@@ -23,6 +23,7 @@ Blocky 需要把 OpenClaw 和 Hermes 的完整原生能力以积木形式展现�
 - 每个适配器读取上游版本、能力描述、配置 Schema/原生文件和运行事件，生成带来源映射的 Blocky 积木。
 - 写回采用格式感知的最小补丁；未知字段进入不透明保留区，不能被丢弃。
 - 两套适配器分别维护版本兼容矩阵、golden fixtures、契约测试与许可证材料。
+- ADR-003 定义的 `blocky compat` CLI 只调用同一适配器协议，不另建直接读写上游文件的旁路。
 
 ```mermaid
 flowchart TB
@@ -196,6 +197,8 @@ OpenClaw 和 Hermes 当前官方仓库均声明 MIT License。分发托管运行
 6. 最后覆盖扩展生态、自动化、多 Agent 与升级矩阵，并逐组合评定 L4。
 
 兼容层不得阻塞 Blocky 基础 MVP；它是基础视觉语言稳定后的独立专业版里程碑。
+
+供通用 Agent 使用的官方 Skill 只能通过 `blocky compat` 的读取、计划、差异和经授权写入命令操作本兼容层；不得教 Agent 绕过适配器直接改 OpenClaw/Hermes 原生目录。
 
 ## 14. 官方依据
 

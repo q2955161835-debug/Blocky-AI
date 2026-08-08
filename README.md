@@ -14,14 +14,17 @@ Blocky 是一款面向普通人和学校教育的“积木式 AI 创作软件”
 - 核心差异：不是节点连线式工作流，而是像 Scratch 一样能嵌套、能约束错误、能逐步执行的视觉语言。
 - 用户术语：单个能力称为“能力积木”，扩展分发单元称为“积木包”，共享入口称为“积木社区”。
 - 内置模板：专业版提供 OpenClaw 与 Hermes 的“原生兼容模板”；Blocky 连接或托管官方运行时，并将原生配置、能力和执行状态可逆地映射为积木，而不是另写一个近似版本。
+- Agent 接入：提供 `blocky` CLI 与官方 `$build-blocky-agents` Skill，让 Codex 等兼容 Agent Skills 标准的通用 Agent 安全地创建、修改、校验和试运行 Blocky 项目。
 - 品牌素材：`logo/logo.png` 作为当前图标概念母图；正式上架前仍需制作各平台规范资源并完成小尺寸可读性检查。
 
 ## 当前文档
 
 - [初版产品方案](doc/产品设计/Blocky-初版产品方案.md)
 - [OpenClaw 与 Hermes 内置兼容模板](doc/产品设计/内置兼容模板-OpenClaw与Hermes.md)
+- [CLI 与官方 Agent Skill 产品设计](doc/产品设计/CLI与官方Agent-Skill.md)
 - [首版跨端技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
 - [原生 Agent 兼容运行时](doc/技术设计/ADR-002-原生Agent兼容运行时.md)
+- [CLI 与官方 Agent Skill 接口](doc/技术设计/ADR-003-CLI与官方Agent-Skill接口.md)
 
 ## 当前结论
 
