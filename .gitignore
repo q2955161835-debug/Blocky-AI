@@ -1,0 +1,33 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# JavaScript / TypeScript
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+
+# Rust / Tauri
+target/
+src-tauri/target/
+
+# Android / HarmonyOS / IDE output
+.gradle/
+.idea/
+.cxx/
+build/
+oh_modules/
+.hvigor/
+.deveco/
+local.properties
+
+# Platform and editor files
+.DS_Store
+Thumbs.db
+*.log
+
+# Temporary experiments belong here but generated contents are not committed
+try/*
+!try/.gitkeep
