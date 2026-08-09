@@ -1,11 +1,9 @@
-use atomic_write_file::AtomicWriteFile;
 use blocky_windows_core_spike_lib::project_store::{
     MAX_PROJECT_BYTES, ProjectStore, SaveProjectRequest,
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::fs;
-use std::io::Write;
 use std::path::Path;
 use tempfile::tempdir;
 
@@ -456,30 +454,6 @@ fn project_store_successful_atomic_write_leaves_only_the_final_file() {
     assert_eq!(entries, vec![std::ffi::OsString::from("demo-project.json")]);
 }
 
-#[test]
-fn atomic_discard_removes_the_named_temporary_file() {
-    let directory = tempdir().expect("temporary project directory");
-    let target = directory.path().join("demo-project.json");
-    let mut file = AtomicWriteFile::open(&target).expect("atomic temporary file opens");
-    file.write_all(b"uncommitted")
-        .expect("atomic temporary file accepts bytes");
-    let entries_before_discard = fs::read_dir(directory.path())
-        .expect("temporary directory is readable")
-        .collect::<Result<Vec<_>, _>>()
-        .expect("temporary entry is readable");
-    assert_eq!(entries_before_discard.len(), 1);
-    assert_ne!(entries_before_discard[0].path(), target);
-
-    file.discard()
-        .expect("explicit discard removes temporary file");
-    assert_eq!(
-        fs::read_dir(directory.path())
-            .expect("temporary directory remains readable")
-            .count(),
-        0
-    );
-}
-
 #[cfg(windows)]
 #[test]
 fn project_store_commit_failure_removes_only_its_new_atomic_temp_file() {
@@ -548,6 +522,97 @@ fn project_store_commit_failure_removes_only_its_new_atomic_temp_file() {
     assert_eq!(
         fs::read(&near_match).expect("near match remains"),
         b"near-match"
+    );
+}
+
+#[cfg(windows)]
+#[test]
+fn project_store_commit_failure_never_deletes_a_foreign_temp_created_in_flight() {
+    use std::fs::OpenOptions;
+    use std::os::windows::fs::OpenOptionsExt;
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::{Duration, Instant};
+
+    let directory = tempdir().expect("temporary project directory");
+    let root = directory.path().to_path_buf();
+    let target = root.join("demo-project.json");
+    let foreign = root.join(".demo-project.json.OWN999");
+    let store = ProjectStore::new(root.clone());
+    store
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect("initial save succeeds");
+    let exclusive = OpenOptions::new()
+        .read(true)
+        .share_mode(0)
+        .open(&target)
+        .expect("target is locked against replacement");
+
+    let (ready_tx, ready_rx) = mpsc::sync_channel(0);
+    let observer_root = root.clone();
+    let observer_foreign = foreign.clone();
+    let observer = thread::spawn(move || {
+        ready_tx.send(()).expect("observer announces readiness");
+        let prefix = ".demo-project.json.";
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while Instant::now() < deadline {
+            let owned_temp_exists = fs::read_dir(&observer_root)
+                .expect("project root remains readable")
+                .filter_map(Result::ok)
+                .filter_map(|entry| entry.file_name().into_string().ok())
+                .any(|name| {
+                    name.starts_with(prefix)
+                        && name.len() == prefix.len() + 6
+                        && name != ".demo-project.json.OWN999"
+                });
+            if owned_temp_exists {
+                fs::write(&observer_foreign, b"foreign-owned")
+                    .expect("lock-external writer creates its own temp");
+                return true;
+            }
+            thread::yield_now();
+        }
+        false
+    });
+    ready_rx.recv().expect("observer is ready before save");
+
+    let error = store
+        .save(request(
+            "demo-project",
+            exact_size_json("demo-project", MAX_PROJECT_BYTES),
+        ))
+        .expect_err("locked target makes atomic commit fail");
+    let injected = observer.join().expect("observer does not panic");
+    drop(exclusive);
+    let mut matching_temps = fs::read_dir(&root)
+        .expect("project root is readable")
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| {
+                    let prefix = ".demo-project.json.";
+                    name.starts_with(prefix) && name.len() == prefix.len() + 6
+                })
+        })
+        .collect::<Vec<_>>();
+    matching_temps.sort();
+
+    assert!(
+        injected,
+        "observer must inject during the owned temp window"
+    );
+    assert_eq!(error.code, "PROJECT_WRITE_COMMIT_FAILED");
+    assert_eq!(error.message, "保存项目失败，请重试");
+    assert_eq!(matching_temps, vec![foreign.clone()]);
+    assert_eq!(
+        fs::read(&foreign).expect("foreign temp remains"),
+        b"foreign-owned"
+    );
+    assert_eq!(
+        fs::read_to_string(&target).expect("original remains"),
+        EXACT_JSON
     );
 }
 

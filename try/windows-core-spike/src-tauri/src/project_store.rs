@@ -1,14 +1,12 @@
-use atomic_write_file::AtomicWriteFile;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
-use std::collections::HashSet;
-use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard, OnceLock};
+use tempfile::{Builder as TempFileBuilder, TempPath};
 
 #[cfg(windows)]
 use std::os::windows::fs::MetadataExt;
@@ -76,20 +74,23 @@ impl ProjectStore {
         ensure_path_entry_safe(&self.root)?;
         let target = self.root.join(format!("{}.json", request.project_id));
         ensure_target_entry_safe(&target)?;
-        let temporary_files_before = atomic_temporary_file_names(&self.root, &target)
-            .map_err(|error| HostError::io("PROJECT_WRITE_TEMP_SCAN_FAILED", error))?;
-        let mut file = AtomicWriteFile::open(&target)
+        let temporary_prefix = format!(".{}.json.", request.project_id);
+        let mut file = TempFileBuilder::new()
+            .prefix(&temporary_prefix)
+            .rand_bytes(6)
+            .tempfile_in(&self.root)
             .map_err(|error| HostError::io("PROJECT_WRITE_OPEN_FAILED", error))?;
         if let Err(error) = file.write_all(request.json.as_bytes()) {
-            return match file.discard() {
-                Ok(()) => Err(HostError::io("PROJECT_WRITE_FAILED", error)),
-                Err(cleanup_error) => {
-                    Err(HostError::io("PROJECT_WRITE_CLEANUP_FAILED", cleanup_error))
-                }
-            };
+            cleanup_owned_temporary_path(file.into_temp_path())?;
+            return Err(HostError::io("PROJECT_WRITE_FAILED", error));
         }
-        if let Err(error) = file.commit() {
-            cleanup_new_atomic_temporary_files(&self.root, &target, &temporary_files_before)?;
+        if let Err(error) = file.as_file().sync_all() {
+            cleanup_owned_temporary_path(file.into_temp_path())?;
+            return Err(HostError::io("PROJECT_WRITE_COMMIT_FAILED", error));
+        }
+        if let Err(error) = file.persist(&target) {
+            let tempfile::PersistError { error, file } = error;
+            cleanup_owned_temporary_path(file.into_temp_path())?;
             return Err(HostError::io("PROJECT_WRITE_COMMIT_FAILED", error));
         }
 
@@ -123,44 +124,9 @@ fn lock_project_saves() -> MutexGuard<'static, ()> {
         .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
 
-fn atomic_temporary_file_name_matches(target: &Path, candidate: &OsStr) -> bool {
-    let Some(target_name) = target.file_name().and_then(OsStr::to_str) else {
-        return false;
-    };
-    let Some(candidate) = candidate.to_str() else {
-        return false;
-    };
-    let prefix = format!(".{target_name}.");
-    let Some(suffix) = candidate.strip_prefix(&prefix) else {
-        return false;
-    };
-    suffix.len() == 6 && suffix.bytes().all(|byte| byte.is_ascii_alphanumeric())
-}
-
-fn atomic_temporary_file_names(root: &Path, target: &Path) -> std::io::Result<HashSet<OsString>> {
-    let mut names = HashSet::new();
-    for entry in fs::read_dir(root)? {
-        let entry = entry?;
-        let name = entry.file_name();
-        if atomic_temporary_file_name_matches(target, &name) && entry.file_type()?.is_file() {
-            names.insert(name);
-        }
-    }
-    Ok(names)
-}
-
-fn cleanup_new_atomic_temporary_files(
-    root: &Path,
-    target: &Path,
-    temporary_files_before: &HashSet<OsString>,
-) -> Result<(), HostError> {
-    let temporary_files_after = atomic_temporary_file_names(root, target)
-        .map_err(|error| HostError::io("PROJECT_WRITE_CLEANUP_FAILED", error))?;
-    for name in temporary_files_after.difference(temporary_files_before) {
-        fs::remove_file(root.join(name))
-            .map_err(|error| HostError::io("PROJECT_WRITE_CLEANUP_FAILED", error))?;
-    }
-    Ok(())
+fn cleanup_owned_temporary_path(path: TempPath) -> Result<(), HostError> {
+    path.close()
+        .map_err(|error| HostError::io("PROJECT_WRITE_CLEANUP_FAILED", error))
 }
 
 fn validate_project_id(project_id: &str) -> Result<(), HostError> {
@@ -299,12 +265,7 @@ fn sha256_hex(bytes: &[u8]) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        atomic_temporary_file_name_matches, cleanup_new_atomic_temporary_files,
-        path_metadata_flags_are_unsafe,
-    };
-    use std::collections::HashSet;
-    use std::ffi::OsString;
+    use super::{cleanup_owned_temporary_path, path_metadata_flags_are_unsafe};
 
     #[test]
     fn project_store_path_flag_helper_rejects_symlinks_and_windows_reparse_points() {
@@ -314,48 +275,19 @@ mod tests {
     }
 
     #[test]
-    fn atomic_temporary_name_matcher_accepts_only_the_exact_target_and_suffix_shape() {
-        let target = std::path::Path::new("demo-project.json");
-        assert!(atomic_temporary_file_name_matches(
-            target,
-            std::ffi::OsStr::new(".demo-project.json.ABC123")
-        ));
-        assert!(!atomic_temporary_file_name_matches(
-            target,
-            std::ffi::OsStr::new(".other-project.json.ABC123")
-        ));
-        assert!(!atomic_temporary_file_name_matches(
-            target,
-            std::ffi::OsStr::new(".demo-project.json.ABC12")
-        ));
-        assert!(!atomic_temporary_file_name_matches(
-            target,
-            std::ffi::OsStr::new(".demo-project.json.ABC12-")
-        ));
-    }
-
-    #[cfg(windows)]
-    #[test]
-    fn atomic_cleanup_failure_uses_a_fixed_safe_error() {
-        use std::fs::{self, OpenOptions};
-        use std::os::windows::fs::OpenOptionsExt;
+    fn owned_temporary_cleanup_failure_uses_a_fixed_safe_error() {
+        use std::fs;
 
         let directory = tempfile::tempdir().expect("temporary project directory");
-        let target = directory.path().join("demo-project.json");
-        let candidate = directory.path().join(".demo-project.json.ABC123");
-        fs::write(&candidate, b"locked cleanup fixture").expect("cleanup fixture is written");
-        let _exclusive = OpenOptions::new()
-            .read(true)
-            .share_mode(0)
-            .open(&candidate)
-            .expect("cleanup fixture is exclusively locked");
+        let file = tempfile::NamedTempFile::new_in(directory.path())
+            .expect("owned temporary file is created");
+        let path = file.path().to_path_buf();
+        let temporary_path = file.into_temp_path();
+        fs::remove_file(&path).expect("owned temporary file is removed for the fault fixture");
+        fs::create_dir(&path).expect("directory blocks file cleanup at the owned path");
 
-        let error = cleanup_new_atomic_temporary_files(
-            directory.path(),
-            &target,
-            &HashSet::<OsString>::new(),
-        )
-        .expect_err("locked new temporary file cannot be cleaned");
+        let error = cleanup_owned_temporary_path(temporary_path)
+            .expect_err("owned temporary path cleanup fails safely");
         assert_eq!(error.code, "PROJECT_WRITE_CLEANUP_FAILED");
         assert_eq!(error.message, "保存项目失败，请重试");
         assert!(
@@ -363,5 +295,6 @@ mod tests {
                 .message
                 .contains(directory.path().to_string_lossy().as_ref())
         );
+        fs::remove_dir(path).expect("fault fixture directory is removed");
     }
 }
