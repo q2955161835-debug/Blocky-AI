@@ -61,7 +61,7 @@ if (-not $devEcoHome -and (Test-Path -LiteralPath 'D:\Deveco_Studio\DevEco Studi
     $devEcoHome = 'D:\Deveco_Studio\DevEco Studio'
 }
 if (-not $devEcoHome -or -not (Test-Path -LiteralPath $devEcoHome)) {
-    throw 'DevEco Studio was not found. Set the user variable DEVECO_STUDIO_HOME.'
+    throw 'DevEco Studio was not found. Set DEVECO_STUDIO_HOME in the current process or user environment.'
 }
 
 $env:ANDROID_HOME = $androidHome

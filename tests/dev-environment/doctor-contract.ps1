@@ -90,10 +90,23 @@ $doctorCommand = "& '$quotedDoctor' -Json"
 
 $healthyProcess = Invoke-IsolatedPowerShell -Code $doctorCommand
 $healthy = Convert-DoctorResult -ProcessResult $healthyProcess -Scenario 'healthy doctor'
+$validAndroidHome = $null
+$validNdkHome = $null
+$validDevEcoHome = $null
 Assert-Equal -Actual $healthyProcess.ExitCode -Expected 0 -Message 'healthy doctor exits successfully'
 if ($healthy) {
     Assert-Equal -Actual $healthy.checks.Count -Expected 26 -Message 'healthy doctor emits the stable 26-check contract'
     Assert-Equal -Actual $healthy.failed -Expected 0 -Message 'healthy doctor has no failures'
+
+    $validAndroidHome = ($healthy.checks | Where-Object { $_.check -eq 'ANDROID_HOME' }).detail
+    $ndkRevision = (($healthy.checks | Where-Object { $_.check -eq 'NDK' }).detail -replace '^Pkg\.Revision\s*=\s*', '')
+    $validNdkHome = Join-Path $validAndroidHome "ndk\$ndkRevision"
+    $devEcoDetail = ($healthy.checks | Where-Object { $_.check -eq 'DevEco Studio' }).detail
+    $validDevEcoHome = $devEcoDetail -replace '^.*?\s+at\s+', ''
+
+    Assert-Equal -Actual (Test-Path -LiteralPath $validAndroidHome) -Expected $true -Message 'healthy doctor exposes a valid Android SDK root'
+    Assert-Equal -Actual (Test-Path -LiteralPath $validNdkHome) -Expected $true -Message 'healthy doctor exposes a valid Android NDK revision'
+    Assert-Equal -Actual (Test-Path -LiteralPath $validDevEcoHome) -Expected $true -Message 'healthy doctor exposes a valid DevEco Studio root'
 }
 
 $invalidAndroidProcess = Invoke-IsolatedPowerShell -Code $doctorCommand -Environment @{
@@ -148,9 +161,9 @@ $loaderCommand = @"
     deveco = `$env:DEVECO_STUDIO_HOME
 } | ConvertTo-Json -Compress
 "@
-$processAndroid = 'D:\Android\.'
-$processNdk = 'D:\Android\ndk\29.0.14206865\.'
-$processDevEco = 'D:\Deveco_Studio\DevEco Studio\.'
+$processAndroid = Join-Path $validAndroidHome '.'
+$processNdk = Join-Path $validNdkHome '.'
+$processDevEco = Join-Path $validDevEcoHome '.'
 $loaderProcess = Invoke-IsolatedPowerShell -Code $loaderCommand -Environment @{
     ANDROID_HOME = $processAndroid
     NDK_HOME = $processNdk
@@ -170,7 +183,7 @@ catch {
 $missingNdkProcess = Invoke-IsolatedPowerShell -Code $loaderCommand -Environment @{
     ANDROID_HOME = $repositoryRoot
     NDK_HOME = 'Z:\Blocky-Missing-Android-NDK'
-    DEVECO_STUDIO_HOME = 'D:\Deveco_Studio\DevEco Studio'
+    DEVECO_STUDIO_HOME = $validDevEcoHome
 }
 Assert-Equal -Actual $missingNdkProcess.ExitCode -Expected 1 -Message 'loader fails when the selected SDK has no NDK'
 Assert-Contains -Actual $missingNdkProcess.Stderr -Expected 'no side-by-side NDK was found' -Message 'loader reports an actionable missing NDK error'
