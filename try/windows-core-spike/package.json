@@ -12,8 +12,9 @@
     "test:unit": "vitest run tests/unit",
     "test:component": "vitest run tests/component",
     "test:e2e:build": "tauri build --no-bundle --features wdio --config src-tauri/tauri.wdio.conf.json",
-    "test:e2e": "wdio run ./wdio.conf.ts --spec ./tests/e2e/windows-core.e2e.ts",
-    "test:soak": "wdio run ./wdio.conf.ts --spec ./tests/e2e/windows-core-soak.e2e.ts",
+    "test:e2e": "node ./scripts/prepare-wdio-artifacts.mjs && wdio run ./wdio.conf.ts --spec ./tests/e2e/windows-core.e2e.ts && node ./scripts/audit-wdio-logs.mjs",
+    "test:e2e:logs": "node ./scripts/audit-wdio-logs.mjs",
+    "test:soak": "node ./scripts/prepare-wdio-artifacts.mjs && wdio run ./wdio.conf.ts --spec ./tests/e2e/windows-core-soak.e2e.ts && node ./scripts/audit-wdio-logs.mjs",
     "check": "vitest run"
   },
   "dependencies": {

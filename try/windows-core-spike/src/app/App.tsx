@@ -61,11 +61,16 @@ export function App({
         <div className="app-actions" aria-label="项目操作">
           <button
             type="button"
-            onClick={() => canvasRef.current?.load(createHundredBlockWorkspaceState())}
+            onClick={() => void controller.replaceWorkspace(
+              createHundredBlockWorkspaceState(),
+            )}
           >
             载入100块
           </button>
-          <button type="button" onClick={() => canvasRef.current?.load(EMPTY_WORKSPACE)}>
+          <button
+            type="button"
+            onClick={() => void controller.replaceWorkspace(EMPTY_WORKSPACE)}
+          >
             清空
           </button>
           {canvasAction ? (
@@ -177,7 +182,7 @@ export function App({
                 disabled={controller.runtime.status === "running" || hasCompileError}
                 running={controller.runtime.status === "running"}
                 pendingPermission={controller.pendingPermission}
-                onCancel={controller.cancelRun}
+                onCancel={() => void controller.cancelRun()}
                 onApprovePermission={controller.approvePermission}
                 onDenyPermission={controller.denyPermission}
               />

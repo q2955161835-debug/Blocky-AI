@@ -4,6 +4,7 @@ import {
   buildEditorProjection,
   type BlocklyCanvasHandle,
 } from "../../src/blockly/BlocklyCanvas";
+import { createHundredBlockWorkspaceState } from "../../src/blockly/fixtures";
 import { useSpikeController } from "../../src/app/useSpikeController";
 import type { HostBridge } from "../../src/host/HostBridge";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
@@ -40,10 +41,13 @@ const VALID_WORKSPACE = {
   },
 };
 
-function canvasHandle(highlight = vi.fn()): BlocklyCanvasHandle {
+function canvasHandle(
+  highlight = vi.fn(),
+  workspace: ReturnType<typeof createHundredBlockWorkspaceState> | typeof VALID_WORKSPACE = VALID_WORKSPACE,
+): BlocklyCanvasHandle {
   return {
     load: vi.fn(),
-    save: vi.fn(() => VALID_WORKSPACE),
+    save: vi.fn(() => workspace),
     blockCount: vi.fn(() => 4),
     highlight,
     zoomIn: vi.fn(),
@@ -155,5 +159,66 @@ describe("useSpikeController", () => {
       "run.cancelled",
     );
     expect(result.current.operationError).toBeNull();
+  });
+
+  it("does not let stale approval callbacks resolve a newer run", async () => {
+    const canvasRef = {
+      current: canvasHandle(vi.fn(), createHundredBlockWorkspaceState()),
+    };
+    const { result } = renderHook(() =>
+      useSpikeController({
+        canvasRef,
+        hostBridge: new InMemoryHostBridge(),
+        projectId: "project-1",
+      }),
+    );
+    act(() => {
+      result.current.acceptProjection(
+        buildEditorProjection(createHundredBlockWorkspaceState()),
+      );
+    });
+    await waitFor(() => expect(result.current.activeEntryId).toBe("block-002"));
+
+    let firstRun!: Promise<void>;
+    act(() => {
+      firstRun = result.current.runInput({
+        entryId: "block-002",
+        text: "/permission",
+        attachments: [],
+      });
+    });
+    await waitFor(() => expect(result.current.pendingPermission).not.toBeNull());
+    const staleApprove = result.current.approvePermission;
+    const staleDeny = result.current.denyPermission;
+    await act(async () => {
+      await result.current.cancelRun();
+      await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
+    });
+
+    let secondRun!: Promise<void>;
+    act(() => {
+      secondRun = result.current.runInput({
+        entryId: "block-002",
+        text: "/permission",
+        attachments: [],
+      });
+    });
+    await waitFor(() => {
+      expect(result.current.pendingPermission?.runId).toBe("desktop-run-2");
+    });
+
+    act(() => {
+      staleApprove();
+      staleDeny();
+    });
+    expect(result.current.pendingPermission?.runId).toBe("desktop-run-2");
+    expect(result.current.runtime.events.at(-1)?.type).toBe(
+      "tool.permission_requested",
+    );
+
+    await act(async () => {
+      result.current.denyPermission();
+      await expect(secondRun).rejects.toThrow("RUN_FAILED");
+    });
   });
 });

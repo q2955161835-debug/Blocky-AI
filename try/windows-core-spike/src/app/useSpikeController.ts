@@ -100,13 +100,36 @@ interface UseSpikeControllerOptions {
 
 export interface PendingPermissionRequest {
   readonly runId: string;
+  readonly runToken: number;
+  readonly projectionRevision: number;
+  readonly projectionDigest: string;
   readonly toolId: string;
   readonly callBlockId: string;
   readonly permissions: readonly string[];
 }
 
 interface PendingPermissionResolver {
+  readonly runToken: number;
+  readonly projectionRevision: number;
+  readonly projectionDigest: string;
   readonly resolve: (decision: "approved" | "denied") => void;
+}
+
+interface RunBinding {
+  readonly runToken: number;
+  readonly projectionRevision: number;
+  readonly projectionDigest: string;
+}
+
+interface ActiveRun extends RunBinding {
+  readonly abortController: AbortController;
+  readonly settled: Promise<void>;
+}
+
+function sameRunBinding(left: RunBinding, right: RunBinding): boolean {
+  return left.runToken === right.runToken &&
+    left.projectionRevision === right.projectionRevision &&
+    left.projectionDigest === right.projectionDigest;
 }
 
 function runtimeText(input: RuntimeInput): string {
@@ -135,35 +158,96 @@ export function useSpikeController({
   const abortControllerRef = useRef<AbortController | null>(null);
   const pendingPermissionRef = useRef<PendingPermissionResolver | null>(null);
   const runSequenceRef = useRef(0);
+  const runTokenRef = useRef(0);
+  const activeRunRef = useRef<ActiveRun | null>(null);
+  const runTransitionRef = useRef<Promise<void>>(Promise.resolve());
+  const projectionIdentityRef = useRef({
+    revision: 0,
+    digest: stableStringify(EMPTY_WORKSPACE),
+  });
 
   const settlePermission = useCallback(
-    (decision: "approved" | "denied"): void => {
+    (
+      decision: "approved" | "denied",
+      expected: RunBinding,
+    ): void => {
       const pending = pendingPermissionRef.current;
-      if (!pending) return;
+      if (!pending || !sameRunBinding(pending, expected)) return;
+      const active = activeRunRef.current;
+      const projectionIdentity = projectionIdentityRef.current;
+      const isCurrent = active !== null &&
+        sameRunBinding(active, pending) &&
+        projectionIdentity.revision === pending.projectionRevision &&
+        projectionIdentity.digest === pending.projectionDigest;
       pendingPermissionRef.current = null;
       setPendingPermission(null);
-      pending.resolve(decision);
+      pending.resolve(isCurrent ? decision : "denied");
     },
     [],
   );
 
   const requestApproval = useCallback(
-    (request: PendingPermissionRequest): Promise<"approved" | "denied"> =>
+    (
+      binding: RunBinding,
+      request: Omit<PendingPermissionRequest, keyof RunBinding>,
+    ): Promise<"approved" | "denied"> =>
       new Promise((resolve) => {
+        const active = activeRunRef.current;
+        const projectionIdentity = projectionIdentityRef.current;
+        if (
+          !active ||
+          !sameRunBinding(active, binding) ||
+          projectionIdentity.revision !== binding.projectionRevision ||
+          projectionIdentity.digest !== binding.projectionDigest
+        ) {
+          resolve("denied");
+          return;
+        }
         const previous = pendingPermissionRef.current;
-        pendingPermissionRef.current = { resolve };
-        setPendingPermission({ ...request, permissions: [...request.permissions] });
+        pendingPermissionRef.current = { ...binding, resolve };
+        setPendingPermission({
+          ...request,
+          ...binding,
+          permissions: [...request.permissions],
+        });
         previous?.resolve("denied");
       }),
     [],
   );
 
-  const cancelRun = useCallback((): void => {
-    abortControllerRef.current?.abort();
-    settlePermission("denied");
+  const cancelRun = useCallback(async (): Promise<void> => {
+    const active = activeRunRef.current;
+    if (!active) return;
+    active.abortController.abort();
+    settlePermission("denied", active);
+    await active.settled;
   }, [settlePermission]);
 
+  const withRunTransition = useCallback(
+    async <T,>(operation: () => Promise<T> | T): Promise<T> => {
+      const previous = runTransitionRef.current;
+      let release = (): void => {};
+      runTransitionRef.current = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await previous;
+      try {
+        return await operation();
+      } finally {
+        release();
+      }
+    },
+    [],
+  );
+
   const acceptProjection = useCallback((nextProjection: EditorProjection): void => {
+    const digest = stableStringify(nextProjection.workspace);
+    if (projectionIdentityRef.current.digest !== digest) {
+      projectionIdentityRef.current = {
+        revision: projectionIdentityRef.current.revision + 1,
+        digest,
+      };
+    }
     setProjection((current) =>
       stableStringify(current.workspace) === stableStringify(nextProjection.workspace)
         ? current
@@ -225,17 +309,31 @@ export function useSpikeController({
   const loadProject = useCallback(async (): Promise<void> => {
     setOperationError(null);
     try {
-      const snapshot = await hostBridge.loadProject(projectId);
-      if (snapshot) canvasRef.current?.load(snapshot.workspace);
+      await withRunTransition(async () => {
+        await cancelRun();
+        const snapshot = await hostBridge.loadProject(projectId);
+        if (snapshot) canvasRef.current?.load(snapshot.workspace);
+      });
     } catch {
       setOperationError(LOAD_ERROR);
     }
-  }, [canvasRef, hostBridge, projectId]);
+  }, [cancelRun, canvasRef, hostBridge, projectId, withRunTransition]);
+
+  const replaceWorkspace = useCallback(
+    async (workspace: JsonValue): Promise<void> => {
+      await withRunTransition(async () => {
+        await cancelRun();
+        canvasRef.current?.load(workspace);
+      });
+    },
+    [cancelRun, canvasRef, withRunTransition],
+  );
 
   const runInput = useCallback(
     async (input: RuntimeInput): Promise<void> => {
       setOperationError(null);
       let abortController: AbortController | null = null;
+      let resolveSettled = (): void => {};
       try {
         const workspace = canvasRef.current?.save();
         if (!workspace) throw new Error("RUN_WORKSPACE_UNAVAILABLE");
@@ -243,9 +341,28 @@ export function useSpikeController({
         assertRunnableProjection(latest, input.entryId);
         acceptProjection(latest);
 
-        cancelRun();
-        abortController = new AbortController();
-        abortControllerRef.current = abortController;
+        const runContext = await withRunTransition(async () => {
+          await cancelRun();
+          const nextAbortController = new AbortController();
+          abortControllerRef.current = nextAbortController;
+          runTokenRef.current += 1;
+          const binding: RunBinding = {
+            runToken: runTokenRef.current,
+            projectionRevision: projectionIdentityRef.current.revision,
+            projectionDigest: projectionIdentityRef.current.digest,
+          };
+          const activeRun: ActiveRun = {
+            ...binding,
+            abortController: nextAbortController,
+            settled: new Promise<void>((resolve) => {
+              resolveSettled = resolve;
+            }),
+          };
+          activeRunRef.current = activeRun;
+          return { abortController: nextAbortController, binding };
+        });
+        abortController = runContext.abortController;
+        const { binding } = runContext;
         const tools = createRuntimeToolMap(latest);
         const dependencies: RuntimeDependencies = {
           runIdFactory: () => {
@@ -254,7 +371,7 @@ export function useSpikeController({
           },
           model: runtimeModel ?? createDeterministicModel(),
           tools,
-          requestApproval,
+          requestApproval: (request) => requestApproval(binding, request),
         };
         const outcome: { terminalType: RunTerminalType | null } = {
           terminalType: null,
@@ -282,6 +399,11 @@ export function useSpikeController({
         if (!handledTerminal) setOperationError(RUN_ERROR);
         throw error;
       } finally {
+        const active = activeRunRef.current;
+        if (active && active.abortController === abortController) {
+          activeRunRef.current = null;
+        }
+        if (abortController) resolveSettled();
         if (abortController && abortControllerRef.current === abortController) {
           abortControllerRef.current = null;
         }
@@ -294,6 +416,7 @@ export function useSpikeController({
       canvasRef,
       requestApproval,
       runtimeModel,
+      withRunTransition,
     ],
   );
 
@@ -307,9 +430,14 @@ export function useSpikeController({
     acceptProjection,
     saveProject,
     loadProject,
+    replaceWorkspace,
     runInput,
     cancelRun,
-    approvePermission: () => settlePermission("approved"),
-    denyPermission: () => settlePermission("denied"),
+    approvePermission: pendingPermission
+      ? () => settlePermission("approved", pendingPermission)
+      : () => {},
+    denyPermission: pendingPermission
+      ? () => settlePermission("denied", pendingPermission)
+      : () => {},
   };
 }

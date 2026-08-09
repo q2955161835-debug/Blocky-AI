@@ -20,6 +20,8 @@ export const config: NativeTauriRunnerConfig = {
         driverProvider: "embedded",
         captureBackendLogs: true,
         captureFrontendLogs: true,
+        backendLogLevel: "info",
+        frontendLogLevel: "warn",
         startTimeout: Number(process.env.BLOCKY_E2E_START_TIMEOUT ?? 120_000),
         commandTimeout: 30_000,
         logDir: "./artifacts/wdio",

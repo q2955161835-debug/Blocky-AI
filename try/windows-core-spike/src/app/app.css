@@ -369,10 +369,11 @@ button:disabled {
   border-color: #e5a7a3;
 }
 
-.runtime-panel--empty {
+.runtime-panel__empty {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
   padding: 32px;
   color: var(--muted);
   text-align: center;

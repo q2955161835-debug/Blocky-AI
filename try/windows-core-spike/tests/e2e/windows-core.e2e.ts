@@ -1,6 +1,8 @@
-import { $, browser, expect } from "@wdio/globals";
+import { createHash } from "node:crypto";
+import { $, $$, browser, expect } from "@wdio/globals";
 import "@wdio/tauri-service";
 import type { InteractionManifest } from "../../src/core/interactionManifest";
+import { stableStringify } from "../../src/core/json";
 import type { RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { SpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
@@ -19,6 +21,13 @@ interface TestHook {
 
 interface HookWindow extends Window {
   __BLOCKY_SPIKE_TEST__: TestHook;
+}
+
+interface NativeProjectRecord {
+  readonly projectId: string;
+  readonly json: string;
+  readonly sha256: string;
+  readonly bytes: number;
 }
 
 function collectBlockIds(value: unknown, found = new Set<string>()): Set<string> {
@@ -82,31 +91,91 @@ async function getManifest(): Promise<unknown> {
   );
 }
 
-async function waitForRustSave(projectId: string): Promise<void> {
+function expectedRecord(projectId: string, json: string): NativeProjectRecord {
+  return {
+    projectId,
+    json,
+    sha256: createHash("sha256").update(json, "utf8").digest("hex"),
+    bytes: Buffer.byteLength(json, "utf8"),
+  };
+}
+
+async function writeRustRecord(
+  projectId: string,
+  json: string,
+): Promise<NativeProjectRecord> {
+  // Seeding the native store cannot be expressed through DOM actions. This
+  // setup-only call gives each run a distinguishable pre-save disk identity.
+  return browser.tauri.execute(async ({ core }, nextProjectId, nextJson) =>
+    core.invoke("save_project", {
+      request: { projectId: nextProjectId, json: nextJson },
+    }) as Promise<NativeProjectRecord>, projectId, json);
+}
+
+async function waitForRustSave(
+  expected: NativeProjectRecord,
+  sentinel: NativeProjectRecord,
+): Promise<NativeProjectRecord> {
   // The save button intentionally has no test-only completion signal. Polling
   // the real Rust load command is assertion-only and prevents clear racing disk IO.
   let lastProbe: unknown;
   try {
     await browser.waitUntil(async () => {
+      const saveError = await $(".app-operation-error");
+      if (await saveError.isExisting()) {
+        lastProbe = { appError: await saveError.getText() };
+        return false;
+      }
       lastProbe = await browser.tauri.execute(async ({ core }, nextProjectId) => {
         try {
           const record = await core.invoke("load_project", {
             projectId: nextProjectId,
-          }) as {
-            json?: unknown;
-          };
-          return { ok: typeof record.json === "string", type: typeof record.json };
+          }) as NativeProjectRecord;
+          return { ok: true, record };
         } catch (error) {
           return { ok: false, error: String(error) };
         }
-      }, projectId);
-      return Boolean((lastProbe as { ok?: boolean } | null)?.ok);
+      }, expected.projectId);
+      const record = (lastProbe as { record?: NativeProjectRecord }).record;
+      return Boolean(
+        record &&
+        record.projectId === expected.projectId &&
+        record.json === expected.json &&
+        record.sha256 === expected.sha256 &&
+        record.bytes === expected.bytes &&
+        record.json !== sentinel.json &&
+        record.sha256 !== sentinel.sha256,
+      );
     });
   } catch (error) {
     throw new Error(`WDIO_RUST_SAVE_PROBE:${JSON.stringify(lastProbe)}`, {
       cause: error,
     });
   }
+  return (lastProbe as { record: NativeProjectRecord }).record;
+}
+
+async function readBlocklyScale(): Promise<number> {
+  const blockCanvases = await $$(".blocklyBlockCanvas");
+  const canvasCount = await blockCanvases.length;
+  if (canvasCount === 0) {
+    throw new Error("WDIO_BLOCKLY_SCALE_UNAVAILABLE:no canvases");
+  }
+  const candidates: Array<{ childCount: number; transform: string | null }> = [];
+  for (let index = 0; index < canvasCount; index += 1) {
+    const canvas = blockCanvases[index];
+    if (!canvas) continue;
+    candidates.push({
+      childCount: Number(await canvas.getProperty("childElementCount")),
+      transform: await canvas.getAttribute("transform"),
+    });
+  }
+  const transform = candidates.sort(
+    (left, right) => right.childCount - left.childCount,
+  )[0]?.transform;
+  const match = transform?.match(/scale\(([-+\d.eE]+)\)/);
+  if (!match) throw new Error(`WDIO_BLOCKLY_SCALE_UNAVAILABLE:${transform}`);
+  return Number(match[1]);
 }
 
 async function readEvents(): Promise<HookRuntimeEvent[]> {
@@ -210,21 +279,44 @@ describe("Windows Core native channel", () => {
       findBlock(snapshotWorkspace(await getCanonicalSnapshot()), "block-001")
         ?.collapsed === true
     ));
+    await builderTab.click();
+    const initialScale = await readBlocklyScale();
     await $("aria/放大画布").click();
+    await browser.waitUntil(async () => (await readBlocklyScale()) > initialScale);
+    const zoomedInScale = await readBlocklyScale();
+    expect(zoomedInScale).toBeGreaterThan(initialScale);
     await $("aria/缩小画布").click();
+    await browser.waitUntil(async () => (await readBlocklyScale()) < zoomedInScale);
+    const zoomedOutScale = await readBlocklyScale();
+    expect(zoomedOutScale).toBeLessThan(zoomedInScale);
+    expect(zoomedOutScale).toBeCloseTo(initialScale, 6);
     const beforeSave = await getCanonicalSnapshot();
     const beforeIds = [...collectBlockIds(beforeSave)].sort();
     expect(beforeIds).toHaveLength(100);
     expect(findBlock(snapshotWorkspace(beforeSave), "block-001"))
       .toMatchObject({ collapsed: true });
 
+    const sentinel = structuredClone(beforeSave) as SpikeProjectSnapshot;
+    const sentinelBlock = findBlock(snapshotWorkspace(sentinel), "block-001");
+    if (!sentinelBlock) throw new Error("WDIO_SENTINEL_BLOCK_UNAVAILABLE");
+    sentinelBlock.collapsed = false;
+    const sentinelJson = stableStringify(sentinel);
+    const sentinelRecord = await writeRustRecord(
+      "windows-core-spike",
+      sentinelJson,
+    );
+    expect(sentinelRecord).toEqual(
+      expectedRecord("windows-core-spike", sentinelJson),
+    );
+
     await $("aria/保存").click();
-    await browser.pause(500);
-    const saveError = await $(".app-operation-error");
-    if (await saveError.isExisting()) {
-      throw new Error(`WDIO_SAVE_UI_ERROR:${await saveError.getText()}`);
-    }
-    await waitForRustSave("windows-core-spike");
+    const expectedSavedRecord = expectedRecord(
+      "windows-core-spike",
+      stableStringify(beforeSave),
+    );
+    expect(await waitForRustSave(expectedSavedRecord, sentinelRecord)).toEqual(
+      expectedSavedRecord,
+    );
     await $("aria/清空").click();
     await browser.waitUntil(async () => (await getBlockCount()) === 0);
     await expect(runtimeTab).toBeDisabled();

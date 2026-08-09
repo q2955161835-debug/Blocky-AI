@@ -35,14 +35,6 @@ export function RuntimePanel({
   onApprovePermission,
   onDenyPermission,
 }: RuntimePanelProps) {
-  if (manifest.entries.length === 0) {
-    return (
-      <section className="runtime-panel runtime-panel--empty">
-        <p>添加聊天入口后才能运行作品</p>
-      </section>
-    );
-  }
-
   const composerProps: RuntimeComposerProps = {
     manifest,
     activeEntryId,
@@ -85,7 +77,11 @@ export function RuntimePanel({
           取消运行
         </button>
       ) : null}
-      <RuntimeComposer {...composerProps} />
+      {manifest.entries.length === 0 ? (
+        <p className="runtime-panel__empty">添加聊天入口后才能运行作品</p>
+      ) : (
+        <RuntimeComposer {...composerProps} />
+      )}
     </section>
   );
 }
