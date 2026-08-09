@@ -2,26 +2,28 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v0.1 |
+| 版本 | v0.2 |
 | 日期 | 2026-08-09 |
 | 状态 | 产品与命令面设计已确认，尚未实现 |
 | 命令名 | `blocky` |
 | 官方 Skills 入口 | `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 首发环境 | Windows；从任意本地项目目录调用 |
 
-> 更新说明（2026-08-09）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为 Skills 包与 Codex 等客户端的官方插件，新增“自定义积木创建”“GitHub 项目转 Blocky”和“现有 Agent 逆向积木”。本文的 CLI、Build Spec、差异和授权原则继续有效；最新 Skills 组成、图形页协作与逆向规则见[《Blocky 完整积木与 Agent 兼容设计》](Blocky-完整积木与Agent兼容设计.md)。
+> 更新说明（2026-08-09）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为 Skills 包与 Codex 等客户端的官方插件，新增“自定义积木创建”“GitHub 项目转 Blocky”和“现有 Agent 逆向积木”。应用也内置使用相同语义补丁协议的搭建助手。最新交互入口、一级 Tool 和双右栏规则见[《Blocky 交互入口与工具积木设计》](Blocky-交互入口与工具积木设计.md)。
 
 ## 1. 产品目标
 
-Blocky 除图形编辑器外，提供一套稳定的 CLI 和一套官方 Agent Skills，使 Codex、Claude Code 及其他兼容 Agent Skills 开放标准的通用 Agent 能辅助用户搭建 AI 程序。本文后续章节详细设计其中的 `$build-blocky-agents`；其余 Skills 和官方插件以上位设计为准。
+Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Agent Skills 包和客户端插件，使用户既可直接在应用内获得积木帮助，也可让 Codex 等外部 Agent 与同一画布协作。本文详细定义这些入口共用的机器契约。
 
-两者分工明确：
+各层分工明确：
 
 - `blocky` CLI 是机器接口，负责确定性读取、创建、编译、校验、差异、模拟、运行和兼容适配。
-- `$build-blocky-agents` 是工作方法，告诉通用 Agent 何时调用哪些命令、如何控制上下文，以及哪些操作必须先展示差异或取得授权。
+- Blocky 内置搭建助手使用受限的画布查询、语义补丁、校验和模拟工具；默认审阅修改，也可在逐轮检查点保护下直接搭建。
+- 官方 Skills 是工作方法，告诉通用 Agent 何时调用哪些命令、如何控制上下文，以及哪些操作必须先展示差异或取得授权。
+- 官方插件负责发现 Skills、CLI 和本机图形页，不复制语言或运行时。
 - Blocky 桌面应用仍是积木画布、权限确认和可视化调试的主要入口。
 
-CLI 与 Skill 不提供第二套 Agent 语言，也不允许通用 Agent 绕过 Blocky 的类型、权益、安全和兼容性规则。
+内置助手、CLI、Skills 与插件不提供第二套 Agent 语言，也不允许绕过 Blocky 的类型、安全和兼容性规则。
 
 ## 2. 典型用户任务
 
@@ -60,11 +62,11 @@ CLI 与 Skill 不提供第二套 Agent 语言，也不允许通用 Agent 绕过 
 ### 后续阶段
 
 - 连接真实模型和 Blocky 本地运行 Host。
-- OpenClaw/Hermes 只读扫描、原生往返和兼容报告。
+- OpenClaw、Hermes、Pi、OpenCode 只读扫描、原生往返和兼容报告。
 - 经 Blocky UI 授权的真实运行、外部行动和远程实例控制。
 - macOS CLI；Windows 以外平台的发行包在对应桌面端适配时加入。
 
-Android 与 HarmonyOS 不提供设备本地 CLI。手机项目可以由电脑上的通用 Agent 通过 `blocky` CLI 修改，再由 Blocky 跨端打开；远程运行仍走兼容运行时协议。
+Android、HarmonyOS 与 iOS 不提供设备本地 CLI 或积木编辑器。它们接收桌面端发布的 Agent，并根据能力协商选择轻量本地运行或连接 Windows、macOS、用户服务器；CLI 只随 Windows 和后续 macOS 完整应用发行。
 
 ## 4. 命令设计
 
@@ -103,7 +105,7 @@ Android 与 HarmonyOS 不提供设备本地 CLI。手机项目可以由电脑上
 | `blocky run watch <run-id> --jsonl` | 订阅积木级事件 | 支持断点续传序号 |
 | `blocky run stop <run-id> --json` | 请求停止运行 | 仅作用于指定运行 ID |
 
-### OpenClaw 与 Hermes
+### 原生 Agent 兼容
 
 | 命令 | 作用 | 默认行为 |
 |---|---|---|
@@ -114,7 +116,7 @@ Android 与 HarmonyOS 不提供设备本地 CLI。手机项目可以由电脑上
 | `blocky compat export <file> --runtime <name> --dry-run --json` | 生成原生写回计划 | 默认只能 dry-run |
 | `blocky compat report <file> --json` | 输出版本组合和 L0-L4 证据 | 不提升兼容等级 |
 
-原生写回后续只通过带 Blocky 作用域授权的命令开放。CLI 不提供直接修改 OpenClaw/Hermes 数据目录的快捷命令。
+`<name>` 首批支持 `openclaw`、`hermes`、`pi` 和 `opencode`。原生写回后续只通过带 Blocky 作用域授权的命令开放；CLI 不提供直接修改任何上游数据目录的快捷命令。
 
 ### 官方 Skill 管理
 
@@ -141,15 +143,25 @@ metadata:
   name: complaint-helper
 target:
   runtime: blocky
-  edition: professional
 program:
-  - id: start
-    type: core.when-run
+  - id: agent-main
+    type: core.agent.define
+    with:
+      name: 投诉回复助手
     do:
-      - id: ask-message
-        type: core.ask-user
+      - id: instructions
+        type: core.agent.instructions
         with:
-          prompt: 粘贴一条客户消息
+          text: 对投诉进行分类并起草回复，不自动发送。
+interactions:
+  - id: input-1
+    type: core.interaction.chat_entry
+    ownerAgentId: agent-main
+    displayName: 输入 1
+    capabilities:
+      - type: core.interaction.accept_text
+tools: []
+customBlocks: []
 permissions: []
 ```
 
@@ -160,6 +172,7 @@ permissions: []
 - 嵌套结构表达控制流，不退化为节点坐标或连线列表。
 - 未识别的新字段进入保留区，旧 CLI 读取后不能静默删除。
 - 导入前必须通过 JSON Schema 和 Blocky 语义校验。
+- 交互入口、Tool 定义和两类自定义积木都有显式区段，但必须映射回画布中的稳定积木 ID，不能成为隐藏行为配置。
 - Spec 不保存画布位置、密钥、运行日志和本机绝对路径；CLI 负责生成合理布局。
 
 ## 6. 机器输出契约
@@ -188,29 +201,21 @@ permissions: []
 - 退出码固定：`0` 成功、`2` 参数错误、`3` 校验失败、`4` 权限/权益不足、`5` 冲突、`6` 运行时不可用、`7` 部分完成、`10` 内部错误。
 - JSON 字段只增不删；破坏性变更提升 `schemaVersion`。
 
-## 7. 官方 Skill 结构
+## 7. 官方 Skills 包结构
 
-官方 Skill 名为 `build-blocky-agents`，发行时采用开放 Agent Skills 格式：
+首批四个官方 Skill 都采用开放 Agent Skills 格式：
 
 ```text
-build-blocky-agents/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    cli-reference.md
-    build-spec.md
-    compatibility.md
-  assets/
-    examples/
-      basic-assistant.blocky.yaml
-      openclaw-readonly-import.blocky.yaml
-      hermes-readonly-import.blocky.yaml
+agent-skills/
+  build-blocky-agents/
+  create-blocky-blocks/
+  convert-github-project-to-blocky/
+  reverse-agent-to-blocky/
 ```
 
-Skill 不内置另一份编译脚本，所有确定性操作交给 `blocky` CLI。`SKILL.md` 保持简短，只包含触发范围和核心工作流；详细命令、Spec 和兼容规则按需读取。`agents/openai.yaml` 只承载 Codex/ChatGPT 的显示元数据，不成为其他客户端使用 Skill 的前提。
+每个目录包含自己的 `SKILL.md`，并可按需包含 `agents/openai.yaml`、`references/` 与无密钥示例。Skill 不内置另一份编译器，所有确定性操作交给 `blocky` CLI。`SKILL.md` 保持简短，只包含触发范围和核心工作流；详细命令、Spec 和兼容规则按需读取。
 
-建议触发描述覆盖：创建或修改 Blocky Agent、检查 `.blocky` 项目、将自然语言转换为能力积木、调试 Blocky 校验、积木化导入 OpenClaw/Hermes。
+四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、OpenCode、OpenClaw、Hermes 是官方兼容 fixture，不为其复制一套 Skill。
 
 ## 8. Skill 必须执行的工作流
 
@@ -230,13 +235,14 @@ Skill 不内置另一份编译脚本，所有确定性操作交给 `blocky` CLI�
 4. 用户请求本地修改时应用带差异指纹的变更，再复验。
 5. 未得到真实运行授权时停在模拟或计划阶段。
 
-### OpenClaw/Hermes
+### 原生 Agent 与逆向
 
 1. 先检测项目、上游版本和兼容等级。
 2. 默认执行只读导入和差异分析。
 3. 不直接编辑上游配置目录。
 4. 写回、安装扩展和真实运行必须使用 Blocky 的授权引用。
 5. 只报告当前组合已经通过的兼容等级。
+6. 优先复用通用积木；无法解释的原生内容进入保留区，并输出源码/配置到积木的证据表与覆盖报告。
 
 ## 9. 权限与信任边界
 
@@ -257,13 +263,9 @@ Skill 不内置另一份编译脚本，所有确定性操作交给 `blocky` CLI�
 - 官方发布包包含来源、版本、SHA-256 和许可证；CLI 的 `skill verify` 不把“文件格式正确”误报为“Blocky 官方签名”。
 - 仓库级 Skill 适合团队版本锁定；用户级 Skill 适合个人在多个项目中调用。
 
-## 11. 教育版与专业版
+## 11. 权益切分边界
 
-- 官方 Skill 免费提供，不把提示词本身作为专业版付费墙。
-- CLI 根据项目模式和授权返回可用积木；Agent 无法通过写 Spec 解锁专业积木。
-- 教育版默认只允许课程积木、模拟模型和教师策略允许的本地文件范围。
-- 专业版开放高级积木目录和原生兼容模板，但危险行动仍逐项授权。
-- 教师可以让通用 Agent 解释作品结构或生成草稿，但课程提交必须保留“由 Agent 辅助”来源标记，具体教学政策后续单独设计。
+当前先实现并验收完整 CLI、积木、Skills 和兼容能力，再单独设计教育基础、教育拓展与专业版权益。权益目录不能改变项目语义、文件格式或安全判断；任何版本都不能通过编辑 Spec 绕过权限。具体哪些 Skill、模板或高级能力属于哪个方案，本设计阶段不提前锁定。
 
 ## 12. 分期和验收
 
@@ -271,24 +273,30 @@ Skill 不内置另一份编译脚本，所有确定性操作交给 `blocky` CLI�
 
 完成 `doctor`、Schema、目录、模板、Build Spec、项目创建/读取/差异/校验和模拟运行。它与 Blocky 语言尖峰一起实施，用于自动化测试核心语义。
 
-### 阶段 B：官方 Skill
+### 阶段 B：内置搭建助手
 
-生成 `build-blocky-agents` 正式目录，使用真实 CLI 文档和样例；通过 Codex 与至少一个其他 Agent Skills 兼容客户端的隔离测试。
+实现默认审阅模式和带逐轮检查点的直接搭建模式，验证冲突拒绝、整轮撤销以及高风险动作仍需单独授权。
 
-### 阶段 C：运行 Host
+### 阶段 C：官方 Skills 包与插件
+
+生成四个正式 Skill，使用真实 CLI 文档和样例；通过 Codex 与至少一个其他 Agent Skills 兼容客户端的隔离测试。官方插件只连接这些既有能力。
+
+### 阶段 D：运行 Host
 
 加入真实模型运行、事件订阅、短期授权引用和 Windows 本地 IPC。
 
-### 阶段 D：原生兼容
+### 阶段 E：原生兼容
 
-开放 OpenClaw/Hermes 的 `compat` 读取、导入、差异、报告，再按 ADR-002 门槛开放写回。
+开放 Pi、OpenCode、OpenClaw、Hermes 的 `compat` 读取、导入、差异、报告，再按 ADR-002 门槛逐个开放写回。
 
 验收门槛：
 
 - 同一个 Build Spec 经 CLI 和桌面应用打开后得到相同 Blocky IR。
 - CLI 修改后，画布可打开、积木 ID 稳定且未知内容未丢失。
+- 交互入口生成相同 `InteractionManifest`；没有入口时运行栏禁用，多入口保持稳定 ID、名称和独立草稿。
+- Tool 引用调用和显式调用共享同一 Schema、权限、错误与结果事件。
 - JSON/JSONL 输出通过固定 Schema，列表可分页，大对象只返回文件路径。
-- Agent 能在无隐藏答案的测试中独立完成新建、修改、错误修复和只读兼容导入。
+- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和四类只读兼容导入。
 - 未授权测试中，Agent 无法触发真实外部副作用、原生写回或权益绕过。
 - Skill 从应用内置副本安装到干净仓库后，可被目标客户端发现且版本校验通过。
 
