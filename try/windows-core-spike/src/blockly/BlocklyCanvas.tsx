@@ -56,15 +56,39 @@ const zhHansMessages = Object.fromEntries(
 
 function fitWorkspace(workspace: Blockly.WorkspaceSvg): void {
   if (workspace.getAllBlocks(false).length === 0) return;
+  const flyout = workspace.getToolbox()?.getFlyout();
+  const flyoutWidth = flyout?.isVisible() ? flyout.getWidth() : 0;
+  if (flyoutWidth > 0) {
+    const metrics = workspace.getMetrics();
+    const bounds = workspace.getBlocksBoundingBox();
+    const horizontalScale =
+      (metrics.viewWidth - flyoutWidth - 48) / bounds.getWidth();
+    const verticalScale = (metrics.viewHeight - 48) / bounds.getHeight();
+    workspace.setScale(
+      Math.max(Math.min(horizontalScale, verticalScale, 0.9), 0.4),
+    );
+    workspace.scrollCenter();
+    const centeredFlyoutOffset = Math.max(flyoutWidth / 2 - 24, 0);
+    workspace.scroll(
+      workspace.scrollX + centeredFlyoutOffset,
+      workspace.scrollY,
+    );
+    return;
+  }
   workspace.zoomToFit();
-  workspace.setScale(Math.max(workspace.scale / 1.1, 0.5));
+  workspace.setScale(Math.max(workspace.scale / 1.1, 0.4));
   workspace.scrollCenter();
 }
 
 function selectFirstToolboxCategory(workspace: Blockly.WorkspaceSvg): void {
   const toolbox = workspace.getToolbox();
   const firstToolboxItem = toolbox?.getToolboxItems()[0];
-  if (toolbox && firstToolboxItem) toolbox.setSelectedItem(firstToolboxItem);
+  if (!toolbox || !firstToolboxItem) return;
+  if (toolbox.getSelectedItem() === firstToolboxItem) {
+    toolbox.refreshSelection();
+    return;
+  }
+  toolbox.setSelectedItem(firstToolboxItem);
 }
 
 export function buildEditorProjection(workspaceState: unknown): EditorProjection {
@@ -96,6 +120,7 @@ function BlocklyCanvasInner(
   const containerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fitFrameRef = useRef<number | null>(null);
   const onProjectionRef = useRef(onProjection);
   onProjectionRef.current = onProjection;
 
@@ -119,6 +144,37 @@ function BlocklyCanvasInner(
     }, 75);
   };
 
+  const cancelScheduledFit = (): void => {
+    if (fitFrameRef.current === null) return;
+    if (typeof window.cancelAnimationFrame === "function") {
+      window.cancelAnimationFrame(fitFrameRef.current);
+    } else {
+      window.clearTimeout(fitFrameRef.current);
+    }
+    fitFrameRef.current = null;
+  };
+
+  const requestLayoutFrame = (callback: FrameRequestCallback): number => {
+    if (typeof window.requestAnimationFrame === "function") {
+      return window.requestAnimationFrame(callback);
+    }
+    return window.setTimeout(() => callback(performance.now()), 0);
+  };
+
+  const scheduleFitAfterToolboxLayout = (
+    workspace: Blockly.WorkspaceSvg,
+  ): void => {
+    cancelScheduledFit();
+    fitFrameRef.current = requestLayoutFrame(() => {
+      fitFrameRef.current = requestLayoutFrame(() => {
+        fitFrameRef.current = null;
+        Blockly.svgResize(workspace);
+        fitWorkspace(workspace);
+        selectFirstToolboxCategory(workspace);
+      });
+    });
+  };
+
   useImperativeHandle(
     ref,
     () => ({
@@ -133,8 +189,8 @@ function BlocklyCanvasInner(
           Blockly.Events.enable();
         }
         Blockly.svgResize(workspace);
-        fitWorkspace(workspace);
         selectFirstToolboxCategory(workspace);
+        scheduleFitAfterToolboxLayout(workspace);
         flushProjection();
       },
       save() {
@@ -185,7 +241,7 @@ function BlocklyCanvasInner(
         wheel: true,
         startScale: 0.9,
         maxScale: 1.5,
-        minScale: 0.5,
+        minScale: 0.4,
         scaleSpeed: 1.1,
       },
     });
@@ -204,7 +260,8 @@ function BlocklyCanvasInner(
       Blockly.Events.enable();
     }
     selectFirstToolboxCategory(workspace);
-    fitWorkspace(workspace);
+    Blockly.svgResize(workspace);
+    scheduleFitAfterToolboxLayout(workspace);
     flushProjection();
 
     const resize = (): void => Blockly.svgResize(workspace);
@@ -219,6 +276,7 @@ function BlocklyCanvasInner(
 
     return () => {
       if (timerRef.current !== null) clearTimeout(timerRef.current);
+      cancelScheduledFit();
       observer?.disconnect();
       window.removeEventListener("resize", resize);
       workspace.removeChangeListener(changeListener);

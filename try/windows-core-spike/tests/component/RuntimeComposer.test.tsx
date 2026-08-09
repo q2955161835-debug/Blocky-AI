@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type {
@@ -167,5 +167,209 @@ describe("RuntimeComposer", () => {
     expect(
       screen.getByText("当前入口已不接受该附件，请删除或切回支持它的入口"),
     ).toBeInTheDocument();
+  });
+
+  it("filters revoked text, Skill, and plugin drafts out of the active-entry payload", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn(async () => undefined);
+    const revocableEntry = entry("entry-revocable", "可撤销入口", {
+      acceptedParts: ["text", "file"],
+      exposedSkills: ["skill.allowed"],
+      exposedPluginActions: ["plugin.allowed"],
+    });
+    const view = render(
+      <RuntimeComposer
+        manifest={manifest([revocableEntry])}
+        activeEntryId={revocableEntry.id}
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+
+    await user.type(screen.getByTestId("runtime-text-input"), "不得提交的旧文本");
+    fireEvent.change(screen.getByLabelText("文件"), {
+      target: { files: [new File(["data"], "allowed.txt")] },
+    });
+    await user.selectOptions(screen.getByTestId("runtime-skill-menu"), "skill.allowed");
+    await user.selectOptions(screen.getByTestId("runtime-plugin-menu"), "plugin.allowed");
+
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([
+          {
+            ...revocableEntry,
+            acceptedParts: ["file"],
+            exposedSkills: [],
+            exposedPluginActions: [],
+          },
+        ])}
+        activeEntryId={revocableEntry.id}
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+
+    expect(screen.queryByTestId("runtime-text-input")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("runtime-skill-menu")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("runtime-plugin-menu")).not.toBeInTheDocument();
+    expect(screen.getByTestId("runtime-send")).toBeEnabled();
+
+    await user.click(screen.getByTestId("runtime-send"));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        entryId: "entry-revocable",
+        attachments: [
+          {
+            id: "entry-revocable-file-1",
+            kind: "file",
+            name: "allowed.txt",
+            bytes: 4,
+          },
+        ],
+      });
+    });
+  });
+
+  it("keeps revoked scalar drafts for capability restoration without enabling submit", async () => {
+    const user = userEvent.setup();
+    const revocableEntry = entry("entry-revocable", "可撤销入口", {
+      acceptedParts: ["text"],
+      exposedSkills: ["skill.allowed"],
+      exposedPluginActions: ["plugin.allowed"],
+    });
+    const view = render(
+      <RuntimeComposer
+        manifest={manifest([revocableEntry])}
+        activeEntryId={revocableEntry.id}
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={vi.fn()}
+        disabled={false}
+      />,
+    );
+
+    await user.type(screen.getByTestId("runtime-text-input"), "待恢复文本");
+    await user.selectOptions(screen.getByTestId("runtime-skill-menu"), "skill.allowed");
+    await user.selectOptions(screen.getByTestId("runtime-plugin-menu"), "plugin.allowed");
+
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([
+          {
+            ...revocableEntry,
+            acceptedParts: [],
+            exposedSkills: [],
+            exposedPluginActions: [],
+          },
+        ])}
+        activeEntryId={revocableEntry.id}
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={vi.fn()}
+        disabled={false}
+      />,
+    );
+
+    expect(screen.getByTestId("runtime-send")).toBeDisabled();
+
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([revocableEntry])}
+        activeEntryId={revocableEntry.id}
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={vi.fn()}
+        disabled={false}
+      />,
+    );
+
+    expect(screen.getByTestId("runtime-text-input")).toHaveValue("待恢复文本");
+    expect(screen.getByTestId("runtime-skill-menu")).toHaveValue("skill.allowed");
+    expect(screen.getByTestId("runtime-plugin-menu")).toHaveValue("plugin.allowed");
+  });
+
+  it("blocks unsupported attachments until support returns or the chip is deleted", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn(async () => undefined);
+    const view = render(
+      <RuntimeComposer
+        manifest={manifest([ENTRY_A])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+
+    await user.type(screen.getByTestId("runtime-text-input"), "仍支持的文本");
+    fireEvent.change(screen.getByLabelText("图片"), {
+      target: { files: [new File(["photo"], "photo.png", { type: "image/png" })] },
+    });
+
+    const textOnlyEntry = { ...ENTRY_A, acceptedParts: ["text"] as const };
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([textOnlyEntry])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+    expect(screen.getByTestId("runtime-send")).toBeDisabled();
+
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([ENTRY_A])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+    expect(screen.getByTestId("runtime-send")).toBeEnabled();
+
+    view.rerender(
+      <RuntimeComposer
+        manifest={manifest([textOnlyEntry])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "删除 photo.png" }));
+    expect(screen.getByTestId("runtime-send")).toBeEnabled();
+    await user.click(screen.getByTestId("runtime-send"));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        entryId: "entry-a",
+        text: "仍支持的文本",
+        attachments: [],
+      });
+    });
+  });
+
+  it("preserves the active draft when submission rejects", async () => {
+    const user = userEvent.setup();
+    render(
+      <RuntimeComposer
+        manifest={manifest([ENTRY_A])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={vi.fn(async () => {
+          throw new Error("private details");
+        })}
+        disabled={false}
+      />,
+    );
+
+    await user.type(screen.getByTestId("runtime-text-input"), "保留以便重试");
+    await user.click(screen.getByTestId("runtime-send"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("runtime-text-input")).toHaveValue("保留以便重试");
+    });
   });
 });

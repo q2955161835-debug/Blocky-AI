@@ -136,6 +136,18 @@ button:disabled {
   padding: 0 16px;
 }
 
+.app-operation-error {
+  margin: 0 16px;
+  overflow: hidden;
+  color: var(--error);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .editor-grid {
   display: grid;
   grid-template-columns: 260px minmax(520px, 1fr) 380px;

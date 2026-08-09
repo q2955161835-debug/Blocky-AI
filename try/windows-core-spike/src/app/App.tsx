@@ -56,6 +56,11 @@ export function App({
             重开
           </button>
         </div>
+        {controller.operationError ? (
+          <p className="app-operation-error" role="alert">
+            {controller.operationError}
+          </p>
+        ) : null}
       </header>
 
       <main className="editor-grid">
@@ -121,22 +126,29 @@ export function App({
           </div>
 
           <div className="assistant-panel__body">
-            {activeTab === "builder" ? (
-              <div id="builder-panel" role="tabpanel" aria-labelledby="builder-tab">
-                <BuilderPlaceholder />
-              </div>
-            ) : (
-              <div id="runtime-panel" role="tabpanel" aria-labelledby="runtime-tab">
-                <RuntimePanel
-                  manifest={controller.projection.interactionManifest}
-                  activeEntryId={controller.activeEntryId}
-                  onActiveEntryIdChange={controller.setActiveEntryId}
-                  onSubmit={controller.runInput}
-                  events={controller.runtime.events}
-                  disabled={controller.runtime.status === "running" || hasCompileError}
-                />
-              </div>
-            )}
+            <div
+              id="builder-panel"
+              role="tabpanel"
+              aria-labelledby="builder-tab"
+              hidden={activeTab !== "builder"}
+            >
+              <BuilderPlaceholder />
+            </div>
+            <div
+              id="runtime-panel"
+              role="tabpanel"
+              aria-labelledby="runtime-tab"
+              hidden={activeTab !== "runtime"}
+            >
+              <RuntimePanel
+                manifest={controller.projection.interactionManifest}
+                activeEntryId={controller.activeEntryId}
+                onActiveEntryIdChange={controller.setActiveEntryId}
+                onSubmit={controller.runInput}
+                events={controller.runtime.events}
+                disabled={controller.runtime.status === "running" || hasCompileError}
+              />
+            </div>
           </div>
         </aside>
       </main>

@@ -42,6 +42,10 @@ const EMPTY_WORKSPACE: JsonValue = {
   blocks: { blocks: [], languageVersion: 0 },
 };
 
+const RUN_ERROR = "运行失败，请检查积木后重试";
+const SAVE_ERROR = "保存失败，请重试";
+const LOAD_ERROR = "载入失败，请重试";
+
 export function reduceRuntimeEvent(
   state: RuntimeViewState,
   event: RuntimeEvent,
@@ -103,6 +107,7 @@ export function useSpikeController({
     activeBlockId: null,
     status: "idle",
   });
+  const [operationError, setOperationError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const runSequenceRef = useRef(0);
 
@@ -123,9 +128,18 @@ export function useSpikeController({
     });
   }, []);
 
-  useEffect(() => {
-    canvasRef.current?.highlight(runtime.activeBlockId);
-  }, [canvasRef, runtime.activeBlockId]);
+  const acceptRuntimeEvent = useCallback(
+    (event: RuntimeEvent): void => {
+      dispatchRuntimeEvent(event);
+      if (event.type === "block.started" && event.blockId) {
+        canvasRef.current?.highlight(event.blockId);
+      } else if (TERMINAL_EVENTS.has(event.type)) {
+        canvasRef.current?.highlight(null);
+      }
+      if (event.type === "run.failed") setOperationError(RUN_ERROR);
+    },
+    [canvasRef],
+  );
 
   useEffect(
     () => () => {
@@ -135,60 +149,78 @@ export function useSpikeController({
   );
 
   const saveProject = useCallback(async (): Promise<void> => {
-    const workspace = canvasRef.current?.save();
-    if (!workspace) return;
-    const latest = buildEditorProjection(workspace);
-    acceptProjection(latest);
-    await hostBridge.saveProject({
-      project: createSpikeProjectSnapshot({
-        projectId,
-        workspace: latest.workspace,
-        program: latest.program,
-        interactionManifest: latest.interactionManifest,
-      }),
-    });
+    setOperationError(null);
+    try {
+      const workspace = canvasRef.current?.save();
+      if (!workspace) return;
+      const latest = buildEditorProjection(workspace);
+      acceptProjection(latest);
+      await hostBridge.saveProject({
+        project: createSpikeProjectSnapshot({
+          projectId,
+          workspace: latest.workspace,
+          program: latest.program,
+          interactionManifest: latest.interactionManifest,
+        }),
+      });
+    } catch {
+      setOperationError(SAVE_ERROR);
+    }
   }, [acceptProjection, canvasRef, hostBridge, projectId]);
 
   const loadProject = useCallback(async (): Promise<void> => {
-    const snapshot = await hostBridge.loadProject(projectId);
-    if (snapshot) canvasRef.current?.load(snapshot.workspace);
+    setOperationError(null);
+    try {
+      const snapshot = await hostBridge.loadProject(projectId);
+      if (snapshot) canvasRef.current?.load(snapshot.workspace);
+    } catch {
+      setOperationError(LOAD_ERROR);
+    }
   }, [canvasRef, hostBridge, projectId]);
 
   const runInput = useCallback(
     async (input: RuntimeInput): Promise<void> => {
-      const workspace = canvasRef.current?.save();
-      if (!workspace) throw new Error("RUN_WORKSPACE_UNAVAILABLE");
-      const latest = buildEditorProjection(workspace);
-      assertRunnableProjection(latest, input.entryId);
-      acceptProjection(latest);
+      setOperationError(null);
+      let abortController: AbortController | null = null;
+      try {
+        const workspace = canvasRef.current?.save();
+        if (!workspace) throw new Error("RUN_WORKSPACE_UNAVAILABLE");
+        const latest = buildEditorProjection(workspace);
+        assertRunnableProjection(latest, input.entryId);
+        acceptProjection(latest);
 
-      abortControllerRef.current?.abort();
-      const abortController = new AbortController();
-      abortControllerRef.current = abortController;
-      const tools = createRuntimeToolMap(latest);
-      const dependencies: RuntimeDependencies = {
-        runIdFactory: () => {
-          runSequenceRef.current += 1;
-          return `desktop-run-${runSequenceRef.current}`;
-        },
-        model: createDeterministicModel(),
-        tools,
-        requestApproval: async () => "approved",
-      };
+        abortControllerRef.current?.abort();
+        abortController = new AbortController();
+        abortControllerRef.current = abortController;
+        const tools = createRuntimeToolMap(latest);
+        const dependencies: RuntimeDependencies = {
+          runIdFactory: () => {
+            runSequenceRef.current += 1;
+            return `desktop-run-${runSequenceRef.current}`;
+          },
+          model: createDeterministicModel(),
+          tools,
+          requestApproval: async () => "approved",
+        };
 
-      await runProgram({
-        program: latest.program,
-        sourceMap: { ...latest.sourceMap },
-        input: runtimeText(input),
-        signal: abortController.signal,
-        dependencies,
-        onEvent: dispatchRuntimeEvent,
-      });
-      if (abortControllerRef.current === abortController) {
-        abortControllerRef.current = null;
+        await runProgram({
+          program: latest.program,
+          sourceMap: { ...latest.sourceMap },
+          input: runtimeText(input),
+          signal: abortController.signal,
+          dependencies,
+          onEvent: acceptRuntimeEvent,
+        });
+      } catch (error) {
+        setOperationError(RUN_ERROR);
+        throw error;
+      } finally {
+        if (abortController && abortControllerRef.current === abortController) {
+          abortControllerRef.current = null;
+        }
       }
     },
-    [acceptProjection, canvasRef],
+    [acceptProjection, acceptRuntimeEvent, canvasRef],
   );
 
   return {
@@ -196,6 +228,7 @@ export function useSpikeController({
     activeEntryId,
     setActiveEntryId,
     runtime,
+    operationError,
     acceptProjection,
     saveProject,
     loadProject,

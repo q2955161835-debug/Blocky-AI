@@ -99,31 +99,44 @@ export function RuntimeComposer({
   const unsupportedAttachments = draft.attachments.filter(
     (attachment) => !accepted.has(attachment.kind),
   );
+  const supportedAttachments = draft.attachments.filter((attachment) =>
+    accepted.has(attachment.kind),
+  );
+  const supportedText = accepted.has("text") ? draft.text : "";
+  const supportedSkillId = activeEntry.exposedSkills.includes(
+    draft.exposedSkillId,
+  )
+    ? draft.exposedSkillId
+    : "";
+  const supportedPluginActionId = activeEntry.exposedPluginActions.includes(
+    draft.exposedPluginActionId,
+  )
+    ? draft.exposedPluginActionId
+    : "";
   const canSubmit =
     !disabled &&
-    (draft.text.trim().length > 0 ||
-      draft.attachments.length > 0 ||
-      draft.exposedSkillId.length > 0 ||
-      draft.exposedPluginActionId.length > 0);
+    unsupportedAttachments.length === 0 &&
+    (supportedText.trim().length > 0 ||
+      supportedAttachments.length > 0 ||
+      supportedSkillId.length > 0 ||
+      supportedPluginActionId.length > 0);
 
   const submit = async (): Promise<void> => {
     if (!canSubmit) return;
     const message: RuntimeInput = {
       entryId: activeEntryId,
-      ...(draft.text.trim() ? { text: draft.text } : {}),
-      attachments: [...draft.attachments],
-      ...(draft.exposedSkillId
-        ? { exposedSkillId: draft.exposedSkillId }
-        : {}),
-      ...(draft.exposedPluginActionId
-        ? { exposedPluginActionId: draft.exposedPluginActionId }
+      ...(supportedText.trim() ? { text: supportedText } : {}),
+      attachments: [...supportedAttachments],
+      ...(supportedSkillId ? { exposedSkillId: supportedSkillId } : {}),
+      ...(supportedPluginActionId
+        ? { exposedPluginActionId: supportedPluginActionId }
         : {}),
     };
     try {
       await onSubmit(message);
       setDrafts((current) => ({ ...current, [activeEntryId]: EMPTY_DRAFT }));
     } catch {
-      // Rejections are deliberately kept inside the controller boundary.
+      // Keep the draft for an explicit retry; the controller owns visible errors.
     }
   };
 
