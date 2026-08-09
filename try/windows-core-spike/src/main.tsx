@@ -3,6 +3,6 @@ import { createRoot } from "react-dom/client";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <main>Blocky Windows Core Spike</main>
+    <main>Blocky Windows 核心尖峰</main>
   </StrictMode>,
 );

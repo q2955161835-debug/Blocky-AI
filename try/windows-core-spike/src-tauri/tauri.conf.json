@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Blocky Windows Core Spike",
+  "productName": "Blocky Windows 核心尖峰",
   "version": "0.0.0",
   "identifier": "ai.blocky.windowscorespike",
   "build": {
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Blocky Windows Core Spike",
+        "title": "Blocky Windows 核心尖峰",
         "width": 800,
         "height": 600
       }
