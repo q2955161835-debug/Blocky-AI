@@ -119,6 +119,55 @@ describe("Tool 契约", () => {
     ]);
   });
 
+  it("只接受明确的对象结果 schema，并拒绝带缺失或冲突保留字段的形式", () => {
+    const primitive = toolProgram({ resultSchema: { type: "string" } });
+    const incomplete = toolProgram({ resultSchema: { properties: {} } });
+
+    expect(compileToolRegistry(primitive).contracts.has("tool-weather")).toBe(false);
+    expect(compileToolRegistry(primitive).diagnostics).toContainEqual(expect.objectContaining({
+      code: "TOOL_RESULT_SCHEMA_NOT_OBJECT",
+      message: expect.stringMatching(/[\u4e00-\u9fff]/),
+    }));
+    expect(compileToolRegistry(incomplete).contracts.has("tool-weather")).toBe(false);
+    expect(compileToolRegistry(incomplete).diagnostics).toContainEqual(expect.objectContaining({
+      code: "TOOL_RESULT_SCHEMA_INVALID",
+      message: expect.stringMatching(/[\u4e00-\u9fff]/),
+    }));
+  });
+
+  it("拒绝非 plain JSON 对象 ARGS，且不泄漏显式调用", () => {
+    const invalidArgs = ["text", [], new Date()] as const;
+
+    for (const args of invalidArgs) {
+      const program = toolProgram({ callArgs: args });
+      const registry = compileToolRegistry(program);
+      const usages = resolveToolUsages(program, registry.contracts);
+
+      expect(usages.explicitCalls).toEqual([]);
+      expect(usages.diagnostics).toContainEqual(expect.objectContaining({
+        code: "TOOL_CALL_INVALID_ARGUMENTS",
+        message: expect.stringMatching(/[\u4e00-\u9fff]/),
+      }));
+    }
+  });
+
+  it("只从 ARGS 读取参数，并拒绝孤立别名和冲突双字段", () => {
+    const aliasOnly = toolProgram();
+    const aliasFields = aliasOnly.roots[2].fields as Record<string, unknown>;
+    delete aliasFields.ARGS;
+    aliasFields.ARGUMENTS = { city: "上海" };
+    const conflict = toolProgram();
+    (conflict.roots[2].fields as Record<string, unknown>).ARGUMENTS = { city: "北京" };
+
+    const aliasUsages = resolveToolUsages(aliasOnly, compileToolRegistry(aliasOnly).contracts);
+    const conflictUsages = resolveToolUsages(conflict, compileToolRegistry(conflict).contracts);
+
+    expect(aliasUsages.explicitCalls).toEqual([]);
+    expect(aliasUsages.diagnostics.map((item) => item.code)).toContain("TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED");
+    expect(conflictUsages.explicitCalls).toEqual([]);
+    expect(conflictUsages.diagnostics.map((item) => item.code)).toContain("TOOL_CALL_ARGUMENT_FIELDS_CONFLICT");
+  });
+
   it("工具定义变化后，两种用法都解析到新契约，且不安全调用保留参数", () => {
     const first = toolProgram();
     const firstRegistry = compileToolRegistry(first);

@@ -56,6 +56,12 @@ function isRecord(value: JsonValue | undefined): value is Record<string, JsonVal
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+function isPlainJsonRecord(value: unknown): value is Record<string, JsonValue> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
 function stringField(node: IrNode, name: string): string | undefined {
   const value = node.fields?.[name];
   return typeof value === "string" && value.trim() !== "" ? value : undefined;
@@ -71,6 +77,10 @@ function isRequired(value: JsonValue | undefined): boolean {
 
 function hasField(node: IrNode, name: string): boolean {
   return Object.prototype.hasOwnProperty.call(node.fields ?? {}, name);
+}
+
+function hasOwn(value: object, name: string): boolean {
+  return Object.prototype.hasOwnProperty.call(value, name);
 }
 
 function valueMatchesType(value: JsonValue, type: ParameterType): boolean {
@@ -102,19 +112,38 @@ function emptySchema(): JsonSchema {
 function compileOutputSchema(node: IrNode, diagnostics: Diagnostic[]): JsonSchema | undefined {
   const raw = node.fields?.SCHEMA;
   if (raw === undefined) return emptySchema();
-  if (!isRecord(raw)) {
+  if (!isPlainJsonRecord(raw)) {
     diagnostics.push(error("TOOL_RESULT_SCHEMA_NOT_OBJECT", "工具结果架构必须是对象", node.id));
     return undefined;
   }
 
+  const reservedKeys = ["type", "properties", "required", "additionalProperties"] as const;
+  const hasReservedKey = reservedKeys.some((key) => hasOwn(raw, key));
   const schema = emptySchema();
-  const propertiesRaw = raw.type === "object" && isRecord(raw.properties)
-    ? raw.properties
-    : raw;
-  const requiredRaw = raw.type === "object" && Array.isArray(raw.required) ? raw.required : [];
+  let propertiesRaw: Record<string, JsonValue>;
+  let requiredRaw: JsonValue[];
+  if (hasReservedKey) {
+    if (!hasOwn(raw, "type")) {
+      diagnostics.push(error("TOOL_RESULT_SCHEMA_INVALID", "工具结果对象架构缺少 type: object", node.id));
+      return undefined;
+    }
+    if (raw.type !== "object") {
+      diagnostics.push(error("TOOL_RESULT_SCHEMA_NOT_OBJECT", "工具结果架构 type 必须严格为 object", node.id));
+      return undefined;
+    }
+    if (!isPlainJsonRecord(raw.properties) || !Array.isArray(raw.required) || raw.additionalProperties !== false) {
+      diagnostics.push(error("TOOL_RESULT_SCHEMA_INVALID", "工具结果对象架构必须完整包含合法的 properties、required 和 additionalProperties: false", node.id));
+      return undefined;
+    }
+    propertiesRaw = raw.properties;
+    requiredRaw = raw.required;
+  } else {
+    // Compatibility: a record without JSON Schema reserved keys is a concise property map.
+    propertiesRaw = raw;
+    requiredRaw = [];
+  }
   let valid = true;
   for (const [name, property] of Object.entries(propertiesRaw)) {
-    if (name === "type" || name === "properties" || name === "required" || name === "additionalProperties") continue;
     const type = isRecord(property) ? parameterType(property.type) : undefined;
     if (!type) {
       diagnostics.push(error("TOOL_RESULT_SCHEMA_INVALID", `工具结果架构字段 ${name} 类型无效`, node.id));
@@ -124,7 +153,7 @@ function compileOutputSchema(node: IrNode, diagnostics: Diagnostic[]): JsonSchem
     schema.properties[name] = { type };
   }
   for (const required of requiredRaw) {
-    if (typeof required !== "string" || !Object.prototype.hasOwnProperty.call(schema.properties, required)) {
+    if (typeof required !== "string" || !hasOwn(schema.properties, required) || schema.required.includes(required)) {
       diagnostics.push(error("TOOL_RESULT_SCHEMA_INVALID", "工具结果架构 required 必须引用已有字段", node.id));
       valid = false;
       continue;
@@ -271,19 +300,38 @@ function resolveReference(
   return { referenceBlockId: parsed.blockId, contract };
 }
 
-function canonicalArgs(call: IrNode, diagnostics: Diagnostic[]): Record<string, JsonValue> {
-  const raw = call.fields?.ARGS ?? call.fields?.ARGUMENTS ?? {};
-  if (!isRecord(raw)) {
-    diagnostics.push(error("TOOL_CALL_INVALID_ARGUMENTS", "工具调用参数必须是对象", call.id));
-    return {};
-  }
+function canonicalArgumentRecord(raw: unknown): Record<string, JsonValue> | undefined {
+  if (!isPlainJsonRecord(raw)) return undefined;
   try {
     const args = canonicalizeJson(raw);
-    return isRecord(args) ? args : {};
+    return isPlainJsonRecord(args) ? args : undefined;
   } catch {
-    diagnostics.push(error("TOOL_CALL_INVALID_ARGUMENTS", "工具调用参数不是有效 JSON 对象", call.id));
-    return {};
+    return undefined;
   }
+}
+
+function canonicalArgs(call: IrNode, diagnostics: Diagnostic[]): Record<string, JsonValue> | undefined {
+  const hasArgs = hasField(call, "ARGS");
+  const hasLegacyArguments = hasField(call, "ARGUMENTS");
+  if (!hasArgs && hasLegacyArguments) {
+    diagnostics.push(error("TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED", "工具调用只接受规范字段 ARGS，不支持 ARGUMENTS 别名", call.id));
+    return undefined;
+  }
+  if (!hasArgs) return {};
+
+  const args = canonicalArgumentRecord(call.fields?.ARGS);
+  if (!args) {
+    diagnostics.push(error("TOOL_CALL_INVALID_ARGUMENTS", "工具调用 ARGS 必须是 plain JSON 对象", call.id));
+    return undefined;
+  }
+  if (hasLegacyArguments) {
+    const legacyArgs = canonicalArgumentRecord(call.fields?.ARGUMENTS);
+    if (!legacyArgs || JSON.stringify(args) !== JSON.stringify(legacyArgs)) {
+      diagnostics.push(error("TOOL_CALL_ARGUMENT_FIELDS_CONFLICT", "工具调用 ARGS 与 ARGUMENTS 字段冲突", call.id));
+      return undefined;
+    }
+  }
+  return args;
 }
 
 export function resolveToolUsages(
@@ -307,10 +355,12 @@ export function resolveToolUsages(
   for (const callBlock of allNodes(program).filter((node) => node.type === "core.tool.call")) {
     const resolved = resolveReference(callBlock.inputs?.TOOL, contracts, diagnostics);
     if (!resolved) continue;
+    const args = canonicalArgs(callBlock, diagnostics);
+    if (!args) continue;
     const call: ToolCall = {
       callBlockId: callBlock.id,
       toolId: resolved.contract.id,
-      args: canonicalArgs(callBlock, diagnostics),
+      args,
     };
     explicitCalls.push({ call, contract: resolved.contract });
     diagnostics.push(...validateToolArgs(resolved.contract, call.args).map((item) => ({ ...item, blockId: callBlock.id })));
