@@ -5,6 +5,12 @@ export type JsonValue =
   | JsonValue[]
   | { [key: string]: JsonValue };
 
+function rejectSymbolKeys(value: object): void {
+  if (Object.getOwnPropertySymbols(value).length > 0) {
+    throw new TypeError("JSON object must not contain symbol keys");
+  }
+}
+
 export function canonicalizeJson(value: unknown): JsonValue {
   if (value === null || typeof value === "string" || typeof value === "boolean") {
     return value;
@@ -13,8 +19,19 @@ export function canonicalizeJson(value: unknown): JsonValue {
     if (!Number.isFinite(value)) throw new TypeError("JSON number must be finite");
     return value;
   }
-  if (Array.isArray(value)) return value.map(canonicalizeJson);
+  if (Array.isArray(value)) {
+    rejectSymbolKeys(value);
+    return Array.from({ length: value.length }, (_, index) => {
+      if (!(index in value)) throw new TypeError("JSON array must not contain holes");
+      return canonicalizeJson(value[index]);
+    });
+  }
   if (typeof value === "object") {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new TypeError("JSON record must be plain");
+    }
+    rejectSymbolKeys(value);
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
         .sort(([left], [right]) => left.localeCompare(right))

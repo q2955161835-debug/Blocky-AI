@@ -90,6 +90,24 @@ describe("workspace compiler", () => {
       severity: "error",
       blockId: "same",
     }));
+    expect(result.program.roots).toEqual([]);
+    expect(result.sourceMap).toEqual({});
+  });
+
+  it("reports a declared next connection when its parent has no next connector", () => {
+    const result = compileWorkspace({
+      blocks: { blocks: [{
+        id: "literal",
+        type: "core.data.literal",
+        next: { block: { id: "send", type: "core.message.send" } },
+      }] },
+    });
+
+    expect(result.diagnostics).toContainEqual(expect.objectContaining({
+      code: "IR_INVALID_CONNECTION",
+      severity: "error",
+      blockId: "literal",
+    }));
   });
 
   it("reports block types outside the spike catalog", () => {

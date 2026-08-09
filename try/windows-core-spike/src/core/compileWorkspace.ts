@@ -42,6 +42,30 @@ function connectionDiagnostic(
   };
 }
 
+function invalidNextDiagnostic(blockId: string): Diagnostic {
+  return {
+    code: "IR_INVALID_CONNECTION",
+    message: `积木 ${blockId} 没有 next 连接器，不能声明后续积木`,
+    severity: "error",
+    blockId,
+  };
+}
+
+function countBlockIds(value: JsonValue, counts: Map<string, number>): void {
+  const record = asRecord(value);
+  if (!record) return;
+  if (typeof record.id === "string") {
+    counts.set(record.id, (counts.get(record.id) ?? 0) + 1);
+  }
+  const inputs = asRecord(record.inputs ?? null);
+  for (const rawConnection of Object.values(inputs ?? {})) {
+    const connection = asRecord(rawConnection);
+    if (connection?.block !== undefined) countBlockIds(connection.block, counts);
+  }
+  const next = asRecord(record.next ?? null);
+  if (next?.block !== undefined) countBlockIds(next.block, counts);
+}
+
 function parseBlock(value: JsonValue, diagnostics: Diagnostic[]): SerializedBlock | undefined {
   const record = asRecord(value);
   if (!record || typeof record.id !== "string" || typeof record.type !== "string") {
@@ -86,7 +110,6 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
   const state = canonicalizeJson(serializedWorkspace);
   const diagnostics: Diagnostic[] = [];
   const sourceMap: Record<string, { nodeId: string }> = {};
-  const seenBlockIds = new Set<string>();
 
   const rootRecord = asRecord(state);
   const blocksRecord = rootRecord && asRecord(rootRecord.blocks);
@@ -100,9 +123,26 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
     };
   }
 
+  const blockIdCounts = new Map<string, number>();
+  rawRoots.forEach((root) => countBlockIds(root, blockIdCounts));
+  const conflictedBlockIds = new Set(
+    [...blockIdCounts.entries()]
+      .filter(([, count]) => count > 1)
+      .map(([id]) => id),
+  );
+  for (const blockId of [...conflictedBlockIds].sort((left, right) => left.localeCompare(right))) {
+    diagnostics.push({
+      code: "IR_DUPLICATE_BLOCK_ID",
+      message: `积木 ID ${blockId} 重复`,
+      severity: "error",
+      blockId,
+    });
+  }
+
   const compileBlock = (rawBlock: JsonValue, expected?: ConnectionShape, owner?: { id: string; input: string }): IrNode | undefined => {
     const block = parseBlock(rawBlock, diagnostics);
     if (!block) return undefined;
+    if (conflictedBlockIds.has(block.id)) return undefined;
     const spec = SPIKE_BLOCK_SPECS[block.type];
     if (!spec) {
       diagnostics.push({
@@ -112,17 +152,7 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
         blockId: block.id,
       });
     }
-    if (seenBlockIds.has(block.id)) {
-      diagnostics.push({
-        code: "IR_DUPLICATE_BLOCK_ID",
-        message: `积木 ID ${block.id} 重复`,
-        severity: "error",
-        blockId: block.id,
-      });
-    } else {
-      seenBlockIds.add(block.id);
-      sourceMap[block.id] = { nodeId: block.id };
-    }
+    sourceMap[block.id] = { nodeId: block.id };
 
     const actual = expected && spec ? spec.output ?? spec.previous : undefined;
     if (expected && actual !== expected && owner) {
@@ -143,8 +173,12 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
 
     let next: IrNode | undefined;
     if (block.next?.block !== undefined) {
-      const child = compileBlock(block.next.block, spec?.next, { id: block.id, input: "next" });
-      if (child) next = child;
+      if (!spec?.next) {
+        diagnostics.push(invalidNextDiagnostic(block.id));
+      } else {
+        const child = compileBlock(block.next.block, spec.next, { id: block.id, input: "next" });
+        if (child) next = child;
+      }
     }
 
     return {
