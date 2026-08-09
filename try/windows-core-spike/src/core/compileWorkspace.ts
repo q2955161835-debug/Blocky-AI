@@ -1,0 +1,169 @@
+import type { Diagnostic } from "./diagnostics";
+import { SPIKE_BLOCK_SPECS, type BlockyProgram, type ConnectionShape, type IrNode } from "./ir";
+import { canonicalizeJson, type JsonValue } from "./json";
+
+export interface CompileResult {
+  program: BlockyProgram;
+  sourceMap: Record<string, { nodeId: string }>;
+  diagnostics: Diagnostic[];
+}
+
+type JsonRecord = { [key: string]: JsonValue };
+
+type SerializedBlock = {
+  id: string;
+  type: string;
+  fields?: JsonRecord;
+  inputs?: Record<string, { block?: JsonValue }>;
+  next?: { block?: JsonValue };
+};
+
+function asRecord(value: JsonValue): JsonRecord | undefined {
+  return value !== null && !Array.isArray(value) && typeof value === "object"
+    ? value
+    : undefined;
+}
+
+function structuralDiagnostic(message: string, blockId?: string): Diagnostic {
+  return { code: "IR_INVALID_WORKSPACE", message, severity: "error", ...(blockId ? { blockId } : {}) };
+}
+
+function connectionDiagnostic(
+  blockId: string,
+  inputName: string,
+  expected: ConnectionShape,
+  actual: ConnectionShape | undefined,
+): Diagnostic {
+  return {
+    code: "IR_INVALID_CONNECTION",
+    message: `积木 ${blockId} 的连接 ${inputName} 需要 ${expected}，实际为 ${actual ?? "无效连接"}`,
+    severity: "error",
+    blockId,
+  };
+}
+
+function parseBlock(value: JsonValue, diagnostics: Diagnostic[]): SerializedBlock | undefined {
+  const record = asRecord(value);
+  if (!record || typeof record.id !== "string" || typeof record.type !== "string") {
+    diagnostics.push(structuralDiagnostic("积木必须包含字符串 id 和 type"));
+    return undefined;
+  }
+
+  const fields = record.fields === undefined ? undefined : asRecord(record.fields);
+  if (record.fields !== undefined && !fields) {
+    diagnostics.push(structuralDiagnostic("积木 fields 必须是对象", record.id));
+  }
+
+  const inputsRecord = record.inputs === undefined ? undefined : asRecord(record.inputs);
+  const inputs: Record<string, { block?: JsonValue }> = {};
+  if (record.inputs !== undefined && !inputsRecord) {
+    diagnostics.push(structuralDiagnostic("积木 inputs 必须是对象", record.id));
+  }
+  for (const [name, rawConnection] of Object.entries(inputsRecord ?? {})) {
+    const connection = asRecord(rawConnection);
+    if (!connection) {
+      diagnostics.push(structuralDiagnostic(`积木输入 ${name} 必须是对象`, record.id));
+      continue;
+    }
+    inputs[name] = connection.block === undefined ? {} : { block: connection.block };
+  }
+
+  const nextRecord = record.next === undefined ? undefined : asRecord(record.next);
+  if (record.next !== undefined && !nextRecord) {
+    diagnostics.push(structuralDiagnostic("积木 next 必须是对象", record.id));
+  }
+
+  return {
+    id: record.id,
+    type: record.type,
+    ...(fields ? { fields } : {}),
+    ...(Object.keys(inputs).length > 0 ? { inputs } : {}),
+    ...(nextRecord ? { next: nextRecord.block === undefined ? {} : { block: nextRecord.block } } : {}),
+  };
+}
+
+export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
+  const state = canonicalizeJson(serializedWorkspace);
+  const diagnostics: Diagnostic[] = [];
+  const sourceMap: Record<string, { nodeId: string }> = {};
+  const seenBlockIds = new Set<string>();
+
+  const rootRecord = asRecord(state);
+  const blocksRecord = rootRecord && asRecord(rootRecord.blocks);
+  const rawRoots = blocksRecord?.blocks;
+  if (!Array.isArray(rawRoots)) {
+    diagnostics.push(structuralDiagnostic("工作区 blocks.blocks 必须是数组"));
+    return {
+      program: { schemaVersion: "blocky.ir/v0-spike", roots: [] },
+      sourceMap,
+      diagnostics,
+    };
+  }
+
+  const compileBlock = (rawBlock: JsonValue, expected?: ConnectionShape, owner?: { id: string; input: string }): IrNode | undefined => {
+    const block = parseBlock(rawBlock, diagnostics);
+    if (!block) return undefined;
+    const spec = SPIKE_BLOCK_SPECS[block.type];
+    if (!spec) {
+      diagnostics.push({
+        code: "IR_UNKNOWN_BLOCK_TYPE",
+        message: `积木 ${block.id} 使用了 Spike 目录外的类型 ${block.type}`,
+        severity: "error",
+        blockId: block.id,
+      });
+    }
+    if (seenBlockIds.has(block.id)) {
+      diagnostics.push({
+        code: "IR_DUPLICATE_BLOCK_ID",
+        message: `积木 ID ${block.id} 重复`,
+        severity: "error",
+        blockId: block.id,
+      });
+    } else {
+      seenBlockIds.add(block.id);
+      sourceMap[block.id] = { nodeId: block.id };
+    }
+
+    const actual = expected && spec ? spec.output ?? spec.previous : undefined;
+    if (expected && actual !== expected && owner) {
+      diagnostics.push(connectionDiagnostic(owner.id, owner.input, expected, actual));
+    }
+
+    const inputs: Record<string, IrNode> = {};
+    for (const [name, connection] of Object.entries(block.inputs ?? {})) {
+      const inputExpected = spec?.inputs?.[name];
+      if (!inputExpected) {
+        diagnostics.push(connectionDiagnostic(block.id, name, "type.json", undefined));
+      }
+      if (connection.block !== undefined) {
+        const child = compileBlock(connection.block, inputExpected, { id: block.id, input: name });
+        if (child) inputs[name] = child;
+      }
+    }
+
+    let next: IrNode | undefined;
+    if (block.next?.block !== undefined) {
+      const child = compileBlock(block.next.block, spec?.next, { id: block.id, input: "next" });
+      if (child) next = child;
+    }
+
+    return {
+      id: block.id,
+      type: block.type,
+      ...(block.fields ? { fields: block.fields } : {}),
+      ...(Object.keys(inputs).length > 0 ? { inputs } : {}),
+      ...(next ? { next } : {}),
+    };
+  };
+
+  const roots = rawRoots
+    .map((root) => compileBlock(root))
+    .filter((root): root is IrNode => root !== undefined)
+    .sort((left, right) => left.id.localeCompare(right.id));
+
+  return {
+    program: { schemaVersion: "blocky.ir/v0-spike", roots },
+    sourceMap,
+    diagnostics,
+  };
+}
