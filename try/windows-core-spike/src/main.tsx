@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
-import { InMemoryHostBridge } from "./host/InMemoryHostBridge";
+import { TauriHostBridge } from "./host/TauriHostBridge";
 
-const hostBridge = new InMemoryHostBridge();
+const hostBridge = new TauriHostBridge();
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>

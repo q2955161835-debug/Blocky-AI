@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { App } from "../../src/app/App";
 import { createHundredBlockWorkspaceState } from "../../src/blockly/fixtures";
+import { countSerializedBlocks } from "../../src/blockly/fixtures";
+import { stableStringify } from "../../src/core/json";
 import type { HostBridge } from "../../src/host/HostBridge";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
 
@@ -14,6 +16,61 @@ const EMPTY_WORKSPACE = {
 };
 
 describe("App", () => {
+  it("restores 100 unique block IDs with byte-stable project JSON after save, clear, and reload", async () => {
+    const user = userEvent.setup();
+    const host = new InMemoryHostBridge();
+    const firstMount = render(
+      <App hostBridge={host} initialWorkspace={EMPTY_WORKSPACE} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "载入100块" }));
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    await waitFor(async () => {
+      expect(await host.loadProject("windows-core-spike")).not.toBeNull();
+    });
+    const before = await host.loadProject("windows-core-spike");
+    if (!before) throw new Error("Expected the first project save");
+    const stableBefore = stableStringify(before);
+
+    firstMount.unmount();
+    render(<App hostBridge={host} initialWorkspace={EMPTY_WORKSPACE} />);
+    expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "重开" }));
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.click(screen.getByRole("button", { name: "保存" }));
+    await waitFor(async () => {
+      const current = await host.loadProject("windows-core-spike");
+      expect(current && stableStringify(current)).toBe(stableBefore);
+    });
+
+    const after = await host.loadProject("windows-core-spike");
+    if (!after) throw new Error("Expected the reloaded project save");
+    const blockIds = new Set<string>();
+    const collectBlockIds = (value: unknown): void => {
+      if (!value || typeof value !== "object") return;
+      if (Array.isArray(value)) {
+        value.forEach(collectBlockIds);
+        return;
+      }
+      const record = value as Record<string, unknown>;
+      if (typeof record.type === "string" && typeof record.id === "string") {
+        blockIds.add(record.id);
+      }
+      Object.values(record).forEach(collectBlockIds);
+    };
+    collectBlockIds(after.workspace);
+
+    expect(countSerializedBlocks(after.workspace)).toBe(100);
+    expect(blockIds.size).toBe(100);
+    expect(stableStringify(after)).toBe(stableBefore);
+  });
+
   it("keeps the builder available while disabling the entire run tab until a valid entry is projected", async () => {
     const user = userEvent.setup();
     render(
