@@ -1,4 +1,4 @@
-export type DiagnosticSeverity = "error";
+export type DiagnosticSeverity = "error" | "warning";
 
 export interface Diagnostic {
   code: string;
