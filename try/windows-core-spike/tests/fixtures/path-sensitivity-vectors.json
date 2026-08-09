@@ -1,0 +1,15 @@
+{
+  "sensitive": [
+    "prefix(C:\\Users\\demo\\key.txt)",
+    "prefix(/var/tmp/key.txt)",
+    "file=/var/secret",
+    "/workspace/config.json"
+  ],
+  "allowed": [
+    "/error",
+    "/permission",
+    "/api/v1",
+    "route=/api/agent/v1",
+    "https://example.com/a/b"
+  ]
+}

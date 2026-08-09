@@ -22,8 +22,8 @@ const DETECTORS: ReadonlyArray<readonly [SensitiveValueKind, RegExp]> = [
   ["bearer-token", /\bBearer\s+[A-Za-z0-9._~+/-]{8,}\b/i],
   ["pem-private-key", /-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----/],
   ["cookie", /(?:^|[;\s])(?:set-)?cookie\s*:\s*[^\s;=]+=[^\s;]+/i],
-  ["windows-absolute-path", /(?<![A-Za-z0-9_])[A-Za-z]:\\(?:[^\s\\]+\\)*[^\s\\]+/],
-  ["unix-absolute-path", /(?:^|[^A-Za-z0-9_])file=\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+|(?<![:A-Za-z0-9_])\/(?:var|tmp|home|usr|etc|opt|mnt)(?:\/[A-Za-z0-9._-]+)+|(?<![:A-Za-z0-9_])\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]*\.[A-Za-z0-9._-]+/i],
+  ["windows-absolute-path", /(?:^|[^A-Za-z0-9_])[A-Za-z]:\\(?:[^\s\\/:*?"<>|]+\\)*[^\s\\/:*?"<>|]+/],
+  ["unix-absolute-path", /(?:^|[^A-Za-z0-9_])file=\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+|(?:^|[^:/A-Za-z0-9_])\/(?:var|tmp|home|usr|etc|opt|mnt)(?:\/[A-Za-z0-9._-]+)+|(?:^|[^:/A-Za-z0-9_])\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+\.[A-Za-z0-9._-]+/i],
 ];
 
 function sensitiveKind(value: string): SensitiveValueKind | undefined {

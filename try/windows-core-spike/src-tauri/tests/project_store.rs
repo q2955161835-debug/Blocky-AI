@@ -1,7 +1,12 @@
+use atomic_write_file::AtomicWriteFile;
 use blocky_windows_core_spike_lib::project_store::{
     MAX_PROJECT_BYTES, ProjectStore, SaveProjectRequest,
 };
+use serde::Deserialize;
 use serde_json::{Value, json};
+use std::fs;
+use std::io::Write;
+use std::path::Path;
 use tempfile::tempdir;
 
 const EXACT_JSON: &str = concat!(
@@ -26,6 +31,51 @@ fn valid_json(project_id: &str, value: Value) -> String {
         "interactionManifest": {},
     })
     .to_string()
+}
+
+#[derive(Deserialize)]
+struct PathSensitivityVectors {
+    sensitive: Vec<String>,
+    allowed: Vec<String>,
+}
+
+fn path_sensitivity_vectors() -> PathSensitivityVectors {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../tests/fixtures/path-sensitivity-vectors.json");
+    serde_json::from_str(&fs::read_to_string(path).expect("shared path vectors are readable"))
+        .expect("shared path vectors are valid JSON")
+}
+
+fn exact_size_json(project_id: &str, bytes: usize) -> String {
+    let prefix = format!(
+        "{{\"schemaVersion\":\"blocky.spike-project/v1\",\"projectId\":\"{project_id}\",\"workspace\":{{\"padding\":\""
+    );
+    let suffix = "\"},\"program\":{},\"interactionManifest\":{}}";
+    assert!(prefix.len() + suffix.len() <= bytes);
+    format!(
+        "{prefix}{}{suffix}",
+        "x".repeat(bytes - prefix.len() - suffix.len())
+    )
+}
+
+#[cfg(unix)]
+fn create_directory_symlink(original: &Path, link: &Path) -> std::io::Result<()> {
+    std::os::unix::fs::symlink(original, link)
+}
+
+#[cfg(windows)]
+fn create_directory_symlink(original: &Path, link: &Path) -> std::io::Result<()> {
+    std::os::windows::fs::symlink_dir(original, link)
+}
+
+#[cfg(unix)]
+fn create_file_symlink(original: &Path, link: &Path) -> std::io::Result<()> {
+    std::os::unix::fs::symlink(original, link)
+}
+
+#[cfg(windows)]
+fn create_file_symlink(original: &Path, link: &Path) -> std::io::Result<()> {
+    std::os::windows::fs::symlink_file(original, link)
 }
 
 #[test]
@@ -198,4 +248,276 @@ fn project_store_reports_not_found_without_leaking_the_storage_path() {
             .contains(directory.path().to_string_lossy().as_ref())
     );
     assert!(!error.message.contains("missing-project.json"));
+}
+
+#[test]
+fn project_store_applies_the_shared_path_sensitivity_vectors() {
+    let vectors = path_sensitivity_vectors();
+    for value in vectors.sensitive {
+        let directory = tempdir().expect("temporary project directory");
+        let store = ProjectStore::new(directory.path().to_path_buf());
+        let error = store
+            .save(request(
+                "demo-project",
+                valid_json("demo-project", json!({ "value": value })),
+            ))
+            .expect_err("sensitive path vector is rejected");
+        assert_eq!(error.code, "PROJECT_SENSITIVE_VALUE");
+    }
+    for value in vectors.allowed {
+        let directory = tempdir().expect("temporary project directory");
+        let store = ProjectStore::new(directory.path().to_path_buf());
+        store
+            .save(request(
+                "demo-project",
+                valid_json("demo-project", json!({ "value": value })),
+            ))
+            .expect("route or URL vector is allowed");
+    }
+}
+
+#[test]
+fn project_store_allows_exactly_five_mibibytes() {
+    let directory = tempdir().expect("temporary project directory");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+    let json = exact_size_json("limit-project", MAX_PROJECT_BYTES);
+
+    let saved = store
+        .save(request("limit-project", json))
+        .expect("exact limit is allowed");
+
+    assert_eq!(saved.bytes, 5_242_880);
+}
+
+#[test]
+fn project_store_counts_and_hashes_exact_unicode_utf8_bytes() {
+    let directory = tempdir().expect("temporary project directory");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+    let json = concat!(
+        "{\"schemaVersion\":\"blocky.spike-project/v1\",",
+        "\"projectId\":\"unicode-project\",",
+        "\"workspace\":{\"text\":\"你好🙂\"},",
+        "\"program\":{},\"interactionManifest\":{}}"
+    );
+
+    let saved = store
+        .save(request("unicode-project", json.to_owned()))
+        .expect("Unicode project is saved");
+
+    assert_eq!(saved.bytes, 145);
+    assert_eq!(
+        saved.sha256,
+        "ee8e664e5e46036a45ef0c9f272a2c634a16836f15ae5d36cdb4eb7f6d985846"
+    );
+}
+
+#[test]
+fn project_store_rejects_non_object_json_as_invalid() {
+    let directory = tempdir().expect("temporary project directory");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+
+    let error = store
+        .save(request("demo-project", "[]".to_owned()))
+        .expect_err("non-object JSON is not a project document");
+
+    assert_eq!(error.code, "PROJECT_JSON_INVALID");
+}
+
+#[test]
+fn project_store_accepts_unknown_root_keys_for_bridge_layer_validation() {
+    let directory = tempdir().expect("temporary project directory");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+    let json = json!({
+        "schemaVersion": "blocky.spike-project/v1",
+        "projectId": "demo-project",
+        "workspace": {},
+        "program": {},
+        "interactionManifest": {},
+        "unexpected": "value",
+    })
+    .to_string();
+
+    let saved = store
+        .save(request("demo-project", json.clone()))
+        .expect("Rust store accepts unknown root keys");
+    let loaded = store.load("demo-project").expect("stored JSON reloads");
+
+    assert_eq!(saved.json, json);
+    assert_eq!(loaded.json, json);
+}
+
+#[test]
+fn project_store_rejects_corrupt_and_oversized_files_on_load() {
+    let directory = tempdir().expect("temporary project directory");
+    fs::write(directory.path().join("corrupt-project.json"), [0xff, 0xfe])
+        .expect("corrupt fixture is written");
+    fs::write(
+        directory.path().join("oversized-project.json"),
+        vec![b'x'; MAX_PROJECT_BYTES + 1],
+    )
+    .expect("oversized fixture is written");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+
+    assert_eq!(
+        store
+            .load("corrupt-project")
+            .expect_err("corrupt load fails")
+            .code,
+        "PROJECT_JSON_INVALID"
+    );
+    assert_eq!(
+        store
+            .load("oversized-project")
+            .expect_err("oversized load fails")
+            .code,
+        "PROJECT_TOO_LARGE"
+    );
+}
+
+#[test]
+fn project_store_io_errors_are_fixed_and_do_not_leak_paths() {
+    let directory = tempdir().expect("temporary project directory");
+    let blocked_root = directory.path().join("blocked-root");
+    fs::write(&blocked_root, b"not a directory").expect("root blocker is written");
+    let create_error = ProjectStore::new(blocked_root.clone())
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect_err("directory creation fails");
+    assert_eq!(create_error.code, "PROJECT_DIRECTORY_CREATE_FAILED");
+    assert_eq!(create_error.message, "保存项目失败，请重试");
+    assert!(
+        !create_error
+            .message
+            .contains(blocked_root.to_string_lossy().as_ref())
+    );
+
+    #[cfg(windows)]
+    {
+        use std::fs::OpenOptions;
+        use std::os::windows::fs::OpenOptionsExt;
+
+        let read_root = directory.path().join("read-root");
+        fs::create_dir(&read_root).expect("read root is created");
+        let target = read_root.join("demo-project.json");
+        fs::write(&target, EXACT_JSON).expect("read fixture is written");
+        let _exclusive = OpenOptions::new()
+            .read(true)
+            .share_mode(0)
+            .open(&target)
+            .expect("exclusive read fixture is opened");
+        let read_error = ProjectStore::new(read_root.clone())
+            .load("demo-project")
+            .expect_err("sharing violation makes the read fail");
+        assert_eq!(read_error.code, "PROJECT_READ_FAILED");
+        assert_eq!(read_error.message, "读取项目失败，请重试");
+        assert!(
+            !read_error
+                .message
+                .contains(read_root.to_string_lossy().as_ref())
+        );
+    }
+}
+
+#[test]
+fn project_store_rejects_non_file_target_before_creating_atomic_temp_files() {
+    let directory = tempdir().expect("temporary project directory");
+    let target = directory.path().join("demo-project.json");
+    fs::create_dir(&target).expect("directory target is created");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+
+    let error = store
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect_err("directory target is rejected before write");
+    let entries = fs::read_dir(directory.path())
+        .expect("project root is readable")
+        .map(|entry| entry.expect("directory entry is readable").file_name())
+        .collect::<Vec<_>>();
+
+    assert_eq!(error.code, "PROJECT_PATH_UNSAFE");
+    assert_eq!(error.message, "项目存储路径不安全");
+    assert_eq!(
+        entries,
+        vec![target.file_name().expect("target name").to_owned()]
+    );
+}
+
+#[test]
+fn project_store_successful_atomic_write_leaves_only_the_final_file() {
+    let directory = tempdir().expect("temporary project directory");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+
+    store
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect("atomic save succeeds");
+    let entries = fs::read_dir(directory.path())
+        .expect("project root is readable")
+        .map(|entry| entry.expect("directory entry is readable").file_name())
+        .collect::<Vec<_>>();
+
+    assert_eq!(entries, vec![std::ffi::OsString::from("demo-project.json")]);
+}
+
+#[test]
+fn atomic_discard_removes_the_named_temporary_file() {
+    let directory = tempdir().expect("temporary project directory");
+    let target = directory.path().join("demo-project.json");
+    let mut file = AtomicWriteFile::open(&target).expect("atomic temporary file opens");
+    file.write_all(b"uncommitted")
+        .expect("atomic temporary file accepts bytes");
+    let entries_before_discard = fs::read_dir(directory.path())
+        .expect("temporary directory is readable")
+        .collect::<Result<Vec<_>, _>>()
+        .expect("temporary entry is readable");
+    assert_eq!(entries_before_discard.len(), 1);
+    assert_ne!(entries_before_discard[0].path(), target);
+
+    file.discard()
+        .expect("explicit discard removes temporary file");
+    assert_eq!(
+        fs::read_dir(directory.path())
+            .expect("temporary directory remains readable")
+            .count(),
+        0
+    );
+}
+
+#[test]
+fn project_store_rejects_symlinked_root_before_save() {
+    let directory = tempdir().expect("temporary project directory");
+    let real_root = directory.path().join("real-root");
+    let linked_root = directory.path().join("linked-root");
+    fs::create_dir(&real_root).expect("real root is created");
+    create_directory_symlink(&real_root, &linked_root)
+        .expect("directory symlink must be available for the safety test");
+
+    let error = ProjectStore::new(linked_root)
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect_err("symlink root is rejected");
+
+    assert_eq!(error.code, "PROJECT_PATH_UNSAFE");
+    assert_eq!(error.message, "项目存储路径不安全");
+}
+
+#[test]
+fn project_store_rejects_symlinked_target_before_load_or_save() {
+    let directory = tempdir().expect("temporary project directory");
+    let outside = directory.path().join("outside.json");
+    let target = directory.path().join("demo-project.json");
+    fs::write(&outside, EXACT_JSON).expect("outside fixture is written");
+    create_file_symlink(&outside, &target)
+        .expect("file symlink must be available for the safety test");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+
+    let load_error = store
+        .load("demo-project")
+        .expect_err("symlink target is rejected on load");
+    let save_error = store
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect_err("symlink target is rejected on save");
+
+    assert_eq!(load_error.code, "PROJECT_PATH_UNSAFE");
+    assert_eq!(save_error.code, "PROJECT_PATH_UNSAFE");
+    assert_eq!(
+        fs::read_to_string(outside).expect("outside file is intact"),
+        EXACT_JSON
+    );
 }

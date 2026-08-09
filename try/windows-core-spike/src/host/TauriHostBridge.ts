@@ -105,6 +105,12 @@ function parseSnapshot(record: ProjectRecord, projectId: string): SpikeProjectSn
   if (record.projectId !== projectId || parsed.data.projectId !== projectId) {
     throw new HostBridgeError("PROJECT_ID_MISMATCH", "项目标识不匹配");
   }
+  if (scanSensitiveValues(parsed.data).length > 0) {
+    throw new HostBridgeError(
+      "PROJECT_SENSITIVE_VALUE",
+      "项目包含不允许保存的敏感值",
+    );
+  }
 
   const compiled = compileWorkspace(parsed.data.workspace);
   const interaction = compileInteractionManifest(compiled.program);

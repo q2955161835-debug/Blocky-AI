@@ -1,5 +1,14 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { redactSensitiveValues, scanSensitiveValues } from "../../src/core/securityScan";
+
+const pathVectors = JSON.parse(
+  readFileSync(
+    resolve(process.cwd(), "tests/fixtures/path-sensitivity-vectors.json"),
+    "utf8",
+  ),
+) as { sensitive: string[]; allowed: string[] };
 
 describe("sensitive value scanner", () => {
   it("scans recursively through string values with JSON paths and not key names", () => {
@@ -59,5 +68,16 @@ describe("sensitive value scanner", () => {
       unixPathWithoutExtension: "[REDACTED:unix-absolute-path]",
       commands,
     });
+  });
+
+  it("applies the shared path sensitivity vectors without route or URL false positives", () => {
+    for (const value of pathVectors.sensitive) {
+      expect(scanSensitiveValues({ value }), value).toEqual([
+        expect.objectContaining({ path: "$.value" }),
+      ]);
+    }
+    for (const value of pathVectors.allowed) {
+      expect(scanSensitiveValues({ value }), value).toEqual([]);
+    }
   });
 });
