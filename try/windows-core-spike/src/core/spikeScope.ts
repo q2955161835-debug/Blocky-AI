@@ -1,0 +1,25 @@
+export const SPIKE_SCOPE = Object.freeze({
+  included: [
+    "blockly-editor",
+    "stable-ir",
+    "interaction-manifest",
+    "tool-contract",
+    "deterministic-runtime",
+    "tauri-project-host",
+    "windows-native-e2e",
+  ],
+  excluded: [
+    "accounts",
+    "billing",
+    "entitlements",
+    "community",
+    "cli",
+    "official-skills",
+    "real-models",
+    "builder-agent",
+    "custom-blocks",
+    "native-agent-adapters",
+    "macos",
+    "mobile",
+  ],
+} as const);

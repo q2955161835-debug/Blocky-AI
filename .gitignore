@@ -28,9 +28,16 @@ local.properties
 Thumbs.db
 *.log
 
-# Temporary experiments belong here but generated contents are not committed
+# Temporary experiments are ignored unless explicitly admitted below
 try/*
-!try/.gitkeep
+!try/windows-core-spike/
+!try/windows-core-spike/**
+try/windows-core-spike/node_modules/
+try/windows-core-spike/dist/
+try/windows-core-spike/coverage/
+try/windows-core-spike/test-results/
+try/windows-core-spike/artifacts/
+try/windows-core-spike/src-tauri/target/
 
 # Local isolated Git worktrees
 .worktrees/
