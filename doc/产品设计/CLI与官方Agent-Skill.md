@@ -6,12 +6,14 @@
 | 日期 | 2026-08-09 |
 | 状态 | 产品与命令面设计已确认，尚未实现 |
 | 命令名 | `blocky` |
-| 官方 Skill | `$build-blocky-agents` |
+| 官方 Skills 入口 | `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 首发环境 | Windows；从任意本地项目目录调用 |
+
+> 更新说明（2026-08-09）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为 Skills 包与 Codex 等客户端的官方插件，新增“自定义积木创建”“GitHub 项目转 Blocky”和“现有 Agent 逆向积木”。本文的 CLI、Build Spec、差异和授权原则继续有效；最新 Skills 组成、图形页协作与逆向规则见[《Blocky 完整积木与 Agent 兼容设计》](Blocky-完整积木与Agent兼容设计.md)。
 
 ## 1. 产品目标
 
-Blocky 除图形编辑器外，提供一套稳定的 CLI 和一份官方 Agent Skill，使 Codex、Claude Code 及其他兼容 Agent Skills 开放标准的通用 Agent 能辅助用户搭建 AI 程序。
+Blocky 除图形编辑器外，提供一套稳定的 CLI 和一套官方 Agent Skills，使 Codex、Claude Code 及其他兼容 Agent Skills 开放标准的通用 Agent 能辅助用户搭建 AI 程序。本文后续章节详细设计其中的 `$build-blocky-agents`；其余 Skills 和官方插件以上位设计为准。
 
 两者分工明确：
 

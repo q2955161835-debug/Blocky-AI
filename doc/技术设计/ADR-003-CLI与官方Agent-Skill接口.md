@@ -1,20 +1,23 @@
-# ADR-003：Blocky CLI 与官方 Agent Skill 接口
+# ADR-003：Blocky CLI、官方 Agent Skills 与插件接口
 
 | 项目 | 内容 |
 |---|---|
 | 状态 | 已接受，随 Blocky Core 尖峰分阶段实现 |
 | 日期 | 2026-08-09 |
-| 决策范围 | Windows CLI、Build Spec、机器输出、官方 Agent Skill、原生兼容命令 |
-| 关联文档 | [产品设计](../产品设计/CLI与官方Agent-Skill.md)、[ADR-001](ADR-001-首版跨端技术选型.md)、[ADR-002](ADR-002-原生Agent兼容运行时.md) |
+| 决策范围 | Windows CLI、Build Spec、机器输出、官方 Agent Skills、官方插件、原生兼容命令 |
+| 关联文档 | [完整积木与 Agent 兼容设计](../产品设计/Blocky-完整积木与Agent兼容设计.md)、[CLI 产品设计](../产品设计/CLI与官方Agent-Skill.md)、[ADR-001](ADR-001-首版跨端技术选型.md)、[ADR-002](ADR-002-原生Agent兼容运行时.md) |
+
+> 更新说明（2026-08-09）：原单一 `$build-blocky-agents` Skill 已扩展为官方 Skills 包与 Codex 等客户端的官方插件。本文定义的 CLI、Build Spec、输出、差异和授权契约继续由全部 Skills 共用；Skills 组成和逆向 Agent 规则以上位设计为准。
 
 ## 1. 背景
 
 Codex 等通用 Agent 擅长理解需求和修改文本，但不能安全、稳定地直接构造 Blockly JSON、Blocky IR 或 `.blocky` ZIP。若只提供自然语言说明，不同 Agent 会编造积木 ID、遗漏权限、破坏未知字段或用隐藏代码代替画布中可见的程序。
 
-因此 Blocky 需要两个层次：
+因此 Blocky 需要三个协作层次：
 
 1. 机器可组合、输出可预测、与桌面应用共享语义的 `blocky` CLI。
-2. 基于开放 Agent Skills 格式的官方 `$build-blocky-agents` Skill，承载工作流与安全边界。
+2. 基于开放 Agent Skills 格式的官方 Skills 包，分别承载搭建 Agent、创建积木、转换 GitHub 项目和逆向现有 Agent 的工作流与安全边界。
+3. Codex 等客户端的官方插件，负责分发 Skills、发现 CLI 并连接本机 Blocky 图形页，不创建第二套语义或绕过授权。
 
 ## 2. 决策
 
