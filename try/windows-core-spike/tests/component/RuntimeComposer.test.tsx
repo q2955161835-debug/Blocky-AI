@@ -351,25 +351,28 @@ describe("RuntimeComposer", () => {
     });
   });
 
-  it("preserves the active draft when submission rejects", async () => {
-    const user = userEvent.setup();
-    render(
-      <RuntimeComposer
-        manifest={manifest([ENTRY_A])}
-        activeEntryId="entry-a"
-        onActiveEntryIdChange={vi.fn()}
-        onSubmit={vi.fn(async () => {
-          throw new Error("private details");
-        })}
-        disabled={false}
-      />,
-    );
+  it.each(["RUN_FAILED", "RUN_CANCELLED"])(
+    "preserves the active draft when submission rejects with %s",
+    async (rejectionCode) => {
+      const user = userEvent.setup();
+      render(
+        <RuntimeComposer
+          manifest={manifest([ENTRY_A])}
+          activeEntryId="entry-a"
+          onActiveEntryIdChange={vi.fn()}
+          onSubmit={vi.fn(async () => {
+            throw new Error(rejectionCode);
+          })}
+          disabled={false}
+        />,
+      );
 
-    await user.type(screen.getByTestId("runtime-text-input"), "保留以便重试");
-    await user.click(screen.getByTestId("runtime-send"));
+      await user.type(screen.getByTestId("runtime-text-input"), "保留以便重试");
+      await user.click(screen.getByTestId("runtime-send"));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("runtime-text-input")).toHaveValue("保留以便重试");
-    });
-  });
+      await waitFor(() => {
+        expect(screen.getByTestId("runtime-text-input")).toHaveValue("保留以便重试");
+      });
+    },
+  );
 });

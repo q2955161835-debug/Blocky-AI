@@ -46,6 +46,15 @@ const RUN_ERROR = "运行失败，请检查积木后重试";
 const SAVE_ERROR = "保存失败，请重试";
 const LOAD_ERROR = "载入失败，请重试";
 
+type RunTerminalType = "run.completed" | "run.cancelled" | "run.failed";
+
+class RunNotCompletedError extends Error {
+  constructor(readonly terminalType: Exclude<RunTerminalType, "run.completed"> | null) {
+    super(terminalType === "run.cancelled" ? "RUN_CANCELLED" : "RUN_FAILED");
+    this.name = "RunNotCompletedError";
+  }
+}
+
 export function reduceRuntimeEvent(
   state: RuntimeViewState,
   event: RuntimeEvent,
@@ -202,6 +211,9 @@ export function useSpikeController({
           tools,
           requestApproval: async () => "approved",
         };
+        const outcome: { terminalType: RunTerminalType | null } = {
+          terminalType: null,
+        };
 
         await runProgram({
           program: latest.program,
@@ -209,10 +221,20 @@ export function useSpikeController({
           input: runtimeText(input),
           signal: abortController.signal,
           dependencies,
-          onEvent: acceptRuntimeEvent,
+          onEvent: (event) => {
+            acceptRuntimeEvent(event);
+            if (TERMINAL_EVENTS.has(event.type)) {
+              outcome.terminalType = event.type as RunTerminalType;
+            }
+          },
         });
+        if (outcome.terminalType !== "run.completed") {
+          throw new RunNotCompletedError(outcome.terminalType);
+        }
       } catch (error) {
-        setOperationError(RUN_ERROR);
+        const handledTerminal =
+          error instanceof RunNotCompletedError && error.terminalType !== null;
+        if (!handledTerminal) setOperationError(RUN_ERROR);
         throw error;
       } finally {
         if (abortController && abortControllerRef.current === abortController) {

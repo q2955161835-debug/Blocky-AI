@@ -123,4 +123,37 @@ describe("useSpikeController", () => {
     expect(result.current.operationError).toBe("运行失败，请检查积木后重试");
     expect(result.current.operationError).not.toMatch(/SECRET|RUN_ENTRY_NOT_FOUND/);
   });
+
+  it("rejects a real cancelled run without turning cancellation into an error alert", async () => {
+    const canvasRef = { current: canvasHandle() };
+    const { result } = renderHook(() =>
+      useSpikeController({
+        canvasRef,
+        hostBridge: new InMemoryHostBridge(),
+        projectId: "project-1",
+      }),
+    );
+
+    act(() => result.current.acceptProjection(buildEditorProjection(VALID_WORKSPACE)));
+    await waitFor(() => expect(result.current.activeEntryId).toBe("entry-1"));
+
+    await act(async () => {
+      const firstRun = result.current.runInput({
+        entryId: "entry-1",
+        text: "将被取消",
+        attachments: [],
+      });
+      const secondRun = result.current.runInput({
+        entryId: "entry-1",
+        text: "后续成功",
+        attachments: [],
+      });
+      await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
+      await expect(secondRun).resolves.toBeUndefined();
+    });
+    expect(result.current.runtime.events.map((event) => event.type)).toContain(
+      "run.cancelled",
+    );
+    expect(result.current.operationError).toBeNull();
+  });
 });

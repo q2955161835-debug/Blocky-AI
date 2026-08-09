@@ -119,4 +119,49 @@ describe("App", () => {
     });
     expect(screen.getByRole("alert")).not.toHaveTextContent("SECRET_LOAD_DETAIL");
   });
+
+  it("keeps the real /error draft after run.failed while showing only the safe alert", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.type(screen.getByTestId("runtime-text-input"), "/error");
+    await user.click(screen.getByTestId("runtime-send"));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "运行失败，请检查积木后重试",
+    );
+    expect(screen.getByRole("alert")).not.toHaveTextContent(
+      "MODEL_SIMULATED_FAILURE",
+    );
+    expect(screen.getByTestId("runtime-text-input")).toHaveValue("/error");
+  });
+
+  it("clears the real draft only after run.completed", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.type(screen.getByTestId("runtime-text-input"), "成功草稿");
+    await user.click(screen.getByTestId("runtime-send"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("runtime-text-input")).toHaveValue("");
+    });
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
 });
