@@ -31,3 +31,6 @@ Thumbs.db
 # Temporary experiments belong here but generated contents are not committed
 try/*
 !try/.gitkeep
+
+# Local isolated Git worktrees
+.worktrees/
