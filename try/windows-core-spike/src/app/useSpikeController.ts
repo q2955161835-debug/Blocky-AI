@@ -95,6 +95,18 @@ interface UseSpikeControllerOptions {
   canvasRef: RefObject<BlocklyCanvasHandle | null>;
   hostBridge: HostBridge;
   projectId: string;
+  runtimeModel?: RuntimeDependencies["model"];
+}
+
+export interface PendingPermissionRequest {
+  readonly runId: string;
+  readonly toolId: string;
+  readonly callBlockId: string;
+  readonly permissions: readonly string[];
+}
+
+interface PendingPermissionResolver {
+  readonly resolve: (decision: "approved" | "denied") => void;
 }
 
 function runtimeText(input: RuntimeInput): string {
@@ -106,6 +118,7 @@ export function useSpikeController({
   canvasRef,
   hostBridge,
   projectId,
+  runtimeModel,
 }: UseSpikeControllerOptions) {
   const [projection, setProjection] = useState<EditorProjection>(() =>
     buildEditorProjection(EMPTY_WORKSPACE),
@@ -117,8 +130,38 @@ export function useSpikeController({
     status: "idle",
   });
   const [operationError, setOperationError] = useState<string | null>(null);
+  const [pendingPermission, setPendingPermission] =
+    useState<PendingPermissionRequest | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const pendingPermissionRef = useRef<PendingPermissionResolver | null>(null);
   const runSequenceRef = useRef(0);
+
+  const settlePermission = useCallback(
+    (decision: "approved" | "denied"): void => {
+      const pending = pendingPermissionRef.current;
+      if (!pending) return;
+      pendingPermissionRef.current = null;
+      setPendingPermission(null);
+      pending.resolve(decision);
+    },
+    [],
+  );
+
+  const requestApproval = useCallback(
+    (request: PendingPermissionRequest): Promise<"approved" | "denied"> =>
+      new Promise((resolve) => {
+        const previous = pendingPermissionRef.current;
+        pendingPermissionRef.current = { resolve };
+        setPendingPermission({ ...request, permissions: [...request.permissions] });
+        previous?.resolve("denied");
+      }),
+    [],
+  );
+
+  const cancelRun = useCallback((): void => {
+    abortControllerRef.current?.abort();
+    settlePermission("denied");
+  }, [settlePermission]);
 
   const acceptProjection = useCallback((nextProjection: EditorProjection): void => {
     setProjection((current) =>
@@ -153,6 +196,8 @@ export function useSpikeController({
   useEffect(
     () => () => {
       abortControllerRef.current?.abort();
+      pendingPermissionRef.current?.resolve("denied");
+      pendingPermissionRef.current = null;
     },
     [],
   );
@@ -198,7 +243,7 @@ export function useSpikeController({
         assertRunnableProjection(latest, input.entryId);
         acceptProjection(latest);
 
-        abortControllerRef.current?.abort();
+        cancelRun();
         abortController = new AbortController();
         abortControllerRef.current = abortController;
         const tools = createRuntimeToolMap(latest);
@@ -207,9 +252,9 @@ export function useSpikeController({
             runSequenceRef.current += 1;
             return `desktop-run-${runSequenceRef.current}`;
           },
-          model: createDeterministicModel(),
+          model: runtimeModel ?? createDeterministicModel(),
           tools,
-          requestApproval: async () => "approved",
+          requestApproval,
         };
         const outcome: { terminalType: RunTerminalType | null } = {
           terminalType: null,
@@ -242,7 +287,14 @@ export function useSpikeController({
         }
       }
     },
-    [acceptProjection, acceptRuntimeEvent, canvasRef],
+    [
+      acceptProjection,
+      acceptRuntimeEvent,
+      cancelRun,
+      canvasRef,
+      requestApproval,
+      runtimeModel,
+    ],
   );
 
   return {
@@ -250,10 +302,14 @@ export function useSpikeController({
     activeEntryId,
     setActiveEntryId,
     runtime,
+    pendingPermission,
     operationError,
     acceptProjection,
     saveProject,
     loadProject,
     runInput,
+    cancelRun,
+    approvePermission: () => settlePermission("approved"),
+    denyPermission: () => settlePermission("denied"),
   };
 }

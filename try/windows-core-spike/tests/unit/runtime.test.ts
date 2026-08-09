@@ -147,6 +147,7 @@ describe("deterministic runtime", () => {
 
     expect(events.at(-1)).toMatchObject({
       type: "run.failed",
+      blockId: "entry",
       data: { code: "MODEL_SIMULATED_FAILURE" },
     });
   });

@@ -1,0 +1,19 @@
+{
+  "build": {
+    "beforeBuildCommand": "pnpm build:wdio"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "security": {
+      "capabilities": [
+        "main",
+        {
+          "identifier": "wdio",
+          "description": "Test-only WebdriverIO capability",
+          "windows": ["main"],
+          "permissions": ["wdio:default"]
+        }
+      ]
+    }
+  }
+}

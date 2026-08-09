@@ -7,6 +7,7 @@ import {
 import { createHundredBlockWorkspaceState } from "../blockly/fixtures";
 import { BuilderPlaceholder } from "../builder/BuilderPlaceholder";
 import type { JsonValue } from "../core/json";
+import type { RuntimeDependencies } from "../core/deterministicRuntime";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
 import { useSpikeController } from "./useSpikeController";
@@ -16,6 +17,14 @@ export interface AppProps {
   hostBridge: HostBridge;
   initialWorkspace?: JsonValue;
   projectId?: string;
+  runtimeModel?: RuntimeDependencies["model"];
+  canvasAction?: CanvasAction;
+}
+
+export interface CanvasAction {
+  readonly ariaLabel: string;
+  readonly label: string;
+  run(): void;
 }
 
 const EMPTY_WORKSPACE: JsonValue = {
@@ -26,10 +35,17 @@ export function App({
   hostBridge,
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
+  runtimeModel,
+  canvasAction,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
   const [activeTab, setActiveTab] = useState<"builder" | "runtime">("runtime");
-  const controller = useSpikeController({ canvasRef, hostBridge, projectId });
+  const controller = useSpikeController({
+    canvasRef,
+    hostBridge,
+    projectId,
+    runtimeModel,
+  });
   const hasEntry = controller.projection.interactionManifest.entries.length > 0;
   const hasCompileError = controller.projection.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
@@ -49,6 +65,18 @@ export function App({
           >
             载入100块
           </button>
+          <button type="button" onClick={() => canvasRef.current?.load(EMPTY_WORKSPACE)}>
+            清空
+          </button>
+          {canvasAction ? (
+            <button
+              type="button"
+              aria-label={canvasAction.ariaLabel}
+              onClick={canvasAction.run}
+            >
+              {canvasAction.label}
+            </button>
+          ) : null}
           <button type="button" onClick={() => void controller.saveProject()}>
             保存
           </button>
@@ -147,6 +175,11 @@ export function App({
                 onSubmit={controller.runInput}
                 events={controller.runtime.events}
                 disabled={controller.runtime.status === "running" || hasCompileError}
+                running={controller.runtime.status === "running"}
+                pendingPermission={controller.pendingPermission}
+                onCancel={controller.cancelRun}
+                onApprovePermission={controller.approvePermission}
+                onDenyPermission={controller.denyPermission}
               />
             </div>
           </div>

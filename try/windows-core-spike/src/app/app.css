@@ -335,9 +335,38 @@ button:disabled {
 
 .runtime-panel {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
   height: 100%;
   min-height: 0;
+}
+
+.runtime-permission {
+  display: grid;
+  gap: 8px;
+  margin: 0 16px 12px;
+  padding: 12px;
+  background: #fff8e6;
+  border: 1px solid #f1d28a;
+  border-radius: 8px;
+}
+
+.runtime-permission p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.runtime-permission > div {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.runtime-cancel {
+  margin: 0 16px 12px;
+  color: var(--error);
+  border-color: #e5a7a3;
 }
 
 .runtime-panel--empty {

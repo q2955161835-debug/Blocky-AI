@@ -1,5 +1,6 @@
 import type { InteractionManifest } from "../core/interactionManifest";
 import type { RuntimeEvent } from "../core/runtimeEvents";
+import type { PendingPermissionRequest } from "../app/useSpikeController";
 import { EventTimeline } from "./EventTimeline";
 import {
   RuntimeComposer,
@@ -14,6 +15,11 @@ export interface RuntimePanelProps {
   onSubmit(message: RuntimeInput): Promise<void>;
   events: readonly RuntimeEvent[];
   disabled: boolean;
+  running: boolean;
+  pendingPermission: PendingPermissionRequest | null;
+  onCancel(): void;
+  onApprovePermission(): void;
+  onDenyPermission(): void;
 }
 
 export function RuntimePanel({
@@ -23,6 +29,11 @@ export function RuntimePanel({
   onSubmit,
   events,
   disabled,
+  running,
+  pendingPermission,
+  onCancel,
+  onApprovePermission,
+  onDenyPermission,
 }: RuntimePanelProps) {
   if (manifest.entries.length === 0) {
     return (
@@ -43,6 +54,37 @@ export function RuntimePanel({
   return (
     <section className="runtime-panel">
       <EventTimeline events={events} />
+      {pendingPermission ? (
+        <section
+          className="runtime-permission"
+          role="alertdialog"
+          aria-label="工具权限请求"
+        >
+          <strong>工具权限请求</strong>
+          <p>
+            Tool：<code>{pendingPermission.toolId}</code>
+          </p>
+          <p>
+            权限：
+            {pendingPermission.permissions.length > 0
+              ? pendingPermission.permissions.join("、")
+              : "无额外权限"}
+          </p>
+          <div>
+            <button type="button" onClick={onDenyPermission}>
+              拒绝
+            </button>
+            <button type="button" onClick={onApprovePermission}>
+              批准
+            </button>
+          </div>
+        </section>
+      ) : null}
+      {running ? (
+        <button className="runtime-cancel" type="button" onClick={onCancel}>
+          取消运行
+        </button>
+      ) : null}
       <RuntimeComposer {...composerProps} />
     </section>
   );

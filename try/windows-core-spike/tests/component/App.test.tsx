@@ -7,6 +7,7 @@ import { countSerializedBlocks } from "../../src/blockly/fixtures";
 import { stableStringify } from "../../src/core/json";
 import type { HostBridge } from "../../src/host/HostBridge";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
+import { createWdioCanvasAction } from "../../src/test/wdioBootstrap";
 
 const EMPTY_WORKSPACE = {
   blocks: {
@@ -90,6 +91,53 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+  });
+
+  it("clears the loaded workspace through a visible project action", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.click(screen.getByRole("button", { name: "清空" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeDisabled();
+    });
+    expect(screen.getByText("添加聊天入口后才能运行作品")).toBeInTheDocument();
+  });
+
+  it("collapses the first top-level block through the visible canvas action", async () => {
+    const user = userEvent.setup();
+    const host = new InMemoryHostBridge();
+    render(
+      <App
+        hostBridge={host}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+        canvasAction={createWdioCanvasAction()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.click(screen.getByRole("button", { name: "折叠首块" }));
+    await user.click(screen.getByRole("button", { name: "保存" }));
+
+    await waitFor(async () => {
+      const saved = await host.loadProject("windows-core-spike");
+      const workspace = saved?.workspace as {
+        blocks?: { blocks?: Array<{ collapsed?: boolean; id?: string }> };
+      } | undefined;
+      expect(workspace?.blocks?.blocks?.find((block) => block.id === "block-001"))
+        .toMatchObject({ collapsed: true });
     });
   });
 
@@ -220,5 +268,74 @@ describe("App", () => {
       expect(screen.getByTestId("runtime-text-input")).toHaveValue("");
     });
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("shows the requested Tool and permissions until the user explicitly denies it", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.type(screen.getByTestId("runtime-text-input"), "/permission");
+    await user.click(screen.getByTestId("runtime-send"));
+
+    const request = await screen.findByRole("alertdialog", { name: "工具权限请求" });
+    expect(request).toHaveTextContent("tool.weather");
+    expect(request).toHaveTextContent("无额外权限");
+    await user.click(screen.getByRole("button", { name: "拒绝" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog", { name: "工具权限请求" })).not.toBeInTheDocument();
+    });
+    expect(screen.getByText("run.failed")).toBeInTheDocument();
+    expect(screen.queryByText("tool.started")).not.toBeInTheDocument();
+  });
+
+  it("executes an approved Tool only after the visible permission action", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.type(screen.getByTestId("runtime-text-input"), "/permission");
+    await user.click(screen.getByTestId("runtime-send"));
+    await screen.findByRole("alertdialog", { name: "工具权限请求" });
+    await user.click(screen.getByRole("button", { name: "批准" }));
+
+    expect(await screen.findByText("tool.completed")).toBeInTheDocument();
+    expect(screen.getByText("run.completed")).toBeInTheDocument();
+  });
+
+  it("cancels a run that is waiting for permission without completing it", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
+    });
+    await user.type(screen.getByTestId("runtime-text-input"), "/permission");
+    await user.click(screen.getByTestId("runtime-send"));
+    await screen.findByRole("alertdialog", { name: "工具权限请求" });
+    await user.click(screen.getByRole("button", { name: "取消运行" }));
+
+    expect(await screen.findByText("run.cancelled")).toBeInTheDocument();
+    expect(screen.queryByText("run.completed")).not.toBeInTheDocument();
   });
 });

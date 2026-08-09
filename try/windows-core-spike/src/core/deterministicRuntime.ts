@@ -95,6 +95,7 @@ function failureCode(error: unknown): string {
 export async function runProgram(options: RunProgramOptions): Promise<void> {
   const runId = options.dependencies.runIdFactory();
   const events = emitFactory(options, runId);
+  let activeBlockId: string | undefined;
   try {
     ensureActive(options.signal);
     events.emit("run.started");
@@ -150,6 +151,7 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
     }
 
     const blockId = firstMappedBlock(options.program, options.sourceMap);
+    activeBlockId = blockId;
     if (blockId) {
       ensureActive(options.signal);
       events.emit("block.started", {}, blockId);
@@ -170,8 +172,11 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       events.emit("run.cancelled");
       return;
     }
-    const blockId = error instanceof RuntimeFailure && error.blockId && options.sourceMap[error.blockId]
-      ? error.blockId
+    const failureBlockId = error instanceof RuntimeFailure
+      ? error.blockId ?? activeBlockId
+      : activeBlockId;
+    const blockId = failureBlockId && options.sourceMap[failureBlockId]
+      ? failureBlockId
       : undefined;
     events.emit("run.failed", { code: failureCode(error) }, blockId);
   }
