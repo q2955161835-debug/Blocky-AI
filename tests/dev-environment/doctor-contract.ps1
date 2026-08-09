@@ -87,27 +87,37 @@ function Assert-Contains {
 $quotedDoctor = $doctorPath.Replace("'", "''")
 $quotedLoader = $loaderPath.Replace("'", "''")
 $doctorCommand = "& '$quotedDoctor' -Json"
+$loaderCommand = @"
+. '$quotedLoader' 6>`$null
+[pscustomobject]@{
+    android = `$env:ANDROID_HOME
+    ndk = `$env:NDK_HOME
+    deveco = `$env:DEVECO_STUDIO_HOME
+} | ConvertTo-Json -Compress
+"@
+
+$baselineLoaderProcess = Invoke-IsolatedPowerShell -Code $loaderCommand
+Assert-Equal -Actual $baselineLoaderProcess.ExitCode -Expected 0 -Message 'loader resolves the healthy environment'
+try {
+    $baselineLoader = $baselineLoaderProcess.Stdout | ConvertFrom-Json
+}
+catch {
+    throw "Healthy loader did not emit valid JSON: $($baselineLoaderProcess.Stdout); stderr=$($baselineLoaderProcess.Stderr)"
+}
+$validAndroidHome = $baselineLoader.android
+$validNdkHome = $baselineLoader.ndk
+$validDevEcoHome = $baselineLoader.deveco
 
 $healthyProcess = Invoke-IsolatedPowerShell -Code $doctorCommand
 $healthy = Convert-DoctorResult -ProcessResult $healthyProcess -Scenario 'healthy doctor'
-$validAndroidHome = $null
-$validNdkHome = $null
-$validDevEcoHome = $null
 Assert-Equal -Actual $healthyProcess.ExitCode -Expected 0 -Message 'healthy doctor exits successfully'
 if ($healthy) {
     Assert-Equal -Actual $healthy.checks.Count -Expected 26 -Message 'healthy doctor emits the stable 26-check contract'
     Assert-Equal -Actual $healthy.failed -Expected 0 -Message 'healthy doctor has no failures'
-
-    $validAndroidHome = ($healthy.checks | Where-Object { $_.check -eq 'ANDROID_HOME' }).detail
-    $ndkRevision = (($healthy.checks | Where-Object { $_.check -eq 'NDK' }).detail -replace '^Pkg\.Revision\s*=\s*', '')
-    $validNdkHome = Join-Path $validAndroidHome "ndk\$ndkRevision"
-    $devEcoDetail = ($healthy.checks | Where-Object { $_.check -eq 'DevEco Studio' }).detail
-    $validDevEcoHome = $devEcoDetail -replace '^.*?\s+at\s+', ''
-
-    Assert-Equal -Actual (Test-Path -LiteralPath $validAndroidHome) -Expected $true -Message 'healthy doctor exposes a valid Android SDK root'
-    Assert-Equal -Actual (Test-Path -LiteralPath $validNdkHome) -Expected $true -Message 'healthy doctor exposes a valid Android NDK revision'
-    Assert-Equal -Actual (Test-Path -LiteralPath $validDevEcoHome) -Expected $true -Message 'healthy doctor exposes a valid DevEco Studio root'
 }
+Assert-Equal -Actual (Test-Path -LiteralPath $validAndroidHome) -Expected $true -Message 'healthy loader exposes a valid Android SDK root'
+Assert-Equal -Actual (Test-Path -LiteralPath $validNdkHome) -Expected $true -Message 'healthy loader exposes a valid Android NDK root'
+Assert-Equal -Actual (Test-Path -LiteralPath $validDevEcoHome) -Expected $true -Message 'healthy loader exposes a valid DevEco Studio root'
 
 $invalidAndroidProcess = Invoke-IsolatedPowerShell -Code $doctorCommand -Environment @{
     ANDROID_HOME = 'Z:\Blocky-Missing-Android-SDK'
@@ -153,14 +163,6 @@ if ($oldJava) {
     Assert-Equal -Actual $javaCheck.status -Expected 'FAIL' -Message 'Java below 17 is rejected'
 }
 
-$loaderCommand = @"
-. '$quotedLoader' 6>`$null
-[pscustomobject]@{
-    android = `$env:ANDROID_HOME
-    ndk = `$env:NDK_HOME
-    deveco = `$env:DEVECO_STUDIO_HOME
-} | ConvertTo-Json -Compress
-"@
 $processAndroid = Join-Path $validAndroidHome '.'
 $processNdk = Join-Path $validNdkHome '.'
 $processDevEco = Join-Path $validDevEcoHome '.'
