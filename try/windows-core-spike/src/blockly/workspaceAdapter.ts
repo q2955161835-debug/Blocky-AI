@@ -1,12 +1,5 @@
 import * as Blockly from "blockly/core";
-
-type JsonValue =
-  | null
-  | boolean
-  | number
-  | string
-  | JsonValue[]
-  | { [key: string]: JsonValue };
+import type { JsonValue } from "../core/json";
 
 export function saveWorkspace(workspace: Blockly.Workspace): JsonValue {
   return Blockly.serialization.workspaces.save(workspace) as JsonValue;
@@ -23,5 +16,5 @@ export function loadWorkspace(
 }
 
 export function listWorkspaceBlockIds(workspace: Blockly.Workspace): string[] {
-  return workspace.getAllBlocks(false).map((block) => block.id).sort();
+  return workspace.getAllBlocks(false).map((block) => block.id);
 }

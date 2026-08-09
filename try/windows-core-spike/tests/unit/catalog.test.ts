@@ -18,4 +18,28 @@ describe("spike block catalog", () => {
     expect(getDefinition("core.tool.reference").outputCheck).toBe("type.tool_ref");
     expect(getDefinition("core.data.compare").outputCheck).toBe("type.boolean");
   });
+
+  it("uses simplified Chinese for visible Blockly labels", () => {
+    const definitions = SPIKE_BLOCK_IDS.map(getDefinition);
+    const visibleMessages = definitions.flatMap((definition) =>
+      Object.entries(definition.json)
+        .filter(([key]) => /^message\d+$/.test(key))
+        .map(([, value]) => value),
+    );
+    const visibleFieldTexts = definitions.flatMap((definition) =>
+      Object.entries(definition.json)
+        .filter(([key]) => /^args\d+$/.test(key))
+        .flatMap(([, value]) => (Array.isArray(value) ? value : []))
+        .filter(
+          (argument): argument is { type: string; name?: string; text?: string } =>
+            typeof argument === "object" && argument !== null && "type" in argument,
+        )
+        .filter((argument) => argument.type === "field_input" && argument.name !== "TOOL_ID")
+        .map((argument) => argument.text),
+    );
+
+    expect([...visibleMessages, ...visibleFieldTexts]).not.toContainEqual(
+      expect.stringMatching(/[A-Za-z]/),
+    );
+  });
 });

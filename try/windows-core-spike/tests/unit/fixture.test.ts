@@ -37,6 +37,30 @@ describe("100-block fixture", () => {
     expect(blocks.every((block) => Boolean(Blockly.Blocks[block.type]))).toBe(true);
   });
 
+  it("keeps the actual Blockly traversal and root-block order on reload", () => {
+    registerSpikeBlocks();
+    const original = new Blockly.Workspace();
+    const reloaded = new Blockly.Workspace();
+    workspaces.push(original, reloaded);
+    loadWorkspace(createHundredBlockWorkspaceState(), original);
+    original.getBlockById("block-001")?.setCollapsed(true);
+
+    const originalTraversal = original.getAllBlocks(false).map((block) => block.id);
+    const originalRootOrder = (saveWorkspace(original) as {
+      blocks: { blocks: Array<{ id: string }> };
+    }).blocks.blocks.map((block) => block.id);
+
+    expect(listWorkspaceBlockIds(original)).toEqual(originalTraversal);
+    loadWorkspace(saveWorkspace(original), reloaded);
+    expect(listWorkspaceBlockIds(reloaded)).toEqual(originalTraversal);
+    expect(
+      (saveWorkspace(reloaded) as { blocks: { blocks: Array<{ id: string }> } }).blocks.blocks.map(
+        (block) => block.id,
+      ),
+    ).toEqual(originalRootOrder);
+    expect(reloaded.getBlockById("block-001")?.isCollapsed()).toBe(true);
+  });
+
   it("round-trips the official Blockly serialization", () => {
     registerSpikeBlocks();
     const original = new Blockly.Workspace();

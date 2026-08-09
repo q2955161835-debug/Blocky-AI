@@ -73,21 +73,21 @@ const toolContractConnections = Object.freeze({
 
 const definitions = [
   block("core.agent.define", "statement-container", "agent", {
-    message0: "agent %1 members %2",
+    message0: "智能体 %1 成员 %2",
     args0: [
-      { type: "field_input", name: "NAME", text: "Agent" },
+      { type: "field_input", name: "NAME", text: "智能体" },
       { type: "input_statement", name: "MEMBERS", check: CONNECTION_CHECK.agentMember },
     ],
   }, { statementInputs: [{ name: "MEMBERS", check: CONNECTION_CHECK.agentMember }] }),
   block("core.agent.add_tool", "statement-container", "agent", {
-    message0: "add tool %1",
+    message0: "添加工具 %1",
     args0: [{ type: "input_value", name: "TOOL", check: CONNECTION_CHECK.toolRef }],
     ...agentMemberConnections,
   }),
   block("core.interaction.chat_entry", "statement-container", "interaction", {
-    message0: "chat entry %1 capabilities %2 handler %3",
+    message0: "聊天入口 %1 能力 %2 处理器 %3",
     args0: [
-      { type: "field_input", name: "NAME", text: "Chat" },
+      { type: "field_input", name: "NAME", text: "聊天" },
       { type: "input_statement", name: "CAPABILITIES", check: CONNECTION_CHECK.entryCapability },
       { type: "input_statement", name: "HANDLER", check: CONNECTION_CHECK.command },
     ],
@@ -99,129 +99,129 @@ const definitions = [
     ],
   }),
   block("core.interaction.accept_text", "statement-container", "interaction", {
-    message0: "accept text",
+    message0: "接收文本",
     ...entryCapabilityConnections,
   }),
   block("core.interaction.accept_image", "statement-container", "interaction", {
-    message0: "accept image",
+    message0: "接收图片",
     ...entryCapabilityConnections,
   }),
   block("core.interaction.accept_file", "statement-container", "interaction", {
-    message0: "accept file",
+    message0: "接收文件",
     ...entryCapabilityConnections,
   }),
   block("core.interaction.accept_voice", "statement-container", "interaction", {
-    message0: "accept voice",
+    message0: "接收语音",
     ...entryCapabilityConnections,
   }),
   block("core.interaction.expose_skill", "statement-container", "interaction", {
-    message0: "expose skill %1",
-    args0: [{ type: "field_input", name: "SKILL", text: "skill" }],
+    message0: "暴露技能 %1",
+    args0: [{ type: "field_input", name: "SKILL", text: "技能" }],
     ...entryCapabilityConnections,
   }),
   block("core.interaction.expose_plugin", "statement-container", "interaction", {
-    message0: "expose plugin %1",
-    args0: [{ type: "field_input", name: "PLUGIN", text: "plugin" }],
+    message0: "暴露插件 %1",
+    args0: [{ type: "field_input", name: "PLUGIN", text: "插件" }],
     ...entryCapabilityConnections,
   }),
   block("core.interaction.current_entry", "reference", "interaction", {
-    message0: "current entry",
+    message0: "当前入口",
     output: CONNECTION_CHECK.entryRef,
   }, { outputCheck: CONNECTION_CHECK.entryRef }),
   block("core.interaction.reference", "reference", "interaction", {
-    message0: "entry reference %1",
-    args0: [{ type: "field_input", name: "ENTRY_ID", text: "chat" }],
+    message0: "入口引用 %1",
+    args0: [{ type: "field_input", name: "ENTRY_ID", text: "聊天" }],
     output: CONNECTION_CHECK.entryRef,
   }, { outputCheck: CONNECTION_CHECK.entryRef }),
   block("core.event.manual_run", "event-hat", "event", {
-    message0: "when manually run",
+    message0: "手动运行时",
     nextStatement: CONNECTION_CHECK.command,
   }),
   block("core.message.incoming", "event-hat", "event", {
-    message0: "when message arrives",
+    message0: "收到消息时",
     nextStatement: CONNECTION_CHECK.command,
   }),
   block("core.message.field", "typed-value", "message", {
-    message0: "message field %1 of %2",
+    message0: "消息字段 %1 来自 %2",
     args0: [
-      { type: "field_input", name: "FIELD", text: "text" },
+      { type: "field_input", name: "FIELD", text: "文本" },
       { type: "input_value", name: "MESSAGE", check: CONNECTION_CHECK.message },
     ],
     output: CONNECTION_CHECK.json,
   }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.message.create", "typed-value", "message", {
-    message0: "create message %1",
+    message0: "创建消息 %1",
     args0: [{ type: "input_value", name: "CONTENT", check: CONNECTION_CHECK.json }],
     output: CONNECTION_CHECK.message,
   }, { outputCheck: CONNECTION_CHECK.message }),
   block("core.message.add_part", "command", "message", {
-    message0: "add part %1",
+    message0: "添加片段 %1",
     args0: [{ type: "input_value", name: "PART", check: CONNECTION_CHECK.json }],
     ...commandConnections,
   }),
   block("core.message.reply", "command", "message", {
-    message0: "reply %1",
+    message0: "回复 %1",
     args0: [{ type: "input_value", name: "MESSAGE", check: CONNECTION_CHECK.message }],
     ...commandConnections,
   }),
   block("core.message.send", "command", "message", {
-    message0: "send message",
+    message0: "发送消息",
     ...commandConnections,
   }),
   block("core.message.stream", "command", "message", {
-    message0: "stream message",
+    message0: "流式发送消息",
     ...commandConnections,
   }),
   block("core.message.wait", "command", "message", {
-    message0: "wait",
+    message0: "等待",
     ...commandConnections,
   }),
   block("core.tool.define", "statement-container", "tool", {
-    message0: "tool %1 contract %2",
+    message0: "工具 %1 合同 %2",
     args0: [
       { type: "field_input", name: "TOOL_ID", text: "tool.weather" },
       { type: "input_statement", name: "CONTRACT", check: CONNECTION_CHECK.toolContract },
     ],
   }, { statementInputs: [{ name: "CONTRACT", check: CONNECTION_CHECK.toolContract }] }),
   block("core.tool.parameter", "statement-container", "tool", {
-    message0: "parameter %1",
-    args0: [{ type: "field_input", name: "NAME", text: "city" }],
+    message0: "参数 %1",
+    args0: [{ type: "field_input", name: "NAME", text: "城市" }],
     ...toolContractConnections,
   }),
   block("core.tool.result_schema", "statement-container", "tool", {
-    message0: "result schema",
+    message0: "结果架构",
     ...toolContractConnections,
   }),
   block("core.tool.reference", "reference", "tool", {
-    message0: "tool reference %1",
+    message0: "工具引用 %1",
     args0: [{ type: "field_input", name: "TOOL_ID", text: "tool.weather" }],
     output: CONNECTION_CHECK.toolRef,
   }, { outputCheck: CONNECTION_CHECK.toolRef }),
   block("core.tool.call", "typed-value", "tool", {
-    message0: "call tool %1",
+    message0: "调用工具 %1",
     args0: [{ type: "input_value", name: "TOOL", check: CONNECTION_CHECK.toolRef }],
     output: CONNECTION_CHECK.json,
   }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.tool.result", "typed-value", "tool", {
-    message0: "tool result",
+    message0: "工具结果",
     output: CONNECTION_CHECK.json,
   }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.tool.require_approval", "statement-container", "tool", {
-    message0: "require approval",
+    message0: "需要审批",
     ...toolContractConnections,
   }),
   block("core.data.literal", "typed-value", "data", {
-    message0: "literal %1",
-    args0: [{ type: "field_input", name: "VALUE", text: "value" }],
+    message0: "字面量 %1",
+    args0: [{ type: "field_input", name: "VALUE", text: "值" }],
     output: CONNECTION_CHECK.json,
   }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.data.record", "typed-value", "data", {
-    message0: "record value %1",
+    message0: "记录值 %1",
     args0: [{ type: "input_value", name: "VALUE", check: CONNECTION_CHECK.json }],
     output: CONNECTION_CHECK.json,
   }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.data.compare", "boolean-condition", "data", {
-    message0: "compare %1 equals %2",
+    message0: "比较 %1 等于 %2",
     args0: [
       { type: "input_value", name: "LEFT", check: CONNECTION_CHECK.json },
       { type: "input_value", name: "RIGHT", check: CONNECTION_CHECK.json },
@@ -230,7 +230,7 @@ const definitions = [
     outputShape: BOOLEAN_OUTPUT_SHAPE,
   }, { outputCheck: CONNECTION_CHECK.boolean }),
   block("core.flow.if", "statement-container", "flow", {
-    message0: "if %1 do %2",
+    message0: "如果 %1 则执行 %2",
     args0: [
       { type: "input_value", name: "CONDITION", check: CONNECTION_CHECK.boolean },
       { type: "input_statement", name: "DO", check: CONNECTION_CHECK.command },
