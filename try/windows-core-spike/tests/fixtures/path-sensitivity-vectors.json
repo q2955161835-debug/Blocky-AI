@@ -2,7 +2,9 @@
   "sensitive": [
     "prefix(C:\\Users\\demo\\key.txt)",
     "prefix(/var/tmp/key.txt)",
+    "prefix(/VAR/tmp/key)",
     "file=/var/secret",
+    "FILE=/custom/secret",
     "/workspace/config.json"
   ],
   "allowed": [
@@ -10,6 +12,8 @@
     "/permission",
     "/api/v1",
     "route=/api/agent/v1",
+    "/api/v1/config.json",
+    "route=/api/v1/config.json",
     "https://example.com/a/b"
   ]
 }

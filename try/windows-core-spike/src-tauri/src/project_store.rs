@@ -3,16 +3,19 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
+use std::collections::HashSet;
+use std::ffi::{OsStr, OsString};
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::sync::OnceLock;
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 #[cfg(windows)]
 use std::os::windows::fs::MetadataExt;
 
 pub const MAX_PROJECT_BYTES: usize = 5 * 1024 * 1024;
 const PROJECT_SCHEMA: &str = "blocky.spike-project/v1";
+static SAVE_LOCK: Mutex<()> = Mutex::new(());
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -66,12 +69,15 @@ impl ProjectStore {
         validate_json_bytes(request.json.as_bytes())?;
         validate_json_document(&request.project_id, &request.json)?;
 
+        let _save_guard = lock_project_saves();
         ensure_path_entry_safe(&self.root)?;
         fs::create_dir_all(&self.root)
             .map_err(|error| HostError::io("PROJECT_DIRECTORY_CREATE_FAILED", error))?;
         ensure_path_entry_safe(&self.root)?;
         let target = self.root.join(format!("{}.json", request.project_id));
         ensure_target_entry_safe(&target)?;
+        let temporary_files_before = atomic_temporary_file_names(&self.root, &target)
+            .map_err(|error| HostError::io("PROJECT_WRITE_TEMP_SCAN_FAILED", error))?;
         let mut file = AtomicWriteFile::open(&target)
             .map_err(|error| HostError::io("PROJECT_WRITE_OPEN_FAILED", error))?;
         if let Err(error) = file.write_all(request.json.as_bytes()) {
@@ -82,8 +88,10 @@ impl ProjectStore {
                 }
             };
         }
-        file.commit()
-            .map_err(|error| HostError::io("PROJECT_WRITE_COMMIT_FAILED", error))?;
+        if let Err(error) = file.commit() {
+            cleanup_new_atomic_temporary_files(&self.root, &target, &temporary_files_before)?;
+            return Err(HostError::io("PROJECT_WRITE_COMMIT_FAILED", error));
+        }
 
         Ok(project_record(request.project_id, request.json))
     }
@@ -107,6 +115,52 @@ impl ProjectStore {
 
         Ok(project_record(project_id.to_owned(), json))
     }
+}
+
+fn lock_project_saves() -> MutexGuard<'static, ()> {
+    SAVE_LOCK
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn atomic_temporary_file_name_matches(target: &Path, candidate: &OsStr) -> bool {
+    let Some(target_name) = target.file_name().and_then(OsStr::to_str) else {
+        return false;
+    };
+    let Some(candidate) = candidate.to_str() else {
+        return false;
+    };
+    let prefix = format!(".{target_name}.");
+    let Some(suffix) = candidate.strip_prefix(&prefix) else {
+        return false;
+    };
+    suffix.len() == 6 && suffix.bytes().all(|byte| byte.is_ascii_alphanumeric())
+}
+
+fn atomic_temporary_file_names(root: &Path, target: &Path) -> std::io::Result<HashSet<OsString>> {
+    let mut names = HashSet::new();
+    for entry in fs::read_dir(root)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        if atomic_temporary_file_name_matches(target, &name) && entry.file_type()?.is_file() {
+            names.insert(name);
+        }
+    }
+    Ok(names)
+}
+
+fn cleanup_new_atomic_temporary_files(
+    root: &Path,
+    target: &Path,
+    temporary_files_before: &HashSet<OsString>,
+) -> Result<(), HostError> {
+    let temporary_files_after = atomic_temporary_file_names(root, target)
+        .map_err(|error| HostError::io("PROJECT_WRITE_CLEANUP_FAILED", error))?;
+    for name in temporary_files_after.difference(temporary_files_before) {
+        fs::remove_file(root.join(name))
+            .map_err(|error| HostError::io("PROJECT_WRITE_CLEANUP_FAILED", error))?;
+    }
+    Ok(())
 }
 
 fn validate_project_id(project_id: &str) -> Result<(), HostError> {
@@ -214,7 +268,7 @@ fn sensitive_patterns() -> &'static [Regex] {
             r"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----",
             r"(?i)(?:^|[;\s])(?:set-)?cookie\s*:\s*[^\s;=]+=[^\s;]+",
             r#"(?i)(?:^|[^A-Za-z0-9_])[a-z]:\\(?:[^\s\\/:*?"<>|]+\\)*[^\s\\/:*?"<>|]+"#,
-            r"(?:^|[^A-Za-z0-9_])file=/(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+|(?:^|[^:/A-Za-z0-9_])/(?:var|tmp|home|usr|etc|opt|mnt)(?:/[A-Za-z0-9._-]+)+|(?:^|[^:/A-Za-z0-9_])/(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+\.[A-Za-z0-9._-]+",
+            r"(?i)(?:^|[^A-Za-z0-9_])file=/(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+|(?:^|[^:/A-Za-z0-9_])/(?:var|tmp|home|usr|etc|opt|mnt|workspace)(?:/[A-Za-z0-9._-]+)+",
         ]
         .into_iter()
         .map(|pattern| Regex::new(pattern).expect("static sensitive-value regex is valid"))
@@ -245,12 +299,69 @@ fn sha256_hex(bytes: &[u8]) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::path_metadata_flags_are_unsafe;
+    use super::{
+        atomic_temporary_file_name_matches, cleanup_new_atomic_temporary_files,
+        path_metadata_flags_are_unsafe,
+    };
+    use std::collections::HashSet;
+    use std::ffi::OsString;
 
     #[test]
     fn project_store_path_flag_helper_rejects_symlinks_and_windows_reparse_points() {
         assert!(path_metadata_flags_are_unsafe(true, 0));
         assert!(path_metadata_flags_are_unsafe(false, 0x400));
         assert!(!path_metadata_flags_are_unsafe(false, 0));
+    }
+
+    #[test]
+    fn atomic_temporary_name_matcher_accepts_only_the_exact_target_and_suffix_shape() {
+        let target = std::path::Path::new("demo-project.json");
+        assert!(atomic_temporary_file_name_matches(
+            target,
+            std::ffi::OsStr::new(".demo-project.json.ABC123")
+        ));
+        assert!(!atomic_temporary_file_name_matches(
+            target,
+            std::ffi::OsStr::new(".other-project.json.ABC123")
+        ));
+        assert!(!atomic_temporary_file_name_matches(
+            target,
+            std::ffi::OsStr::new(".demo-project.json.ABC12")
+        ));
+        assert!(!atomic_temporary_file_name_matches(
+            target,
+            std::ffi::OsStr::new(".demo-project.json.ABC12-")
+        ));
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn atomic_cleanup_failure_uses_a_fixed_safe_error() {
+        use std::fs::{self, OpenOptions};
+        use std::os::windows::fs::OpenOptionsExt;
+
+        let directory = tempfile::tempdir().expect("temporary project directory");
+        let target = directory.path().join("demo-project.json");
+        let candidate = directory.path().join(".demo-project.json.ABC123");
+        fs::write(&candidate, b"locked cleanup fixture").expect("cleanup fixture is written");
+        let _exclusive = OpenOptions::new()
+            .read(true)
+            .share_mode(0)
+            .open(&candidate)
+            .expect("cleanup fixture is exclusively locked");
+
+        let error = cleanup_new_atomic_temporary_files(
+            directory.path(),
+            &target,
+            &HashSet::<OsString>::new(),
+        )
+        .expect_err("locked new temporary file cannot be cleaned");
+        assert_eq!(error.code, "PROJECT_WRITE_CLEANUP_FAILED");
+        assert_eq!(error.message, "保存项目失败，请重试");
+        assert!(
+            !error
+                .message
+                .contains(directory.path().to_string_lossy().as_ref())
+        );
     }
 }

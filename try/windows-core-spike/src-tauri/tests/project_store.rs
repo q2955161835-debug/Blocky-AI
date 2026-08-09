@@ -480,6 +480,119 @@ fn atomic_discard_removes_the_named_temporary_file() {
     );
 }
 
+#[cfg(windows)]
+#[test]
+fn project_store_commit_failure_removes_only_its_new_atomic_temp_file() {
+    use std::fs::OpenOptions;
+    use std::os::windows::fs::OpenOptionsExt;
+
+    let directory = tempdir().expect("temporary project directory");
+    let target = directory.path().join("demo-project.json");
+    let existing_temp = directory.path().join(".demo-project.json.ABC123");
+    let other_project_temp = directory.path().join(".other-project.json.XYZ789");
+    let near_match = directory.path().join(".demo-project.json.ABC12");
+    let store = ProjectStore::new(directory.path().to_path_buf());
+    store
+        .save(request("demo-project", EXACT_JSON.to_owned()))
+        .expect("initial save succeeds");
+    fs::write(&existing_temp, b"existing-temp").expect("existing temp fixture is written");
+    fs::write(&other_project_temp, b"other-project").expect("other project fixture is written");
+    fs::write(&near_match, b"near-match").expect("near match fixture is written");
+
+    let exclusive = OpenOptions::new()
+        .read(true)
+        .share_mode(0)
+        .open(&target)
+        .expect("target is locked against replacement");
+    let error = store
+        .save(request(
+            "demo-project",
+            valid_json("demo-project", json!({ "revision": 2 })),
+        ))
+        .expect_err("locked target makes atomic commit fail");
+    drop(exclusive);
+    let mut entries = fs::read_dir(directory.path())
+        .expect("project root is readable")
+        .map(|entry| entry.expect("directory entry is readable").file_name())
+        .collect::<Vec<_>>();
+    entries.sort();
+    let mut expected = vec![
+        target.file_name().expect("target name").to_owned(),
+        existing_temp
+            .file_name()
+            .expect("existing temp name")
+            .to_owned(),
+        other_project_temp
+            .file_name()
+            .expect("other project temp name")
+            .to_owned(),
+        near_match.file_name().expect("near match name").to_owned(),
+    ];
+    expected.sort();
+
+    assert_eq!(error.code, "PROJECT_WRITE_COMMIT_FAILED");
+    assert_eq!(error.message, "保存项目失败，请重试");
+    assert_eq!(entries, expected);
+    assert_eq!(
+        fs::read_to_string(&target).expect("original remains"),
+        EXACT_JSON
+    );
+    assert_eq!(
+        fs::read(&existing_temp).expect("existing temp remains"),
+        b"existing-temp"
+    );
+    assert_eq!(
+        fs::read(&other_project_temp).expect("other project remains"),
+        b"other-project"
+    );
+    assert_eq!(
+        fs::read(&near_match).expect("near match remains"),
+        b"near-match"
+    );
+}
+
+#[test]
+fn concurrent_saves_of_one_project_leave_one_complete_snapshot_and_no_temp_files() {
+    use std::sync::{Arc, Barrier};
+    use std::thread;
+
+    const WRITERS: usize = 12;
+    let directory = tempdir().expect("temporary project directory");
+    let root = directory.path().to_path_buf();
+    let barrier = Arc::new(Barrier::new(WRITERS));
+    let snapshots = (0..WRITERS)
+        .map(|revision| valid_json("demo-project", json!({ "revision": revision })))
+        .collect::<Vec<_>>();
+    let handles = snapshots
+        .iter()
+        .cloned()
+        .map(|snapshot| {
+            let barrier = Arc::clone(&barrier);
+            let root = root.clone();
+            thread::spawn(move || {
+                barrier.wait();
+                ProjectStore::new(root).save(request("demo-project", snapshot))
+            })
+        })
+        .collect::<Vec<_>>();
+
+    for handle in handles {
+        handle
+            .join()
+            .expect("save thread does not panic")
+            .expect("concurrent save succeeds");
+    }
+    let final_json = fs::read_to_string(root.join("demo-project.json"))
+        .expect("one complete project snapshot remains");
+    assert!(snapshots.contains(&final_json));
+    assert_eq!(
+        fs::read_dir(&root)
+            .expect("project root is readable")
+            .count(),
+        1
+    );
+}
+
 #[test]
 fn project_store_rejects_symlinked_root_before_save() {
     let directory = tempdir().expect("temporary project directory");
