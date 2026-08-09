@@ -51,7 +51,7 @@ function twoApprovalCallsProgram(): BlockyProgram {
       {
         id: "invalid-first-call",
         type: "core.tool.call",
-        fields: { ARGS: {} },
+        fields: { ARGS: "not-an-argument-record" },
         inputs: { TOOL: { id: "invalid-first-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.required" } } },
       },
       {
@@ -274,7 +274,7 @@ describe("deterministic runtime", () => {
     expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "TOOL_CALL_INVALID" } });
   });
 
-  it("fails the first invalid approval call instead of executing a later valid one", async () => {
+  it("fails the first invalid-ARGS approval call instead of executing a later valid one", async () => {
     const requiredTool = { ...approvedTool(), id: "mock.required", inputSchema: {
       type: "object" as const,
       properties: { destination: { type: "string" as const } },
@@ -293,7 +293,11 @@ describe("deterministic runtime", () => {
 
     expect(events.map((event) => event.type)).not.toContain("tool.permission_requested");
     expect(events.map((event) => event.type)).not.toContain("tool.started");
-    expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "TOOL_CALL_INVALID" } });
+    expect(events.at(-1)).toMatchObject({
+      type: "run.failed",
+      blockId: "invalid-first-call",
+      data: { code: "TOOL_CALL_INVALID" },
+    });
   });
 
   it("redacts sensitive event data before it is observed", async () => {

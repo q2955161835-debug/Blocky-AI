@@ -1,4 +1,4 @@
-import type { BlockyProgram } from "./ir";
+import type { BlockyProgram, IrNode } from "./ir";
 import { createRuntimeEvent, type RuntimeEvent, type RuntimeEventType } from "./runtimeEvents";
 import { resolveToolUsages, type ToolContract } from "./toolContract";
 
@@ -26,7 +26,7 @@ export interface RunProgramOptions {
 }
 
 class RuntimeFailure extends Error {
-  constructor(readonly code: string) {
+  constructor(readonly code: string, readonly blockId?: string) {
     super(code);
   }
 }
@@ -42,6 +42,23 @@ function firstMappedBlock(program: BlockyProgram, sourceMap: Record<string, { no
   if (!blockId) return undefined;
   if (!sourceMap[blockId]) throw new RuntimeFailure("RUNTIME_SOURCE_MAP_MISSING");
   return blockId;
+}
+
+function explicitToolCallsInOrder(program: BlockyProgram): IrNode[] {
+  const calls: IrNode[] = [];
+  const visit = (node: IrNode): void => {
+    if (node.type === "core.tool.call") calls.push(node);
+    for (const child of Object.values(node.inputs ?? {})) visit(child);
+    if (node.next) visit(node.next);
+  };
+  program.roots.forEach(visit);
+  return calls;
+}
+
+function toolIdForCall(call: IrNode): string | undefined {
+  const reference = call.inputs?.TOOL;
+  const toolId = reference?.type === "core.tool.reference" ? reference.fields?.TOOL_ID : undefined;
+  return typeof toolId === "string" && toolId.trim() !== "" ? toolId : undefined;
 }
 
 function emitFactory(options: RunProgramOptions, runId: string) {
@@ -87,7 +104,21 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       const invalidCallIds = new Set(usages.diagnostics
         .filter((diagnostic) => diagnostic.severity === "error" && diagnostic.blockId)
         .map((diagnostic) => diagnostic.blockId as string));
-      const requested = usages.explicitCalls.find(({ contract }) => contract.requiresApproval);
+      let requested: (typeof usages.explicitCalls)[number] | undefined;
+      for (const callBlock of explicitToolCallsInOrder(options.program)) {
+        const toolId = toolIdForCall(callBlock);
+        if (!toolId) throw new RuntimeFailure("TOOL_CALL_INVALID", callBlock.id);
+        const contract = options.dependencies.tools.get(toolId);
+        if (!contract) throw new RuntimeFailure("TOOL_CALL_INVALID", callBlock.id);
+        if (!contract.requiresApproval) continue;
+
+        const resolved = usages.explicitCalls.find(({ call }) => call.callBlockId === callBlock.id);
+        if (!resolved || invalidCallIds.has(callBlock.id)) {
+          throw new RuntimeFailure("TOOL_CALL_INVALID", callBlock.id);
+        }
+        requested = resolved;
+        break;
+      }
 
       if (!requested) throw new RuntimeFailure("TOOL_APPROVAL_CALL_MISSING");
       const { call, contract } = requested;
@@ -106,7 +137,7 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
         permissions: [...contract.permissions],
       });
       ensureActive(options.signal);
-      if (decision === "denied") throw new RuntimeFailure("TOOL_PERMISSION_DENIED");
+      if (decision === "denied") throw new RuntimeFailure("TOOL_PERMISSION_DENIED", call.callBlockId);
 
       events.emit("tool.started", { toolId: contract.id }, call.callBlockId);
       ensureActive(options.signal);
@@ -139,6 +170,9 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       events.emit("run.cancelled");
       return;
     }
-    events.emit("run.failed", { code: failureCode(error) });
+    const blockId = error instanceof RuntimeFailure && error.blockId && options.sourceMap[error.blockId]
+      ? error.blockId
+      : undefined;
+    events.emit("run.failed", { code: failureCode(error) }, blockId);
   }
 }
