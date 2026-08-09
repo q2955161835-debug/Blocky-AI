@@ -87,18 +87,18 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       const invalidCallIds = new Set(usages.diagnostics
         .filter((diagnostic) => diagnostic.severity === "error" && diagnostic.blockId)
         .map((diagnostic) => diagnostic.blockId as string));
-      const requested = usages.explicitCalls.find(({ call, contract }) =>
-        contract.requiresApproval && !invalidCallIds.has(call.callBlockId));
-      const hasInvalidApprovedCall = usages.explicitCalls.some(({ call, contract }) =>
-        contract.requiresApproval && invalidCallIds.has(call.callBlockId));
+      const requested = usages.explicitCalls.find(({ contract }) => contract.requiresApproval);
 
-      if (!requested) throw new RuntimeFailure(hasInvalidApprovedCall ? "TOOL_CALL_INVALID" : "TOOL_APPROVAL_CALL_MISSING");
+      if (!requested) throw new RuntimeFailure("TOOL_APPROVAL_CALL_MISSING");
       const { call, contract } = requested;
+      if (invalidCallIds.has(call.callBlockId)) throw new RuntimeFailure("TOOL_CALL_INVALID");
       if (!options.sourceMap[call.callBlockId]) throw new RuntimeFailure("RUNTIME_SOURCE_MAP_MISSING");
 
       ensureActive(options.signal);
       events.emit("block.started", {}, call.callBlockId);
+      ensureActive(options.signal);
       events.emit("tool.permission_requested", { permissions: contract.permissions, toolId: contract.id }, call.callBlockId);
+      ensureActive(options.signal);
       const decision = await options.dependencies.requestApproval({
         runId,
         toolId: contract.id,
@@ -111,7 +111,9 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       events.emit("tool.started", { toolId: contract.id }, call.callBlockId);
       ensureActive(options.signal);
       events.emit("tool.completed", { result: contract.implementation.result, toolId: contract.id }, call.callBlockId);
+      ensureActive(options.signal);
       events.emit("block.completed", {}, call.callBlockId);
+      ensureActive(options.signal);
       events.emit("run.completed");
       return;
     }
@@ -133,7 +135,7 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
     events.emit("run.completed");
   } catch (error) {
     if (events.isTerminal()) return;
-    if (error instanceof RuntimeCancelled) {
+    if (options.signal.aborted || error instanceof RuntimeCancelled) {
       events.emit("run.cancelled");
       return;
     }

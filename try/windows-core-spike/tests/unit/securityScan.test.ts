@@ -38,4 +38,26 @@ describe("sensitive value scanner", () => {
       safe: "projectId",
     });
   });
+
+  it("recognizes embedded absolute file paths without redacting commands or routes", () => {
+    const windowsPath = ["file=", "C", ":\\", "Users\\Example\\secret.txt"].join("");
+    const unixPath = ["file=", "/", "var", "/tmp/secret.txt"].join("");
+    const unixPathWithoutExtension = ["file=", "/", "var", "/secret"].join("");
+    const commands = ["/error", "/permission", "/api/v1"];
+    const values = { windowsPath, unixPath, unixPathWithoutExtension, commands };
+    const findings = scanSensitiveValues(values);
+
+    expect(findings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ path: "$.windowsPath", kind: "windows-absolute-path" }),
+      expect.objectContaining({ path: "$.unixPath", kind: "unix-absolute-path" }),
+      expect.objectContaining({ path: "$.unixPathWithoutExtension", kind: "unix-absolute-path" }),
+    ]));
+    expect(findings.some((finding) => finding.path.startsWith("$.commands"))).toBe(false);
+    expect(redactSensitiveValues(values)).toEqual({
+      windowsPath: "[REDACTED:windows-absolute-path]",
+      unixPath: "[REDACTED:unix-absolute-path]",
+      unixPathWithoutExtension: "[REDACTED:unix-absolute-path]",
+      commands,
+    });
+  });
 });

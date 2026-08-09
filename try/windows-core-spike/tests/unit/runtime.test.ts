@@ -44,6 +44,35 @@ function permissionSourceMap() {
   };
 }
 
+function twoApprovalCallsProgram(): BlockyProgram {
+  return {
+    schemaVersion: "blocky.ir/v0-spike",
+    roots: [
+      {
+        id: "invalid-first-call",
+        type: "core.tool.call",
+        fields: { ARGS: {} },
+        inputs: { TOOL: { id: "invalid-first-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.required" } } },
+      },
+      {
+        id: "valid-later-call",
+        type: "core.tool.call",
+        fields: { ARGS: {} },
+        inputs: { TOOL: { id: "valid-later-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.write" } } },
+      },
+    ],
+  };
+}
+
+function twoApprovalCallsSourceMap() {
+  return {
+    "invalid-first-call": { nodeId: "invalid-first-call" },
+    "invalid-first-ref": { nodeId: "invalid-first-ref" },
+    "valid-later-call": { nodeId: "valid-later-call" },
+    "valid-later-ref": { nodeId: "valid-later-ref" },
+  };
+}
+
 function dependencies(overrides: Partial<RuntimeDependencies> = {}): RuntimeDependencies {
   return {
     runIdFactory: () => "run-test-001",
@@ -154,6 +183,79 @@ describe("deterministic runtime", () => {
     expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "TOOL_PERMISSION_DENIED" } });
   });
 
+  it.each(["tool.completed", "block.completed"])("cancellation after %s wins over completion", async (abortAfter) => {
+    const controller = new AbortController();
+    const events: RuntimeEvent[] = [];
+    await runProgram({
+      program: permissionProgram(),
+      sourceMap: permissionSourceMap(),
+      input: "/permission",
+      signal: controller.signal,
+      dependencies: dependencies({ tools: new Map([["mock.write", approvedTool()]]) }),
+      onEvent: (event) => {
+        events.push(event);
+        if (event.type === abortAfter) controller.abort();
+      },
+    });
+
+    expect(events.at(-1)?.type).toBe("run.cancelled");
+    expect(events.filter((event) => event.type === "run.cancelled")).toHaveLength(1);
+    expect(events.some((event) => event.type === "run.completed")).toBe(false);
+  });
+
+  it("checks cancellation before publishing the event after block start", async () => {
+    const controller = new AbortController();
+    const events: RuntimeEvent[] = [];
+    await runProgram({
+      program: permissionProgram(),
+      sourceMap: permissionSourceMap(),
+      input: "/permission",
+      signal: controller.signal,
+      dependencies: dependencies({ tools: new Map([["mock.write", approvedTool()]]) }),
+      onEvent: (event) => {
+        events.push(event);
+        if (event.type === "block.started") controller.abort();
+      },
+    });
+
+    expect(events.map((event) => event.type)).not.toContain("tool.permission_requested");
+    expect(events.at(-1)?.type).toBe("run.cancelled");
+  });
+
+  it("lets cancellation win when approval aborts before rejecting", async () => {
+    const controller = new AbortController();
+    const events = await run({
+      program: permissionProgram(),
+      sourceMap: permissionSourceMap(),
+      input: "/permission",
+      signal: controller.signal,
+      runtime: dependencies({
+        tools: new Map([["mock.write", approvedTool()]]),
+        requestApproval: async () => {
+          controller.abort();
+          throw new Error("approval callback rejected");
+        },
+      }),
+    });
+
+    expect(events.map((event) => event.type)).not.toContain("run.failed");
+    expect(events.filter((event) => event.type === "run.cancelled")).toHaveLength(1);
+  });
+
+  it("keeps an approval rejection without cancellation as a stable failure", async () => {
+    const events = await run({
+      program: permissionProgram(),
+      sourceMap: permissionSourceMap(),
+      input: "/permission",
+      runtime: dependencies({
+        tools: new Map([["mock.write", approvedTool()]]),
+        requestApproval: async () => { throw new Error("approval callback rejected"); },
+      }),
+    });
+
+    expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "RUNTIME_SIMULATED_FAILURE" } });
+  });
+
   it("does not execute an invalid explicit tool call", async () => {
     const requiredTool = { ...approvedTool(), inputSchema: {
       type: "object" as const,
@@ -169,6 +271,28 @@ describe("deterministic runtime", () => {
     });
 
     expect(events.some((event) => event.type === "tool.started")).toBe(false);
+    expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "TOOL_CALL_INVALID" } });
+  });
+
+  it("fails the first invalid approval call instead of executing a later valid one", async () => {
+    const requiredTool = { ...approvedTool(), id: "mock.required", inputSchema: {
+      type: "object" as const,
+      properties: { destination: { type: "string" as const } },
+      required: ["destination"],
+      additionalProperties: false as const,
+    } };
+    const events = await run({
+      program: twoApprovalCallsProgram(),
+      sourceMap: twoApprovalCallsSourceMap(),
+      input: "/permission",
+      runtime: dependencies({ tools: new Map([
+        ["mock.required", requiredTool],
+        ["mock.write", approvedTool()],
+      ]) }),
+    });
+
+    expect(events.map((event) => event.type)).not.toContain("tool.permission_requested");
+    expect(events.map((event) => event.type)).not.toContain("tool.started");
     expect(events.at(-1)).toMatchObject({ type: "run.failed", data: { code: "TOOL_CALL_INVALID" } });
   });
 
