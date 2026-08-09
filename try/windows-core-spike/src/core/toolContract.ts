@@ -313,7 +313,7 @@ function canonicalArgumentRecord(raw: unknown): Record<string, JsonValue> | unde
 function canonicalArgs(call: IrNode, diagnostics: Diagnostic[]): Record<string, JsonValue> | undefined {
   const hasArgs = hasField(call, "ARGS");
   const hasLegacyArguments = hasField(call, "ARGUMENTS");
-  if (!hasArgs && hasLegacyArguments) {
+  if (hasLegacyArguments) {
     diagnostics.push(error("TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED", "工具调用只接受规范字段 ARGS，不支持 ARGUMENTS 别名", call.id));
     return undefined;
   }
@@ -323,13 +323,6 @@ function canonicalArgs(call: IrNode, diagnostics: Diagnostic[]): Record<string, 
   if (!args) {
     diagnostics.push(error("TOOL_CALL_INVALID_ARGUMENTS", "工具调用 ARGS 必须是 plain JSON 对象", call.id));
     return undefined;
-  }
-  if (hasLegacyArguments) {
-    const legacyArgs = canonicalArgumentRecord(call.fields?.ARGUMENTS);
-    if (!legacyArgs || JSON.stringify(args) !== JSON.stringify(legacyArgs)) {
-      diagnostics.push(error("TOOL_CALL_ARGUMENT_FIELDS_CONFLICT", "工具调用 ARGS 与 ARGUMENTS 字段冲突", call.id));
-      return undefined;
-    }
   }
   return args;
 }

@@ -151,21 +151,29 @@ describe("Tool 契约", () => {
     }
   });
 
-  it("只从 ARGS 读取参数，并拒绝孤立别名和冲突双字段", () => {
+  it("只从 ARGS 读取参数，并拒绝任何 ARGUMENTS 别名", () => {
     const aliasOnly = toolProgram();
     const aliasFields = aliasOnly.roots[2].fields as Record<string, unknown>;
     delete aliasFields.ARGS;
     aliasFields.ARGUMENTS = { city: "上海" };
     const conflict = toolProgram();
     (conflict.roots[2].fields as Record<string, unknown>).ARGUMENTS = { city: "北京" };
+    const duplicate = toolProgram();
+    (duplicate.roots[2].fields as Record<string, unknown>).ARGUMENTS = { city: "上海" };
 
     const aliasUsages = resolveToolUsages(aliasOnly, compileToolRegistry(aliasOnly).contracts);
     const conflictUsages = resolveToolUsages(conflict, compileToolRegistry(conflict).contracts);
+    const duplicateUsages = resolveToolUsages(duplicate, compileToolRegistry(duplicate).contracts);
 
     expect(aliasUsages.explicitCalls).toEqual([]);
     expect(aliasUsages.diagnostics.map((item) => item.code)).toContain("TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED");
     expect(conflictUsages.explicitCalls).toEqual([]);
-    expect(conflictUsages.diagnostics.map((item) => item.code)).toContain("TOOL_CALL_ARGUMENT_FIELDS_CONFLICT");
+    expect(conflictUsages.diagnostics.map((item) => item.code)).toContain("TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED");
+    expect(duplicateUsages.explicitCalls).toEqual([]);
+    expect(duplicateUsages.diagnostics).toContainEqual(expect.objectContaining({
+      code: "TOOL_CALL_ARGUMENTS_ALIAS_UNSUPPORTED",
+      message: expect.stringMatching(/[\u4e00-\u9fff]/),
+    }));
   });
 
   it("工具定义变化后，两种用法都解析到新契约，且不安全调用保留参数", () => {
