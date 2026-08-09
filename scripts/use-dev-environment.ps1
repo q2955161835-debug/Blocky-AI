@@ -17,7 +17,10 @@ function Add-PathEntry {
     }
 }
 
-$androidHome = [Environment]::GetEnvironmentVariable('ANDROID_HOME', 'User')
+$androidHome = $env:ANDROID_HOME
+if (-not $androidHome) {
+    $androidHome = [Environment]::GetEnvironmentVariable('ANDROID_HOME', 'User')
+}
 if (-not $androidHome -and (Test-Path -LiteralPath 'D:\Android')) {
     $androidHome = 'D:\Android'
 }
@@ -25,18 +28,28 @@ if (-not $androidHome -or -not (Test-Path -LiteralPath $androidHome)) {
     throw 'ANDROID_HOME is not configured or does not exist.'
 }
 
-$ndkHome = [Environment]::GetEnvironmentVariable('NDK_HOME', 'User')
+$ndkHome = $env:NDK_HOME
+if (-not $ndkHome) {
+    $ndkHome = [Environment]::GetEnvironmentVariable('NDK_HOME', 'User')
+}
 if (-not $ndkHome -or -not (Test-Path -LiteralPath $ndkHome)) {
     $ndkRoot = Join-Path $androidHome 'ndk'
-    $ndkHome = Get-ChildItem -LiteralPath $ndkRoot -Directory |
-        Sort-Object Name -Descending |
-        Select-Object -First 1 -ExpandProperty FullName
+    $ndkHome = if (Test-Path -LiteralPath $ndkRoot) {
+        Get-ChildItem -LiteralPath $ndkRoot -Directory |
+            Sort-Object Name -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+    } else {
+        $null
+    }
 }
 if (-not $ndkHome -or -not (Test-Path -LiteralPath $ndkHome)) {
     throw 'NDK_HOME is not configured and no side-by-side NDK was found.'
 }
 
-$devEcoHome = [Environment]::GetEnvironmentVariable('DEVECO_STUDIO_HOME', 'User')
+$devEcoHome = $env:DEVECO_STUDIO_HOME
+if (-not $devEcoHome) {
+    $devEcoHome = [Environment]::GetEnvironmentVariable('DEVECO_STUDIO_HOME', 'User')
+}
 if (-not $devEcoHome) {
     $devEcoBin = [Environment]::GetEnvironmentVariable('DevEco Studio', 'Process')
     if ($devEcoBin) {
