@@ -127,6 +127,13 @@ export function App({
               >
                 缩小
               </button>
+              <button
+                type="button"
+                aria-label="重置画布缩放"
+                onClick={() => canvasRef.current?.resetZoom()}
+              >
+                重置
+              </button>
             </div>
           </div>
         </section>

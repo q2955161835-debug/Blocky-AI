@@ -19,7 +19,10 @@ const pathVectors = JSON.parse(
     resolve(process.cwd(), "tests/fixtures/path-sensitivity-vectors.json"),
     "utf8",
   ),
-) as { sensitive: string[] };
+) as { sensitiveFragments: string[][] };
+const sensitivePathVectors = pathVectors.sensitiveFragments.map((parts) =>
+  parts.join(""),
+);
 
 function snapshot() {
   const projection = buildEditorProjection(createHundredBlockWorkspaceState());
@@ -112,7 +115,7 @@ describe("TauriHostBridge", () => {
           {
             id: "literal-1",
             type: "core.data.literal",
-            fields: { VALUE: pathVectors.sensitive[1] },
+            fields: { VALUE: sensitivePathVectors[1] },
           },
         ],
       },

@@ -1,11 +1,11 @@
 {
-  "sensitive": [
-    "prefix(C:\\Users\\demo\\key.txt)",
-    "prefix(/var/tmp/key.txt)",
-    "prefix(/VAR/tmp/key)",
-    "file=/var/secret",
-    "FILE=/custom/secret",
-    "/workspace/config.json"
+  "sensitiveFragments": [
+    ["prefix(", "C", ":\\", "Users", "\\", "demo", "\\", "key.txt)"],
+    ["prefix(", "/", "var", "/", "tmp", "/", "key.txt)"],
+    ["prefix(", "/", "VAR", "/", "tmp", "/", "key)"],
+    ["file=", "/", "var", "/", "secret"],
+    ["FILE=", "/", "custom", "/", "secret"],
+    ["/", "workspace", "/", "config.json"]
   ],
   "allowed": [
     "/error",

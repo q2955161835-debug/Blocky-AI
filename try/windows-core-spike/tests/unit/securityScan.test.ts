@@ -8,7 +8,10 @@ const pathVectors = JSON.parse(
     resolve(process.cwd(), "tests/fixtures/path-sensitivity-vectors.json"),
     "utf8",
   ),
-) as { sensitive: string[]; allowed: string[] };
+) as { sensitiveFragments: string[][]; allowed: string[] };
+const sensitivePathVectors = pathVectors.sensitiveFragments.map((parts) =>
+  parts.join(""),
+);
 
 describe("sensitive value scanner", () => {
   it("scans recursively through string values with JSON paths and not key names", () => {
@@ -19,7 +22,7 @@ describe("sensitive value scanner", () => {
     const bearer = ["Bearer ", "x".repeat(16)].join("");
     const pem = ["-----BEGIN ", "PRIVATE KEY-----"].join("");
     const cookie = ["Cookie", ": session=", "x".repeat(12)].join("");
-    const unixPath = ["/", "var", "/tmp/data.txt"].join("");
+    const unixPath = ["/", "var", "/", "tmp", "/", "data.txt"].join("");
     const findings = scanSensitiveValues({
       fakeToken,
       nested: [fakePath, { github, aws, bearer, pem, cookie, unixPath }],
@@ -50,7 +53,7 @@ describe("sensitive value scanner", () => {
 
   it("recognizes embedded absolute file paths without redacting commands or routes", () => {
     const windowsPath = ["file=", "C", ":\\", "Users\\Example\\secret.txt"].join("");
-    const unixPath = ["file=", "/", "var", "/tmp/secret.txt"].join("");
+    const unixPath = ["file=", "/", "var", "/", "tmp", "/", "secret.txt"].join("");
     const unixPathWithoutExtension = ["file=", "/", "var", "/secret"].join("");
     const commands = ["/error", "/permission", "/api/v1"];
     const values = { windowsPath, unixPath, unixPathWithoutExtension, commands };
@@ -71,7 +74,7 @@ describe("sensitive value scanner", () => {
   });
 
   it("applies the shared path sensitivity vectors without route or URL false positives", () => {
-    for (const value of pathVectors.sensitive) {
+    for (const value of sensitivePathVectors) {
       expect(scanSensitiveValues({ value }), value).toEqual([
         expect.objectContaining({ path: "$.value" }),
       ]);

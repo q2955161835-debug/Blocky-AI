@@ -17,6 +17,26 @@ const EMPTY_WORKSPACE = {
 };
 
 describe("App", () => {
+  it("exposes an accessible canvas zoom reset action", () => {
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={EMPTY_WORKSPACE}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "重置画布缩放" }),
+    ).toBeInTheDocument();
+    const mediaReferences = [...document.querySelectorAll("image")].map(
+      (image) => image.getAttribute("href") ?? image.getAttribute("xlink:href"),
+    );
+    expect(mediaReferences.length).toBeGreaterThan(0);
+    expect(mediaReferences.every((reference) =>
+      reference === "./blockly-media/sprites.svg"
+    )).toBe(true);
+  });
+
   it("restores 100 unique block IDs with byte-stable project JSON after save, clear, and reload", async () => {
     const user = userEvent.setup();
     const host = new InMemoryHostBridge();

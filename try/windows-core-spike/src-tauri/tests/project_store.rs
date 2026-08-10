@@ -32,8 +32,9 @@ fn valid_json(project_id: &str, value: Value) -> String {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct PathSensitivityVectors {
-    sensitive: Vec<String>,
+    sensitive_fragments: Vec<Vec<String>>,
     allowed: Vec<String>,
 }
 
@@ -251,7 +252,8 @@ fn project_store_reports_not_found_without_leaking_the_storage_path() {
 #[test]
 fn project_store_applies_the_shared_path_sensitivity_vectors() {
     let vectors = path_sensitivity_vectors();
-    for value in vectors.sensitive {
+    for fragments in vectors.sensitive_fragments {
+        let value = fragments.concat();
         let directory = tempdir().expect("temporary project directory");
         let store = ProjectStore::new(directory.path().to_path_buf());
         let error = store

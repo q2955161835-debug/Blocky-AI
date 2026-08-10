@@ -24,6 +24,7 @@ export interface BlocklyCanvasHandle {
   highlight(blockId: string | null): void;
   zoomIn(): void;
   zoomOut(): void;
+  resetZoom(): void;
 }
 
 export interface EditorProjection {
@@ -211,6 +212,20 @@ function BlocklyCanvasInner(
       zoomOut() {
         workspaceRef.current?.zoomCenter(-1);
       },
+      resetZoom() {
+        const workspace = workspaceRef.current;
+        if (!workspace) return;
+        const { startScale, scaleSpeed } = workspace.options.zoomOptions;
+        const zoomSteps = Math.log(startScale / workspace.scale)
+          / Math.log(scaleSpeed);
+        workspace.beginCanvasTransition();
+        workspace.zoomCenter(zoomSteps);
+        workspace.scrollCenter();
+        window.setTimeout(
+          workspace.endCanvasTransition.bind(workspace),
+          500,
+        );
+      },
     }),
     [initialState],
   );
@@ -222,6 +237,8 @@ function BlocklyCanvasInner(
     Blockly.setLocale(zhHansMessages);
     registerSpikeBlocks();
     const workspace = Blockly.inject(container, {
+      media: "./blockly-media/",
+      sounds: false,
       toolbox: LOCAL_TOOLBOX,
       renderer: "geras",
       trashcan: true,

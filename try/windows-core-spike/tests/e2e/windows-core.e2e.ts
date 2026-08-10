@@ -7,6 +7,7 @@ import type { RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { SpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
 type HookRuntimeEvent = RuntimeEvent;
+const RESET_ZOOM_SCALE = 0.9;
 
 interface TestHook {
   getBlockCount(): number;
@@ -19,9 +20,9 @@ interface TestHook {
   readUsedJsHeapSize(): number | null;
 }
 
-interface HookWindow extends Window {
+type HookWindow = Omit<Window, "__BLOCKY_SPIKE_TEST__"> & {
   __BLOCKY_SPIKE_TEST__: TestHook;
-}
+};
 
 interface NativeProjectRecord {
   readonly projectId: string;
@@ -290,6 +291,13 @@ describe("Windows Core native channel", () => {
     const zoomedOutScale = await readBlocklyScale();
     expect(zoomedOutScale).toBeLessThan(zoomedInScale);
     expect(zoomedOutScale).toBeCloseTo(initialScale, 6);
+    await $("aria/放大画布").click();
+    await browser.waitUntil(async () => (await readBlocklyScale()) > initialScale);
+    await $("aria/重置画布缩放").click();
+    await browser.waitUntil(async () => (
+      Math.abs((await readBlocklyScale()) - RESET_ZOOM_SCALE) < 0.000001
+    ));
+    expect(await readBlocklyScale()).toBeCloseTo(RESET_ZOOM_SCALE, 6);
     const beforeSave = await getCanonicalSnapshot();
     const beforeIds = [...collectBlockIds(beforeSave)].sort();
     expect(beforeIds).toHaveLength(100);

@@ -52,6 +52,7 @@ function canvasHandle(
     highlight,
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
+    resetZoom: vi.fn(),
   };
 }
 
