@@ -166,13 +166,63 @@ function Get-TrackedPaths {
 
 function Get-TextContent([string]$Path) {
     if ($binaryExtensions.Contains([System.IO.Path]::GetExtension($Path))) {
-        return $null
+        return [pscustomobject]@{
+            kind = 'binary'
+            content = $null
+        }
     }
+
     $bytes = [System.IO.File]::ReadAllBytes($Path)
-    if ($bytes -contains 0) {
-        return $null
+    try {
+        if (
+            $bytes.Length -ge 3 -and
+            $bytes[0] -eq 0xEF -and
+            $bytes[1] -eq 0xBB -and
+            $bytes[2] -eq 0xBF
+        ) {
+            $content = [System.Text.UTF8Encoding]::new($false, $true).GetString(
+                $bytes,
+                3,
+                $bytes.Length - 3
+            )
+        }
+        elseif (
+            $bytes.Length -ge 2 -and
+            $bytes[0] -eq 0xFF -and
+            $bytes[1] -eq 0xFE
+        ) {
+            $content = [System.Text.UnicodeEncoding]::new($false, $false, $true).GetString(
+                $bytes,
+                2,
+                $bytes.Length - 2
+            )
+        }
+        elseif (
+            $bytes.Length -ge 2 -and
+            $bytes[0] -eq 0xFE -and
+            $bytes[1] -eq 0xFF
+        ) {
+            $content = [System.Text.UnicodeEncoding]::new($true, $false, $true).GetString(
+                $bytes,
+                2,
+                $bytes.Length - 2
+            )
+        }
+        else {
+            $content = [System.Text.UTF8Encoding]::new($false, $true).GetString($bytes)
+        }
     }
-    return [System.Text.UTF8Encoding]::new($false, $true).GetString($bytes)
+    catch [System.Text.DecoderFallbackException] {
+        return [pscustomobject]@{
+            kind = 'text-decoding-error'
+            content = $null
+        }
+    }
+
+    return [pscustomobject]@{
+        kind = 'text'
+        content = $content
+    }
 }
 
 $counts = [ordered]@{
@@ -183,6 +233,86 @@ $counts = [ordered]@{
 }
 $findings = [System.Collections.Generic.List[object]]::new()
 
+function Add-Finding(
+    [string]$Target,
+    [string]$Category,
+    [string]$Path,
+    [int]$Count = 1
+) {
+    $counts[$Target] += $Count
+    $findings.Add([ordered]@{
+        target = $Target
+        category = $Category
+        file = [System.IO.Path]::GetFileName($Path)
+        count = $Count
+    })
+}
+
+function Measure-StringContent(
+    [string]$Target,
+    [string]$Path,
+    [AllowEmptyString()]
+    [string]$Content
+) {
+    if ($Content.IndexOf([char]0) -ge 0) {
+        Add-Finding -Target $Target -Category 'unsafe-text-nul' -Path $Path
+    }
+    foreach ($entry in $detectors.GetEnumerator()) {
+        $matchCount = $entry.Value.Matches($Content).Count
+        if ($matchCount -eq 0) {
+            continue
+        }
+        Add-Finding -Target $Target -Category $entry.Key -Path $Path -Count $matchCount
+    }
+}
+
+function Measure-JsonElement(
+    [string]$Target,
+    [string]$Path,
+    [System.Text.Json.JsonElement]$Element
+) {
+    if ($Element.ValueKind -eq [System.Text.Json.JsonValueKind]::String) {
+        Measure-StringContent -Target $Target -Path $Path -Content $Element.GetString()
+        return
+    }
+    if ($Element.ValueKind -eq [System.Text.Json.JsonValueKind]::Array) {
+        foreach ($item in $Element.EnumerateArray()) {
+            Measure-JsonElement -Target $Target -Path $Path -Element $item
+        }
+        return
+    }
+    if ($Element.ValueKind -eq [System.Text.Json.JsonValueKind]::Object) {
+        foreach ($property in $Element.EnumerateObject()) {
+            Measure-JsonElement -Target $Target -Path $Path -Element $property.Value
+        }
+    }
+}
+
+function Measure-JsonContent(
+    [string]$Target,
+    [string]$Path,
+    [AllowEmptyString()]
+    [string]$Content
+) {
+    $options = [System.Text.Json.JsonDocumentOptions]::new()
+    $options.AllowTrailingCommas = $true
+    $options.CommentHandling = [System.Text.Json.JsonCommentHandling]::Skip
+    try {
+        $document = [System.Text.Json.JsonDocument]::Parse($Content, $options)
+    }
+    catch [System.Text.Json.JsonException] {
+        Add-Finding -Target $Target -Category 'invalid-json' -Path $Path
+        return
+    }
+
+    try {
+        Measure-JsonElement -Target $Target -Path $Path -Element $document.RootElement
+    }
+    finally {
+        $document.Dispose()
+    }
+}
+
 function Measure-Target(
     [string]$Target,
     [string[]]$Paths
@@ -191,22 +321,24 @@ function Measure-Target(
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
             throw ('SENSITIVE_SCAN_INPUT_MISSING:{0}' -f $Target)
         }
-        $content = Get-TextContent -Path $path
-        if ($null -eq $content) {
+        $text = Get-TextContent -Path $path
+        if ($text.kind -eq 'binary') {
             continue
         }
-        foreach ($entry in $detectors.GetEnumerator()) {
-            $matchCount = $entry.Value.Matches($content).Count
-            if ($matchCount -eq 0) {
-                continue
+        if ($text.kind -eq 'text-decoding-error') {
+            Add-Finding -Target $Target -Category $text.kind -Path $path
+            continue
+        }
+
+        $extension = [System.IO.Path]::GetExtension($path)
+        if ($extension -in @('.json', '.jsonc')) {
+            if ($text.content.IndexOf([char]0) -ge 0) {
+                Add-Finding -Target $Target -Category 'unsafe-text-nul' -Path $path
             }
-            $counts[$Target] += $matchCount
-            $findings.Add([ordered]@{
-                target = $Target
-                category = $entry.Key
-                file = [System.IO.Path]::GetFileName($path)
-                count = $matchCount
-            })
+            Measure-JsonContent -Target $Target -Path $path -Content $text.content
+        }
+        else {
+            Measure-StringContent -Target $Target -Path $path -Content $text.content
         }
     }
 }
