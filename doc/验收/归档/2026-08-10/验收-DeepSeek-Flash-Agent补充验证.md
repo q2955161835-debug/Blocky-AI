@@ -4,10 +4,10 @@
 
 | 项目 | 内容 |
 |---|---|
-| 涉及模块 | 外部模型兼容性、Tool 调用续轮、稳定 IR、RuntimeEvent、HostBridge 冻结契约与秘密边界 |
-| 验收对象 | `codex/feat-windows-core-spike` / `642f06cb59420031925c47ee801505656e50ccf8` |
+| 涉及模块 | 外部模型兼容性、Tool 调用续轮、稳定 IR、RuntimeEvent、HostBridge 冻结契约、项目规则、主线整合与秘密边界 |
+| 验收对象 | `main` / `7982639ef2b147444f65a59cca3b5b8c30f4c824`；核心契约代码提交 `642f06cb59420031925c47ee801505656e50ccf8` |
 | 验收等级 | L3（外部凭据、网络请求、核心运行契约与工具边界） |
-| 验证结果 | 冻结契约后 4 个限定 live 请求全部 HTTP 200；真实模型固定文本、工具两轮、运行事件、IR 形状、普通包隔离与安全差异扫描全部通过；独立复审 Critical（严重）0 / Important（重要）0 / Minor（次要）0 |
+| 验证结果 | 冻结契约后 4 个限定 live 请求全部 HTTP 200；真实模型固定文本、工具两轮、运行事件、IR 形状、普通包隔离、安全差异扫描、项目规则与 `main` 合并后 Fast（快速）门禁全部通过；独立复审 Critical（严重）0 / Important（重要）0 / Minor（次要）0 |
 | 问题风险 | 仅验证当前 API 与最小 seam（接缝）兼容；产品没有内置 DeepSeek 适配器；未验证 SLA（服务等级）、生产重试/限流/计费，也没有执行真实外部工具副作用 |
 | 最终结论 | **通过** |
 
@@ -86,3 +86,20 @@
 - 把一次外部兼容性探针扩大为完整 Agent 产品验收。
 
 后续若实现正式模型适配器，必须创建新的 L3 任务验收，重新验证密钥真/假账本、网络/CSP、错误与取消、工具审批、日志脱敏、普通包隔离和发布构建。
+
+### 6. 项目规则与主线整合
+
+用户明确授权创建项目级 `AGENTS.md`、合并 `main` 并在验收后推送私有 GitHub（代码托管）。项目规则提交与修复如下：
+
+- `f251235d1bb019c31479816e2c30e68163b911a6`：新增 Blocky 项目目标、长期文档入口、目录职责、架构数据流、依赖、命令、复测矩阵、安全边界、私有仓库地址和执行报告要求；同步 README（说明文档）与合并前风险记录。
+- 首轮独立文档复审发现若干尖峰路径未带 `try/windows-core-spike/` 前缀，并把尚不存在的跨模块验收目录写成当前目录；结论为 Important 1、不可合并。
+- `7982639ef2b147444f65a59cca3b5b8c30f4c824`：把所有尖峰路径统一为仓库根可解析路径，跨模块目录明确为按需创建。复审确认 30 个现存路径全部可达，Critical / Important / Minor 为 0 / 0 / 0，结论 merge-ready（可合并）。
+
+主线整合步骤与结果：
+
+1. 功能分支在 `7982639` fresh（新鲜）运行 `pnpm --dir .\try\windows-core-spike check`，exit 0：unit 20 files / 97 tests、component 5 files / 33 tests、TypeScript/Vite、Rust 2 + 23 tests 与四目标敏感扫描全部通过。
+2. `main` 的唯一工作区修改是用户 Logo（标识）。先创建只含 `logo/logo.png` 的命名 Git stash（暂存栈），再从 `d98bc6c` fast-forward（快进）到 `7982639`。stash、HEAD 和磁盘 Logo 的 Git blob 均为 `10b4f0ae39fab54ff42d91973da77ebd1621088e`，SHA-256 均为 `12D3F351006663FD07EFD11480101F3C06A43F91633F2E8A914888CA63CF0D9D`；确认内容已被提交后删除冗余 stash。
+3. 合并后首次 Fast 门禁在 `unit-tests` 入口失败：主工作区尚无项目本地 `node_modules`，固定错误为 `vitest not recognized`；代码测试尚未开始。两工作区 lockfile（锁文件）的原始字节因 Windows 换行转换不同，但经 Git 过滤后的 blob 均为 `e595635a4fb20136969e5e7c20203ee4cf63d9b3`，不存在依赖漂移。
+4. 在 D 盘主项目执行 `pnpm --dir .\try\windows-core-spike install --frozen-lockfile --offline`，复用 540 个包、下载数 0、tracked（跟踪）工作树保持干净；随后从头重跑同一 Fast 门禁，exit 0，97 个单元、33 个组件、Rust 25 项、构建和敏感扫描全部通过。
+
+合并后门禁失败由主工作区缺失忽略依赖造成，不是产品或测试失败；没有增加重试、放宽断言或修改锁文件。功能分支和 worktree（工作树）只在本记录的最终复审通过后清理；push（推送）只在本地清理与最终 Git 检查通过后执行。
