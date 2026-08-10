@@ -371,18 +371,16 @@ button:disabled {
 
 .runtime-panel__empty {
   display: flex;
+  grid-row: 1;
+  grid-column: 1;
   align-items: center;
   justify-content: center;
   margin: 0;
   padding: 32px;
   color: var(--muted);
-  text-align: center;
-}
-
-.runtime-panel--empty p {
-  margin: 0;
   font-size: 14px;
   line-height: 1.55;
+  text-align: center;
 }
 
 .event-timeline {

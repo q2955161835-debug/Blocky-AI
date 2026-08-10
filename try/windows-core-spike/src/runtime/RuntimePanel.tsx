@@ -35,6 +35,10 @@ export function RuntimePanel({
   onApprovePermission,
   onDenyPermission,
 }: RuntimePanelProps) {
+  const showEmptyGuidance = manifest.entries.length === 0 &&
+    events.length === 0 &&
+    !pendingPermission &&
+    !running;
   const composerProps: RuntimeComposerProps = {
     manifest,
     activeEntryId,
@@ -45,7 +49,11 @@ export function RuntimePanel({
 
   return (
     <section className="runtime-panel">
-      <EventTimeline events={events} />
+      {showEmptyGuidance ? (
+        <p className="runtime-panel__empty">添加聊天入口后才能运行作品</p>
+      ) : (
+        <EventTimeline events={events} />
+      )}
       {pendingPermission ? (
         <section
           className="runtime-permission"
@@ -77,11 +85,9 @@ export function RuntimePanel({
           取消运行
         </button>
       ) : null}
-      {manifest.entries.length === 0 ? (
-        <p className="runtime-panel__empty">添加聊天入口后才能运行作品</p>
-      ) : (
+      {manifest.entries.length > 0 ? (
         <RuntimeComposer {...composerProps} />
-      )}
+      ) : null}
     </section>
   );
 }
