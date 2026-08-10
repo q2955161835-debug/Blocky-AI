@@ -102,4 +102,4 @@
 3. 合并后首次 Fast 门禁在 `unit-tests` 入口失败：主工作区尚无项目本地 `node_modules`，固定错误为 `vitest not recognized`；代码测试尚未开始。两工作区 lockfile（锁文件）的原始字节因 Windows 换行转换不同，但经 Git 过滤后的 blob 均为 `e595635a4fb20136969e5e7c20203ee4cf63d9b3`，不存在依赖漂移。
 4. 在 D 盘主项目执行 `pnpm --dir .\try\windows-core-spike install --frozen-lockfile --offline`，复用 540 个包、下载数 0、tracked（跟踪）工作树保持干净；随后从头重跑同一 Fast 门禁，exit 0，97 个单元、33 个组件、Rust 25 项、构建和敏感扫描全部通过。
 
-合并后门禁失败由主工作区缺失忽略依赖造成，不是产品或测试失败；没有增加重试、放宽断言或修改锁文件。最终复审通过后，已注销并精确清理功能 worktree（工作树），删除已合并分支 `codex/feat-windows-core-spike`；当前只保留干净的 `main`。push（推送）将在本记录更新的独立复审、敏感扫描与最终 Git 检查通过后执行。
+合并后门禁失败由主工作区缺失忽略依赖造成，不是产品或测试失败；没有增加重试、放宽断言或修改锁文件。最终复审通过后，已注销并精确清理功能 worktree（工作树），删除已合并分支 `codex/feat-windows-core-spike`；当前只保留干净的 `main`。首次 push（推送）因 HTTP 408 未更新远端，经 `ls-remote` 只读确认后，以不 force（强制）、不 fetch（拉取）的普通幂等重试成功把私有 GitHub `origin/main` 更新到 `288e6a8d18075313bdcea2a0c00468aaa414b5eb`；未创建 PR（拉取请求）。
