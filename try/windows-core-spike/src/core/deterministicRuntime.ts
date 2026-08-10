@@ -67,7 +67,7 @@ function emitFactory(options: RunProgramOptions, runId: string) {
   let sequence = 0;
   let terminal = false;
   return {
-    emit(type: RuntimeEventType, data: unknown = {}, blockId?: string): void {
+    emit(type: RuntimeEventType, data: Record<string, unknown> = {}, blockId?: string): void {
       if (terminal) throw new RuntimeFailure("RUNTIME_EVENT_AFTER_TERMINAL");
       if (blockId !== undefined && !options.sourceMap[blockId]) {
         throw new RuntimeFailure("RUNTIME_SOURCE_MAP_MISSING");

@@ -15,11 +15,6 @@ export interface ProjectRecord {
   readonly bytes: number;
 }
 
-interface NativeSaveProjectRequest {
-  readonly projectId: string;
-  readonly json: string;
-}
-
 export class HostBridgeError extends Error {
   constructor(
     readonly code: string,
@@ -130,17 +125,19 @@ function parseSnapshot(record: ProjectRecord, projectId: string): SpikeProjectSn
 
 export class TauriHostBridge implements HostBridge {
   async saveProject(request: SaveProjectRequest): Promise<void> {
-    if (scanSensitiveValues(request.project).length > 0) {
+    let raw: unknown;
+    try {
+      raw = JSON.parse(request.json);
+    } catch {
+      throw new HostBridgeError("PROJECT_JSON_INVALID", "项目 JSON 无效");
+    }
+    if (scanSensitiveValues(raw).length > 0) {
       throw new HostBridgeError(
         "PROJECT_SENSITIVE_VALUE",
         "项目包含不允许保存的敏感值",
       );
     }
-    const nativeRequest: NativeSaveProjectRequest = {
-      projectId: request.project.projectId,
-      json: stableStringify(request.project),
-    };
-    await invoke<ProjectRecord>("save_project", { request: nativeRequest });
+    await invoke<ProjectRecord>("save_project", { request });
   }
 
   async loadProject(projectId: string): Promise<SpikeProjectSnapshot> {

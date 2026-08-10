@@ -1,7 +1,8 @@
 import type { SpikeProjectSnapshot } from "../project/SpikeProjectSnapshot";
 
 export interface SaveProjectRequest {
-  readonly project: SpikeProjectSnapshot;
+  readonly projectId: string;
+  readonly json: string;
 }
 
 export interface HostBridge {

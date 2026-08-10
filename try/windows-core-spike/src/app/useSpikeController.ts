@@ -293,13 +293,15 @@ export function useSpikeController({
       if (!workspace) return;
       const latest = buildEditorProjection(workspace);
       acceptProjection(latest);
+      const project = createSpikeProjectSnapshot({
+        projectId,
+        workspace: latest.workspace,
+        program: latest.program,
+        interactionManifest: latest.interactionManifest,
+      });
       await hostBridge.saveProject({
-        project: createSpikeProjectSnapshot({
-          projectId,
-          workspace: latest.workspace,
-          program: latest.program,
-          interactionManifest: latest.interactionManifest,
-        }),
+        projectId,
+        json: stableStringify(project),
       });
     } catch {
       setOperationError(SAVE_ERROR);

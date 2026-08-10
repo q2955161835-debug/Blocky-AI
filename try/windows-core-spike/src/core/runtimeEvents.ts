@@ -23,7 +23,7 @@ export interface RuntimeEvent {
   readonly sequence: number;
   readonly type: RuntimeEventType;
   readonly blockId?: string;
-  readonly data: JsonValue;
+  readonly data: Record<string, JsonValue>;
 }
 
 export interface RuntimeEventInput {
@@ -31,7 +31,7 @@ export interface RuntimeEventInput {
   sequence: number;
   type: RuntimeEventType;
   blockId?: string;
-  data?: unknown;
+  data?: Record<string, unknown>;
 }
 
 function deepFreeze<T>(value: T): T {
@@ -43,9 +43,12 @@ function deepFreeze<T>(value: T): T {
 /** The only supported runtime-event construction path. */
 export function createRuntimeEvent(input: RuntimeEventInput): RuntimeEvent {
   const data = redactSensitiveValues(input.data ?? {});
+  if (data === null || Array.isArray(data) || typeof data !== "object") {
+    throw new TypeError("RUNTIME_EVENT_DATA_NOT_OBJECT");
+  }
   const raw: RuntimeEvent = {
     ...(input.blockId === undefined ? {} : { blockId: input.blockId }),
-    data,
+    data: data as Record<string, JsonValue>,
     eventVersion: "blocky.event/v0-spike",
     runId: input.runId,
     sequence: input.sequence,

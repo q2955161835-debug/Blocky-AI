@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createDeterministicModel, runProgram, type RuntimeDependencies } from "../../src/core/deterministicRuntime";
 import type { BlockyProgram, IrNode } from "../../src/core/ir";
 import { stableStringify, type JsonValue } from "../../src/core/json";
-import type { RuntimeEvent } from "../../src/core/runtimeEvents";
+import { createRuntimeEvent, type RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { ToolContract } from "../../src/core/toolContract";
 
 function irNode(
@@ -105,6 +105,15 @@ async function run(options: {
 }
 
 describe("deterministic runtime", () => {
+  it("rejects non-record event data before it can violate the frozen event contract", () => {
+    expect(() => createRuntimeEvent({
+      runId: "run-invalid-data",
+      sequence: 1,
+      type: "run.started",
+      data: ["not", "a", "record"] as never,
+    })).toThrowError("RUNTIME_EVENT_DATA_NOT_OBJECT");
+  });
+
   it("streams deterministic chunks with contiguous source-mapped events", async () => {
     const events = await run({ input: "你好" });
 

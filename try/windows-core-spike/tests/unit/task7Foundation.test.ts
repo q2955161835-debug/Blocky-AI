@@ -7,6 +7,7 @@ import {
   type RuntimeViewState,
 } from "../../src/app/useSpikeController";
 import { createRuntimeEvent } from "../../src/core/runtimeEvents";
+import { stableStringify } from "../../src/core/json";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
 import { createSpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
@@ -146,7 +147,7 @@ describe("Task 7 foundations", () => {
     });
     const host = new InMemoryHostBridge();
 
-    await host.saveProject({ project: snapshot });
+    await host.saveProject({ projectId: snapshot.projectId, json: stableStringify(snapshot) });
     const loaded = await host.loadProject("project-1");
 
     expect(loaded).toEqual(snapshot);

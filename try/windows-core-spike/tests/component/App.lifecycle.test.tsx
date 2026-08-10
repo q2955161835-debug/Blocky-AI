@@ -5,7 +5,7 @@ import { App } from "../../src/app/App";
 import { buildEditorProjection } from "../../src/blockly/BlocklyCanvas";
 import { createHundredBlockWorkspaceState } from "../../src/blockly/fixtures";
 import type { RuntimeDependencies } from "../../src/core/deterministicRuntime";
-import type { JsonValue } from "../../src/core/json";
+import { stableStringify, type JsonValue } from "../../src/core/json";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
 import { createSpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
@@ -31,13 +31,15 @@ async function seedProject(
   workspace: JsonValue,
 ): Promise<void> {
   const projection = buildEditorProjection(workspace);
+  const project = createSpikeProjectSnapshot({
+    projectId: "windows-core-spike",
+    workspace: projection.workspace,
+    program: projection.program,
+    interactionManifest: projection.interactionManifest,
+  });
   await host.saveProject({
-    project: createSpikeProjectSnapshot({
-      projectId: "windows-core-spike",
-      workspace: projection.workspace,
-      program: projection.program,
-      interactionManifest: projection.interactionManifest,
-    }),
+    projectId: project.projectId,
+    json: stableStringify(project),
   });
 }
 

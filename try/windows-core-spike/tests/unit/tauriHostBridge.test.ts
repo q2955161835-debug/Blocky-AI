@@ -53,7 +53,7 @@ describe("TauriHostBridge", () => {
     const json = stableStringify(project);
     invokeMock.mockResolvedValueOnce(record(json));
 
-    await new TauriHostBridge().saveProject({ project });
+    await new TauriHostBridge().saveProject({ projectId: project.projectId, json });
 
     expect(invokeMock).toHaveBeenCalledTimes(1);
     expect(invokeMock).toHaveBeenCalledWith("save_project", {
@@ -70,7 +70,10 @@ describe("TauriHostBridge", () => {
     };
 
     await expect(
-      new TauriHostBridge().saveProject({ project: unsafeProject }),
+      new TauriHostBridge().saveProject({
+        projectId: unsafeProject.projectId,
+        json: stableStringify(unsafeProject),
+      }),
     ).rejects.toMatchObject({
       code: "PROJECT_SENSITIVE_VALUE",
       message: "项目包含不允许保存的敏感值",
