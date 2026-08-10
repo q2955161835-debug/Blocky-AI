@@ -34,13 +34,13 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - [平台分层与桌面技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
 - [Windows Core 技术尖峰报告](doc/技术设计/Windows-Core技术尖峰报告.md)
 - [Windows Core L3 任务验收](doc/验收/归档/2026-08-10/验收-Windows-Core技术尖峰.md)
+- [DeepSeek Flash Agent 补充验证](doc/验收/归档/2026-08-10/验收-DeepSeek-Flash-Agent补充验证.md)
 - [Blocky 编辑器与运行核心模块验收](doc/验收/模块/验收-Blocky编辑器与运行核心.md)
+- [项目规则与项目地图](AGENTS.md)
 - [原生 Agent 兼容运行时](doc/技术设计/ADR-002-原生Agent兼容运行时.md)
 - [CLI、官方 Agent Skills 与插件接口](doc/技术设计/ADR-003-CLI与官方Agent-Skill接口.md)
 - [开放扩展与社区安全边界](doc/技术设计/ADR-004-开放扩展与社区安全边界.md)
 
 ## 当前结论
 
-`try/` 中的 Windows Blockly/本地 WebView（网页视图）技术尖峰已在测试提交 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e` 通过八项 Core、原生 E2E、性能、360-cycle/30 分钟长稳、安全与人工门禁。下一步先设计正式仓库和共享包，再按独立子规格实现完整产品；ADR-001 第二阶段 Windows 完整能力和第三阶段后续平台仍未验证。完整产品通过后再切分订阅权益。
-
-> 项目级 `AGENTS.md` 尚未创建。按照当前项目规则，需得到用户明确授权后才能创建或维护。
+`try/` 中的 Windows Blockly/本地 WebView（网页视图）技术尖峰已在原始全量基线 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e` 通过八项 Core、原生 E2E、性能、360-cycle/30 分钟长稳、安全与人工门禁；冻结契约补充提交 `642f06cb59420031925c47ee801505656e50ccf8` 重新通过聚焦、Fast、Core、原生 E2E、性能、日志审计与普通包隔离。下一步先设计正式仓库和共享包，再按独立子规格实现完整产品；ADR-001 第二阶段 Windows 完整能力和第三阶段后续平台仍未验证。完整产品通过后再切分订阅权益。
