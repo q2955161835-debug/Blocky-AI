@@ -86,9 +86,9 @@
 | 放大、缩小、重置 | 通过；重置后真实 Blockly 比例为 0.9 | [重置](../../技术设计/Windows-Core视觉验收/05-zoom-reset.png) |
 | 100 块保存、关闭、重开、重载 | 通过；同一普通 EXE 与真实 Host 数据 | [重开](../../技术设计/Windows-Core视觉验收/06-100-blocks-reopened.png) |
 | 两入口独立草稿 | 通过；Follow-up（后续入口）无文本能力，以独立 Skill 选择与 Chat（聊天）文本草稿证明状态分离 | 技术报告记录人工结果 |
-| 六种能力增删 | 通过；文本/图片/文件/语音/Skill/插件均检查 | [六能力](../../技术设计/Windows-Core视觉验收/07-six-capabilities.png) |
-| 正常、取消、错误、权限拒绝/批准 | 全部通过；错误消息已脱敏 | [权限等待与高亮](../../技术设计/Windows-Core视觉验收/08-permission-pending-highlight.png) / [批准](../../技术设计/Windows-Core视觉验收/09-permission-approved.png) |
-| 高亮与时间线一致 | 通过；等待/批准/取消/错误截图均一致 | [等待高亮](../../技术设计/Windows-Core视觉验收/08-permission-pending-highlight.png) |
+| 六种能力增删 | 通过；文本/图片/文件/语音/Skill/插件均检查 | [六个右栏控件](../../技术设计/Windows-Core视觉验收/07-six-capabilities.png) |
+| 正常、取消、错误、权限拒绝/批准 | 全部通过；错误消息已脱敏；批准完成链由原生 E2E、事件断言和人工记录验证 | [正常完成与六能力](../../技术设计/Windows-Core视觉验收/07-six-capabilities.png) / [权限等待与高亮](../../技术设计/Windows-Core视觉验收/08-permission-pending-highlight.png) |
+| 高亮与时间线一致 | 通过；权限等待时活动积木与 `tool.permission_requested` 的稳定块 ID 对应 | [等待高亮](../../技术设计/Windows-Core视觉验收/08-permission-pending-highlight.png) |
 
 ### 7. 敏感扫描、普通包与 Logo
 

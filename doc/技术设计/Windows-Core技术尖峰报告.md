@@ -98,7 +98,7 @@ flowchart LR
 
 ## 7. 人工与视觉验收
 
-下列 9 张关键 PNG（便携式网络图形）已从忽略目录复制到 Git 跟踪文档目录，避免临时报告成为唯一证据。逐图检查未见密钥、绝对路径或账号值；部分截图左下带有无关 Codex 桌面通知，不覆盖被验收控件，属于证据视觉卫生限制。
+下列 8 张关键 PNG（便携式网络图形）已从忽略目录复制到 Git 跟踪文档目录，避免临时报告成为唯一证据。逐图检查未见密钥、绝对路径或账号值；部分截图左下带有无关 Codex 桌面通知，不覆盖被验收控件，属于证据视觉卫生限制。权限批准完成链由原生 E2E、事件断言和人工验收记录共同证明，不使用无法直接显示完整批准链的截图冒充视觉证据。
 
 | 场景 | 持久证据 | SHA-256 |
 |---|---|---|
@@ -108,9 +108,8 @@ flowchart LR
 | 非法 Boolean→JSON（布尔到对象表示）连接被拒绝 | [04-invalid-boolean-json-rejected.png](./Windows-Core视觉验收/04-invalid-boolean-json-rejected.png) | `FEAD5BCA9D299A4673D925B8848F47668797C2A54CCD79DEF94AF985F21B78F6` |
 | 放大、缩小后重置 | [05-zoom-reset.png](./Windows-Core视觉验收/05-zoom-reset.png) | `AF1374348D7640376F9AC2210C9DD9AC862BCC37BF6BDE8F79471604394F90D1` |
 | 100 块保存、关闭、重开并重载 | [06-100-blocks-reopened.png](./Windows-Core视觉验收/06-100-blocks-reopened.png) | `D250EEFA9A818CB38CABE8B544C59D64F12EBC5E1F81396F22FEC8045C08DFFA` |
-| 入口六种能力 | [07-six-capabilities.png](./Windows-Core视觉验收/07-six-capabilities.png) | `468759D6AAABD493EDC3CA4B190024F95F1EF5CD848BA3E4EAB6A3FD64C7AD60` |
+| 右栏六种能力控件与正常运行完成 | [07-six-capabilities.png](./Windows-Core视觉验收/07-six-capabilities.png) | `76B99E70F4B1A73C45EB1E64A05ADB13E7BF1F5C2EC70A62CD43D7496B26B641` |
 | 权限等待、时间线与积木高亮 | [08-permission-pending-highlight.png](./Windows-Core视觉验收/08-permission-pending-highlight.png) | `6F9D1AD5C0DDE41AFE0AD6B268894FC2E09D162373731E257BAD341E0100AB08` |
-| 权限批准路径 | [09-permission-approved.png](./Windows-Core视觉验收/09-permission-approved.png) | `FFAFBFE66EBD6E0D993D1DCC31B08D92A30F8506FED8CFD9B34A83D395C585AE` |
 
 批准源 `logo/logo.png` 为 1254 × 1254、SHA-256 `12D3F351006663FD07EFD11480101F3C06A43F91633F2E8A914888CA63CF0D9D`；Windows `icon.ico` 为 79,902 bytes（字节）、6 个图标条目、SHA-256 `CBBAE888F508EDBA2E051640D992ABB38752D5C9513B53EFE50E400F2C7DB69F`。32/64/128/512 像素 PNG 的 SHA-256 分别为 `193342E1F008436D9BB2ADCED8D9AB756194E71C55BCB086127181289C3F108F`、`D9335F27BE613F55DD0E493BA3186AC822D314EC2450438796275CCD39114205`、`050EFCC3FB45CBD4F1345BF46DA59227332E6C46B4D23F4395F0BE4B82EC3817`、`073E00081A5E1B3904642FD263CC66B29C41B49F61FD7E9027A4B63B43CB4BC7`；完整值由品牌资产契约测试锁定。
 
