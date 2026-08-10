@@ -18,6 +18,7 @@ export type RuntimeEventType = typeof RUNTIME_EVENT_TYPES[number];
 
 /** The frozen, canonical, redacted event contract shared by every Core runtime consumer. */
 export interface RuntimeEvent {
+  readonly eventVersion: "blocky.event/v0-spike";
   readonly runId: string;
   readonly sequence: number;
   readonly type: RuntimeEventType;
@@ -45,6 +46,7 @@ export function createRuntimeEvent(input: RuntimeEventInput): RuntimeEvent {
   const raw: RuntimeEvent = {
     ...(input.blockId === undefined ? {} : { blockId: input.blockId }),
     data,
+    eventVersion: "blocky.event/v0-spike",
     runId: input.runId,
     sequence: input.sequence,
     type: input.type,

@@ -98,10 +98,14 @@ function readTimelineEvents(): RuntimeEvent[] {
       const type = item.querySelector(".event-timeline__meta strong")?.textContent;
       const blockId = item.querySelector(".event-timeline__meta code")?.textContent;
       const summary = item.querySelector(".event-timeline__summary")?.textContent;
-      if (!sequenceText || !type) throw new Error("WDIO_EVENT_DOM_INVALID");
+      const eventVersion = item.dataset.eventVersion;
+      const runId = item.dataset.runId;
+      if (eventVersion !== "blocky.event/v0-spike" || !runId || !sequenceText || !type) {
+        throw new Error("WDIO_EVENT_DOM_INVALID");
+      }
       return {
-        eventVersion: "blocky.event/v0-spike",
-        runId: "wdio-dom-event",
+        eventVersion,
+        runId,
         sequence: Number(sequenceText.replace(/^#/, "")),
         type,
         ...(blockId ? { blockId } : {}),
@@ -114,8 +118,8 @@ function readTimelineEvents(): RuntimeEvent[] {
 function countProgramNodes(roots: readonly IrNode[]): number {
   const visit = (node: IrNode): number =>
     1 +
-    Object.values(node.inputs ?? {}).reduce(
-      (total, child) => total + visit(child),
+    Object.values(node.inputs).reduce(
+      (total, child) => total + (child ? visit(child) : 0),
       0,
     ) +
     (node.next ? visit(node.next) : 0);

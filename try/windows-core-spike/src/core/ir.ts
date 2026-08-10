@@ -14,9 +14,9 @@ export type ConnectionShape =
 export interface IrNode {
   id: string;
   type: string;
-  fields?: Record<string, JsonValue>;
-  inputs?: Record<string, IrNode>;
-  next?: IrNode;
+  fields: Record<string, JsonValue>;
+  inputs: Record<string, IrNode | null>;
+  next: IrNode | null;
 }
 
 export interface BlockyProgram {

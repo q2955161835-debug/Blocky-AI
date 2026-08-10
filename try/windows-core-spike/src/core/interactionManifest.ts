@@ -31,7 +31,7 @@ const PARTS: readonly Readonly<{ type: string; part: InputPartKind }> [] = Objec
 ]);
 
 function stringField(node: IrNode, fieldName: string): string | undefined {
-  const value = node.fields?.[fieldName];
+  const value = node.fields[fieldName];
   return typeof value === "string" ? value : undefined;
 }
 
@@ -40,7 +40,7 @@ function nonBlankField(node: IrNode, fieldName: string): string | undefined {
   return value && value.trim().length > 0 ? value : undefined;
 }
 
-function memberChain(first: IrNode | undefined): IrNode[] {
+function memberChain(first: IrNode | null | undefined): IrNode[] {
   const nodes: IrNode[] = [];
   const visited = new Set<IrNode>();
   let current = first;
@@ -52,18 +52,18 @@ function memberChain(first: IrNode | undefined): IrNode[] {
   return nodes;
 }
 
-function capabilityChain(first: IrNode | undefined): IrNode[] {
+function capabilityChain(first: IrNode | null | undefined): IrNode[] {
   return memberChain(first);
 }
 
 function allNodes(program: BlockyProgram): IrNode[] {
   const nodes: IrNode[] = [];
   const visited = new Set<IrNode>();
-  const visit = (current: IrNode | undefined): void => {
+  const visit = (current: IrNode | null | undefined): void => {
     if (!current || visited.has(current)) return;
     visited.add(current);
     nodes.push(current);
-    for (const input of Object.values(current.inputs ?? {})) visit(input);
+    for (const input of Object.values(current.inputs)) visit(input);
     visit(current.next);
   };
   for (const root of program.roots) visit(root);
@@ -79,7 +79,7 @@ function capabilityIds(nodes: IrNode[], type: string, fieldName: string): readon
 }
 
 function compileEntry(entry: IrNode, ownerAgentId: string, ordinal: number): InteractionEntry {
-  const capabilities = capabilityChain(entry.inputs?.CAPABILITIES);
+  const capabilities = capabilityChain(entry.inputs.CAPABILITIES);
   const acceptedParts = Object.freeze(PARTS
     .filter(({ type }) => capabilities.some((capability) => capability.type === type))
     .map(({ part }) => part));
@@ -121,11 +121,11 @@ export function compileInteractionManifest(program: BlockyProgram): InteractionC
 
   for (const agent of program.roots.filter((node) => node.type === "core.agent.define")) {
     let entryOrdinal = 0;
-    for (const member of memberChain(agent.inputs?.MEMBERS)) {
+    for (const member of memberChain(agent.inputs.MEMBERS)) {
       if (member.type !== "core.interaction.chat_entry") continue;
       entryOrdinal += 1;
       validEntries.add(member);
-      if (!member.inputs?.HANDLER) {
+      if (!member.inputs.HANDLER) {
         diagnostics.push(emptyHandlerDiagnostic(member));
         continue;
       }

@@ -18,7 +18,12 @@ export function EventTimeline({ events }: EventTimelineProps) {
       ) : (
         <ol className="event-timeline__list">
           {events.map((event) => (
-            <li key={`${event.runId}-${event.sequence}`} className="event-timeline__item">
+            <li
+              key={`${event.runId}-${event.sequence}`}
+              className="event-timeline__item"
+              data-event-version={event.eventVersion}
+              data-run-id={event.runId}
+            >
               <div className="event-timeline__meta">
                 <span>#{event.sequence}</span>
                 <strong>{event.type}</strong>

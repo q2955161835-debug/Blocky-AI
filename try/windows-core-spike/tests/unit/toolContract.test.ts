@@ -9,9 +9,9 @@ import {
 function node(
   id: string,
   type: string,
-  options: Omit<IrNode, "id" | "type"> = {},
+  options: Partial<Omit<IrNode, "id" | "type">> = {},
 ): IrNode {
-  return { id, type, ...options };
+  return { id, type, fields: {}, inputs: {}, next: null, ...options };
 }
 
 function toolProgram(options: {

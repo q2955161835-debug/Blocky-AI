@@ -6,9 +6,9 @@ import type { BlockyProgram, IrNode } from "../../src/core/ir";
 function node(
   id: string,
   type: string,
-  options: Pick<IrNode, "fields" | "inputs" | "next"> = {},
+  options: Partial<Pick<IrNode, "fields" | "inputs" | "next">> = {},
 ): IrNode {
-  return { id, type, ...options };
+  return { id, type, fields: {}, inputs: {}, next: null, ...options };
 }
 
 function chain(...nodes: IrNode[]): IrNode {
@@ -32,12 +32,12 @@ function entry(
   capabilities: IrNode | undefined = undefined,
   handlerNode: IrNode | undefined = handler(`${id}-handler`),
 ): IrNode {
+  const inputs: Record<string, IrNode | null> = {};
+  if (capabilities) inputs.CAPABILITIES = capabilities;
+  if (handlerNode) inputs.HANDLER = handlerNode;
   return node(id, "core.interaction.chat_entry", {
     fields: { NAME: name },
-    inputs: {
-      ...(capabilities ? { CAPABILITIES: capabilities } : {}),
-      ...(handlerNode ? { HANDLER: handlerNode } : {}),
-    },
+    inputs,
   });
 }
 

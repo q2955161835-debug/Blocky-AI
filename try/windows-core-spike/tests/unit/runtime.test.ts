@@ -1,13 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { createDeterministicModel, runProgram, type RuntimeDependencies } from "../../src/core/deterministicRuntime";
-import type { BlockyProgram } from "../../src/core/ir";
+import type { BlockyProgram, IrNode } from "../../src/core/ir";
 import { stableStringify, type JsonValue } from "../../src/core/json";
 import type { RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { ToolContract } from "../../src/core/toolContract";
 
+function irNode(
+  id: string,
+  type: string,
+  options: Partial<Omit<IrNode, "id" | "type">> = {},
+): IrNode {
+  return { id, type, fields: {}, inputs: {}, next: null, ...options };
+}
+
 const normalProgram: BlockyProgram = {
   schemaVersion: "blocky.ir/v0-spike",
-  roots: [{ id: "entry", type: "core.event.manual_run" }],
+  roots: [irNode("entry", "core.event.manual_run")],
 };
 
 const normalSourceMap = { entry: { nodeId: "entry" } };
@@ -28,12 +36,10 @@ function approvedTool(): Readonly<ToolContract> {
 function permissionProgram(args: Record<string, JsonValue> = {}): BlockyProgram {
   return {
     schemaVersion: "blocky.ir/v0-spike",
-    roots: [{
-      id: "tool-call",
-      type: "core.tool.call",
+    roots: [irNode("tool-call", "core.tool.call", {
       fields: { ARGS: args },
-      inputs: { TOOL: { id: "tool-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.write" } } },
-    }],
+      inputs: { TOOL: irNode("tool-ref", "core.tool.reference", { fields: { TOOL_ID: "mock.write" } }) },
+    })],
   };
 }
 
@@ -48,18 +54,14 @@ function twoApprovalCallsProgram(): BlockyProgram {
   return {
     schemaVersion: "blocky.ir/v0-spike",
     roots: [
-      {
-        id: "invalid-first-call",
-        type: "core.tool.call",
+      irNode("invalid-first-call", "core.tool.call", {
         fields: { ARGS: "not-an-argument-record" },
-        inputs: { TOOL: { id: "invalid-first-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.required" } } },
-      },
-      {
-        id: "valid-later-call",
-        type: "core.tool.call",
+        inputs: { TOOL: irNode("invalid-first-ref", "core.tool.reference", { fields: { TOOL_ID: "mock.required" } }) },
+      }),
+      irNode("valid-later-call", "core.tool.call", {
         fields: { ARGS: {} },
-        inputs: { TOOL: { id: "valid-later-ref", type: "core.tool.reference", fields: { TOOL_ID: "mock.write" } } },
-      },
+        inputs: { TOOL: irNode("valid-later-ref", "core.tool.reference", { fields: { TOOL_ID: "mock.write" } }) },
+      }),
     ],
   };
 }
@@ -115,6 +117,7 @@ describe("deterministic runtime", () => {
       "run.completed",
     ]);
     expect(events.map((event) => event.sequence)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(events.every((event) => event.eventVersion === "blocky.event/v0-spike")).toBe(true);
     expect(events.filter((event) => event.blockId).every((event) =>
       normalSourceMap[event.blockId as keyof typeof normalSourceMap] !== undefined,
     )).toBe(true);

@@ -28,6 +28,33 @@ describe("workspace compiler", () => {
     expect(first.program.schemaVersion).toBe("blocky.ir/v0-spike");
   });
 
+  it("materializes every frozen IR node slot, including empty objects and null next", () => {
+    const result = compileWorkspace({
+      blocks: {
+        blocks: [{
+          id: "event",
+          type: "core.event.manual_run",
+          next: { block: { id: "send", type: "core.message.send" } },
+        }],
+      },
+    });
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.program.roots).toEqual([{
+      id: "event",
+      type: "core.event.manual_run",
+      fields: {},
+      inputs: {},
+      next: {
+        id: "send",
+        type: "core.message.send",
+        fields: {},
+        inputs: {},
+        next: null,
+      },
+    }]);
+  });
+
   it("ignores visual state and JSON object key order", () => {
     const original = createHundredBlockWorkspaceState();
     const altered = cloneJson(original) as Record<string, unknown>;

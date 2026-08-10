@@ -45,9 +45,9 @@ const irNodeSchema: z.ZodType<IrNode> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
     type: z.string(),
-    fields: z.record(z.string(), jsonValueSchema).optional(),
-    inputs: z.record(z.string(), irNodeSchema).optional(),
-    next: irNodeSchema.optional(),
+    fields: z.record(z.string(), jsonValueSchema),
+    inputs: z.record(z.string(), irNodeSchema.nullable()),
+    next: irNodeSchema.nullable(),
   }),
 );
 

@@ -48,7 +48,9 @@ function explicitToolCallsInOrder(program: BlockyProgram): IrNode[] {
   const calls: IrNode[] = [];
   const visit = (node: IrNode): void => {
     if (node.type === "core.tool.call") calls.push(node);
-    for (const child of Object.values(node.inputs ?? {})) visit(child);
+    for (const child of Object.values(node.inputs)) {
+      if (child) visit(child);
+    }
     if (node.next) visit(node.next);
   };
   program.roots.forEach(visit);
@@ -56,8 +58,8 @@ function explicitToolCallsInOrder(program: BlockyProgram): IrNode[] {
 }
 
 function toolIdForCall(call: IrNode): string | undefined {
-  const reference = call.inputs?.TOOL;
-  const toolId = reference?.type === "core.tool.reference" ? reference.fields?.TOOL_ID : undefined;
+  const reference = call.inputs.TOOL;
+  const toolId = reference?.type === "core.tool.reference" ? reference.fields.TOOL_ID : undefined;
   return typeof toolId === "string" && toolId.trim() !== "" ? toolId : undefined;
 }
 

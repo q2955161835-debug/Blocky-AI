@@ -63,7 +63,7 @@ function isPlainJsonRecord(value: unknown): value is Record<string, JsonValue> {
 }
 
 function stringField(node: IrNode, name: string): string | undefined {
-  const value = node.fields?.[name];
+  const value = node.fields[name];
   return typeof value === "string" && value.trim() !== "" ? value : undefined;
 }
 
@@ -76,7 +76,7 @@ function isRequired(value: JsonValue | undefined): boolean {
 }
 
 function hasField(node: IrNode, name: string): boolean {
-  return Object.prototype.hasOwnProperty.call(node.fields ?? {}, name);
+  return Object.prototype.hasOwnProperty.call(node.fields, name);
 }
 
 function hasOwn(value: object, name: string): boolean {
@@ -95,7 +95,9 @@ function deepFreeze<T>(value: T): T {
 
 function walk(node: IrNode, visit: (current: IrNode) => void): void {
   visit(node);
-  for (const child of Object.values(node.inputs ?? {})) walk(child, visit);
+  for (const child of Object.values(node.inputs)) {
+    if (child) walk(child, visit);
+  }
   if (node.next) walk(node.next, visit);
 }
 
@@ -110,7 +112,7 @@ function emptySchema(): JsonSchema {
 }
 
 function compileOutputSchema(node: IrNode, diagnostics: Diagnostic[]): JsonSchema | undefined {
-  const raw = node.fields?.SCHEMA;
+  const raw = node.fields.SCHEMA;
   if (raw === undefined) return emptySchema();
   if (!isPlainJsonRecord(raw)) {
     diagnostics.push(error("TOOL_RESULT_SCHEMA_NOT_OBJECT", "工具结果架构必须是对象", node.id));
@@ -175,11 +177,11 @@ function compileDefinition(node: IrNode, diagnostics: Diagnostic[]): ToolContrac
   let requiresApproval = false;
   let valid = true;
   const seenParameters = new Set<string>();
-  let contractNode = node.inputs?.CONTRACT;
+  let contractNode = node.inputs.CONTRACT;
   while (contractNode) {
     if (contractNode.type === "core.tool.parameter") {
       const name = stringField(contractNode, "NAME");
-      const type = parameterType(contractNode.fields?.TYPE ?? "string");
+      const type = parameterType(contractNode.fields.TYPE ?? "string");
       if (!name || !type) {
         diagnostics.push(error("TOOL_PARAMETER_INVALID", "工具参数名称或类型无效，仅支持字符串、数字和布尔值", contractNode.id));
         if (hasField(contractNode, "DEFAULT")) {
@@ -192,9 +194,9 @@ function compileDefinition(node: IrNode, diagnostics: Diagnostic[]): ToolContrac
       } else {
         seenParameters.add(name);
         inputSchema.properties[name] = { type };
-        if (isRequired(contractNode.fields?.REQUIRED)) inputSchema.required.push(name);
+        if (isRequired(contractNode.fields.REQUIRED)) inputSchema.required.push(name);
         if (hasField(contractNode, "DEFAULT")) {
-          const defaultValue = contractNode.fields?.DEFAULT as JsonValue;
+          const defaultValue = contractNode.fields.DEFAULT as JsonValue;
           if (!valueMatchesType(defaultValue, type)) {
             diagnostics.push(error("TOOL_PARAMETER_INVALID_DEFAULT", `工具参数 ${name} 的默认值与类型不匹配`, contractNode.id));
             valid = false;
@@ -272,7 +274,7 @@ export function validateToolArgs(
   return diagnostics;
 }
 
-function readReference(reference: IrNode | undefined, diagnostics: Diagnostic[]): { id: string; blockId: string } | undefined {
+function readReference(reference: IrNode | null | undefined, diagnostics: Diagnostic[]): { id: string; blockId: string } | undefined {
   if (!reference || reference.type !== "core.tool.reference") {
     diagnostics.push(error("TOOL_REFERENCE_MISSING", "工具使用缺少工具引用", reference?.id));
     return undefined;
@@ -286,7 +288,7 @@ function readReference(reference: IrNode | undefined, diagnostics: Diagnostic[])
 }
 
 function resolveReference(
-  reference: IrNode | undefined,
+  reference: IrNode | null | undefined,
   contracts: Map<string, Readonly<ToolContract>>,
   diagnostics: Diagnostic[],
 ): { referenceBlockId: string; contract: Readonly<ToolContract> } | undefined {
@@ -319,7 +321,7 @@ function canonicalArgs(call: IrNode, diagnostics: Diagnostic[]): Record<string, 
   }
   if (!hasArgs) return {};
 
-  const args = canonicalArgumentRecord(call.fields?.ARGS);
+  const args = canonicalArgumentRecord(call.fields.ARGS);
   if (!args) {
     diagnostics.push(error("TOOL_CALL_INVALID_ARGUMENTS", "工具调用 ARGS 必须是 plain JSON 对象", call.id));
     return undefined;
@@ -336,17 +338,17 @@ export function resolveToolUsages(
   const explicitCalls: ToolUsageResult["explicitCalls"] = [];
 
   for (const agent of allNodes(program).filter((node) => node.type === "core.agent.define")) {
-    const members = agent.inputs?.MEMBERS;
+    const members = agent.inputs.MEMBERS;
     if (!members) continue;
     walk(members, (member) => {
       if (member.type !== "core.agent.add_tool") return;
-      const resolved = resolveReference(member.inputs?.TOOL, contracts, diagnostics);
+      const resolved = resolveReference(member.inputs.TOOL, contracts, diagnostics);
       if (resolved) agentAttachments.push({ agentId: agent.id, ...resolved });
     });
   }
 
   for (const callBlock of allNodes(program).filter((node) => node.type === "core.tool.call")) {
-    const resolved = resolveReference(callBlock.inputs?.TOOL, contracts, diagnostics);
+    const resolved = resolveReference(callBlock.inputs.TOOL, contracts, diagnostics);
     if (!resolved) continue;
     const args = canonicalArgs(callBlock, diagnostics);
     if (!args) continue;

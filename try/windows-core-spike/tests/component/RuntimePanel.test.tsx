@@ -11,6 +11,7 @@ const EMPTY_MANIFEST: InteractionManifest = {
 };
 
 const CANCELLED_EVENT: RuntimeEvent = {
+  eventVersion: "blocky.event/v0-spike",
   runId: "run-1",
   sequence: 1,
   type: "run.cancelled",
@@ -69,7 +70,10 @@ describe("RuntimePanel empty manifest", () => {
     });
 
     expect(screen.getByRole("heading", { name: "事件时间线" })).toBeInTheDocument();
-    expect(screen.getByText("run.cancelled")).toBeInTheDocument();
+    const eventType = screen.getByText("run.cancelled");
+    const eventRow = eventType.closest(".event-timeline__item");
+    expect(eventRow).toHaveAttribute("data-event-version", "blocky.event/v0-spike");
+    expect(eventRow).toHaveAttribute("data-run-id", "run-1");
     expect(screen.getByRole("alertdialog", { name: "工具权限请求" }))
       .toBeInTheDocument();
     expect(screen.getByRole("button", { name: "取消运行" })).toBeInTheDocument();

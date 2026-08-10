@@ -159,7 +159,7 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
       diagnostics.push(connectionDiagnostic(owner.id, owner.input, expected, actual));
     }
 
-    const inputs: Record<string, IrNode> = {};
+    const inputs: Record<string, IrNode | null> = {};
     for (const [name, connection] of Object.entries(block.inputs ?? {})) {
       const inputExpected = spec?.inputs?.[name];
       if (!inputExpected) {
@@ -167,11 +167,13 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
       }
       if (connection.block !== undefined) {
         const child = compileBlock(connection.block, inputExpected, { id: block.id, input: name });
-        if (child) inputs[name] = child;
+        inputs[name] = child ?? null;
+      } else {
+        inputs[name] = null;
       }
     }
 
-    let next: IrNode | undefined;
+    let next: IrNode | null = null;
     if (block.next?.block !== undefined) {
       if (!spec?.next) {
         diagnostics.push(invalidNextDiagnostic(block.id));
@@ -184,9 +186,9 @@ export function compileWorkspace(serializedWorkspace: unknown): CompileResult {
     return {
       id: block.id,
       type: block.type,
-      ...(block.fields ? { fields: block.fields } : {}),
-      ...(Object.keys(inputs).length > 0 ? { inputs } : {}),
-      ...(next ? { next } : {}),
+      fields: block.fields ?? {},
+      inputs,
+      next,
     };
   };
 
