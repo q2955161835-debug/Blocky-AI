@@ -5,12 +5,12 @@
 | 项目 | 结论 |
 |---|---|
 | 验收日期 | 2026-08-10 |
-| 验收对象 | `codex/feat-windows-core-spike` 分支，测试提交 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e` |
+| 验收对象 | `codex/feat-windows-core-spike` 分支；原始全量基线 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e`，冻结契约补充提交 `642f06cb59420031925c47ee801505656e50ccf8` |
 | 独立复审 | L3（核心执行与本地数据边界）通过；Critical（严重）0 / Important（重要）0 / Minor（次要）0 |
 | 技术决策 | **GO（继续）**：八项 Windows Core（Windows 核心）门禁全部通过，可以开始设计正式 monorepo（单体仓库）与共享包 |
 | 决策边界 | 不授权整包复制尖峰、不代表正式产品、发行、上架、收费或完整 311 块支持，也不验证 ADR-001 第二、第三阶段 |
 
-本报告记录的是位于 `try/windows-core-spike/` 的一次性 Windows 原生技术尖峰。测试提交固定为 `7eeb9a8`；包含本报告的后续文档提交只固化证据与结论，不产生新的产品测试事实，二者不得混为同一提交。
+本报告记录的是位于 `try/windows-core-spike/` 的一次性 Windows 原生技术尖峰。原始全量测试提交为 `7eeb9a8`；随后 `22f9778` 与 `642f06c` 恢复并补齐冻结的 IR（中间表示）、运行事件与 Host（宿主）请求契约，已重新通过聚焦、Fast、Core、原生 E2E（端到端）、性能、日志审计和普通包隔离。旧的 30 分钟长稳仍只绑定其原始 full（完整）运行，不冒充在补充提交上重新执行。包含本报告的后续文档提交只固化证据与结论，不替代测试提交。
 
 ## 1. 机器与锁定工具链
 
@@ -27,7 +27,7 @@
 
 本次只验证 ADR-001 第一阶段八项 Core（核心）门禁：本地 Blockly、精确 100 积木编辑/保存、稳定 IR（中间表示）、双标签与入口投影、一等 Tool（工具）契约、确定性运行时、受限 Tauri Host（宿主）以及原生 Windows E2E（端到端）、性能、长稳和敏感信息边界。
 
-明确未实现或未验证：正式 Blocky 应用骨架、完整 311-ID（标识符）目录、真实模型/插件、搭建助手、账号、订阅、权益、社区、CLI（命令行）、官方 Skills（技能）、四类原生 Agent（智能体）适配器、自定义积木、正式 `.blocky` 容器、安装器/签名/商店资源、macOS、Android、HarmonyOS、iOS 和商业发布。
+明确未实现或未验证：正式 Blocky 应用骨架、完整 311-ID（标识符）目录、产品内置的真实模型/插件适配器、搭建助手、账号、订阅、权益、社区、CLI（命令行）、官方 Skills（技能）、四类原生 Agent（智能体）适配器、自定义积木、正式 `.blocky` 容器、安装器/签名/商店资源、macOS、Android、HarmonyOS、iOS 和商业发布。用户授权的 DeepSeek Flash 外部兼容性探针已作为补充验收通过，但它没有被接入产品构建、配置或持久化路径。
 
 ## 3. 验证架构
 
@@ -72,6 +72,14 @@ flowchart LR
 | 8 | 项目与日志敏感扫描为零 | `SENSITIVE_SCAN tracked=0 snapshot=0 frontend_log=0 backend_log=0`；WDIO 应用诊断、敏感值和绝对工作区路径均为 0；含 NUL（空字符）文本缺口已失败关闭 | 项目 JSON 与事件面板未出现明文秘密或绝对路径 | 通过 |
 
 详细命令、退出码和验收等级见[任务验收记录](../验收/归档/2026-08-10/验收-Windows-Core技术尖峰.md)。
+
+### 4.1 DeepSeek Flash 外部兼容性补充验收
+
+用户明确授权后，独立子 Agent 使用本地进程环境临时读取凭据，对 `deepseek-v4-flash` 执行限定的 live（在线）兼容性探针。当前有效的冻结契约后复验严格只访问 `api.deepseek.com`，共 4 个小请求且均为 HTTP 200：模型列表 133 ms、固定文本 1162 ms、工具调用第一轮 76 ms、合成工具结果后的第二轮 70 ms。Chat 请求按官方 [Chat Completion API](https://api-docs.deepseek.com/api/create-chat-completion) 显式关闭 thinking（思考），工具链路遵循官方 [Tool Calls 指南](https://api-docs.deepseek.com/guides/tool_calls)。
+
+固定文本经现有依赖注入边界进入 deterministic runtime（确定性运行时），得到 `run.started -> block.started -> model.chunk -> block.completed -> run.completed`；每个事件均带 `blocky.event/v0-spike`、连续序号、同一运行标识和有效 source map（来源映射），且只有一个完成终态。工具两轮验证了工具名、JSON 对象参数、无额外字段和 `tool_call_id` 链接；工具结果只在本地合成，没有执行真实外部工具副作用。
+
+这项结果只说明外部 API 与当前最小 model/tool seam（模型/工具接缝）兼容，不代表产品已内置 DeepSeek、已实现生产适配器、已验证服务可用性 SLA（服务等级）或已授权任何真实工具动作。详细命令边界、Token（令牌）计数、秘密处理和独立复审见[补充任务验收](../验收/归档/2026-08-10/验收-DeepSeek-Flash-Agent补充验证.md)。
 
 ## 5. 性能与 30 分钟长稳
 
@@ -123,6 +131,7 @@ flowchart LR
 | WDIO 日志 allowlist（允许清单）与秘密检测存在假阴性 | 锚定完整 provider（提供方）行，应用错误优先分类，复用八类敏感检测且不回显；原 Minor 关闭 |
 | 空运行面板布局回退 | 区分纯空闲与生命周期状态，真实 CSS（样式表）验证居中、字体和可达的时间线/审批/取消；原 Minor 关闭 |
 | 仓库扫描器把含 NUL 文本误作二进制跳过 | 严格文本解码与 JSON 语义扫描，失败关闭；最终独立复审 0/0/0 |
+| 冻结 IR / RuntimeEvent / Host 请求形状发生漂移 | 恢复 `fields` / `inputs` / `next` 必填与显式 `null`，由唯一事件工厂写入 `eventVersion` 并限制 `data` 为对象记录，公开保存请求统一为 `{ projectId, json }`；聚焦 57/57、`check`、`check:core` 与安全差异扫描独立通过，原 Important 关闭 |
 | 首次完整门禁出现一次 Vitest worker（测试工作进程）异常退出 | 未增加自动重试或抑制；同拓扑连续 3 次单元测试及后续独立 `check`、`check:core`、`check:full` 均通过，判定为一次性调度异常 |
 
 既有 Vite 主压缩 chunk（代码块）大于 1000 kB 警告仍保留；当前实测性能通过，但正式仓库设计应安排 code splitting（代码拆分）。无 BOM 的 UTF-16 不做猜测解码，而是严格失败关闭，这是有意安全边界。
@@ -135,6 +144,7 @@ flowchart LR
 - Codex Security 在 `C:\Users\29551\AppData\Local\Temp\codex-security-scans-*` 写入扫描包与仓库范围威胁模型；它们是插件产物，不是项目文件。
 - computer-use（计算机控制）在窗口激活与状态读取时均返回精确错误 `Error: node_repl exec context not found`；重置仍无效。后备只使用机器既有 pywinauto 0.6.9、Pillow 12.1.0、OpenCV 4.13.0.92 与 Win32/System.Drawing（Windows 原生绘图）能力，没有安装或升级依赖。
 - 正常应用以进程级 WebView2 主机解析阻断方式离线运行；反复检查应用进程 `Established=0`、`ExternalEstablished=0`，没有修改系统网络适配器或全局防火墙规则。
+- DeepSeek 补充验收只读取用户明确授权的本地凭据文件并把值注入短生命周期测试子进程；没有修改凭据文件、没有记录真实路径/值/请求头/响应正文，也没有把凭据写入 Git、报告或缓存。网络只访问 `api.deepseek.com`；探针和工作区内定向缓存已删除。
 - 本阶段没有 push（推送）、PR（拉取请求）、发布、上架或其他 GitHub 外部写入。
 
 ## 10. GO 后果与正式仓库约束
