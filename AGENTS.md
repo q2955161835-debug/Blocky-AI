@@ -34,16 +34,16 @@ Blocky 是面向普通用户与学校教育的安装式积木 AI（人工智能�
 | `doc/产品设计/` | 产品范围、积木目录、交互、兼容模板和商业边界 |
 | `doc/技术设计/` | ADR（架构决策记录）、技术报告与持久视觉证据 |
 | `doc/验收/模块/` | 长期功能/场景基线 |
-| `doc/验收/跨模块/` | 重要跨模块完整流程；没有独立流程时保持为空 |
+| 按需创建的 `doc/验收/跨模块/` | 只用于重要跨模块完整流程；当前目录尚未创建 |
 | `doc/验收/归档/` | 已完成任务的 L0–L3（验收等级）记录 |
 | `doc/进展记录/` | 按日期记录阶段进展、文件用途与异常 |
 | `scripts/`、`tests/dev-environment/` | 跨平台开发环境 doctor（环境检查）及其稳定契约 |
 | `try/windows-core-spike/src/blockly/` | 本地 Blockly 目录、连接语法、工具箱、夹具与画布适配 |
 | `try/windows-core-spike/src/core/` | 纯 TypeScript（类型脚本）编译、IR、清单、Tool、运行事件与脱敏 |
-| `try/windows-core-spike/src/app/`、`src/runtime/`、`src/builder/` | React（界面框架）三栏界面、控制器和运行/搭建视图 |
-| `try/windows-core-spike/src/project/`、`src/host/` | 规范项目快照与窄 HostBridge（宿主桥） |
+| `try/windows-core-spike/src/app/`、`try/windows-core-spike/src/runtime/`、`try/windows-core-spike/src/builder/` | React（界面框架）三栏界面、控制器和运行/搭建视图 |
+| `try/windows-core-spike/src/project/`、`try/windows-core-spike/src/host/` | 规范项目快照与窄 HostBridge（宿主桥） |
 | `try/windows-core-spike/src-tauri/` | Rust（系统语言）原子项目存储、能力配置和 Windows 图标 |
-| `try/windows-core-spike/tests/`、`scripts/` | 单元、组件、原生 E2E（端到端）、性能、长稳与安全门禁 |
+| `try/windows-core-spike/tests/`、`try/windows-core-spike/scripts/` | 单元、组件、原生 E2E（端到端）、性能、长稳与安全门禁 |
 
 ## 4. 架构与数据流
 
@@ -58,7 +58,7 @@ Blocky 是面向普通用户与学校教育的安装式积木 AI（人工智能�
 
 ## 5. 关键依赖与运行方式
 
-尖峰依赖 Node.js（JavaScript 运行时）、pnpm（包管理器）、Rust/Cargo（构建工具）、Tauri（桌面壳）、React、TypeScript、Vite（构建器）、Blockly、Zod（数据校验）、Vitest（测试框架）和仅测试使用的 WebdriverIO。精确锁定版本以 `try/windows-core-spike/package.json`、`pnpm-lock.yaml`、`src-tauri/Cargo.toml` 与 `Cargo.lock` 为准。
+尖峰依赖 Node.js（JavaScript 运行时）、pnpm（包管理器）、Rust/Cargo（构建工具）、Tauri（桌面壳）、React、TypeScript、Vite（构建器）、Blockly、Zod（数据校验）、Vitest（测试框架）和仅测试使用的 WebdriverIO。精确锁定版本以 `try/windows-core-spike/package.json`、`try/windows-core-spike/pnpm-lock.yaml`、`try/windows-core-spike/src-tauri/Cargo.toml` 与 `try/windows-core-spike/src-tauri/Cargo.lock` 为准。
 
 常用命令从项目根执行：
 
@@ -89,7 +89,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 - Host、权限、CSP（内容安全策略）、日志或敏感扫描变化：按 L3 复测负例、真实原子保存、日志审计与普通包隔离。
 - 事件上限、保存循环、WebView（网页视图）生命周期或长期状态变化：必须重新执行未缩短的 `check:full`。
 - 只改文档：至少检查 UTF-8（统一字符编码）、相对链接、`git diff --check` 和仓库敏感扫描；引用测试事实时绑定产生事实的精确提交。
-- 功能、预期或风险变化时，更新 `doc/验收/模块/`；每次交付在 `doc/验收/归档/` 留任务记录，完整跨模块流程才写入 `doc/验收/跨模块/`。
+- 功能、预期或风险变化时，更新 `doc/验收/模块/`；每次交付在 `doc/验收/归档/` 留任务记录；出现重要完整跨模块流程时才创建并写入 `doc/验收/跨模块/`。
 
 ## 7. 项目特有安全与范围边界
 
