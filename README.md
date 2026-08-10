@@ -33,7 +33,7 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - [CLI 与官方 Agent Skill 产品设计](doc/产品设计/CLI与官方Agent-Skill.md)
 - [平台分层与桌面技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
 - [Windows Core 技术尖峰报告](doc/技术设计/Windows-Core技术尖峰报告.md)
-- [Windows Core L3 任务验收](doc/验收/任务/验收-Windows-Core技术尖峰.md)
+- [Windows Core L3 任务验收](doc/验收/归档/2026-08-10/验收-Windows-Core技术尖峰.md)
 - [Blocky 编辑器与运行核心模块验收](doc/验收/模块/验收-Blocky编辑器与运行核心.md)
 - [原生 Agent 兼容运行时](doc/技术设计/ADR-002-原生Agent兼容运行时.md)
 - [CLI、官方 Agent Skills 与插件接口](doc/技术设计/ADR-003-CLI与官方Agent-Skill接口.md)
