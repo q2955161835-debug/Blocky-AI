@@ -2,11 +2,11 @@
 
 Blocky 是一款面向普通人和学校教育的“积木式 AI 创作软件”。用户通过可拼接、可解释的能力积木创建 AI 伙伴，并使用右侧搭建助手或运行入口完成创作、对话和调试。
 
-![Blocky 当前图标概念](logo/logo.png)
+![Blocky 已批准的 Windows Logo（标识）](logo/logo.png)
 
-当前阶段已形成完整积木与主流 Agent 兼容设计基线，但仍不包含应用代码或可运行原型。
+当前阶段已形成完整积木与主流 Agent 兼容设计基线，并在 `try/windows-core-spike/` 完成一个可删除的 Windows Core（Windows 核心）原生技术尖峰。该尖峰已通过 L3 验收，但不是正式 Blocky 应用，也不是可分发产品。
 
-Windows Core 与未来移动使用端所需的本机开发工具链已准备，并提供可复现的[开发环境检查入口](doc/开发/开发环境.md)；下一步只先执行 Windows 技术尖峰，正式业务骨架仍须等待尖峰通过。
+Windows Core 与未来移动使用端所需的本机开发工具链已准备，并提供可复现的[开发环境检查入口](doc/开发/开发环境.md)。Windows Core 技术结论为 GO（继续）：只授权下一步设计正式 monorepo（单体仓库）与共享包，不授权复制尖峰、发行、收费、上架或声称完整 311 块已实现。
 
 ## 已确认方向
 
@@ -21,7 +21,7 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - 用户术语：单个能力称为“能力积木”，扩展分发单元称为“积木包”，共享入口称为“积木社区”。
 - 内置模板：完整产品提供 OpenClaw、Hermes、Pi 与 OpenCode 的原生兼容模板；Blocky 连接或托管锁定版本的官方运行时，并将原生配置、能力和执行状态可逆地映射为通用积木。
 - Agent 接入：提供 `blocky` CLI、官方 Skills 包和 Codex 等客户端的官方插件，使编程 Agent 能创建积木、搭建 Agent、转换 GitHub 项目和逆向现有 Agent，并与图形页进行可审查协作。
-- 品牌素材：`logo/logo.png` 作为当前图标概念母图；正式上架前仍需制作各平台规范资源并完成小尺寸可读性检查。
+- 品牌素材：`logo/logo.png` 是本次正式批准的 Windows Logo（标识）母图，Windows/Tauri 图标已生成并通过普通窗口检查；各平台上架资源、签名包图标矩阵和商店素材仍属于未来交付。
 
 ## 当前文档
 
@@ -32,12 +32,15 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - [OpenClaw、Hermes、Pi 与 OpenCode 官方兼容模板](doc/产品设计/内置兼容模板-OpenClaw-Hermes-Pi与OpenCode.md)
 - [CLI 与官方 Agent Skill 产品设计](doc/产品设计/CLI与官方Agent-Skill.md)
 - [平台分层与桌面技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
+- [Windows Core 技术尖峰报告](doc/技术设计/Windows-Core技术尖峰报告.md)
+- [Windows Core L3 任务验收](doc/验收/任务/验收-Windows-Core技术尖峰.md)
+- [Blocky 编辑器与运行核心模块验收](doc/验收/模块/验收-Blocky编辑器与运行核心.md)
 - [原生 Agent 兼容运行时](doc/技术设计/ADR-002-原生Agent兼容运行时.md)
 - [CLI、官方 Agent Skills 与插件接口](doc/技术设计/ADR-003-CLI与官方Agent-Skill接口.md)
 - [开放扩展与社区安全边界](doc/技术设计/ADR-004-开放扩展与社区安全边界.md)
 
 ## 当前结论
 
-首个实施门禁调整为 `try/` 中的 Windows Blockly/本地 WebView 技术尖峰。尖峰通过后按独立子规格依次实现统一积木语义、交互入口与工具形态、Windows 编辑器、右侧双 Agent 栏、完整积木族、扩展与社区、原生兼容和 Agent 工具链；macOS 对等桌面端及移动 Agent 使用器分别在后续阶段实施。完整产品通过后再切分订阅权益。
+`try/` 中的 Windows Blockly/本地 WebView（网页视图）技术尖峰已在测试提交 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e` 通过八项 Core、原生 E2E、性能、360-cycle/30 分钟长稳、安全与人工门禁。下一步先设计正式仓库和共享包，再按独立子规格实现完整产品；ADR-001 第二阶段 Windows 完整能力和第三阶段后续平台仍未验证。完整产品通过后再切分订阅权益。
 
 > 项目级 `AGENTS.md` 尚未创建。按照当前项目规则，需得到用户明确授权后才能创建或维护。
