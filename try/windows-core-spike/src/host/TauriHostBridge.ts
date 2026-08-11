@@ -6,7 +6,12 @@ import type { BlockyProgram, IrNode } from "../core/ir";
 import { stableStringify, type JsonValue } from "../core/json";
 import { scanSensitiveValues } from "../core/securityScan";
 import type { SpikeProjectSnapshot } from "../project/SpikeProjectSnapshot";
-import type { HostBridge, SaveProjectRequest } from "./HostBridge";
+import type {
+  DocumentRecord,
+  HostBridge,
+  SaveDocumentRequest,
+  SaveProjectRequest,
+} from "./HostBridge";
 
 export interface ProjectRecord {
   readonly projectId: string;
@@ -74,10 +79,22 @@ const snapshotSchema = z.strictObject({
   interactionManifest: interactionManifestSchema,
 });
 
-function parseSnapshot(record: ProjectRecord, projectId: string): SpikeProjectSnapshot {
+const documentRecordSchema = z.strictObject({
+  documentId: z.string().min(1).max(128),
+  displayName: z.string().min(1).max(255),
+  json: z.string(),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  bytes: z.number().int().nonnegative(),
+  hasFileAssociation: z.boolean(),
+});
+
+function parseSnapshotJson(
+  json: string,
+  expectedProjectId?: string,
+): SpikeProjectSnapshot {
   let raw: unknown;
   try {
-    raw = JSON.parse(record.json);
+    raw = JSON.parse(json);
   } catch {
     throw new HostBridgeError("PROJECT_JSON_INVALID", "项目 JSON 无效");
   }
@@ -97,7 +114,7 @@ function parseSnapshot(record: ProjectRecord, projectId: string): SpikeProjectSn
   if (!parsed.success) {
     throw new HostBridgeError("PROJECT_JSON_INVALID", "项目 JSON 无效");
   }
-  if (record.projectId !== projectId || parsed.data.projectId !== projectId) {
+  if (expectedProjectId && parsed.data.projectId !== expectedProjectId) {
     throw new HostBridgeError("PROJECT_ID_MISMATCH", "项目标识不匹配");
   }
   if (scanSensitiveValues(parsed.data).length > 0) {
@@ -123,6 +140,25 @@ function parseSnapshot(record: ProjectRecord, projectId: string): SpikeProjectSn
   return parsed.data;
 }
 
+function parseProjectRecord(
+  record: ProjectRecord,
+  projectId: string,
+): SpikeProjectSnapshot {
+  if (record.projectId !== projectId) {
+    throw new HostBridgeError("PROJECT_ID_MISMATCH", "项目标识不匹配");
+  }
+  return parseSnapshotJson(record.json, projectId);
+}
+
+function parseDocumentRecord(raw: unknown): DocumentRecord {
+  const parsed = documentRecordSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new HostBridgeError("DOCUMENT_RECORD_INVALID", "项目文件响应无效");
+  }
+  parseSnapshotJson(parsed.data.json);
+  return parsed.data;
+}
+
 export class TauriHostBridge implements HostBridge {
   async saveProject(request: SaveProjectRequest): Promise<void> {
     let raw: unknown;
@@ -142,6 +178,23 @@ export class TauriHostBridge implements HostBridge {
 
   async loadProject(projectId: string): Promise<SpikeProjectSnapshot> {
     const record = await invoke<ProjectRecord>("load_project", { projectId });
-    return parseSnapshot(record, projectId);
+    return parseProjectRecord(record, projectId);
+  }
+
+  async openDocument(): Promise<DocumentRecord | null> {
+    const record = await invoke<unknown>("open_project_document");
+    return record === null ? null : parseDocumentRecord(record);
+  }
+
+  async saveDocument(
+    request: SaveDocumentRequest,
+  ): Promise<DocumentRecord | null> {
+    parseSnapshotJson(request.json);
+    const record = await invoke<unknown>("save_project_document", { request });
+    return record === null ? null : parseDocumentRecord(record);
+  }
+
+  async clearDocumentAssociation(): Promise<void> {
+    await invoke("clear_project_document_association");
   }
 }

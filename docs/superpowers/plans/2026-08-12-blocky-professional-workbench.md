@@ -205,7 +205,7 @@ clearDocumentAssociation(): Promise<void>;
 - Produces Rust commands: `open_project_document`, `save_project_document`, `clear_project_document_association`.
 - Consumes: validated `blocky.spike-project/v1` JSON; keeps paths only inside `DocumentStore`.
 
-- [ ] **Step 1: Write failing TypeScript contract tests**
+- [x] **Step 1: Write failing TypeScript contract tests**
 
 ```ts
 expect(await host.openDocument()).toBeNull();
@@ -216,27 +216,27 @@ expect(await host.openDocument()).toMatchObject({
 expect(record).not.toHaveProperty("path");
 ```
 
-- [ ] **Step 2: Run RED for missing HostBridge methods**
+- [x] **Step 2: Run RED for missing HostBridge methods**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentHostBridge.test.ts`
 
 Expected: FAIL with TypeScript contract errors.
 
-- [ ] **Step 3: Extend HostBridge and implement deterministic in-memory behavior**
+- [x] **Step 3: Extend HostBridge and implement deterministic in-memory behavior**
 
 The in-memory bridge stores `json`, `displayName`, and a boolean association only. It exposes test helpers `queueOpen(json, displayName)` and `queueCancelOpen()` without introducing production path fields.
 
-- [ ] **Step 4: Run TypeScript GREEN**
+- [x] **Step 4: Run TypeScript GREEN**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentHostBridge.test.ts tests/unit/tauriHostBridge.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Write failing Rust archive tests before adding archive code**
+- [x] **Step 5: Write failing Rust archive tests before adding archive code**
 
 ```rust
 #[test]
-fn blocky_archive_round_trips_one_project_json_entry() {
+fn blocky_archive_round_trips_versioned_manifest_and_project_json() {
     let bytes = encode_blocky_archive(VALID_JSON.as_bytes()).unwrap();
     assert_eq!(decode_blocky_archive(&bytes).unwrap(), VALID_JSON.as_bytes());
 }
@@ -249,13 +249,13 @@ fn blocky_archive_rejects_traversal_duplicate_and_oversized_entries() {
 }
 ```
 
-- [ ] **Step 6: Run Rust RED**
+- [x] **Step 6: Run Rust RED**
 
 Run: `cargo test --locked --manifest-path .\try\windows-core-spike\src-tauri\Cargo.toml document_store`
 
 Expected: FAIL because `document_store` functions do not exist.
 
-- [ ] **Step 7: Add locked minimal dependencies**
+- [x] **Step 7: Add locked minimal dependencies**
 
 Run from `try/windows-core-spike/src-tauri`:
 
@@ -266,7 +266,7 @@ cargo add zip@6.0.0 --no-default-features --features deflate
 
 Expected: `Cargo.toml` and lockfile use exact compatible versions; no unrelated dependency upgrades.
 
-- [ ] **Step 8: Implement archive validation and atomic document storage**
+- [x] **Step 8: Implement archive validation and atomic document storage**
 
 ```rust
 pub struct DocumentStore {
@@ -288,13 +288,13 @@ pub struct DocumentRecord {
 }
 ```
 
-`decode_blocky_archive` accepts exactly one regular `project.json`, rejects backslashes/absolute/traversal paths, duplicate names, encrypted/unsupported compression, more than 16 entries, archive bytes above 5 MiB, and decompressed `project.json` above 5 MiB. `save` writes a deflated archive to a tempfile in the target directory, `sync_all`, then persists atomically. Dialog cancellation returns `Ok(None)`.
+`decode_blocky_archive` accepts exactly two regular entries: `manifest.json` with `blocky.document/v1`, and one validated `project.json`. It rejects backslashes/absolute/traversal paths, duplicate or unknown names, encrypted/unsupported compression, malformed/ZIP64/multipart central directories, archive bytes above 5 MiB, and decompressed `project.json` above 5 MiB. `save` writes a deflated archive to a tempfile in the target directory, `sync_all`, then persists atomically. Dialog cancellation returns `Ok(None)`.
 
-- [ ] **Step 9: Register commands without adding broad capability permissions**
+- [x] **Step 9: Register commands without adding broad capability permissions**
 
 Manage `DocumentStore` in `tauri::Builder`, run blocking dialogs/filesystem work through `tauri::async_runtime::spawn_blocking`, and return only `DocumentRecord`. Keep the existing app-data commands unchanged.
 
-- [ ] **Step 10: Implement TauriHostBridge validation and run GREEN**
+- [x] **Step 10: Implement TauriHostBridge validation and run GREEN**
 
 Validate returned JSON with the existing snapshot parser, rename the internal parser to accept the record identity required by app-data vs user documents, and ensure rejected payloads expose only `HostBridgeError.code` plus fixed Chinese messages.
 

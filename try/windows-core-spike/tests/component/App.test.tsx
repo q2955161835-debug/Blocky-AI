@@ -274,6 +274,13 @@ describe("App", () => {
       loadProject: async () => {
         throw new Error("SECRET_LOAD_DETAIL");
       },
+      openDocument: async () => {
+        throw new Error("SECRET_OPEN_DETAIL");
+      },
+      saveDocument: async () => {
+        throw new Error("SECRET_DOCUMENT_SAVE_DETAIL");
+      },
+      clearDocumentAssociation: async () => {},
     };
     render(
       <App hostBridge={rejectingHost} initialWorkspace={EMPTY_WORKSPACE} />,
