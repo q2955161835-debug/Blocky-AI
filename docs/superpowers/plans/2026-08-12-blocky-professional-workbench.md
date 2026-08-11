@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Implement [the approved second-version design](../../../doc/产品设计/Blocky-现代桌面工作区设计.md) and [L3 acceptance draft](../../../doc/验收/任务/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
+- Implement [the approved second-version design](../../../doc/产品设计/Blocky-现代桌面工作区设计.md) and [L3 acceptance baseline](../../../doc/验收/归档/2026-08-12/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
 - No production code without a failing test first; every RED failure must be observed and recorded in the task checklist/commit history.
 - Use only existing Fluent icons for visible common actions; no text-symbol, emoji, handcrafted SVG, or CSS-art icons.
 - Keep `save_project` / `load_project` as the app-data recovery contract while adding a separate user-document bridge.
@@ -635,7 +635,7 @@ Commit: `feat: make conversation the agent test surface`
 - Consumes all prior tasks.
 - Produces one working single-document workbench and retains `canvasAction` only as a WDIO-injected test API, never a visible ordinary menu item.
 
-- [ ] **Step 1: Rewrite App component tests first**
+- [x] **Step 1: Rewrite App component tests first**
 
 Require:
 
@@ -650,29 +650,29 @@ expect(document.querySelector(".blocklyTrash")).toBeNull();
 
 Add a full in-memory flow: add Agent/chat blocks → send → save-as → dirty edit → new → unsaved modal cancel/discard.
 
-- [ ] **Step 2: Run App RED**
+- [x] **Step 2: Run App RED**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/App.test.tsx tests/component/App.lifecycle.test.tsx`
 
 Expected: FAIL on old static title, old runtime label, Run/trash/menu/internal copy, and missing lifecycle.
 
-- [ ] **Step 3: Recompose App around focused controllers**
+- [x] **Step 3: Recompose App around focused controllers**
 
 Default right tab is `builder`. Keep both panels mounted after first use so drafts survive. `对话测试` remains selectable even without an entry and shows a real `添加聊天入口` action. Build command context from document/canvas/layout/help actions. Route all library/search/builder insertions through one insertion function. Remove ordinary fixture import and visible test action; WDIO bootstrap continues through its isolated injected `canvasAction` or global test hook.
 
-- [ ] **Step 4: Implement close guard in `WindowChromeBridge` composition**
+- [x] **Step 4: Implement close guard in `WindowChromeBridge` composition**
 
 Titlebar close and `file.exit` both call `documentSession.requestClose`, which invokes the actual bridge only after the decision flow succeeds. Keep minimize/maximize direct.
 
-- [ ] **Step 5: Apply the approved professional visual system**
+- [x] **Step 5: Apply the approved professional visual system**
 
 Maintain the existing dark tokens and real Blockly colors. Add exact states for command search, menu shortcuts, straight disabled arrows, tool toggle, drag preview, marquee, chat bubbles, trace accordion, save error, modal, and focus rings. Remove all Run/trash/old technical placeholder styles. Validate 1440×900 and 1180×720 without hiding core actions.
 
-- [ ] **Step 6: Remove user-visible spike branding from Tauri metadata**
+- [x] **Step 6: Remove user-visible spike branding from Tauri metadata**
 
 Set `productName` and window `title` to `Blocky`; use a product-facing package description while retaining internal identifier/schema versions that are required for compatibility. Update localization tests to distinguish allowed internal contract strings from forbidden rendered copy.
 
-- [ ] **Step 7: Run component/localization GREEN and commit**
+- [x] **Step 7: Run component/localization GREEN and commit**
 
 Run:
 
@@ -701,7 +701,7 @@ Commit: `feat: integrate the professional Blocky workbench`
 - Consumes completed product behavior.
 - Produces reproducible L3 evidence tied to the final commit.
 
-- [ ] **Step 1: Add failing E2E assertions for approved interaction paths**
+- [x] **Step 1: Add failing E2E assertions for approved interaction paths**
 
 Cover exact native behavior:
 
@@ -714,7 +714,7 @@ Cover exact native behavior:
 7. no `.blocklyTrash`, visible fixture command, or technical spike copy;
 8. `.blocky` open/save-as cancellation and successful round-trip through a controlled native dialog fixture.
 
-- [ ] **Step 2: Run focused E2E RED against the old/incomplete behavior**
+- [x] **Step 2: Run focused E2E RED against the old/incomplete behavior**
 
 Run:
 
@@ -725,11 +725,11 @@ pnpm --dir .\try\windows-core-spike test:e2e
 
 Expected: any remaining integration gap fails before adjustment.
 
-- [ ] **Step 3: Fix each E2E gap through a new focused failing component/unit test first**
+- [x] **Step 3: Fix each E2E gap through a new focused failing component/unit test first**
 
 Do not patch production behavior directly. For every observed issue, add the smallest reproducing test, confirm RED, implement, rerun focused GREEN, then rerun E2E.
 
-- [ ] **Step 4: Run required automated gates**
+- [x] **Step 4: Run required automated gates**
 
 ```powershell
 pnpm --dir .\try\windows-core-spike check
@@ -742,19 +742,19 @@ git diff --check
 
 Run `check:full` only if final code review confirms an event cap, save loop, WebView lifecycle, or long-lived run state changed; otherwise record the exact non-trigger rationale.
 
-- [ ] **Step 5: Perform product-design visual comparison**
+- [x] **Step 5: Perform product-design visual comparison**
 
 At 1440×900 and 1180×720, capture matching expanded, collapsed, command-center, marquee-selection, chat-result, and unsaved-dialog states in the user-approved browser and Windows Tauri. Put the approved reference and new screenshot into the same comparison input, fix all visible hierarchy/spacing/crop/focus defects, and repeat until clean.
 
-- [ ] **Step 6: Request independent L3 acceptance**
+- [x] **Step 6: Request independent L3 acceptance**
 
 Dispatch a fresh sub-Agent only for acceptance, give it the confirmed A1–A6 file and final commit, and require commands/evidence rather than implementation-context claims. Critical/Important findings return to a new RED test and fix cycle.
 
-- [ ] **Step 7: Finalize docs after independent PASS**
+- [x] **Step 7: Finalize docs after independent PASS**
 
 Update the module baseline, fill actual commands/exit codes/hash/bytes/security scan/risks in task acceptance, archive it by date, update one precise local-time progress entry, and archive this completed plan. Record that `cargo info`/dependency resolution used the normal external Cargo cache under the user profile; no project data or secrets were stored there.
 
-- [ ] **Step 8: Commit delivery evidence**
+- [x] **Step 8: Commit delivery evidence**
 
 Commit: `docs: record professional workbench acceptance`
 
