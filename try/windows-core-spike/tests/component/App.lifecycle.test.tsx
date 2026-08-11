@@ -1,176 +1,79 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { App } from "../../src/app/App";
-import { buildEditorProjection } from "../../src/blockly/BlocklyCanvas";
 import { createHundredBlockWorkspaceState } from "../../src/blockly/fixtures";
-import type { RuntimeDependencies } from "../../src/core/deterministicRuntime";
-import { stableStringify, type JsonValue } from "../../src/core/json";
 import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
-import { createSpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
+import type { WindowChromeBridge } from "../../src/app/WindowChromeBridge";
 
-type ReplacementName = "清空" | "载入100块" | "重开";
-type AppUser = ReturnType<typeof userEvent.setup>;
-
-async function invokeReplacement(
-  user: AppUser,
-  replacement: ReplacementName,
+async function invokeFileAction(
+  user: ReturnType<typeof userEvent.setup>,
+  action: string,
 ): Promise<void> {
-  const menu = replacement === "载入100块" ? "视图" : "文件";
-  await user.click(screen.getByRole("button", { name: menu }));
-  await user.click(screen.getByRole("menuitem", { name: replacement }));
+  await user.click(screen.getByRole("button", { name: "文件" }));
+  await user.click(screen.getByRole("menuitem", { name: new RegExp(`^${action}`) }));
 }
 
-function workspaceWithEntryName(name: string): JsonValue {
-  const state = structuredClone(createHundredBlockWorkspaceState()) as JsonValue;
-  const rename = (value: JsonValue): boolean => {
-    if (Array.isArray(value)) return value.some(rename);
-    if (value === null || typeof value !== "object") return false;
-    if (value.id === "block-002") {
-      value.fields = { NAME: name };
-      return true;
-    }
-    return Object.values(value).some(rename);
-  };
-  if (!rename(state)) throw new Error("TEST_ENTRY_BLOCK_UNAVAILABLE");
-  return state;
-}
-
-async function seedProject(
-  host: InMemoryHostBridge,
-  workspace: JsonValue,
-): Promise<void> {
-  const projection = buildEditorProjection(workspace);
-  const project = createSpikeProjectSnapshot({
-    projectId: "windows-core-spike",
-    workspace: projection.workspace,
-    program: projection.program,
-    interactionManifest: projection.interactionManifest,
-  });
-  await host.saveProject({
-    projectId: project.projectId,
-    json: stableStringify(project),
-  });
-}
-
-async function renderReplacementCase(
-  replacement: ReplacementName,
-  runtimeModel?: RuntimeDependencies["model"],
-): Promise<void> {
-  const host = new InMemoryHostBridge();
-  if (replacement === "重开") {
-    await seedProject(host, workspaceWithEntryName("Disk Chat"));
-  }
-  render(
-    <App
-      hostBridge={host}
-      initialWorkspace={workspaceWithEntryName("Before Chat")}
-      runtimeModel={runtimeModel}
-    />,
-  );
-  await waitFor(() => {
-    expect(screen.getByTestId("runtime-entry-select")).toHaveTextContent(
-      "Before Chat",
+describe("App document lifecycle", () => {
+  it("saves, marks later edits dirty, and guards New with cancel and discard", async () => {
+    const user = userEvent.setup();
+    const host = new InMemoryHostBridge();
+    render(
+      <App
+        hostBridge={host}
+        initialWorkspace={createHundredBlockWorkspaceState()}
+      />,
     );
-  });
-}
 
-async function expectReplacement(replacement: ReplacementName): Promise<void> {
-  if (replacement === "清空") {
-    await waitFor(() => {
-      expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeDisabled();
-    });
-    return;
-  }
-  await waitFor(() => {
-    expect(screen.getByTestId("runtime-entry-select")).toHaveTextContent(
-      replacement === "载入100块" ? "Chat" : "Disk Chat",
+    await invokeFileAction(user, "另存为…");
+    expect(await screen.findByText("未命名 Agent.blocky · 已保存"))
+      .toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: "搭建助手" }));
+    await user.click(screen.getByRole("button", { name: "打开快速入门" }));
+    await user.click(screen.getByRole("button", { name: "AI 伙伴" }));
+    await user.click(screen.getByRole("button", { name: /智能体.*成员/ }));
+    expect(await screen.findByText("未命名 Agent.blocky · 未保存"))
+      .toBeInTheDocument();
+
+    await invokeFileAction(user, "新建 Agent");
+    const dialog = screen.getByRole("dialog", { name: "保存更改？" });
+    expect(dialog).toHaveTextContent("未命名 Agent.blocky");
+    await user.click(screen.getByRole("button", { name: "取消" }));
+    expect(screen.queryByRole("dialog", { name: "保存更改？" }))
+      .not.toBeInTheDocument();
+    expect(screen.getByLabelText("画布积木数量")).toHaveTextContent("101 个积木");
+
+    await invokeFileAction(user, "新建 Agent");
+    await user.click(screen.getByRole("button", { name: "不保存" }));
+    await waitFor(() => expect(screen.getByLabelText("画布积木数量"))
+      .toHaveTextContent("0 个积木"));
+    expect(screen.getByText("未命名 Agent · 未保存")).toBeInTheDocument();
+  });
+
+  it("routes both titlebar close and Exit through the unsaved guard", async () => {
+    const user = userEvent.setup();
+    const close = vi.fn(async () => {});
+    const chrome: WindowChromeBridge = {
+      minimize: vi.fn(async () => {}),
+      toggleMaximize: vi.fn(async () => {}),
+      close,
+    };
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={{ blocks: { languageVersion: 0, blocks: [] } }}
+        windowChrome={chrome}
+      />,
     );
+
+    await user.click(screen.getByRole("button", { name: "关闭窗口" }));
+    expect(screen.getByRole("dialog", { name: "保存更改？" })).toBeInTheDocument();
+    expect(close).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "取消" }));
+
+    await invokeFileAction(user, "退出");
+    await user.click(screen.getByRole("button", { name: "不保存" }));
+    await waitFor(() => expect(close).toHaveBeenCalledOnce());
   });
-}
-
-function createAbortGatedModel(): {
-  readonly model: RuntimeDependencies["model"];
-  readonly started: Promise<void>;
-  readonly aborted: Promise<void>;
-  release(): void;
-} {
-  let resolveStarted!: () => void;
-  let resolveAborted!: () => void;
-  let resolveRelease!: () => void;
-  const started = new Promise<void>((resolve) => {
-    resolveStarted = resolve;
-  });
-  const aborted = new Promise<void>((resolve) => {
-    resolveAborted = resolve;
-  });
-  const released = new Promise<void>((resolve) => {
-    resolveRelease = resolve;
-  });
-  return {
-    model: {
-      async *stream(_input, signal) {
-        resolveStarted();
-        signal.addEventListener("abort", () => resolveAborted(), { once: true });
-        await released;
-      },
-    },
-    started,
-    aborted,
-    release: resolveRelease,
-  };
-}
-
-describe.each<ReplacementName>(["清空", "载入100块", "重开"])(
-  "workspace replacement through %s",
-  (replacement) => {
-    it("aborts and settles an active model run before replacing the workspace", async () => {
-      const user = userEvent.setup();
-      const gate = createAbortGatedModel();
-      await renderReplacementCase(replacement, gate.model);
-      await user.type(screen.getByTestId("runtime-text-input"), "old model run");
-      await user.click(screen.getByTestId("runtime-send"));
-      await gate.started;
-
-      await invokeReplacement(user, replacement);
-      try {
-        await expect(gate.aborted).resolves.toBeUndefined();
-        expect(screen.getByTestId("runtime-entry-select")).toHaveTextContent(
-          "Before Chat",
-        );
-      } finally {
-        await act(async () => gate.release());
-      }
-
-      await expectReplacement(replacement);
-      expect(await screen.findByText("run.cancelled")).toBeInTheDocument();
-      expect(screen.queryByText("run.completed")).not.toBeInTheDocument();
-    });
-
-    it("settles a pending permission run and never revives its old prompt", async () => {
-      const user = userEvent.setup();
-      await renderReplacementCase(replacement);
-      await user.type(screen.getByTestId("runtime-text-input"), "/permission");
-      await user.click(screen.getByTestId("runtime-send"));
-      await screen.findByRole("alertdialog", { name: "工具权限请求" });
-
-      await invokeReplacement(user, replacement);
-      await expectReplacement(replacement);
-      expect(await screen.findByText("run.cancelled")).toBeInTheDocument();
-      expect(
-        screen.queryByRole("alertdialog", { name: "工具权限请求" }),
-      ).not.toBeInTheDocument();
-
-      if (replacement !== "清空") {
-        await invokeReplacement(user, "清空");
-      }
-      await invokeReplacement(user, "载入100块");
-      await waitFor(() => {
-        expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
-      });
-      expect(
-        screen.queryByRole("alertdialog", { name: "工具权限请求" }),
-      ).not.toBeInTheDocument();
-    });
-  },
-);
+});

@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BlockLibrary,
   getBlockDisplayName,
   type BlockPointerDragStart,
 } from "../blockly/BlockLibrary";
+import { BlockPreview } from "../blockly/BlockPreview";
 import {
   BlocklyCanvas,
   type BlocklyCanvasHandle,
   type CanvasViewState,
+  type EditorProjection,
 } from "../blockly/BlocklyCanvas";
 import { CanvasToolControls } from "../blockly/CanvasToolControls";
+import type { SpikeBlockId } from "../blockly/catalog";
 import {
   countSerializedBlocks,
 } from "../blockly/fixtures";
@@ -20,6 +23,7 @@ import {
 import { BuilderAssistant } from "../builder/BuilderAssistant";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
+import type { BlockyProgram, IrNode } from "../core/ir";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
 import { indexProgramBlockTypes } from "../runtime/eventPresentation";
@@ -35,6 +39,9 @@ import {
   type WindowChromeBridge,
 } from "./WindowChromeBridge";
 import { useSpikeController } from "./useSpikeController";
+import { useDocumentSession } from "./useDocumentSession";
+import { UnsavedChangesDialog } from "./UnsavedChangesDialog";
+import { HelpDialog, type HelpView } from "./HelpDialog";
 import "./app.css";
 
 export interface AppProps {
@@ -58,6 +65,18 @@ const EMPTY_WORKSPACE: JsonValue = {
 
 const NOOP_WINDOW_CHROME = new NoopWindowChromeBridge();
 
+function programHasType(program: BlockyProgram, blockType: string): boolean {
+  const visited = new Set<string>();
+  const visit = (node: IrNode | null): boolean => {
+    if (!node || visited.has(node.id)) return false;
+    visited.add(node.id);
+    return node.type === blockType ||
+      Object.values(node.inputs).some(visit) ||
+      visit(node.next);
+  };
+  return program.roots.some(visit);
+}
+
 export function App({
   hostBridge,
   initialWorkspace = EMPTY_WORKSPACE,
@@ -68,11 +87,17 @@ export function App({
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
   const canvasStageRef = useRef<HTMLElement>(null);
   const externalDragCleanupRef = useRef<(() => void) | null>(null);
-  const [activeTab, setActiveTab] = useState<"builder" | "runtime">("runtime");
+  const [activeTab, setActiveTab] = useState<"builder" | "runtime">("builder");
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<SpikeBlockCategoryId>("agents");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [helpView, setHelpView] = useState<HelpView | null>(null);
+  const [blockDragPreview, setBlockDragPreview] = useState<{
+    readonly blockType: SpikeBlockId;
+    readonly clientX: number;
+    readonly clientY: number;
+  } | null>(null);
   const [canvasView, setCanvasView] = useState<CanvasViewState>({
     zoomPercent: 90,
     canUndo: false,
@@ -87,9 +112,24 @@ export function App({
     projectId,
     runtimeModel,
   });
-  const hasEntry = controller.projection.interactionManifest.entries.length > 0;
+  const documentSession = useDocumentSession({
+    canvasRef,
+    hostBridge,
+    projectId,
+    cancelRun: controller.cancelRun,
+    onClose: () => void windowChrome.close(),
+    initialWorkspace,
+  });
+  const acceptProjection = useCallback((projection: EditorProjection): void => {
+    controller.acceptProjection(projection);
+    documentSession.acceptWorkspace(projection.workspace);
+  }, [controller.acceptProjection, documentSession.acceptWorkspace]);
   const hasAgent = controller.projection.program.roots.some(
     (root) => root.type === "core.agent.define",
+  );
+  const hasChatBlock = programHasType(
+    controller.projection.program,
+    "core.interaction.chat_entry",
   );
   const hasCompileError = controller.projection.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
@@ -111,6 +151,9 @@ export function App({
     ),
     [],
   );
+  const insertBlock = useCallback((blockType: SpikeBlockId): string | null =>
+    canvasRef.current?.insertBlock({ blockType }) ?? null,
+  []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -123,10 +166,26 @@ export function App({
 
   const handleBlockPointerDragStart = (request: BlockPointerDragStart): void => {
     externalDragCleanupRef.current?.();
+    let moved = false;
+    const move = (event: PointerEvent): void => {
+      if (event.pointerId !== request.pointerId) return;
+      if (Math.hypot(
+        event.clientX - request.clientPoint.clientX,
+        event.clientY - request.clientPoint.clientY,
+      ) >= 6) {
+        moved = true;
+        setBlockDragPreview({
+          blockType: request.blockType,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        });
+      }
+    };
     const finish = (event: PointerEvent): void => {
       if (event.pointerId !== request.pointerId) return;
       const bounds = canvasStageRef.current?.getBoundingClientRect();
       if (
+        moved &&
         bounds &&
         event.clientX >= bounds.left && event.clientX <= bounds.right &&
         event.clientY >= bounds.top && event.clientY <= bounds.bottom
@@ -139,6 +198,8 @@ export function App({
       cleanup();
     };
     const cleanup = (): void => {
+      setBlockDragPreview(null);
+      window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", finish);
       window.removeEventListener("pointercancel", finish);
       if (externalDragCleanupRef.current === cleanup) {
@@ -146,6 +207,7 @@ export function App({
       }
     };
     externalDragCleanupRef.current = cleanup;
+    window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", finish);
     window.addEventListener("pointercancel", finish);
   };
@@ -153,17 +215,19 @@ export function App({
   const runCommand = (id: WorkbenchCommandId): void => {
     switch (id) {
       case "file.new":
-        void controller.replaceWorkspace(EMPTY_WORKSPACE);
+        void documentSession.newDocument();
         break;
       case "file.open":
-        void controller.loadProject();
+        void documentSession.openDocument();
         break;
       case "file.save":
+        void documentSession.saveDocument();
+        break;
       case "file.saveAs":
-        void controller.saveProject();
+        void documentSession.saveDocumentAs();
         break;
       case "file.exit":
-        void windowChrome.close();
+        void documentSession.requestClose();
         break;
       case "edit.undo":
         canvasRef.current?.undo();
@@ -211,11 +275,13 @@ export function App({
         canvasRef.current?.setTool("pan");
         break;
       case "help.quickStart":
-        setRightCollapsed(false);
-        setActiveTab("builder");
+        setHelpView("quickStart");
         break;
       case "help.shortcuts":
+        setHelpView("shortcuts");
+        break;
       case "help.about":
+        setHelpView("about");
         break;
     }
   };
@@ -237,11 +303,12 @@ export function App({
       <DesktopTitleBar
         commands={commands}
         blockSearchItems={blockSearchItems}
-        documentLabel="天气助手 · 已保存"
+        documentLabel={documentSession.label}
         leftCollapsed={leftCollapsed}
         rightCollapsed={rightCollapsed}
-        onInsertBlock={(blockType) => canvasRef.current?.insertBlock({ blockType })}
+        onInsertBlock={insertBlock}
         windowChrome={windowChrome}
+        onRequestClose={documentSession.requestClose}
       />
 
       <main
@@ -256,7 +323,7 @@ export function App({
             <BlockLibrary
               selectedCategoryId={selectedCategoryId}
               onSelectedCategoryIdChange={setSelectedCategoryId}
-              onInsert={(request) => canvasRef.current?.insertBlock(request)}
+              onInsert={(request) => insertBlock(request.blockType)}
               onPointerDragStart={handleBlockPointerDragStart}
             />
           </div>
@@ -274,7 +341,7 @@ export function App({
           <BlocklyCanvas
             ref={canvasRef}
             initialState={initialWorkspace}
-            onProjection={controller.acceptProjection}
+            onProjection={acceptProjection}
             onViewStateChange={setCanvasView}
           />
           <CanvasToolControls
@@ -283,7 +350,7 @@ export function App({
           />
           <CanvasControls
             zoomPercent={canvasView.zoomPercent}
-            onSave={() => void controller.saveProject()}
+            onSave={() => void documentSession.saveDocument()}
             onZoomOut={() => {
               canvasRef.current?.zoomOut();
             }}
@@ -326,7 +393,6 @@ export function App({
               aria-controls="runtime-panel"
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => setActiveTab("runtime")}
-              disabled={!hasEntry}
             >
               对话测试
             </button>
@@ -341,13 +407,9 @@ export function App({
             >
                 <BuilderAssistant
                   hasAgent={hasAgent}
-                  hasChatEntry={hasEntry}
-                  onAddAgent={() => canvasRef.current?.insertBlock({
-                    blockType: "core.agent.define",
-                  })}
-                  onAddChatEntry={() => canvasRef.current?.insertBlock({
-                    blockType: "core.interaction.chat_entry",
-                  })}
+                  hasChatEntry={hasChatBlock}
+                  onAddAgent={() => void insertBlock("core.agent.define")}
+                  onAddChatEntry={() => void insertBlock("core.interaction.chat_entry")}
                   onOpenQuickStart={() => runCommand("help.quickStart")}
                 />
             </div>
@@ -376,6 +438,31 @@ export function App({
           </div>
         </aside>
       </main>
+      {documentSession.pendingIntent ? (
+        <UnsavedChangesDialog
+          documentName={documentSession.state.displayName}
+          onDecision={(decision) => void documentSession.resolveUnsavedDecision(decision)}
+        />
+      ) : null}
+      {helpView ? (
+        <HelpDialog view={helpView} onClose={() => setHelpView(null)} />
+      ) : null}
+      {blockDragPreview ? (
+        <div
+          className="block-drag-preview"
+          data-testid="block-drag-preview"
+          aria-hidden="true"
+          style={{
+            left: blockDragPreview.clientX,
+            top: blockDragPreview.clientY,
+          }}
+        >
+          <span className="sr-only">
+            {getBlockDisplayName(blockDragPreview.blockType)}
+          </span>
+          <BlockPreview blockType={blockDragPreview.blockType} />
+        </div>
+      ) : null}
     </div>
   );
 }

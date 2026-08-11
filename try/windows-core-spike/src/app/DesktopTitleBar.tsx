@@ -41,6 +41,7 @@ export interface DesktopTitleBarProps {
   readonly rightCollapsed: boolean;
   readonly onInsertBlock: (blockType: SpikeBlockId) => void;
   readonly windowChrome: WindowChromeBridge;
+  readonly onRequestClose?: () => void | Promise<unknown>;
 }
 
 function IconButton({
@@ -98,6 +99,7 @@ export function DesktopTitleBar({
   rightCollapsed,
   onInsertBlock,
   windowChrome,
+  onRequestClose,
 }: DesktopTitleBarProps) {
   const [openMenu, setOpenMenu] = useState<WorkbenchMenuId | null>(null);
   const rootRef = useRef<HTMLElement>(null);
@@ -253,7 +255,7 @@ export function DesktopTitleBar({
         <IconButton
           label="关闭窗口"
           className="titlebar-icon-button--close"
-          onClick={() => void windowChrome.close()}
+          onClick={() => void (onRequestClose?.() ?? windowChrome.close())}
         >
           <Dismiss20Regular aria-hidden="true" />
         </IconButton>
