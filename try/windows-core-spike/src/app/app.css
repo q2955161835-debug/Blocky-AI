@@ -429,6 +429,36 @@ input:focus-visible,
   inset: 0;
 }
 
+.blockly-canvas-surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.blockly-canvas-surface--select .blocklyMainBackground {
+  cursor: crosshair;
+}
+
+.blockly-canvas-surface--pan,
+.blockly-canvas-surface--pan .blocklySvg {
+  cursor: grab;
+}
+
+.blockly-selection-marquee {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  background: rgb(75 131 245 / 14%);
+  border: 1px solid #6e9cff;
+  border-radius: 3px;
+}
+
+.blocklyDraggable.blocky-multi-selected > .blocklyPath {
+  filter: drop-shadow(0 0 3px rgb(115 158 255 / 90%));
+  stroke: #8ab0ff;
+  stroke-width: 2px;
+}
+
 .blocklySvg {
   background: var(--canvas) !important;
 }
@@ -504,17 +534,33 @@ input:focus-visible,
   width: 38px;
 }
 
-.canvas-controls__run {
-  gap: 7px;
-  min-width: 94px;
-  padding: 0 15px !important;
-  color: #ffffff;
-  font-weight: 700;
-  background: var(--action);
+.canvas-tool-controls {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  background: rgb(40 46 56 / 95%);
+  border: 1px solid #414a58;
+  border-radius: 10px;
+  box-shadow: 0 9px 28px rgb(0 0 0 / 24%);
+  transform: translateX(-50%);
 }
 
-.canvas-controls__run:hover:not(:disabled) {
-  background: var(--action-hover);
+.canvas-tool-controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 7px;
+}
+
+.canvas-tool-controls button[aria-pressed="true"] {
+  color: #ffffff;
+  background: #3b66bd;
 }
 
 .canvas-controls__zoom {

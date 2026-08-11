@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BlockLibrary,
-  BLOCKY_BLOCK_DRAG_MIME,
   getBlockDisplayName,
+  type BlockPointerDragStart,
 } from "../blockly/BlockLibrary";
 import {
   BlocklyCanvas,
   type BlocklyCanvasHandle,
+  type CanvasViewState,
 } from "../blockly/BlocklyCanvas";
+import { CanvasToolControls } from "../blockly/CanvasToolControls";
 import {
   countSerializedBlocks,
 } from "../blockly/fixtures";
-import type { SpikeBlockId } from "../blockly/catalog";
 import {
   SPIKE_BLOCK_CATEGORIES,
   type SpikeBlockCategoryId,
@@ -65,12 +66,21 @@ export function App({
   windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
+  const canvasStageRef = useRef<HTMLElement>(null);
+  const externalDragCleanupRef = useRef<(() => void) | null>(null);
   const [activeTab, setActiveTab] = useState<"builder" | "runtime">("runtime");
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<SpikeBlockCategoryId>("agents");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
-  const [zoomPercent, setZoomPercent] = useState(90);
+  const [canvasView, setCanvasView] = useState<CanvasViewState>({
+    zoomPercent: 90,
+    canUndo: false,
+    canRedo: false,
+    canPaste: false,
+    tool: "select",
+    selectionCount: 0,
+  });
   const controller = useSpikeController({
     canvasRef,
     hostBridge,
@@ -106,29 +116,35 @@ export function App({
     return () => window.cancelAnimationFrame(frame);
   }, [leftCollapsed, rightCollapsed]);
 
-  const updateZoomLabel = (): void => {
-    const scale = canvasRef.current?.captureViewState().scale;
-    if (scale !== undefined) setZoomPercent(Math.round(scale * 100));
-  };
+  useEffect(() => () => externalDragCleanupRef.current?.(), []);
 
-  const openRuntime = (): void => {
-    setRightCollapsed(false);
-    setActiveTab("runtime");
-    window.requestAnimationFrame(() => {
-      document.querySelector<HTMLTextAreaElement>(
-        '[data-testid="runtime-text-input"]',
-      )?.focus();
-    });
-  };
-
-  const handleDrop = (event: DragEvent<HTMLElement>): void => {
-    const blockType = event.dataTransfer.getData(BLOCKY_BLOCK_DRAG_MIME);
-    if (!blockType) return;
-    event.preventDefault();
-    canvasRef.current?.insertBlock({
-      blockType: blockType as SpikeBlockId,
-      clientPoint: { clientX: event.clientX, clientY: event.clientY },
-    });
+  const handleBlockPointerDragStart = (request: BlockPointerDragStart): void => {
+    externalDragCleanupRef.current?.();
+    const finish = (event: PointerEvent): void => {
+      if (event.pointerId !== request.pointerId) return;
+      const bounds = canvasStageRef.current?.getBoundingClientRect();
+      if (
+        bounds &&
+        event.clientX >= bounds.left && event.clientX <= bounds.right &&
+        event.clientY >= bounds.top && event.clientY <= bounds.bottom
+      ) {
+        canvasRef.current?.insertBlock({
+          blockType: request.blockType,
+          clientPoint: { clientX: event.clientX, clientY: event.clientY },
+        });
+      }
+      cleanup();
+    };
+    const cleanup = (): void => {
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+      if (externalDragCleanupRef.current === cleanup) {
+        externalDragCleanupRef.current = null;
+      }
+    };
+    externalDragCleanupRef.current = cleanup;
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
   };
 
   const runCommand = (id: WorkbenchCommandId): void => {
@@ -152,6 +168,21 @@ export function App({
       case "edit.redo":
         canvasRef.current?.redo();
         break;
+      case "edit.selectAll":
+        canvasRef.current?.selectAll();
+        break;
+      case "edit.cut":
+        canvasRef.current?.cutSelection();
+        break;
+      case "edit.copy":
+        canvasRef.current?.copySelection();
+        break;
+      case "edit.paste":
+        canvasRef.current?.pasteSelection();
+        break;
+      case "edit.delete":
+        canvasRef.current?.deleteSelection();
+        break;
       case "view.toggleLeft":
         setLeftCollapsed((current) => !current);
         break;
@@ -160,31 +191,26 @@ export function App({
         break;
       case "view.zoomIn":
         canvasRef.current?.zoomIn();
-        updateZoomLabel();
         break;
       case "view.zoomOut":
         canvasRef.current?.zoomOut();
-        updateZoomLabel();
         break;
       case "view.resetZoom":
         canvasRef.current?.resetZoom();
-        updateZoomLabel();
         break;
       case "view.fit":
         canvasRef.current?.fitToView();
-        updateZoomLabel();
+        break;
+      case "view.selectTool":
+        canvasRef.current?.setTool("select");
+        break;
+      case "view.panTool":
+        canvasRef.current?.setTool("pan");
         break;
       case "help.quickStart":
         setRightCollapsed(false);
         setActiveTab("builder");
         break;
-      case "edit.selectAll":
-      case "edit.cut":
-      case "edit.copy":
-      case "edit.paste":
-      case "edit.delete":
-      case "view.selectTool":
-      case "view.panTool":
       case "help.shortcuts":
       case "help.about":
         break;
@@ -192,13 +218,13 @@ export function App({
   };
   const commands = createWorkbenchCommands({
     state: {
-      canUndo: true,
-      canRedo: true,
-      selectionCount: 0,
-      canPaste: false,
+      canUndo: canvasView.canUndo,
+      canRedo: canvasView.canRedo,
+      selectionCount: canvasView.selectionCount,
+      canPaste: canvasView.canPaste,
       leftCollapsed,
       rightCollapsed,
-      tool: "select",
+      tool: canvasView.tool,
     },
     run: runCommand,
   });
@@ -229,19 +255,15 @@ export function App({
               selectedCategoryId={selectedCategoryId}
               onSelectedCategoryIdChange={setSelectedCategoryId}
               onInsert={(request) => canvasRef.current?.insertBlock(request)}
+              onPointerDragStart={handleBlockPointerDragStart}
             />
           </div>
         )}
 
         <section
+          ref={canvasStageRef}
           className="canvas-stage"
           aria-label="积木画布区"
-          onDragOver={(event) => {
-            if (event.dataTransfer.types.includes(BLOCKY_BLOCK_DRAG_MIME)) {
-              event.preventDefault();
-            }
-          }}
-          onDrop={handleDrop}
         >
           <div className="canvas-stage__badge" aria-label="画布积木数量">
             <span aria-hidden="true" />
@@ -251,22 +273,23 @@ export function App({
             ref={canvasRef}
             initialState={initialWorkspace}
             onProjection={controller.acceptProjection}
+            onViewStateChange={setCanvasView}
+          />
+          <CanvasToolControls
+            tool={canvasView.tool}
+            onToolChange={(nextTool) => canvasRef.current?.setTool(nextTool)}
           />
           <CanvasControls
-            zoomPercent={zoomPercent}
+            zoomPercent={canvasView.zoomPercent}
             onSave={() => void controller.saveProject()}
-            onRun={openRuntime}
             onZoomOut={() => {
               canvasRef.current?.zoomOut();
-              updateZoomLabel();
             }}
             onZoomIn={() => {
               canvasRef.current?.zoomIn();
-              updateZoomLabel();
             }}
             onFit={() => {
               canvasRef.current?.fitToView();
-              updateZoomLabel();
             }}
           />
           {controller.operationError ? (

@@ -35,6 +35,27 @@ function hasOverlap(state: BlocklyViewState): boolean {
 }
 
 describe("Blockly workbench layout invariants", () => {
+  it("uses select mode, wheel-only zoom, and no Blockly trashcan", async () => {
+    const canvasRef = createRef<BlocklyCanvasHandle>();
+    render(
+      <BlocklyCanvas
+        ref={canvasRef}
+        initialState={EMPTY_WORKSPACE}
+        onProjection={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => expect(canvasRef.current).not.toBeNull());
+    const workspace = Blockly.getMainWorkspace();
+    if (!(workspace instanceof Blockly.WorkspaceSvg)) {
+      throw new Error("Expected the rendered Blockly workspace.");
+    }
+    expect(workspace.options.hasTrashcan).toBe(false);
+    expect(workspace.options.moveOptions.wheel).toBe(false);
+    expect(workspace.options.zoomOptions.wheel).toBe(true);
+    expect(canvasRef.current?.getTool()).toBe("select");
+  });
+
   it("preserves the complete workspace transform during resize-only layout changes", async () => {
     const canvasRef = createRef<BlocklyCanvasHandle>();
     render(
@@ -113,6 +134,45 @@ describe("Blockly workbench layout invariants", () => {
     expect(canvasRef.current?.blockCount()).toBe(1);
     canvasRef.current?.redo();
     expect(canvasRef.current?.blockCount()).toBe(2);
+  });
+
+  it("treats multi-block clipboard and deletion as undoable group operations", async () => {
+    const canvasRef = createRef<BlocklyCanvasHandle>();
+    const onViewStateChange = vi.fn();
+    render(
+      <BlocklyCanvas
+        ref={canvasRef}
+        initialState={EMPTY_WORKSPACE}
+        onProjection={vi.fn()}
+        onViewStateChange={onViewStateChange}
+      />,
+    );
+
+    await waitFor(() => expect(canvasRef.current).not.toBeNull());
+    canvasRef.current?.insertBlock({ blockType: "core.data.literal" });
+    canvasRef.current?.insertBlock({ blockType: "core.data.literal" });
+    canvasRef.current?.selectAll();
+    expect(onViewStateChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ selectionCount: 2 }),
+    );
+    const workspace = Blockly.getMainWorkspace();
+    if (!(workspace instanceof Blockly.WorkspaceSvg)) {
+      throw new Error("Expected the rendered Blockly workspace.");
+    }
+    expect(workspace.getTopBlocks(false).every((block) =>
+      block.getSvgRoot().classList.contains("blocky-multi-selected"),
+    )).toBe(true);
+
+    canvasRef.current?.copySelection();
+    canvasRef.current?.deleteSelection();
+    expect(canvasRef.current?.blockCount()).toBe(0);
+    canvasRef.current?.undo();
+    expect(canvasRef.current?.blockCount()).toBe(2);
+    canvasRef.current?.selectAll();
+    canvasRef.current?.pasteSelection();
+    expect(canvasRef.current?.blockCount()).toBe(4);
+    const pasted = canvasRef.current?.captureViewState();
+    expect(pasted && hasOverlap(pasted)).toBe(false);
   });
 
   it("repairs a top-level block dragged onto another block", async () => {

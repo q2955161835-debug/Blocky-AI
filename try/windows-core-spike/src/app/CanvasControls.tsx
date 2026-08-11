@@ -1,6 +1,5 @@
 import {
   Add20Regular,
-  Play20Filled,
   Save20Regular,
   Subtract20Regular,
   ZoomFit20Regular,
@@ -9,7 +8,6 @@ import {
 export interface CanvasControlsProps {
   readonly zoomPercent: number;
   readonly onSave: () => void;
-  readonly onRun: () => void;
   readonly onZoomOut: () => void;
   readonly onZoomIn: () => void;
   readonly onFit: () => void;
@@ -18,7 +16,6 @@ export interface CanvasControlsProps {
 export function CanvasControls({
   zoomPercent,
   onSave,
-  onRun,
   onZoomOut,
   onZoomIn,
   onFit,
@@ -34,10 +31,6 @@ export function CanvasControls({
           onClick={onSave}
         >
           <Save20Regular aria-hidden="true" />
-        </button>
-        <button type="button" className="canvas-controls__run" onClick={onRun}>
-          <Play20Filled aria-hidden="true" />
-          <span>运行</span>
         </button>
       </div>
       <div className="canvas-controls__zoom" aria-label="画布缩放">

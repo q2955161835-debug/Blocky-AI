@@ -435,7 +435,7 @@ export interface CanvasInteractionState {
 - Extends `BlocklyCanvasHandle` with: `canUndo`, `canRedo`, `setTool`, `getTool`, `selectAll`, `cutSelection`, `copySelection`, `pasteSelection`, `deleteSelection`, and `insertBlock`.
 - `BlockLibrary` produces `onPointerDragStart({ blockType, pointerId, clientPoint })`; App forwards pointer moves/up to the canvas handle.
 
-- [ ] **Step 1: Write failing pure interaction tests**
+- [x] **Step 1: Write failing pure interaction tests**
 
 ```ts
 expect(rectIntersects({ left: 0, top: 0, right: 20, bottom: 20 }, rootBounds)).toBe(true);
@@ -445,11 +445,11 @@ expect(selectionMoveDelta(startPrimary, endPrimary)).toEqual({ dx: 24, dy: -12 }
 
 Also test clipboard serialization strips IDs and keeps relative coordinates.
 
-- [ ] **Step 2: Run RED, implement pure geometry/selection helpers, rerun GREEN**
+- [x] **Step 2: Run RED, implement pure geometry/selection helpers, rerun GREEN**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/canvasInteraction.test.ts`
 
-- [ ] **Step 3: Replace the old HTML5 drag test with a failing pointer-session test**
+- [x] **Step 3: Replace the old HTML5 drag test with a failing pointer-session test**
 
 ```tsx
 fireEvent.pointerDown(toolBlock, { pointerId: 7, clientX: 120, clientY: 240 });
@@ -463,11 +463,11 @@ Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/BlockL
 
 Expected: FAIL because the library still emits only HTML5 drag payloads.
 
-- [ ] **Step 4: Implement pointer-session library insertion while preserving click insert**
+- [x] **Step 4: Implement pointer-session library insertion while preserving click insert**
 
 Remove `draggable`, `BLOCKY_BLOCK_DRAG_MIME`, `onDragStart`, App `onDrop`, and App `onDragOver`. Suppress the click that follows a real drag threshold; keep ordinary click insertion unchanged.
 
-- [ ] **Step 5: Add failing Blockly behavior assertions**
+- [x] **Step 5: Add failing Blockly behavior assertions**
 
 Extend the component test harness/test API to assert:
 
@@ -480,23 +480,23 @@ expect(canvas.getTool()).toBe("select");
 
 Add real pointer/wheel behavior to the E2E spec in Task 7, not a jsdom-only claim.
 
-- [ ] **Step 6: Implement canvas configuration and live history/zoom callbacks**
+- [x] **Step 6: Implement canvas configuration and live history/zoom callbacks**
 
 Set `trashcan: false`, `move.wheel: false`, `zoom.wheel: true`. Listen to viewport changes/wheel completion and call `onViewStateChange({ zoomPercent, canUndo, canRedo, tool, selectionCount })`. Make titlebar and zoom output read this state.
 
-- [ ] **Step 7: Implement local selection/marquee controller behind the narrow handle**
+- [x] **Step 7: Implement local selection/marquee controller behind the narrow handle**
 
 In select mode, capture blank-workspace pointer drags to render a marquee; use actual top-block bounding rectangles and intersection semantics. Shift adds/removes selection. Add `.blocky-multi-selected` only to real Blockly SVG roots. On primary selected-block release, move other selected roots by the same delta inside one Blockly event group, then repair the selected group against unselected roots as a unit. Escape clears selection.
 
-- [ ] **Step 8: Implement pan mode and temporary Space pan**
+- [x] **Step 8: Implement pan mode and temporary Space pan**
 
 In pan mode (or while Space is held), capture pointer movement, update `scrollX/scrollY`, and call workspace `translate`; never move blocks. Restore select mode behavior on Space release. `V` and `H` switch persistent tools unless a text input is focused.
 
-- [ ] **Step 9: Implement clipboard/delete commands with Blockly serialization**
+- [x] **Step 9: Implement clipboard/delete commands with Blockly serialization**
 
 Use `Blockly.serialization.blocks.save(root, { addCoordinates: true, saveIds: false })`. Paste with `append(..., { recordUndo: true })`, preserve relative offsets, and pass the pasted group through the placement service. Delete only selected roots inside one event group. Verify undo/redo restores the entire operation.
 
-- [ ] **Step 10: Remove Run control, add tool controls, and run canvas GREEN suite**
+- [x] **Step 10: Remove Run control, add tool controls, and run canvas GREEN suite**
 
 `CanvasControls` keeps Save/−/%/+/Fit only. `CanvasToolControls` uses `Cursor20Regular` and `HandLeft20Regular` (or the closest exported Fluent hand icon verified in the installed package), with visible selected state and `V`/`H` hints.
 
