@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
 import {
   BlockLibrary,
   BLOCKY_BLOCK_DRAG_MIME,
+  getBlockDisplayName,
 } from "../blockly/BlockLibrary";
 import {
   BlocklyCanvas,
@@ -9,10 +10,12 @@ import {
 } from "../blockly/BlocklyCanvas";
 import {
   countSerializedBlocks,
-  createHundredBlockWorkspaceState,
 } from "../blockly/fixtures";
 import type { SpikeBlockId } from "../blockly/catalog";
-import type { SpikeBlockCategoryId } from "../blockly/toolbox";
+import {
+  SPIKE_BLOCK_CATEGORIES,
+  type SpikeBlockCategoryId,
+} from "../blockly/toolbox";
 import { BuilderPlaceholder } from "../builder/BuilderPlaceholder";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
@@ -21,6 +24,11 @@ import { RuntimePanel } from "../runtime/RuntimePanel";
 import { indexProgramBlockTypes } from "../runtime/eventPresentation";
 import { CanvasControls } from "./CanvasControls";
 import { DesktopTitleBar } from "./DesktopTitleBar";
+import {
+  createWorkbenchCommands,
+  type CommandBlockItem,
+  type WorkbenchCommandId,
+} from "./commands";
 import {
   NoopWindowChromeBridge,
   type WindowChromeBridge,
@@ -54,7 +62,6 @@ export function App({
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
   runtimeModel,
-  canvasAction,
   windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
@@ -78,6 +85,18 @@ export function App({
   const runtimeBlockTypes = useMemo(
     () => indexProgramBlockTypes(controller.projection.program),
     [controller.projection.program],
+  );
+  const blockSearchItems = useMemo<readonly CommandBlockItem[]>(
+    () => SPIKE_BLOCK_CATEGORIES.flatMap((category) =>
+      category.blockIds.map((blockType) => ({
+        kind: "block" as const,
+        blockType,
+        label: getBlockDisplayName(blockType),
+        categoryName: category.name,
+        keywords: [category.name],
+      })),
+    ),
+    [],
   );
 
   useEffect(() => {
@@ -112,30 +131,88 @@ export function App({
     });
   };
 
+  const runCommand = (id: WorkbenchCommandId): void => {
+    switch (id) {
+      case "file.new":
+        void controller.replaceWorkspace(EMPTY_WORKSPACE);
+        break;
+      case "file.open":
+        void controller.loadProject();
+        break;
+      case "file.save":
+      case "file.saveAs":
+        void controller.saveProject();
+        break;
+      case "file.exit":
+        void windowChrome.close();
+        break;
+      case "edit.undo":
+        canvasRef.current?.undo();
+        break;
+      case "edit.redo":
+        canvasRef.current?.redo();
+        break;
+      case "view.toggleLeft":
+        setLeftCollapsed((current) => !current);
+        break;
+      case "view.toggleRight":
+        setRightCollapsed((current) => !current);
+        break;
+      case "view.zoomIn":
+        canvasRef.current?.zoomIn();
+        updateZoomLabel();
+        break;
+      case "view.zoomOut":
+        canvasRef.current?.zoomOut();
+        updateZoomLabel();
+        break;
+      case "view.resetZoom":
+        canvasRef.current?.resetZoom();
+        updateZoomLabel();
+        break;
+      case "view.fit":
+        canvasRef.current?.fitToView();
+        updateZoomLabel();
+        break;
+      case "help.quickStart":
+        setRightCollapsed(false);
+        setActiveTab("builder");
+        break;
+      case "edit.selectAll":
+      case "edit.cut":
+      case "edit.copy":
+      case "edit.paste":
+      case "edit.delete":
+      case "view.selectTool":
+      case "view.panTool":
+      case "help.shortcuts":
+      case "help.about":
+        break;
+    }
+  };
+  const commands = createWorkbenchCommands({
+    state: {
+      canUndo: true,
+      canRedo: true,
+      selectionCount: 0,
+      canPaste: false,
+      leftCollapsed,
+      rightCollapsed,
+      tool: "select",
+    },
+    run: runCommand,
+  });
+
   return (
     <div className="app-shell">
       <DesktopTitleBar
-        projectTitle="天气助手 · 已保存"
+        commands={commands}
+        blockSearchItems={blockSearchItems}
+        documentLabel="天气助手 · 已保存"
         leftCollapsed={leftCollapsed}
         rightCollapsed={rightCollapsed}
-        onToggleLeft={() => setLeftCollapsed((current) => !current)}
-        onToggleRight={() => setRightCollapsed((current) => !current)}
-        onUndo={() => canvasRef.current?.undo()}
-        onRedo={() => canvasRef.current?.redo()}
-        onSave={() => void controller.saveProject()}
-        onLoad={() => void controller.loadProject()}
-        onClear={() => void controller.replaceWorkspace(EMPTY_WORKSPACE)}
-        onFit={() => {
-          canvasRef.current?.fitToView();
-          updateZoomLabel();
-        }}
-        onLoadFixture={() => void controller.replaceWorkspace(
-          createHundredBlockWorkspaceState(),
-        )}
+        onInsertBlock={(blockType) => canvasRef.current?.insertBlock({ blockType })}
         windowChrome={windowChrome}
-        extraViewAction={canvasAction
-          ? { label: canvasAction.ariaLabel, run: canvasAction.run }
-          : undefined}
       />
 
       <main

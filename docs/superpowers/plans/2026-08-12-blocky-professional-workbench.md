@@ -66,7 +66,7 @@
 - Produces: `WorkbenchCommandId`, `WorkbenchCommand`, `createWorkbenchCommands(context)`, `matchesShortcut(event, shortcut)`, `searchWorkbenchItems(query, commands, blocks)`.
 - Consumes later: `CommandContext` callbacks from `App`, block items from the existing catalog, `documentLabel` from Task 3.
 
-- [ ] **Step 1: Write failing unit tests for command identity, search, and shortcut conflicts**
+- [x] **Step 1: Write failing unit tests for command identity, search, and shortcut conflicts**
 
 ```ts
 const commands = createWorkbenchCommands(fakeContext());
@@ -86,13 +86,13 @@ expect(searchWorkbenchItems("聊天", commands, commandBlocks))
   .toContainEqual(expect.objectContaining({ kind: "block", blockType: "core.interaction.chat_entry" }));
 ```
 
-- [ ] **Step 2: Run RED test and confirm missing command module is the failure**
+- [x] **Step 2: Run RED test and confirm missing command module is the failure**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/commands.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/commands.test.ts`
 
 Expected: FAIL because `src/app/commands.ts` does not exist.
 
-- [ ] **Step 3: Implement the typed command registry and search projection**
+- [x] **Step 3: Implement the typed command registry and search projection**
 
 ```ts
 export type WorkbenchMenuId = "file" | "edit" | "view" | "help";
@@ -117,13 +117,13 @@ export interface WorkbenchCommand {
 
 Create commands from callbacks and live booleans; never keep a second hard-coded menu list in the titlebar.
 
-- [ ] **Step 4: Run unit GREEN and the existing titlebar test to expose old prop assumptions**
+- [x] **Step 4: Run unit GREEN and the existing titlebar test to expose old prop assumptions**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/commands.test.ts tests/component/DesktopTitleBar.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/commands.test.ts tests/component/DesktopTitleBar.test.tsx`
 
 Expected: command tests PASS; old titlebar test FAILS because it still expects hard-coded callbacks.
 
-- [ ] **Step 5: Rewrite the titlebar component test for straight arrows, command menus, and Ctrl+P search**
+- [x] **Step 5: Rewrite the titlebar component test for straight arrows, command menus, and Ctrl+P search**
 
 ```tsx
 expect(screen.getByRole("button", { name: "撤销" }).querySelector("svg"))
@@ -136,13 +136,13 @@ await user.keyboard("{Enter}");
 expect(runCommand).toHaveBeenCalledWith("file.saveAs");
 ```
 
-- [ ] **Step 6: Run RED and confirm the existing titlebar lacks the approved behavior**
+- [x] **Step 6: Run RED and confirm the existing titlebar lacks the approved behavior**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/component/DesktopTitleBar.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/DesktopTitleBar.test.tsx`
 
 Expected: FAIL on icon, disabled state, and missing command center.
 
-- [ ] **Step 7: Implement `CommandCenter` and refactor `DesktopTitleBar`**
+- [x] **Step 7: Implement `CommandCenter` and refactor `DesktopTitleBar`**
 
 Use `ArrowLeft20Regular`, `ArrowRight20Regular`, and `Search20Regular`. Render menu items from `commands.filter(command => command.menu === menuId)`, show shortcut labels, support ArrowUp/ArrowDown/Enter/Escape, and close after a successful command. The titlebar receives:
 
@@ -159,9 +159,9 @@ interface DesktopTitleBarProps {
 }
 ```
 
-- [ ] **Step 8: Run GREEN and commit**
+- [x] **Step 8: Run GREEN and commit**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/commands.test.ts tests/component/DesktopTitleBar.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/commands.test.ts tests/component/DesktopTitleBar.test.tsx`
 
 Commit: `feat: add real workbench commands and command center`
 
@@ -218,7 +218,7 @@ expect(record).not.toHaveProperty("path");
 
 - [ ] **Step 2: Run RED for missing HostBridge methods**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/documentHostBridge.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentHostBridge.test.ts`
 
 Expected: FAIL with TypeScript contract errors.
 
@@ -228,7 +228,7 @@ The in-memory bridge stores `json`, `displayName`, and a boolean association onl
 
 - [ ] **Step 4: Run TypeScript GREEN**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/documentHostBridge.test.ts tests/unit/tauriHostBridge.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentHostBridge.test.ts tests/unit/tauriHostBridge.test.ts`
 
 Expected: PASS.
 
@@ -301,7 +301,7 @@ Validate returned JSON with the existing snapshot parser, rename the internal pa
 Run:
 
 ```powershell
-pnpm --dir .\try\windows-core-spike vitest run tests/unit/documentHostBridge.test.ts tests/unit/tauriHostBridge.test.ts
+pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentHostBridge.test.ts tests/unit/tauriHostBridge.test.ts
 cargo test --locked --manifest-path .\try\windows-core-spike\src-tauri\Cargo.toml
 ```
 
@@ -353,7 +353,7 @@ expect(formatDocumentLabel(saved)).toBe("weather.blocky · 已保存");
 
 - [ ] **Step 2: Run RED and implement pure state machine**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/documentSession.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentSession.test.ts`
 
 Expected RED: module missing. Implement reducer with explicit actions and rerun to GREEN.
 
@@ -376,7 +376,7 @@ expect(host.saveDocument).toHaveBeenCalledWith(expect.objectContaining({ saveAs:
 
 - [ ] **Step 4: Run hook RED**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/component/useDocumentSession.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/useDocumentSession.test.tsx`
 
 Expected: FAIL because the hook does not exist.
 
@@ -399,7 +399,7 @@ The dialog traps focus, restores focus on close, and exposes `保存并继续`, 
 Run:
 
 ```powershell
-pnpm --dir .\try\windows-core-spike vitest run tests/unit/documentSession.test.ts tests/component/useDocumentSession.test.tsx tests/component/UnsavedChangesDialog.test.tsx tests/component/useSpikeController.test.tsx
+pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentSession.test.ts tests/component/useDocumentSession.test.tsx tests/component/UnsavedChangesDialog.test.tsx tests/component/useSpikeController.test.tsx
 ```
 
 Commit: `feat: add guarded single document lifecycle`
@@ -447,7 +447,7 @@ Also test clipboard serialization strips IDs and keeps relative coordinates.
 
 - [ ] **Step 2: Run RED, implement pure geometry/selection helpers, rerun GREEN**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/canvasInteraction.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/canvasInteraction.test.ts`
 
 - [ ] **Step 3: Replace the old HTML5 drag test with a failing pointer-session test**
 
@@ -459,7 +459,7 @@ expect(onPointerDragStart).toHaveBeenCalledWith({
 });
 ```
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/component/BlockLibrary.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/BlockLibrary.test.tsx`
 
 Expected: FAIL because the library still emits only HTML5 drag payloads.
 
@@ -503,7 +503,7 @@ Use `Blockly.serialization.blocks.save(root, { addCoordinates: true, saveIds: fa
 Run:
 
 ```powershell
-pnpm --dir .\try\windows-core-spike vitest run tests/unit/canvasInteraction.test.ts tests/unit/blockPlacement.test.ts tests/component/BlockLibrary.test.tsx tests/component/WorkbenchLayout.test.tsx
+pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/canvasInteraction.test.ts tests/unit/blockPlacement.test.ts tests/component/BlockLibrary.test.tsx tests/component/WorkbenchLayout.test.tsx
 ```
 
 Commit: `feat: add professional canvas interactions`
@@ -558,7 +558,7 @@ expect(JSON.stringify(turns)).not.toMatch(/block-001|blocky\.event|\{"/);
 
 - [ ] **Step 2: Run RED, implement pure projection, and rerun GREEN**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/unit/conversationProjection.test.ts`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/conversationProjection.test.ts`
 
 Map `model.chunk.data.text` into one assistant message. Project trace labels from `eventPresentation`; use fixed friendly labels for run/model/tool/block terminal states and never stringify raw event data.
 
@@ -573,7 +573,7 @@ expect(textarea).toHaveValue("第一行\n第二行");
 
 - [ ] **Step 4: Run RED and implement Enter-to-send plus Fluent send icon**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/component/RuntimeComposer.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/RuntimeComposer.test.tsx`
 
 Use `Send20Filled`, keep the draft after failed/cancelled runs, clear only after `run.completed`, and keep attachment/entry isolation.
 
@@ -611,7 +611,7 @@ Buttons call the same canvas insertion/Help command paths; do not imply a connec
 Run:
 
 ```powershell
-pnpm --dir .\try\windows-core-spike vitest run tests/unit/conversationProjection.test.ts tests/unit/eventPresentation.test.ts tests/component/RuntimeComposer.test.tsx tests/component/RuntimePanel.test.tsx tests/component/useSpikeController.test.tsx
+pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/conversationProjection.test.ts tests/unit/eventPresentation.test.ts tests/component/RuntimeComposer.test.tsx tests/component/RuntimePanel.test.tsx tests/component/useSpikeController.test.tsx
 ```
 
 Commit: `feat: make conversation the agent test surface`
@@ -652,7 +652,7 @@ Add a full in-memory flow: add Agent/chat blocks → send → save-as → dirty 
 
 - [ ] **Step 2: Run App RED**
 
-Run: `pnpm --dir .\try\windows-core-spike vitest run tests/component/App.test.tsx tests/component/App.lifecycle.test.tsx`
+Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/App.test.tsx tests/component/App.lifecycle.test.tsx`
 
 Expected: FAIL on old static title, old runtime label, Run/trash/menu/internal copy, and missing lifecycle.
 
@@ -677,7 +677,7 @@ Set `productName` and window `title` to `Blocky`; use a product-facing package d
 Run:
 
 ```powershell
-pnpm --dir .\try\windows-core-spike vitest run tests/component tests/unit/localization.test.ts tests/unit/spikeScope.test.ts
+pnpm --dir .\try\windows-core-spike exec vitest run tests/component tests/unit/localization.test.ts tests/unit/spikeScope.test.ts
 pnpm --dir .\try\windows-core-spike build
 ```
 
