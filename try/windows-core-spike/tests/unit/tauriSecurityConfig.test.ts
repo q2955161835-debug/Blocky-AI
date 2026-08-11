@@ -35,6 +35,7 @@ describe("normal Tauri release security configuration", () => {
             height: 900,
             minWidth: 1180,
             minHeight: 720,
+            decorations: false,
           },
         ],
         security: {
@@ -49,12 +50,24 @@ describe("normal Tauri release security configuration", () => {
     });
   });
 
-  it("grants the normal window only the default core capability", () => {
+  it("grants only the default core and explicit custom-titlebar window controls", () => {
     expect(mainCapability).toMatchObject({
       identifier: "main",
       windows: ["main"],
-      permissions: ["core:default"],
+      permissions: [
+        "core:default",
+        "core:window:allow-minimize",
+        "core:window:allow-toggle-maximize",
+        "core:window:allow-close",
+        "core:window:allow-start-dragging",
+      ],
     });
-    expect(mainCapability.permissions).toEqual(["core:default"]);
+    expect(mainCapability.permissions).toEqual([
+      "core:default",
+      "core:window:allow-minimize",
+      "core:window:allow-toggle-maximize",
+      "core:window:allow-close",
+      "core:window:allow-start-dragging",
+    ]);
   });
 });

@@ -1,10 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App, type CanvasAction } from "./app/App";
+import { TauriWindowChromeBridge } from "./app/WindowChromeBridge";
 import type { RuntimeDependencies } from "./core/deterministicRuntime";
 import { TauriHostBridge } from "./host/TauriHostBridge";
 
 const hostBridge = new TauriHostBridge();
+const windowChrome = new TauriWindowChromeBridge();
 
 async function bootstrap(): Promise<void> {
   let runtimeModel: RuntimeDependencies["model"] | undefined;
@@ -22,6 +24,7 @@ async function bootstrap(): Promise<void> {
         hostBridge={hostBridge}
         runtimeModel={runtimeModel}
         canvasAction={canvasAction}
+        windowChrome={windowChrome}
       />
     </StrictMode>,
   );
