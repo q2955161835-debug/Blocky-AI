@@ -18,6 +18,15 @@ const CANCELLED_EVENT: RuntimeEvent = {
   data: {},
 };
 
+const TOOL_EVENT: RuntimeEvent = {
+  eventVersion: "blocky.event/v0-spike",
+  runId: "run-2",
+  sequence: 3,
+  type: "tool.started",
+  blockId: "tool-call",
+  data: {},
+};
+
 function renderPanel(overrides: Partial<RuntimePanelProps> = {}) {
   return render(
     <RuntimePanel
@@ -26,6 +35,7 @@ function renderPanel(overrides: Partial<RuntimePanelProps> = {}) {
       onActiveEntryIdChange={vi.fn()}
       onSubmit={vi.fn(async () => undefined)}
       events={[]}
+      blockTypes={{}}
       disabled
       running={false}
       pendingPermission={null}
@@ -80,5 +90,21 @@ describe("RuntimePanel empty manifest", () => {
     expect(screen.queryByText("添加聊天入口后才能运行作品"))
       .not.toBeInTheDocument();
     expect(screen.queryByTestId("runtime-send")).not.toBeInTheDocument();
+  });
+
+  it("renders a visible source category and its actual shared block colour", () => {
+    const colouredProps = {
+      events: [TOOL_EVENT],
+      blockTypes: { "tool-call": "core.tool.call" },
+    } as Partial<RuntimePanelProps> & {
+      blockTypes: Readonly<Record<string, string>>;
+    };
+
+    renderPanel(colouredProps);
+
+    const category = screen.getByText("工具");
+    const eventRow = category.closest(".event-timeline__item");
+    expect(eventRow).toHaveAttribute("data-category", "tools");
+    expect(eventRow).toHaveStyle({ "--event-colour": "#ef6c00" });
   });
 });

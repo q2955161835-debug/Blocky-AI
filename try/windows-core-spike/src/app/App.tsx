@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
 import {
   BlockLibrary,
   BLOCKY_BLOCK_DRAG_MIME,
@@ -18,6 +18,7 @@ import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
+import { indexProgramBlockTypes } from "../runtime/eventPresentation";
 import { CanvasControls } from "./CanvasControls";
 import { DesktopTitleBar } from "./DesktopTitleBar";
 import {
@@ -74,6 +75,10 @@ export function App({
     (diagnostic) => diagnostic.severity === "error",
   );
   const blockCount = countSerializedBlocks(controller.projection.workspace);
+  const runtimeBlockTypes = useMemo(
+    () => indexProgramBlockTypes(controller.projection.program),
+    [controller.projection.program],
+  );
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -246,6 +251,7 @@ export function App({
                 onActiveEntryIdChange={controller.setActiveEntryId}
                 onSubmit={controller.runInput}
                 events={controller.runtime.events}
+                blockTypes={runtimeBlockTypes}
                 disabled={controller.runtime.status === "running" || hasCompileError}
                 running={controller.runtime.status === "running"}
                 pendingPermission={controller.pendingPermission}

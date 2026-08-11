@@ -698,9 +698,11 @@ input:focus-visible,
 }
 
 .event-timeline__item {
+  position: relative;
   padding: 11px 12px;
-  background: #2b313a;
-  border: 1px solid #3b4451;
+  background: color-mix(in srgb, var(--event-colour) 12%, #2b313a);
+  border: 1px solid color-mix(in srgb, var(--event-colour) 42%, #3b4451);
+  border-left: 3px solid var(--event-colour);
   border-radius: 8px;
 }
 
@@ -715,6 +717,14 @@ input:focus-visible,
 
 .event-timeline__meta strong {
   color: var(--text);
+}
+
+.event-timeline__category {
+  padding: 2px 6px;
+  color: #ffffff;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--event-colour) 72%, #20242c);
+  border-radius: 999px;
 }
 
 .event-timeline__meta code {
