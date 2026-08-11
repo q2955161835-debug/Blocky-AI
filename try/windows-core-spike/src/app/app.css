@@ -429,8 +429,11 @@ input:focus-visible,
   inset: 0;
 }
 
+.blocklySvg {
+  background: var(--canvas) !important;
+}
+
 .blocklyMainBackground {
-  fill: var(--canvas) !important;
   stroke: none !important;
 }
 

@@ -145,7 +145,8 @@ export function createHundredBlockWorkspaceState(): WorkspaceState {
 
   roots.forEach((root, index) => {
     root.x = 24 + (index % 4) * 520;
-    root.y = 24 + Math.floor(index / 4) * 640;
+    // Keep fixture roots clear of the fixed canvas badge and project actions.
+    root.y = 96 + Math.floor(index / 4) * 640;
   });
 
   const result = state();

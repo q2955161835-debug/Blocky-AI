@@ -40,7 +40,9 @@ export function EventTimeline({ events, blockTypes }: EventTimelineProps) {
                   <span className="event-timeline__category">
                     {presentation.categoryName}
                   </span>
-                  <span>#{event.sequence}</span>
+                  <span className="event-timeline__sequence">
+                    #{event.sequence}
+                  </span>
                   <strong>{event.type}</strong>
                   {event.blockId ? <code>{event.blockId}</code> : null}
                 </div>

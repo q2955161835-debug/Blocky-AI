@@ -59,10 +59,18 @@ function Assert-NormalIsolation {
     }
     $capability = Get-Content -LiteralPath $capabilityFiles[0].FullName -Raw |
         ConvertFrom-Json
+    $expectedPermissions = @(
+        'core:default',
+        'core:window:allow-minimize',
+        'core:window:allow-toggle-maximize',
+        'core:window:allow-close',
+        'core:window:allow-start-dragging'
+    )
+    $actualPermissions = @($capability.permissions)
     if (
         $capability.identifier -ne 'main' -or
-        @($capability.permissions).Count -ne 1 -or
-        $capability.permissions[0] -ne 'core:default'
+        $actualPermissions.Count -ne $expectedPermissions.Count -or
+        ($actualPermissions -join "`n") -ne ($expectedPermissions -join "`n")
     ) {
         Set-FirstFailure -ExitCode 1
         throw 'NORMAL_ISOLATION_CAPABILITY_CONTENT_INVALID'
@@ -93,7 +101,9 @@ function Assert-NormalIsolation {
     [Console]::Out.WriteLine(
         ('NORMAL_EXE bytes={0} sha256={1}' -f $exe.Length, $hash)
     )
-    [Console]::Out.WriteLine('NORMAL_ISOLATION markers=0 cargo_wdio=0 capability=main')
+    [Console]::Out.WriteLine(
+        'NORMAL_ISOLATION markers=0 cargo_wdio=0 capability=main custom_window=4'
+    )
 }
 
 function Restore-NormalRelease {

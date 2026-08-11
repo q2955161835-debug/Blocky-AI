@@ -47,6 +47,7 @@ describe("100-block fixture", () => {
     expect(roots.every((root) =>
       Number.isFinite(root.x) && Number.isFinite(root.y)
     )).toBe(true);
+    expect(roots.every((root) => (root.y ?? 0) >= 96)).toBe(true);
     expect(new Set(roots.map((root) => `${root.x}:${root.y}`)).size)
       .toBe(roots.length);
     expect(second).toEqual(first);

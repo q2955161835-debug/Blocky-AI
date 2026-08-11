@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { resolve } from "node:path";
 import { $, $$, browser, expect } from "@wdio/globals";
 import "@wdio/tauri-service";
 import type { InteractionManifest } from "../../src/core/interactionManifest";
@@ -7,11 +8,26 @@ import type { RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { SpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
 type HookRuntimeEvent = RuntimeEvent;
-const RESET_ZOOM_SCALE = 0.9;
+
+interface WorkspaceViewState {
+  readonly scale: number;
+  readonly scrollX: number;
+  readonly scrollY: number;
+  readonly topBlocks: readonly {
+    readonly id: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }[];
+}
 
 interface TestHook {
   getBlockCount(): number;
-  loadHundredBlockFixture(): void;
+  loadHundredBlockFixture(): Promise<void>;
+  loadVisualAcceptanceWorkspace(): void;
+  readWorkspaceViewState(): WorkspaceViewState;
+  readTopLevelOverlapPairs(): readonly string[];
   getCanonicalSnapshot(): SpikeProjectSnapshot;
   getManifest(): InteractionManifest;
   startSimulation(input: string): void;
@@ -90,6 +106,27 @@ async function getManifest(): Promise<unknown> {
   return browser.tauri.execute(({ core: _core }) =>
     (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__.getManifest(),
   );
+}
+
+async function readWorkspaceViewState(): Promise<WorkspaceViewState> {
+  return browser.tauri.execute(({ core: _core }) =>
+    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
+      .readWorkspaceViewState(),
+  );
+}
+
+async function readTopLevelOverlapPairs(): Promise<readonly string[]> {
+  return browser.tauri.execute(({ core: _core }) =>
+    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
+      .readTopLevelOverlapPairs(),
+  );
+}
+
+async function invokeMenu(menuName: string, actionName: string): Promise<void> {
+  await $(`aria/${menuName}`).click();
+  const action = await $(`aria/${actionName}`);
+  await action.waitForDisplayed();
+  await action.click();
 }
 
 function expectedRecord(projectId: string, json: string): NativeProjectRecord {
@@ -229,8 +266,25 @@ describe("Windows Core native channel", () => {
     await expect(builderTab).toBeEnabled();
     await expect(runtimeTab).toBeDisabled();
 
-    await $("aria/载入100块").click();
+    await invokeMenu("视图", "载入100块");
     await browser.waitUntil(async () => (await getBlockCount()) === 100);
+    const beforePanelCollapse = await readWorkspaceViewState();
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await $("aria/收起积木栏").click();
+    await $("aria/收起运行栏").click();
+    await $("aria/展开积木栏").waitForDisplayed();
+    await $("aria/展开运行栏").waitForDisplayed();
+    await browser.waitUntil(async () =>
+      JSON.stringify(await readWorkspaceViewState()) ===
+        JSON.stringify(beforePanelCollapse),
+    );
+    expect(await readWorkspaceViewState()).toEqual(beforePanelCollapse);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await $("aria/展开积木栏").click();
+    await $("aria/展开运行栏").click();
+    await $("aria/收起积木栏").waitForDisplayed();
+    await $("aria/收起运行栏").waitForDisplayed();
+    expect(await readWorkspaceViewState()).toEqual(beforePanelCollapse);
     await expect(runtimeTab).toBeEnabled();
     await runtimeTab.click();
 
@@ -275,7 +329,7 @@ describe("Windows Core native channel", () => {
       ],
     });
 
-    await $("aria/折叠首块").click();
+    await invokeMenu("视图", "折叠首块");
     await browser.waitUntil(async () => (
       findBlock(snapshotWorkspace(await getCanonicalSnapshot()), "block-001")
         ?.collapsed === true
@@ -291,13 +345,7 @@ describe("Windows Core native channel", () => {
     const zoomedOutScale = await readBlocklyScale();
     expect(zoomedOutScale).toBeLessThan(zoomedInScale);
     expect(zoomedOutScale).toBeCloseTo(initialScale, 6);
-    await $("aria/放大画布").click();
-    await browser.waitUntil(async () => (await readBlocklyScale()) > initialScale);
-    await $("aria/重置画布缩放").click();
-    await browser.waitUntil(async () => (
-      Math.abs((await readBlocklyScale()) - RESET_ZOOM_SCALE) < 0.000001
-    ));
-    expect(await readBlocklyScale()).toBeCloseTo(RESET_ZOOM_SCALE, 6);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
     const beforeSave = await getCanonicalSnapshot();
     const beforeIds = [...collectBlockIds(beforeSave)].sort();
     expect(beforeIds).toHaveLength(100);
@@ -317,7 +365,7 @@ describe("Windows Core native channel", () => {
       expectedRecord("windows-core-spike", sentinelJson),
     );
 
-    await $("aria/保存").click();
+    await $("aria/保存项目").click();
     const expectedSavedRecord = expectedRecord(
       "windows-core-spike",
       stableStringify(beforeSave),
@@ -325,10 +373,10 @@ describe("Windows Core native channel", () => {
     expect(await waitForRustSave(expectedSavedRecord, sentinelRecord)).toEqual(
       expectedSavedRecord,
     );
-    await $("aria/清空").click();
+    await invokeMenu("文件", "清空");
     await browser.waitUntil(async () => (await getBlockCount()) === 0);
     await expect(runtimeTab).toBeDisabled();
-    await $("aria/重开").click();
+    await invokeMenu("文件", "重开");
     await browser.waitUntil(async () => (await getBlockCount()) === 100);
     const afterReload = await getCanonicalSnapshot();
     expect(JSON.stringify(afterReload)).toBe(JSON.stringify(beforeSave));
@@ -380,6 +428,47 @@ describe("Windows Core native channel", () => {
     const approvedEvents = await waitForTerminal("run.completed");
     expect(approvedEvents.some((event) => event.type === "tool.completed")).toBe(true);
 
+    const visualDir = resolve(
+      process.cwd(),
+      "../../doc/技术设计/Windows-Core视觉验收",
+    );
+    await browser.tauri.execute(({ core: _core }) =>
+      (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
+        .loadVisualAcceptanceWorkspace(),
+    );
+    await browser.waitUntil(async () => (await getBlockCount()) === 3);
+    await expect($("aria/画布积木数量")).toHaveText("画布 · 3 个积木");
+    await browser.tauri.execute(({ core: _core }) => {
+      const timeline = document.querySelector<HTMLElement>(".event-timeline");
+      if (!timeline) throw new Error("WDIO_EVENT_TIMELINE_UNAVAILABLE");
+      timeline.scrollTop = timeline.scrollHeight;
+    });
+    const beforeVisualCollapse = await readWorkspaceViewState();
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await browser.saveScreenshot(resolve(
+      visualDir,
+      "09-modern-workbench-expanded.png",
+    ));
+    await $("aria/收起积木栏").click();
+    await $("aria/收起运行栏").click();
+    await $("aria/展开积木栏").waitForDisplayed();
+    await $("aria/展开运行栏").waitForDisplayed();
+    await browser.waitUntil(async () =>
+      JSON.stringify(await readWorkspaceViewState()) ===
+        JSON.stringify(beforeVisualCollapse),
+    );
+    expect(await readWorkspaceViewState()).toEqual(beforeVisualCollapse);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await browser.saveScreenshot(resolve(
+      visualDir,
+      "10-modern-workbench-collapsed.png",
+    ));
+    await $("aria/展开积木栏").click();
+    await $("aria/展开运行栏").click();
+    await $("aria/收起积木栏").waitForDisplayed();
+    await $("aria/收起运行栏").waitForDisplayed();
+    expect(await readWorkspaceViewState()).toEqual(beforeVisualCollapse);
+
     // Replacing browser networking constructors cannot be expressed with DOM actions;
     // this setup-only execution makes every outbound attempt fail synchronously.
     await browser.tauri.execute(({ core: _core }) => {
@@ -413,8 +502,8 @@ describe("Windows Core native channel", () => {
       } as unknown as typeof window.WebSocket;
     });
 
-    await $("aria/清空").click();
-    await $("aria/重开").click();
+    await invokeMenu("文件", "清空");
+    await invokeMenu("文件", "重开");
     await browser.waitUntil(async () => (await getBlockCount()) === 100);
     await runtimeTab.click();
     await $("[data-testid='runtime-text-input']").setValue("断网运行");
@@ -428,5 +517,13 @@ describe("Windows Core native channel", () => {
         .__BLOCKY_OUTBOUND_ATTEMPTS__ ?? [],
     );
     expect(outboundAttempts).toEqual([]);
+
+    await $("aria/适配画布").click();
+    await browser.waitUntil(async () =>
+      (await readBlocklyScale()) !== beforeVisualCollapse.scale,
+    );
+    expect(await readBlocklyScale()).toBeGreaterThanOrEqual(0.4);
+    expect(await readBlocklyScale()).toBeLessThanOrEqual(1.5);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
   });
 });

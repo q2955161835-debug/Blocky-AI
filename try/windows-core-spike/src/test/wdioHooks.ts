@@ -49,7 +49,10 @@ interface SoakCycleResult {
 
 interface WdioSpikeTestHook {
   getBlockCount(): number;
-  loadHundredBlockFixture(): void;
+  loadHundredBlockFixture(): Promise<void>;
+  loadVisualAcceptanceWorkspace(): void;
+  readWorkspaceViewState(): WorkspaceViewState;
+  readTopLevelOverlapPairs(): readonly string[];
   getCanonicalSnapshot(): SpikeProjectSnapshot;
   getManifest(): InteractionManifest;
   startSimulation(input: string): void;
@@ -61,24 +64,132 @@ interface WdioSpikeTestHook {
   runSoakCycle(cycle: number): Promise<SoakCycleResult>;
 }
 
+interface WorkspaceViewState {
+  readonly scale: number;
+  readonly scrollX: number;
+  readonly scrollY: number;
+  readonly topBlocks: readonly {
+    readonly id: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }[];
+}
+
 declare global {
   interface Window {
     __BLOCKY_SPIKE_TEST__?: WdioSpikeTestHook;
   }
 }
 
-function mainWorkspace(): Blockly.Workspace {
+function mainWorkspace(): Blockly.WorkspaceSvg {
   const workspace = Blockly.getMainWorkspace();
-  if (!workspace) throw new Error("WDIO_WORKSPACE_UNAVAILABLE");
+  if (!(workspace instanceof Blockly.WorkspaceSvg)) {
+    throw new Error("WDIO_WORKSPACE_UNAVAILABLE");
+  }
   return workspace;
 }
 
 function clickButton(name: string): void {
   const button = [...document.querySelectorAll<HTMLButtonElement>("button")].find(
-    (candidate) => candidate.textContent?.trim() === name,
+    (candidate) =>
+      candidate.getAttribute("aria-label") === name ||
+      candidate.textContent?.trim() === name,
   );
   if (!button) throw new Error(`WDIO_BUTTON_UNAVAILABLE:${name}`);
   button.click();
+}
+
+async function clickMenuAction(menuName: string, actionName: string): Promise<void> {
+  clickButton(menuName);
+  await waitFor(() => [...document.querySelectorAll<HTMLButtonElement>(
+    'button[role="menuitem"]',
+  )].some((candidate) => candidate.textContent?.trim() === actionName));
+  clickButton(actionName);
+}
+
+function readWorkspaceViewState(): WorkspaceViewState {
+  const workspace = mainWorkspace();
+  return {
+    scale: workspace.scale,
+    scrollX: workspace.scrollX,
+    scrollY: workspace.scrollY,
+    topBlocks: [...workspace.getTopBlocks(true)]
+      .sort((left, right) => left.id.localeCompare(right.id))
+      .map((block) => {
+        const bounds = block.getBoundingRectangle();
+        return {
+          id: block.id,
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.right - bounds.left,
+          height: bounds.bottom - bounds.top,
+        };
+      }),
+  };
+}
+
+function readTopLevelOverlapPairs(): readonly string[] {
+  const blocks = readWorkspaceViewState().topBlocks;
+  const overlaps: string[] = [];
+  for (let leftIndex = 0; leftIndex < blocks.length; leftIndex += 1) {
+    const left = blocks[leftIndex];
+    if (!left) continue;
+    for (let rightIndex = leftIndex + 1; rightIndex < blocks.length; rightIndex += 1) {
+      const right = blocks[rightIndex];
+      if (!right) continue;
+      const separated =
+        left.x + left.width <= right.x ||
+        right.x + right.width <= left.x ||
+        left.y + left.height <= right.y ||
+        right.y + right.height <= left.y;
+      if (!separated) overlaps.push(`${left.id}|${right.id}`);
+    }
+  }
+  return overlaps;
+}
+
+function loadVisualAcceptanceWorkspace(): void {
+  const workspace = mainWorkspace();
+  const metrics = workspace.getMetrics();
+  const x = metrics.viewLeft + Math.max(120, metrics.viewWidth * 0.18);
+  const y = metrics.viewTop + 150;
+  const state = {
+    blocks: {
+      languageVersion: 0,
+      blocks: [
+        {
+          type: "core.agent.define",
+          id: "block-001",
+          x,
+          y,
+          fields: { NAME: "Weather assistant" },
+        },
+        {
+          type: "core.interaction.chat_entry",
+          id: "block-002",
+          x: x + 24,
+          y: y + 170,
+          fields: { NAME: "Chat" },
+        },
+        {
+          type: "core.tool.call",
+          id: "block-043",
+          x: x + 48,
+          y: y + 340,
+        },
+      ],
+    },
+  };
+  Blockly.Events.disable();
+  try {
+    workspace.clear();
+    Blockly.serialization.workspaces.load(state, workspace);
+  } finally {
+    Blockly.Events.enable();
+  }
+  workspace.fireChangeListener(new Blockly.Events.FinishedLoading(workspace));
 }
 
 function setControlledTextAreaValue(element: HTMLTextAreaElement, value: string): void {
@@ -94,7 +205,9 @@ function setControlledTextAreaValue(element: HTMLTextAreaElement, value: string)
 function readTimelineEvents(): RuntimeEvent[] {
   return [...document.querySelectorAll<HTMLElement>(".event-timeline__item")].map(
     (item) => {
-      const sequenceText = item.querySelector(".event-timeline__meta span")?.textContent;
+      const sequenceText = item.querySelector(
+        ".event-timeline__sequence",
+      )?.textContent;
       const type = item.querySelector(".event-timeline__meta strong")?.textContent;
       const blockId = item.querySelector(".event-timeline__meta code")?.textContent;
       const summary = item.querySelector(".event-timeline__summary")?.textContent;
@@ -356,7 +469,7 @@ async function canonicalSoakSnapshot(): Promise<{
 
 async function prepareSoak(): Promise<SoakPreparation> {
   installSoakEvidenceCollectors();
-  clickButton("载入100块");
+  await clickMenuAction("视图", "载入100块");
   await waitFor(() => mainWorkspace().getAllBlocks(false).length === 100);
   mainWorkspace().getBlockById("block-001")?.setCollapsed(false);
   const baseline = await canonicalSoakSnapshot();
@@ -438,7 +551,10 @@ async function runSoakCycle(cycle: number): Promise<SoakCycleResult> {
 export function installWdioHooks(): void {
   const hook: WdioSpikeTestHook = {
     getBlockCount: () => mainWorkspace().getAllBlocks(false).length,
-    loadHundredBlockFixture: () => clickButton("载入100块"),
+    loadHundredBlockFixture: () => clickMenuAction("视图", "载入100块"),
+    loadVisualAcceptanceWorkspace,
+    readWorkspaceViewState,
+    readTopLevelOverlapPairs,
     getCanonicalSnapshot: () => {
       const projection = buildEditorProjection(
         Blockly.serialization.workspaces.save(mainWorkspace()),

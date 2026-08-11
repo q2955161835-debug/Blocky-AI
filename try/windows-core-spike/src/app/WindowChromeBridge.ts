@@ -15,21 +15,23 @@ export class NoopWindowChromeBridge implements WindowChromeBridge {
 }
 
 export class TauriWindowChromeBridge implements WindowChromeBridge {
-  private readonly window: Window;
+  constructor(private readonly window?: Window) {}
 
-  constructor(window: Window = getCurrentWindow()) {
-    this.window = window;
+  private currentWindow(): Window {
+    // Resolve the native handle only when a window action is invoked. This
+    // keeps ordinary Web/unit rendering independent from the Tauri runtime.
+    return this.window ?? getCurrentWindow();
   }
 
   minimize(): Promise<void> {
-    return this.window.minimize();
+    return this.currentWindow().minimize();
   }
 
   toggleMaximize(): Promise<void> {
-    return this.window.toggleMaximize();
+    return this.currentWindow().toggleMaximize();
   }
 
   close(): Promise<void> {
-    return this.window.close();
+    return this.currentWindow().close();
   }
 }
