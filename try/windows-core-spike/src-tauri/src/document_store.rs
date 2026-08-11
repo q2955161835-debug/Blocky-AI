@@ -2,6 +2,8 @@ use crate::project_store::{MAX_PROJECT_BYTES, validate_snapshot_json};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
+#[cfg(feature = "wdio")]
+use std::collections::VecDeque;
 use std::fs;
 use std::io::{Cursor, Read, Write};
 use std::path::{Component, Path, PathBuf};
@@ -66,9 +68,13 @@ struct DocumentSession {
     associated_path: Option<PathBuf>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct DocumentStore {
     session: Mutex<DocumentSession>,
+    #[cfg(feature = "wdio")]
+    dialog_overrides: Mutex<VecDeque<Option<PathBuf>>>,
+    #[cfg(feature = "wdio")]
+    wdio_root: tempfile::TempDir,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -79,14 +85,17 @@ struct DocumentManifest {
 
 impl DocumentStore {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            session: Mutex::new(DocumentSession::default()),
+            #[cfg(feature = "wdio")]
+            dialog_overrides: Mutex::new(VecDeque::new()),
+            #[cfg(feature = "wdio")]
+            wdio_root: tempfile::tempdir().expect("WDIO document fixture directory is available"),
+        }
     }
 
     pub fn open_with_dialog(&self) -> Result<Option<DocumentRecord>, DocumentError> {
-        let Some(path) = rfd::FileDialog::new()
-            .add_filter("Blocky Agent", &["blocky"])
-            .pick_file()
-        else {
+        let Some(path) = self.pick_open_path()? else {
             return Ok(None);
         };
         self.open_path(&path).map(Some)
@@ -104,11 +113,7 @@ impl DocumentStore {
         let path = match target {
             Some(path) => path,
             None => {
-                let Some(path) = rfd::FileDialog::new()
-                    .add_filter("Blocky Agent", &["blocky"])
-                    .set_file_name(safe_suggested_name(&request.suggested_name))
-                    .save_file()
-                else {
+                let Some(path) = self.pick_save_path(&request.suggested_name)? else {
                     return Ok(None);
                 };
                 ensure_blocky_extension(path)
@@ -182,6 +187,129 @@ impl DocumentStore {
             DocumentError::new("DOCUMENT_SESSION_UNAVAILABLE", "项目文件操作失败，请重试")
         })
     }
+
+    fn pick_open_path(&self) -> Result<Option<PathBuf>, DocumentError> {
+        #[cfg(feature = "wdio")]
+        if let Some(selection) = self.take_dialog_override()? {
+            return Ok(selection);
+        }
+        Ok(rfd::FileDialog::new()
+            .add_filter("Blocky Agent", &["blocky"])
+            .pick_file())
+    }
+
+    fn pick_save_path(&self, suggested_name: &str) -> Result<Option<PathBuf>, DocumentError> {
+        #[cfg(feature = "wdio")]
+        if let Some(selection) = self.take_dialog_override()? {
+            return Ok(selection);
+        }
+        Ok(rfd::FileDialog::new()
+            .add_filter("Blocky Agent", &["blocky"])
+            .set_file_name(safe_suggested_name(suggested_name))
+            .save_file())
+    }
+
+    #[cfg(feature = "wdio")]
+    fn take_dialog_override(&self) -> Result<Option<Option<PathBuf>>, DocumentError> {
+        self.dialog_overrides
+            .lock()
+            .map(|mut queue| queue.pop_front())
+            .map_err(|_| {
+                DocumentError::new(
+                    "DOCUMENT_TEST_DIALOG_UNAVAILABLE",
+                    "项目文件操作失败，请重试",
+                )
+            })
+    }
+
+    #[cfg(feature = "wdio")]
+    pub fn prepare_wdio_dialog_fixture(&self, fixture: &str) -> Result<(), DocumentError> {
+        let root = self.wdio_root.path();
+        let selection = match fixture {
+            "cancel" => None,
+            "roundTrip" => Some(root.join("lifecycle.blocky")),
+            "saveFailure" => Some(root.join("missing-parent").join("failure.blocky")),
+            "invalidZip" => {
+                let path = root.join("invalid-zip.blocky");
+                fs::write(&path, b"not-a-zip")
+                    .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+                Some(path)
+            }
+            "pathTraversal" => {
+                let path = root.join("path-traversal.blocky");
+                let archive = wdio_archive(&[
+                    (MANIFEST_NAME, br#"{"formatVersion":"blocky.document/v1"}"#),
+                    ("../project.json", wdio_project_json().as_bytes()),
+                ])?;
+                fs::write(&path, archive)
+                    .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+                Some(path)
+            }
+            "unsupportedVersion" => {
+                let path = root.join("unsupported-version.blocky");
+                let archive = wdio_archive(&[
+                    (MANIFEST_NAME, br#"{"formatVersion":"blocky.document/v2"}"#),
+                    (PROJECT_NAME, wdio_project_json().as_bytes()),
+                ])?;
+                fs::write(&path, archive)
+                    .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+                Some(path)
+            }
+            "derivedMismatch" => {
+                let path = root.join("derived-mismatch.blocky");
+                let archive = encode_blocky_archive(wdio_derived_mismatch_json().as_bytes())?;
+                fs::write(&path, archive)
+                    .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+                Some(path)
+            }
+            _ => return Err(DocumentError::invalid("DOCUMENT_TEST_FIXTURE_UNKNOWN")),
+        };
+        self.dialog_overrides
+            .lock()
+            .map_err(|_| {
+                DocumentError::new(
+                    "DOCUMENT_TEST_DIALOG_UNAVAILABLE",
+                    "项目文件操作失败，请重试",
+                )
+            })?
+            .push_back(selection);
+        Ok(())
+    }
+}
+
+impl Default for DocumentStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(feature = "wdio")]
+fn wdio_project_json() -> String {
+    r#"{"schemaVersion":"blocky.spike-project/v1","projectId":"windows-core-spike","workspace":{"blocks":{"blocks":[],"languageVersion":0}},"program":{"schemaVersion":"blocky.ir/v0-spike","roots":[]},"interactionManifest":{"schemaVersion":"blocky.interaction/v0-spike","entries":[]}}"#.to_owned()
+}
+
+#[cfg(feature = "wdio")]
+fn wdio_derived_mismatch_json() -> String {
+    r#"{"schemaVersion":"blocky.spike-project/v1","projectId":"windows-core-spike","workspace":{"blocks":{"blocks":[],"languageVersion":0}},"program":{"schemaVersion":"blocky.ir/v0-spike","roots":[{"id":"orphan","type":"core.agent.define","fields":{},"inputs":{},"next":null}]},"interactionManifest":{"schemaVersion":"blocky.interaction/v0-spike","entries":[]}}"#.to_owned()
+}
+
+#[cfg(feature = "wdio")]
+fn wdio_archive(entries: &[(&str, &[u8])]) -> Result<Vec<u8>, DocumentError> {
+    let cursor = Cursor::new(Vec::new());
+    let mut archive = ZipWriter::new(cursor);
+    let options = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
+    for (name, contents) in entries {
+        archive
+            .start_file(*name, options)
+            .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+        archive
+            .write_all(contents)
+            .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))?;
+    }
+    archive
+        .finish()
+        .map(|cursor| cursor.into_inner())
+        .map_err(|error| DocumentError::io("DOCUMENT_TEST_FIXTURE_FAILED", error))
 }
 
 fn next_document_id() -> String {
@@ -457,6 +585,8 @@ fn declared_entry_count(bytes: &[u8]) -> Result<usize, DocumentError> {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "wdio")]
+    use super::SaveDocumentRequest;
     use super::{
         BLOCKY_DOCUMENT_FORMAT, DocumentStore, MAX_PROJECT_BYTES, decode_blocky_archive,
         encode_blocky_archive, validate_archive_entry_name,
@@ -594,5 +724,44 @@ mod tests {
         assert_eq!(reopened.json, VALID_PROJECT);
         assert_eq!(reopened.sha256, saved.sha256);
         assert_eq!(reopened.bytes, saved.bytes);
+    }
+
+    #[cfg(feature = "wdio")]
+    #[test]
+    fn controlled_dialog_selection_drives_the_real_document_store_without_public_paths() {
+        let store = DocumentStore::new();
+        store
+            .prepare_wdio_dialog_fixture("roundTrip")
+            .expect("round-trip save selection is queued");
+        let saved = store
+            .save_with_dialog(SaveDocumentRequest {
+                json: VALID_PROJECT.to_owned(),
+                suggested_name: "ignored.blocky".to_owned(),
+                save_as: true,
+            })
+            .expect("controlled save succeeds")
+            .expect("controlled save is not cancelled");
+        assert_eq!(saved.display_name, "lifecycle.blocky");
+
+        store.clear_association().expect("association clears");
+        store
+            .prepare_wdio_dialog_fixture("roundTrip")
+            .expect("round-trip open selection is queued");
+        let opened = store
+            .open_with_dialog()
+            .expect("controlled open succeeds")
+            .expect("controlled open is not cancelled");
+        assert_eq!(opened.json, VALID_PROJECT);
+        assert_eq!(opened.sha256, saved.sha256);
+
+        store
+            .prepare_wdio_dialog_fixture("cancel")
+            .expect("cancel selection is queued");
+        assert!(
+            store
+                .open_with_dialog()
+                .expect("cancel is not an error")
+                .is_none()
+        );
     }
 }

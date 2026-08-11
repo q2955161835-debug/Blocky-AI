@@ -62,6 +62,7 @@ export function useDocumentSession({
   stateRef.current = state;
   const [pendingIntent, setPendingIntent] =
     useState<PendingDocumentIntent>(null);
+  const [operationError, setOperationError] = useState<string | null>(null);
   const operationQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const commit = useCallback((action: DocumentSessionAction): void => {
@@ -93,6 +94,7 @@ export function useDocumentSession({
     });
     commit({ type: "workspaceAccepted", digest });
     commit({ type: "saveStarted" });
+    setOperationError(null);
     try {
       const record = await hostBridge.saveDocument({
         json: stableStringify(project),
@@ -111,9 +113,10 @@ export function useDocumentSession({
         savedDigest: digest,
       });
       return true;
-    } catch (error) {
+    } catch {
       commit({ type: "saveFailed" });
-      throw error;
+      setOperationError("无法保存项目文件，请检查文件后重试");
+      return false;
     }
   }, [canvasRef, commit, hostBridge, projectId]);
 
@@ -129,6 +132,7 @@ export function useDocumentSession({
   const performIntent = useCallback(async (
     intent: Exclude<PendingDocumentIntent, null>,
   ): Promise<boolean> => {
+    setOperationError(null);
     await cancelRun();
     if (intent === "close") {
       onClose();
@@ -141,20 +145,24 @@ export function useDocumentSession({
       canvasRef.current?.load(EMPTY_WORKSPACE);
       return true;
     }
-
-    const record = await hostBridge.openDocument();
-    if (!record) return false;
-    const workspace = workspaceFromDocument(record.json);
-    const digest = stableStringify(workspace);
-    commit({
-      type: "documentOpened",
-      documentId: record.documentId,
-      displayName: record.displayName,
-      digest,
-      hasFileAssociation: record.hasFileAssociation,
-    });
-    canvasRef.current?.load(workspace);
-    return true;
+    try {
+      const record = await hostBridge.openDocument();
+      if (!record) return false;
+      const workspace = workspaceFromDocument(record.json);
+      const digest = stableStringify(workspace);
+      commit({
+        type: "documentOpened",
+        documentId: record.documentId,
+        displayName: record.displayName,
+        digest,
+        hasFileAssociation: record.hasFileAssociation,
+      });
+      canvasRef.current?.load(workspace);
+      return true;
+    } catch {
+      setOperationError("无法打开项目文件，当前文档未更改");
+      return false;
+    }
   }, [cancelRun, canvasRef, commit, hostBridge, onClose]);
 
   const requestIntent = useCallback((
@@ -191,7 +199,8 @@ export function useDocumentSession({
     }
     await runSerialized(async () => {
       if (decision === "save" && !await save(false)) return;
-      if (await performIntent(intent)) setPendingIntent(null);
+      await performIntent(intent);
+      setPendingIntent(null);
     });
   }, [pendingIntent, performIntent, runSerialized, save]);
 
@@ -199,6 +208,7 @@ export function useDocumentSession({
     state,
     label: formatDocumentLabel(state),
     pendingIntent,
+    operationError,
     acceptWorkspace,
     newDocument,
     openDocument,

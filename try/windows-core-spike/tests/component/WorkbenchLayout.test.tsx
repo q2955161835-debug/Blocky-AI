@@ -1,6 +1,6 @@
 import { createRef } from "react";
 import * as Blockly from "blockly/core";
-import { render, waitFor } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import {
   BlocklyCanvas,
@@ -35,7 +35,7 @@ function hasOverlap(state: BlocklyViewState): boolean {
 }
 
 describe("Blockly workbench layout invariants", () => {
-  it("uses select mode, wheel-only zoom, and no Blockly trashcan", async () => {
+  it("uses select mode, canvas-owned wheel zoom, and no Blockly trashcan", async () => {
     const canvasRef = createRef<BlocklyCanvasHandle>();
     render(
       <BlocklyCanvas
@@ -52,8 +52,14 @@ describe("Blockly workbench layout invariants", () => {
     }
     expect(workspace.options.hasTrashcan).toBe(false);
     expect(workspace.options.moveOptions.wheel).toBe(false);
-    expect(workspace.options.zoomOptions.wheel).toBe(true);
+    expect(workspace.options.zoomOptions.wheel).toBe(false);
     expect(canvasRef.current?.getTool()).toBe("select");
+
+    const zoom = vi.spyOn(workspace, "zoom").mockImplementation(() => {});
+    const canvas = document.querySelector<HTMLElement>(".blockly-canvas");
+    if (!canvas) throw new Error("Expected the Blockly canvas element.");
+    fireEvent.wheel(canvas, { deltaY: -120, clientX: 120, clientY: 120 });
+    expect(zoom).toHaveBeenCalledWith(120, 120, 1);
   });
 
   it("preserves the complete workspace transform during resize-only layout changes", async () => {
@@ -160,7 +166,7 @@ describe("Blockly workbench layout invariants", () => {
       throw new Error("Expected the rendered Blockly workspace.");
     }
     expect(workspace.getTopBlocks(false).every((block) =>
-      block.getSvgRoot().classList.contains("blocky-multi-selected"),
+      block.getSvgRoot().getAttribute("data-blocky-selected") === "true",
     )).toBe(true);
 
     canvasRef.current?.copySelection();

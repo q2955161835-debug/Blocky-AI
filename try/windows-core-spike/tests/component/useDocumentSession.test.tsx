@@ -117,4 +117,40 @@ describe("useDocumentSession", () => {
     expect(result.current.pendingIntent).toBe("close");
     expect(result.current.state.saveState).toBe("dirty");
   });
+
+  it("keeps the current document and exposes a friendly error when native open fails", async () => {
+    const open = vi.spyOn(host, "openDocument").mockRejectedValue(
+      new Error("DOCUMENT_ARCHIVE_PATH_UNSAFE:C:\\private\\fixture.blocky"),
+    );
+    const { result } = renderSession();
+
+    await act(() => result.current.openDocument());
+    await act(() => result.current.resolveUnsavedDecision("discard"));
+
+    expect(open).toHaveBeenCalledOnce();
+    expect(canvas.load).not.toHaveBeenCalled();
+    expect(result.current.pendingIntent).toBeNull();
+    expect(result.current.operationError).toBe("无法打开项目文件，当前文档未更改");
+    expect(result.current.operationError).not.toMatch(/private|fixture|DOCUMENT_/);
+  });
+
+  it("keeps a guarded action pending and exposes a friendly error when saving fails", async () => {
+    vi.spyOn(host, "saveDocument").mockRejectedValue(
+      new Error("DOCUMENT_WRITE_FAILED:C:\\private\\fixture.blocky"),
+    );
+    const { result } = renderSession();
+
+    await act(() => result.current.requestClose());
+    await act(() => result.current.resolveUnsavedDecision("save"));
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(result.current.pendingIntent).toBe("close");
+    expect(result.current.state.saveState).toBe("error");
+    expect(result.current.operationError).toBe("无法保存项目文件，请检查文件后重试");
+    expect(result.current.operationError).not.toMatch(/private|fixture|DOCUMENT_/);
+
+    await act(() => result.current.resolveUnsavedDecision("discard"));
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(result.current.operationError).toBeNull();
+  });
 });

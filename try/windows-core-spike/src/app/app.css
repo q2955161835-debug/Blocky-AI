@@ -578,7 +578,7 @@ input:focus-visible,
   border-radius: 3px;
 }
 
-.blocklyDraggable.blocky-multi-selected > .blocklyPath {
+.blocklyDraggable[data-blocky-selected="true"] > .blocklyPath {
   filter: drop-shadow(0 0 3px rgb(115 158 255 / 90%));
   stroke: #8ab0ff;
   stroke-width: 2px;

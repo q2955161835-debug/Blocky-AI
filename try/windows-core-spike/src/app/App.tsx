@@ -117,6 +117,20 @@ export function App({
     onClose: () => void windowChrome.close(),
     initialWorkspace,
   });
+  useEffect(() => {
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void windowChrome.onCloseRequested(() => {
+      void documentSession.requestClose();
+    }).then((nextUnlisten) => {
+      if (disposed) nextUnlisten();
+      else unlisten = nextUnlisten;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [documentSession.requestClose, windowChrome]);
   const acceptProjection = useCallback((projection: EditorProjection): void => {
     controller.acceptProjection(projection);
     documentSession.acceptWorkspace(projection.workspace);
@@ -363,6 +377,11 @@ export function App({
               {controller.operationError}
             </p>
           ) : null}
+          {documentSession.operationError ? (
+            <p className="app-operation-error" role="alert">
+              {documentSession.operationError}
+            </p>
+          ) : null}
         </section>
 
         <aside
@@ -377,8 +396,13 @@ export function App({
               role="tab"
               aria-selected={activeTab === "builder"}
               aria-controls="builder-panel"
-              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setActiveTab("builder")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setActiveTab("builder");
+                }
+              }}
             >
               搭建助手
             </button>
@@ -388,8 +412,13 @@ export function App({
               role="tab"
               aria-selected={activeTab === "runtime"}
               aria-controls="runtime-panel"
-              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setActiveTab("runtime")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setActiveTab("runtime");
+                }
+              }}
             >
               对话测试
             </button>

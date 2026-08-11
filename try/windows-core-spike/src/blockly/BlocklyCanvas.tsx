@@ -205,7 +205,6 @@ function BlocklyCanvasInner(
         readonly kind: "marquee";
         readonly pointerId: number;
         readonly startClient: CanvasPoint;
-        readonly startWorkspace: CanvasPoint;
         readonly additive: boolean;
         readonly initialSelection: ReadonlySet<string>;
       }
@@ -238,17 +237,26 @@ function BlocklyCanvasInner(
     });
   };
 
-  const applySelection = (selection: ReadonlySet<string>): void => {
-    selectedRootIdsRef.current = new Set(selection);
+  const syncSelectionDecorations = (): void => {
     const workspace = workspaceRef.current;
     if (workspace) {
       for (const block of workspace.getTopBlocks(false)) {
-        block.getSvgRoot().classList.toggle(
-          "blocky-multi-selected",
-          selection.has(block.id),
-        );
+        const root = block.getSvgRoot();
+        if (selectedRootIdsRef.current.has(block.id)) {
+          root.setAttribute("data-blocky-selected", "true");
+        } else {
+          root.removeAttribute("data-blocky-selected");
+        }
       }
     }
+  };
+
+  const applySelection = (selection: ReadonlySet<string>): void => {
+    selectedRootIdsRef.current = new Set(selection);
+    // Blockly owns the root class attribute and can rewrite it at the end of a
+    // pointer gesture. A dedicated data attribute keeps Blocky's multi-select
+    // decoration independent from Blockly's single-selection renderer.
+    syncSelectionDecorations();
     notifyViewState();
   };
 
@@ -547,7 +555,7 @@ function BlocklyCanvasInner(
       },
       zoom: {
         controls: false,
-        wheel: true,
+        wheel: false,
         startScale: 0.9,
         maxScale: 1.5,
         minScale: 0.4,
@@ -569,6 +577,23 @@ function BlocklyCanvasInner(
       notifyViewState();
     };
     workspace.addChangeListener(changeListener);
+
+    const zoomOnWheel = (event: WheelEvent): void => {
+      if (event.deltaY === 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const bounds = container.getBoundingClientRect();
+      workspace.zoom(
+        event.clientX - bounds.left,
+        event.clientY - bounds.top,
+        event.deltaY < 0 ? 1 : -1,
+      );
+      notifyViewState();
+    };
+    container.addEventListener("wheel", zoomOnWheel, {
+      capture: true,
+      passive: false,
+    });
 
     Blockly.Events.disable();
     try {
@@ -596,6 +621,7 @@ function BlocklyCanvasInner(
       observer?.disconnect();
       window.removeEventListener("resize", resize);
       workspace.removeChangeListener(changeListener);
+      container.removeEventListener("wheel", zoomOnWheel, { capture: true });
       workspace.dispose();
       workspaceRef.current = null;
     };
@@ -608,16 +634,6 @@ function BlocklyCanvasInner(
     const isTextEditingTarget = (target: EventTarget | null): boolean => {
       if (!(target instanceof HTMLElement)) return false;
       return target.matches("input, textarea, select, [contenteditable='true']");
-    };
-    const clientToWorkspace = (point: CanvasPoint): CanvasPoint => {
-      const workspace = workspaceRef.current;
-      const bounds = container.getBoundingClientRect();
-      if (!workspace) return point;
-      const metrics = workspace.getMetrics();
-      return {
-        x: metrics.viewLeft + (point.x - bounds.left) / workspace.scale,
-        y: metrics.viewTop + (point.y - bounds.top) / workspace.scale,
-      };
     };
     const workspaceRectToLocal = (
       start: CanvasPoint,
@@ -676,7 +692,6 @@ function BlocklyCanvasInner(
         kind: "marquee",
         pointerId: event.pointerId,
         startClient,
-        startWorkspace: clientToWorkspace(startClient),
         additive: event.shiftKey,
         initialSelection: new Set(selectedRootIdsRef.current),
       };
@@ -715,20 +730,26 @@ function BlocklyCanvasInner(
       if (interaction && interaction.pointerId === event.pointerId && workspace) {
         if (interaction.kind === "marquee") {
           const selectionRect = rectFromPoints(
-            interaction.startWorkspace,
-            clientToWorkspace({ x: event.clientX, y: event.clientY }),
+            interaction.startClient,
+            { x: event.clientX, y: event.clientY },
           );
-          const matches = workspace.getTopBlocks(false)
-            .filter((block) => {
-              const bounds = block.getBoundingRectangle();
-              return rectIntersects(selectionRect, {
+          const candidateBounds = workspace.getTopBlocks(false)
+            .map((block) => {
+              // Select what the user can actually see. DOM client bounds
+              // already include Blockly's pan, zoom, and SVG transforms, so
+              // they avoid mixing Blockly pixel metrics with workspace units.
+              const bounds = block.getSvgRoot().getBoundingClientRect();
+              const visibleRect = {
                 left: bounds.left,
                 top: bounds.top,
                 right: bounds.right,
                 bottom: bounds.bottom,
-              });
-            })
-            .map((block) => block.id);
+              };
+              return { block, visibleRect };
+            });
+          const matches = candidateBounds
+            .filter(({ visibleRect }) => rectIntersects(selectionRect, visibleRect))
+            .map(({ block }) => block.id);
           applySelection(interaction.additive
             ? new Set([...interaction.initialSelection, ...matches])
             : new Set(matches));

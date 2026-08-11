@@ -46,6 +46,7 @@ function createFixture(overrides: { canUndo?: boolean; canRedo?: boolean } = {})
     minimize: vi.fn().mockResolvedValue(undefined),
     toggleMaximize: vi.fn().mockResolvedValue(undefined),
     close: vi.fn().mockResolvedValue(undefined),
+    onCloseRequested: vi.fn().mockResolvedValue(() => {}),
   };
   const onInsertBlock = vi.fn();
   return { commands, runCommand, windowChrome, onInsertBlock };

@@ -11,6 +11,7 @@ const EMPTY_WORKSPACE = {
 
 describe("App professional workbench", () => {
   it("starts as a real unsaved document with builder-first navigation and no obsolete controls", async () => {
+    const user = userEvent.setup();
     render(<App hostBridge={new InMemoryHostBridge()} initialWorkspace={EMPTY_WORKSPACE} />);
 
     expect(await screen.findByText("未命名 Agent · 未保存")).toBeInTheDocument();
@@ -24,6 +25,11 @@ describe("App professional workbench", () => {
     expect(screen.getAllByRole("button", { name: "撤销" })).toHaveLength(1);
     expect(screen.getByRole("button", { name: "保存项目" })).toBeInTheDocument();
     expect(screen.getByLabelText("画布缩放")).toBeInTheDocument();
+
+    const runtimeTab = screen.getByRole("tab", { name: "对话测试" });
+    runtimeTab.focus();
+    await user.keyboard("{Enter}");
+    expect(runtimeTab).toHaveAttribute("aria-selected", "true");
   });
 
   it("collapses either side from the titlebar while leaving the canvas mounted", async () => {

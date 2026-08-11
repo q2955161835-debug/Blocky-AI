@@ -54,10 +54,15 @@ describe("App document lifecycle", () => {
   it("routes both titlebar close and Exit through the unsaved guard", async () => {
     const user = userEvent.setup();
     const close = vi.fn(async () => {});
+    let nativeCloseHandler: (() => void) | undefined;
     const chrome: WindowChromeBridge = {
       minimize: vi.fn(async () => {}),
       toggleMaximize: vi.fn(async () => {}),
       close,
+      onCloseRequested: vi.fn(async (handler) => {
+        nativeCloseHandler = handler;
+        return () => {};
+      }),
     };
     render(
       <App
@@ -69,6 +74,12 @@ describe("App document lifecycle", () => {
 
     await user.click(screen.getByRole("button", { name: "关闭窗口" }));
     expect(screen.getByRole("dialog", { name: "保存更改？" })).toBeInTheDocument();
+    expect(close).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "取消" }));
+
+    await waitFor(() => expect(nativeCloseHandler).toBeTypeOf("function"));
+    nativeCloseHandler?.();
+    expect(await screen.findByRole("dialog", { name: "保存更改？" })).toBeInTheDocument();
     expect(close).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "取消" }));
 

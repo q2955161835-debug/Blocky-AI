@@ -64,6 +64,23 @@ fn clear_project_document_association(
     store.clear_association()
 }
 
+#[cfg(feature = "wdio")]
+#[tauri::command]
+fn wdio_prepare_document_dialog(
+    store: tauri::State<'_, Arc<DocumentStore>>,
+    fixture: String,
+) -> Result<(), DocumentError> {
+    store.prepare_wdio_dialog_fixture(&fixture)
+}
+
+#[cfg(feature = "wdio")]
+#[tauri::command]
+fn wdio_request_window_close(window: tauri::WebviewWindow) -> Result<(), String> {
+    window
+        .close()
+        .map_err(|_| "WDIO_NATIVE_CLOSE_FAILED".to_owned())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri::Builder::default();
@@ -73,15 +90,29 @@ pub fn run() {
         .plugin(tauri_plugin_wdio::init())
         .plugin(tauri_plugin_wdio_webdriver::init());
 
+    let builder = builder.manage(Arc::new(DocumentStore::new()));
+
+    #[cfg(not(feature = "wdio"))]
+    let builder = builder.invoke_handler(tauri::generate_handler![
+        save_project,
+        load_project,
+        open_project_document,
+        save_project_document,
+        clear_project_document_association
+    ]);
+
+    #[cfg(feature = "wdio")]
+    let builder = builder.invoke_handler(tauri::generate_handler![
+        save_project,
+        load_project,
+        open_project_document,
+        save_project_document,
+        clear_project_document_association,
+        wdio_prepare_document_dialog,
+        wdio_request_window_close
+    ]);
+
     builder
-        .manage(Arc::new(DocumentStore::new()))
-        .invoke_handler(tauri::generate_handler![
-            save_project,
-            load_project,
-            open_project_document,
-            save_project_document,
-            clear_project_document_association
-        ])
         .run(tauri::generate_context!())
         .expect("error while running Blocky Windows Core spike");
 }
