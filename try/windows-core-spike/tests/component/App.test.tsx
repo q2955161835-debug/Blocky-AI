@@ -16,8 +16,53 @@ const EMPTY_WORKSPACE = {
   },
 };
 
+type AppUser = ReturnType<typeof userEvent.setup>;
+
+async function invokeMenuAction(
+  user: AppUser,
+  menu: "文件" | "编辑" | "视图" | "帮助",
+  action: string,
+): Promise<void> {
+  await user.click(screen.getByRole("button", { name: menu }));
+  await user.click(screen.getByRole("menuitem", { name: action }));
+}
+
 describe("App", () => {
-  it("exposes an accessible canvas zoom reset action", () => {
+  it("recomposes the approved fourth-version workbench without a second toolbar", async () => {
+    const user = userEvent.setup();
+    render(
+      <App
+        hostBridge={new InMemoryHostBridge()}
+        initialWorkspace={EMPTY_WORKSPACE}
+      />,
+    );
+
+    expect(screen.getAllByRole("button", { name: "撤销" })).toHaveLength(1);
+    expect(screen.queryByLabelText("项目操作")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "保存项目" }))
+      .toHaveClass("canvas-controls__save");
+    expect(screen.getByLabelText("画布缩放"))
+      .toHaveClass("canvas-controls__zoom");
+    expect(screen.getByLabelText("积木库")).toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "运行与搭建面板" }))
+      .toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "收起积木栏" }));
+    expect(screen.queryByLabelText("积木库")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "展开积木栏" }))
+      .toHaveAttribute("aria-pressed", "true");
+
+    await user.click(screen.getByRole("button", { name: "收起运行栏" }));
+    expect(screen.queryByRole("complementary", { name: "运行与搭建面板" }))
+      .not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "运行" }));
+    expect(screen.getByRole("complementary", { name: "运行与搭建面板" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "运行 Agent" }))
+      .toHaveAttribute("aria-selected", "true");
+  });
+
+  it("exposes an accessible explicit fit-to-view action", () => {
     render(
       <App
         hostBridge={new InMemoryHostBridge()}
@@ -26,7 +71,7 @@ describe("App", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: "重置画布缩放" }),
+      screen.getByRole("button", { name: "适配画布" }),
     ).toBeInTheDocument();
     const mediaReferences = [...document.querySelectorAll("image")].map(
       (image) => image.getAttribute("href") ?? image.getAttribute("xlink:href"),
@@ -44,11 +89,11 @@ describe("App", () => {
       <App hostBridge={host} initialWorkspace={EMPTY_WORKSPACE} />,
     );
 
-    await user.click(screen.getByRole("button", { name: "载入100块" }));
+    await invokeMenuAction(user, "视图", "载入100块");
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
     });
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    await user.click(screen.getByRole("button", { name: "保存项目" }));
     await waitFor(async () => {
       expect(await host.loadProject("windows-core-spike")).not.toBeNull();
     });
@@ -60,11 +105,11 @@ describe("App", () => {
     render(<App hostBridge={host} initialWorkspace={EMPTY_WORKSPACE} />);
     expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "重开" }));
+    await invokeMenuAction(user, "文件", "重开");
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
     });
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    await user.click(screen.getByRole("button", { name: "保存项目" }));
     await waitFor(async () => {
       const current = await host.loadProject("windows-core-spike");
       expect(current && stableStringify(current)).toBe(stableBefore);
@@ -107,7 +152,7 @@ describe("App", () => {
     expect(screen.queryByRole("textbox", { name: "发送给 Agent" })).not.toBeInTheDocument();
     expect(screen.queryByTestId("runtime-send")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "载入100块" }));
+    await invokeMenuAction(user, "视图", "载入100块");
 
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
@@ -126,7 +171,7 @@ describe("App", () => {
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
     });
-    await user.click(screen.getByRole("button", { name: "清空" }));
+    await invokeMenuAction(user, "文件", "清空");
 
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeDisabled();
@@ -148,8 +193,8 @@ describe("App", () => {
     await waitFor(() => {
       expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
     });
-    await user.click(screen.getByRole("button", { name: "折叠首块" }));
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    await invokeMenuAction(user, "视图", "折叠首块");
+    await user.click(screen.getByRole("button", { name: "保存项目" }));
 
     await waitFor(async () => {
       const saved = await host.loadProject("windows-core-spike");
@@ -234,11 +279,11 @@ describe("App", () => {
       <App hostBridge={rejectingHost} initialWorkspace={EMPTY_WORKSPACE} />,
     );
 
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    await user.click(screen.getByRole("button", { name: "保存项目" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("保存失败，请重试");
     expect(screen.getByRole("alert")).not.toHaveTextContent("SECRET_SAVE_DETAIL");
 
-    await user.click(screen.getByRole("button", { name: "重开" }));
+    await invokeMenuAction(user, "文件", "重开");
     await waitFor(() => {
       expect(screen.getByRole("alert")).toHaveTextContent("载入失败，请重试");
     });

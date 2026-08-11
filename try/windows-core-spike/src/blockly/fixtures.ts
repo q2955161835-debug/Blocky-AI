@@ -143,6 +143,12 @@ export function createHundredBlockWorkspaceState(): WorkspaceState {
   }
   while (countSerializedBlocks(state()) < 100) roots.push(literal(`padding ${chainNumber++}`));
 
+  roots.forEach((root, index) => {
+    root.x = 24 + (index % 4) * 520;
+    // Keep fixture roots clear of the fixed canvas badge and project actions.
+    root.y = 96 + Math.floor(index / 4) * 640;
+  });
+
   const result = state();
   const count = countSerializedBlocks(result);
   if (count !== 100 || sequence !== 101) {

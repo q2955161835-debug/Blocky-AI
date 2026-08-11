@@ -10,6 +10,16 @@ import { InMemoryHostBridge } from "../../src/host/InMemoryHostBridge";
 import { createSpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
 type ReplacementName = "清空" | "载入100块" | "重开";
+type AppUser = ReturnType<typeof userEvent.setup>;
+
+async function invokeReplacement(
+  user: AppUser,
+  replacement: ReplacementName,
+): Promise<void> {
+  const menu = replacement === "载入100块" ? "视图" : "文件";
+  await user.click(screen.getByRole("button", { name: menu }));
+  await user.click(screen.getByRole("menuitem", { name: replacement }));
+}
 
 function workspaceWithEntryName(name: string): JsonValue {
   const state = structuredClone(createHundredBlockWorkspaceState()) as JsonValue;
@@ -122,7 +132,7 @@ describe.each<ReplacementName>(["清空", "载入100块", "重开"])(
       await user.click(screen.getByTestId("runtime-send"));
       await gate.started;
 
-      await user.click(screen.getByRole("button", { name: replacement }));
+      await invokeReplacement(user, replacement);
       try {
         await expect(gate.aborted).resolves.toBeUndefined();
         expect(screen.getByTestId("runtime-entry-select")).toHaveTextContent(
@@ -144,7 +154,7 @@ describe.each<ReplacementName>(["清空", "载入100块", "重开"])(
       await user.click(screen.getByTestId("runtime-send"));
       await screen.findByRole("alertdialog", { name: "工具权限请求" });
 
-      await user.click(screen.getByRole("button", { name: replacement }));
+      await invokeReplacement(user, replacement);
       await expectReplacement(replacement);
       expect(await screen.findByText("run.cancelled")).toBeInTheDocument();
       expect(
@@ -152,9 +162,9 @@ describe.each<ReplacementName>(["清空", "载入100块", "重开"])(
       ).not.toBeInTheDocument();
 
       if (replacement !== "清空") {
-        await user.click(screen.getByRole("button", { name: "清空" }));
+        await invokeReplacement(user, "清空");
       }
-      await user.click(screen.getByRole("button", { name: "载入100块" }));
+      await invokeReplacement(user, "载入100块");
       await waitFor(() => {
         expect(screen.getByRole("tab", { name: "运行 Agent" })).toBeEnabled();
       });

@@ -1,0 +1,64 @@
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import {
+  BLOCKY_BLOCK_DRAG_MIME,
+  BlockLibrary,
+  type BlockInsertRequest,
+} from "../../src/blockly/BlockLibrary";
+
+describe("BlockLibrary", () => {
+  it("separates six categories from authentic Blockly previews", async () => {
+    const onInsert = vi.fn<(request: BlockInsertRequest) => void>();
+    const view = render(
+      <BlockLibrary
+        selectedCategoryId="agents"
+        onSelectedCategoryIdChange={vi.fn()}
+        onInsert={onInsert}
+      />,
+    );
+
+    const categoryNavigation = screen.getByRole("navigation", {
+      name: "积木分类",
+    });
+    expect(categoryNavigation).toBeInTheDocument();
+    expect(within(categoryNavigation).getAllByRole("button")).toHaveLength(6);
+    await waitFor(() => {
+      expect(view.container.querySelectorAll(".block-preview .blocklySvg"))
+        .toHaveLength(2);
+    });
+    expect(view.container.querySelector(".block-preview--fake-card")).toBeNull();
+
+    await userEvent.click(screen.getByRole("button", { name: /智能体.*成员/ }));
+    expect(onInsert).toHaveBeenCalledWith({ blockType: "core.agent.define" });
+  });
+
+  it("searches registered labels and emits a typed drag payload", async () => {
+    const user = userEvent.setup();
+    render(
+      <BlockLibrary
+        selectedCategoryId="agents"
+        onSelectedCategoryIdChange={vi.fn()}
+        onInsert={vi.fn()}
+      />,
+    );
+
+    await user.type(screen.getByRole("searchbox", { name: "搜索全部积木" }), "调用工具");
+    const toolBlock = await screen.findByRole("button", { name: /调用工具/ });
+    const setData = vi.fn();
+    const dataTransfer = { effectAllowed: "none", setData };
+    fireEvent.dragStart(toolBlock, { dataTransfer });
+
+    expect(setData).toHaveBeenCalledWith(
+      BLOCKY_BLOCK_DRAG_MIME,
+      "core.tool.call",
+    );
+    expect(dataTransfer.effectAllowed).toBe("copy");
+  });
+});

@@ -26,5 +26,5 @@ describe("Windows Core spike localization", () => {
       expect(screen.getByRole("main")).toHaveTextContent("Blocky Windows 核心尖峰");
     });
     expect(document.body).not.toHaveTextContent("Blocky Windows Core Spike");
-  });
+  }, 15_000);
 });

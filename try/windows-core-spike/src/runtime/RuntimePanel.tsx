@@ -2,6 +2,7 @@ import type { InteractionManifest } from "../core/interactionManifest";
 import type { RuntimeEvent } from "../core/runtimeEvents";
 import type { PendingPermissionRequest } from "../app/useSpikeController";
 import { EventTimeline } from "./EventTimeline";
+import type { ProgramBlockTypes } from "./eventPresentation";
 import {
   RuntimeComposer,
   type RuntimeComposerProps,
@@ -14,6 +15,7 @@ export interface RuntimePanelProps {
   onActiveEntryIdChange(entryId: string): void;
   onSubmit(message: RuntimeInput): Promise<void>;
   events: readonly RuntimeEvent[];
+  blockTypes: ProgramBlockTypes;
   disabled: boolean;
   running: boolean;
   pendingPermission: PendingPermissionRequest | null;
@@ -28,6 +30,7 @@ export function RuntimePanel({
   onActiveEntryIdChange,
   onSubmit,
   events,
+  blockTypes,
   disabled,
   running,
   pendingPermission,
@@ -52,7 +55,7 @@ export function RuntimePanel({
       {showEmptyGuidance ? (
         <p className="runtime-panel__empty">添加聊天入口后才能运行作品</p>
       ) : (
-        <EventTimeline events={events} />
+        <EventTimeline events={events} blockTypes={blockTypes} />
       )}
       {pendingPermission ? (
         <section
