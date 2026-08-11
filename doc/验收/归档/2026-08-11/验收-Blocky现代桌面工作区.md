@@ -8,8 +8,8 @@
 | 验收等级 | L3（自定义窗口权限、核心编辑画布与原生完整流程） |
 | 自动验证 | 通过；`pnpm check:core` 最终退出码 0 |
 | 视觉验证 | 通过；批准稿与 1440×900 逻辑窗口实机截图并排复核，使用真实 Blockly SVG |
-| 独立验收 | 待独立子 agent 复核 |
-| 当前结论 | 未执行（等待独立验收后归档） |
+| 独立验收 | 通过；Critical 0 / Important 0 / Minor 0（初审唯一测试覆盖建议已补齐） |
+| 当前结论 | 通过 |
 
 ## 详细报告
 
@@ -52,7 +52,7 @@
 | 命令 | 结果 |
 |---|---|
 | `pnpm test:unit` | 22 文件、105 项通过 |
-| `pnpm test:component` | 8 文件、43 项通过 |
+| `pnpm test:component` | 完整门禁时 8 文件、43 项通过；补充两项重叠回归后 8 文件、45 项通过 |
 | `pnpm build` | 通过；仅保留既有大 chunk 警告 |
 | `cargo fmt --all -- --check` | 通过 |
 | normal/all-features `cargo clippy -- -D warnings` | 通过 |
@@ -61,14 +61,14 @@
 
 原生性能五次样本中位数：载入 100 块 `20.4 ms`、保存编译 `0.5 ms`、运行 `0.1 ms`。仓库、快照、前端日志和后端日志敏感扫描均为 0；普通包 `markers=0`、`cargo_wdio=0`、唯一 `main` capability 和四项最小窗口权限。
 
-最终普通 EXE：`try/windows-core-spike/src-tauri/target/release/blocky-windows-core-spike.exe`，大小 `11,794,432` 字节，SHA-256 `2103A32AD783084138713A6D620ADDEFC87EFF4510AAAF6B7D664105DE964E68`。
+最终普通 EXE：`try/windows-core-spike/src-tauri/target/release/blocky-windows-core-spike.exe`，大小 `11,794,432` 字节，独立验收重建后的 SHA-256 为 `7B85CD8073F369C594E38DF404E6EC9391C0795AD6584A03C50D9B6E16313A0E`。完整 `check:core` 最后一次普通构建的 SHA-256 为 `2103A32AD783084138713A6D620ADDEFC87EFF4510AAAF6B7D664105DE964E68`；两次源码、大小和隔离扫描一致，但开发构建未保证二进制可复现。
 
 ### 6. 视觉证据
 
 | 状态 | 文件 | SHA-256 |
 |---|---|---|
-| 左右栏展开、真实积木与来源着色时间线 | [09-modern-workbench-expanded.png](../../技术设计/Windows-Core视觉验收/09-modern-workbench-expanded.png) | `ACD2D2EF1F2E337FB47DCED9EEABF05125605F3307770B941A7BE0FFC963523D` |
-| 左右栏同时收起、积木几何保持 | [10-modern-workbench-collapsed.png](../../技术设计/Windows-Core视觉验收/10-modern-workbench-collapsed.png) | `86157DC6FE77B5724CFF0674B902B9FA85830AF5C7937D55072C03F5C086C937` |
+| 左右栏展开、真实积木与来源着色时间线 | [09-modern-workbench-expanded.png](../../../技术设计/Windows-Core视觉验收/09-modern-workbench-expanded.png) | `ACD2D2EF1F2E337FB47DCED9EEABF05125605F3307770B941A7BE0FFC963523D` |
+| 左右栏同时收起、积木几何保持 | [10-modern-workbench-collapsed.png](../../../技术设计/Windows-Core视觉验收/10-modern-workbench-collapsed.png) | `86157DC6FE77B5724CFF0674B902B9FA85830AF5C7937D55072C03F5C086C937` |
 
 Windows 125% 缩放下图片物理尺寸为 1800×1125，对应 Tauri 1440×900 逻辑窗口。批准稿与实机图已归一化到同一比较画板并排检查；实机遵循用户追加约束，收纳时真实积木不会像设计示意矩形一样横向拉伸。
 
@@ -79,7 +79,14 @@ Windows 125% 缩放下图片物理尺寸为 1800×1125，对应 Tauri 1440×900 
 - 未执行 `pnpm check:full`：本次未修改事件上限、保存循环、WebView 生命周期或长期状态契约，按模块复测矩阵不要求重新执行 360-cycle 长稳。
 - 当前仍是可删除 Windows Core 技术尖峰，不代表正式产品、完整 311 块或安装签名已经完成。
 - 既有主 JS chunk 约 1.05 MB，构建继续提示超过 1000 kB；本任务没有扩大运行时语义或引入远程资源，后续正式 monorepo 再做按包拆分。
+- 独立验收初审建议补充“人为拖动至重叠”和“输入本身已重叠的旧项目”专门回归；已新增两项组件测试，聚焦 5/5 与完整组件 45/45 均通过，Minor 关闭。
+
+### 8. 独立验收
+
+独立子 agent 在不修改文件、不采信本文结论的前提下复核 `main..47d66f6`，并实际运行 `git diff --check main..HEAD`、105 项单元、43 项组件、普通 Web 构建、普通 Tauri 构建、Cargo normal 依赖树与六类普通 `dist` 测试标记扫描，均退出码 0。独立结论为“通过”，Critical 0、Important 0；唯一 Minor 已按上一节补测并关闭。
+
+补测后由同一独立验收者再次只读复核当前 diff，并重跑 `git diff --check` 与 `WorkbenchLayout.test.tsx` 5/5；确认 Minor 关闭，未新增 Critical、Important 或 Minor，原 L3“通过”结论继续成立。
 
 ## 最终结论
 
-等待独立子 agent 复核后填写。
+通过。批准的第四版现代桌面工作区已实现；真实 Blockly、零顶层重叠、侧栏收纳视图不变量、来源颜色时间线、自定义窗口最小权限和普通包测试隔离均有自动、原生、视觉与独立证据。
