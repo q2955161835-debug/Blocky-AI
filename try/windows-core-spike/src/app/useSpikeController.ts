@@ -97,6 +97,7 @@ interface UseSpikeControllerOptions {
   hostBridge: HostBridge;
   projectId: string;
   runtimeModel?: RuntimeDependencies["model"];
+  onRuntimeEvent?: (event: RuntimeEvent) => void;
 }
 
 export interface PendingPermissionRequest {
@@ -143,6 +144,7 @@ export function useSpikeController({
   hostBridge,
   projectId,
   runtimeModel,
+  onRuntimeEvent,
 }: UseSpikeControllerOptions) {
   const [projection, setProjection] = useState<EditorProjection>(() =>
     buildEditorProjection(EMPTY_WORKSPACE),
@@ -268,6 +270,7 @@ export function useSpikeController({
 
   const acceptRuntimeEvent = useCallback(
     (event: RuntimeEvent): void => {
+      onRuntimeEvent?.(event);
       dispatchRuntimeEvent(event);
       if (event.type === "block.started" && event.blockId) {
         canvasRef.current?.highlight(event.blockId);
@@ -276,7 +279,7 @@ export function useSpikeController({
       }
       if (event.type === "run.failed") setOperationError(RUN_ERROR);
     },
-    [canvasRef],
+    [canvasRef, onRuntimeEvent],
   );
 
   useEffect(

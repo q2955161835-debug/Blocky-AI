@@ -436,6 +436,7 @@ input:focus-visible,
   padding: 8px 7px 8px 16px;
   color: #bdc6d2;
   text-align: left;
+  white-space: nowrap;
   border-radius: 8px;
 }
 
@@ -801,6 +802,7 @@ input:focus-visible,
   min-height: 44px;
   padding: 10px 12px;
   text-align: left;
+  white-space: nowrap;
   background: #2b313b;
   border: 1px solid #3c4552;
   border-radius: 9px;

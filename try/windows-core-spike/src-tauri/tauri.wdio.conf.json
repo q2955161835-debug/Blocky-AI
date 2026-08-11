@@ -3,6 +3,17 @@
     "beforeBuildCommand": "pnpm build:wdio"
   },
   "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Blocky",
+        "width": 1536,
+        "height": 842,
+        "minWidth": 1180,
+        "minHeight": 720,
+        "decorations": false
+      }
+    ],
     "withGlobalTauri": true,
     "security": {
       "capabilities": [

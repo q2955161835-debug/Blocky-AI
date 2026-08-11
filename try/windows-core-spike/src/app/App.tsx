@@ -23,6 +23,7 @@ import {
 import { BuilderAssistant } from "../builder/BuilderAssistant";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
+import type { RuntimeEvent } from "../core/runtimeEvents";
 import type { BlockyProgram, IrNode } from "../core/ir";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
@@ -49,14 +50,8 @@ export interface AppProps {
   initialWorkspace?: JsonValue;
   projectId?: string;
   runtimeModel?: RuntimeDependencies["model"];
-  canvasAction?: CanvasAction;
+  onRuntimeEvent?: (event: RuntimeEvent) => void;
   windowChrome?: WindowChromeBridge;
-}
-
-export interface CanvasAction {
-  readonly ariaLabel: string;
-  readonly label: string;
-  run(): void;
 }
 
 const EMPTY_WORKSPACE: JsonValue = {
@@ -82,6 +77,7 @@ export function App({
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
   runtimeModel,
+  onRuntimeEvent,
   windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
@@ -111,6 +107,7 @@ export function App({
     hostBridge,
     projectId,
     runtimeModel,
+    onRuntimeEvent,
   });
   const documentSession = useDocumentSession({
     canvasRef,
