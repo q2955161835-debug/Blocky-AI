@@ -9,22 +9,46 @@ import * as Blockly from "blockly/core";
 import * as ZhHans from "blockly/msg/zh-hans";
 import { compileWorkspace } from "../core/compileWorkspace";
 import type { Diagnostic } from "../core/diagnostics";
-import { compileInteractionManifest, type InteractionManifest } from "../core/interactionManifest";
+import {
+  compileInteractionManifest,
+  type InteractionManifest,
+} from "../core/interactionManifest";
 import type { BlockyProgram } from "../core/ir";
 import { canonicalizeJson, type JsonValue } from "../core/json";
 import { compileToolRegistry, type ToolContract } from "../core/toolContract";
+import type { BlockInsertRequest } from "./BlockLibrary";
+import { repairTopLevelOverlaps } from "./blockPlacement";
 import { registerSpikeBlocks } from "./definitions";
+import { getSpikeBlockCategory } from "./toolbox";
 import { loadWorkspace, saveWorkspace } from "./workspaceAdapter";
-import { LOCAL_TOOLBOX } from "./toolbox";
+
+export interface BlocklyViewState {
+  readonly scale: number;
+  readonly scrollX: number;
+  readonly scrollY: number;
+  readonly topBlocks: readonly {
+    readonly id: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }[];
+}
 
 export interface BlocklyCanvasHandle {
   load(state: JsonValue): void;
   save(): JsonValue;
   blockCount(): number;
   highlight(blockId: string | null): void;
+  insertBlock(request: BlockInsertRequest): string | null;
+  undo(): void;
+  redo(): void;
   zoomIn(): void;
   zoomOut(): void;
   resetZoom(): void;
+  fitToView(): void;
+  resizePreservingView(): void;
+  captureViewState(): BlocklyViewState;
 }
 
 export interface EditorProjection {
@@ -57,39 +81,54 @@ const zhHansMessages = Object.fromEntries(
 
 function fitWorkspace(workspace: Blockly.WorkspaceSvg): void {
   if (workspace.getAllBlocks(false).length === 0) return;
-  const flyout = workspace.getToolbox()?.getFlyout();
-  const flyoutWidth = flyout?.isVisible() ? flyout.getWidth() : 0;
-  if (flyoutWidth > 0) {
-    const metrics = workspace.getMetrics();
-    const bounds = workspace.getBlocksBoundingBox();
-    const horizontalScale =
-      (metrics.viewWidth - flyoutWidth - 48) / bounds.getWidth();
-    const verticalScale = (metrics.viewHeight - 48) / bounds.getHeight();
-    workspace.setScale(
-      Math.max(Math.min(horizontalScale, verticalScale, 0.9), 0.4),
-    );
-    workspace.scrollCenter();
-    const centeredFlyoutOffset = Math.max(flyoutWidth / 2 - 24, 0);
-    workspace.scroll(
-      workspace.scrollX + centeredFlyoutOffset,
-      workspace.scrollY,
-    );
-    return;
-  }
   workspace.zoomToFit();
   workspace.setScale(Math.max(workspace.scale / 1.1, 0.4));
   workspace.scrollCenter();
 }
 
-function selectFirstToolboxCategory(workspace: Blockly.WorkspaceSvg): void {
-  const toolbox = workspace.getToolbox();
-  const firstToolboxItem = toolbox?.getToolboxItems()[0];
-  if (!toolbox || !firstToolboxItem) return;
-  if (toolbox.getSelectedItem() === firstToolboxItem) {
-    toolbox.refreshSelection();
-    return;
-  }
-  toolbox.setSelectedItem(firstToolboxItem);
+function captureWorkspaceView(workspace: Blockly.WorkspaceSvg): BlocklyViewState {
+  return {
+    scale: workspace.scale,
+    scrollX: workspace.scrollX,
+    scrollY: workspace.scrollY,
+    topBlocks: [...workspace.getTopBlocks(true)]
+      .sort((left, right) => left.id.localeCompare(right.id))
+      .map((block) => {
+        const bounds = block.getBoundingRectangle();
+        return {
+          id: block.id,
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.right - bounds.left,
+          height: bounds.bottom - bounds.top,
+        };
+      }),
+  };
+}
+
+function restoreWorkspaceView(
+  workspace: Blockly.WorkspaceSvg,
+  view: Pick<BlocklyViewState, "scale" | "scrollX" | "scrollY">,
+): void {
+  if (workspace.scale !== view.scale) workspace.setScale(view.scale);
+
+  // WorkspaceSvg.scroll intentionally clamps against the current content
+  // bounds. A panel resize or project load must preserve the user's canvas
+  // transform even when those bounds change, so restore the translation using
+  // the same un-clamped path Blockly uses for top-level workspace metrics.
+  workspace.scrollX = view.scrollX;
+  workspace.scrollY = view.scrollY;
+  const metrics = workspace.getMetrics();
+  workspace.translate(
+    view.scrollX + metrics.absoluteLeft,
+    view.scrollY + metrics.absoluteTop,
+  );
+}
+
+function resizePreservingWorkspaceView(workspace: Blockly.WorkspaceSvg): void {
+  const view = captureWorkspaceView(workspace);
+  Blockly.svgResize(workspace);
+  restoreWorkspaceView(workspace, view);
 }
 
 export function buildEditorProjection(workspaceState: unknown): EditorProjection {
@@ -121,7 +160,7 @@ function BlocklyCanvasInner(
   const containerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fitFrameRef = useRef<number | null>(null);
+  const repairingRef = useRef(false);
   const onProjectionRef = useRef(onProjection);
   onProjectionRef.current = onProjection;
 
@@ -145,35 +184,17 @@ function BlocklyCanvasInner(
     }, 75);
   };
 
-  const cancelScheduledFit = (): void => {
-    if (fitFrameRef.current === null) return;
-    if (typeof window.cancelAnimationFrame === "function") {
-      window.cancelAnimationFrame(fitFrameRef.current);
-    } else {
-      window.clearTimeout(fitFrameRef.current);
-    }
-    fitFrameRef.current = null;
-  };
-
-  const requestLayoutFrame = (callback: FrameRequestCallback): number => {
-    if (typeof window.requestAnimationFrame === "function") {
-      return window.requestAnimationFrame(callback);
-    }
-    return window.setTimeout(() => callback(performance.now()), 0);
-  };
-
-  const scheduleFitAfterToolboxLayout = (
+  const repairOverlaps = (
     workspace: Blockly.WorkspaceSvg,
+    preferredBlockId?: string,
   ): void => {
-    cancelScheduledFit();
-    fitFrameRef.current = requestLayoutFrame(() => {
-      fitFrameRef.current = requestLayoutFrame(() => {
-        fitFrameRef.current = null;
-        Blockly.svgResize(workspace);
-        fitWorkspace(workspace);
-        selectFirstToolboxCategory(workspace);
-      });
-    });
+    if (repairingRef.current) return;
+    repairingRef.current = true;
+    try {
+      repairTopLevelOverlaps(workspace, preferredBlockId);
+    } finally {
+      repairingRef.current = false;
+    }
   };
 
   useImperativeHandle(
@@ -182,16 +203,17 @@ function BlocklyCanvasInner(
       load(state) {
         const workspace = workspaceRef.current;
         if (!workspace) return;
+        const view = captureWorkspaceView(workspace);
         Blockly.Events.disable();
         try {
           workspace.clear();
           loadWorkspace(state, workspace);
+          repairOverlaps(workspace);
         } finally {
           Blockly.Events.enable();
         }
         Blockly.svgResize(workspace);
-        selectFirstToolboxCategory(workspace);
-        scheduleFitAfterToolboxLayout(workspace);
+        restoreWorkspaceView(workspace, view);
         flushProjection();
       },
       save() {
@@ -205,6 +227,56 @@ function BlocklyCanvasInner(
       },
       highlight(blockId) {
         workspaceRef.current?.highlightBlock(blockId);
+      },
+      insertBlock(request) {
+        const workspace = workspaceRef.current;
+        if (!workspace || !getSpikeBlockCategory(request.blockType)) return null;
+        let block: Blockly.BlockSvg | null = null;
+        let creationEvent: Blockly.Events.BlockCreate | null = null;
+        Blockly.Events.setGroup(true);
+        Blockly.Events.disable();
+        try {
+          block = workspace.newBlock(request.blockType);
+          block.initSvg();
+          block.render();
+          const metrics = workspace.getMetrics();
+          const containerBounds = containerRef.current?.getBoundingClientRect();
+          const x = request.clientPoint && containerBounds
+            ? metrics.viewLeft +
+              (request.clientPoint.clientX - containerBounds.left) / workspace.scale
+            : metrics.viewLeft + 48;
+          const y = request.clientPoint && containerBounds
+            ? metrics.viewTop +
+              (request.clientPoint.clientY - containerBounds.top) / workspace.scale
+            : metrics.viewTop + 48;
+          const bounds = block.getBoundingRectangle();
+          block.moveBy(x - bounds.left, y - bounds.top);
+          repairOverlaps(workspace, block.id);
+          // Programmatic creation normally reaches the undo stack on Blockly's
+          // deferred event queue. Capture one atomic event at the final,
+          // collision-free position so an immediate Undo command is reliable.
+          creationEvent = new Blockly.Events.BlockCreate(block);
+        } catch {
+          block?.dispose(false, true);
+          return null;
+        } finally {
+          Blockly.Events.enable();
+          Blockly.Events.setGroup(false);
+        }
+        workspace.fireChangeListener(creationEvent);
+        return block.id;
+      },
+      undo() {
+        const workspace = workspaceRef.current;
+        if (!workspace) return;
+        workspace.undo(false);
+        flushProjection();
+      },
+      redo() {
+        const workspace = workspaceRef.current;
+        if (!workspace) return;
+        workspace.undo(true);
+        flushProjection();
       },
       zoomIn() {
         workspaceRef.current?.zoomCenter(1);
@@ -221,10 +293,23 @@ function BlocklyCanvasInner(
         workspace.beginCanvasTransition();
         workspace.zoomCenter(zoomSteps);
         workspace.scrollCenter();
-        window.setTimeout(
-          workspace.endCanvasTransition.bind(workspace),
-          500,
-        );
+        window.setTimeout(workspace.endCanvasTransition.bind(workspace), 500);
+      },
+      fitToView() {
+        const workspace = workspaceRef.current;
+        if (!workspace) return;
+        fitWorkspace(workspace);
+      },
+      resizePreservingView() {
+        const workspace = workspaceRef.current;
+        if (!workspace) return;
+        resizePreservingWorkspaceView(workspace);
+      },
+      captureViewState() {
+        const workspace = workspaceRef.current;
+        return workspace
+          ? captureWorkspaceView(workspace)
+          : { scale: 1, scrollX: 0, scrollY: 0, topBlocks: [] };
       },
     }),
     [initialState],
@@ -239,13 +324,13 @@ function BlocklyCanvasInner(
     const workspace = Blockly.inject(container, {
       media: "./blockly-media/",
       sounds: false,
-      toolbox: LOCAL_TOOLBOX,
+      toolbox: undefined,
       renderer: "geras",
       trashcan: true,
       grid: {
         spacing: 24,
         length: 2,
-        colour: "#d9e1ec",
+        colour: "#3a414c",
         snap: false,
       },
       move: {
@@ -266,6 +351,12 @@ function BlocklyCanvasInner(
 
     const changeListener = (event: Blockly.Events.Abstract): void => {
       if (event.isUiEvent) return;
+      if (event.type === Blockly.Events.BLOCK_MOVE && !repairingRef.current) {
+        const blockId = (event as Blockly.Events.Abstract & { blockId?: string })
+          .blockId;
+        const block = blockId ? workspace.getBlockById(blockId) : null;
+        if (block && !block.getParent()) repairOverlaps(workspace, block.id);
+      }
       scheduleProjection();
     };
     workspace.addChangeListener(changeListener);
@@ -273,15 +364,14 @@ function BlocklyCanvasInner(
     Blockly.Events.disable();
     try {
       loadWorkspace(initialState, workspace);
+      repairOverlaps(workspace);
     } finally {
       Blockly.Events.enable();
     }
-    selectFirstToolboxCategory(workspace);
     Blockly.svgResize(workspace);
-    scheduleFitAfterToolboxLayout(workspace);
     flushProjection();
 
-    const resize = (): void => Blockly.svgResize(workspace);
+    const resize = (): void => resizePreservingWorkspaceView(workspace);
     let observer: ResizeObserver | null = null;
     if (typeof ResizeObserver === "function") {
       observer = new ResizeObserver(resize);
@@ -293,7 +383,6 @@ function BlocklyCanvasInner(
 
     return () => {
       if (timerRef.current !== null) clearTimeout(timerRef.current);
-      cancelScheduledFit();
       observer?.disconnect();
       window.removeEventListener("resize", resize);
       workspace.removeChangeListener(changeListener);
@@ -302,7 +391,13 @@ function BlocklyCanvasInner(
     };
   }, []);
 
-  return <div ref={containerRef} className="blockly-canvas" aria-label="Blockly 画布" />;
+  return (
+    <div
+      ref={containerRef}
+      className="blockly-canvas"
+      aria-label="Blockly 画布"
+    />
+  );
 }
 
 export const BlocklyCanvas = forwardRef(BlocklyCanvasInner);
