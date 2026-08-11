@@ -340,7 +340,7 @@ export type UnsavedDecision = "save" | "discard" | "cancel";
 - Hook produces: `state`, `label`, `pendingIntent`, `acceptWorkspace`, `newDocument`, `openDocument`, `saveDocument`, `saveDocumentAs`, `requestClose`, `resolveUnsavedDecision`.
 - Consumes: `BlocklyCanvasHandle`, `HostBridge`, `cancelRun`, `WindowChromeBridge.close` callback.
 
-- [ ] **Step 1: Write failing reducer tests for every save-state transition**
+- [x] **Step 1: Write failing reducer tests for every save-state transition**
 
 ```ts
 expect(createUntitledSession(EMPTY_DIGEST)).toMatchObject({
@@ -351,13 +351,13 @@ expect(reduceDocumentSession(state, { type: "saveFailed" }).saveState).toBe("err
 expect(formatDocumentLabel(saved)).toBe("weather.blocky · 已保存");
 ```
 
-- [ ] **Step 2: Run RED and implement pure state machine**
+- [x] **Step 2: Run RED and implement pure state machine**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/documentSession.test.ts`
 
 Expected RED: module missing. Implement reducer with explicit actions and rerun to GREEN.
 
-- [ ] **Step 3: Write failing hook tests for new/open/save/save-as and unsaved decisions**
+- [x] **Step 3: Write failing hook tests for new/open/save/save-as and unsaved decisions**
 
 Test these exact cases:
 
@@ -374,17 +374,17 @@ await result.current.saveDocument();
 expect(host.saveDocument).toHaveBeenCalledWith(expect.objectContaining({ saveAs: false }));
 ```
 
-- [ ] **Step 4: Run hook RED**
+- [x] **Step 4: Run hook RED**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/useDocumentSession.test.tsx`
 
 Expected: FAIL because the hook does not exist.
 
-- [ ] **Step 5: Implement hook with one serialized replacement queue**
+- [x] **Step 5: Implement hook with one serialized replacement queue**
 
 Before new/open, call `cancelRun()`. Set the baseline digest before `canvas.load` so its synchronous projection does not mark the opened document dirty. A failed/cancelled save must not continue a guarded action. A dialog cancellation leaves state unchanged. Keep legacy `saveProject/loadProject` in `useSpikeController` only for existing recovery/E2E APIs, but remove them from ordinary UI composition.
 
-- [ ] **Step 6: Write RED modal test and implement the modal**
+- [x] **Step 6: Write RED modal test and implement the modal**
 
 ```tsx
 expect(screen.getByRole("dialog", { name: "保存更改？" })).toHaveTextContent("weather.blocky");
@@ -394,7 +394,7 @@ expect(onDecision).toHaveBeenCalledWith("cancel");
 
 The dialog traps focus, restores focus on close, and exposes `保存并继续`, `不保存`, `取消`.
 
-- [ ] **Step 7: Run document suite GREEN and commit**
+- [x] **Step 7: Run document suite GREEN and commit**
 
 Run:
 
