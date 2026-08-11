@@ -1,11 +1,36 @@
 import { describe, expect, it } from "vitest";
 import { SPIKE_BLOCK_IDS } from "../../src/blockly/catalog";
 import { getDefinition } from "../../src/blockly/definitions";
+import {
+  getSpikeBlockCategory,
+  getSpikeBlockColour,
+  SPIKE_BLOCK_CATEGORIES,
+} from "../../src/blockly/toolbox";
 
 describe("spike block catalog", () => {
   it("keeps the deliberately limited 31-block spike catalog stable", () => {
     expect(SPIKE_BLOCK_IDS).toHaveLength(31);
     expect(new Set(SPIKE_BLOCK_IDS).size).toBe(31);
+  });
+
+  it("uses one typed category source for all 31 blocks", () => {
+    expect(SPIKE_BLOCK_CATEGORIES.map((category) => category.name)).toEqual([
+      "AI 伙伴",
+      "交互入口",
+      "消息",
+      "工具",
+      "数据",
+      "流程",
+    ]);
+
+    const categoryBlockIds = SPIKE_BLOCK_CATEGORIES.flatMap(
+      (category) => category.blockIds,
+    );
+    expect(new Set(categoryBlockIds).size).toBe(31);
+    expect([...categoryBlockIds].sort()).toEqual([...SPIKE_BLOCK_IDS].sort());
+    expect(getSpikeBlockCategory("core.tool.call")?.id).toBe("tools");
+    expect(getSpikeBlockColour("core.tool.call")).toBe("#ef6c00");
+    expect(getSpikeBlockCategory("missing.block")).toBeUndefined();
   });
 
   it("keeps the chat entry composer separate from its block surface", () => {

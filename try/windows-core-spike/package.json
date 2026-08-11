@@ -21,6 +21,7 @@
     "check:full": "pwsh -NoProfile -File ./scripts/verify-spike.ps1 -IncludeSoak"
   },
   "dependencies": {
+    "@fluentui/react-icons": "2.0.316",
     "@tauri-apps/api": "2.11.1",
     "blockly": "13.2.1",
     "react": "19.2.8",
