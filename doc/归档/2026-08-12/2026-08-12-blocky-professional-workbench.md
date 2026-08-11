@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Implement [the approved second-version design](../../../doc/产品设计/Blocky-现代桌面工作区设计.md) and [L3 acceptance baseline](../../../doc/验收/归档/2026-08-12/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
+- Implement [the approved second-version design](../../产品设计/Blocky-现代桌面工作区设计.md) and [L3 acceptance baseline](../../验收/归档/2026-08-12/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
 - No production code without a failing test first; every RED failure must be observed and recorded in the task checklist/commit history.
 - Use only existing Fluent icons for visible common actions; no text-symbol, emoji, handcrafted SVG, or CSS-art icons.
 - Keep `save_project` / `load_project` as the app-data recovery contract while adding a separate user-document bridge.
@@ -758,6 +758,6 @@ Update the module baseline, fill actual commands/exit codes/hash/bytes/security 
 
 Commit: `docs: record professional workbench acceptance`
 
-- [ ] **Step 9: Finish branch**
+- [x] **Step 9: Finish branch**
 
 Use `superpowers:verification-before-completion`, `superpowers:requesting-code-review`, and `superpowers:finishing-a-development-branch`. After all checks and user-approved acceptance pass, merge into `main`, rerun the compact post-merge gate, delete `codex/feat-professional-workbench`, and report whether push remains pending.
