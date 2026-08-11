@@ -1,15 +1,29 @@
-import { useRef, useState } from "react";
-import blockyLogoUrl from "../../../../logo/logo.png";
+import { useEffect, useRef, useState, type DragEvent } from "react";
+import {
+  BlockLibrary,
+  BLOCKY_BLOCK_DRAG_MIME,
+} from "../blockly/BlockLibrary";
 import {
   BlocklyCanvas,
   type BlocklyCanvasHandle,
 } from "../blockly/BlocklyCanvas";
-import { createHundredBlockWorkspaceState } from "../blockly/fixtures";
+import {
+  countSerializedBlocks,
+  createHundredBlockWorkspaceState,
+} from "../blockly/fixtures";
+import type { SpikeBlockId } from "../blockly/catalog";
+import type { SpikeBlockCategoryId } from "../blockly/toolbox";
 import { BuilderPlaceholder } from "../builder/BuilderPlaceholder";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
+import { CanvasControls } from "./CanvasControls";
+import { DesktopTitleBar } from "./DesktopTitleBar";
+import {
+  NoopWindowChromeBridge,
+  type WindowChromeBridge,
+} from "./WindowChromeBridge";
 import { useSpikeController } from "./useSpikeController";
 import "./app.css";
 
@@ -19,6 +33,7 @@ export interface AppProps {
   projectId?: string;
   runtimeModel?: RuntimeDependencies["model"];
   canvasAction?: CanvasAction;
+  windowChrome?: WindowChromeBridge;
 }
 
 export interface CanvasAction {
@@ -31,15 +46,23 @@ const EMPTY_WORKSPACE: JsonValue = {
   blocks: { blocks: [], languageVersion: 0 },
 };
 
+const NOOP_WINDOW_CHROME = new NoopWindowChromeBridge();
+
 export function App({
   hostBridge,
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
   runtimeModel,
   canvasAction,
+  windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
   const [activeTab, setActiveTab] = useState<"builder" | "runtime">("runtime");
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState<SpikeBlockCategoryId>("agents");
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
+  const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [zoomPercent, setZoomPercent] = useState(90);
   const controller = useSpikeController({
     canvasRef,
     hostBridge,
@@ -50,95 +73,132 @@ export function App({
   const hasCompileError = controller.projection.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
   );
+  const blockCount = countSerializedBlocks(controller.projection.workspace);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      canvasRef.current?.resizePreservingView();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [leftCollapsed, rightCollapsed]);
+
+  const updateZoomLabel = (): void => {
+    const scale = canvasRef.current?.captureViewState().scale;
+    if (scale !== undefined) setZoomPercent(Math.round(scale * 100));
+  };
+
+  const openRuntime = (): void => {
+    setRightCollapsed(false);
+    setActiveTab("runtime");
+    window.requestAnimationFrame(() => {
+      document.querySelector<HTMLTextAreaElement>(
+        '[data-testid="runtime-text-input"]',
+      )?.focus();
+    });
+  };
+
+  const handleDrop = (event: DragEvent<HTMLElement>): void => {
+    const blockType = event.dataTransfer.getData(BLOCKY_BLOCK_DRAG_MIME);
+    if (!blockType) return;
+    event.preventDefault();
+    canvasRef.current?.insertBlock({
+      blockType: blockType as SpikeBlockId,
+      clientPoint: { clientX: event.clientX, clientY: event.clientY },
+    });
+  };
 
   return (
     <div className="app-shell">
-      <header className="app-chrome">
-        <div className="app-brand">
-          <img src={blockyLogoUrl} alt="" />
-          <strong>Blocky</strong>
-        </div>
-        <div className="app-actions" aria-label="项目操作">
-          <button
-            type="button"
-            onClick={() => void controller.replaceWorkspace(
-              createHundredBlockWorkspaceState(),
-            )}
-          >
-            载入100块
-          </button>
-          <button
-            type="button"
-            onClick={() => void controller.replaceWorkspace(EMPTY_WORKSPACE)}
-          >
-            清空
-          </button>
-          {canvasAction ? (
-            <button
-              type="button"
-              aria-label={canvasAction.ariaLabel}
-              onClick={canvasAction.run}
-            >
-              {canvasAction.label}
-            </button>
-          ) : null}
-          <button type="button" onClick={() => void controller.saveProject()}>
-            保存
-          </button>
-          <button type="button" onClick={() => void controller.loadProject()}>
-            重开
-          </button>
-        </div>
-        {controller.operationError ? (
-          <p className="app-operation-error" role="alert">
-            {controller.operationError}
-          </p>
-        ) : null}
-      </header>
+      <DesktopTitleBar
+        projectTitle="天气助手 · 已保存"
+        leftCollapsed={leftCollapsed}
+        rightCollapsed={rightCollapsed}
+        onToggleLeft={() => setLeftCollapsed((current) => !current)}
+        onToggleRight={() => setRightCollapsed((current) => !current)}
+        onUndo={() => canvasRef.current?.undo()}
+        onRedo={() => canvasRef.current?.redo()}
+        onSave={() => void controller.saveProject()}
+        onLoad={() => void controller.loadProject()}
+        onClear={() => void controller.replaceWorkspace(EMPTY_WORKSPACE)}
+        onFit={() => {
+          canvasRef.current?.fitToView();
+          updateZoomLabel();
+        }}
+        onLoadFixture={() => void controller.replaceWorkspace(
+          createHundredBlockWorkspaceState(),
+        )}
+        windowChrome={windowChrome}
+        extraViewAction={canvasAction
+          ? { label: canvasAction.ariaLabel, run: canvasAction.run }
+          : undefined}
+      />
 
-      <main className="editor-grid">
+      <main
+        className={[
+          "workbench",
+          leftCollapsed ? "workbench--left-collapsed" : "",
+          rightCollapsed ? "workbench--right-collapsed" : "",
+        ].filter(Boolean).join(" ")}
+      >
         <span className="sr-only">Blocky Windows 核心尖峰</span>
-        <section className="editor-workspace">
-          <header className="library-heading">
-            <h1>本地积木库</h1>
-            <span>31 个尖峰块</span>
-          </header>
-          <header className="canvas-heading">
-            <h1>Blockly 画布</h1>
-          </header>
-          <div className="editor-workspace__surface">
-            <BlocklyCanvas
-              ref={canvasRef}
-              initialState={initialWorkspace}
-              onProjection={controller.acceptProjection}
+        {leftCollapsed ? null : (
+          <div className="workbench__library">
+            <BlockLibrary
+              selectedCategoryId={selectedCategoryId}
+              onSelectedCategoryIdChange={setSelectedCategoryId}
+              onInsert={(request) => canvasRef.current?.insertBlock(request)}
             />
-            <div className="canvas-zoom" aria-label="画布缩放">
-              <button
-                type="button"
-                aria-label="放大画布"
-                onClick={() => canvasRef.current?.zoomIn()}
-              >
-                放大
-              </button>
-              <button
-                type="button"
-                aria-label="缩小画布"
-                onClick={() => canvasRef.current?.zoomOut()}
-              >
-                缩小
-              </button>
-              <button
-                type="button"
-                aria-label="重置画布缩放"
-                onClick={() => canvasRef.current?.resetZoom()}
-              >
-                重置
-              </button>
-            </div>
           </div>
+        )}
+
+        <section
+          className="canvas-stage"
+          aria-label="积木画布区"
+          onDragOver={(event) => {
+            if (event.dataTransfer.types.includes(BLOCKY_BLOCK_DRAG_MIME)) {
+              event.preventDefault();
+            }
+          }}
+          onDrop={handleDrop}
+        >
+          <div className="canvas-stage__badge" aria-label="画布积木数量">
+            <span aria-hidden="true" />
+            画布 · {blockCount} 个积木
+          </div>
+          <BlocklyCanvas
+            ref={canvasRef}
+            initialState={initialWorkspace}
+            onProjection={controller.acceptProjection}
+          />
+          <CanvasControls
+            zoomPercent={zoomPercent}
+            onSave={() => void controller.saveProject()}
+            onRun={openRuntime}
+            onZoomOut={() => {
+              canvasRef.current?.zoomOut();
+              updateZoomLabel();
+            }}
+            onZoomIn={() => {
+              canvasRef.current?.zoomIn();
+              updateZoomLabel();
+            }}
+            onFit={() => {
+              canvasRef.current?.fitToView();
+              updateZoomLabel();
+            }}
+          />
+          {controller.operationError ? (
+            <p className="app-operation-error" role="alert">
+              {controller.operationError}
+            </p>
+          ) : null}
         </section>
 
-        <aside className="assistant-panel">
+        <aside
+          className="assistant-panel"
+          aria-label="运行与搭建面板"
+          hidden={rightCollapsed}
+        >
           <div className="assistant-tabs" role="tablist" aria-label="右侧工作区">
             <button
               id="builder-tab"

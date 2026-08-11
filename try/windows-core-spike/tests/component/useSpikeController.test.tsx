@@ -50,9 +50,20 @@ function canvasHandle(
     save: vi.fn(() => workspace),
     blockCount: vi.fn(() => 4),
     highlight,
+    insertBlock: vi.fn(() => null),
+    undo: vi.fn(),
+    redo: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
     resetZoom: vi.fn(),
+    fitToView: vi.fn(),
+    resizePreservingView: vi.fn(),
+    captureViewState: vi.fn(() => ({
+      scale: 0.9,
+      scrollX: 0,
+      scrollY: 0,
+      topBlocks: [],
+    })),
   };
 }
 
