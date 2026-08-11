@@ -1,8 +1,12 @@
 import type { InteractionManifest } from "../core/interactionManifest";
 import type { RuntimeEvent } from "../core/runtimeEvents";
 import type { PendingPermissionRequest } from "../app/useSpikeController";
-import { EventTimeline } from "./EventTimeline";
 import type { ProgramBlockTypes } from "./eventPresentation";
+import { ConversationPanel } from "./ConversationPanel";
+import {
+  projectConversationTurns,
+  type SubmittedRuntimeInput,
+} from "./conversationProjection";
 import {
   RuntimeComposer,
   type RuntimeComposerProps,
@@ -13,7 +17,8 @@ export interface RuntimePanelProps {
   manifest: InteractionManifest;
   activeEntryId: string | null;
   onActiveEntryIdChange(entryId: string): void;
-  onSubmit(message: RuntimeInput): Promise<void>;
+  onSubmit(message: RuntimeInput): Promise<unknown>;
+  submissions: readonly SubmittedRuntimeInput[];
   events: readonly RuntimeEvent[];
   blockTypes: ProgramBlockTypes;
   disabled: boolean;
@@ -29,6 +34,7 @@ export function RuntimePanel({
   activeEntryId,
   onActiveEntryIdChange,
   onSubmit,
+  submissions,
   events,
   blockTypes,
   disabled,
@@ -39,7 +45,7 @@ export function RuntimePanel({
   onDenyPermission,
 }: RuntimePanelProps) {
   const showEmptyGuidance = manifest.entries.length === 0 &&
-    events.length === 0 &&
+    submissions.length === 0 &&
     !pendingPermission &&
     !running;
   const composerProps: RuntimeComposerProps = {
@@ -49,13 +55,14 @@ export function RuntimePanel({
     onSubmit,
     disabled,
   };
+  const turns = projectConversationTurns(submissions, events, blockTypes);
 
   return (
     <section className="runtime-panel">
       {showEmptyGuidance ? (
-        <p className="runtime-panel__empty">添加聊天入口后才能运行作品</p>
+        <p className="runtime-panel__empty">添加聊天入口后即可开始对话测试</p>
       ) : (
-        <EventTimeline events={events} blockTypes={blockTypes} />
+        <ConversationPanel turns={turns} />
       )}
       {pendingPermission ? (
         <section

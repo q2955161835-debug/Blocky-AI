@@ -44,6 +44,29 @@ const ENTRY_B = entry("entry-b", "文件处理", {
 });
 
 describe("RuntimeComposer", () => {
+  it("sends with Enter, inserts a newline with Shift+Enter, and uses the familiar send icon", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn(async () => undefined);
+    render(
+      <RuntimeComposer
+        manifest={manifest([ENTRY_A])}
+        activeEntryId="entry-a"
+        onActiveEntryIdChange={vi.fn()}
+        onSubmit={onSubmit}
+        disabled={false}
+      />,
+    );
+    const textarea = screen.getByTestId("runtime-text-input");
+    await user.type(textarea, "你好{Enter}");
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ text: "你好" }));
+
+    await user.type(textarea, "第一行{Shift>}{Enter}{/Shift}第二行");
+    expect(textarea).toHaveValue("第一行\n第二行");
+    expect(screen.getByRole("button", { name: "发送消息" }).querySelector("svg"))
+      .toBeInTheDocument();
+  });
+
   it("derives all six capability controls only from the active manifest entry", async () => {
     const user = userEvent.setup();
     const onActiveEntryIdChange = vi.fn();

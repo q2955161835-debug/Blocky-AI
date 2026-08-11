@@ -544,7 +544,7 @@ export function projectConversationTurns(
 
 - `useSpikeController.runInput` returns `{ runId: string }` after terminal completion and records the submitted user input keyed to the emitted run ID.
 
-- [ ] **Step 1: Write failing projection tests using real runtime events**
+- [x] **Step 1: Write failing projection tests using real runtime events**
 
 ```ts
 const turns = projectConversationTurns(submissions, events, blockTypes);
@@ -556,13 +556,13 @@ expect(turns[0]).toMatchObject({
 expect(JSON.stringify(turns)).not.toMatch(/block-001|blocky\.event|\{"/);
 ```
 
-- [ ] **Step 2: Run RED, implement pure projection, and rerun GREEN**
+- [x] **Step 2: Run RED, implement pure projection, and rerun GREEN**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/unit/conversationProjection.test.ts`
 
 Map `model.chunk.data.text` into one assistant message. Project trace labels from `eventPresentation`; use fixed friendly labels for run/model/tool/block terminal states and never stringify raw event data.
 
-- [ ] **Step 3: Write failing composer keyboard tests**
+- [x] **Step 3: Write failing composer keyboard tests**
 
 ```tsx
 await user.type(textarea, "你好{Enter}");
@@ -571,13 +571,13 @@ await user.type(textarea, "第一行{Shift>}{Enter}{/Shift}第二行");
 expect(textarea).toHaveValue("第一行\n第二行");
 ```
 
-- [ ] **Step 4: Run RED and implement Enter-to-send plus Fluent send icon**
+- [x] **Step 4: Run RED and implement Enter-to-send plus Fluent send icon**
 
 Run: `pnpm --dir .\try\windows-core-spike exec vitest run tests/component/RuntimeComposer.test.tsx`
 
 Use `Send20Filled`, keep the draft after failed/cancelled runs, clear only after `run.completed`, and keep attachment/entry isolation.
 
-- [ ] **Step 5: Rewrite RuntimePanel test to require conversation messages and collapsed trace**
+- [x] **Step 5: Rewrite RuntimePanel test to require conversation messages and collapsed trace**
 
 ```tsx
 expect(screen.getByText("明天上海天气怎么样？")).toHaveClass("conversation-message--user");
@@ -586,11 +586,11 @@ expect(screen.getByText("执行过程")).toHaveAttribute("aria-expanded", "false
 expect(screen.queryByText("block-001")).not.toBeInTheDocument();
 ```
 
-- [ ] **Step 6: Run RED and implement `ConversationPanel` / friendly trace**
+- [x] **Step 6: Run RED and implement `ConversationPanel` / friendly trace**
 
 Retain permission approval UI and stop button. Default trace collapsed; expanded cards use real category color plus category/action text. Rename the tab to `对话测试`.
 
-- [ ] **Step 7: Replace technical builder placeholder with real actions**
+- [x] **Step 7: Replace technical builder placeholder with real actions**
 
 `BuilderPlaceholder` becomes `BuilderAssistant` with callbacks:
 
@@ -606,7 +606,7 @@ interface BuilderAssistantProps {
 
 Buttons call the same canvas insertion/Help command paths; do not imply a connected AI builder model.
 
-- [ ] **Step 8: Run runtime GREEN suite and commit**
+- [x] **Step 8: Run runtime GREEN suite and commit**
 
 Run:
 

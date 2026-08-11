@@ -17,7 +17,7 @@ import {
   SPIKE_BLOCK_CATEGORIES,
   type SpikeBlockCategoryId,
 } from "../blockly/toolbox";
-import { BuilderPlaceholder } from "../builder/BuilderPlaceholder";
+import { BuilderAssistant } from "../builder/BuilderAssistant";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
 import type { HostBridge } from "../host/HostBridge";
@@ -88,6 +88,9 @@ export function App({
     runtimeModel,
   });
   const hasEntry = controller.projection.interactionManifest.entries.length > 0;
+  const hasAgent = controller.projection.program.roots.some(
+    (root) => root.type === "core.agent.define",
+  );
   const hasCompileError = controller.projection.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
   );
@@ -248,7 +251,6 @@ export function App({
           rightCollapsed ? "workbench--right-collapsed" : "",
         ].filter(Boolean).join(" ")}
       >
-        <span className="sr-only">Blocky Windows 核心尖峰</span>
         {leftCollapsed ? null : (
           <div className="workbench__library">
             <BlockLibrary
@@ -326,7 +328,7 @@ export function App({
               onClick={() => setActiveTab("runtime")}
               disabled={!hasEntry}
             >
-              运行 Agent
+              对话测试
             </button>
           </div>
 
@@ -337,7 +339,17 @@ export function App({
               aria-labelledby="builder-tab"
               hidden={activeTab !== "builder"}
             >
-              <BuilderPlaceholder />
+                <BuilderAssistant
+                  hasAgent={hasAgent}
+                  hasChatEntry={hasEntry}
+                  onAddAgent={() => canvasRef.current?.insertBlock({
+                    blockType: "core.agent.define",
+                  })}
+                  onAddChatEntry={() => canvasRef.current?.insertBlock({
+                    blockType: "core.interaction.chat_entry",
+                  })}
+                  onOpenQuickStart={() => runCommand("help.quickStart")}
+                />
             </div>
             <div
               id="runtime-panel"
@@ -349,7 +361,8 @@ export function App({
                 manifest={controller.projection.interactionManifest}
                 activeEntryId={controller.activeEntryId}
                 onActiveEntryIdChange={controller.setActiveEntryId}
-                onSubmit={controller.runInput}
+                  onSubmit={controller.runInput}
+                  submissions={controller.submissions}
                 events={controller.runtime.events}
                 blockTypes={runtimeBlockTypes}
                 disabled={controller.runtime.status === "running" || hasCompileError}

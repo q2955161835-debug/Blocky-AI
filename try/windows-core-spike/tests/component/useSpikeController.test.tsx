@@ -93,13 +93,21 @@ describe("useSpikeController", () => {
     await waitFor(() => expect(result.current.activeEntryId).toBe("entry-1"));
     highlight.mockClear();
 
+    let outcome: { runId: string } | undefined;
     await act(async () => {
-      await result.current.runInput({
+      outcome = await result.current.runInput({
         entryId: "entry-1",
         text: "你好",
         attachments: [],
       });
     });
+
+    expect(outcome).toEqual({ runId: "desktop-run-1" });
+    expect(result.current.submissions).toEqual([{
+      runId: "desktop-run-1",
+      entryId: "entry-1",
+      userText: "你好",
+    }]);
 
     expect(result.current.runtime.events.map((event) => event.type)).toEqual([
       "run.started",
@@ -182,7 +190,7 @@ describe("useSpikeController", () => {
         attachments: [],
       });
       await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
-      await expect(secondRun).resolves.toBeUndefined();
+      await expect(secondRun).resolves.toEqual({ runId: "desktop-run-2" });
     });
     expect(result.current.runtime.events.map((event) => event.type)).toContain(
       "run.cancelled",
@@ -208,7 +216,7 @@ describe("useSpikeController", () => {
     });
     await waitFor(() => expect(result.current.activeEntryId).toBe("block-002"));
 
-    let firstRun!: Promise<void>;
+    let firstRun!: Promise<{ readonly runId: string }>;
     act(() => {
       firstRun = result.current.runInput({
         entryId: "block-002",
@@ -224,7 +232,7 @@ describe("useSpikeController", () => {
       await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
     });
 
-    let secondRun!: Promise<void>;
+    let secondRun!: Promise<{ readonly runId: string }>;
     act(() => {
       secondRun = result.current.runInput({
         entryId: "block-002",

@@ -1,4 +1,12 @@
-import { useId, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { Send20Filled } from "@fluentui/react-icons";
+import {
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from "react";
 import type {
   InputPartKind,
   InteractionManifest,
@@ -23,7 +31,7 @@ export interface RuntimeComposerProps {
   manifest: InteractionManifest;
   activeEntryId: string | null;
   onActiveEntryIdChange(entryId: string): void;
-  onSubmit(message: RuntimeInput): Promise<void>;
+  onSubmit(message: RuntimeInput): Promise<unknown>;
   disabled: boolean;
 }
 
@@ -171,6 +179,13 @@ export function RuntimeComposer({
             const text = event.currentTarget.value;
             updateDraft((current) => ({ ...current, text }));
           }}
+          onKeyDown={(event: KeyboardEvent<HTMLTextAreaElement>) => {
+            if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
+              return;
+            }
+            event.preventDefault();
+            void submit();
+          }}
           disabled={disabled}
           rows={3}
         />
@@ -278,10 +293,11 @@ export function RuntimeComposer({
         className="runtime-composer__send"
         data-testid="runtime-send"
         type="button"
+        aria-label="发送消息"
         onClick={() => void submit()}
         disabled={!canSubmit}
       >
-        发送
+        <Send20Filled aria-hidden="true" />
       </button>
     </section>
   );
