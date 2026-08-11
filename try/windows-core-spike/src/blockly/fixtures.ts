@@ -143,6 +143,11 @@ export function createHundredBlockWorkspaceState(): WorkspaceState {
   }
   while (countSerializedBlocks(state()) < 100) roots.push(literal(`padding ${chainNumber++}`));
 
+  roots.forEach((root, index) => {
+    root.x = 24 + (index % 4) * 520;
+    root.y = 24 + Math.floor(index / 4) * 640;
+  });
+
   const result = state();
   const count = countSerializedBlocks(result);
   if (count !== 100 || sequence !== 101) {

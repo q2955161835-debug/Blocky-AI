@@ -37,6 +37,21 @@ describe("100-block fixture", () => {
     expect(blocks.every((block) => Boolean(Blockly.Blocks[block.type]))).toBe(true);
   });
 
+  it("assigns stable unique coordinates to every top-level stack", () => {
+    const first = createHundredBlockWorkspaceState() as {
+      blocks: { blocks: Array<{ id: string; x?: number; y?: number }> };
+    };
+    const second = createHundredBlockWorkspaceState();
+    const roots = first.blocks.blocks;
+
+    expect(roots.every((root) =>
+      Number.isFinite(root.x) && Number.isFinite(root.y)
+    )).toBe(true);
+    expect(new Set(roots.map((root) => `${root.x}:${root.y}`)).size)
+      .toBe(roots.length);
+    expect(second).toEqual(first);
+  });
+
   it("keeps the actual Blockly traversal and root-block order on reload", () => {
     registerSpikeBlocks();
     const original = new Blockly.Workspace();
