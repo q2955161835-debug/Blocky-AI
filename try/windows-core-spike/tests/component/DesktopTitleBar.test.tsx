@@ -1,99 +1,143 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { DesktopTitleBar } from "../../src/app/DesktopTitleBar";
 import {
-  DesktopTitleBar,
-  type DesktopTitleBarProps,
-} from "../../src/app/DesktopTitleBar";
+  createWorkbenchCommands,
+  type CommandBlockItem,
+  type WorkbenchCommandId,
+} from "../../src/app/commands";
 import type { WindowChromeBridge } from "../../src/app/WindowChromeBridge";
 
-function createProps(
-  overrides: Partial<DesktopTitleBarProps> = {},
-): DesktopTitleBarProps {
+vi.mock("@fluentui/react-icons", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@fluentui/react-icons")>();
   return {
-    projectTitle: "天气助手 · 已保存",
-    leftCollapsed: false,
-    rightCollapsed: false,
-    onToggleLeft: vi.fn(),
-    onToggleRight: vi.fn(),
-    onUndo: vi.fn(),
-    onRedo: vi.fn(),
-    onSave: vi.fn(),
-    onLoad: vi.fn(),
-    onClear: vi.fn(),
-    onFit: vi.fn(),
-    onLoadFixture: vi.fn(),
-    windowChrome: {
-      minimize: vi.fn().mockResolvedValue(undefined),
-      toggleMaximize: vi.fn().mockResolvedValue(undefined),
-      close: vi.fn().mockResolvedValue(undefined),
-    },
-    ...overrides,
+    ...original,
+    ArrowLeft20Regular: () => <svg data-testid="straight-undo-icon" />,
+    ArrowRight20Regular: () => <svg data-testid="straight-redo-icon" />,
   };
+});
+
+const blockSearchItems: readonly CommandBlockItem[] = [
+  {
+    kind: "block",
+    blockType: "core.interaction.chat_entry",
+    label: "聊天入口",
+    categoryName: "交互入口",
+    keywords: ["对话"],
+  },
+];
+
+function createFixture(overrides: { canUndo?: boolean; canRedo?: boolean } = {}) {
+  const runCommand = vi.fn<(id: WorkbenchCommandId) => void>();
+  const commands = createWorkbenchCommands({
+    state: {
+      canUndo: overrides.canUndo ?? true,
+      canRedo: overrides.canRedo ?? false,
+      selectionCount: 0,
+      canPaste: false,
+      leftCollapsed: false,
+      rightCollapsed: false,
+      tool: "select",
+    },
+    run: runCommand,
+  });
+  const windowChrome: WindowChromeBridge = {
+    minimize: vi.fn().mockResolvedValue(undefined),
+    toggleMaximize: vi.fn().mockResolvedValue(undefined),
+    close: vi.fn().mockResolvedValue(undefined),
+    onCloseRequested: vi.fn().mockResolvedValue(() => {}),
+  };
+  const onInsertBlock = vi.fn();
+  return { commands, runCommand, windowChrome, onInsertBlock };
 }
 
 describe("DesktopTitleBar", () => {
-  it("renders one compact icon titlebar with real menus and panel toggles", async () => {
+  it("renders straight history arrows, a live document label, and real command menus", async () => {
     const user = userEvent.setup();
-    const props = createProps();
-    render(<DesktopTitleBar {...props} />);
-
-    expect(screen.getByLabelText("应用标题栏")).toHaveClass("desktop-titlebar");
-    expect(screen.getByTestId("titlebar-drag-region")).toHaveAttribute(
-      "data-tauri-drag-region",
+    const fixture = createFixture();
+    render(
+      <DesktopTitleBar
+        commands={fixture.commands}
+        blockSearchItems={blockSearchItems}
+        documentLabel="未命名 Agent · 未保存"
+        leftCollapsed={false}
+        rightCollapsed={false}
+        onInsertBlock={fixture.onInsertBlock}
+        windowChrome={fixture.windowChrome}
+      />,
     );
-    expect(screen.getByLabelText("应用标题栏"))
-      .not.toHaveAttribute("data-tauri-drag-region");
-    expect(screen.getAllByRole("button", { name: "撤销" })).toHaveLength(1);
-    expect(screen.getAllByRole("button", { name: "重做" })).toHaveLength(1);
-    expect(screen.getByRole("button", { name: "收起积木栏" }))
-      .toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "收起运行栏" }))
-      .toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "撤销" })).toHaveTextContent("");
-    expect(screen.getByText("文件")).toBeInTheDocument();
-    expect(screen.getByText("编辑")).toBeInTheDocument();
-    expect(screen.getByText("视图")).toBeInTheDocument();
-    expect(screen.getByText("帮助")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "收起积木栏" }));
-    await user.click(screen.getByRole("button", { name: "收起运行栏" }));
-    expect(props.onToggleLeft).toHaveBeenCalledOnce();
-    expect(props.onToggleRight).toHaveBeenCalledOnce();
-  });
-
-  it("executes menu commands and closes an open menu with Escape", async () => {
-    const user = userEvent.setup();
-    const props = createProps();
-    render(<DesktopTitleBar {...props} />);
+    expect(screen.getByText("未命名 Agent · 未保存")).toBeInTheDocument();
+    expect(screen.getByTestId("straight-undo-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("straight-redo-icon")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "撤销" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "重做" })).toBeDisabled();
+    expect(screen.queryByText(/载入100块|技术尖峰/)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "文件" }));
-    expect(screen.getByRole("menu", { name: "文件" })).toBeInTheDocument();
-    await user.click(screen.getByRole("menuitem", { name: "保存" }));
-    expect(props.onSave).toHaveBeenCalledOnce();
+    expect(screen.getByRole("menuitem", { name: /新建 Agent.*Ctrl\+N/ }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /打开….*Ctrl\+O/ }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /另存为….*Ctrl\+Shift\+S/ }))
+      .toBeInTheDocument();
+    await user.click(screen.getByRole("menuitem", { name: /打开….*Ctrl\+O/ }));
+    expect(fixture.runCommand).toHaveBeenCalledWith("file.open");
     expect(screen.queryByRole("menu", { name: "文件" })).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "视图" }));
-    expect(screen.getByRole("menu", { name: "视图" })).toBeInTheDocument();
-    await user.keyboard("{Escape}");
-    expect(screen.queryByRole("menu", { name: "视图" })).not.toBeInTheDocument();
   });
 
-  it("delegates native window controls through the injected bridge", async () => {
+  it("focuses Ctrl+P command search and inserts a matched catalog block", async () => {
     const user = userEvent.setup();
-    const windowChrome: WindowChromeBridge = {
-      minimize: vi.fn().mockResolvedValue(undefined),
-      toggleMaximize: vi.fn().mockResolvedValue(undefined),
-      close: vi.fn().mockResolvedValue(undefined),
-    };
-    render(<DesktopTitleBar {...createProps({ windowChrome })} />);
+    const fixture = createFixture();
+    render(
+      <DesktopTitleBar
+        commands={fixture.commands}
+        blockSearchItems={blockSearchItems}
+        documentLabel="weather.blocky · 已保存"
+        leftCollapsed={false}
+        rightCollapsed={false}
+        onInsertBlock={fixture.onInsertBlock}
+        windowChrome={fixture.windowChrome}
+      />,
+    );
+
+    await user.keyboard("{Control>}p{/Control}");
+    const search = screen.getByRole("combobox", { name: "搜索积木和命令" });
+    expect(search).toHaveFocus();
+    await user.type(search, "聊天");
+    expect(screen.getByRole("option", { name: /聊天入口.*交互入口/ }))
+      .toBeInTheDocument();
+    await user.keyboard("{Enter}");
+    expect(fixture.onInsertBlock).toHaveBeenCalledWith(
+      "core.interaction.chat_entry",
+    );
+  });
+
+  it("supports keyboard menu navigation and native window controls", async () => {
+    const user = userEvent.setup();
+    const fixture = createFixture();
+    render(
+      <DesktopTitleBar
+        commands={fixture.commands}
+        blockSearchItems={blockSearchItems}
+        documentLabel="weather.blocky · 已保存"
+        leftCollapsed={false}
+        rightCollapsed={false}
+        onInsertBlock={fixture.onInsertBlock}
+        windowChrome={fixture.windowChrome}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "视图" }));
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu", { name: "视图" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "最小化窗口" }));
     await user.click(screen.getByRole("button", { name: "最大化或还原窗口" }));
     await user.click(screen.getByRole("button", { name: "关闭窗口" }));
-
-    expect(windowChrome.minimize).toHaveBeenCalledOnce();
-    expect(windowChrome.toggleMaximize).toHaveBeenCalledOnce();
-    expect(windowChrome.close).toHaveBeenCalledOnce();
+    expect(fixture.windowChrome.minimize).toHaveBeenCalledOnce();
+    expect(fixture.windowChrome.toggleMaximize).toHaveBeenCalledOnce();
+    expect(fixture.windowChrome.close).toHaveBeenCalledOnce();
   });
 });

@@ -1,8 +1,10 @@
 import {
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
-  type DragEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { SpikeBlockId } from "./catalog";
 import { getDefinition } from "./definitions";
@@ -12,17 +14,22 @@ import {
   type SpikeBlockCategoryId,
 } from "./toolbox";
 
-export const BLOCKY_BLOCK_DRAG_MIME = "application/x-blocky-block-type";
-
 export interface BlockInsertRequest {
   readonly blockType: SpikeBlockId;
   readonly clientPoint?: Readonly<{ clientX: number; clientY: number }>;
+}
+
+export interface BlockPointerDragStart {
+  readonly blockType: SpikeBlockId;
+  readonly pointerId: number;
+  readonly clientPoint: Readonly<{ clientX: number; clientY: number }>;
 }
 
 export interface BlockLibraryProps {
   readonly selectedCategoryId: SpikeBlockCategoryId;
   readonly onSelectedCategoryIdChange: (categoryId: SpikeBlockCategoryId) => void;
   readonly onInsert: (request: BlockInsertRequest) => void;
+  readonly onPointerDragStart?: (request: BlockPointerDragStart) => void;
 }
 
 export function getBlockDisplayName(blockType: SpikeBlockId): string {
@@ -36,8 +43,16 @@ export function BlockLibrary({
   selectedCategoryId,
   onSelectedCategoryIdChange,
   onInsert,
+  onPointerDragStart,
 }: BlockLibraryProps) {
   const [query, setQuery] = useState("");
+  const pointerSessionRef = useRef<{
+    readonly pointerId: number;
+    readonly startX: number;
+    readonly startY: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
   const normalizedQuery = query.trim().toLocaleLowerCase("zh-CN");
   const selectedCategory = SPIKE_BLOCK_CATEGORIES.find(
     (category) => category.id === selectedCategoryId,
@@ -53,13 +68,49 @@ export function BlockLibrary({
     );
   }, [normalizedQuery, selectedCategory.blockIds]);
 
-  const startDrag = (
-    event: DragEvent<HTMLButtonElement>,
+  const startPointerDrag = (
+    event: ReactPointerEvent<HTMLButtonElement>,
     blockType: SpikeBlockId,
   ): void => {
-    event.dataTransfer.effectAllowed = "copy";
-    event.dataTransfer.setData(BLOCKY_BLOCK_DRAG_MIME, blockType);
+    if (event.button !== 0) return;
+    pointerSessionRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    };
+    onPointerDragStart?.({
+      blockType,
+      pointerId: event.pointerId,
+      clientPoint: { clientX: event.clientX, clientY: event.clientY },
+    });
   };
+
+  useEffect(() => {
+    const move = (event: PointerEvent): void => {
+      const session = pointerSessionRef.current;
+      if (!session || session.pointerId !== event.pointerId) return;
+      if (
+        Math.hypot(event.clientX - session.startX, event.clientY - session.startY) >= 6
+      ) {
+        session.moved = true;
+      }
+    };
+    const finish = (event: PointerEvent): void => {
+      const session = pointerSessionRef.current;
+      if (!session || session.pointerId !== event.pointerId) return;
+      suppressClickRef.current = session.moved;
+      pointerSessionRef.current = null;
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
+    return () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+    };
+  }, []);
 
   return (
     <aside className="block-library" aria-label="积木库">
@@ -98,9 +149,15 @@ export function BlockLibrary({
                 type="button"
                 className="block-library__item"
                 aria-label={displayName}
-                draggable
-                onClick={() => onInsert({ blockType })}
-                onDragStart={(event) => startDrag(event, blockType)}
+                onClick={(event) => {
+                  if (suppressClickRef.current) {
+                    suppressClickRef.current = false;
+                    event.preventDefault();
+                    return;
+                  }
+                  onInsert({ blockType });
+                }}
+                onPointerDown={(event) => startPointerDrag(event, blockType)}
               >
                 <BlockPreview blockType={blockType} />
               </button>

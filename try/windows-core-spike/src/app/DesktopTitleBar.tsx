@@ -1,6 +1,6 @@
 import {
-  ArrowRedo20Regular,
-  ArrowUndo20Regular,
+  ArrowLeft20Regular,
+  ArrowRight20Regular,
   Dismiss20Regular,
   PanelLeft20Regular,
   PanelRight20Regular,
@@ -15,42 +15,47 @@ import {
   type ReactNode,
 } from "react";
 import blockyLogoUrl from "../../../../logo/logo.png";
+import type { SpikeBlockId } from "../blockly/catalog";
+import { CommandCenter } from "./CommandCenter";
+import {
+  matchesShortcut,
+  type CommandBlockItem,
+  type WorkbenchCommand,
+  type WorkbenchCommandId,
+  type WorkbenchMenuId,
+} from "./commands";
 import type { WindowChromeBridge } from "./WindowChromeBridge";
 
-type MenuId = "file" | "edit" | "view" | "help";
+const MENU_LABELS: Readonly<Record<WorkbenchMenuId, string>> = {
+  file: "文件",
+  edit: "编辑",
+  view: "视图",
+  help: "帮助",
+};
 
 export interface DesktopTitleBarProps {
-  readonly projectTitle: string;
+  readonly commands: readonly WorkbenchCommand[];
+  readonly blockSearchItems: readonly CommandBlockItem[];
+  readonly documentLabel: string;
   readonly leftCollapsed: boolean;
   readonly rightCollapsed: boolean;
-  readonly onToggleLeft: () => void;
-  readonly onToggleRight: () => void;
-  readonly onUndo: () => void;
-  readonly onRedo: () => void;
-  readonly onSave: () => void;
-  readonly onLoad: () => void;
-  readonly onClear: () => void;
-  readonly onFit: () => void;
-  readonly onLoadFixture: () => void;
+  readonly onInsertBlock: (blockType: SpikeBlockId) => void;
   readonly windowChrome: WindowChromeBridge;
-  readonly extraViewAction?: Readonly<{ label: string; run: () => void }>;
-}
-
-interface MenuAction {
-  readonly label: string;
-  readonly run: () => void;
+  readonly onRequestClose?: () => void | Promise<unknown>;
 }
 
 function IconButton({
   label,
   children,
   pressed,
+  disabled = false,
   onClick,
   className = "",
 }: {
   readonly label: string;
   readonly children: ReactNode;
   readonly pressed?: boolean;
+  readonly disabled?: boolean;
   readonly onClick: () => void;
   readonly className?: string;
 }) {
@@ -61,6 +66,7 @@ function IconButton({
       aria-label={label}
       aria-pressed={pressed}
       title={label}
+      disabled={disabled}
       onClick={onClick}
     >
       {children}
@@ -68,88 +74,65 @@ function IconButton({
   );
 }
 
+function commandById(
+  commands: readonly WorkbenchCommand[],
+  id: WorkbenchCommandId,
+): WorkbenchCommand {
+  const command = commands.find((candidate) => candidate.id === id);
+  if (!command) throw new Error(`WORKBENCH_COMMAND_MISSING:${id}`);
+  return command;
+}
+
+function isTextEditingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement;
+}
+
 export function DesktopTitleBar({
-  projectTitle,
+  commands,
+  blockSearchItems,
+  documentLabel,
   leftCollapsed,
   rightCollapsed,
-  onToggleLeft,
-  onToggleRight,
-  onUndo,
-  onRedo,
-  onSave,
-  onLoad,
-  onClear,
-  onFit,
-  onLoadFixture,
+  onInsertBlock,
   windowChrome,
-  extraViewAction,
+  onRequestClose,
 }: DesktopTitleBarProps) {
-  const [openMenu, setOpenMenu] = useState<MenuId | null>(null);
-  const [aboutOpen, setAboutOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<WorkbenchMenuId | null>(null);
   const rootRef = useRef<HTMLElement>(null);
+  const undo = commandById(commands, "edit.undo");
+  const redo = commandById(commands, "edit.redo");
+  const toggleLeft = commandById(commands, "view.toggleLeft");
+  const toggleRight = commandById(commands, "view.toggleRight");
 
   useEffect(() => {
     const closeOnPointerDown = (event: PointerEvent): void => {
       if (!rootRef.current?.contains(event.target as Node)) setOpenMenu(null);
     };
-    const closeOnEscape = (event: globalThis.KeyboardEvent): void => {
-      if (event.key === "Escape") {
-        setOpenMenu(null);
-        setAboutOpen(false);
+    const handleKeyDown = (event: globalThis.KeyboardEvent): void => {
+      if (event.key === "Escape") setOpenMenu(null);
+      for (const command of commands) {
+        if (!command.shortcut || !command.enabled) continue;
+        const isPlainLetter = command.shortcut.length === 1;
+        if (isPlainLetter && isTextEditingTarget(event.target)) continue;
+        if (matchesShortcut(event, command.shortcut)) {
+          event.preventDefault();
+          command.run();
+          setOpenMenu(null);
+          return;
+        }
       }
     };
     document.addEventListener("pointerdown", closeOnPointerDown);
-    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("pointerdown", closeOnPointerDown);
-      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
-
-  const menuActions: Record<MenuId, readonly MenuAction[]> = {
-    file: [
-      { label: "保存", run: onSave },
-      { label: "重开", run: onLoad },
-      { label: "清空", run: onClear },
-    ],
-    edit: [
-      { label: "撤销", run: onUndo },
-      { label: "重做", run: onRedo },
-    ],
-    view: [
-      {
-        label: leftCollapsed ? "展开积木栏" : "收起积木栏",
-        run: onToggleLeft,
-      },
-      {
-        label: rightCollapsed ? "展开运行栏" : "收起运行栏",
-        run: onToggleRight,
-      },
-      { label: "适配画布", run: onFit },
-      { label: "载入100块", run: onLoadFixture },
-      ...(extraViewAction
-        ? [{ label: extraViewAction.label, run: extraViewAction.run }]
-        : []),
-    ],
-    help: [
-      {
-        label: "关于 Windows Core 技术尖峰",
-        run: () => setAboutOpen(true),
-      },
-    ],
-  };
-
-  const menuLabels: Record<MenuId, string> = {
-    file: "文件",
-    edit: "编辑",
-    view: "视图",
-    help: "帮助",
-  };
-
-  const runAndClose = (action: MenuAction): void => {
-    setOpenMenu(null);
-    action.run();
-  };
+  }, [commands]);
 
   const handleMenuKeys = (event: ReactKeyboardEvent<HTMLDivElement>): void => {
     const items = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(
@@ -169,6 +152,11 @@ export function DesktopTitleBar({
     }
   };
 
+  const runAndClose = (command: WorkbenchCommand): void => {
+    setOpenMenu(null);
+    command.run();
+  };
+
   return (
     <header ref={rootRef} className="desktop-titlebar" aria-label="应用标题栏">
       <div className="desktop-titlebar__brand">
@@ -180,21 +168,21 @@ export function DesktopTitleBar({
         <IconButton
           label={leftCollapsed ? "展开积木栏" : "收起积木栏"}
           pressed={leftCollapsed}
-          onClick={onToggleLeft}
+          onClick={toggleLeft.run}
         >
           <PanelLeft20Regular aria-hidden="true" />
         </IconButton>
         <span className="titlebar-separator" aria-hidden="true" />
-        <IconButton label="撤销" onClick={onUndo}>
-          <ArrowUndo20Regular aria-hidden="true" />
+        <IconButton label="撤销" disabled={!undo.enabled} onClick={undo.run}>
+          <ArrowLeft20Regular aria-hidden="true" />
         </IconButton>
-        <IconButton label="重做" onClick={onRedo}>
-          <ArrowRedo20Regular aria-hidden="true" />
+        <IconButton label="重做" disabled={!redo.enabled} onClick={redo.run}>
+          <ArrowRight20Regular aria-hidden="true" />
         </IconButton>
       </div>
 
       <nav className="desktop-titlebar__menus" aria-label="应用菜单">
-        {(Object.keys(menuLabels) as MenuId[]).map((menuId) => (
+        {(Object.keys(MENU_LABELS) as WorkbenchMenuId[]).map((menuId) => (
           <div className="titlebar-menu" key={menuId}>
             <button
               type="button"
@@ -204,23 +192,26 @@ export function DesktopTitleBar({
                 current === menuId ? null : menuId
               )}
             >
-              {menuLabels[menuId]}
+              {MENU_LABELS[menuId]}
             </button>
             {openMenu === menuId ? (
               <div
                 role="menu"
-                aria-label={menuLabels[menuId]}
+                aria-label={MENU_LABELS[menuId]}
                 className="titlebar-menu__popover"
                 onKeyDown={handleMenuKeys}
               >
-                {menuActions[menuId].map((action) => (
+                {commands.filter((command) => command.menu === menuId).map((command) => (
                   <button
-                    key={action.label}
+                    key={command.id}
                     type="button"
                     role="menuitem"
-                    onClick={() => runAndClose(action)}
+                    disabled={!command.enabled}
+                    aria-current={command.selected ? "true" : undefined}
+                    onClick={() => runAndClose(command)}
                   >
-                    {action.label}
+                    <span>{command.label}</span>
+                    {command.shortcut ? <kbd>{command.shortcut}</kbd> : null}
                   </button>
                 ))}
               </div>
@@ -229,19 +220,25 @@ export function DesktopTitleBar({
         ))}
       </nav>
 
+      <CommandCenter
+        commands={commands}
+        blockItems={blockSearchItems}
+        onInsertBlock={onInsertBlock}
+      />
+
       <div
         className="desktop-titlebar__drag-region"
         data-testid="titlebar-drag-region"
         data-tauri-drag-region
       >
-        <span>{projectTitle}</span>
+        <span>{documentLabel}</span>
       </div>
 
       <div className="desktop-titlebar__window-actions">
         <IconButton
-          label={rightCollapsed ? "展开运行栏" : "收起运行栏"}
+          label={rightCollapsed ? "展开右侧面板" : "收起右侧面板"}
           pressed={rightCollapsed}
-          onClick={onToggleRight}
+          onClick={toggleRight.run}
         >
           <PanelRight20Regular aria-hidden="true" />
         </IconButton>
@@ -258,19 +255,11 @@ export function DesktopTitleBar({
         <IconButton
           label="关闭窗口"
           className="titlebar-icon-button--close"
-          onClick={() => void windowChrome.close()}
+          onClick={() => void (onRequestClose?.() ?? windowChrome.close())}
         >
           <Dismiss20Regular aria-hidden="true" />
         </IconButton>
       </div>
-
-      {aboutOpen ? (
-        <section className="about-popover" role="dialog" aria-label="关于 Blocky">
-          <strong>Windows Core 技术尖峰</strong>
-          <p>验证本地 Blockly 编辑、项目保存与确定性运行核心；不是正式发行版。</p>
-          <button type="button" onClick={() => setAboutOpen(false)}>关闭</button>
-        </section>
-      ) : null}
     </header>
   );
 }

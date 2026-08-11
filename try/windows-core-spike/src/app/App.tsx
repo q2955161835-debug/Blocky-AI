@@ -1,31 +1,48 @@
-import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BlockLibrary,
-  BLOCKY_BLOCK_DRAG_MIME,
+  getBlockDisplayName,
+  type BlockPointerDragStart,
 } from "../blockly/BlockLibrary";
+import { BlockPreview } from "../blockly/BlockPreview";
 import {
   BlocklyCanvas,
   type BlocklyCanvasHandle,
+  type CanvasViewState,
+  type EditorProjection,
 } from "../blockly/BlocklyCanvas";
+import { CanvasToolControls } from "../blockly/CanvasToolControls";
+import type { SpikeBlockId } from "../blockly/catalog";
 import {
   countSerializedBlocks,
-  createHundredBlockWorkspaceState,
 } from "../blockly/fixtures";
-import type { SpikeBlockId } from "../blockly/catalog";
-import type { SpikeBlockCategoryId } from "../blockly/toolbox";
-import { BuilderPlaceholder } from "../builder/BuilderPlaceholder";
+import {
+  SPIKE_BLOCK_CATEGORIES,
+  type SpikeBlockCategoryId,
+} from "../blockly/toolbox";
+import { BuilderAssistant } from "../builder/BuilderAssistant";
 import type { JsonValue } from "../core/json";
 import type { RuntimeDependencies } from "../core/deterministicRuntime";
+import type { RuntimeEvent } from "../core/runtimeEvents";
+import type { BlockyProgram, IrNode } from "../core/ir";
 import type { HostBridge } from "../host/HostBridge";
 import { RuntimePanel } from "../runtime/RuntimePanel";
 import { indexProgramBlockTypes } from "../runtime/eventPresentation";
 import { CanvasControls } from "./CanvasControls";
 import { DesktopTitleBar } from "./DesktopTitleBar";
 import {
+  createWorkbenchCommands,
+  type CommandBlockItem,
+  type WorkbenchCommandId,
+} from "./commands";
+import {
   NoopWindowChromeBridge,
   type WindowChromeBridge,
 } from "./WindowChromeBridge";
 import { useSpikeController } from "./useSpikeController";
+import { useDocumentSession } from "./useDocumentSession";
+import { UnsavedChangesDialog } from "./UnsavedChangesDialog";
+import { HelpDialog, type HelpView } from "./HelpDialog";
 import "./app.css";
 
 export interface AppProps {
@@ -33,14 +50,8 @@ export interface AppProps {
   initialWorkspace?: JsonValue;
   projectId?: string;
   runtimeModel?: RuntimeDependencies["model"];
-  canvasAction?: CanvasAction;
+  onRuntimeEvent?: (event: RuntimeEvent) => void;
   windowChrome?: WindowChromeBridge;
-}
-
-export interface CanvasAction {
-  readonly ariaLabel: string;
-  readonly label: string;
-  run(): void;
 }
 
 const EMPTY_WORKSPACE: JsonValue = {
@@ -49,28 +60,88 @@ const EMPTY_WORKSPACE: JsonValue = {
 
 const NOOP_WINDOW_CHROME = new NoopWindowChromeBridge();
 
+function programHasType(program: BlockyProgram, blockType: string): boolean {
+  const visited = new Set<string>();
+  const visit = (node: IrNode | null): boolean => {
+    if (!node || visited.has(node.id)) return false;
+    visited.add(node.id);
+    return node.type === blockType ||
+      Object.values(node.inputs).some(visit) ||
+      visit(node.next);
+  };
+  return program.roots.some(visit);
+}
+
 export function App({
   hostBridge,
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
   runtimeModel,
-  canvasAction,
+  onRuntimeEvent,
   windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
   const canvasRef = useRef<BlocklyCanvasHandle>(null);
-  const [activeTab, setActiveTab] = useState<"builder" | "runtime">("runtime");
+  const canvasStageRef = useRef<HTMLElement>(null);
+  const externalDragCleanupRef = useRef<(() => void) | null>(null);
+  const [activeTab, setActiveTab] = useState<"builder" | "runtime">("builder");
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<SpikeBlockCategoryId>("agents");
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
-  const [zoomPercent, setZoomPercent] = useState(90);
+  const [helpView, setHelpView] = useState<HelpView | null>(null);
+  const [blockDragPreview, setBlockDragPreview] = useState<{
+    readonly blockType: SpikeBlockId;
+    readonly clientX: number;
+    readonly clientY: number;
+  } | null>(null);
+  const [canvasView, setCanvasView] = useState<CanvasViewState>({
+    zoomPercent: 90,
+    canUndo: false,
+    canRedo: false,
+    canPaste: false,
+    tool: "select",
+    selectionCount: 0,
+  });
   const controller = useSpikeController({
     canvasRef,
     hostBridge,
     projectId,
     runtimeModel,
+    onRuntimeEvent,
   });
-  const hasEntry = controller.projection.interactionManifest.entries.length > 0;
+  const documentSession = useDocumentSession({
+    canvasRef,
+    hostBridge,
+    projectId,
+    cancelRun: controller.cancelRun,
+    onClose: () => void windowChrome.close(),
+    initialWorkspace,
+  });
+  useEffect(() => {
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void windowChrome.onCloseRequested(() => {
+      void documentSession.requestClose();
+    }).then((nextUnlisten) => {
+      if (disposed) nextUnlisten();
+      else unlisten = nextUnlisten;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [documentSession.requestClose, windowChrome]);
+  const acceptProjection = useCallback((projection: EditorProjection): void => {
+    controller.acceptProjection(projection);
+    documentSession.acceptWorkspace(projection.workspace);
+  }, [controller.acceptProjection, documentSession.acceptWorkspace]);
+  const hasAgent = controller.projection.program.roots.some(
+    (root) => root.type === "core.agent.define",
+  );
+  const hasChatBlock = programHasType(
+    controller.projection.program,
+    "core.interaction.chat_entry",
+  );
   const hasCompileError = controller.projection.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
   );
@@ -79,6 +150,21 @@ export function App({
     () => indexProgramBlockTypes(controller.projection.program),
     [controller.projection.program],
   );
+  const blockSearchItems = useMemo<readonly CommandBlockItem[]>(
+    () => SPIKE_BLOCK_CATEGORIES.flatMap((category) =>
+      category.blockIds.map((blockType) => ({
+        kind: "block" as const,
+        blockType,
+        label: getBlockDisplayName(blockType),
+        categoryName: category.name,
+        keywords: [category.name],
+      })),
+    ),
+    [],
+  );
+  const insertBlock = useCallback((blockType: SpikeBlockId): string | null =>
+    canvasRef.current?.insertBlock({ blockType }) ?? null,
+  []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -87,55 +173,153 @@ export function App({
     return () => window.cancelAnimationFrame(frame);
   }, [leftCollapsed, rightCollapsed]);
 
-  const updateZoomLabel = (): void => {
-    const scale = canvasRef.current?.captureViewState().scale;
-    if (scale !== undefined) setZoomPercent(Math.round(scale * 100));
+  useEffect(() => () => externalDragCleanupRef.current?.(), []);
+
+  const handleBlockPointerDragStart = (request: BlockPointerDragStart): void => {
+    externalDragCleanupRef.current?.();
+    let moved = false;
+    const move = (event: PointerEvent): void => {
+      if (event.pointerId !== request.pointerId) return;
+      if (Math.hypot(
+        event.clientX - request.clientPoint.clientX,
+        event.clientY - request.clientPoint.clientY,
+      ) >= 6) {
+        moved = true;
+        setBlockDragPreview({
+          blockType: request.blockType,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        });
+      }
+    };
+    const finish = (event: PointerEvent): void => {
+      if (event.pointerId !== request.pointerId) return;
+      const bounds = canvasStageRef.current?.getBoundingClientRect();
+      if (
+        moved &&
+        bounds &&
+        event.clientX >= bounds.left && event.clientX <= bounds.right &&
+        event.clientY >= bounds.top && event.clientY <= bounds.bottom
+      ) {
+        canvasRef.current?.insertBlock({
+          blockType: request.blockType,
+          clientPoint: { clientX: event.clientX, clientY: event.clientY },
+        });
+      }
+      cleanup();
+    };
+    const cleanup = (): void => {
+      setBlockDragPreview(null);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+      if (externalDragCleanupRef.current === cleanup) {
+        externalDragCleanupRef.current = null;
+      }
+    };
+    externalDragCleanupRef.current = cleanup;
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
   };
 
-  const openRuntime = (): void => {
-    setRightCollapsed(false);
-    setActiveTab("runtime");
-    window.requestAnimationFrame(() => {
-      document.querySelector<HTMLTextAreaElement>(
-        '[data-testid="runtime-text-input"]',
-      )?.focus();
-    });
+  const runCommand = (id: WorkbenchCommandId): void => {
+    switch (id) {
+      case "file.new":
+        void documentSession.newDocument();
+        break;
+      case "file.open":
+        void documentSession.openDocument();
+        break;
+      case "file.save":
+        void documentSession.saveDocument();
+        break;
+      case "file.saveAs":
+        void documentSession.saveDocumentAs();
+        break;
+      case "file.exit":
+        void documentSession.requestClose();
+        break;
+      case "edit.undo":
+        canvasRef.current?.undo();
+        break;
+      case "edit.redo":
+        canvasRef.current?.redo();
+        break;
+      case "edit.selectAll":
+        canvasRef.current?.selectAll();
+        break;
+      case "edit.cut":
+        canvasRef.current?.cutSelection();
+        break;
+      case "edit.copy":
+        canvasRef.current?.copySelection();
+        break;
+      case "edit.paste":
+        canvasRef.current?.pasteSelection();
+        break;
+      case "edit.delete":
+        canvasRef.current?.deleteSelection();
+        break;
+      case "view.toggleLeft":
+        setLeftCollapsed((current) => !current);
+        break;
+      case "view.toggleRight":
+        setRightCollapsed((current) => !current);
+        break;
+      case "view.zoomIn":
+        canvasRef.current?.zoomIn();
+        break;
+      case "view.zoomOut":
+        canvasRef.current?.zoomOut();
+        break;
+      case "view.resetZoom":
+        canvasRef.current?.resetZoom();
+        break;
+      case "view.fit":
+        canvasRef.current?.fitToView();
+        break;
+      case "view.selectTool":
+        canvasRef.current?.setTool("select");
+        break;
+      case "view.panTool":
+        canvasRef.current?.setTool("pan");
+        break;
+      case "help.quickStart":
+        setHelpView("quickStart");
+        break;
+      case "help.shortcuts":
+        setHelpView("shortcuts");
+        break;
+      case "help.about":
+        setHelpView("about");
+        break;
+    }
   };
-
-  const handleDrop = (event: DragEvent<HTMLElement>): void => {
-    const blockType = event.dataTransfer.getData(BLOCKY_BLOCK_DRAG_MIME);
-    if (!blockType) return;
-    event.preventDefault();
-    canvasRef.current?.insertBlock({
-      blockType: blockType as SpikeBlockId,
-      clientPoint: { clientX: event.clientX, clientY: event.clientY },
-    });
-  };
+  const commands = createWorkbenchCommands({
+    state: {
+      canUndo: canvasView.canUndo,
+      canRedo: canvasView.canRedo,
+      selectionCount: canvasView.selectionCount,
+      canPaste: canvasView.canPaste,
+      leftCollapsed,
+      rightCollapsed,
+      tool: canvasView.tool,
+    },
+    run: runCommand,
+  });
 
   return (
     <div className="app-shell">
       <DesktopTitleBar
-        projectTitle="天气助手 · 已保存"
+        commands={commands}
+        blockSearchItems={blockSearchItems}
+        documentLabel={documentSession.label}
         leftCollapsed={leftCollapsed}
         rightCollapsed={rightCollapsed}
-        onToggleLeft={() => setLeftCollapsed((current) => !current)}
-        onToggleRight={() => setRightCollapsed((current) => !current)}
-        onUndo={() => canvasRef.current?.undo()}
-        onRedo={() => canvasRef.current?.redo()}
-        onSave={() => void controller.saveProject()}
-        onLoad={() => void controller.loadProject()}
-        onClear={() => void controller.replaceWorkspace(EMPTY_WORKSPACE)}
-        onFit={() => {
-          canvasRef.current?.fitToView();
-          updateZoomLabel();
-        }}
-        onLoadFixture={() => void controller.replaceWorkspace(
-          createHundredBlockWorkspaceState(),
-        )}
+        onInsertBlock={insertBlock}
         windowChrome={windowChrome}
-        extraViewAction={canvasAction
-          ? { label: canvasAction.ariaLabel, run: canvasAction.run }
-          : undefined}
+        onRequestClose={documentSession.requestClose}
       />
 
       <main
@@ -145,26 +329,21 @@ export function App({
           rightCollapsed ? "workbench--right-collapsed" : "",
         ].filter(Boolean).join(" ")}
       >
-        <span className="sr-only">Blocky Windows 核心尖峰</span>
         {leftCollapsed ? null : (
           <div className="workbench__library">
             <BlockLibrary
               selectedCategoryId={selectedCategoryId}
               onSelectedCategoryIdChange={setSelectedCategoryId}
-              onInsert={(request) => canvasRef.current?.insertBlock(request)}
+              onInsert={(request) => insertBlock(request.blockType)}
+              onPointerDragStart={handleBlockPointerDragStart}
             />
           </div>
         )}
 
         <section
+          ref={canvasStageRef}
           className="canvas-stage"
           aria-label="积木画布区"
-          onDragOver={(event) => {
-            if (event.dataTransfer.types.includes(BLOCKY_BLOCK_DRAG_MIME)) {
-              event.preventDefault();
-            }
-          }}
-          onDrop={handleDrop}
         >
           <div className="canvas-stage__badge" aria-label="画布积木数量">
             <span aria-hidden="true" />
@@ -173,28 +352,34 @@ export function App({
           <BlocklyCanvas
             ref={canvasRef}
             initialState={initialWorkspace}
-            onProjection={controller.acceptProjection}
+            onProjection={acceptProjection}
+            onViewStateChange={setCanvasView}
+          />
+          <CanvasToolControls
+            tool={canvasView.tool}
+            onToolChange={(nextTool) => canvasRef.current?.setTool(nextTool)}
           />
           <CanvasControls
-            zoomPercent={zoomPercent}
-            onSave={() => void controller.saveProject()}
-            onRun={openRuntime}
+            zoomPercent={canvasView.zoomPercent}
+            onSave={() => void documentSession.saveDocument()}
             onZoomOut={() => {
               canvasRef.current?.zoomOut();
-              updateZoomLabel();
             }}
             onZoomIn={() => {
               canvasRef.current?.zoomIn();
-              updateZoomLabel();
             }}
             onFit={() => {
               canvasRef.current?.fitToView();
-              updateZoomLabel();
             }}
           />
           {controller.operationError ? (
             <p className="app-operation-error" role="alert">
               {controller.operationError}
+            </p>
+          ) : null}
+          {documentSession.operationError ? (
+            <p className="app-operation-error" role="alert">
+              {documentSession.operationError}
             </p>
           ) : null}
         </section>
@@ -211,8 +396,13 @@ export function App({
               role="tab"
               aria-selected={activeTab === "builder"}
               aria-controls="builder-panel"
-              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setActiveTab("builder")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setActiveTab("builder");
+                }
+              }}
             >
               搭建助手
             </button>
@@ -222,11 +412,15 @@ export function App({
               role="tab"
               aria-selected={activeTab === "runtime"}
               aria-controls="runtime-panel"
-              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setActiveTab("runtime")}
-              disabled={!hasEntry}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setActiveTab("runtime");
+                }
+              }}
             >
-              运行 Agent
+              对话测试
             </button>
           </div>
 
@@ -237,7 +431,13 @@ export function App({
               aria-labelledby="builder-tab"
               hidden={activeTab !== "builder"}
             >
-              <BuilderPlaceholder />
+                <BuilderAssistant
+                  hasAgent={hasAgent}
+                  hasChatEntry={hasChatBlock}
+                  onAddAgent={() => void insertBlock("core.agent.define")}
+                  onAddChatEntry={() => void insertBlock("core.interaction.chat_entry")}
+                  onOpenQuickStart={() => runCommand("help.quickStart")}
+                />
             </div>
             <div
               id="runtime-panel"
@@ -249,7 +449,8 @@ export function App({
                 manifest={controller.projection.interactionManifest}
                 activeEntryId={controller.activeEntryId}
                 onActiveEntryIdChange={controller.setActiveEntryId}
-                onSubmit={controller.runInput}
+                  onSubmit={controller.runInput}
+                  submissions={controller.submissions}
                 events={controller.runtime.events}
                 blockTypes={runtimeBlockTypes}
                 disabled={controller.runtime.status === "running" || hasCompileError}
@@ -263,6 +464,31 @@ export function App({
           </div>
         </aside>
       </main>
+      {documentSession.pendingIntent ? (
+        <UnsavedChangesDialog
+          documentName={documentSession.state.displayName}
+          onDecision={(decision) => void documentSession.resolveUnsavedDecision(decision)}
+        />
+      ) : null}
+      {helpView ? (
+        <HelpDialog view={helpView} onClose={() => setHelpView(null)} />
+      ) : null}
+      {blockDragPreview ? (
+        <div
+          className="block-drag-preview"
+          data-testid="block-drag-preview"
+          aria-hidden="true"
+          style={{
+            left: blockDragPreview.clientX,
+            top: blockDragPreview.clientY,
+          }}
+        >
+          <span className="sr-only">
+            {getBlockDisplayName(blockDragPreview.blockType)}
+          </span>
+          <BlockPreview blockType={blockDragPreview.blockType} />
+        </div>
+      ) : null}
     </div>
   );
 }

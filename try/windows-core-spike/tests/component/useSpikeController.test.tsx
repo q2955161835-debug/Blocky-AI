@@ -53,6 +53,16 @@ function canvasHandle(
     insertBlock: vi.fn(() => null),
     undo: vi.fn(),
     redo: vi.fn(),
+    canUndo: vi.fn(() => false),
+    canRedo: vi.fn(() => false),
+    canPaste: vi.fn(() => false),
+    setTool: vi.fn(),
+    getTool: vi.fn(() => "select" as const),
+    selectAll: vi.fn(),
+    cutSelection: vi.fn(),
+    copySelection: vi.fn(),
+    pasteSelection: vi.fn(),
+    deleteSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
     resetZoom: vi.fn(),
@@ -83,13 +93,21 @@ describe("useSpikeController", () => {
     await waitFor(() => expect(result.current.activeEntryId).toBe("entry-1"));
     highlight.mockClear();
 
+    let outcome: { runId: string } | undefined;
     await act(async () => {
-      await result.current.runInput({
+      outcome = await result.current.runInput({
         entryId: "entry-1",
         text: "你好",
         attachments: [],
       });
     });
+
+    expect(outcome).toEqual({ runId: "desktop-run-1" });
+    expect(result.current.submissions).toEqual([{
+      runId: "desktop-run-1",
+      entryId: "entry-1",
+      userText: "你好",
+    }]);
 
     expect(result.current.runtime.events.map((event) => event.type)).toEqual([
       "run.started",
@@ -113,6 +131,13 @@ describe("useSpikeController", () => {
       loadProject: async () => {
         throw new Error("SECRET_LOAD_DETAIL");
       },
+      openDocument: async () => {
+        throw new Error("SECRET_OPEN_DETAIL");
+      },
+      saveDocument: async () => {
+        throw new Error("SECRET_DOCUMENT_SAVE_DETAIL");
+      },
+      clearDocumentAssociation: async () => {},
     };
     const canvasRef = { current: canvasHandle() };
     const { result } = renderHook(() =>
@@ -165,7 +190,7 @@ describe("useSpikeController", () => {
         attachments: [],
       });
       await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
-      await expect(secondRun).resolves.toBeUndefined();
+      await expect(secondRun).resolves.toEqual({ runId: "desktop-run-2" });
     });
     expect(result.current.runtime.events.map((event) => event.type)).toContain(
       "run.cancelled",
@@ -191,7 +216,7 @@ describe("useSpikeController", () => {
     });
     await waitFor(() => expect(result.current.activeEntryId).toBe("block-002"));
 
-    let firstRun!: Promise<void>;
+    let firstRun!: Promise<{ readonly runId: string }>;
     act(() => {
       firstRun = result.current.runInput({
         entryId: "block-002",
@@ -207,7 +232,7 @@ describe("useSpikeController", () => {
       await expect(firstRun).rejects.toThrow("RUN_CANCELLED");
     });
 
-    let secondRun!: Promise<void>;
+    let secondRun!: Promise<{ readonly runId: string }>;
     act(() => {
       secondRun = result.current.runInput({
         entryId: "block-002",

@@ -1,13 +1,9 @@
-import { createHash } from "node:crypto";
 import { resolve } from "node:path";
-import { $, $$, browser, expect } from "@wdio/globals";
+import { $, browser, expect } from "@wdio/globals";
 import "@wdio/tauri-service";
 import type { InteractionManifest } from "../../src/core/interactionManifest";
-import { stableStringify } from "../../src/core/json";
 import type { RuntimeEvent } from "../../src/core/runtimeEvents";
 import type { SpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
-
-type HookRuntimeEvent = RuntimeEvent;
 
 interface WorkspaceViewState {
   readonly scale: number;
@@ -22,224 +18,56 @@ interface WorkspaceViewState {
   }[];
 }
 
+const KEY = Object.freeze({
+  Alt: "\uE00A",
+  Ctrl: "\uE009",
+  Delete: "\uE017",
+  Enter: "\uE007",
+  Escape: "\uE00C",
+  Shift: "\uE008",
+  Space: "\uE00D",
+});
+
 interface TestHook {
   getBlockCount(): number;
-  loadHundredBlockFixture(): Promise<void>;
+  loadHundredBlockFixture(): void;
   loadVisualAcceptanceWorkspace(): void;
   readWorkspaceViewState(): WorkspaceViewState;
   readTopLevelOverlapPairs(): readonly string[];
   getCanonicalSnapshot(): SpikeProjectSnapshot;
   getManifest(): InteractionManifest;
-  startSimulation(input: string): void;
-  cancelSimulation(): void;
-  readRedactedEvents(): HookRuntimeEvent[];
-  readUsedJsHeapSize(): number | null;
+  readRedactedEvents(): RuntimeEvent[];
 }
 
 type HookWindow = Omit<Window, "__BLOCKY_SPIKE_TEST__"> & {
   __BLOCKY_SPIKE_TEST__: TestHook;
 };
 
-interface NativeProjectRecord {
-  readonly projectId: string;
-  readonly json: string;
-  readonly sha256: string;
-  readonly bytes: number;
-}
-
-function collectBlockIds(value: unknown, found = new Set<string>()): Set<string> {
-  if (!value || typeof value !== "object") return found;
-  if (Array.isArray(value)) {
-    for (const item of value) collectBlockIds(item, found);
-    return found;
-  }
-  const record = value as Record<string, unknown>;
-  if (typeof record.type === "string" && typeof record.id === "string") {
-    found.add(record.id);
-  }
-  for (const child of Object.values(record)) collectBlockIds(child, found);
-  return found;
-}
-
-function findBlock(value: unknown, id: string): Record<string, unknown> | null {
-  if (!value || typeof value !== "object") return null;
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const found = findBlock(item, id);
-      if (found) return found;
-    }
-    return null;
-  }
-  const record = value as Record<string, unknown>;
-  if (record.id === id && typeof record.type === "string") return record;
-  for (const child of Object.values(record)) {
-    const found = findBlock(child, id);
-    if (found) return found;
-  }
-  return null;
-}
-
-function snapshotWorkspace(snapshot: unknown): unknown {
-  if (!snapshot || typeof snapshot !== "object" || !("workspace" in snapshot)) {
-    throw new Error("WDIO_SNAPSHOT_WORKSPACE_UNAVAILABLE");
-  }
-  return (snapshot as { workspace: unknown }).workspace;
+async function callHook<T>(method: keyof TestHook): Promise<T> {
+  return browser.tauri.execute(({ core: _core }, nextMethod) => {
+    const hook = (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__;
+    const operation = hook[nextMethod] as () => T;
+    return operation();
+  }, method);
 }
 
 async function getBlockCount(): Promise<number> {
-  // Canonical workspace/IR state is not reliably observable from rendered SVG,
-  // so this assertion-only bridge reads the wdio-only deterministic hook.
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__.getBlockCount(),
-  );
-}
-
-async function getCanonicalSnapshot(): Promise<unknown> {
-  // The exact canonical snapshot cannot be reconstructed from visible labels.
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__.getCanonicalSnapshot(),
-  );
-}
-
-async function getManifest(): Promise<unknown> {
-  // Manifest identity/capability assertions require the wdio-only compiled view.
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__.getManifest(),
-  );
+  return callHook<number>("getBlockCount");
 }
 
 async function readWorkspaceViewState(): Promise<WorkspaceViewState> {
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
-      .readWorkspaceViewState(),
-  );
+  return callHook<WorkspaceViewState>("readWorkspaceViewState");
 }
 
 async function readTopLevelOverlapPairs(): Promise<readonly string[]> {
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
-      .readTopLevelOverlapPairs(),
-  );
+  return callHook<readonly string[]>("readTopLevelOverlapPairs");
 }
 
-async function invokeMenu(menuName: string, actionName: string): Promise<void> {
-  await $(`aria/${menuName}`).click();
-  const action = await $(`aria/${actionName}`);
-  await action.waitForDisplayed();
-  await action.click();
+async function readEvents(): Promise<RuntimeEvent[]> {
+  return callHook<RuntimeEvent[]>("readRedactedEvents");
 }
 
-function expectedRecord(projectId: string, json: string): NativeProjectRecord {
-  return {
-    projectId,
-    json,
-    sha256: createHash("sha256").update(json, "utf8").digest("hex"),
-    bytes: Buffer.byteLength(json, "utf8"),
-  };
-}
-
-async function writeRustRecord(
-  projectId: string,
-  json: string,
-): Promise<NativeProjectRecord> {
-  // Seeding the native store cannot be expressed through DOM actions. This
-  // setup-only call gives each run a distinguishable pre-save disk identity.
-  return browser.tauri.execute(async ({ core }, nextProjectId, nextJson) =>
-    core.invoke("save_project", {
-      request: { projectId: nextProjectId, json: nextJson },
-    }) as Promise<NativeProjectRecord>, projectId, json);
-}
-
-async function waitForRustSave(
-  expected: NativeProjectRecord,
-  sentinel: NativeProjectRecord,
-): Promise<NativeProjectRecord> {
-  // The save button intentionally has no test-only completion signal. Polling
-  // the real Rust load command is assertion-only and prevents clear racing disk IO.
-  let lastProbe: unknown;
-  try {
-    await browser.waitUntil(async () => {
-      const saveError = await $(".app-operation-error");
-      if (await saveError.isExisting()) {
-        lastProbe = { appError: await saveError.getText() };
-        return false;
-      }
-      lastProbe = await browser.tauri.execute(async ({ core }, nextProjectId) => {
-        try {
-          const record = await core.invoke("load_project", {
-            projectId: nextProjectId,
-          }) as NativeProjectRecord;
-          return { ok: true, record };
-        } catch (error) {
-          return { ok: false, error: String(error) };
-        }
-      }, expected.projectId);
-      const record = (lastProbe as { record?: NativeProjectRecord }).record;
-      return Boolean(
-        record &&
-        record.projectId === expected.projectId &&
-        record.json === expected.json &&
-        record.sha256 === expected.sha256 &&
-        record.bytes === expected.bytes &&
-        record.json !== sentinel.json &&
-        record.sha256 !== sentinel.sha256,
-      );
-    });
-  } catch (error) {
-    throw new Error(`WDIO_RUST_SAVE_PROBE:${JSON.stringify(lastProbe)}`, {
-      cause: error,
-    });
-  }
-  return (lastProbe as { record: NativeProjectRecord }).record;
-}
-
-async function readBlocklyScale(): Promise<number> {
-  const blockCanvases = await $$(".blocklyBlockCanvas");
-  const canvasCount = await blockCanvases.length;
-  if (canvasCount === 0) {
-    throw new Error("WDIO_BLOCKLY_SCALE_UNAVAILABLE:no canvases");
-  }
-  const candidates: Array<{ childCount: number; transform: string | null }> = [];
-  for (let index = 0; index < canvasCount; index += 1) {
-    const canvas = blockCanvases[index];
-    if (!canvas) continue;
-    candidates.push({
-      childCount: Number(await canvas.getProperty("childElementCount")),
-      transform: await canvas.getAttribute("transform"),
-    });
-  }
-  const transform = candidates.sort(
-    (left, right) => right.childCount - left.childCount,
-  )[0]?.transform;
-  const match = transform?.match(/scale\(([-+\d.eE]+)\)/);
-  if (!match) throw new Error(`WDIO_BLOCKLY_SCALE_UNAVAILABLE:${transform}`);
-  return Number(match[1]);
-}
-
-async function readEvents(): Promise<HookRuntimeEvent[]> {
-  // Structured redacted events cannot be recovered losslessly from timeline text.
-  return browser.tauri.execute(({ core: _core }) =>
-    (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__.readRedactedEvents(),
-  );
-}
-
-async function setControlledSelect(testId: string, value: string): Promise<void> {
-  // Embedded WebDriver did not dispatch React's controlled-select change for
-  // selectByAttribute, selectByVisibleText, or keyboard input. This narrowly
-  // applies the native select setter plus a real bubbling change event.
-  await browser.tauri.execute(({ core: _core }, nextTestId, nextValue) => {
-    const select = document.querySelector<HTMLSelectElement>(`[data-testid='${nextTestId}']`);
-    const setter = Object.getOwnPropertyDescriptor(
-      HTMLSelectElement.prototype,
-      "value",
-    )?.set;
-    if (!select || !setter) throw new Error("WDIO_CONTROLLED_SELECT_UNAVAILABLE");
-    setter.call(select, nextValue);
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  }, testId, value);
-}
-
-async function eventsSinceLastStart(): Promise<HookRuntimeEvent[]> {
+async function eventsSinceLastStart(): Promise<RuntimeEvent[]> {
   const events = await readEvents();
   let start = -1;
   for (let index = events.length - 1; index >= 0; index -= 1) {
@@ -251,7 +79,7 @@ async function eventsSinceLastStart(): Promise<HookRuntimeEvent[]> {
   return start < 0 ? [] : events.slice(start);
 }
 
-async function waitForTerminal(type: string): Promise<HookRuntimeEvent[]> {
+async function waitForTerminal(type: RuntimeEvent["type"]): Promise<RuntimeEvent[]> {
   await browser.waitUntil(
     async () => (await eventsSinceLastStart()).at(-1)?.type === type,
     { timeout: 15_000, timeoutMsg: `未观察到终止事件 ${type}` },
@@ -259,68 +87,488 @@ async function waitForTerminal(type: string): Promise<HookRuntimeEvent[]> {
   return eventsSinceLastStart();
 }
 
-describe("Windows Core native channel", () => {
-  it("drives the compiled Tauri executable through the complete Core contract", async () => {
-    const builderTab = await $("aria/搭建助手");
-    const runtimeTab = await $("aria/运行 Agent");
-    await expect(builderTab).toBeEnabled();
-    await expect(runtimeTab).toBeDisabled();
+async function loadHundredBlockFixture(): Promise<void> {
+  await callHook<void>("loadHundredBlockFixture");
+  await browser.waitUntil(async () => (await getBlockCount()) === 100);
+}
 
-    await invokeMenu("视图", "载入100块");
-    await browser.waitUntil(async () => (await getBlockCount()) === 100);
-    const beforePanelCollapse = await readWorkspaceViewState();
-    expect(await readTopLevelOverlapPairs()).toEqual([]);
-    await $("aria/收起积木栏").click();
-    await $("aria/收起运行栏").click();
-    await $("aria/展开积木栏").waitForDisplayed();
-    await $("aria/展开运行栏").waitForDisplayed();
-    await browser.waitUntil(async () =>
-      JSON.stringify(await readWorkspaceViewState()) ===
-        JSON.stringify(beforePanelCollapse),
+type DocumentDialogFixture =
+  | "cancel"
+  | "roundTrip"
+  | "saveFailure"
+  | "invalidZip"
+  | "pathTraversal"
+  | "unsupportedVersion"
+  | "derivedMismatch";
+
+async function prepareDocumentDialog(fixture: DocumentDialogFixture): Promise<void> {
+  await browser.tauri.execute(async ({ core }, nextFixture) => {
+    await core.invoke("wdio_prepare_document_dialog", { fixture: nextFixture });
+  }, fixture);
+}
+
+async function requestNativeWindowClose(): Promise<void> {
+  await browser.tauri.execute(async ({ core }) => {
+    await core.invoke("wdio_request_window_close");
+  });
+}
+
+async function pressShortcut(...keys: string[]): Promise<void> {
+  const action = browser.action("key");
+  for (const key of keys) action.down(key);
+  for (const key of [...keys].reverse()) action.up(key);
+  await action.perform();
+}
+
+async function titleText(): Promise<string> {
+  return browser.execute(() =>
+    document.querySelector<HTMLElement>(".desktop-titlebar__drag-region")
+      ?.innerText.trim() ?? "",
+  );
+}
+
+async function clickFileMenuItem(label: string): Promise<void> {
+  await $("aria/文件").click();
+  await $(`//button[@role='menuitem'][.//span[normalize-space()=${JSON.stringify(label)}]]`)
+    .click();
+}
+
+async function selectedBlockCount(): Promise<number> {
+  return browser.execute(() =>
+    document.querySelectorAll('[data-blocky-selected="true"]').length,
+  );
+}
+
+async function pointerClick(
+  element: ReturnType<typeof $>,
+  shiftKey = false,
+): Promise<void> {
+  await browser.execute((target, additive) => {
+    const bounds = target.getBoundingClientRect();
+    const options = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      pointerId: 72,
+      pointerType: "mouse",
+      clientX: bounds.left + bounds.width / 2,
+      clientY: bounds.top + bounds.height / 2,
+      shiftKey: additive,
+    };
+    target.dispatchEvent(new PointerEvent("pointerdown", {
+      ...options,
+      button: 0,
+      buttons: 1,
+    }));
+    target.dispatchEvent(new PointerEvent("pointerup", {
+      ...options,
+      button: 0,
+      buttons: 0,
+    }));
+  }, element, shiftKey);
+}
+
+async function pointerDragViewport(
+  start: { readonly x: number; readonly y: number },
+  end: { readonly x: number; readonly y: number },
+): Promise<void> {
+  await browser.execute(async (from, to) => {
+    const origin = document.querySelector(".blockly-canvas");
+    if (!origin) throw new Error("POINTER_ORIGIN_UNAVAILABLE");
+    const down = new PointerEvent("pointerdown", {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      pointerId: 71,
+      pointerType: "mouse",
+      button: 0,
+      buttons: 1,
+      clientX: from.x,
+      clientY: from.y,
+    });
+    origin.dispatchEvent(down);
+    await new Promise<void>((resolveFrame) => requestAnimationFrame(() => resolveFrame()));
+    const move = new PointerEvent("pointermove", {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      pointerId: 71,
+      pointerType: "mouse",
+      button: -1,
+      buttons: 1,
+      clientX: to.x,
+      clientY: to.y,
+    });
+    origin.dispatchEvent(move);
+    await new Promise<void>((resolveFrame) => requestAnimationFrame(() => resolveFrame()));
+    const up = new PointerEvent("pointerup", {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      pointerId: 71,
+      pointerType: "mouse",
+      button: 0,
+      buttons: 0,
+      clientX: to.x,
+      clientY: to.y,
+    });
+    origin.dispatchEvent(up);
+  }, start, end);
+}
+
+async function dispatchWheel(
+  selector: string,
+  deltaY: number,
+): Promise<{ readonly cancelled: boolean; readonly tag: string; readonly className: string }> {
+  return browser.execute((targetSelector, nextDeltaY) => {
+    const target = document.querySelector(targetSelector);
+    if (!target) throw new Error("WHEEL_TARGET_UNAVAILABLE");
+    const rect = target.getBoundingClientRect();
+    const dispatched = target.dispatchEvent(new WheelEvent("wheel", {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      clientX: rect.left + rect.width / 2,
+      clientY: rect.top + rect.height / 2,
+      deltaX: 0,
+      deltaY: nextDeltaY,
+      deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+    }));
+    return {
+      cancelled: !dispatched,
+      tag: target.tagName,
+      className: target.getAttribute("class") ?? "",
+    };
+  }, selector, deltaY);
+}
+
+async function focusControl(name: string): Promise<void> {
+  const focused = await browser.execute((accessibleName) => {
+    const candidates = [...document.querySelectorAll<HTMLElement>(
+      "button, input, textarea, select, [tabindex]",
+    )];
+    const target = candidates.find((candidate) =>
+      !candidate.hasAttribute("disabled") &&
+      (candidate.getAttribute("aria-label") ??
+        candidate.getAttribute("placeholder") ??
+        candidate.innerText.trim()) === accessibleName,
     );
-    expect(await readWorkspaceViewState()).toEqual(beforePanelCollapse);
+    target?.focus();
+    return target !== undefined && document.activeElement === target;
+  }, name);
+  if (!focused) throw new Error(`KEYBOARD_FOCUS_TARGET_UNAVAILABLE:${name}`);
+}
+
+async function setCssViewport(
+  width: number,
+  height: number,
+): Promise<{ readonly width: number; readonly height: number; readonly dpr: number }> {
+  let requestedWidth = width;
+  let requestedHeight = height;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    await browser.setWindowSize(requestedWidth, requestedHeight);
+    await browser.pause(50);
+    const actual = await browser.execute(() => ({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      dpr: window.devicePixelRatio,
+    }));
+    if (actual.width === width && actual.height === height) return actual;
+    requestedWidth += Math.round((width - actual.width) * actual.dpr);
+    requestedHeight += Math.round((height - actual.height) * actual.dpr);
+  }
+  const actual = await browser.execute(() => ({
+    width: window.innerWidth,
+    height: window.innerHeight,
+    dpr: window.devicePixelRatio,
+  }));
+  throw new Error(
+    `CSS_VIEWPORT_MISMATCH:${width}x${height}:${JSON.stringify(actual)}`,
+  );
+}
+
+describe("Blocky professional native workbench", () => {
+  it("drives the real Tauri UI without exposing obsolete test controls", async () => {
+    await expect($("aria/搭建助手")).toHaveAttribute("aria-selected", "true");
+    await expect($("aria/对话测试")).toBeEnabled();
+    await expect($("aria/搜索积木和命令")).toExist();
+    await expect($("aria/选择工具 (V)")).toHaveAttribute("aria-pressed", "true");
+    expect(await browser.execute(() => document.body.innerText)).not.toMatch(
+      /Windows Core|技术尖峰|载入100块|折叠首块|运行 Agent/,
+    );
+    expect(await $("aria/运行").isExisting()).toBe(false);
+    expect(await $(".blocklyTrash").isExisting()).toBe(false);
+    const initialLayout = await browser.execute(() => {
+      const zoom = document.querySelector(".canvas-controls__zoom")
+        ?.getBoundingClientRect();
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        zoomBottom: zoom?.bottom ?? Number.POSITIVE_INFINITY,
+      };
+    });
+    expect(initialLayout).toMatchObject({ width: 1536, height: 843 });
+    expect(initialLayout.zoomBottom).toBeLessThanOrEqual(initialLayout.height);
+
+    // Drive the ordinary file UI through the real Tauri IPC and a test-only,
+    // path-opaque native dialog selection. The production build has neither
+    // the command nor the fixture capability.
+    expect(await titleText()).toBe("未命名 Agent · 未保存");
+    await prepareDocumentDialog("cancel");
+    await clickFileMenuItem("另存为…");
+    await browser.pause(100);
+    expect(await titleText()).toBe("未命名 Agent · 未保存");
+
+    await prepareDocumentDialog("roundTrip");
+    await clickFileMenuItem("另存为…");
+    await browser.waitUntil(async () => (await titleText()) === "lifecycle.blocky · 已保存");
+
+    await $("aria/智能体 成员").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 1);
+    await pressShortcut(KEY.Ctrl, "s");
+    await browser.waitUntil(async () => (await titleText()) === "lifecycle.blocky · 已保存");
+
+    await $("aria/智能体 成员").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 2);
+    await browser.waitUntil(async () => (await titleText()) === "lifecycle.blocky · 未保存");
+    await pressShortcut(KEY.Ctrl, "n");
+    await $("aria/保存更改？").waitForDisplayed();
+    await $("aria/取消").click();
+    expect(await getBlockCount()).toBe(2);
+    await pressShortcut(KEY.Ctrl, "n");
+    await $("aria/不保存").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 0);
+    expect(await titleText()).toBe("未命名 Agent · 未保存");
+
+    await prepareDocumentDialog("roundTrip");
+    await pressShortcut(KEY.Ctrl, "o");
+    await $("aria/保存更改？").waitForDisplayed();
+    await $("aria/不保存").click();
+    await browser.waitUntil(async () => (await titleText()) === "lifecycle.blocky · 已保存");
+    expect(await getBlockCount()).toBe(1);
+    const validSnapshot = await callHook<SpikeProjectSnapshot>("getCanonicalSnapshot");
+
+    for (const fixture of [
+      "invalidZip",
+      "pathTraversal",
+      "unsupportedVersion",
+      "derivedMismatch",
+    ] as const) {
+      await prepareDocumentDialog(fixture);
+      await pressShortcut(KEY.Ctrl, "o");
+      await expect($("aria/无法打开项目文件，当前文档未更改")).toBeDisplayed();
+      expect(await callHook<SpikeProjectSnapshot>("getCanonicalSnapshot"))
+        .toEqual(validSnapshot);
+      expect(await titleText()).toBe("lifecycle.blocky · 已保存");
+    }
+
+    await pressShortcut(KEY.Ctrl, "n");
+    await browser.waitUntil(async () => (await getBlockCount()) === 0);
+    expect(await titleText()).toBe("未命名 Agent · 未保存");
+    await $("aria/智能体 成员").click();
+    await browser.waitUntil(async () => (await titleText()) === "未命名 Agent · 未保存");
+    await pressShortcut(KEY.Ctrl, "n");
+    await $("aria/保存更改？").waitForDisplayed();
+    await prepareDocumentDialog("saveFailure");
+    await $("aria/保存并继续").click();
+    await expect($("aria/无法保存项目文件，请检查文件后重试")).toBeDisplayed();
+    await expect($("aria/保存更改？")).toBeDisplayed();
+    expect(await getBlockCount()).toBe(1);
+    await $("aria/不保存").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 0);
+
+    await requestNativeWindowClose();
+    await $("aria/保存更改？").waitForDisplayed();
+    await $("aria/取消").click();
+    await expect($("aria/Blocky")).toExist();
+
+    // Exercise native WebView pointer/wheel events rather than creating blocks
+    // through the WDIO hook. Click insertion, pointer drag, marquee, Shift selection,
+    // clipboard, Delete, wheel zoom and temporary Space pan all go through the
+    // same DOM event path used by a person.
+    const libraryBlock = await $("aria/智能体 成员");
+    await libraryBlock.click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 1);
+    await browser.execute(() => {
+      const source = document.querySelector<HTMLElement>(
+        ".block-library__item[aria-label='智能体 成员']",
+      );
+      const target = document.querySelector<HTMLElement>(".blockly-canvas");
+      if (!source || !target) throw new Error("LIBRARY_DRAG_TARGET_UNAVAILABLE");
+      const sourceRect = source.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const start = {
+        x: sourceRect.left + sourceRect.width / 2,
+        y: sourceRect.top + sourceRect.height / 2,
+      };
+      const end = {
+        x: targetRect.left + targetRect.width * 0.62,
+        y: targetRect.top + targetRect.height * 0.32,
+      };
+      source.dispatchEvent(new PointerEvent("pointerdown", {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        pointerId: 63,
+        pointerType: "mouse",
+        button: 0,
+        buttons: 1,
+        clientX: start.x,
+        clientY: start.y,
+      }));
+      window.dispatchEvent(new PointerEvent("pointermove", {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        pointerId: 63,
+        pointerType: "mouse",
+        button: -1,
+        buttons: 1,
+        clientX: end.x,
+        clientY: end.y,
+      }));
+      window.dispatchEvent(new PointerEvent("pointerup", {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        pointerId: 63,
+        pointerType: "mouse",
+        button: 0,
+        buttons: 0,
+        clientX: end.x,
+        clientY: end.y,
+      }));
+    });
+    await browser.waitUntil(async () => (await getBlockCount()) === 2);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+
+    const beforeWheel = await readWorkspaceViewState();
+    const wheelDispatch = await dispatchWheel(".blockly-canvas", -420);
+    await browser.pause(100);
+    const afterWheelDispatch = await readWorkspaceViewState();
+    if (Math.abs(afterWheelDispatch.scale - beforeWheel.scale) <= 0.000_001) {
+      throw new Error(`WHEEL_ZOOM_UNCHANGED:${JSON.stringify(wheelDispatch)}`);
+    }
+    const afterCanvasWheel = await readWorkspaceViewState();
+    await expect($("aria/当前画布缩放")).toHaveText(
+      `${Math.round(afterCanvasWheel.scale * 100)}%`,
+    );
+    await dispatchWheel(".block-palette__list", 320);
+    expect((await readWorkspaceViewState()).scale).toBe(afterCanvasWheel.scale);
+
+    const marquee = await browser.execute(() => {
+      const canvasRect = document.querySelector(".blockly-canvas")
+        ?.getBoundingClientRect();
+      if (!canvasRect) return null;
+      return {
+        start: {
+          x: canvasRect.left + 8,
+          y: canvasRect.bottom - 120,
+        },
+        end: {
+          x: canvasRect.right - 8,
+          y: canvasRect.top + 8,
+        },
+      };
+    });
+    if (!marquee) throw new Error("MARQUEE_GEOMETRY_UNAVAILABLE");
+    await pointerDragViewport(marquee.start, marquee.end);
+    await browser.pause(100);
+    const marqueeCount = await selectedBlockCount();
+    if (marqueeCount !== 2) {
+      throw new Error(`MARQUEE_SELECTION_COUNT:${marqueeCount}`);
+    }
+
+    await browser.keys([KEY.Escape]);
+    await browser.waitUntil(async () => (await selectedBlockCount()) === 0);
+    const blockElements = await $$(".blocklyDraggable");
+    const firstBlock = blockElements[0];
+    const secondBlock = blockElements[1];
+    if (!firstBlock || !secondBlock) throw new Error("POINTER_BLOCKS_UNAVAILABLE");
+    await pointerClick(firstBlock);
+    expect(await selectedBlockCount()).toBe(1);
+    await pointerClick(secondBlock, true);
+    expect(await selectedBlockCount()).toBe(2);
+
+    await pressShortcut(KEY.Ctrl, "c");
+    await pressShortcut(KEY.Ctrl, "v");
+    await browser.waitUntil(async () => (await getBlockCount()) === 4);
+    await browser.waitUntil(async () => (await selectedBlockCount()) === 2);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await $("aria/编辑").click();
+    const deleteCommand = await $("//button[@role='menuitem'][.//span[normalize-space()='删除']]");
+    await deleteCommand.waitForEnabled();
+    await $("aria/编辑").click();
+    await pressShortcut(KEY.Delete);
+    await browser.waitUntil(async () => (await getBlockCount()) === 2);
+    await $("aria/撤销").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 4);
+    await $("aria/重做").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 2);
+    await pressShortcut(KEY.Ctrl, "a");
+    expect(await selectedBlockCount()).toBe(2);
+    await browser.keys([KEY.Escape]);
+    expect(await selectedBlockCount()).toBe(0);
+
+    const beforeSpacePan = await readWorkspaceViewState();
+    const panPoints = await browser.execute(() => {
+      const rect = document.querySelector(".blockly-canvas")?.getBoundingClientRect();
+      if (!rect) return null;
+      return {
+        start: { x: rect.right - 180, y: rect.bottom - 160 },
+        end: { x: rect.right - 100, y: rect.bottom - 110 },
+      };
+    });
+    if (!panPoints) throw new Error("PAN_GEOMETRY_UNAVAILABLE");
+    await browser.action("key").down(KEY.Space).perform(true);
+    await pointerDragViewport(panPoints.start, panPoints.end);
+    await browser.action("key").up(KEY.Space).perform();
+    const afterSpacePan = await readWorkspaceViewState();
+    expect(afterSpacePan.scale).toBe(beforeSpacePan.scale);
+    expect(afterSpacePan.topBlocks).toEqual(beforeSpacePan.topBlocks);
+    expect({ x: afterSpacePan.scrollX, y: afterSpacePan.scrollY }).not.toEqual({
+      x: beforeSpacePan.scrollX,
+      y: beforeSpacePan.scrollY,
+    });
+
+    await loadHundredBlockFixture();
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    const beforeCollapse = await readWorkspaceViewState();
+
+    await $("aria/收起积木栏").click();
+    await $("aria/收起右侧面板").click();
+    await $("aria/展开积木栏").waitForDisplayed();
+    await $("aria/展开右侧面板").waitForDisplayed();
+    await browser.waitUntil(async () =>
+      JSON.stringify(await readWorkspaceViewState()) === JSON.stringify(beforeCollapse),
+    );
     expect(await readTopLevelOverlapPairs()).toEqual([]);
     await $("aria/展开积木栏").click();
-    await $("aria/展开运行栏").click();
-    await $("aria/收起积木栏").waitForDisplayed();
-    await $("aria/收起运行栏").waitForDisplayed();
-    expect(await readWorkspaceViewState()).toEqual(beforePanelCollapse);
-    await expect(runtimeTab).toBeEnabled();
-    await runtimeTab.click();
+    await $("aria/展开右侧面板").click();
 
-    const entrySelect = await $("[data-testid='runtime-entry-select']");
-    await expect(entrySelect).toHaveValue("block-002");
-    await expect(entrySelect).toHaveText(expect.stringContaining("Chat"));
-    await expect(entrySelect).toHaveText(expect.stringContaining("Follow-up"));
+    const initialScale = (await readWorkspaceViewState()).scale;
+    const search = await $("aria/搜索积木和命令");
+    await search.click();
+    await search.setValue("放大");
+    await browser.keys(["Enter"]);
+    await browser.waitUntil(async () =>
+      (await readWorkspaceViewState()).scale > initialScale,
+    );
 
-    const textInput = await $("[data-testid='runtime-text-input']");
-    await textInput.setValue("A 草稿");
-    await expect($("[data-testid='runtime-add-image']")).toExist();
-    await expect($("[data-testid='runtime-add-file']")).toExist();
-    await expect($("[data-testid='runtime-add-voice']")).toExist();
-    await expect($("[data-testid='runtime-skill-menu']")).toExist();
-    await expect($("[data-testid='runtime-plugin-menu']")).toExist();
+    await search.click();
+    await search.setValue("智能体 成员");
+    await browser.keys(["Enter"]);
+    await browser.waitUntil(async () => (await getBlockCount()) === 101);
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await $("aria/撤销").click();
+    await browser.waitUntil(async () => (await getBlockCount()) === 100);
 
-    await setControlledSelect("runtime-entry-select", "block-015");
-    await expect(entrySelect).toHaveValue("block-015");
-    await $("[data-testid='runtime-skill-menu'] option[value='history']").waitForExist();
-    await setControlledSelect("runtime-skill-menu", "history");
-    await expect($("[data-testid='runtime-text-input']")).not.toExist();
-    await expect($("[data-testid='runtime-add-image']")).not.toExist();
-    await expect($("[data-testid='runtime-add-file']")).not.toExist();
-    await expect($("[data-testid='runtime-add-voice']")).not.toExist();
-    await expect($("[data-testid='runtime-plugin-menu']")).not.toExist();
-    await expect($("[data-testid='runtime-skill-menu']")).toHaveValue("history");
-    await setControlledSelect("runtime-entry-select", "block-002");
-    await expect(entrySelect).toHaveValue("block-002");
-    await $("[data-testid='runtime-text-input']").waitForExist();
-    await expect($("[data-testid='runtime-text-input']")).toHaveValue("A 草稿");
-    await setControlledSelect("runtime-entry-select", "block-015");
-    await expect(entrySelect).toHaveValue("block-015");
-    await $("[data-testid='runtime-skill-menu'] option[value='history']").waitForExist();
-    await expect($("[data-testid='runtime-skill-menu']")).toHaveValue("history");
+    await $("aria/平移工具 (H)").click();
+    await expect($("aria/平移工具 (H)")).toHaveAttribute("aria-pressed", "true");
+    await browser.keys(["v"]);
+    await expect($("aria/选择工具 (V)")).toHaveAttribute("aria-pressed", "true");
 
-    const manifest = await getManifest();
+    const manifest = await callHook<InteractionManifest>("getManifest");
     expect(manifest).toMatchObject({
       schemaVersion: "blocky.interaction/v0-spike",
       entries: [
@@ -329,201 +577,167 @@ describe("Windows Core native channel", () => {
       ],
     });
 
-    await invokeMenu("视图", "折叠首块");
-    await browser.waitUntil(async () => (
-      findBlock(snapshotWorkspace(await getCanonicalSnapshot()), "block-001")
-        ?.collapsed === true
-    ));
-    await builderTab.click();
-    const initialScale = await readBlocklyScale();
-    await $("aria/放大画布").click();
-    await browser.waitUntil(async () => (await readBlocklyScale()) > initialScale);
-    const zoomedInScale = await readBlocklyScale();
-    expect(zoomedInScale).toBeGreaterThan(initialScale);
-    await $("aria/缩小画布").click();
-    await browser.waitUntil(async () => (await readBlocklyScale()) < zoomedInScale);
-    const zoomedOutScale = await readBlocklyScale();
-    expect(zoomedOutScale).toBeLessThan(zoomedInScale);
-    expect(zoomedOutScale).toBeCloseTo(initialScale, 6);
-    expect(await readTopLevelOverlapPairs()).toEqual([]);
-    const beforeSave = await getCanonicalSnapshot();
-    const beforeIds = [...collectBlockIds(beforeSave)].sort();
-    expect(beforeIds).toHaveLength(100);
-    expect(findBlock(snapshotWorkspace(beforeSave), "block-001"))
-      .toMatchObject({ collapsed: true });
-
-    const sentinel = structuredClone(beforeSave) as SpikeProjectSnapshot;
-    const sentinelBlock = findBlock(snapshotWorkspace(sentinel), "block-001");
-    if (!sentinelBlock) throw new Error("WDIO_SENTINEL_BLOCK_UNAVAILABLE");
-    sentinelBlock.collapsed = false;
-    const sentinelJson = stableStringify(sentinel);
-    const sentinelRecord = await writeRustRecord(
-      "windows-core-spike",
-      sentinelJson,
-    );
-    expect(sentinelRecord).toEqual(
-      expectedRecord("windows-core-spike", sentinelJson),
-    );
-
-    await $("aria/保存项目").click();
-    const expectedSavedRecord = expectedRecord(
-      "windows-core-spike",
-      stableStringify(beforeSave),
-    );
-    expect(await waitForRustSave(expectedSavedRecord, sentinelRecord)).toEqual(
-      expectedSavedRecord,
-    );
-    await invokeMenu("文件", "清空");
-    await browser.waitUntil(async () => (await getBlockCount()) === 0);
-    await expect(runtimeTab).toBeDisabled();
-    await invokeMenu("文件", "重开");
-    await browser.waitUntil(async () => (await getBlockCount()) === 100);
-    const afterReload = await getCanonicalSnapshot();
-    expect(JSON.stringify(afterReload)).toBe(JSON.stringify(beforeSave));
-    expect([...collectBlockIds(afterReload)].sort()).toEqual(beforeIds);
-
-    await runtimeTab.click();
-    await $("[data-testid='runtime-text-input']").setValue("你好");
-    await $("[data-testid='runtime-send']").click();
-    await browser.waitUntil(async () => (await $(".blocklyHighlighted")).isExisting());
-    const normalEvents = await waitForTerminal("run.completed");
-    expect(normalEvents.filter((event) => event.type === "model.chunk").map(
+    await $("aria/对话测试").click();
+    const input = await $("aria/发送给 Agent");
+    await input.setValue("你好");
+    await browser.keys(["Enter"]);
+    const completed = await waitForTerminal("run.completed");
+    expect(completed.filter((event) => event.type === "model.chunk").map(
       (event) => (event.data as { text: string }).text,
-    )).toEqual([
-      "已收到：",
-      "你好",
-    ]);
-    expect(normalEvents.some((event) => event.type === "block.started")).toBe(true);
-
-    await $("[data-testid='runtime-text-input']").setValue("取消我");
-    await $("[data-testid='runtime-send']").click();
-    await browser.waitUntil(async () => (await eventsSinceLastStart()).some((event) => event.type === "block.started"));
-    await $("aria/取消运行").click();
-    const cancelledEvents = await waitForTerminal("run.cancelled");
-    expect(cancelledEvents.some((event) => event.type === "run.completed")).toBe(false);
-
-    await $("[data-testid='runtime-text-input']").setValue("/error");
-    await $("[data-testid='runtime-send']").click();
-    const errorEvents = await waitForTerminal("run.failed");
-    expect(errorEvents.at(-1)).toMatchObject({
-      type: "run.failed",
-      blockId: "block-001",
-      data: { code: "MODEL_SIMULATED_FAILURE" },
+    )).toEqual(["已收到：", "你好"]);
+    await expect($(".conversation-message--user")).toHaveText("你好");
+    await expect($(".conversation-message--assistant")).toHaveText("已收到：你好");
+    const traceToggle = await $("button.conversation-trace__toggle");
+    await expect(traceToggle).toHaveAttribute("aria-expanded", "false");
+    await traceToggle.click();
+    await $(".conversation-trace__item").waitForDisplayed();
+    const tracePresentation = await browser.execute(() => {
+      const rows = [...document.querySelectorAll<HTMLElement>(
+        ".conversation-trace__item",
+      )];
+      return {
+        categories: [...new Set(rows.map((row) => row.dataset.category))],
+        colours: rows.map((row) => row.style.getPropertyValue("--event-colour")),
+      };
     });
+    expect(tracePresentation.categories.length).toBeGreaterThanOrEqual(2);
+    expect(tracePresentation.colours.every((colour) => colour.length > 0)).toBe(true);
+    await browser.saveScreenshot(resolve(
+      process.cwd(),
+      "../../doc/技术设计/Windows-Core视觉验收/13-professional-conversation-trace.png",
+    ));
+    await traceToggle.click();
+    const productText = await browser.execute(() => document.body.innerText);
+    expect(productText).not.toMatch(/block-001|blocky\.event|run\.completed/);
 
-    await $("[data-testid='runtime-text-input']").setValue("/permission");
-    await $("[data-testid='runtime-send']").click();
-    const permissionDialog = await $("aria/工具权限请求");
-    await permissionDialog.waitForDisplayed();
-    await expect(permissionDialog).toHaveText(expect.stringContaining("tool.weather"));
-    await expect(permissionDialog).toHaveText(expect.stringContaining("无额外权限"));
+    await input.setValue("/permission");
+    await browser.keys(["Enter"]);
+    await $("aria/工具权限请求").waitForDisplayed();
     await $("aria/拒绝").click();
-    const deniedEvents = await waitForTerminal("run.failed");
-    expect(deniedEvents.some((event) => event.type === "tool.started")).toBe(false);
+    const denied = await waitForTerminal("run.failed");
+    expect(denied.some((event) => event.type === "tool.started")).toBe(false);
 
-    await $("[data-testid='runtime-text-input']").setValue("/permission");
-    await $("[data-testid='runtime-send']").click();
+    await input.setValue("/permission");
+    await browser.keys(["Enter"]);
     await $("aria/工具权限请求").waitForDisplayed();
     await $("aria/批准").click();
-    const approvedEvents = await waitForTerminal("run.completed");
-    expect(approvedEvents.some((event) => event.type === "tool.completed")).toBe(true);
+    const approved = await waitForTerminal("run.completed");
+    expect(approved.some((event) => event.type === "tool.completed")).toBe(true);
 
-    const visualDir = resolve(
+    // Keyboard-only core path plus the two approved product viewports. The
+    // current Windows host runs at 125% DPI, so the screenshot pixels also
+    // prove a high-DPI native render rather than a browser-only resize.
+    await setCssViewport(1440, 900);
+    await browser.saveScreenshot(resolve(
       process.cwd(),
-      "../../doc/技术设计/Windows-Core视觉验收",
+      "../../doc/技术设计/Windows-Core视觉验收/15-professional-workbench-1440x900.png",
+    ));
+
+    await setCssViewport(1180, 720);
+    const compactLayout = await browser.execute(() => {
+      const selectors = [
+        ".desktop-titlebar",
+        ".command-center",
+        ".canvas-tool-controls",
+        ".canvas-controls__primary",
+        ".canvas-controls__zoom",
+        ".assistant-panel",
+      ];
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        devicePixelRatio: window.devicePixelRatio,
+        bounds: selectors.map((selector) => {
+          const rect = document.querySelector(selector)?.getBoundingClientRect();
+          return rect ? {
+            selector,
+            left: rect.left,
+            top: rect.top,
+            right: rect.right,
+            bottom: rect.bottom,
+          } : null;
+        }),
+      };
+    });
+    expect(compactLayout.width).toBe(1180);
+    expect(compactLayout.height).toBe(720);
+    expect(compactLayout.devicePixelRatio).toBeGreaterThan(1);
+    await browser.saveScreenshot(resolve(
+      process.cwd(),
+      "../../doc/技术设计/Windows-Core视觉验收/16-professional-workbench-1180x720-high-dpi.png",
+    ));
+    const compactBoundsFit = compactLayout.bounds.every((bounds) =>
+      bounds !== null &&
+      bounds.left >= 0 && bounds.top >= 0 &&
+      bounds.right <= compactLayout.width && bounds.bottom <= compactLayout.height
     );
-    await browser.tauri.execute(({ core: _core }) =>
-      (window as unknown as HookWindow).__BLOCKY_SPIKE_TEST__
-        .loadVisualAcceptanceWorkspace(),
+    if (!compactBoundsFit) {
+      throw new Error(`COMPACT_LAYOUT_OVERFLOW:${JSON.stringify(compactLayout)}`);
+    }
+
+    const keyboardFocusOrder = await browser.execute(() =>
+      [...document.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex='-1'])",
+      )].map((control) =>
+        control.getAttribute("aria-label") ??
+          control.getAttribute("placeholder") ??
+          control.innerText.trim(),
+      ),
     );
+    const builderFocusIndex = keyboardFocusOrder.indexOf("搭建助手");
+    const runtimeFocusIndex = keyboardFocusOrder.indexOf("对话测试");
+    const inputFocusIndex = keyboardFocusOrder.indexOf("发送给 Agent");
+    expect(builderFocusIndex).toBeGreaterThan(-1);
+    expect(runtimeFocusIndex).toBeGreaterThan(builderFocusIndex);
+    expect(inputFocusIndex).toBeGreaterThan(runtimeFocusIndex);
+
+    await focusControl("搭建助手");
+    await browser.keys([KEY.Enter]);
+    await expect($("aria/搭建助手")).toHaveAttribute("aria-selected", "true");
+    await focusControl("对话测试");
+    await browser.keys([KEY.Enter]);
+    await expect($("aria/对话测试")).toHaveAttribute("aria-selected", "true");
+    await focusControl("发送给 Agent");
+    await browser.keys("键盘验收");
+    await browser.keys([KEY.Enter]);
+    await waitForTerminal("run.completed");
+    const keyboardMessage = await browser.execute(() =>
+      [...document.querySelectorAll<HTMLElement>(".conversation-message--user")]
+        .at(-1)?.innerText.trim() ?? "",
+    );
+    expect(keyboardMessage).toBe("键盘验收");
+
+    const beforeKeyboardInsert = await getBlockCount();
+    await pressShortcut(KEY.Ctrl, "p");
+    await browser.keys("智能体 成员");
+    await browser.keys([KEY.Enter]);
+    await browser.waitUntil(async () => (await getBlockCount()) === beforeKeyboardInsert + 1);
+    await pressShortcut(KEY.Ctrl, "a");
+    expect(await selectedBlockCount()).toBeGreaterThan(0);
+    await pressShortcut(KEY.Ctrl, "c");
+    await pressShortcut(KEY.Ctrl, "v");
+    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await prepareDocumentDialog("roundTrip");
+    await pressShortcut(KEY.Ctrl, KEY.Shift, "s");
+    await browser.waitUntil(async () => (await titleText()) === "lifecycle.blocky · 已保存");
+
+    await setCssViewport(1536, 843);
+
+    const visualDir = resolve(process.cwd(), "../../doc/技术设计/Windows-Core视觉验收");
+    await callHook<void>("loadVisualAcceptanceWorkspace");
     await browser.waitUntil(async () => (await getBlockCount()) === 3);
+    await $("aria/搭建助手").click();
     await expect($("aria/画布积木数量")).toHaveText("画布 · 3 个积木");
-    await browser.tauri.execute(({ core: _core }) => {
-      const timeline = document.querySelector<HTMLElement>(".event-timeline");
-      if (!timeline) throw new Error("WDIO_EVENT_TIMELINE_UNAVAILABLE");
-      timeline.scrollTop = timeline.scrollHeight;
-    });
-    const beforeVisualCollapse = await readWorkspaceViewState();
+    const visualState = await readWorkspaceViewState();
     expect(await readTopLevelOverlapPairs()).toEqual([]);
-    await browser.saveScreenshot(resolve(
-      visualDir,
-      "09-modern-workbench-expanded.png",
-    ));
+    await browser.saveScreenshot(resolve(visualDir, "11-professional-workbench-expanded.png"));
+
     await $("aria/收起积木栏").click();
-    await $("aria/收起运行栏").click();
-    await $("aria/展开积木栏").waitForDisplayed();
-    await $("aria/展开运行栏").waitForDisplayed();
+    await $("aria/收起右侧面板").click();
     await browser.waitUntil(async () =>
-      JSON.stringify(await readWorkspaceViewState()) ===
-        JSON.stringify(beforeVisualCollapse),
+      JSON.stringify(await readWorkspaceViewState()) === JSON.stringify(visualState),
     );
-    expect(await readWorkspaceViewState()).toEqual(beforeVisualCollapse);
     expect(await readTopLevelOverlapPairs()).toEqual([]);
-    await browser.saveScreenshot(resolve(
-      visualDir,
-      "10-modern-workbench-collapsed.png",
-    ));
-    await $("aria/展开积木栏").click();
-    await $("aria/展开运行栏").click();
-    await $("aria/收起积木栏").waitForDisplayed();
-    await $("aria/收起运行栏").waitForDisplayed();
-    expect(await readWorkspaceViewState()).toEqual(beforeVisualCollapse);
-
-    // Replacing browser networking constructors cannot be expressed with DOM actions;
-    // this setup-only execution makes every outbound attempt fail synchronously.
-    await browser.tauri.execute(({ core: _core }) => {
-      const originalFetch = window.fetch.bind(window);
-      const outboundAttempts: string[] = [];
-      Object.assign(window, { __BLOCKY_OUTBOUND_ATTEMPTS__: outboundAttempts });
-      window.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
-        const raw = typeof input === "string"
-          ? input
-          : input instanceof URL
-            ? input.href
-            : input.url;
-        const parsed = new URL(raw, window.location.href);
-        if (parsed.protocol === "http:" && parsed.host === "ipc.localhost") {
-          return originalFetch(input, init);
-        }
-        outboundAttempts.push(`${parsed.protocol}//${parsed.host}`);
-        throw new Error("OUTBOUND_FETCH_BLOCKED");
-      }) as typeof window.fetch;
-      window.XMLHttpRequest = class BlockedXmlHttpRequest {
-        constructor() {
-          outboundAttempts.push("xhr://constructor");
-          throw new Error("OUTBOUND_XHR_BLOCKED");
-        }
-      } as unknown as typeof window.XMLHttpRequest;
-      window.WebSocket = class BlockedWebSocket {
-        constructor() {
-          outboundAttempts.push("websocket://constructor");
-          throw new Error("OUTBOUND_WEBSOCKET_BLOCKED");
-        }
-      } as unknown as typeof window.WebSocket;
-    });
-
-    await invokeMenu("文件", "清空");
-    await invokeMenu("文件", "重开");
-    await browser.waitUntil(async () => (await getBlockCount()) === 100);
-    await runtimeTab.click();
-    await $("[data-testid='runtime-text-input']").setValue("断网运行");
-    await $("[data-testid='runtime-send']").click();
-    const offlineEvents = await waitForTerminal("run.completed");
-    expect(offlineEvents.filter((event) => event.type === "model.chunk")).toHaveLength(2);
-    // The external-attempt ledger is assertion-only state installed above;
-    // Tauri's fixed ipc.localhost transport is intentionally not outbound.
-    const outboundAttempts = await browser.tauri.execute(({ core: _core }) =>
-      (window as unknown as { __BLOCKY_OUTBOUND_ATTEMPTS__?: string[] })
-        .__BLOCKY_OUTBOUND_ATTEMPTS__ ?? [],
-    );
-    expect(outboundAttempts).toEqual([]);
-
-    await $("aria/适配画布").click();
-    await browser.waitUntil(async () =>
-      (await readBlocklyScale()) !== beforeVisualCollapse.scale,
-    );
-    expect(await readBlocklyScale()).toBeGreaterThanOrEqual(0.4);
-    expect(await readBlocklyScale()).toBeLessThanOrEqual(1.5);
-    expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await browser.saveScreenshot(resolve(visualDir, "12-professional-workbench-collapsed.png"));
   });
 });

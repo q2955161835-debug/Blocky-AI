@@ -11,20 +11,20 @@ const tauriConfig = JSON.parse(
   app: { windows: Array<{ title: string }> };
 };
 
-describe("Windows Core spike localization", () => {
-  it("renders only Simplified Chinese page and window labels", async () => {
+describe("Blocky product localization", () => {
+  it("uses product-facing Blocky metadata and keeps internal spike copy out of the rendered UI", async () => {
     expect(indexHtml).toContain('<html lang="zh-CN">');
-    expect(indexHtml).toContain("<title>Blocky Windows 核心尖峰</title>");
-    expect(indexHtml).not.toContain("Blocky Windows Core Spike");
-    expect(tauriConfig.productName).toBe("Blocky Windows 核心尖峰");
-    expect(tauriConfig.app.windows[0]?.title).toBe("Blocky Windows 核心尖峰");
+    expect(indexHtml).toContain("<title>Blocky</title>");
+    expect(tauriConfig.productName).toBe("Blocky");
+    expect(tauriConfig.app.windows[0]?.title).toBe("Blocky");
 
     document.body.innerHTML = '<div id="root"></div>';
     await import("../../src/main");
 
     await waitFor(() => {
-      expect(screen.getByRole("main")).toHaveTextContent("Blocky Windows 核心尖峰");
+      expect(screen.getByRole("banner", { name: "应用标题栏" }))
+        .toHaveTextContent("Blocky");
     });
-    expect(document.body).not.toHaveTextContent("Blocky Windows Core Spike");
+    expect(document.body).not.toHaveTextContent(/Windows Core|核心尖峰|技术尖峰/);
   }, 15_000);
 });

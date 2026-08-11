@@ -1,5 +1,6 @@
 import * as Blockly from "blockly/core";
 import { buildEditorProjection } from "../blockly/BlocklyCanvas";
+import { repairTopLevelOverlaps } from "../blockly/blockPlacement";
 import { createHundredBlockWorkspaceState } from "../blockly/fixtures";
 import { createDeterministicModel, runProgram } from "../core/deterministicRuntime";
 import type { InteractionManifest } from "../core/interactionManifest";
@@ -49,7 +50,7 @@ interface SoakCycleResult {
 
 interface WdioSpikeTestHook {
   getBlockCount(): number;
-  loadHundredBlockFixture(): Promise<void>;
+  loadHundredBlockFixture(): void;
   loadVisualAcceptanceWorkspace(): void;
   readWorkspaceViewState(): WorkspaceViewState;
   readTopLevelOverlapPairs(): readonly string[];
@@ -101,14 +102,6 @@ function clickButton(name: string): void {
   button.click();
 }
 
-async function clickMenuAction(menuName: string, actionName: string): Promise<void> {
-  clickButton(menuName);
-  await waitFor(() => [...document.querySelectorAll<HTMLButtonElement>(
-    'button[role="menuitem"]',
-  )].some((candidate) => candidate.textContent?.trim() === actionName));
-  clickButton(actionName);
-}
-
 function readWorkspaceViewState(): WorkspaceViewState {
   const workspace = mainWorkspace();
   return {
@@ -150,12 +143,28 @@ function readTopLevelOverlapPairs(): readonly string[] {
   return overlaps;
 }
 
-function loadVisualAcceptanceWorkspace(): void {
+function replaceWorkspace(state: object): void {
   const workspace = mainWorkspace();
-  const metrics = workspace.getMetrics();
+  Blockly.Events.disable();
+  try {
+    workspace.clear();
+    Blockly.serialization.workspaces.load(state, workspace);
+    repairTopLevelOverlaps(workspace);
+  } finally {
+    Blockly.Events.enable();
+  }
+  workspace.fireChangeListener(new Blockly.Events.FinishedLoading(workspace));
+}
+
+function loadHundredBlockFixture(): void {
+  replaceWorkspace(createHundredBlockWorkspaceState());
+}
+
+function loadVisualAcceptanceWorkspace(): void {
+  const metrics = mainWorkspace().getMetrics();
   const x = metrics.viewLeft + Math.max(120, metrics.viewWidth * 0.18);
   const y = metrics.viewTop + 150;
-  const state = {
+  replaceWorkspace({
     blocks: {
       languageVersion: 0,
       blocks: [
@@ -181,15 +190,7 @@ function loadVisualAcceptanceWorkspace(): void {
         },
       ],
     },
-  };
-  Blockly.Events.disable();
-  try {
-    workspace.clear();
-    Blockly.serialization.workspaces.load(state, workspace);
-  } finally {
-    Blockly.Events.enable();
-  }
-  workspace.fireChangeListener(new Blockly.Events.FinishedLoading(workspace));
+  });
 }
 
 function setControlledTextAreaValue(element: HTMLTextAreaElement, value: string): void {
@@ -202,30 +203,14 @@ function setControlledTextAreaValue(element: HTMLTextAreaElement, value: string)
   element.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
-function readTimelineEvents(): RuntimeEvent[] {
-  return [...document.querySelectorAll<HTMLElement>(".event-timeline__item")].map(
-    (item) => {
-      const sequenceText = item.querySelector(
-        ".event-timeline__sequence",
-      )?.textContent;
-      const type = item.querySelector(".event-timeline__meta strong")?.textContent;
-      const blockId = item.querySelector(".event-timeline__meta code")?.textContent;
-      const summary = item.querySelector(".event-timeline__summary")?.textContent;
-      const eventVersion = item.dataset.eventVersion;
-      const runId = item.dataset.runId;
-      if (eventVersion !== "blocky.event/v0-spike" || !runId || !sequenceText || !type) {
-        throw new Error("WDIO_EVENT_DOM_INVALID");
-      }
-      return {
-        eventVersion,
-        runId,
-        sequence: Number(sequenceText.replace(/^#/, "")),
-        type,
-        ...(blockId ? { blockId } : {}),
-        data: summary ? JSON.parse(summary) : {},
-      } as RuntimeEvent;
-    },
-  );
+let runtimeEvents: RuntimeEvent[] = [];
+
+export function recordRuntimeEvent(event: RuntimeEvent): void {
+  runtimeEvents = [...runtimeEvents, event].slice(-200);
+}
+
+function readRuntimeEvents(): RuntimeEvent[] {
+  return [...runtimeEvents];
 }
 
 function countProgramNodes(roots: readonly IrNode[]): number {
@@ -427,7 +412,7 @@ async function waitFor(
 }
 
 function latestRunEvents(): RuntimeEvent[] {
-  const events = readTimelineEvents();
+  const events = readRuntimeEvents();
   let start = -1;
   for (let index = events.length - 1; index >= 0; index -= 1) {
     if (events[index]?.type === "run.started") {
@@ -469,9 +454,14 @@ async function canonicalSoakSnapshot(): Promise<{
 
 async function prepareSoak(): Promise<SoakPreparation> {
   installSoakEvidenceCollectors();
-  await clickMenuAction("视图", "载入100块");
+  runtimeEvents = [];
+  loadHundredBlockFixture();
   await waitFor(() => mainWorkspace().getAllBlocks(false).length === 100);
   mainWorkspace().getBlockById("block-001")?.setCollapsed(false);
+  clickButton("对话测试");
+  await waitFor(() => Boolean(document.querySelector(
+    "[data-testid='runtime-text-input']",
+  )));
   const baseline = await canonicalSoakSnapshot();
   if (baseline.blockCount !== 100 || baseline.nodeCount !== 100) {
     throw new Error("WDIO_SOAK_BASELINE_COUNT_INVALID");
@@ -499,7 +489,7 @@ async function runSoakCycle(cycle: number): Promise<SoakCycleResult> {
   );
   if (!textArea) throw new Error("WDIO_SOAK_RUNTIME_INPUT_UNAVAILABLE");
   setControlledTextAreaValue(textArea, input);
-  clickButton("发送");
+  clickButton("发送消息");
   await waitFor(() => {
     const events = latestRunEvents();
     const hasInputChunk = events.some((event) => {
@@ -540,7 +530,7 @@ async function runSoakCycle(cycle: number): Promise<SoakCycleResult> {
     snapshotSha256: snapshot.sha256,
     compileErrorCount: snapshot.compileErrorCount,
     terminalTypes,
-    eventRowCount: document.querySelectorAll(".event-timeline__item").length,
+    eventRowCount: readRuntimeEvents().length,
     uncaughtErrors: [...soakEvidence.uncaughtErrors],
     unhandledRejections: [...soakEvidence.unhandledRejections],
     outboundAttempts: [...soakEvidence.outboundAttempts],
@@ -551,7 +541,7 @@ async function runSoakCycle(cycle: number): Promise<SoakCycleResult> {
 export function installWdioHooks(): void {
   const hook: WdioSpikeTestHook = {
     getBlockCount: () => mainWorkspace().getAllBlocks(false).length,
-    loadHundredBlockFixture: () => clickMenuAction("视图", "载入100块"),
+    loadHundredBlockFixture,
     loadVisualAcceptanceWorkspace,
     readWorkspaceViewState,
     readTopLevelOverlapPairs,
@@ -578,10 +568,10 @@ export function installWdioHooks(): void {
       );
       if (!textArea) throw new Error("WDIO_RUNTIME_INPUT_UNAVAILABLE");
       setControlledTextAreaValue(textArea, input);
-      clickButton("发送");
+      clickButton("发送消息");
     },
     cancelSimulation: () => clickButton("取消运行"),
-    readRedactedEvents: readTimelineEvents,
+    readRedactedEvents: readRuntimeEvents,
     readUsedJsHeapSize: () => {
       const memory = (
         performance as Performance & { memory?: { usedJSHeapSize?: number } }

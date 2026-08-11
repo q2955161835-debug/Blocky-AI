@@ -16,7 +16,7 @@ describe("normal Tauri release security configuration", () => {
   it("uses the local-only build, fixed Simplified Chinese window, and constrained CSP", () => {
     expect(tauriConfig).toMatchObject({
       $schema: "https://schema.tauri.app/config/2",
-      productName: "Blocky Windows 核心尖峰",
+      productName: "Blocky",
       version: "0.0.0",
       identifier: "ai.blocky.windowscorespike",
       build: {
@@ -30,7 +30,7 @@ describe("normal Tauri release security configuration", () => {
         windows: [
           {
             label: "main",
-            title: "Blocky Windows 核心尖峰",
+            title: "Blocky",
             width: 1440,
             height: 900,
             minWidth: 1180,

@@ -9,6 +9,7 @@ import {
   TauriHostBridge,
   type ProjectRecord,
 } from "../../src/host/TauriHostBridge";
+import type { DocumentRecord } from "../../src/host/HostBridge";
 import { createSpikeProjectSnapshot } from "../../src/project/SpikeProjectSnapshot";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
@@ -40,6 +41,17 @@ function record(json: string): ProjectRecord {
     json,
     sha256: "0".repeat(64),
     bytes: new TextEncoder().encode(json).byteLength,
+  };
+}
+
+function documentRecord(json: string): DocumentRecord {
+  return {
+    documentId: "document-opaque-1",
+    displayName: "weather.blocky",
+    json,
+    sha256: "1".repeat(64),
+    bytes: new TextEncoder().encode(json).byteLength,
+    hasFileAssociation: true,
   };
 }
 
@@ -163,5 +175,46 @@ describe("TauriHostBridge", () => {
       code: "PROJECT_SCHEMA_UNSUPPORTED",
       message: "项目格式版本不受支持",
     });
+  });
+
+  it("opens a user document without sending or receiving a native path", async () => {
+    const json = stableStringify(snapshot());
+    invokeMock.mockResolvedValueOnce(documentRecord(json));
+
+    const opened = await new TauriHostBridge().openDocument();
+
+    expect(invokeMock).toHaveBeenCalledWith("open_project_document");
+    expect(opened).toEqual(documentRecord(json));
+    expect(opened).not.toHaveProperty("path");
+  });
+
+  it("treats native document dialog cancellation as null", async () => {
+    invokeMock.mockResolvedValueOnce(null);
+    await expect(new TauriHostBridge().openDocument()).resolves.toBeNull();
+    expect(invokeMock).toHaveBeenCalledWith("open_project_document");
+  });
+
+  it("saves through an opaque native document association", async () => {
+    const json = stableStringify(snapshot());
+    invokeMock.mockResolvedValueOnce(documentRecord(json));
+
+    const saved = await new TauriHostBridge().saveDocument({
+      json,
+      suggestedName: "weather.blocky",
+      saveAs: true,
+    });
+
+    expect(invokeMock).toHaveBeenCalledWith("save_project_document", {
+      request: { json, suggestedName: "weather.blocky", saveAs: true },
+    });
+    expect(saved).toEqual(documentRecord(json));
+  });
+
+  it("clears only the host-owned file association", async () => {
+    invokeMock.mockResolvedValueOnce(undefined);
+    await new TauriHostBridge().clearDocumentAssociation();
+    expect(invokeMock).toHaveBeenCalledWith(
+      "clear_project_document_association",
+    );
   });
 });

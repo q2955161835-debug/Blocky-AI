@@ -152,6 +152,19 @@ fn validate_json_bytes(bytes: &[u8]) -> Result<(), HostError> {
     }
 }
 
+pub(crate) fn validate_snapshot_json(json: &str) -> Result<(), HostError> {
+    validate_json_bytes(json.as_bytes())?;
+    let value: Value = serde_json::from_str(json)
+        .map_err(|_| HostError::new("PROJECT_JSON_INVALID", "项目 JSON 无效"))?;
+    let project_id = value
+        .as_object()
+        .and_then(|object| object.get("projectId"))
+        .and_then(Value::as_str)
+        .ok_or_else(|| HostError::new("PROJECT_JSON_INVALID", "项目 JSON 无效"))?;
+    validate_project_id(project_id)?;
+    validate_json_document(project_id, json)
+}
+
 fn validate_json_document(project_id: &str, json: &str) -> Result<(), HostError> {
     let value: Value = serde_json::from_str(json)
         .map_err(|_| HostError::new("PROJECT_JSON_INVALID", "项目 JSON 无效"))?;

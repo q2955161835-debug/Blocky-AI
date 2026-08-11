@@ -23,6 +23,7 @@ import type { ToolContract } from "../core/toolContract";
 import type { HostBridge } from "../host/HostBridge";
 import { createSpikeProjectSnapshot } from "../project/SpikeProjectSnapshot";
 import type { RuntimeInput } from "../runtime/RuntimeComposer";
+import type { SubmittedRuntimeInput } from "../runtime/conversationProjection";
 
 export type RuntimeStatus = "idle" | "running" | RuntimeEventType;
 
@@ -96,6 +97,7 @@ interface UseSpikeControllerOptions {
   hostBridge: HostBridge;
   projectId: string;
   runtimeModel?: RuntimeDependencies["model"];
+  onRuntimeEvent?: (event: RuntimeEvent) => void;
 }
 
 export interface PendingPermissionRequest {
@@ -142,6 +144,7 @@ export function useSpikeController({
   hostBridge,
   projectId,
   runtimeModel,
+  onRuntimeEvent,
 }: UseSpikeControllerOptions) {
   const [projection, setProjection] = useState<EditorProjection>(() =>
     buildEditorProjection(EMPTY_WORKSPACE),
@@ -153,6 +156,7 @@ export function useSpikeController({
     status: "idle",
   });
   const [operationError, setOperationError] = useState<string | null>(null);
+  const [submissions, setSubmissions] = useState<readonly SubmittedRuntimeInput[]>([]);
   const [pendingPermission, setPendingPermission] =
     useState<PendingPermissionRequest | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -266,6 +270,7 @@ export function useSpikeController({
 
   const acceptRuntimeEvent = useCallback(
     (event: RuntimeEvent): void => {
+      onRuntimeEvent?.(event);
       dispatchRuntimeEvent(event);
       if (event.type === "block.started" && event.blockId) {
         canvasRef.current?.highlight(event.blockId);
@@ -274,7 +279,7 @@ export function useSpikeController({
       }
       if (event.type === "run.failed") setOperationError(RUN_ERROR);
     },
-    [canvasRef],
+    [canvasRef, onRuntimeEvent],
   );
 
   useEffect(
@@ -332,7 +337,7 @@ export function useSpikeController({
   );
 
   const runInput = useCallback(
-    async (input: RuntimeInput): Promise<void> => {
+    async (input: RuntimeInput): Promise<{ readonly runId: string }> => {
       setOperationError(null);
       let abortController: AbortController | null = null;
       let resolveSettled = (): void => {};
@@ -366,11 +371,16 @@ export function useSpikeController({
         abortController = runContext.abortController;
         const { binding } = runContext;
         const tools = createRuntimeToolMap(latest);
+        runSequenceRef.current += 1;
+        const runId = `desktop-run-${runSequenceRef.current}`;
+        const inputText = runtimeText(input);
+        setSubmissions((current) => [...current, {
+          runId,
+          entryId: input.entryId,
+          userText: inputText,
+        }].slice(-100));
         const dependencies: RuntimeDependencies = {
-          runIdFactory: () => {
-            runSequenceRef.current += 1;
-            return `desktop-run-${runSequenceRef.current}`;
-          },
+          runIdFactory: () => runId,
           model: runtimeModel ?? createDeterministicModel(),
           tools,
           requestApproval: (request) => requestApproval(binding, request),
@@ -382,7 +392,7 @@ export function useSpikeController({
         await runProgram({
           program: latest.program,
           sourceMap: { ...latest.sourceMap },
-          input: runtimeText(input),
+          input: inputText,
           signal: abortController.signal,
           dependencies,
           onEvent: (event) => {
@@ -395,6 +405,7 @@ export function useSpikeController({
         if (outcome.terminalType !== "run.completed") {
           throw new RunNotCompletedError(outcome.terminalType);
         }
+        return { runId };
       } catch (error) {
         const handledTerminal =
           error instanceof RunNotCompletedError && error.terminalType !== null;
@@ -424,6 +435,7 @@ export function useSpikeController({
 
   return {
     projection,
+    submissions,
     activeEntryId,
     setActiveEntryId,
     runtime,
