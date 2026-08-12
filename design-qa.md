@@ -11,8 +11,6 @@
 - Visual hierarchy: the lower-opacity slate thumb no longer competes with blocks, canvas controls, or the assistant panel.
 - Interaction affordance: the larger invisible track remains intact, so the visual reduction does not reduce the pointer target.
 - Layout, typography, colour tokens, copy, and imagery: unchanged outside the requested scrollbar treatment; no clipping or new overlap was observed.
-- Native close path: the same native run verified that discarding unsaved changes destroys the only application window.
-
 ## Findings
 
 - P0: 0
@@ -20,3 +18,7 @@
 - P2: 0
 
 final result: passed
+
+## Functional regression evidence (not visual QA)
+
+The native E2E run separately verified that discarding unsaved changes destroys the production main window. This result is a functional acceptance signal and is not part of the visual pass above.
