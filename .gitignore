@@ -41,3 +41,6 @@ try/windows-core-spike/src-tauri/target/
 
 # Local isolated Git worktrees
 .worktrees/
+
+# Local handoff binary copied to the workspace root
+/Blocky.exe
