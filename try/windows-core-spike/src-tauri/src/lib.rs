@@ -81,6 +81,27 @@ fn wdio_request_window_close(window: tauri::WebviewWindow) -> Result<(), String>
         .map_err(|_| "WDIO_NATIVE_CLOSE_FAILED".to_owned())
 }
 
+#[cfg(feature = "wdio")]
+#[tauri::command]
+async fn wdio_create_close_sentinel(app: tauri::AppHandle) -> Result<(), String> {
+    if app.get_webview_window("wdio-close-sentinel").is_some() {
+        return Ok(());
+    }
+    let sentinel_url = "about:blank"
+        .parse()
+        .map_err(|_| "WDIO_CLOSE_SENTINEL_URL_FAILED".to_owned())?;
+    tauri::WebviewWindowBuilder::new(
+        &app,
+        "wdio-close-sentinel",
+        tauri::WebviewUrl::External(sentinel_url),
+    )
+    .visible(false)
+    .focusable(false)
+    .build()
+    .map(|_| ())
+    .map_err(|_| "WDIO_CLOSE_SENTINEL_FAILED".to_owned())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri::Builder::default();
@@ -109,7 +130,8 @@ pub fn run() {
         save_project_document,
         clear_project_document_association,
         wdio_prepare_document_dialog,
-        wdio_request_window_close
+        wdio_request_window_close,
+        wdio_create_close_sentinel
     ]);
 
     builder

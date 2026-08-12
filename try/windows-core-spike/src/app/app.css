@@ -592,13 +592,34 @@ input:focus-visible,
   stroke: none !important;
 }
 
-.blocklyScrollbarHandle {
-  fill: #56606f !important;
+.blocklyMainWorkspaceScrollbar .blocklyScrollbarBackground {
+  fill: transparent !important;
+}
+
+.blocklyMainWorkspaceScrollbar .blocklyScrollbarHandle {
+  fill: #657083 !important;
+  fill-opacity: 0.62 !important;
+  transition: fill 120ms ease, fill-opacity 120ms ease;
+}
+
+.blocklyScrollbarVertical .blocklyScrollbarHandle {
+  x: calc(50% - 3px) !important;
+  width: 6px !important;
+  rx: 3px;
+  ry: 3px;
+}
+
+.blocklyScrollbarHorizontal .blocklyScrollbarHandle {
+  y: calc(50% - 3px) !important;
+  height: 6px !important;
+  rx: 3px;
+  ry: 3px;
 }
 
 .blocklyScrollbarBackground:hover + .blocklyScrollbarHandle,
 .blocklyScrollbarHandle:hover {
-  fill: #6b7686 !important;
+  fill: #778397 !important;
+  fill-opacity: 0.86 !important;
 }
 
 .canvas-stage__badge {

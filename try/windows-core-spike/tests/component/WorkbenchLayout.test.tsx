@@ -8,6 +8,7 @@ import {
   type BlocklyViewState,
 } from "../../src/blockly/BlocklyCanvas";
 import { createHundredBlockWorkspaceState } from "../../src/blockly/fixtures";
+import "../../src/app/app.css";
 
 const EMPTY_WORKSPACE = {
   blocks: { languageVersion: 0, blocks: [] },
@@ -35,6 +36,41 @@ function hasOverlap(state: BlocklyViewState): boolean {
 }
 
 describe("Blockly workbench layout invariants", () => {
+  it("keeps canvas scrollbar thumbs slender without shrinking the interaction track", async () => {
+    render(
+      <BlocklyCanvas
+        initialState={EMPTY_WORKSPACE}
+        onProjection={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(document.querySelector(".blocklyScrollbarVertical")).not.toBeNull();
+      expect(document.querySelector(".blocklyScrollbarHorizontal")).not.toBeNull();
+    });
+    const verticalTrack = document.querySelector<SVGElement>(
+      ".blocklyScrollbarVertical",
+    );
+    const verticalThumb = document.querySelector<SVGRectElement>(
+      ".blocklyScrollbarVertical .blocklyScrollbarHandle",
+    );
+    const horizontalTrack = document.querySelector<SVGElement>(
+      ".blocklyScrollbarHorizontal",
+    );
+    const horizontalThumb = document.querySelector<SVGRectElement>(
+      ".blocklyScrollbarHorizontal .blocklyScrollbarHandle",
+    );
+    if (!verticalTrack || !verticalThumb || !horizontalTrack || !horizontalThumb) {
+      throw new Error("Expected both Blockly scrollbar tracks and thumbs.");
+    }
+
+    expect(Number(verticalTrack.getAttribute("width"))).toBeGreaterThanOrEqual(15);
+    expect(Number(horizontalTrack.getAttribute("height"))).toBeGreaterThanOrEqual(15);
+    expect(getComputedStyle(verticalThumb).width).toBe("6px");
+    expect(getComputedStyle(horizontalThumb).height).toBe("6px");
+    expect(getComputedStyle(verticalThumb).fillOpacity).toBe("0.62");
+  });
+
   it("uses select mode, canvas-owned wheel zoom, and no Blockly trashcan", async () => {
     const canvasRef = createRef<BlocklyCanvasHandle>();
     render(
