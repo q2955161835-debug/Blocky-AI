@@ -259,6 +259,16 @@ async function focusControl(name: string): Promise<void> {
   if (!focused) throw new Error(`KEYBOARD_FOCUS_TARGET_UNAVAILABLE:${name}`);
 }
 
+async function createFinalCloseSentinel(): Promise<void> {
+  await browser.tauri.execute(async ({ core }) => {
+    await core.invoke("wdio_create_close_sentinel");
+  });
+}
+
+async function clearBrowserTextSelection(): Promise<void> {
+  await browser.execute(() => window.getSelection()?.removeAllRanges());
+}
+
 async function setCssViewport(
   width: number,
   height: number,
@@ -533,6 +543,49 @@ describe("Blocky professional native workbench", () => {
 
     await loadHundredBlockFixture();
     expect(await readTopLevelOverlapPairs()).toEqual([]);
+    await clearBrowserTextSelection();
+    const scrollbarPresentation = await browser.execute(() => {
+      const verticalTrack = document.querySelector<SVGElement>(
+        ".blocklyScrollbarVertical",
+      );
+      const verticalThumb = document.querySelector<SVGRectElement>(
+        ".blocklyScrollbarVertical .blocklyScrollbarHandle",
+      );
+      const horizontalTrack = document.querySelector<SVGElement>(
+        ".blocklyScrollbarHorizontal",
+      );
+      const horizontalThumb = document.querySelector<SVGRectElement>(
+        ".blocklyScrollbarHorizontal .blocklyScrollbarHandle",
+      );
+      if (!verticalTrack || !verticalThumb || !horizontalTrack || !horizontalThumb) {
+        return null;
+      }
+      const verticalTrackBounds = verticalTrack.getBoundingClientRect();
+      const verticalThumbBounds = verticalThumb.getBoundingClientRect();
+      const horizontalTrackBounds = horizontalTrack.getBoundingClientRect();
+      const horizontalThumbBounds = horizontalThumb.getBoundingClientRect();
+      return {
+        verticalTrackWidth: verticalTrackBounds.width,
+        verticalThumbWidth: verticalThumbBounds.width,
+        verticalInset: verticalThumbBounds.left - verticalTrackBounds.left,
+        horizontalTrackHeight: horizontalTrackBounds.height,
+        horizontalThumbHeight: horizontalThumbBounds.height,
+        horizontalInset: horizontalThumbBounds.top - horizontalTrackBounds.top,
+        fillOpacity: getComputedStyle(verticalThumb).fillOpacity,
+      };
+    });
+    expect(scrollbarPresentation).not.toBeNull();
+    expect(scrollbarPresentation?.verticalTrackWidth).toBeGreaterThanOrEqual(15);
+    expect(scrollbarPresentation?.verticalThumbWidth).toBeCloseTo(6, 0);
+    expect(scrollbarPresentation?.verticalInset).toBeGreaterThanOrEqual(4);
+    expect(scrollbarPresentation?.horizontalTrackHeight).toBeGreaterThanOrEqual(15);
+    expect(scrollbarPresentation?.horizontalThumbHeight).toBeCloseTo(6, 0);
+    expect(scrollbarPresentation?.horizontalInset).toBeGreaterThanOrEqual(4);
+    expect(scrollbarPresentation?.fillOpacity).toBe("0.62");
+    await browser.saveScreenshot(resolve(
+      process.cwd(),
+      "../../doc/技术设计/Windows-Core视觉验收/19-thin-canvas-scrollbars.png",
+    ));
     const beforeCollapse = await readWorkspaceViewState();
 
     await $("aria/收起积木栏").click();
@@ -602,6 +655,7 @@ describe("Blocky professional native workbench", () => {
     });
     expect(tracePresentation.categories.length).toBeGreaterThanOrEqual(2);
     expect(tracePresentation.colours.every((colour) => colour.length > 0)).toBe(true);
+    await clearBrowserTextSelection();
     await browser.saveScreenshot(resolve(
       process.cwd(),
       "../../doc/技术设计/Windows-Core视觉验收/13-professional-conversation-trace.png",
@@ -623,6 +677,9 @@ describe("Blocky professional native workbench", () => {
     await $("aria/批准").click();
     const approved = await waitForTerminal("run.completed");
     expect(approved.some((event) => event.type === "tool.completed")).toBe(true);
+    await browser.waitUntil(async () => (await input.getValue()) === "", {
+      timeoutMsg: "授权运行完成后输入草稿未清空",
+    });
 
     // Keyboard-only core path plus the two approved product viewports. The
     // current Windows host runs at 125% DPI, so the screenshot pixels also
@@ -727,6 +784,7 @@ describe("Blocky professional native workbench", () => {
     await callHook<void>("loadVisualAcceptanceWorkspace");
     await browser.waitUntil(async () => (await getBlockCount()) === 3);
     await $("aria/搭建助手").click();
+    await clearBrowserTextSelection();
     await expect($("aria/画布积木数量")).toHaveText("画布 · 3 个积木");
     const visualState = await readWorkspaceViewState();
     expect(await readTopLevelOverlapPairs()).toEqual([]);
@@ -739,5 +797,25 @@ describe("Blocky professional native workbench", () => {
     );
     expect(await readTopLevelOverlapPairs()).toEqual([]);
     await browser.saveScreenshot(resolve(visualDir, "12-professional-workbench-collapsed.png"));
+
+    // Leave the destructive close path to the very end: the real application
+    // window must disappear after the user explicitly discards dirty changes.
+    await $("aria/展开积木栏").click();
+    await $("aria/智能体 成员").click();
+    await browser.waitUntil(async () => (await titleText()).endsWith("· 未保存"));
+    // A hidden, test-only native window keeps the WDIO service alive after
+    // the production main window is destroyed. Normal builds never compile
+    // this sentinel, so their last-window process exit semantics are unchanged.
+    await createFinalCloseSentinel();
+    await requestNativeWindowClose();
+    await $("aria/保存更改？").waitForDisplayed();
+    await $("aria/不保存").click();
+    await browser.waitUntil(async () => {
+      const handles = await browser.getWindowHandles();
+      return handles.length === 1 && handles[0] === "wdio-close-sentinel";
+    }, {
+      timeout: 5_000,
+      timeoutMsg: "点击不保存后原生窗口仍然存在",
+    });
   });
 });

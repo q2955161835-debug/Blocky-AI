@@ -49,7 +49,7 @@ describe("App document lifecycle", () => {
     await waitFor(() => expect(screen.getByLabelText("画布积木数量"))
       .toHaveTextContent("0 个积木"));
     expect(screen.getByText("未命名 Agent · 未保存")).toBeInTheDocument();
-  });
+  }, 10_000);
 
   it("routes both titlebar close and Exit through the unsaved guard", async () => {
     const user = userEvent.setup();

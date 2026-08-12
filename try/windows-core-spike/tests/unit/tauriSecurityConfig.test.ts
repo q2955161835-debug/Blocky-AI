@@ -58,7 +58,7 @@ describe("normal Tauri release security configuration", () => {
         "core:default",
         "core:window:allow-minimize",
         "core:window:allow-toggle-maximize",
-        "core:window:allow-close",
+        "core:window:allow-destroy",
         "core:window:allow-start-dragging",
       ],
     });
@@ -66,8 +66,11 @@ describe("normal Tauri release security configuration", () => {
       "core:default",
       "core:window:allow-minimize",
       "core:window:allow-toggle-maximize",
-      "core:window:allow-close",
+      "core:window:allow-destroy",
       "core:window:allow-start-dragging",
     ]);
+    expect(mainCapability.permissions).not.toContain(
+      "core:window:allow-close",
+    );
   });
 });
