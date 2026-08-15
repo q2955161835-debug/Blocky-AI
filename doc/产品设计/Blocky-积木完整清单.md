@@ -507,6 +507,7 @@
 | OpenClaw / Hermes | Agent、交互入口、模型、工具、技能、记忆、会话、消息渠道、计划任务、权限和扩展 | 0 个优先目标；未知原生能力进入保留块 |
 | Pi | 极简 Agent、聊天入口、模型、read/write/edit/bash、会话、Skills、Extensions 与 Packages | 0；默认模板只启用四个核心工具，扩展按需映射 |
 | OpenCode | 主/子 Agent、工具权限、文件与终端、MCP、自定义工具、Skills、插件、会话和上下文管理 | 0；框架配置进入适配器元数据 |
+| DeepSeek Harness | Profile、Bundle、Cordis 插件树、模型适配器、Agent 循环、工具与审批管线、沙箱、会话事件、子 Agent 和运行配置 | 0；插件配置与未知行进入适配器元数据或原生保留块 |
 
 “专用核心积木数量目标为 0”表示不因框架品牌复制语义，不表示禁止版本化适配器、组合模板或原生保留块。
 
@@ -522,7 +523,7 @@
 | 社区搜索、评论、举报和审核 | Blocky 社区服务与客户端页面 |
 | 账号、订阅、席位和机构授权 | 账号与权益服务 |
 | 包签名验证、恶意代码扫描和依赖求解 | 包管理与安全服务 |
-| 原生运行时安装、升级和进程托管 | Host 与 OpenClaw/Hermes/Pi/OpenCode 兼容适配器 |
+| 原生运行时安装、升级和进程托管 | Host 与 OpenClaw/Hermes/Pi/OpenCode/DeepSeek Harness 兼容适配器 |
 | Codex 等 Agent 的插件安装与发现 | 官方插件和 CLI 管理命令 |
 
 这些能力可以创建、安装或操作积木，但不进入用户 Agent 的可执行语义，避免“每个产品按钮都是一块积木”。

@@ -19,7 +19,7 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - 交互入口：没有聊天入口积木时运行标签页禁用；多个入口可切换和重命名，图片、文件、语音、Skills 与插件控件按入口能力积木解锁。
 - 核心形态：工具是独立一等积木；Agent、交互入口、模型、Prompt、记忆、Skill、多 Agent 与护栏等重要语义具有专属外观，但复用统一连接规则。
 - 用户术语：单个能力称为“能力积木”，扩展分发单元称为“积木包”，共享入口称为“积木社区”。
-- 内置模板：完整产品提供 OpenClaw、Hermes、Pi 与 OpenCode 的原生兼容模板；Blocky 连接或托管锁定版本的官方运行时，并将原生配置、能力和执行状态可逆地映射为通用积木。
+- 内置模板：完整产品提供 OpenClaw、Hermes、Pi、OpenCode 与 DeepSeek Harness 的原生兼容模板；Blocky 连接或托管锁定版本的官方运行时，并将原生配置、能力和执行状态可逆地映射为通用积木。
 - Agent 接入：提供 `blocky` CLI、官方 Skills 包和 Codex 等客户端的官方插件，使编程 Agent 能创建积木、搭建 Agent、转换 GitHub 项目和逆向现有 Agent，并与图形页进行可审查协作。
 - 品牌素材：`logo/logo.png` 是本次正式批准的 Windows Logo（标识）母图，Windows/Tauri 图标已生成并通过普通窗口检查；各平台上架资源、签名包图标矩阵和商店素材仍属于未来交付。
 
@@ -29,7 +29,7 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 - [完整积木与 Agent 兼容设计](doc/产品设计/Blocky-完整积木与Agent兼容设计.md)
 - [积木完整清单](doc/产品设计/Blocky-积木完整清单.md)
 - [交互入口与工具积木设计](doc/产品设计/Blocky-交互入口与工具积木设计.md)
-- [OpenClaw、Hermes、Pi 与 OpenCode 官方兼容模板](doc/产品设计/内置兼容模板-OpenClaw-Hermes-Pi与OpenCode.md)
+- [OpenClaw、Hermes、Pi、OpenCode 与 DeepSeek Harness 官方兼容模板](doc/产品设计/内置兼容模板-OpenClaw-Hermes-Pi与OpenCode.md)
 - [CLI 与官方 Agent Skill 产品设计](doc/产品设计/CLI与官方Agent-Skill.md)
 - [平台分层与桌面技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
 - [Windows Core 技术尖峰报告](doc/技术设计/Windows-Core技术尖峰报告.md)

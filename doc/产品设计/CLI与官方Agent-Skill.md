@@ -62,7 +62,7 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 ### 后续阶段
 
 - 连接真实模型和 Blocky 本地运行 Host。
-- OpenClaw、Hermes、Pi、OpenCode 只读扫描、原生往返和兼容报告。
+- OpenClaw、Hermes、Pi、OpenCode、DeepSeek Harness 只读扫描、原生往返和兼容报告。
 - 经 Blocky UI 授权的真实运行、外部行动和远程实例控制。
 - macOS CLI；Windows 以外平台的发行包在对应桌面端适配时加入。
 
@@ -116,7 +116,7 @@ Android、HarmonyOS 与 iOS 不提供设备本地 CLI 或积木编辑器。它�
 | `blocky compat export <file> --runtime <name> --dry-run --json` | 生成原生写回计划 | 默认只能 dry-run |
 | `blocky compat report <file> --json` | 输出版本组合和 L0-L4 证据 | 不提升兼容等级 |
 
-`<name>` 首批支持 `openclaw`、`hermes`、`pi` 和 `opencode`。原生写回后续只通过带 Blocky 作用域授权的命令开放；CLI 不提供直接修改任何上游数据目录的快捷命令。
+`<name>` 首批支持 `openclaw`、`hermes`、`pi`、`opencode` 和 `deepseek-harness`（可接受别名 `dsh`，结构化输出统一返回规范名）。原生写回后续只通过带 Blocky 作用域授权的命令开放；CLI 不提供直接修改任何上游数据目录的快捷命令。
 
 ### 官方 Skill 管理
 
@@ -215,7 +215,7 @@ agent-skills/
 
 每个目录包含自己的 `SKILL.md`，并可按需包含 `agents/openai.yaml`、`references/` 与无密钥示例。Skill 不内置另一份编译器，所有确定性操作交给 `blocky` CLI。`SKILL.md` 保持简短，只包含触发范围和核心工作流；详细命令、Spec 和兼容规则按需读取。
 
-四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、OpenCode、OpenClaw、Hermes 是官方兼容 fixture，不为其复制一套 Skill。
+四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、OpenCode、OpenClaw、Hermes、DeepSeek Harness 是官方兼容 fixture，不为其复制一套 Skill。
 
 ## 8. Skill 必须执行的工作流
 
@@ -287,7 +287,7 @@ agent-skills/
 
 ### 阶段 E：原生兼容
 
-开放 Pi、OpenCode、OpenClaw、Hermes 的 `compat` 读取、导入、差异、报告，再按 ADR-002 门槛逐个开放写回。
+开放 Pi、OpenCode、OpenClaw、Hermes、DeepSeek Harness 的 `compat` 读取、导入、差异、报告，再按兼容模板与 ADR-002 的共同门槛逐个开放写回。
 
 验收门槛：
 
@@ -296,7 +296,7 @@ agent-skills/
 - 交互入口生成相同 `InteractionManifest`；没有入口时运行栏禁用，多入口保持稳定 ID、名称和独立草稿。
 - Tool 引用调用和显式调用共享同一 Schema、权限、错误与结果事件。
 - JSON/JSONL 输出通过固定 Schema，列表可分页，大对象只返回文件路径。
-- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和四类只读兼容导入。
+- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和五类只读兼容导入。
 - 未授权测试中，Agent 无法触发真实外部副作用、原生写回或权益绕过。
 - Skill 从应用内置副本安装到干净仓库后，可被目标客户端发现且版本校验通过。
 
