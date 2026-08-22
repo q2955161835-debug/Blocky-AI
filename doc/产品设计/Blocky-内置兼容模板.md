@@ -236,9 +236,22 @@ DeepSeek Harness 当前处于开发者预览，上游明确提示会发生破坏
 - DeepSeek Harness 的 Profile、Bundle、Cordis 补丁和外部插件均可改变模型、工具、权限或执行环境；导入与升级前必须显示来源和能力差异，凭据只以引用进入适配器，不能写入 `.blocky` 项目。
 - 工具调用、文件写入、终端、网络、消息、secret、sudo 和原生写回分别授权。
 - 原生运行时升级先在隔离副本执行扫描、结构映射、配置往返和固定任务行为测试；失败时保留旧版本。
-- 分发任何上游代码或二进制前重新核对许可证、版权、NOTICE、商标和再分发要求，不能从当前 MIT 快照推断未来版本。
+- 分发任何上游代码或二进制前重新核对许可证、版权、NOTICE、商标和再分发要求，不能从当前研究快照推断未来版本。
 
-## 14. 实施顺序
+## 14. Claude Code 研究夹具（不是第七个模板）
+
+Claude Code 官方资料公开了 CLAUDE.md、Skills、Subagents、MCP、Hooks、Plugins 等扩展边界，公开仓库也可用于核对分发、插件和配置材料。这些证据适合与 Codex、OpenClaw 一起验证真实编程 Harness 场景，但不自动证明完整核心源码可转换或可再分发。
+
+当前只建立配置/扩展/行为研究夹具：
+
+- CLAUDE.md 与 Blocky 项目规则/上下文作用域映射；
+- Skills、MCP、Subagents、Hooks 和 Plugins 到通用积木/资源/权限的映射；
+- 文件、搜索、执行、Web 等工具能力和审批事件的行为对照；
+- 无法从公开证据确认的内部状态进入“未知/未验证”，不能生成伪原生块。
+
+只有完成源码与许可证审计、运行时接入尖峰、结构/配置/行为往返、维护成本评估和用户价值决策，才可以提议把 Claude Code 加入内置模板；本文件继续保持首批六个模板不变。
+
+## 15. 实施顺序
 
 1. 完成 Blocky Core、交互入口、工具契约与 Windows Host 技术尖峰。
 2. 冻结统一兼容适配器协议、事件模型、原生保留区和兼容夹具格式。
@@ -248,11 +261,12 @@ DeepSeek Harness 当前处于开发者预览，上游明确提示会发生破坏
 6. 实现 OpenCode 模板，验证主/子 Agent、权限、工具、MCP、Skills 和插件映射。
 7. 实现 DeepSeek Harness 模板，验证 Profile / Bundle 分层、插件树、工具审批、会话事件和运行配置投影。
 8. 实现 OpenClaw 与 Hermes 的版本化托管、往返和行为对照。
-9. Windows 稳定后验证 macOS 桌面对等，再设计移动 Agent 使用器的远程和本地运行矩阵。
+9. 同期使用 Claude Code 公开配置/扩展/行为夹具执行对照，但不计入六个适配器完成度。
+10. Windows 稳定后验证 macOS 桌面对等，再设计移动 Agent 使用器的远程和本地运行矩阵。
 
 顺序不代表模板权益或发布时间承诺；每个模板只有通过自身门禁后才能进入可发布构建。
 
-## 15. 验收门槛
+## 16. 验收门槛
 
 - 六个模板分别锁定仓库、commit、依赖和测试夹具。
 - 每个原生对象都有通用积木、组合/自定义积木或原生保留块，无未报告丢失。
@@ -261,12 +275,13 @@ DeepSeek Harness 当前处于开发者预览，上游明确提示会发生破坏
 - 模型消息、工具参数、流式事件、审批、取消、状态和失败恢复完成固定任务行为对照。
 - Pi 默认项目只有四个工具；添加扩展后来源、权限和模板改造状态准确。
 - Codex 的 AGENTS.md 作用域、Skills、MCP、沙箱、审批、子 Agent 和工具事件分别有覆盖夹具。
+- Claude Code 夹具准确区分公开配置/扩展/行为证据与未知内部实现，不显示“完整兼容”。
 - OpenCode 主/子 Agent、工具权限、MCP、Skills 和插件分别有覆盖夹具。
 - DeepSeek Harness 的 Profile、Bundle、Cordis 插件树、运行配置、工具审批和会话事件分别有覆盖夹具；未知插件与配置行可无损保留。
 - 移动端只显示运行能力，正确选择本地、桌面或服务器目标并提示数据外发。
 - 未达到“已验证完整兼容”的版本不得使用原版功能一致宣传。
 
-## 16. 官方依据
+## 17. 官方依据
 
 - OpenClaw 仓库：<https://github.com/openclaw/openclaw>
 - OpenClaw 架构与工具：<https://docs.openclaw.ai/concepts/architecture>、<https://docs.openclaw.ai/tools>
@@ -276,6 +291,7 @@ DeepSeek Harness 当前处于开发者预览，上游明确提示会发生破坏
 - Pi Coding Agent 与默认四工具：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/README.md>
 - Pi Extensions 与 RPC：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md>、<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md>
 - Codex Skills、CLI 功能与 AGENTS.md：<https://developers.openai.com/codex/skills>、<https://developers.openai.com/codex/cli/features>、<https://developers.openai.com/codex/guides/agents-md>
+- Claude Code 扩展能力与公开仓库：<https://code.claude.com/docs/en/features-overview>、<https://github.com/anthropics/claude-code>
 - OpenCode 仓库：<https://github.com/anomalyco/opencode>
 - OpenCode Agents、Tools、Skills 与 Plugins：<https://github.com/anomalyco/opencode/blob/dev/packages/web/src/content/docs/agents.mdx>、<https://github.com/anomalyco/opencode/blob/dev/packages/web/src/content/docs/tools.mdx>、<https://github.com/anomalyco/opencode/blob/dev/packages/web/src/content/docs/skills.mdx>、<https://github.com/anomalyco/opencode/blob/dev/packages/web/src/content/docs/plugins.mdx>
 - DeepSeek Harness 官方仓库与中文说明：<https://github.com/deepseek-ai/deepseek-harness>、<https://github.com/deepseek-ai/deepseek-harness/blob/master/README.zh.md>

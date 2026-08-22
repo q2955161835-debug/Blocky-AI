@@ -30,7 +30,7 @@
 |---|---|
 | 目录读取 | 查询稳定积木 ID、类型、模板和说明 |
 | 项目检查 | 读取当前项目摘要、选区、错误和只读运行状态 |
-| 语义修改 | 提交 Build Spec 或语义补丁，不直接编辑 Blockly JSON、IR 或 `.blocky` 压缩包 |
+| 语义修改 | 提交 Build Spec 或语义补丁，不直接编辑 Project Manifest、任一模块 Blockly Workspace、IR 或 `.blocky` 容器 |
 | 校验与模拟 | 运行类型、权限、依赖、确定性模拟和结构测试 |
 | 真实运行 | 只能在用户签发的单次、短期、作用域授权内执行 |
 
@@ -109,7 +109,7 @@ entries:
     executionRequirements: []
 ```
 
-右侧栏、移动端 Agent 使用器、CLI 校验和自动化测试只读取该清单，不自行扫描积木猜测界面功能。清单是编译产物，事实来源仍是积木与 Blocky IR。
+右侧栏、移动端 Agent 使用器、CLI 校验和自动化测试只读取该清单，不自行扫描积木猜测界面功能。清单是编译产物，事实来源仍是 Project Manifest、模块 Workspace 与 Module/Project IR。
 
 ## 4. 重要语义与连接语法
 

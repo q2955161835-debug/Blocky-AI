@@ -2,14 +2,14 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v0.2 |
-| 日期 | 2026-08-09 |
+| 版本 | v0.4 |
+| 日期 | 2026-08-23 |
 | 状态 | 产品与命令面设计已确认，尚未实现 |
 | 命令名 | `blocky` |
 | 官方 Skills 入口 | `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 首发环境 | Windows；从任意本地项目目录调用 |
 
-> 更新说明（2026-08-09）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为 Skills 包与 Codex 等客户端的官方插件，新增“自定义积木创建”“GitHub 项目转 Blocky”和“现有 Agent 逆向积木”。应用也内置使用相同语义补丁协议的搭建助手。最新交互入口、一级 Tool 和双右栏规则见[《Blocky 交互入口与工具积木设计》](Blocky-交互入口与工具积木设计.md)。
+> 更新说明（2026-08-23）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为四个 Skills 与 Codex 等客户端的官方插件；`$convert-github-project-to-blocky` 固定为核心项目积木化入口，可输出自定义积木、可展开蓝图、兼容模板草案或原生保留报告。具体证据链、RAG 积木和 Harness 夹具见[《Blocky GitHub 项目积木化与 Agent 组件设计》](Blocky-GitHub项目积木化与Agent组件设计.md)。
 
 ## 1. 产品目标
 
@@ -43,6 +43,14 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 
 ```text
 检查这个 Hermes 模板为什么无法通过兼容验证，并生成一份修复计划。
+```
+
+```text
+分析这个锁定 commit 的 RAG 项目，优先复用 Blocky 知识积木；适合封装的做成自定义积木，完整流程保存为可展开蓝图，先给我看证据和差异。
+```
+
+```text
+把资料问答 Agent 和工单 RPA 分到两个画布，建立类型化调用；再为 Agent 创建一个操作页面，只预览，不部署。
 ```
 
 通用 Agent 负责理解自然语言和编辑声明式 Build Spec；CLI 负责把结果转换为真实 Blocky 项目并给出可验证结果。
@@ -95,6 +103,44 @@ Android、HarmonyOS 与 iOS 不提供设备本地 CLI 或积木编辑器。它�
 
 `project apply` 不接受“忽略全部错误”开关。Agent 需要重新读取错误、修改 Spec 并再次验证。
 
+### 多模块与应用界面
+
+| 命令 | 作用 | 关键约束 |
+|---|---|---|
+| `blocky project module list <file> --json` | 列出模块、入口、导出和诊断 | 不读取标签会话状态 |
+| `blocky project module inspect <file> --module <id> --json` | 读取单模块摘要和跨模块依赖 | 大 Workspace 写工件，不直接塞入 stdout |
+| `blocky surface list <file> --json` | 列出显式创建的 AppSurface | 新项目默认返回空列表 |
+| `blocky surface plan <file> --module <id> --goal <text> --json` | 规划页面、Bridge、依赖和文件产物 | 不修改项目、不安装依赖、不启动预览 |
+| `blocky surface diff <plan> --target <file> --json` | 生成可审查前端和 Manifest 差异 | 返回项目/计划/文件差异指纹 |
+| `blocky surface apply <plan> --target <file> --diff-digest <digest>` | 应用已审阅页面差异 | 冲突停止；不自动部署、开域名或建数据库 |
+| `blocky surface build <file> --surface <id> --json` | 在锁定依赖和资源预算下构建 | 需要受控构建 Host |
+| `blocky surface preview <file> --surface <id> --json` | 请求桌面应用打开隔离浏览器预览 | 需要 Host；不返回可复用权限令牌 |
+
+只有 `surface plan` 或等价的用户显式 UI 命令可以开始应用界面创建。Agent 搭建完成、运行或发布 API 不得隐式调用这些命令。
+
+### RPA 检查与导入
+
+| 命令 | 作用 | 关键约束 |
+|---|---|---|
+| `blocky rpa inspect <file> --module <id> --json` | 列出目标应用、定位器、权限、副作用和恢复点 | 只读，不连接或操作应用 |
+| `blocky rpa validate <file> --module <id> --profile attended --json` | 校验有人值守自动化结构 | 阶段 7 首批只支持 attended |
+| `blocky rpa import-recording <recording> --target <file> --module <id> --json` | 将用户主动录制结果转换为幽灵积木 | 密码/Token/验证码不进入录制工件；默认只生成差异 |
+
+实际连接、查找、操作、截图、暂停和恢复由桌面 Host 与运行协议执行；CLI 不提供绕过 UI 授权的“全局控制电脑”快捷命令。无人值守 Worker 命令在阶段 11 专项设计前不进入 CLI。
+
+### GitHub 项目积木化
+
+| 命令 | 作用 | 关键约束 |
+|---|---|---|
+| `blocky convert snapshot --repo <url> --ref <ref> --output <dir> --json` | 获取锁定、可重放的仓库快照 | 网络与缓存写入单独显示；不执行仓库代码或安装脚本 |
+| `blocky convert inspect <snapshot-or-local-path> --json` | 读取语言、入口、依赖、类型、数据流、副作用和许可证摘要 | 只读；大证据写工件 |
+| `blocky convert plan <snapshot> --goal <text> --json` | 生成源码证据映射与产物选择 | 只建议自定义积木、蓝图、兼容草案或保留项，不修改项目 |
+| `blocky convert benchmark <plan> --profile <tier> --json` | 执行确定性契约与性能基线 | 只运行 Blocky 白名单夹具，不运行上游任意脚本 |
+| `blocky convert diff <plan> --target <file> --json` | 生成 Build Spec 和幽灵语义差异 | 只读，返回差异指纹 |
+| `blocky convert apply <plan> --target <file> --diff-digest <digest>` | 应用已审阅转换产物 | 不覆盖并发修改；阻塞/未知项保持可见 |
+
+阶段 1 Demo 只使用仓库内锁定的本地快照，通过相同 `inspect/plan/diff` 领域接口完成端到端流程；界面、项目和 Schema 不增加 Demo 专用标记。真实网络快照与正式命令在转换领域服务、供应链门禁和 CLI Core 稳定后开放。
+
 ### 运行和观察
 
 | 命令 | 作用 | 关键约束 |
@@ -116,7 +162,7 @@ Android、HarmonyOS 与 iOS 不提供设备本地 CLI 或积木编辑器。它�
 | `blocky compat export <file> --runtime <name> --dry-run --json` | 生成原生写回计划 | 默认只能 dry-run |
 | `blocky compat report <file> --json` | 输出版本组合和 L0-L4 证据 | 不提升兼容等级 |
 
-`<name>` 首批支持 `openclaw`、`hermes`、`pi`、`opencode` 和 `deepseek-harness`（可接受别名 `dsh`，结构化输出统一返回规范名）。原生写回后续只通过带 Blocky 作用域授权的命令开放；CLI 不提供直接修改任何上游数据目录的快捷命令。
+`<name>` 首批支持 `pi`、`codex`、`openclaw`、`hermes`、`opencode` 和 `deepseek-harness`（可接受别名 `dsh`，结构化输出统一返回规范名）。原生写回后续只通过带 Blocky 作用域授权的命令开放；CLI 不提供直接修改任何上游数据目录的快捷命令。Claude Code 先作为公开配置/扩展/行为夹具，未通过专项决策前不加入首批模板枚举。
 
 ### 官方 Skill 管理
 
@@ -138,21 +184,25 @@ Build Spec 是面向人和 Agent 的声明式 YAML/JSON 交换格式，不取代
 
 ```yaml
 apiVersion: blocky.ai/v1alpha1
-kind: BlockyProgram
+kind: BlockyProject
 metadata:
   name: complaint-helper
 target:
   runtime: blocky
-program:
-  - id: agent-main
-    type: core.agent.define
-    with:
-      name: 投诉回复助手
-    do:
-      - id: instructions
-        type: core.agent.instructions
+modules:
+  - id: assistant-module
+    name: 投诉回复助手
+    purpose: agent
+    program:
+      - id: agent-main
+        type: core.agent.define
         with:
-          text: 对投诉进行分类并起草回复，不自动发送。
+          name: 投诉回复助手
+        do:
+          - id: instructions
+            type: core.agent.instructions
+            with:
+              text: 对投诉进行分类并起草回复，不自动发送。
 interactions:
   - id: input-1
     type: core.interaction.chat_entry
@@ -163,17 +213,20 @@ interactions:
 tools: []
 customBlocks: []
 permissions: []
+appSurfaces: []
 ```
 
 设计要求：
 
 - `type` 必须来自当前 CLI 动态目录，不能由 Agent 自造。
+- `modules` 使用稳定模块 ID；跨模块引用保存 `moduleId`/`exportId`，不按显示名猜目标。旧单程序 Spec 只作为显式迁移输入，不作为正式多模块事实源。
 - 每个积木使用稳定 ID，支持差异定位和执行事件映射。
 - 嵌套结构表达控制流，不退化为节点坐标或连线列表。
 - 未识别的新字段进入保留区，旧 CLI 读取后不能静默删除。
 - 导入前必须通过 JSON Schema 和 Blocky 语义校验。
 - 交互入口、Tool 定义和两类自定义积木都有显式区段，但必须映射回画布中的稳定积木 ID，不能成为隐藏行为配置。
 - Spec 不保存画布位置、密钥、运行日志和本机绝对路径；CLI 负责生成合理布局。
+- `appSurfaces` 默认空；只有显式页面计划被接受后才增加条目。标签顺序、浏览器视口和最近关闭标签不属于 Build Spec。
 
 ## 6. 机器输出契约
 
@@ -215,7 +268,7 @@ agent-skills/
 
 每个目录包含自己的 `SKILL.md`，并可按需包含 `agents/openai.yaml`、`references/` 与无密钥示例。Skill 不内置另一份编译器，所有确定性操作交给 `blocky` CLI。`SKILL.md` 保持简短，只包含触发范围和核心工作流；详细命令、Spec 和兼容规则按需读取。
 
-四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、Codex、OpenCode、OpenClaw、Hermes、DeepSeek Harness 是官方兼容 fixture，不为其复制一套 Skill。
+四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。`$convert-github-project-to-blocky` 是核心项目积木化入口，它可以把仓库中的清晰组件交给自定义积木服务，把多步通用能力交给蓝图服务，把完整 Harness 交给兼容草案服务。Pi、Codex、OpenCode、OpenClaw、Hermes、DeepSeek Harness 是官方兼容 fixture，不为其复制一套 Skill；Claude Code 先作为公开配置/扩展/行为研究 fixture。
 
 ## 8. Skill 必须执行的工作流
 
@@ -234,6 +287,17 @@ agent-skills/
 3. 运行 `project diff`，向用户说明权限或行为变化。
 4. 用户请求本地修改时应用带差异指纹的变更，再复验。
 5. 未得到真实运行授权时停在模拟或计划阶段。
+
+### GitHub 项目积木化
+
+1. 运行 `doctor` 并读取积木目录、蓝图、类型和转换器版本，不凭 Skill 内容编造积木 ID。
+2. 对远程仓库先生成锁定 ref 的不可变快照计划；对本地仓库记录当前 commit/dirty 状态，默认只读且不执行安装脚本。
+3. 识别语言、入口、公开 API、数据流、状态、副作用、权限、依赖、许可证和性能热点，输出源码符号到 Blocky 语义的证据表。
+4. 优先复用核心积木；在自定义积木、Blocky 蓝图、兼容模板草案和原生保留报告之间作出可解释选择，允许混合产物。
+5. 对知识库/RAG 仓库优先映射 `core.knowledge.source/sync/embed/index/retrieve/rerank/compress/cite` 等通用积木；缓存、评估和权限复用既有语义，不生成框架品牌块。
+6. 生成公开输入/输出、错误、权限、依赖、资源预算、来源 commit 和未覆盖项；运行确定性契约/性能夹具。
+7. 通过 `convert diff` 展示幽灵差异；只有用户接受且差异指纹仍有效时才应用，再编译、校验和模拟。
+8. 返回产物路径、证据覆盖、许可证/性能风险和未验证项；没有源码或许可证证据时只返回阻塞报告。
 
 ### 原生 Agent 与逆向
 
@@ -271,7 +335,7 @@ agent-skills/
 
 ### 阶段 A：CLI Core
 
-完成 `doctor`、Schema、目录、模板、Build Spec、项目创建/读取/差异/校验和模拟运行。它与 Blocky 语言尖峰一起实施，用于自动化测试核心语义。
+阶段 1 Demo 先以相同领域接口跑通本地锁定快照的 inspect/plan/diff；随后完成 `doctor`、Schema、目录、模板、Build Spec、项目创建/读取/差异/校验、模拟运行和完整 convert 命令。Demo 不在项目或 Schema 中引入专用字段。
 
 ### 阶段 B：内置搭建助手
 
@@ -279,7 +343,7 @@ agent-skills/
 
 ### 阶段 C：官方 Skills 包与插件
 
-生成四个正式 Skill，使用真实 CLI 文档和样例；通过 Codex 与至少一个其他 Agent Skills 兼容客户端的隔离测试。官方插件只连接这些既有能力。
+生成四个正式 Skill，使用真实 CLI 文档和样例；`$convert-github-project-to-blocky` 优先覆盖普通组件、RAG 项目和 Harness 三类失败夹具。通过 Codex 与至少一个其他 Agent Skills 兼容客户端的隔离测试。官方插件只连接这些既有能力。
 
 ### 阶段 D：运行 Host
 
@@ -296,7 +360,8 @@ agent-skills/
 - 交互入口生成相同 `InteractionManifest`；没有入口时运行栏禁用，多入口保持稳定 ID、名称和独立草稿。
 - Tool 引用调用和显式调用共享同一 Schema、权限、错误与结果事件。
 - JSON/JSONL 输出通过固定 Schema，列表可分页，大对象只返回文件路径。
-- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和五类只读兼容导入。
+- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和六类只读兼容导入。
+- GitHub 转换至少覆盖：一个单组件仓库生成自定义积木、一个 RAG 仓库生成通用积木蓝图、一个 Harness 生成兼容草案，以及许可证/源码不足时只输出阻塞报告。
 - 未授权测试中，Agent 无法触发真实外部副作用、原生写回或权益绕过。
 - Skill 从应用内置副本安装到干净仓库后，可被目标客户端发现且版本校验通过。
 
@@ -306,3 +371,5 @@ agent-skills/
 - OpenAI 官方建议 Agent 友好 CLI 提供可组合命令、可预测 JSON、分页、文件导出、清晰认证检查，以及写入前授权边界：<https://learn.chatgpt.com/use-cases/agent-friendly-clis>
 - Agent Skills 开放标准与渐进加载方式：<https://agentskills.io/home>
 - Agent Skills 完整格式、命名、目录与验证约束：<https://agentskills.io/specification>
+- Codex 开放仓库、Claude Code 扩展能力与 OpenClaw Tools：<https://github.com/openai/codex>、<https://code.claude.com/docs/en/features-overview>、<https://docs.openclaw.ai/tools>
+- LangChain 模块化 Retrieval 与 Qdrant 混合查询/过滤/生产优化：<https://docs.langchain.com/oss/python/langchain/retrieval>、<https://qdrant.tech/documentation/search/hybrid-queries/>、<https://qdrant.tech/documentation/production-checklist/>

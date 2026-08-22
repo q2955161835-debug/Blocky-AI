@@ -8,7 +8,7 @@
 | 验收对象 | `codex/feat-windows-core-spike` 分支；原始全量基线 `7eeb9a8e0974b4356e24abf80c3ade46d486af6e`，冻结契约补充提交 `642f06cb59420031925c47ee801505656e50ccf8` |
 | 独立复审 | L3（核心执行与本地数据边界）通过；Critical（严重）0 / Important（重要）0 / Minor（次要）0 |
 | 技术决策 | **GO（继续）**：八项 Windows Core（Windows 核心）门禁全部通过，可以开始设计正式 monorepo（单体仓库）与共享包 |
-| 决策边界 | 不授权整包复制尖峰、不代表正式产品、发行、上架、收费或完整 311 块支持，也不验证 ADR-001 第二、第三阶段 |
+| 决策边界 | 不授权整包复制尖峰、不代表正式产品、发行、上架、收费或完整积木目录支持，也不验证 ADR-001 第二、第三阶段 |
 
 本报告记录的是位于 `try/windows-core-spike/` 的一次性 Windows 原生技术尖峰。原始全量测试提交为 `7eeb9a8`；随后 `22f9778` 与 `642f06c` 恢复并补齐冻结的 IR（中间表示）、运行事件与 Host（宿主）请求契约，已重新通过聚焦、Fast、Core、原生 E2E（端到端）、性能、日志审计和普通包隔离。旧的 30 分钟长稳仍只绑定其原始 full（完整）运行，不冒充在补充提交上重新执行。包含本报告的后续文档提交只固化证据与结论，不替代测试提交。
 
@@ -27,7 +27,7 @@
 
 本次只验证 ADR-001 第一阶段八项 Core（核心）门禁：本地 Blockly、精确 100 积木编辑/保存、稳定 IR（中间表示）、双标签与入口投影、一等 Tool（工具）契约、确定性运行时、受限 Tauri Host（宿主）以及原生 Windows E2E（端到端）、性能、长稳和敏感信息边界。
 
-明确未实现或未验证：正式 Blocky 应用骨架、完整 311-ID（标识符）目录、产品内置的真实模型/插件适配器、搭建助手、账号、订阅、权益、社区、CLI（命令行）、官方 Skills（技能）、四类原生 Agent（智能体）适配器、自定义积木、正式 `.blocky` 容器、安装器/签名/商店资源、macOS、Android、HarmonyOS、iOS 和商业发布。用户授权的 DeepSeek Flash 外部兼容性探针已作为补充验收通过，但它没有被接入产品构建、配置或持久化路径。
+明确未实现或未验证：正式 Blocky 应用骨架、正式完整积木目录、产品内置的真实模型/插件适配器、搭建助手、账号、订阅、权益、社区、CLI（命令行）、官方 Skills（技能）、Pi/Codex/OpenClaw/Hermes/OpenCode/DeepSeek Harness 六类首批原生 Agent（智能体）适配器、自定义积木、正式 `.blocky` 容器、安装器/签名/商店资源、macOS、Android、HarmonyOS、iOS 和商业发布。用户授权的 DeepSeek Flash 外部兼容性探针已作为补充验收通过，但它没有被接入产品构建、配置或持久化路径。
 
 ## 3. 验证架构
 
@@ -151,4 +151,4 @@ flowchart LR
 
 本次 GO 只授权下一步设计正式 monorepo 与共享包边界，建议以实际尖峰依赖方向为输入，评审 `apps/desktop`、`packages/block-editor`、`packages/block-language`、`packages/interaction-manifest`、`packages/runtime`、`packages/host-contracts` 等职责，以及稳定版本号、迁移策略和跨包测试。
 
-正式实现必须：重新评审 `v0-spike`/`v1` 临时契约；保留纯语义内核、Manifest 唯一投影、一等 Tool、窄 Host 和测试能力隔离；将可复用逻辑从 `try/` 逐项迁移并重新测试。不得把尖峰整体复制为产品，不得由本报告推出发行、收费、完整 311 块、第二阶段完整 Windows 能力或任何后续平台已通过。
+正式实现必须：重新评审 `v0-spike`/`v1` 临时契约；保留纯语义内核、Manifest 唯一投影、一等 Tool、窄 Host 和测试能力隔离；将可复用逻辑从 `try/` 逐项迁移并重新测试。不得把尖峰整体复制为产品，不得由本报告推出发行、收费、完整积木目录、第二阶段完整 Windows 能力或任何后续平台已通过。

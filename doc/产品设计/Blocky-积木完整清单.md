@@ -2,11 +2,11 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v0.3 设计清单 |
+| 版本 | v0.4 设计清单 |
 | 日期 | 2026-08-09 |
 | 状态 | 当前完整产品基线；后续评审按版本增删 |
 | 上位设计 | [《Blocky 完整积木与 Agent 兼容设计》](Blocky-完整积木与Agent兼容设计.md) |
-| 专项设计 | [《Blocky 交互入口与工具积木设计》](Blocky-交互入口与工具积木设计.md) |
+| 专项设计 | [《Blocky 交互入口与工具积木设计》](Blocky-交互入口与工具积木设计.md)、[《Blocky 多画布、应用界面与 RPA 设计》](Blocky-多画布应用界面与RPA设计.md) |
 | 清单作用 | 图形页、Blocky IR、CLI、Skills、插件、社区和逆向转换共同使用的语义目录 |
 
 ## 1. 清单规则
@@ -17,6 +17,7 @@
 - 核心 Agent 语义可以使用专属外观，但必须复用统一的事件、命令、值、条件、容器和引用连接规则。
 - 社区可以新增扩展积木，但不能占用 `core.*`、`protocol.*`、`runtime.*` 等官方命名空间。
 - 本清单描述完整产品能力，不表示首个实施阶段会一次性实现，也不表示未来订阅权益归属。
+- 清单总数不是产品目标；新增语义必须有实际场景、稳定 ID、类型/权限/运行契约和迁移方案，能由已有积木或可展开蓝图表达时不新增原语。
 
 ## 2. 类型清单
 
@@ -46,9 +47,12 @@
 | `type.event<T>` | 事件 | 名称、负载、来源和时间 |
 | `type.task<I,O>` | 任务 | 输入、输出、状态、负责人和截止条件 |
 | `type.plan` | 计划 | 可执行步骤、依赖和完成条件 |
+| `type.module_ref` | 模块引用 | 指向另一画布导出的 Agent、自动化、服务、规则或数据处理模块 |
 | `type.agent_ref` | AI 伙伴引用 | 指向项目内或远程 Agent |
 | `type.interaction_entry_ref` | 交互入口引用 | 指向一个所属 Agent 明确的聊天入口 |
 | `type.tool_ref` | 工具引用 | 指向已定义工具或协议工具 |
+| `type.app_session_ref` | 应用会话引用 | 指向用户授权的桌面应用、进程和窗口会话 |
+| `type.ui_target_ref` | 界面目标引用 | 指向浏览器语义元素、Windows UI Automation 控件或受控视觉目标 |
 | `type.skill_ref` | Skill 引用 | 指向可发现、可调用的 Skill |
 | `type.plugin_action_ref` | 插件动作引用 | 指向用户明确开放的插件动作，不等同整个插件权限 |
 | `type.memory_ref` | 记忆引用 | 指向一个记忆存储与作用域 |
@@ -287,6 +291,8 @@
 | `core.flow.reduce` | 将列表汇总为 `[初始值]` | 值/原子 | 列表、初始值和子程序 → 值 | MapReduce 共用 |
 | `core.flow.subprogram_define` | 定义子程序 `[名称]` | 定义容器 | 参数、脚本和返回 → 子程序引用 | 可复用确定性流程 |
 | `core.flow.subprogram_call` | 运行子程序 `[名称]` | 值/原子 | 参数 → 返回值 | 不复制内部积木 |
+| `core.module.reference` | 引用项目模块 `[名称]` | 值/引用 | 稳定模块与导出入口 → 模块引用 | 跨画布链接，双击可跳到目标画布 |
+| `core.module.invoke` | 运行模块 `[模块]` | 值/原子 | 模块引用、入口和输入 → 结果 | Agent、RPA、规则、服务和数据模块共用 |
 | `core.flow.dynamic_route` | 运行时选择下一段 `[规则]` | 值/原子 | 状态与候选 → 路由结果 | 图运行时动态节点 |
 | `core.flow.wait` | 等待 `[时长/事件]` | 命令/原子 | 条件 → 恢复事件 | 可持久等待 |
 | `core.flow.timeout` | 最多执行 `[时长]` | 容器/原子 | 时长与超时分支 → 结果 | 超时后显式取消或转移 |
@@ -374,7 +380,11 @@
 | `core.browser.navigate` | 打开网页 `[地址]` | 值/原子 | 地址 → 页面引用 | 域名与下载权限受控 |
 | `core.browser.interact` | 在页面执行 `[点击/输入/选择]` | 值/原子 | 页面、目标和动作 → 页面状态 | 目标定位可解释 |
 | `core.browser.extract` | 从页面读取 `[内容]` | 值/原子 | 页面与规则 → 数据 | 不默认执行页面脚本 |
-| `core.computer.act` | 在应用中执行 `[操作]` | 值/扩展 | 应用、目标和动作 → 结果 | 视觉/辅助功能适配，必须可停止 |
+| `core.computer.attach` | 连接应用或窗口 `[目标]` | 值/原子 | 进程、签名、标题和用户选择 → 应用会话引用 | 权限绑定当前会话，不按标题猜测 |
+| `core.computer.find` | 在应用中查找 `[界面元素]` | 值/原子 | 应用会话与 UIA/语义/视觉定位器 → 界面目标引用 | 绝对坐标是最后回退且显示警告 |
+| `core.computer.read` | 读取界面目标的 `[字段]` | 值/原子 | 界面目标与字段 → 结构化值 | 文本、值、状态、表格与脱敏策略 |
+| `core.computer.act` | 在应用中执行 `[操作]` | 值/扩展 | 应用会话、界面目标和动作 → 结果 | 点击/输入/选择/滚动/拖放，必须可停止 |
+| `core.computer.wait` | 等待界面目标达到 `[条件]` | 值/原子 | 目标、条件和超时 → 结果 | 避免固定睡眠，超时可定位 |
 | `core.computer.capture` | 获取 `[窗口/区域]` 画面 | 值/原子 | 目标 → 图片 | 隐私和敏感窗口策略 |
 
 ## 18. 持久执行、恢复与可靠性
@@ -489,6 +499,7 @@
 | `recipe.agent.rag` | 基于资料回答并引用 | 检索 + 重排 + 上下文压缩 + 模型 + 引用 |
 | `recipe.agent.code` | 在沙箱中完成代码任务 | 计划 + 文件/终端工具 + 沙箱 + 测试 + 汇报 |
 | `recipe.agent.browser` | 浏览网页并完成任务 | 浏览器操作 + 观察 + 工具循环 + 人工确认 |
+| `recipe.automation.rpa` | 在桌面应用中完成流程 | 连接应用 + 查找目标 + 读取/操作 + 等待 + 校验 + 失败处理 + 可选人工确认 |
 | `recipe.workflow.durable_approval` | 可暂停恢复的审批流程 | 检查点 + 审批 + 持久任务 + 幂等 + 补偿 |
 | `recipe.workflow.parallel_research` | 多路研究后汇总 | 扇出 + 多 Agent/工具 + 汇合 + 去重 + 综合 |
 | `recipe.workflow.evaluate_improve` | 评估并迭代改进 | 运行 + 评分 + 反思 + 有界重试 + 对比 |
@@ -504,6 +515,7 @@
 | LlamaIndex / Dify | 文档、知识摄取、索引、检索、RAG、工作流、工具、可观测性 | 0 |
 | smolagents / OpenHands | 代码与工具循环、文件、终端、浏览器、沙箱、事件、运行环境 | 0；无法拆解的业务代码使用自定义代码积木 |
 | AutoGPT | 事件、连续运行、积木工作流、连接器、部署、市场和监控 | 0；连接器通过通用工具接口 |
+| Codex / Claude Code | 仓库规则、Skills、MCP、文件/搜索/执行工具、沙箱与审批、子 Agent、Hooks/插件、会话和事件 | 0；Codex 可用锁定源码夹具，Claude Code 在专项审计前只使用公开配置/扩展/行为夹具 |
 | OpenClaw / Hermes | Agent、交互入口、模型、工具、技能、记忆、会话、消息渠道、计划任务、权限和扩展 | 0 个优先目标；未知原生能力进入保留块 |
 | Pi | 极简 Agent、聊天入口、模型、read/write/edit/bash、会话、Skills、Extensions 与 Packages | 0；默认模板只启用四个核心工具，扩展按需映射 |
 | OpenCode | 主/子 Agent、工具权限、文件与终端、MCP、自定义工具、Skills、插件、会话和上下文管理 | 0；框架配置进入适配器元数据 |
@@ -515,7 +527,7 @@
 
 | 能力 | 正确归属 |
 |---|---|
-| 扫描 GitHub 仓库和识别 Agent 框架 | `blocky` CLI 分析器与官方 Skills |
+| 扫描 GitHub 仓库和识别 Agent 框架 | `blocky` CLI 分析器、转换领域服务与核心 `$convert-github-project-to-blocky` Skill；详见[项目积木化设计](Blocky-GitHub项目积木化与Agent组件设计.md) |
 | 逆向映射、覆盖报告和行为对照 | 逆向转换服务、CLI 和兼容测试 |
 | 内置搭建助手的模型会话与工具调度 | 桌面应用的 Builder Agent Host，不进入作品 Agent IR |
 | 画布差异预览、检查点、逐块接受和整轮撤销 | Windows/macOS 编辑器事务层 |
