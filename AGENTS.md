@@ -277,7 +277,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 - 完成的执行计划和一次性设计移入 `doc/归档/YYYY-MM-DD/`；历史验收留在 `doc/验收/归档/`。
 - 当前执行计划完成前不得归档；设置中心最终盘点任务完成前不得把设置模板写成最终成品。
 - 交付报告列出精确提交、分支、修改范围、测试命令与退出码、未执行项、已知风险、工作区外读写和是否 push。代码任务另列产物字节数/哈希、普通包隔离和敏感扫描摘要。
-- 当前私有 GitHub 仓库：`https://github.com/q2955161835-debug/Blocky-AI`。本机 `main` 可能领先远端；任何 push、PR、发布或外部提交都须单独得到用户授权。
+- 当前私有 GitHub 仓库：`https://github.com/I-dont-know-codex-is-right/Blocky-AI`。本机 `main` 可能领先远端；任何 push、PR、发布或外部提交都须单独得到用户授权。
 
 ## 13. 工作区外依赖
 
