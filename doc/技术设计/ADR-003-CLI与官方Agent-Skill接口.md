@@ -293,7 +293,7 @@ CLI 只传引用 ID，真实授权内容存于 Host 安全存储。Host 校验�
 
 - `references/cli-reference.md`：当前稳定命令和输出码。
 - `references/build-spec.md`：Schema、字段选择和示例。
-- `references/compatibility.md`：OpenClaw、Hermes、Pi、OpenCode 流程与兼容等级表述。
+- `references/compatibility.md`：Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness 流程与兼容等级表述。
 - `assets/examples/`：可复制的无密钥 Spec 模板。
 
 ### OpenAI 扩展层
@@ -397,7 +397,7 @@ Codex 仓库级目标遵循其官方 `.agents/skills` 发现路径；其他客�
 4. 实现内置搭建助手的审阅模式，再加入带逐轮检查点的直接搭建模式。
 5. 用真实 CLI 行为生成四个官方 Skills、引用和示例，运行格式验证与隔离前向测试。
 6. 加入本地 Host、真实模型和短期授权引用。
-7. 接入 ADR-002 四套适配器，依次开放兼容读取、报告和经授权写回。
+7. 接入 ADR-002 六套适配器，依次开放兼容读取、报告和经授权写回。
 
 禁止先发布一个只靠提示词猜积木结构的“官方 Skill”；Skill 正式可用必须以经过验证的 CLI Core 为前置。
 

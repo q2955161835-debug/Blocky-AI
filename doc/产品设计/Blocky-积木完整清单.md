@@ -523,7 +523,7 @@
 | 社区搜索、评论、举报和审核 | Blocky 社区服务与客户端页面 |
 | 账号、订阅、席位和机构授权 | 账号与权益服务 |
 | 包签名验证、恶意代码扫描和依赖求解 | 包管理与安全服务 |
-| 原生运行时安装、升级和进程托管 | Host 与 OpenClaw/Hermes/Pi/OpenCode/DeepSeek Harness 兼容适配器 |
+| 原生运行时安装、升级和进程托管 | Host 与 Pi/Codex/OpenClaw/Hermes/OpenCode/DeepSeek Harness 兼容适配器 |
 | Codex 等 Agent 的插件安装与发现 | 官方插件和 CLI 管理命令 |
 
 这些能力可以创建、安装或操作积木，但不进入用户 Agent 的可执行语义，避免“每个产品按钮都是一块积木”。

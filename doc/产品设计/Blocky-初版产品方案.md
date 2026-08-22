@@ -65,7 +65,7 @@ Blocky 不提供浏览器 Web 入口；本地应用可以使用系统 WebView �
 
 ### 搭建助手
 
-Blocky 内置自有极简搭建 Agent，模型来源可配置，不把 Pi、Codex 或 OpenCode 设为默认依赖。它使用与外部 Agent 相同的 Build Spec、语义补丁、校验和授权协议：
+Blocky 内置品牌化的“Blocky 构建助手”，模型来源可配置。产品边界是 Blocky 自有 BuilderAdapter、Build Spec、语义补丁、校验和授权协议；Pi SDK 是首选内部引擎候选，外部 Pi、Codex 或 OpenCode 客户端仍只是可选接入方。
 
 - 默认审阅模式显示幽灵积木或差异，用户决定接受范围。
 - 可切换直接搭建模式；每轮修改自动建立检查点并支持整轮撤销。
@@ -124,11 +124,12 @@ Blocky 社区允许上传、下载、收藏、版本化和改造：
 
 可执行内容须经过来源、签名、许可证、依赖、权限、沙箱、资源预算和撤销检查；“可下载”不等于“安全”或“官方推荐”。
 
-完整产品包含五个官方原生兼容模板：
+完整产品首批包含六个官方原生兼容模板：
 
 - OpenClaw。
 - Hermes。
 - Pi：默认仅聊天入口、Agent、模型和 `read`、`write`、`edit`、`bash` 四个工具，保持极简。
+- Codex：覆盖仓库级 AGENTS.md、Skills、MCP、沙箱、审批、工具、子 Agent 和结构化会话事件。
 - OpenCode：覆盖主/子 Agent、工具权限、MCP、自定义工具、Skills、Plugins、会话与上下文。
 - DeepSeek Harness：把 Profile、Bundle、Cordis 插件树、Agent 循环、工具、审批、沙箱和会话事件投影为通用积木；默认可使用 DeepSeek 模型，但不把模型提供商与 Harness 运行时绑定为同一语义。
 
@@ -176,7 +177,7 @@ Codex 等 Agent 的 Blocky 官方插件负责分发这些 Skills、发现 CLI �
 2. 在 `try/` 完成 Windows Core 技术尖峰，不先搭正式业务骨架。
 3. 建立共享语言、IR、Interaction Manifest、Tool 契约、项目格式和确定性模拟运行时。
 4. 完成 Windows 画布、双右栏、运行调试和本地项目闭环。
-5. 完成自定义积木、扩展沙箱、社区与四套原生兼容适配器。
+5. 完成自定义积木、扩展沙箱、社区与六套原生兼容适配器。
 6. 完成内置搭建助手、CLI、四个官方 Skills 和官方插件。
 7. 完整能力通过后再切分教育基础、教育拓展与专业权益，并实施账号和计费。
 8. 后续交付 macOS 同级桌面应用，再分别验收 Android、HarmonyOS、iOS Agent 使用器。

@@ -1,106 +1,241 @@
-# Blocky 项目规则与项目地图
+# Blocky 项目规则与执行地图
 
-本文件只补充 Blocky 项目长期维护信息；跨项目通用规则以 `D:\AGENTS.md` 为准，不在这里重复。
+本文件只维护 Blocky 的项目级事实、当前阶段和执行入口；跨项目 Git、安全、验收、进展记录、依赖、环境变量及存储规则以 `D:\AGENTS.md` 为准，不在这里重复。
 
-## 1. 项目目标与当前阶段
+## 1. 项目目标与当前状态
 
-Blocky 是面向普通用户与学校教育的安装式积木 AI（人工智能）创作软件。桌面端采用 Scratch（积木编程）式嵌套画布，不采用通用节点连线工作流；教育版与专业版共享项目格式、积木语言与运行内核。
+Blocky 是面向普通用户和学校教育的安装式积木 AI（人工智能）创作软件。桌面端使用 Scratch（积木编程）式嵌套画布，不使用通用节点连线工作流；教育版与专业版共享项目格式、积木语言、运行内核和安全模型。
 
-当前仓库以产品设计、架构决策和可删除的 Windows Core（Windows 核心）技术尖峰为主，尚不是正式可发行产品：
+当前状态：
 
-- `try/windows-core-spike/` 已验证 ADR-001 第一阶段的本地 Blockly（积木编辑器）、稳定 IR（中间表示）、交互清单、一等 Tool（工具）、确定性运行时、窄 Tauri Host（宿主）和 Windows 原生测试通道。
-- 技术结论为 GO（继续）：下一步可设计正式 monorepo（单体仓库）与共享包，但禁止把尖峰整体复制为产品。
-- 完整 311 块、正式模型/插件适配器、账号/订阅、CLI（命令行）、安装签名、商店资源及后续平台仍需独立设计和验收。
-- DeepSeek Flash 的 live（在线）结果只是用户授权的外部 API（应用程序接口）兼容性补充验证；普通产品构建不读取模型凭据，也没有内置 DeepSeek 适配器。
+- `try/windows-core-spike/` 已完成 Windows Core 技术尖峰，验证本地 Blockly、稳定 IR（中间表示）、InteractionManifest、ToolContract、确定性运行时、窄 Tauri Host 和 Windows 原生测试通道。
+- 尖峰是可删除验证，不是正式 Blocky 应用、正式包边界或可发布产品；禁止改名后继续扩写为正式应用。
+- 品牌、积木分类、首批六个兼容模板和阶段 0–7 顺序已经确认。
+- 当前执行基线是 `doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md`；后续开发从阶段 0 开始。
+- 正式 311 块、模型/Provider、知识、记忆、Skills、MCP、护栏、构建助手、兼容适配器、CLI、账号、发布和多平台仍未实现。
 
-## 2. 核心文档入口
+## 2. 文档优先级与入口
 
-- 产品方向与当前状态：`README.md`
-- 产品方案：`doc/产品设计/Blocky-初版产品方案.md`
-- 完整积木与 Agent（智能体）兼容设计：`doc/产品设计/Blocky-完整积木与Agent兼容设计.md`
-- 跨端技术选型：`doc/技术设计/ADR-001-首版跨端技术选型.md`
-- Windows Core 技术结论：`doc/技术设计/Windows-Core技术尖峰报告.md`
+同一事项冲突时按以下顺序处理：
+
+1. 用户在当前任务中的直接指令；
+2. [完整开发计划](doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)；
+3. [设置中心设计模板](doc/产品设计/Blocky-设置中心设计模板.md)；
+4. [完整积木与 Agent 兼容设计](doc/产品设计/Blocky-完整积木与Agent兼容设计.md)与[初版产品方案](doc/产品设计/Blocky-初版产品方案.md)；
+5. ADR-001 至 ADR-004；
+6. Windows Core 尖峰报告、模块验收和已归档任务证据。
+
+核心入口：
+
+- 当前方向与状态：`README.md`
+- 完整积木清单：`doc/产品设计/Blocky-积木完整清单.md`
+- 交互入口与工具：`doc/产品设计/Blocky-交互入口与工具积木设计.md`
+- 六个内置兼容模板：`doc/产品设计/Blocky-内置兼容模板.md`
+- CLI 与官方 Skills：`doc/产品设计/CLI与官方Agent-Skill.md`
+- 正式技术边界：`doc/技术设计/ADR-001-首版跨端技术选型.md` 至 `ADR-004-开放扩展与社区安全边界.md`
+- 尖峰技术结论：`doc/技术设计/Windows-Core技术尖峰报告.md`
 - 长期模块验收：`doc/验收/模块/验收-Blocky编辑器与运行核心.md`
-- 任务验收与历史证据：`doc/验收/归档/`
-- 开发环境：`doc/开发/开发环境.md`
-- 当前待确认计划：`doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md`
-- 已完成计划：`doc/归档/`
+- 已完成计划和一次性设计：`doc/归档/`
 
-产品目标、架构或模块职责变化时，优先更新上述对应文档；本文件只维护入口与不应分散的长期约束。
+归档文件只提供历史证据，不覆盖当前执行计划。引用旧测试事实时必须绑定原精确提交，不得描述为当前提交的新运行。
 
-## 3. 目录职责
+## 3. 已确认产品契约
+
+### 3.1 品牌和用户术语
+
+- 桌面产品：`Blocky Studio`
+- 内置编程智能体：`Blocky 构建助手`
+- 固定或组合模板积木：`Blocky 蓝图`
+- 调试与可观察界面：`运行轨迹`
+- 六个完整项目起点：`内置兼容模板`
+- 用户组合能力：`自定义能力`
+
+主界面不使用“基于 Pi 改造的 Agent”“Blockly 壳”等依赖或内部实现文案。底层依赖只在兼容详情、关于、许可证和开发诊断中显示。
+
+### 3.2 积木分类
+
+专业视图固定使用十二类 Agent 语义：
+
+1. 触发与交互
+2. 智能体
+3. 指令与上下文
+4. 模型
+5. 知识库
+6. 记忆
+7. 工具
+8. 技能与扩展
+9. 协作与编排
+10. 护栏与权限
+11. 数据与逻辑
+12. 输出与渠道
+
+入门视图使用“开始、角色、会思考、会查找、会记住、会行动、会回答”七类任务投影。两个视图使用相同 Workspace、IR 和项目格式；运行调试、资源管理和部署配置不作为积木一级类别。
+
+### 3.3 蓝图、代码和运行状态
+
+- 用户可框选或 `Shift + 左键` 点击多选积木并保存为个人 Blocky 蓝图；多顶层栈保留相对布局，必需外部依赖必须转成公开插槽或阻止保存。
+- 蓝图可展开为原子积木，官方更新保留用户差异；插入蓝图时生成新的稳定 ID。
+- 代码自定义状态使用积木内部徽标和左侧标记：官方默认、已自定义有效、警告、无效。
+- 运行状态使用瞬时外轮廓：激活加粗并绿色亮起，警告黄色，错误红色；同时显示图标和文字，不能只靠颜色。
+- 运行高亮不得改变积木尺寸或导致布局抖动；减少动态效果时取消呼吸动画但保留轮廓和文字。
+
+### 3.4 画布输入和命令
+
+- 默认是选择模式；`Shift + 左键单击` 在点击模式下加入/移出多选，不触发拖拽。
+- 空白左键拖动框选；拖动任一已选积木整体移动选择。
+- 按住鼠标中键拖动时始终平移画布；`Space + 左键拖动` 是备用临时平移。
+- 普通滚轮只在画布上以指针为中心缩放；双击空白或 `Tab` 打开积木搜索。
+- 顶部菜单、命令中心、快捷键和右键菜单必须读取同一 `CommandDefinition`；互斥弹层由统一管理器控制。
+- 默认快捷键、冲突处理和多选菜单以完整开发计划 9.2–9.5 节为准，并允许在设置中心改键。
+
+## 4. 构建助手与官方 Skills
+
+Blocky 构建助手的用户流程固定为：
+
+```text
+自然语言需求
+→ 搭建计划
+→ Build Spec
+→ 可见语义补丁 / 幽灵积木
+→ 接受或拒绝
+→ 编译、校验和运行预览
+```
+
+Pi SDK 是首选内部引擎候选，但产品边界始终是 Blocky 自有 BuilderAdapter、权限、Build Spec 和语义补丁。WebView 不运行 Pi，不向模型暴露任意文件系统或 Shell。
+
+内部四个受控工具：
+
+- `inspect`：只读积木目录、项目、选择区和诊断；
+- `draft`：只生成 Build Spec；
+- `patch`：只生成版本化语义补丁和幽灵预览；
+- `verify`：只执行白名单编译、仿真、测试和格式化任务。
+
+Blocky 官方 Skills 库首批固定为：
+
+- `$build-blocky-agents`
+- `$create-blocky-blocks`
+- `$convert-github-project-to-blocky`
+- `$reverse-agent-to-blocky`
+
+需求澄清、目录检索、测试生成等是内部步骤，不得另起官方 Skill。四个 Skills 必须基于真实 CLI、Schema、桌面和客户端失败夹具迭代；没有 CLI Core 前禁止发布只靠提示词猜积木结构的 Skill。
+
+## 5. 内置兼容模板
+
+首批六个模板：Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness。每个模板独立锁定上游版本、commit、依赖、许可证和夹具，分别完成结构映射、配置往返、行为对照、权限、安全、升级和恢复验收。
+
+- 模板是可自由改造的普通 Blocky 项目起点，不是六个版本或 Agent 类型上限。
+- Codex 模板与 Codex 官方 Blocky 插件是两个方向：前者投影 Codex，后者让 Codex 搭建 Blocky 项目。
+- 未通过自身兼容矩阵的模板不得宣称“原生完整兼容”。
+- 上游专有名词不进入普通核心积木 ID；无法通用表达的内容进入可定位原生保留区。
+
+## 6. 正式架构与数据流
+
+唯一编辑事实是版本化 Blockly Workspace JSON：
+
+```text
+Workspace JSON
+→ compiler
+→ Blocky IR + source map + diagnostics
+→ InteractionManifest + ToolContract
+→ runtime-core
+→ RuntimeEvent
+→ 运行 Agent / 运行轨迹 / 画布高亮
+```
+
+不可破坏边界：
+
+1. Workspace 是编辑事实；IR、清单和轨迹均可重新生成并校验。
+2. WebView 不持有模型密钥、任意本机路径、文件系统或 Shell 权限。
+3. Builder、Runtime、CLI 和兼容适配器通过版本化协议协作，不直接修改彼此内部状态。
+4. 项目保存只持久化声明的 Workspace、资源引用和格式字段；磁盘派生字段加载后必须重编译比对。
+5. 测试钩子、WDIO capability 和远程代码不得进入普通 release 构建。
+
+正式 monorepo 的目标包边界以完整开发计划第 10 节为准。建立正式包时逐项迁移尖峰契约和测试，不复制整个 `try/windows-core-spike/`。
+
+## 7. 设置、资源与秘密
+
+设置分四层：应用设置、项目设置、资源配置、积木配置。完整字段和阶段安排见 `doc/产品设计/Blocky-设置中心设计模板.md`。
+
+- 模型、知识、工具、Skill、MCP、护栏等可配置积木通过双击、右键“配置”或检查器打开资源编辑器。
+- 模型积木保存 ModelProfile 引用；Provider 资源保存类型、Base URL、模型 ID、协议、超时和非秘密参数。
+- API Key、Token、Cookie、私有地址和额外敏感请求头只进入 Host 安全存储或 Git 忽略的 `.env`；项目、蓝图、IR、日志和文档只保存引用。
+- 配置界面必须显示当前值来自应用、项目、资源还是积木覆盖，并提供“恢复继承”。
+- 正式 Windows 产品功能冻结前，必须执行设置中心最终盘点，删除无消费者设置、补齐真实能力并重验默认值、迁移、重置和秘密隔离。
+
+开发和自动化默认使用确定性无密钥 Provider。验收确需真实大模型 API 时，验收 Agent 必须主动请求用户通过应用安全存储或本地 `.env` 配置，不要求在聊天中粘贴密钥；未获得凭据时将 live 子项记录为“阻塞”或“未执行”，不能伪报通过。
+
+## 8. 实施顺序
+
+严格按照完整开发计划执行：
+
+- R0 / 阶段 0–2：产品契约、正式 monorepo、语言 v1、命令系统、设置壳和资源注册表。
+- R1 / 阶段 3–7：蓝图与首次体验、最小完整 Agent、构建助手、运行轨迹、专业编辑交互。
+- R2 / 阶段 8–11：六个兼容模板、Blocks ↔ Text、CLI、官方 Skills/Codex 插件、教育和专业部署。
+- R3 / 阶段 12–14：社区供应链、macOS/移动运行端、权益和商业化。
+
+当前下一阶段是阶段 0。进入后续阶段前必须完成前置阶段门禁；禁止并行铺开六个半成品适配器，也禁止先实现 311 块再补最小运行闭环。
+
+## 9. 目录职责
 
 | 路径 | 职责 |
 |---|---|
-| `doc/产品设计/` | 产品范围、积木目录、交互、兼容模板和商业边界 |
-| `doc/技术设计/` | ADR（架构决策记录）、技术报告与持久视觉证据 |
-| `doc/执行计划/` | 待确认或执行中的阶段计划；完成后移入 `doc/归档/` |
-| `doc/验收/模块/` | 长期功能/场景基线 |
-| 按需创建的 `doc/验收/跨模块/` | 只用于重要跨模块完整流程；当前目录尚未创建 |
-| `doc/验收/归档/` | 已完成任务的 L0–L3（验收等级）记录 |
-| `doc/进展记录/` | 按日期记录阶段进展、文件用途与异常 |
-| `scripts/`、`tests/dev-environment/` | 跨平台开发环境 doctor（环境检查）及其稳定契约 |
-| `try/windows-core-spike/src/blockly/` | 本地 Blockly 目录、连接语法、工具箱、夹具与画布适配 |
-| `try/windows-core-spike/src/core/` | 纯 TypeScript（类型脚本）编译、IR、清单、Tool、运行事件与脱敏 |
-| `try/windows-core-spike/src/app/`、`try/windows-core-spike/src/runtime/`、`try/windows-core-spike/src/builder/` | React（界面框架）三栏界面、控制器和运行/搭建视图 |
-| `try/windows-core-spike/src/project/`、`try/windows-core-spike/src/host/` | 规范项目快照与窄 HostBridge（宿主桥） |
-| `try/windows-core-spike/src-tauri/` | Rust（系统语言）原子项目存储、能力配置和 Windows 图标 |
-| `try/windows-core-spike/tests/`、`try/windows-core-spike/scripts/` | 单元、组件、原生 E2E（端到端）、性能、长稳与安全门禁 |
+| `doc/执行计划/` | 当前待执行计划；完成后按日期归档 |
+| `doc/产品设计/` | 当前产品、积木、设置、兼容模板和 CLI/Skills 设计 |
+| `doc/技术设计/` | 当前 ADR、技术报告和持久视觉证据 |
+| `doc/验收/模块/` | 长期模块功能与场景基线 |
+| `doc/验收/跨模块/` | 仅用于重要跨模块完整流程，按需创建 |
+| `doc/验收/任务/` | 当前开发任务验收记录，按需创建 |
+| `doc/验收/归档/` | 已通过或结束的历史任务验收 |
+| `doc/进展记录/` | 按日期记录阶段进展、异常和工作区外操作 |
+| `doc/归档/` | 已完成计划、一次性设计和被当前基线替代的文档 |
+| `scripts/`、`tests/dev-environment/` | 开发环境检查及其稳定契约 |
+| `try/windows-core-spike/` | 可删除 Windows Core 技术尖峰和尖峰测试，不是正式包 |
 
-## 4. 架构与数据流
+正式 `apps/`、`packages/`、`tools/` 目录在阶段 1 按计划创建。不存在的正式命令、包或构建产物不得在文档中写成已经可用。
 
-唯一编辑事实是 Blockly workspace JSON（工作区对象表示）：
+## 10. 当前命令与验证
 
-1. `compileWorkspace` 把工作区编译为版本化 `BlockyProgram`，并生成稳定 source map（来源映射）。
-2. 同一编译投影生成 `InteractionManifest`（交互清单）和只读 `ToolContract`（工具契约）注册表；右侧运行界面只读取清单，不扫描画布猜能力。
-3. `deterministicRuntime` 只读取 IR、source map、依赖注入的 model/tool seam（模型/工具接缝），并通过唯一工厂生成版本化、脱敏、冻结的 `RuntimeEvent`（运行事件）。
-4. `SpikeProjectSnapshot` 保存 workspace、派生 IR 和清单；加载时重新编译并比较派生数据，不能信任磁盘中的派生字段。
-5. `HostBridge` 的保存契约固定为 `{ projectId, json }`；生产实现 `TauriHostBridge` 只调用 `save_project` / `load_project`，Rust Host 不接受前端任意路径。
-6. WDIO（WebdriverIO）钩子、插件与 capability（能力）只允许出现在专用测试构建；普通 release（发布构建）必须保持隔离。
-
-## 5. 关键依赖与运行方式
-
-尖峰依赖 Node.js（JavaScript 运行时）、pnpm（包管理器）、Rust/Cargo（构建工具）、Tauri（桌面壳）、React、TypeScript、Vite（构建器）、Blockly、Zod（数据校验）、Vitest（测试框架）和仅测试使用的 WebdriverIO。精确锁定版本以 `try/windows-core-spike/package.json`、`try/windows-core-spike/pnpm-lock.yaml`、`try/windows-core-spike/src-tauri/Cargo.toml` 与 `try/windows-core-spike/src-tauri/Cargo.lock` 为准。
-
-常用命令从项目根执行：
+当前可用命令从仓库根执行：
 
 ```powershell
 # 开发环境 26 项检查
 pwsh -NoProfile -File .\scripts\check-dev-environment.ps1 -Json
 pwsh -NoProfile -File .\tests\dev-environment\doctor-contract.ps1
 
-# 安装尖峰锁定依赖
+# 尖峰依赖和门禁
 pnpm --dir .\try\windows-core-spike install --frozen-lockfile
-
-# 快速、Core 和完整长稳门禁
 pnpm --dir .\try\windows-core-spike check
 pnpm --dir .\try\windows-core-spike check:core
 pnpm --dir .\try\windows-core-spike check:full
 
-# 普通 Web（网页资源）与 Tauri release 构建
+# 尖峰普通 Web 与 Tauri release 构建
 pnpm --dir .\try\windows-core-spike build
 pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 ```
 
-`check:full` 包含 360 个 5 秒循环与 30 次真实 Rust Host 保存/重载，耗时约 30 分钟以上；不得缩短后称为完整长稳通过。
+`check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上；不得缩短后声称完整长稳通过。
 
-## 6. 验收与复测矩阵
+阶段 1 必须为正式 monorepo 建立根命令并立即更新本节；在此之前不能把尖峰命令描述为正式产品测试。
 
-- Blockly 目录、连接、序列化或 100 块夹具变化：复测编辑、合法/非法连接、稳定 ID、保存/重开。
-- IR、清单、Tool 或运行事件契约变化：运行单元/组件、`check:core`、原生 E2E 与三项性能；同步更新模块验收。
-- Host、权限、CSP（内容安全策略）、日志或敏感扫描变化：按 L3 复测负例、真实原子保存、日志审计与普通包隔离。
-- 事件上限、保存循环、WebView（网页视图）生命周期或长期状态变化：必须重新执行未缩短的 `check:full`。
-- 只改文档：至少检查 UTF-8（统一字符编码）、相对链接、`git diff --check` 和仓库敏感扫描；引用测试事实时绑定产生事实的精确提交。
-- 功能、预期或风险变化时，更新 `doc/验收/模块/`；每次交付在 `doc/验收/归档/` 留任务记录；出现重要完整跨模块流程时才创建并写入 `doc/验收/跨模块/`。
+## 11. 复测映射
 
-## 7. 项目特有安全与范围边界
+- 积木目录、分类、连接、蓝图、多选或序列化变化：复测目录投影、Shift 点击多选、框选、保存为蓝图、稳定 ID、展开/折叠、保存重开和撤销。
+- IR、清单、Tool 或运行事件变化：运行单元/契约/组件、Core、原生 E2E、性能和运行轨迹；同步模块验收。
+- 高亮、主题或画布输入变化：复测绿色激活、黄色警告、红色错误、代码状态徽标、减少动效、鼠标中键平移、滚轮缩放和高 DPI。
+- 设置、Provider、API 或秘密变化：复测四层继承、迁移、重置、无密钥 Provider、安全存储、日志脱敏和缺失配置负例。
+- Host、权限、CSP、原生路径或日志变化：按 L3 复测越界负例、原子保存、普通包隔离和四目标敏感扫描。
+- 兼容模板变化：每个上游分别执行来源、结构、配置往返、行为、权限、升级和恢复矩阵；一个模板通过不能代表其他模板。
+- 事件上限、保存循环、WebView 生命周期或长期状态变化：重新执行未缩短的 `check:full`。
+- 只改文档：严格 UTF-8、相对链接、表格、术语/数量一致性、敏感类别扫描和 `git diff --check`。
 
-- `logo/logo.png` 是当前批准的 Windows Logo（标识）母图；派生图标和持久截图的哈希记录在 Windows Core 技术报告。
-- Blockly、脚本、样式和媒体必须随普通应用本地加载；普通构建不允许远程代码、WDIO 测试钩子或测试 capability。
-- 项目 JSON、事件、前端日志和后端日志必须通过四目标敏感扫描；报告只写类别、目标与计数，不写匹配值。
-- `try/windows-core-spike/` 是可删除尖峰，不是未来正式包边界。迁移复用逻辑时逐项建立正式包、版本、迁移与跨包测试。
-- 当前私有 GitHub（代码托管）仓库为 `https://github.com/q2955161835-debug/Blocky-AI`。
+## 12. 文档、归档与交付要求
 
-## 8. 执行报告要求
+- 功能、术语、预期或风险变化时，同步更新执行计划、对应产品/ADR、模块验收和进展记录，避免只改一处。
+- 完成的执行计划和一次性设计移入 `doc/归档/YYYY-MM-DD/`；历史验收留在 `doc/验收/归档/`。
+- 当前执行计划完成前不得归档；设置中心最终盘点任务完成前不得把设置模板写成最终成品。
+- 交付报告列出精确提交、分支、修改范围、测试命令与退出码、未执行项、已知风险、工作区外读写和是否 push。代码任务另列产物字节数/哈希、普通包隔离和敏感扫描摘要。
+- 当前私有 GitHub 仓库：`https://github.com/q2955161835-debug/Blocky-AI`。本机 `main` 可能领先远端；任何 push、PR、发布或外部提交都须单独得到用户授权。
 
-交付报告应列出：精确提交、分支、修改范围、测试命令与退出码、原生 EXE（可执行文件）字节数/哈希、普通包隔离摘要、敏感扫描结果、未执行项、已知风险、工作区外写入和是否 push（推送）。不要把旧提交日志、历史长稳或忽略目录报告描述为当前提交的新运行。
+## 13. 工作区外依赖
+
+当前正式构建不依赖工作区外业务文件。用户提供的研究报告、临时截图和本机参考项目只能作为设计证据，不能成为构建输入或运行时依赖；若未来确需工作区外文件，必须在本节记录完整路径、用途、版本和安全边界。

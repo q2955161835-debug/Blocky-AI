@@ -62,7 +62,7 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 ### 后续阶段
 
 - 连接真实模型和 Blocky 本地运行 Host。
-- OpenClaw、Hermes、Pi、OpenCode、DeepSeek Harness 只读扫描、原生往返和兼容报告。
+- Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness 只读扫描、原生往返和兼容报告。
 - 经 Blocky UI 授权的真实运行、外部行动和远程实例控制。
 - macOS CLI；Windows 以外平台的发行包在对应桌面端适配时加入。
 
@@ -215,7 +215,7 @@ agent-skills/
 
 每个目录包含自己的 `SKILL.md`，并可按需包含 `agents/openai.yaml`、`references/` 与无密钥示例。Skill 不内置另一份编译器，所有确定性操作交给 `blocky` CLI。`SKILL.md` 保持简短，只包含触发范围和核心工作流；详细命令、Spec 和兼容规则按需读取。
 
-四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、OpenCode、OpenClaw、Hermes、DeepSeek Harness 是官方兼容 fixture，不为其复制一套 Skill。
+四个入口分别覆盖：创建或修改 Blocky Agent；创建可视化/代码自定义积木；把 GitHub 项目转换为 Blocky；以证据映射方式逆向现有 Agent。Pi、Codex、OpenCode、OpenClaw、Hermes、DeepSeek Harness 是官方兼容 fixture，不为其复制一套 Skill。
 
 ## 8. Skill 必须执行的工作流
 
@@ -287,7 +287,7 @@ agent-skills/
 
 ### 阶段 E：原生兼容
 
-开放 Pi、OpenCode、OpenClaw、Hermes、DeepSeek Harness 的 `compat` 读取、导入、差异、报告，再按兼容模板与 ADR-002 的共同门槛逐个开放写回。
+开放 Pi、Codex、OpenCode、OpenClaw、Hermes、DeepSeek Harness 的 `compat` 读取、导入、差异、报告，再按兼容模板与 ADR-002 的共同门槛逐个开放写回。
 
 验收门槛：
 

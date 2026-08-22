@@ -4,13 +4,13 @@
 |---|---|
 | 状态 | 已接受，须按上游和平台分别通过兼容尖峰 |
 | 日期 | 2026-08-09 |
-| 修订 | v0.2，将 Pi 与 OpenCode 纳入官方模板和兼容体系 |
-| 决策范围 | OpenClaw、Hermes、Pi、OpenCode 官方积木模板与原生运行时适配 |
-| 关联文档 | [四类内置兼容模板](../产品设计/内置兼容模板-OpenClaw-Hermes-Pi与OpenCode.md)、[ADR-001](ADR-001-首版跨端技术选型.md) |
+| 修订 | v0.4，纳入 Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness 六个首批模板 |
+| 决策范围 | 六个内置兼容模板与原生运行时适配 |
+| 关联文档 | [Blocky 内置兼容模板](../产品设计/Blocky-内置兼容模板.md)、[ADR-001](ADR-001-首版跨端技术选型.md) |
 
 ## 1. 背景
 
-Blocky 要让用户通过积木理解、搭建并改造主流 Agent，同时尽可能保持原项目能力。OpenClaw、Hermes、Pi 与 OpenCode 都有自己的运行循环、工具、配置、会话和扩展边界；把它们重新实现为一套“看起来相似”的 Blocky 运行逻辑会产生不可验证的行为漂移。
+Blocky 要让用户通过积木理解、搭建并改造主流 Agent，同时尽可能保持原项目能力。Pi、Codex、OpenClaw、Hermes、OpenCode 与 DeepSeek Harness 都有自己的运行循环、工具、配置、会话和扩展边界；把它们重新实现为一套“看起来相似”的 Blocky 运行逻辑会产生不可验证的行为漂移。
 
 这些模板的目标不是为每个项目增加一组不可复用的专属积木，而是：
 
@@ -21,13 +21,13 @@ Blocky 要让用户通过积木理解、搭建并改造主流 Agent，同时尽�
 
 ## 2. 决策
 
-四个官方模板统一采用：
+六个内置兼容模板统一采用：
 
 > 固定并验证上游版本 + 进程外原生运行时 + 版本化适配器 + 可逆积木投影
 
 具体规则：
 
-- Blocky 不把四个上游运行时重写进确定性运行内核。
+- Blocky 不把六个上游运行时重写进确定性运行内核。
 - 每个模板记录上游项目、版本/提交、来源、内容校验和、许可证和兼容等级。
 - 适配器读取能力、配置、项目文件与事件，投影为通用积木优先的 Blocky 项目。
 - 写回先生成语义差异预览，再使用格式感知的最小补丁；未知字段和注释不得静默丢失。
@@ -80,7 +80,7 @@ compatibility.report
 
 所有响应包含适配器协议版本、上游标识、上游版本、运行实例 ID、能力摘要和结构化错误来源。事件同时保留标准化类型和上游原生类型，便于统一显示且不丢失专属语义。
 
-统一协议只统一生命周期、工具契约、权限与可观察性，不强迫四个上游拥有相同配置或行为。
+统一协议只统一生命周期、工具契约、权限与可观察性，不强迫六个上游拥有相同配置或行为。
 
 ## 4. 可逆投影
 
@@ -135,7 +135,19 @@ Pi 模板刻意保持极简，用来证明少量高复用积木可以组成实�
 
 原 `badlogic/pi-mono` 官方入口现已指向 `earendil-works/pi`；实现和版本固定时以重定向后的现行上游为准，不能长期依赖旧仓库名。
 
-## 8. OpenCode 模板
+## 8. Codex 模板
+
+Codex 模板重点表达仓库级规则、专业工具、Skills、MCP、沙箱、审批和子 Agent：
+
+- 按用户、仓库和子目录范围发现 AGENTS.md，并保留实际作用域与优先级。
+- 把文件读取、搜索、补丁、终端和网络工具映射为通用 Tool 及对应权限事件。
+- 把 sandbox、approval、网络和外部写入策略映射为 Blocky 护栏与 Host 授权；Blocky 只能收紧权限。
+- 仓库级 `.agents/skills`、用户级 Skills、MCP Servers、插件和子 Agent 使用通用扩展与协作积木。
+- CLI、SDK 或 app-server 的结构化会话事件映射到稳定 Blocky 事件和来源积木。
+
+Codex 模板用于把 Codex 本身投影为 Blocky 项目；Codex 官方插件用于让 Codex 搭建其他 Blocky 项目。两条路径共享 CLI、Build Spec 和授权协议，但不得互相绕过或递归自改。
+
+## 9. OpenCode 模板
 
 OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 
@@ -147,7 +159,16 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 
 上述能力优先使用通用 Agent、Tool、Skill/插件、多 Agent 和权限积木。只有上游特有配置或生命周期无法由通用语义无损表达时，才增加 `opencode.*` 原生保留积木。
 
-## 9. “逆向 Agent 积木”Skill 的复用方法
+## 10. DeepSeek Harness 模板
+
+DeepSeek Harness 模板重点表达 Profile、Bundle、Cordis 插件树、模型适配器、Agent 循环、工具管线、审批、沙箱、持久会话事件和子 Agent：
+
+- Profile 与按顺序叠加的 Bundle 映射为可展开预设和组合蓝图。
+- Cordis 插件映射为通用能力、插件引用或原生保留块，未知配置不得静默删除。
+- `web` / `headless` 是运行配置，不生成两套核心 Agent 语义。
+- 上游开发者预览版本必须锁定 commit、配置夹具和依赖；每次升级重新执行结构、往返、卸载回退、审批和会话恢复对照。
+
+## 11. “逆向 Agent 积木”Skill 的复用方法
 
 官方 Skill 不通过项目名称套用固定模板，而执行可验证的分析流程：
 
@@ -161,7 +182,7 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 
 若每逆向一个 Agent 都要新增大量专属积木，视为通用积木抽象或表达能力存在缺口，应先改进核心语言而非继续堆专属积木。
 
-## 10. 进程、版本与升级
+## 12. 进程、版本与升级
 
 - 托管运行时安装到应用数据区的独立版本目录，不写入项目仓库，也不要求全局安装。
 - 只从记录在兼容清单中的上游来源获取；下载、安装和更新均先生成计划。
@@ -170,7 +191,7 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 - 连接用户已有实例时只报告版本和兼容等级，不擅自升级。
 - 具体上游版本必须在实现时联网重验并写入锁定清单；本 ADR 不把设计日看到的版本号当作长期事实。
 
-## 11. 安全与许可证
+## 13. 安全与许可证
 
 - Blocky 主应用、适配器和上游运行时使用独立进程与最小文件范围。
 - 原生命令、脚本、Tool、Plugin、Skill 和 MCP 不自动继承 Blocky 主进程权限。
@@ -180,7 +201,7 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 - 每个固定版本保存其许可证、版权、依赖材料和修改说明；不得以模板名称暗示上游合作或认证。
 - 许可证与商标结论在每次分发前重新审查，本 ADR 不替代法律审核。
 
-## 12. 平台拓扑
+## 14. 平台拓扑
 
 ### Windows 与 macOS
 
@@ -195,7 +216,7 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 - 其他情况连接用户已配对的桌面或服务器运行端，并明确显示远程数据和执行位置。
 - 不提供原生配置投影、积木编辑和写回。
 
-## 13. 验证矩阵
+## 15. 验证矩阵
 
 每个“上游版本 × 桌面平台 × 运行模式”单独验收：
 
@@ -209,17 +230,18 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 
 移动使用端另验收交互清单、能力协商、配对、远程标识、断线恢复与取消，不因桌面兼容通过而自动通过。
 
-## 14. 实施顺序
+## 16. 实施顺序
 
 1. 先通过 Windows Blocky Core 与通用 Tool/交互入口协议尖峰。
 2. 定义 `agent-compat` 协议及假数据适配器桩。
-3. 以 Pi 验证最小通用映射，以 OpenCode 验证较丰富的编码 Agent 映射。
-4. 分别实现 OpenClaw、Hermes 的只读扫描与运行连接。
-5. 四套适配器先完成投影和行为对照，再逐个开放写回和托管安装。
-6. 把映射证据、覆盖报告和失败模式固化进“逆向 Agent 积木”Skill。
-7. Windows 稳定后再验收 macOS完整能力和移动使用端。
+3. 以 Pi 验证最小通用映射，以 Codex 验证仓库规则、专业工具、Skills、MCP、沙箱和子 Agent 映射。
+4. 以 OpenCode 验证另一类丰富编码 Agent 映射，以 DeepSeek Harness 验证插件树、Profile/Bundle、审批与持久会话。
+5. 分别实现 OpenClaw、Hermes 的只读扫描与运行连接。
+6. 六套适配器先完成投影和行为对照，再逐个开放写回和托管安装。
+7. 把映射证据、覆盖报告和失败模式固化进 `$reverse-agent-to-blocky` Skill。
+8. Windows 稳定后再验收 macOS 完整能力和移动使用端。
 
-## 15. 官方依据
+## 17. 官方依据
 
 - OpenClaw 官方仓库：<https://github.com/openclaw/openclaw>
 - OpenClaw 架构：<https://docs.openclaw.ai/concepts/architecture>
@@ -229,8 +251,10 @@ OpenCode 模板覆盖比 Pi 更完整的编码 Agent 编排：
 - Pi coding agent（默认工具、扩展、Skills、Packages）：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/README.md>
 - Pi Extensions：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md>
 - Pi RPC：<https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc.md>
+- Codex Skills、CLI 功能与 AGENTS.md：<https://developers.openai.com/codex/skills>、<https://developers.openai.com/codex/cli/features>、<https://developers.openai.com/codex/guides/agents-md>
 - OpenCode 官方仓库：<https://github.com/anomalyco/opencode>
 - OpenCode Agents：<https://opencode.ai/docs/agents/>
 - OpenCode Tools：<https://opencode.ai/docs/tools/>
 - OpenCode Skills：<https://opencode.ai/docs/skills/>
 - OpenCode Plugins：<https://opencode.ai/docs/plugins/>
+- DeepSeek Harness 官方仓库、架构与用户指南：<https://github.com/deepseek-ai/deepseek-harness>、<https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/architecture.md>、<https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/index.md>

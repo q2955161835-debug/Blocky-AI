@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Implement [the approved second-version design](../../产品设计/Blocky-现代桌面工作区设计.md) and [L3 acceptance baseline](../../验收/归档/2026-08-12/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
+- Implement [the approved second-version design](Blocky-现代桌面工作区设计.md) and [L3 acceptance baseline](../../验收/归档/2026-08-12/验收-Blocky专业生产力工作台.md) exactly; do not broaden into a monorepo migration.
 - No production code without a failing test first; every RED failure must be observed and recorded in the task checklist/commit history.
 - Use only existing Fluent icons for visible common actions; no text-symbol, emoji, handcrafted SVG, or CSS-art icons.
 - Keep `save_project` / `load_project` as the app-data recovery contract while adding a separate user-document bridge.
