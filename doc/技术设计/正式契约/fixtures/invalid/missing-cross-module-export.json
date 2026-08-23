@@ -1,0 +1,90 @@
+{
+  "caseId": "invalid.missing-cross-module-export",
+  "expect": {
+    "valid": false,
+    "diagnosticCodes": [
+      "BLK-LINK-002"
+    ]
+  },
+  "payload": {
+    "project": {
+      "schemaVersion": "blocky.project/v1alpha1",
+      "projectId": "research-workbench",
+      "displayName": "研究工作台",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "displayName": "研究助手",
+          "purpose": "agent",
+          "workspaceRef": "workspaces/research-agent.workspace.json",
+          "exports": []
+        },
+        {
+          "moduleId": "citation-service",
+          "displayName": "引用服务",
+          "purpose": "service",
+          "workspaceRef": "workspaces/citation-service.workspace.json",
+          "exports": [
+            {
+              "exportId": "lookup-v1",
+              "displayName": "检索引用",
+              "kind": "tool"
+            }
+          ]
+        }
+      ],
+      "resources": [],
+      "appSurfaces": [],
+      "format": {
+        "createdWith": "blocky-desktop/0.1.0",
+        "minimumReaderVersion": "0.1.0"
+      }
+    },
+    "projectIr": {
+      "schemaVersion": "blocky.project-ir/v1alpha1",
+      "projectId": "research-workbench",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "digest": "sha256:fixture-research-agent"
+        },
+        {
+          "moduleId": "citation-service",
+          "digest": "sha256:fixture-citation-service"
+        }
+      ],
+      "links": [
+        {
+          "linkId": "request-citation",
+          "source": {
+            "projectId": "research-workbench",
+            "moduleId": "research-agent",
+            "blockId": "call-citation",
+            "portId": "citation-result"
+          },
+          "target": {
+            "moduleId": "citation-service",
+            "exportId": "lookup-v2"
+          },
+          "mode": "sync",
+          "timeoutMs": 5000
+        }
+      ]
+    },
+    "resolvedDiagnostics": [
+      {
+        "schemaVersion": "blocky.diagnostic/v1alpha1",
+        "diagnosticId": "missing-citation-export",
+        "code": "BLK-LINK-002",
+        "severity": "error",
+        "message": "目标导出 citation-service.lookup-v2 不存在。",
+        "source": {
+          "projectId": "research-workbench",
+          "moduleId": "research-agent",
+          "blockId": "call-citation"
+        },
+        "related": []
+      }
+    ]
+  }
+}
