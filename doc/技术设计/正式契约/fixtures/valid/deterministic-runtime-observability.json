@@ -1,0 +1,248 @@
+{
+  "caseId": "valid.deterministic-runtime-observability",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": [],
+    "visualStates": [
+      {
+        "eventSequence": 2,
+        "blockId": "search-block",
+        "state": "active",
+        "label": "正在运行",
+        "icon": "running",
+        "outline": "thick",
+        "tone": "green"
+      },
+      {
+        "eventSequence": 4,
+        "blockId": "search-block",
+        "state": "warning",
+        "label": "需要注意",
+        "icon": "warning",
+        "outline": "thick",
+        "tone": "yellow"
+      },
+      {
+        "eventSequence": 10,
+        "blockId": "answer-block",
+        "state": "error",
+        "label": "运行错误",
+        "icon": "error",
+        "outline": "thick",
+        "tone": "red"
+      }
+    ],
+    "runLogSummaries": [
+      "开始运行研究助手",
+      "搜索工具需要批准",
+      "搜索结果可能不完整",
+      "研究运行已完成",
+      "回答积木运行失败"
+    ]
+  },
+  "payload": {
+    "sourceMap": {
+      "search-block": {
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "blockId": "search-block"
+      },
+      "answer-block": {
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "blockId": "answer-block"
+      }
+    },
+    "events": [
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 1,
+        "timestamp": "2026-08-23T01:00:00.000Z",
+        "type": "run.started",
+        "data": {
+          "summary": "开始运行研究助手"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 2,
+        "timestamp": "2026-08-23T01:00:00.010Z",
+        "type": "block.started",
+        "blockId": "search-block",
+        "data": {
+          "summary": "开始搜索"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 3,
+        "timestamp": "2026-08-23T01:00:00.020Z",
+        "type": "tool.permission-requested",
+        "blockId": "search-block",
+        "correlationId": "tool-call-search",
+        "data": {
+          "toolId": "web-search",
+          "summary": "搜索工具需要批准"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 4,
+        "timestamp": "2026-08-23T01:00:00.030Z",
+        "type": "block.warning",
+        "blockId": "search-block",
+        "data": {
+          "code": "BLK-RUN-101",
+          "summary": "搜索结果可能不完整"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 5,
+        "timestamp": "2026-08-23T01:00:00.040Z",
+        "type": "tool.completed",
+        "blockId": "search-block",
+        "correlationId": "tool-call-search",
+        "data": {
+          "resultCount": 2
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 6,
+        "timestamp": "2026-08-23T01:00:00.050Z",
+        "type": "block.completed",
+        "blockId": "search-block",
+        "data": {
+          "summary": "搜索完成"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-success",
+        "sequence": 7,
+        "timestamp": "2026-08-23T01:00:00.060Z",
+        "type": "run.completed",
+        "data": {
+          "summary": "研究运行已完成"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-failure",
+        "sequence": 8,
+        "timestamp": "2026-08-23T01:01:00.000Z",
+        "type": "run.started",
+        "data": {
+          "summary": "开始失败路径"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-failure",
+        "sequence": 9,
+        "timestamp": "2026-08-23T01:01:00.010Z",
+        "type": "block.started",
+        "blockId": "answer-block",
+        "data": {
+          "summary": "开始生成回答"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-failure",
+        "sequence": 10,
+        "timestamp": "2026-08-23T01:01:00.020Z",
+        "type": "block.failed",
+        "blockId": "answer-block",
+        "data": {
+          "code": "BLK-RUN-201",
+          "summary": "回答积木运行失败"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      },
+      {
+        "eventVersion": "blocky.event/v1alpha1",
+        "projectId": "research-workbench",
+        "moduleId": "research-agent",
+        "runId": "run-failure",
+        "sequence": 11,
+        "timestamp": "2026-08-23T01:01:00.030Z",
+        "type": "run.failed",
+        "data": {
+          "code": "BLK-RUN-201",
+          "summary": "运行因回答错误而停止"
+        },
+        "redaction": {
+          "applied": false,
+          "categories": []
+        }
+      }
+    ]
+  }
+}
