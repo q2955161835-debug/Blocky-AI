@@ -38,6 +38,7 @@ type ResourceReference = {
   resourceId: StableId;
   kind: "model" | "knowledge" | "memory" | "tool" | "skill" | "mcp" |
     "guardrail" | "data" | "task";
+  scope: "project" | "user";
   definitionRef: string;
   secretRefs: string[];
 };
@@ -51,7 +52,7 @@ type AppSurfaceReference = {
 约束：
 
 - `projectId`、`moduleId`、`exportId`、`resourceId` 与 `surfaceId` 是稳定引用；显示名只用于界面。
-- `workspaceRef`、Schema 引用、资源定义引用和界面清单引用必须是项目相对引用，不能包含 `..`。
+- `workspaceRef`、Schema 引用和界面清单引用必须是项目相对引用，不能包含 `..`。`ResourceReference.scope: "project"` 时 `definitionRef` 同样使用项目相对路径；`scope: "user"` 时它必须是符合 `StableId` 的本机资源注册 ID。读取器不能根据字符串外观猜作用域，也不能接受 URI 或绝对路径代替声明。
 - 新项目的 `appSurfaces` 必须是空数组。只有用户明确要求创建应用页面并接受语义补丁，才可增加 `AppSurfaceReference`。
 - 秘密只记录逻辑 `secretRefs`，项目与 Workspace 均不得保存秘密值。
 - 删除模块、导出、资源或界面前必须先检查稳定引用，并以诊断暴露破坏影响。
@@ -84,6 +85,22 @@ type WorkspaceSessionState = {
     visible: boolean;
     activeView: "problems" | "run-log" | "terminal" | "output";
     heightPx: number;
+    maximized: boolean;
+    filters: Record<string, JsonValue>;
+  };
+  canvasViews: Array<{
+    tabId: StableId;
+    viewport: { offsetX: number; offsetY: number; scale: number };
+  }>;
+  browserViews: Array<{
+    tabId: StableId;
+    viewport: { widthPx: number; heightPx: number; scale: number };
+    scroll: { x: number; y: number };
+  }>;
+  terminalLayout: {
+    direction: "single" | "horizontal" | "vertical";
+    sessionIds: StableId[];
+    activeSessionId?: StableId;
   };
 };
 ```
@@ -94,6 +111,9 @@ type WorkspaceSessionState = {
 - 恢复时找不到目标的标签应被跳过并产生信息级诊断，不能按显示名猜测。
 - 浏览器标签只能打开已存在的 AppSurface，不能因打开标签而凭空创建页面。
 - `order` 从零开始且在同一会话中唯一；无有效活动标签时省略 `activeTabId`。
+- `canvasViews` 与 `browserViews` 以 `tabId` 关联已打开标签；关闭标签时同时清除其视口状态。缩放必须为正数，浏览器视口尺寸必须为正整数。
+- `terminalLayout` 只保存会话 ID 的布局和焦点，不保存 PTY 句柄、命令历史、输入、输出或环境值；找不到的会话 ID 在恢复时丢弃。
+- `bottomPanel.filters` 只保存 JSON 可序列化的视图筛选条件；`maximized`、筛选、终端布局和浏览器视口都属于本机会话，不进入项目事实。
 
 ## 4. 单工作区迁移
 

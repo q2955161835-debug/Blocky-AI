@@ -226,24 +226,34 @@ Provider 配置作为资源管理器的一部分，也可从设置中心进入�
 每个正式设置项至少声明：
 
 ```ts
+type SettingValidationRule = {
+  ruleId: StableId;
+  kind: "required" | "minimum" | "maximum" | "integer" | "pattern" |
+    "one-of" | "reference-kind";
+  argument?: JsonValue;
+  code: string;
+  message: string;
+};
+
 type SettingDefinition = {
+  schemaVersion: "blocky.setting/v1alpha1";
   id: string;
   title: string;
   description: string;
   category: string;
   scope: "app" | "project" | "resource" | "block";
   valueType: "boolean" | "number" | "string" | "enum" | "secretRef" | "command";
-  defaultValue?: unknown;
+  defaultValue?: JsonValue;
   sensitive: boolean;
   requiresRestart: boolean;
   dependsOn?: string[];
   conflictsWith?: string[];
   migrationVersion: number;
-  validate(value: unknown): SettingDiagnostic[];
+  validationRules: SettingValidationRule[];
 };
 ```
 
-实现时 Schema 是设置 UI、默认值、搜索、导入导出、迁移和测试的唯一事实来源。安全存储实现只接受 `secretRef`，不允许普通字符串字段偷偷保存密钥。
+实现时 Schema 是设置 UI、默认值、搜索、导入导出、迁移和测试的唯一事实来源。定义对象只包含 JSON 值，设置引擎解释 `validationRules` 并产生字段诊断；安全存储实现只接受 `secretRef`，不允许普通字符串字段偷偷保存密钥。
 
 ### 6.1 首批窗口、预览与 RPA 字段候选
 

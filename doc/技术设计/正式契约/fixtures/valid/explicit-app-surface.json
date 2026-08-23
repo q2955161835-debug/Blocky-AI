@@ -9,7 +9,7 @@
       "schemaVersion": "blocky.build/v1alpha1",
       "requestId": "create-research-page",
       "projectId": "research-workbench",
-      "baseDigest": "sha256:before-surface",
+      "baseDigest": "3333333333333333333333333333333333333333333333333333333333333333",
       "intent": "为研究助手创建一个可在浏览器标签打开的查询页面",
       "targetModuleIds": [
         "research-agent"
@@ -28,7 +28,21 @@
         "schemaVersion": "blocky.project/v1alpha1",
         "projectId": "research-workbench",
         "displayName": "研究工作台",
-        "modules": [],
+        "modules": [
+          {
+            "moduleId": "research-agent",
+            "displayName": "研究助手",
+            "purpose": "agent",
+            "workspaceRef": "workspaces/research-agent.workspace.json",
+            "exports": [
+              {
+                "exportId": "answer-with-citations",
+                "displayName": "生成带引用回答",
+                "kind": "agent"
+              }
+            ]
+          }
+        ],
         "resources": [],
         "appSurfaces": [],
         "format": {
@@ -41,7 +55,7 @@
       "schemaVersion": "blocky.patch/v1alpha1",
       "patchId": "add-research-page",
       "projectId": "research-workbench",
-      "baseDigest": "sha256:before-surface",
+      "baseDigest": "3333333333333333333333333333333333333333333333333333333333333333",
       "catalogVersion": "catalog/0.1.0",
       "operations": [
         {
@@ -77,7 +91,21 @@
         "schemaVersion": "blocky.project/v1alpha1",
         "projectId": "research-workbench",
         "displayName": "研究工作台",
-        "modules": [],
+        "modules": [
+          {
+            "moduleId": "research-agent",
+            "displayName": "研究助手",
+            "purpose": "agent",
+            "workspaceRef": "workspaces/research-agent.workspace.json",
+            "exports": [
+              {
+                "exportId": "answer-with-citations",
+                "displayName": "生成带引用回答",
+                "kind": "agent"
+              }
+            ]
+          }
+        ],
         "resources": [],
         "appSurfaces": [
           {

@@ -4,14 +4,16 @@
     "valid": false,
     "diagnosticCodes": [
       "BLK-SURFACE-001"
-    ]
+    ],
+    "projectBytesUnchanged": true
   },
   "payload": {
+    "beforeProjectDigest": "4444444444444444444444444444444444444444444444444444444444444444",
     "buildSpec": {
       "schemaVersion": "blocky.build/v1alpha1",
       "requestId": "create-chat-agent",
       "projectId": "assistant-project",
-      "baseDigest": "sha256:agent-only-project",
+      "baseDigest": "4444444444444444444444444444444444444444444444444444444444444444",
       "intent": "创建一个回答产品问题的 Agent",
       "targetModuleIds": [],
       "requiredResources": [],
@@ -24,7 +26,7 @@
       "schemaVersion": "blocky.patch/v1alpha1",
       "patchId": "unexpected-page",
       "projectId": "assistant-project",
-      "baseDigest": "sha256:agent-only-project",
+      "baseDigest": "4444444444444444444444444444444444444444444444444444444444444444",
       "catalogVersion": "catalog/0.1.0",
       "operations": [
         {
@@ -49,6 +51,8 @@
       ],
       "permissionDelta": [],
       "diagnostics": []
-    }
+    },
+    "writeApplied": false,
+    "afterProjectDigest": "4444444444444444444444444444444444444444444444444444444444444444"
   }
 }

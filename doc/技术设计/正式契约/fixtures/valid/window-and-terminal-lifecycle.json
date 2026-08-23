@@ -20,49 +20,59 @@
   "payload": {
     "transitions": [
       {
-        "schemaVersion": "blocky.window/v1alpha1",
-        "state": "visible",
-        "event": "minimize",
-        "dirtyProject": true,
-        "activeRunCount": 1,
-        "activeTerminalCount": 1,
-        "nextState": "hidden-notification-area"
+        "input": {
+          "schemaVersion": "blocky.window/v1alpha1",
+          "state": "visible",
+          "event": "minimize",
+          "dirtyProject": true,
+          "activeRunCount": 1,
+          "activeTerminalCount": 1
+        },
+        "expectedState": "hidden-notification-area"
       },
       {
-        "schemaVersion": "blocky.window/v1alpha1",
-        "state": "hidden-notification-area",
-        "event": "restore",
-        "dirtyProject": true,
-        "activeRunCount": 1,
-        "activeTerminalCount": 1,
-        "nextState": "visible"
+        "input": {
+          "schemaVersion": "blocky.window/v1alpha1",
+          "state": "hidden-notification-area",
+          "event": "restore",
+          "dirtyProject": true,
+          "activeRunCount": 1,
+          "activeTerminalCount": 1
+        },
+        "expectedState": "visible"
       },
       {
-        "schemaVersion": "blocky.window/v1alpha1",
-        "state": "visible",
-        "event": "close-requested",
-        "dirtyProject": true,
-        "activeRunCount": 1,
-        "activeTerminalCount": 1,
-        "nextState": "close-confirmation"
+        "input": {
+          "schemaVersion": "blocky.window/v1alpha1",
+          "state": "visible",
+          "event": "close-requested",
+          "dirtyProject": true,
+          "activeRunCount": 1,
+          "activeTerminalCount": 1
+        },
+        "expectedState": "close-confirmation"
       },
       {
-        "schemaVersion": "blocky.window/v1alpha1",
-        "state": "close-confirmation",
-        "event": "stop-and-exit",
-        "dirtyProject": false,
-        "activeRunCount": 0,
-        "activeTerminalCount": 0,
-        "nextState": "exiting"
+        "input": {
+          "schemaVersion": "blocky.window/v1alpha1",
+          "state": "close-confirmation",
+          "event": "stop-and-exit",
+          "dirtyProject": false,
+          "activeRunCount": 0,
+          "activeTerminalCount": 0
+        },
+        "expectedState": "exiting"
       },
       {
-        "schemaVersion": "blocky.window/v1alpha1",
-        "state": "exiting",
-        "event": "exit",
-        "dirtyProject": false,
-        "activeRunCount": 0,
-        "activeTerminalCount": 0,
-        "nextState": "exited"
+        "input": {
+          "schemaVersion": "blocky.window/v1alpha1",
+          "state": "exiting",
+          "event": "exit",
+          "dirtyProject": false,
+          "activeRunCount": 0,
+          "activeTerminalCount": 0
+        },
+        "expectedState": "exited"
       }
     ],
     "hiddenExecution": {

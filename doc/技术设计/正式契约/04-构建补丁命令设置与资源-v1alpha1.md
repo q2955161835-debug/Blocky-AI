@@ -87,6 +87,22 @@ type PointerGestureDefinition = {
 ## 3. 设置 Schema
 
 ```ts
+type SettingValidationRule = {
+  ruleId: StableId;
+  kind: "required" | "minimum" | "maximum" | "integer" | "pattern" |
+    "one-of" | "reference-kind";
+  argument?: JsonValue;
+  code: string;
+  message: string;
+};
+
+type SettingDiagnostic = {
+  code: string;
+  severity: "warning" | "error";
+  settingId: string;
+  message: string;
+};
+
 type SettingDefinition = {
   schemaVersion: "blocky.setting/v1alpha1";
   id: string;
@@ -95,17 +111,17 @@ type SettingDefinition = {
   category: string;
   scope: "app" | "project" | "resource" | "block";
   valueType: "boolean" | "number" | "string" | "enum" | "secretRef" | "command";
-  defaultValue?: unknown;
+  defaultValue?: JsonValue;
   sensitive: boolean;
   requiresRestart: boolean;
   dependsOn?: string[];
   conflictsWith?: string[];
   migrationVersion: number;
-  validate(value: unknown): SettingDiagnostic[];
+  validationRules: SettingValidationRule[];
 };
 ```
 
-Schema 是设置 UI、搜索、默认值、作用域继承、重置、导入导出、迁移和测试的唯一事实来源。`valueType: "secretRef"` 只保存安全存储引用；任何普通字符串设置不得承载密钥。
+Schema 是设置 UI、搜索、默认值、作用域继承、重置、导入导出、迁移和测试的唯一事实来源。定义对象严格可序列化；设置引擎按顺序解释 `validationRules` 并产生 `SettingDiagnostic[]`，不能把函数写进 Schema。`valueType: "secretRef"` 只保存安全存储引用；任何普通字符串设置不得承载密钥。
 
 阶段 1 只显示已有真实消费者的设置：窗口最小化/关闭/恢复、工作台标签和底部面板恢复、用户终端输出预算，以及资源 `secretRef` 绑定。尚未实现的 AppSurface、RPA 和 Provider 行为不显示无效开关。发布候选前必须执行最终盘点：从真实命令、资源、积木、Host、适配器和运行时生成能力清单，删除无消费者设置、补齐必要控制并重验默认值、迁移、安全和多平台差异。
 
@@ -117,6 +133,7 @@ type ResourceDefinition = {
   resourceId: StableId;
   kind: "model" | "knowledge" | "memory" | "tool" | "skill" | "mcp" |
     "guardrail" | "data" | "task";
+  scope: "project" | "user";
   displayName: string;
   definition: JsonValue;
   capabilityRequirements: string[];
@@ -124,7 +141,7 @@ type ResourceDefinition = {
 };
 ```
 
-资源注册表为上下文与输入、模型与推理、知识与检索、记忆与状态、工具与连接、Skills 与能力、流程与协作、安全与护栏、数据与结构等专业积木提供稳定引用。项目积木只保存 `resourceId`；定义可以位于项目或本机注册表，但作用域必须显式，秘密字段只能通过 `secretRef` 绑定。
+资源注册表为上下文与输入、模型与推理、知识与检索、记忆与状态、工具与连接、Skills 与能力、流程与协作、安全与护栏、数据与结构等专业积木提供稳定引用。项目积木保存 `resourceId` 和显式 `scope`；`project` 定义随项目存储，`user` 定义位于本机资源注册表且项目只保存注册 ID。两者不能同名回退或按字符串猜测，秘密字段只能通过 `secretRef` 绑定。
 
 模型资源至少表达 Provider、端点配置、模型 ID 和能力要求；知识资源表达来源、切分、索引与检索策略；工具、Skill、MCP 与任务表达版本、权限和实现引用；护栏表达输入/输出阶段和失败策略。接口不固定具体供应商，也不固定积木总数。
 

@@ -46,11 +46,11 @@
       "modules": [
         {
           "moduleId": "research-agent",
-          "digest": "sha256:fixture-research-agent"
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
         },
         {
           "moduleId": "citation-service",
-          "digest": "sha256:fixture-citation-service"
+          "digest": "2222222222222222222222222222222222222222222222222222222222222222"
         }
       ],
       "links": [

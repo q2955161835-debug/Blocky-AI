@@ -2,7 +2,10 @@
   "caseId": "valid.minimal-multi-module-project",
   "expect": {
     "valid": true,
-    "diagnosticCodes": []
+    "diagnosticCodes": [],
+    "secretRefsOnly": [
+      "handbook-access"
+    ]
   },
   "payload": {
     "project": {
@@ -45,8 +48,11 @@
         {
           "resourceId": "product-handbook",
           "kind": "knowledge",
+          "scope": "project",
           "definitionRef": "resources/product-handbook.json",
-          "secretRefs": []
+          "secretRefs": [
+            "handbook-access"
+          ]
         }
       ],
       "appSurfaces": [],
@@ -55,15 +61,46 @@
         "minimumReaderVersion": "0.1.0"
       }
     },
+    "projectIr": {
+      "schemaVersion": "blocky.project-ir/v1alpha1",
+      "projectId": "research-workbench",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        {
+          "moduleId": "citation-service",
+          "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ],
+      "links": [
+        {
+          "linkId": "request-citation",
+          "source": {
+            "projectId": "research-workbench",
+            "moduleId": "research-agent",
+            "blockId": "call-citation",
+            "portId": "citation-query"
+          },
+          "target": {
+            "moduleId": "citation-service",
+            "exportId": "lookup-v1"
+          },
+          "mode": "sync",
+          "timeoutMs": 5000
+        }
+      ]
+    },
     "workspaces": {
       "research-agent": {
         "workspaceRef": "workspaces/research-agent.workspace.json",
-        "workspaceDigest": "sha256:fixture-research-agent",
+        "workspaceDigest": "1111111111111111111111111111111111111111111111111111111111111111",
         "topBlockIds": ["on-question"]
       },
       "citation-service": {
         "workspaceRef": "workspaces/citation-service.workspace.json",
-        "workspaceDigest": "sha256:fixture-citation-service",
+        "workspaceDigest": "2222222222222222222222222222222222222222222222222222222222222222",
         "topBlockIds": ["lookup-entry"]
       }
     },
@@ -88,7 +125,32 @@
       "bottomPanel": {
         "visible": true,
         "activeView": "problems",
-        "heightPx": 260
+        "heightPx": 260,
+        "maximized": false,
+        "filters": {}
+      },
+      "canvasViews": [
+        {
+          "tabId": "tab-research",
+          "viewport": {
+            "offsetX": 120,
+            "offsetY": 80,
+            "scale": 1
+          }
+        },
+        {
+          "tabId": "tab-citations",
+          "viewport": {
+            "offsetX": 40,
+            "offsetY": 40,
+            "scale": 0.9
+          }
+        }
+      ],
+      "browserViews": [],
+      "terminalLayout": {
+        "direction": "single",
+        "sessionIds": []
       }
     }
   }

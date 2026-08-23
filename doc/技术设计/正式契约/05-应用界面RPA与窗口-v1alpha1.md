@@ -61,13 +61,65 @@ type RpaLocator = {
   selector: JsonValue;
   risk: "normal" | "elevated";
 };
+
+type RpaPermissionScope = {
+  permissionId: StableId;
+  applicationId: StableId;
+  windowSelector?: JsonValue;
+  targetLocatorIds: StableId[];
+  actions: string[];
+  dataScopes: string[];
+  validUntil: string;
+};
+
+type RpaApplicationSession = {
+  sessionId: StableId;
+  moduleId: StableId;
+  applicationIds: StableId[];
+  presence: "user-present";
+  status: "starting" | "running" | "paused" | "stopping" | "stopped" | "failed";
+  capabilityId: StableId;
+  expiresAt: string;
+};
+
+type RpaSensitiveInputBinding = {
+  fieldId: StableId;
+  source: "user-present-input" | "secretRef";
+  secretRef?: string;
+  recording: "excluded";
+};
+
+type RpaSideEffectPolicy = {
+  actionId: StableId;
+  checkpointId: StableId;
+  replay: "idempotent" | "compensated" | "never";
+  idempotencyKeyRef?: string;
+  compensationActionId?: StableId;
+};
+
+type RpaTraceContract = {
+  runtimeEventVersion: "blocky.event/v1alpha1";
+  auditVersion: "blocky.audit/v1alpha1";
+  sourceMapRequired: true;
+  artifactPolicy: "reference-only";
+};
+
+type RpaModuleDefinition = {
+  contract: RpaModuleContract;
+  permissionScopes: RpaPermissionScope[];
+  locators: RpaLocator[];
+  sensitiveInputs: RpaSensitiveInputBinding[];
+  sideEffectPolicies: RpaSideEffectPolicy[];
+  trace: RpaTraceContract;
+  session: RpaApplicationSession;
+};
 ```
 
-v1alpha1 只接受 `mode: "attended"`：用户必须在本机可见会话中发起、观察并可随时暂停。`unattended` 返回 `BLK-RPA-001`，企业 Worker、远程队列和无人值守凭据必须另行版本化和 L3 评审。
+v1alpha1 只接受 `mode: "attended"`：用户必须在本机可见会话中发起、观察并可随时暂停。每个 `permissions` 条目引用同定义中的 `RpaPermissionScope.permissionId`；Host 同时校验应用、窗口、目标、动作、数据范围、有效期和 session capability。`unattended` 返回 `BLK-RPA-001`，企业 Worker、远程队列和无人值守凭据必须另行版本化和 L3 评审。
 
-定位优先级为浏览器语义、Windows UIA、图像、绝对坐标。绝对坐标只是持续显示 elevated 警告的最后回退；恢复检查点前必须重新验证窗口、页面、记录和外部状态。每个副作用声明幂等键或补偿策略，并在执行前创建 `beforeSideEffect` 检查点。
+定位优先级为浏览器语义、Windows UIA、图像、绝对坐标。绝对坐标只是持续显示 elevated 警告的最后回退；恢复检查点前必须重新验证窗口、页面、记录和外部状态。每个副作用通过 `RpaSideEffectPolicy` 声明幂等、补偿或禁止重放，并在执行前创建 `beforeSideEffect` 检查点。
 
-密码、Token、Cookie、验证码和隐私字段通过用户现场输入或 `secretRef` 解决，不进入录制、截图、OCR、运行轨迹或日志。用户终端也不是 RPA 的执行后门；RPA 请求进程任务时仍使用隔离的 `AgentProcessRequest`。
+密码、Token、Cookie、验证码和隐私字段通过 `RpaSensitiveInputBinding` 的用户现场输入或 `secretRef` 解决，不进入录制、截图、OCR、运行轨迹或日志。暂停/恢复/停止复用 `RuntimeEvent` 的 `run.paused/run.resumed/run.cancelled`，每个动作以 source map 定位并通过同一 `correlationId` 关联 RPA 身份的 `AuditRecord`；截图/OCR 只保存有界、脱敏的工件引用。用户终端也不是 RPA 的执行后门；RPA 请求进程任务时仍使用隔离的 `AgentProcessRequest`。
 
 ## 3. 窗口生命周期
 

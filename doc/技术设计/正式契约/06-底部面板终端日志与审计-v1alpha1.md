@@ -23,15 +23,15 @@ type BottomPanelViewState = {
 };
 ```
 
-四个 view ID 固定为 `problems`、`run-log`、`terminal`、`output`。面板状态属于 `WorkspaceSessionState` 的本机扩展，不写项目。以下是互不替代的独立命令：
+四个 view ID 固定为 `problems`、`run-log`、`terminal`、`output`。`BottomPanelViewState` 是 `WorkspaceSessionState.bottomPanel` 的精确投影，不写项目。以下是互不替代的独立命令：
 
-- `view.toggleBottomPanel`：只显示或隐藏面板。
-- `view.showProblems`：显示问题并激活问题视图。
-- `view.showRunLog`：显示面板并激活运行日志。
+- `view.toggle-bottom-panel`：只显示或隐藏面板。
+- `view.show-problems`：显示问题并激活问题视图。
+- `view.show-run-log`：显示面板并激活运行日志。
 - `terminal.create`：经 Host 创建用户终端会话。
 - `terminal.stop`：停止指定用户终端或具名任务。
-- `logs.clearView`：清除当前投影，不删除持久诊断。
-- `logs.clearStoredDiagnostics`：显式清除本机诊断存储，并记录清除摘要。
+- `logs.clear-view`：清除当前投影，不删除持久诊断。
+- `logs.clear-stored-diagnostics`：显式清除本机诊断存储，并记录清除摘要。
 
 隐藏、关闭或折叠底部面板不停止运行、终端、预览或 RPA。关闭存在前台任务的终端必须提供返回或终止后关闭的明确选择。
 
@@ -40,7 +40,7 @@ type BottomPanelViewState = {
 ```ts
 type TerminalSessionContract = {
   schemaVersion: "blocky.terminal/v1alpha1";
-  sessionId: string;
+  sessionId: StableId;
   owner: "user";
   mode: "interactive" | "task";
   profileId: string;
@@ -51,17 +51,35 @@ type TerminalSessionContract = {
   status: "starting" | "running" | "stopping" | "exited" | "failed";
 };
 
+type TaskParameterValidationRule = {
+  ruleId: StableId;
+  kind: "minimum" | "maximum" | "integer" | "pattern" | "prefix" | "one-of";
+  argument: JsonValue;
+  code: string;
+  message: string;
+};
+
 type TaskDefinition = {
   schemaVersion: "blocky.task/v1alpha1";
   taskId: StableId;
   displayName: string;
   source: "project" | "blocky" | "extension";
+  parameters: Array<{
+    parameterId: StableId;
+    valueType: "string" | "number" | "boolean";
+    required: boolean;
+    validationRules: TaskParameterValidationRule[];
+  }>;
   command: { executableRef: string; arguments: string[] };
   workingDirectoryRef: string;
   allowedEnvironmentKeys: string[];
   secretRefs: string[];
   timeoutMs: number;
   outputBudgetBytes: number;
+  concurrency: { maxInstances: number; overflow: "queue" | "reject" };
+  cancellation: { gracePeriodMs: number; terminateProcessGroup: boolean };
+  successExitCodes: number[];
+  platforms: Array<"windows" | "macos">;
   agentPolicy: "deny" | "approval-required" | "allow-scoped";
 };
 
@@ -75,7 +93,11 @@ type AgentProcessRequest = {
 };
 ```
 
-`UserTerminalSession` 只能由用户创建，拥有独立 PTY、Shell Profile 和界面生命周期。`AgentProcessRequest` 不含 `terminalSessionId`、PTY 句柄、原始命令字符串、任意 cwd 或环境值；Builder、Agent、Skill、扩展和 RPA 只能请求已注册 `TaskDefinition`，由 Host 校验调用者、参数、能力、目录、时间和输出预算。
+`UserTerminalSession` 只能由用户创建，拥有独立 PTY、Shell Profile 和界面生命周期。`AgentProcessRequest` 不含 `terminalSessionId`、PTY 句柄、原始命令字符串、任意 cwd 或环境值；Builder、Agent、Skill、扩展和 RPA 只能请求已注册 `TaskDefinition`，由 Host 校验调用者、参数、能力、目录、平台、并发、时间和输出预算。
+
+`parameters` 是 `AgentProcessRequest.arguments` 的唯一允许集合；Host 先检查必填和 `valueType`，再按顺序解释 `validationRules`，失败返回规则声明的稳定 `code/message`，通过后才展开 `command.arguments`。`minimum/maximum` 的参数是数字，`integer` 是布尔值，`pattern/prefix` 是字符串，`one-of` 是同类型 JSON 数组；其他形状以 `BLK-TERM-101` 拒绝。禁止字符串拼接未验证输入。`executableRef` 是逻辑注册引用，由 Host 按 `platforms` 选择锁定实现，不在项目中保存平台绝对路径。取消以 `requestId` 定位独立进程组，先等待 `gracePeriodMs`，再按 `terminateProcessGroup` 结算；调用者不能取得进程句柄。只有 `successExitCodes` 中的退出码视为完成，超时、取消、拒绝和异常退出使用不同结构化结果。
+
+参数替换记号语法固定为 `${<parameterId>}`，例如 `parameterId: "project-ref"` 对应 `${project-ref}`。每个替换记号必须且只能引用一个已声明参数；不允许属性访问、表达式、命令替换、嵌套替换或未声明变量。
 
 Agent 不能附加、读取、写入或继承用户 PTY，也不能读取用户终端输入、历史、环境或输出。越界请求返回 `BLK-TERM-003` 并在产生副作用前拒绝。任务定义随项目保存时是可审查资源，导入后不会自动运行。
 
@@ -108,7 +130,7 @@ type AuditRecord = {
   schemaVersion: "blocky.audit/v1alpha1";
   auditId: string;
   timestamp: string;
-  actor: { kind: "user" | "builder" | "agent" | "extension"; id: string };
+  actor: { kind: "user" | "builder" | "agent" | "extension" | "rpa"; id: string };
   action: string;
   target: string;
   decision: "allowed" | "denied" | "cancelled" | "failed" | "completed";

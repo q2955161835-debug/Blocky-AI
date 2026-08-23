@@ -35,6 +35,55 @@
         }
       ]
     },
+    "permissionScopes": [
+      {
+        "permissionId": "windows.uia.read",
+        "applicationId": "accounting-client",
+        "windowSelector": {
+          "titlePattern": "Fixture Accounting"
+        },
+        "targetLocatorIds": [
+          "invoice-submit-uia"
+        ],
+        "actions": [
+          "read"
+        ],
+        "dataScopes": [
+          "invoice-form"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      },
+      {
+        "permissionId": "windows.uia.invoke",
+        "applicationId": "accounting-client",
+        "windowSelector": {
+          "titlePattern": "Fixture Accounting"
+        },
+        "targetLocatorIds": [
+          "invoice-submit-uia",
+          "invoice-submit-fallback"
+        ],
+        "actions": [
+          "invoke"
+        ],
+        "dataScopes": [
+          "invoice-submit"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      },
+      {
+        "permissionId": "browser.semantic.read",
+        "applicationId": "supplier-portal",
+        "targetLocatorIds": [],
+        "actions": [
+          "read"
+        ],
+        "dataScopes": [
+          "supplier-status"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      }
+    ],
     "locators": [
       {
         "locatorId": "invoice-submit-uia",
@@ -71,10 +120,32 @@
         "recording": "excluded"
       }
     ],
-    "sideEffectPolicy": {
-      "checkpointId": "before-submit",
-      "idempotencyKeyRef": "invoice-record-id",
-      "compensation": "mark-for-human-review"
+    "sideEffectPolicies": [
+      {
+        "actionId": "submit-invoice",
+        "checkpointId": "before-submit",
+        "replay": "compensated",
+        "idempotencyKeyRef": "invoice-record-id",
+        "compensationActionId": "mark-for-human-review"
+      }
+    ],
+    "trace": {
+      "runtimeEventVersion": "blocky.event/v1alpha1",
+      "auditVersion": "blocky.audit/v1alpha1",
+      "sourceMapRequired": true,
+      "artifactPolicy": "reference-only"
+    },
+    "session": {
+      "sessionId": "invoice-session",
+      "moduleId": "invoice-assistant",
+      "applicationIds": [
+        "accounting-client",
+        "supplier-portal"
+      ],
+      "presence": "user-present",
+      "status": "running",
+      "capabilityId": "invoice-attended-run",
+      "expiresAt": "2026-08-23T03:30:00Z"
     }
   }
 }
