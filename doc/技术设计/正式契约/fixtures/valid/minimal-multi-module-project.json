@@ -1,0 +1,95 @@
+{
+  "caseId": "valid.minimal-multi-module-project",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": []
+  },
+  "payload": {
+    "project": {
+      "schemaVersion": "blocky.project/v1alpha1",
+      "projectId": "research-workbench",
+      "displayName": "研究工作台",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "displayName": "研究助手",
+          "purpose": "agent",
+          "workspaceRef": "workspaces/research-agent.workspace.json",
+          "exports": [
+            {
+              "exportId": "answer-with-citations",
+              "displayName": "生成带引用回答",
+              "kind": "agent",
+              "inputSchemaRef": "schemas/question.json",
+              "outputSchemaRef": "schemas/cited-answer.json"
+            }
+          ]
+        },
+        {
+          "moduleId": "citation-service",
+          "displayName": "引用服务",
+          "purpose": "service",
+          "workspaceRef": "workspaces/citation-service.workspace.json",
+          "exports": [
+            {
+              "exportId": "lookup-v1",
+              "displayName": "检索引用",
+              "kind": "tool",
+              "inputSchemaRef": "schemas/query.json",
+              "outputSchemaRef": "schemas/citations.json"
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "product-handbook",
+          "kind": "knowledge",
+          "definitionRef": "resources/product-handbook.json",
+          "secretRefs": []
+        }
+      ],
+      "appSurfaces": [],
+      "format": {
+        "createdWith": "blocky-desktop/0.1.0",
+        "minimumReaderVersion": "0.1.0"
+      }
+    },
+    "workspaces": {
+      "research-agent": {
+        "workspaceRef": "workspaces/research-agent.workspace.json",
+        "workspaceDigest": "sha256:fixture-research-agent",
+        "topBlockIds": ["on-question"]
+      },
+      "citation-service": {
+        "workspaceRef": "workspaces/citation-service.workspace.json",
+        "workspaceDigest": "sha256:fixture-citation-service",
+        "topBlockIds": ["lookup-entry"]
+      }
+    },
+    "workspaceSession": {
+      "schemaVersion": "blocky.workspace-session/v1alpha1",
+      "projectId": "research-workbench",
+      "openTabs": [
+        {
+          "tabId": "tab-research",
+          "kind": "canvas",
+          "targetId": "research-agent",
+          "order": 0
+        },
+        {
+          "tabId": "tab-citations",
+          "kind": "canvas",
+          "targetId": "citation-service",
+          "order": 1
+        }
+      ],
+      "activeTabId": "tab-research",
+      "bottomPanel": {
+        "visible": true,
+        "activeView": "problems",
+        "heightPx": 260
+      }
+    }
+  }
+}
