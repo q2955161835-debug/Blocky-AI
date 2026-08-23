@@ -1,0 +1,54 @@
+{
+  "caseId": "invalid.implicit-app-surface",
+  "expect": {
+    "valid": false,
+    "diagnosticCodes": [
+      "BLK-SURFACE-001"
+    ]
+  },
+  "payload": {
+    "buildSpec": {
+      "schemaVersion": "blocky.build/v1alpha1",
+      "requestId": "create-chat-agent",
+      "projectId": "assistant-project",
+      "baseDigest": "sha256:agent-only-project",
+      "intent": "创建一个回答产品问题的 Agent",
+      "targetModuleIds": [],
+      "requiredResources": [],
+      "requestedCapabilities": [],
+      "acceptanceCriteria": [
+        "Agent 可在 Blocky 运行面板回答问题"
+      ]
+    },
+    "candidatePatch": {
+      "schemaVersion": "blocky.patch/v1alpha1",
+      "patchId": "unexpected-page",
+      "projectId": "assistant-project",
+      "baseDigest": "sha256:agent-only-project",
+      "catalogVersion": "catalog/0.1.0",
+      "operations": [
+        {
+          "op": "app-surface.add",
+          "manifest": {
+            "schemaVersion": "blocky.app-surface/v1alpha1",
+            "surfaceId": "unexpected-page",
+            "displayName": "未请求页面",
+            "sourceRootRef": "surfaces/unexpected-page/src",
+            "associatedModuleIds": [
+              "assistant-agent"
+            ],
+            "bridgeRef": "surfaces/unexpected-page/bridge.json",
+            "permissions": [],
+            "build": {
+              "packageManager": "pnpm",
+              "lockfileRef": "surfaces/unexpected-page/pnpm-lock.yaml",
+              "outputRef": "surfaces/unexpected-page/dist"
+            }
+          }
+        }
+      ],
+      "permissionDelta": [],
+      "diagnostics": []
+    }
+  }
+}

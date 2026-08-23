@@ -1,0 +1,32 @@
+{
+  "caseId": "invalid.unattended-rpa-v1alpha1",
+  "expect": {
+    "valid": false,
+    "diagnosticCodes": [
+      "BLK-RPA-001"
+    ]
+  },
+  "payload": {
+    "candidateContract": {
+      "schemaVersion": "blocky.rpa/v1alpha1",
+      "moduleId": "nightly-invoice-worker",
+      "mode": "unattended",
+      "applications": [
+        {
+          "applicationId": "accounting-client",
+          "executableRef": "application://accounting-client"
+        }
+      ],
+      "permissions": [
+        "windows.uia.invoke"
+      ],
+      "checkpoints": [
+        {
+          "checkpointId": "before-submit",
+          "beforeSideEffect": true,
+          "revalidateExternalState": true
+        }
+      ]
+    }
+  }
+}

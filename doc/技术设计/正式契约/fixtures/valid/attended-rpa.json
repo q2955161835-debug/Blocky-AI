@@ -1,0 +1,80 @@
+{
+  "caseId": "valid.attended-rpa",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": [],
+    "warnings": [
+      "absolute-coordinate locator requires elevated confirmation"
+    ]
+  },
+  "payload": {
+    "contract": {
+      "schemaVersion": "blocky.rpa/v1alpha1",
+      "moduleId": "invoice-assistant",
+      "mode": "attended",
+      "applications": [
+        {
+          "applicationId": "accounting-client",
+          "executableRef": "application://accounting-client"
+        },
+        {
+          "applicationId": "supplier-portal",
+          "browserOrigin": "https://supplier.fixture.invalid"
+        }
+      ],
+      "permissions": [
+        "windows.uia.read",
+        "windows.uia.invoke",
+        "browser.semantic.read"
+      ],
+      "checkpoints": [
+        {
+          "checkpointId": "before-submit",
+          "beforeSideEffect": true,
+          "revalidateExternalState": true
+        }
+      ]
+    },
+    "locators": [
+      {
+        "locatorId": "invoice-submit-uia",
+        "strategy": "windows-uia",
+        "applicationId": "accounting-client",
+        "selector": {
+          "automationId": "submit-invoice",
+          "controlType": "Button"
+        },
+        "risk": "normal"
+      },
+      {
+        "locatorId": "invoice-submit-fallback",
+        "strategy": "absolute-coordinate",
+        "applicationId": "accounting-client",
+        "selector": {
+          "x": 720,
+          "y": 540,
+          "displayFingerprint": "fixture-display"
+        },
+        "risk": "elevated"
+      }
+    ],
+    "sensitiveInputs": [
+      {
+        "fieldId": "one-time-code",
+        "source": "user-present-input",
+        "recording": "excluded"
+      },
+      {
+        "fieldId": "portal-password",
+        "source": "secretRef",
+        "secretRef": "secret://supplier-portal-password",
+        "recording": "excluded"
+      }
+    ],
+    "sideEffectPolicy": {
+      "checkpointId": "before-submit",
+      "idempotencyKeyRef": "invoice-record-id",
+      "compensation": "mark-for-human-review"
+    }
+  }
+}

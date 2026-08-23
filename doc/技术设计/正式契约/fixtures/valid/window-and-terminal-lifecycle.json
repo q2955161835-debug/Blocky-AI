@@ -1,0 +1,87 @@
+{
+  "caseId": "valid.window-and-terminal-lifecycle",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": [],
+    "authorizedTaskContinuesWhileHidden": true,
+    "exitSettlementCounts": {
+      "host": 0,
+      "sidecar": 0,
+      "preview": 0,
+      "runtime": 0,
+      "rpa": 0,
+      "pty": 0,
+      "childProcess": 0,
+      "logFlusher": 0,
+      "port": 0,
+      "fileLock": 0
+    }
+  },
+  "payload": {
+    "transitions": [
+      {
+        "schemaVersion": "blocky.window/v1alpha1",
+        "state": "visible",
+        "event": "minimize",
+        "dirtyProject": true,
+        "activeRunCount": 1,
+        "activeTerminalCount": 1,
+        "nextState": "hidden-notification-area"
+      },
+      {
+        "schemaVersion": "blocky.window/v1alpha1",
+        "state": "hidden-notification-area",
+        "event": "restore",
+        "dirtyProject": true,
+        "activeRunCount": 1,
+        "activeTerminalCount": 1,
+        "nextState": "visible"
+      },
+      {
+        "schemaVersion": "blocky.window/v1alpha1",
+        "state": "visible",
+        "event": "close-requested",
+        "dirtyProject": true,
+        "activeRunCount": 1,
+        "activeTerminalCount": 1,
+        "nextState": "close-confirmation"
+      },
+      {
+        "schemaVersion": "blocky.window/v1alpha1",
+        "state": "close-confirmation",
+        "event": "stop-and-exit",
+        "dirtyProject": false,
+        "activeRunCount": 0,
+        "activeTerminalCount": 0,
+        "nextState": "exiting"
+      },
+      {
+        "schemaVersion": "blocky.window/v1alpha1",
+        "state": "exiting",
+        "event": "exit",
+        "dirtyProject": false,
+        "activeRunCount": 0,
+        "activeTerminalCount": 0,
+        "nextState": "exited"
+      }
+    ],
+    "hiddenExecution": {
+      "runId": "user-authorized-run",
+      "authorizationState": "allowed-before-minimize",
+      "startedWhileHidden": false,
+      "continuedWhileHidden": true
+    },
+    "exitSettlementCounts": {
+      "host": 0,
+      "sidecar": 0,
+      "preview": 0,
+      "runtime": 0,
+      "rpa": 0,
+      "pty": 0,
+      "childProcess": 0,
+      "logFlusher": 0,
+      "port": 0,
+      "fileLock": 0
+    }
+  }
+}
