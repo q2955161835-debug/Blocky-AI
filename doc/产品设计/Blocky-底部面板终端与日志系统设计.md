@@ -156,7 +156,7 @@ type LogEnvelope = {
 
 type TerminalSessionContract = {
   schemaVersion: "blocky.terminal/v1alpha1";
-  sessionId: string;
+  sessionId: StableId;
   owner: "user";
   mode: "interactive" | "task";
   profileId: string;
@@ -171,7 +171,7 @@ type AuditRecord = {
   schemaVersion: "blocky.audit/v1alpha1";
   auditId: string;
   timestamp: string;
-  actor: { kind: "user" | "builder" | "agent" | "extension"; id: string };
+  actor: { kind: "user" | "builder" | "agent" | "extension" | "rpa"; id: string };
   action: string;
   target: string;
   decision: "allowed" | "denied" | "cancelled" | "failed" | "completed";

@@ -1,0 +1,151 @@
+{
+  "caseId": "valid.attended-rpa",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": [],
+    "warnings": [
+      "absolute-coordinate locator requires elevated confirmation"
+    ]
+  },
+  "payload": {
+    "contract": {
+      "schemaVersion": "blocky.rpa/v1alpha1",
+      "moduleId": "invoice-assistant",
+      "mode": "attended",
+      "applications": [
+        {
+          "applicationId": "accounting-client",
+          "executableRef": "application://accounting-client"
+        },
+        {
+          "applicationId": "supplier-portal",
+          "browserOrigin": "https://supplier.fixture.invalid"
+        }
+      ],
+      "permissions": [
+        "windows.uia.read",
+        "windows.uia.invoke",
+        "browser.semantic.read"
+      ],
+      "checkpoints": [
+        {
+          "checkpointId": "before-submit",
+          "beforeSideEffect": true,
+          "revalidateExternalState": true
+        }
+      ]
+    },
+    "permissionScopes": [
+      {
+        "permissionId": "windows.uia.read",
+        "applicationId": "accounting-client",
+        "windowSelector": {
+          "titlePattern": "Fixture Accounting"
+        },
+        "targetLocatorIds": [
+          "invoice-submit-uia"
+        ],
+        "actions": [
+          "read"
+        ],
+        "dataScopes": [
+          "invoice-form"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      },
+      {
+        "permissionId": "windows.uia.invoke",
+        "applicationId": "accounting-client",
+        "windowSelector": {
+          "titlePattern": "Fixture Accounting"
+        },
+        "targetLocatorIds": [
+          "invoice-submit-uia",
+          "invoice-submit-fallback"
+        ],
+        "actions": [
+          "invoke"
+        ],
+        "dataScopes": [
+          "invoice-submit"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      },
+      {
+        "permissionId": "browser.semantic.read",
+        "applicationId": "supplier-portal",
+        "targetLocatorIds": [],
+        "actions": [
+          "read"
+        ],
+        "dataScopes": [
+          "supplier-status"
+        ],
+        "validUntil": "2026-08-23T03:30:00Z"
+      }
+    ],
+    "locators": [
+      {
+        "locatorId": "invoice-submit-uia",
+        "strategy": "windows-uia",
+        "applicationId": "accounting-client",
+        "selector": {
+          "automationId": "submit-invoice",
+          "controlType": "Button"
+        },
+        "risk": "normal"
+      },
+      {
+        "locatorId": "invoice-submit-fallback",
+        "strategy": "absolute-coordinate",
+        "applicationId": "accounting-client",
+        "selector": {
+          "x": 720,
+          "y": 540,
+          "displayFingerprint": "fixture-display"
+        },
+        "risk": "elevated"
+      }
+    ],
+    "sensitiveInputs": [
+      {
+        "fieldId": "one-time-code",
+        "source": "user-present-input",
+        "recording": "excluded"
+      },
+      {
+        "fieldId": "portal-password",
+        "source": "secretRef",
+        "secretRef": "secret://supplier-portal-password",
+        "recording": "excluded"
+      }
+    ],
+    "sideEffectPolicies": [
+      {
+        "actionId": "submit-invoice",
+        "checkpointId": "before-submit",
+        "replay": "compensated",
+        "idempotencyKeyRef": "invoice-record-id",
+        "compensationActionId": "mark-for-human-review"
+      }
+    ],
+    "trace": {
+      "runtimeEventVersion": "blocky.event/v1alpha1",
+      "auditVersion": "blocky.audit/v1alpha1",
+      "sourceMapRequired": true,
+      "artifactPolicy": "reference-only"
+    },
+    "session": {
+      "sessionId": "invoice-session",
+      "moduleId": "invoice-assistant",
+      "applicationIds": [
+        "accounting-client",
+        "supplier-portal"
+      ],
+      "presence": "user-present",
+      "status": "running",
+      "capabilityId": "invoice-attended-run",
+      "expiresAt": "2026-08-23T03:30:00Z"
+    }
+  }
+}

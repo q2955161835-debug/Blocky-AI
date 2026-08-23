@@ -1,0 +1,157 @@
+{
+  "caseId": "valid.minimal-multi-module-project",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": [],
+    "secretRefsOnly": [
+      "handbook-access"
+    ]
+  },
+  "payload": {
+    "project": {
+      "schemaVersion": "blocky.project/v1alpha1",
+      "projectId": "research-workbench",
+      "displayName": "研究工作台",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "displayName": "研究助手",
+          "purpose": "agent",
+          "workspaceRef": "workspaces/research-agent.workspace.json",
+          "exports": [
+            {
+              "exportId": "answer-with-citations",
+              "displayName": "生成带引用回答",
+              "kind": "agent",
+              "inputSchemaRef": "schemas/question.json",
+              "outputSchemaRef": "schemas/cited-answer.json"
+            }
+          ]
+        },
+        {
+          "moduleId": "citation-service",
+          "displayName": "引用服务",
+          "purpose": "service",
+          "workspaceRef": "workspaces/citation-service.workspace.json",
+          "exports": [
+            {
+              "exportId": "lookup-v1",
+              "displayName": "检索引用",
+              "kind": "tool",
+              "inputSchemaRef": "schemas/query.json",
+              "outputSchemaRef": "schemas/citations.json"
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "product-handbook",
+          "kind": "knowledge",
+          "scope": "project",
+          "definitionRef": "resources/product-handbook.json",
+          "secretRefs": [
+            "handbook-access"
+          ]
+        }
+      ],
+      "appSurfaces": [],
+      "format": {
+        "createdWith": "blocky-desktop/0.1.0",
+        "minimumReaderVersion": "0.1.0"
+      }
+    },
+    "projectIr": {
+      "schemaVersion": "blocky.project-ir/v1alpha1",
+      "projectId": "research-workbench",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        {
+          "moduleId": "citation-service",
+          "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ],
+      "links": [
+        {
+          "linkId": "request-citation",
+          "source": {
+            "projectId": "research-workbench",
+            "moduleId": "research-agent",
+            "blockId": "call-citation",
+            "portId": "citation-query"
+          },
+          "target": {
+            "moduleId": "citation-service",
+            "exportId": "lookup-v1"
+          },
+          "mode": "sync",
+          "timeoutMs": 5000
+        }
+      ]
+    },
+    "workspaces": {
+      "research-agent": {
+        "workspaceRef": "workspaces/research-agent.workspace.json",
+        "workspaceDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "topBlockIds": ["on-question"]
+      },
+      "citation-service": {
+        "workspaceRef": "workspaces/citation-service.workspace.json",
+        "workspaceDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "topBlockIds": ["lookup-entry"]
+      }
+    },
+    "workspaceSession": {
+      "schemaVersion": "blocky.workspace-session/v1alpha1",
+      "projectId": "research-workbench",
+      "openTabs": [
+        {
+          "tabId": "tab-research",
+          "kind": "canvas",
+          "targetId": "research-agent",
+          "order": 0
+        },
+        {
+          "tabId": "tab-citations",
+          "kind": "canvas",
+          "targetId": "citation-service",
+          "order": 1
+        }
+      ],
+      "activeTabId": "tab-research",
+      "bottomPanel": {
+        "visible": true,
+        "activeView": "problems",
+        "heightPx": 260,
+        "maximized": false,
+        "filters": {}
+      },
+      "canvasViews": [
+        {
+          "tabId": "tab-research",
+          "viewport": {
+            "offsetX": 120,
+            "offsetY": 80,
+            "scale": 1
+          }
+        },
+        {
+          "tabId": "tab-citations",
+          "viewport": {
+            "offsetX": 40,
+            "offsetY": 40,
+            "scale": 0.9
+          }
+        }
+      ],
+      "browserViews": [],
+      "terminalLayout": {
+        "direction": "single",
+        "sessionIds": []
+      }
+    }
+  }
+}

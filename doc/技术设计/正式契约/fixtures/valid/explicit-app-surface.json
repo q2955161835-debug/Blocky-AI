@@ -1,0 +1,123 @@
+{
+  "caseId": "valid.explicit-app-surface",
+  "expect": {
+    "valid": true,
+    "diagnosticCodes": []
+  },
+  "payload": {
+    "buildSpec": {
+      "schemaVersion": "blocky.build/v1alpha1",
+      "requestId": "create-research-page",
+      "projectId": "research-workbench",
+      "baseDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "intent": "为研究助手创建一个可在浏览器标签打开的查询页面",
+      "targetModuleIds": [
+        "research-agent"
+      ],
+      "requiredResources": [],
+      "requestedCapabilities": [
+        "surface.preview"
+      ],
+      "acceptanceCriteria": [
+        "页面可提交问题并展示带引用回答"
+      ]
+    },
+    "patchDecision": "accepted",
+    "before": {
+      "project": {
+        "schemaVersion": "blocky.project/v1alpha1",
+        "projectId": "research-workbench",
+        "displayName": "研究工作台",
+        "modules": [
+          {
+            "moduleId": "research-agent",
+            "displayName": "研究助手",
+            "purpose": "agent",
+            "workspaceRef": "workspaces/research-agent.workspace.json",
+            "exports": [
+              {
+                "exportId": "answer-with-citations",
+                "displayName": "生成带引用回答",
+                "kind": "agent"
+              }
+            ]
+          }
+        ],
+        "resources": [],
+        "appSurfaces": [],
+        "format": {
+          "createdWith": "blocky-desktop/0.1.0",
+          "minimumReaderVersion": "0.1.0"
+        }
+      }
+    },
+    "patch": {
+      "schemaVersion": "blocky.patch/v1alpha1",
+      "patchId": "add-research-page",
+      "projectId": "research-workbench",
+      "baseDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "catalogVersion": "catalog/0.1.0",
+      "operations": [
+        {
+          "op": "app-surface.add",
+          "manifest": {
+            "schemaVersion": "blocky.app-surface/v1alpha1",
+            "surfaceId": "research-page",
+            "displayName": "研究页面",
+            "sourceRootRef": "surfaces/research-page/src",
+            "associatedModuleIds": [
+              "research-agent"
+            ],
+            "bridgeRef": "surfaces/research-page/bridge.json",
+            "permissions": [
+              "surface.invoke.research"
+            ],
+            "build": {
+              "packageManager": "pnpm",
+              "lockfileRef": "surfaces/research-page/pnpm-lock.yaml",
+              "outputRef": "surfaces/research-page/dist"
+            }
+          }
+        }
+      ],
+      "permissionDelta": [
+        "surface.preview",
+        "surface.invoke.research"
+      ],
+      "diagnostics": []
+    },
+    "after": {
+      "project": {
+        "schemaVersion": "blocky.project/v1alpha1",
+        "projectId": "research-workbench",
+        "displayName": "研究工作台",
+        "modules": [
+          {
+            "moduleId": "research-agent",
+            "displayName": "研究助手",
+            "purpose": "agent",
+            "workspaceRef": "workspaces/research-agent.workspace.json",
+            "exports": [
+              {
+                "exportId": "answer-with-citations",
+                "displayName": "生成带引用回答",
+                "kind": "agent"
+              }
+            ]
+          }
+        ],
+        "resources": [],
+        "appSurfaces": [
+          {
+            "surfaceId": "research-page",
+            "manifestRef": "surfaces/research-page/manifest.json"
+          }
+        ],
+        "format": {
+          "createdWith": "blocky-desktop/0.1.0",
+          "minimumReaderVersion": "0.1.0"
+        }
+      }
+    }
+  }
+}

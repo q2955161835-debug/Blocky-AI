@@ -1,0 +1,76 @@
+{
+  "caseId": "invalid.agent-attaches-user-terminal",
+  "expect": {
+    "valid": false,
+    "diagnosticCodes": [
+      "BLK-TERM-003"
+    ]
+  },
+  "payload": {
+    "registeredTask": {
+      "schemaVersion": "blocky.task/v1alpha1",
+      "taskId": "validate-project",
+      "displayName": "验证项目",
+      "source": "blocky",
+      "parameters": [
+        {
+          "parameterId": "project-ref",
+          "valueType": "string",
+          "required": true,
+          "validationRules": [
+            {
+              "ruleId": "project-prefix",
+              "kind": "prefix",
+              "argument": "project://",
+              "code": "BLK-TERM-101",
+              "message": "项目引用必须使用 project:// 前缀。"
+            }
+          ]
+        }
+      ],
+      "command": {
+        "executableRef": "runtime://blocky-validator",
+        "arguments": [
+          "--project",
+          "${project-ref}"
+        ]
+      },
+      "workingDirectoryRef": "project://root",
+      "allowedEnvironmentKeys": [],
+      "secretRefs": [],
+      "timeoutMs": 30000,
+      "outputBudgetBytes": 1048576,
+      "concurrency": {
+        "maxInstances": 1,
+        "overflow": "reject"
+      },
+      "cancellation": {
+        "gracePeriodMs": 1000,
+        "terminateProcessGroup": true
+      },
+      "successExitCodes": [
+        0
+      ],
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "agentPolicy": "allow-scoped"
+    },
+    "candidateAgentProcessRequest": {
+      "requestId": "validate-request",
+      "caller": {
+        "kind": "agent",
+        "id": "research-agent"
+      },
+      "taskId": "validate-project",
+      "arguments": {
+        "projectRef": "project://root"
+      },
+      "capabilityId": "project-validation",
+      "timeoutMs": 30000,
+      "terminalSessionId": "user-terminal-one",
+      "rawCommand": "fixture-invalid-direct-terminal-command"
+    }
+  }
+}

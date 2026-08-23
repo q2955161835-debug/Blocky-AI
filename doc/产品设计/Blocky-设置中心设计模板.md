@@ -7,6 +7,7 @@
 | 产品入口 | Blocky Studio → 设置 |
 | 适用平台 | Windows 首发；macOS 复用结构；移动运行端按能力裁剪 |
 | 关联计划 | [Blocky 竞品驱动完整开发计划](../执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md) |
+| 正式契约 | [SettingDefinition、ResourceDefinition 与阶段 1 可见边界](../技术设计/正式契约/04-构建补丁命令设置与资源-v1alpha1.md) |
 
 ## 1. 目标
 
@@ -225,24 +226,34 @@ Provider 配置作为资源管理器的一部分，也可从设置中心进入�
 每个正式设置项至少声明：
 
 ```ts
+type SettingValidationRule = {
+  ruleId: StableId;
+  kind: "required" | "minimum" | "maximum" | "integer" | "pattern" |
+    "one-of" | "reference-kind";
+  argument?: JsonValue;
+  code: string;
+  message: string;
+};
+
 type SettingDefinition = {
+  schemaVersion: "blocky.setting/v1alpha1";
   id: string;
   title: string;
   description: string;
   category: string;
   scope: "app" | "project" | "resource" | "block";
   valueType: "boolean" | "number" | "string" | "enum" | "secretRef" | "command";
-  defaultValue?: unknown;
+  defaultValue?: JsonValue;
   sensitive: boolean;
   requiresRestart: boolean;
   dependsOn?: string[];
   conflictsWith?: string[];
   migrationVersion: number;
-  validate(value: unknown): SettingDiagnostic[];
+  validationRules: SettingValidationRule[];
 };
 ```
 
-实现时 Schema 是设置 UI、默认值、搜索、导入导出、迁移和测试的唯一事实来源。安全存储实现只接受 `secretRef`，不允许普通字符串字段偷偷保存密钥。
+实现时 Schema 是设置 UI、默认值、搜索、导入导出、迁移和测试的唯一事实来源。定义对象只包含 JSON 值，设置引擎解释 `validationRules` 并产生字段诊断；安全存储实现只接受 `secretRef`，不允许普通字符串字段偷偷保存密钥。
 
 ### 6.1 首批窗口、预览与 RPA 字段候选
 
@@ -285,7 +296,7 @@ type SettingDefinition = {
 
 | 阶段 | 设置工作 |
 |---|---|
-| 阶段 0 | 冻结本模板、字段命名、作用域、秘密边界及底部面板/终端/日志字段语义 |
+| 阶段 0 | 已冻结 SettingDefinition、ResourceDefinition、作用域、秘密边界及底部面板/终端/日志字段语义；实现未开始 |
 | 阶段 1 | Demo 只建立走正式接口的最小设置/资源纵切、窗口生命周期和底部面板设置：通知区域/任务栏最小化、关闭保护、窗口恢复、后台运行、面板恢复和终端任务输出预算；不加入 Demo 专用字段，也不提前展示未生效的 RPA/前端开关 |
 | 阶段 2 | 稳定设置 Schema、版本、迁移和 Host 存储契约；实现设置中心壳、搜索、快捷键、应用/项目作用域、资源入口、标签会话、底部面板/用户终端/日志保留、浏览器隔离与预览回收 |
 | 阶段 3–4 | 加入真实蓝图、模型、Provider、知识/RAG、记忆、工具和护栏配置 |
