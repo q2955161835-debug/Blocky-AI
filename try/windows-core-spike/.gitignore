@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 
 # This Windows-only spike does not track the generator's macOS icon.
 /src-tauri/icons/icon.icns

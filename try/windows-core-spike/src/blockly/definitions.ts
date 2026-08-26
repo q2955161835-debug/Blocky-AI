@@ -14,6 +14,11 @@ type VisualRole =
   | "tool"
   | "message"
   | "event"
+  | "reason"
+  | "knowledge"
+  | "model"
+  | "guardrail"
+  | "output"
   | "data"
   | "flow";
 
@@ -35,6 +40,11 @@ const roleColours: Record<VisualRole, string> = {
   tool: "#EF6C00",
   message: "#42A5F5",
   event: "#AB47BC",
+  reason: "#7E57C2",
+  knowledge: "#00897B",
+  model: "#3949AB",
+  guardrail: "#D81B60",
+  output: "#00796B",
   data: "#78909C",
   flow: "#8D6E63",
 };
@@ -210,6 +220,50 @@ const definitions = [
     message0: "需要审批",
     ...toolContractConnections,
   }),
+  block("core.reason.plan", "typed-value", "reason", {
+    message0: "把当前问题拆成多个子任务",
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.knowledge.retrieve", "typed-value", "knowledge", {
+    message0: "从 %1 按子任务 %2 检索",
+    args0: [
+      {
+        type: "field_dropdown",
+        name: "SOURCE_ID",
+        options: [["小学自然科学课程库", "knowledge.course.primary-science"]],
+      },
+      { type: "input_value", name: "PLAN", check: CONNECTION_CHECK.json },
+    ],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.knowledge.rerank", "typed-value", "knowledge", {
+    message0: "对检索证据重排并去重 %1",
+    args0: [{ type: "input_value", name: "EVIDENCE", check: CONNECTION_CHECK.json }],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.model.call", "typed-value", "model", {
+    message0: "使用证据合成模型回答 %1",
+    args0: [{ type: "input_value", name: "CONTEXT", check: CONNECTION_CHECK.json }],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.guardrail.check_output", "typed-value", "guardrail", {
+    message0: "检查无依据内容 %1 规则 %2",
+    args0: [
+      { type: "input_value", name: "OUTPUT", check: CONNECTION_CHECK.json },
+      { type: "field_input", name: "POLICY", text: "无依据标注待核实" },
+    ],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.knowledge.cite", "typed-value", "knowledge", {
+    message0: "为回答加入课程引用 %1",
+    args0: [{ type: "input_value", name: "ANSWER", check: CONNECTION_CHECK.json }],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
+  block("core.output.markdown", "typed-value", "output", {
+    message0: "把核验结果排版成标题与列表 %1",
+    args0: [{ type: "input_value", name: "CONTENT", check: CONNECTION_CHECK.json }],
+    output: CONNECTION_CHECK.json,
+  }, { outputCheck: CONNECTION_CHECK.json }),
   block("core.data.literal", "typed-value", "data", {
     message0: "字面量 %1",
     args0: [{ type: "field_input", name: "VALUE", text: "值" }],

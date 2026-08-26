@@ -27,6 +27,7 @@ local.properties
 .DS_Store
 Thumbs.db
 *.log
+~$*.pptx
 
 # Temporary experiments are ignored unless explicitly admitted below
 try/*

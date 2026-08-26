@@ -1,4 +1,5 @@
 import type { RuntimeEvent, RuntimeEventType } from "../core/runtimeEvents";
+import type { ModelCallReport } from "../core/deterministicRuntime";
 import {
   presentRuntimeEvent,
   type ProgramBlockTypes,
@@ -22,6 +23,7 @@ export interface ConversationTurn {
   readonly userText: string;
   readonly assistantText: string;
   readonly status: "running" | "completed" | "cancelled" | "failed";
+  readonly modelReport: ModelCallReport | null;
   readonly trace: readonly PresentedRuntimeEvent[];
 }
 
@@ -33,6 +35,7 @@ const FIXED_EVENT_LABELS: Readonly<Record<RuntimeEventType, string>> = {
   "block.started": "进入积木",
   "block.completed": "完成积木",
   "model.chunk": "生成回复",
+  "model.completed": "真实模型调用完成",
   "tool.permission_requested": "等待工具授权",
   "tool.started": "调用工具",
   "tool.completed": "工具调用完成",
@@ -79,6 +82,25 @@ function assistantTextFor(
     : "处理已完成。";
 }
 
+function modelReportFor(events: readonly RuntimeEvent[]): ModelCallReport | null {
+  const event = [...events].reverse().find((candidate) =>
+    candidate.type === "model.completed" && candidate.data.live === true);
+  if (!event) return null;
+  const { provider, model, requestId, promptTokens, completionTokens, totalTokens } = event.data;
+  if (typeof provider !== "string" || typeof model !== "string" ||
+    typeof requestId !== "string" || typeof promptTokens !== "number" ||
+    typeof completionTokens !== "number" || typeof totalTokens !== "number") return null;
+  return {
+    live: true,
+    provider,
+    model,
+    requestId,
+    promptTokens,
+    completionTokens,
+    totalTokens,
+  };
+}
+
 export function projectConversationTurns(
   submissions: readonly SubmittedRuntimeInput[],
   events: readonly RuntimeEvent[],
@@ -100,6 +122,7 @@ export function projectConversationTurns(
       userText: submission.userText,
       assistantText: assistantTextFor(runEvents, status),
       status,
+      modelReport: modelReportFor(runEvents),
       trace: runEvents.map((event) => {
         const presentation = presentRuntimeEvent(event, blockTypes);
         return {

@@ -134,6 +134,14 @@
 
 基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core` 与原生 POC 人工运行；当前任务证据见 [秋叶课堂 POC Agent](../归档/2026-08-26/验收-Blocky秋叶课堂POC-Agent.md)。
 
+### 6.5 领域级证据 Agent 与无依据护栏
+
+验证步骤：使用同一个 Agent、聊天入口和知识源配置，分别输入秋叶变色、水循环降雨、光合作用问题，再输入同时包含两个主题与一个资料缺失细节的复合问题；核对问题拆解、检索、证据重排去重、模型、护栏、引用绑定、标题与列表排版、来源事件和最终回答；扫描 `.blocky` 是否保存固定答案或题目专用知识源。
+
+预期结果：不同主题不需要修改 Agent 配置或积木；检索只返回当前问题相关证据，重排节点按相关性排序并去重，复合问题可命中多份课程资料；无来源模型草稿被护栏改写为“待核实”，不能进入带引用结论；结构化输出渲染为真实标题、段落、列表和加粗字段，不显示原始 Markdown 标记；项目中不存在 `core.data.literal` 固定回答或单题判断分支。普通 release 的模型调用必须经过 Rust Host，成功后产生 `model.completed` 安全事件并显示 Provider、实际模型、请求 ID 与 Token 用量；自动化测试使用确定性适配器且必须明确不产生外部消费。两者都不被描述为生产级外部知识库或完整 RAG。
+
+基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core`、`.blocky` ZIP 静态审计与 Windows 普通 release 人工运行；当前结果：通过。当前任务证据见 [自然科学课程助教 Agent](../任务/验收-Blocky自然科学课程助教Agent.md)。
+
 ## 7. Tauri Host 本地存储
 
 ### 7.1 路径、大小与模式约束

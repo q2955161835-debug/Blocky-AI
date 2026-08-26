@@ -9,6 +9,7 @@ export const RUNTIME_EVENT_TYPES = Object.freeze([
   "block.started",
   "block.completed",
   "model.chunk",
+  "model.completed",
   "tool.permission_requested",
   "tool.started",
   "tool.completed",

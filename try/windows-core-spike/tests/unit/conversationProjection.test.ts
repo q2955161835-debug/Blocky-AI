@@ -57,6 +57,48 @@ describe("conversationProjection", () => {
     expect(JSON.stringify(turn)).not.toMatch(/block-001|blocky\.event|"data"|PRIVATE_INTERNAL_CODE/);
   });
 
+  it("projects a verified live provider report without exposing request content", () => {
+    const turns = projectConversationTurns(
+      [{ runId: "live-run", entryId: "entry", userText: "课程问题" }],
+      [
+        createRuntimeEvent({ runId: "live-run", sequence: 1, type: "run.started" }),
+        createRuntimeEvent({
+          runId: "live-run",
+          sequence: 2,
+          type: "model.completed",
+          blockId: "model-block",
+          data: {
+            live: true,
+            provider: "deepseek",
+            model: "deepseek-v4-flash",
+            requestId: "response-001",
+            promptTokens: 100,
+            completionTokens: 50,
+            totalTokens: 150,
+          },
+        }),
+        createRuntimeEvent({
+          runId: "live-run",
+          sequence: 3,
+          type: "model.chunk",
+          data: { text: "回答" },
+        }),
+        createRuntimeEvent({ runId: "live-run", sequence: 4, type: "run.completed" }),
+      ],
+      { "model-block": "core.model.call" },
+    );
+
+    expect(turns[0]?.modelReport).toEqual({
+      live: true,
+      provider: "deepseek",
+      model: "deepseek-v4-flash",
+      requestId: "response-001",
+      promptTokens: 100,
+      completionTokens: 50,
+      totalTokens: 150,
+    });
+  });
+
   it("uses fixed safe fallback messages for running, cancelled, and failed runs", () => {
     const submissions: SubmittedRuntimeInput[] = [
       { runId: "running", entryId: "entry", userText: "一" },

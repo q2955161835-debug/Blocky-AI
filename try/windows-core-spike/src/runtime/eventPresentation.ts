@@ -10,6 +10,11 @@ export interface RuntimeEventPresentation {
     | "interactions"
     | "messages"
     | "tools"
+    | "reason"
+    | "knowledge"
+    | "model"
+    | "guardrails"
+    | "output"
     | "data"
     | "flow"
     | "neutral";

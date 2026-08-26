@@ -8,17 +8,31 @@ import {
 } from "../../src/blockly/toolbox";
 
 describe("spike block catalog", () => {
-  it("keeps the deliberately limited 31-block spike catalog stable", () => {
-    expect(SPIKE_BLOCK_IDS).toHaveLength(31);
-    expect(new Set(SPIKE_BLOCK_IDS).size).toBe(31);
+  it("keeps the deliberately limited 38-block spike catalog stable", () => {
+    expect(SPIKE_BLOCK_IDS).toHaveLength(38);
+    expect(new Set(SPIKE_BLOCK_IDS).size).toBe(38);
+    expect(SPIKE_BLOCK_IDS).toEqual(expect.arrayContaining([
+      "core.reason.plan",
+      "core.knowledge.retrieve",
+      "core.knowledge.rerank",
+      "core.model.call",
+      "core.guardrail.check_output",
+      "core.knowledge.cite",
+      "core.output.markdown",
+    ]));
   });
 
-  it("uses one typed category source for all 31 blocks", () => {
+  it("uses one typed category source for all 38 blocks", () => {
     expect(SPIKE_BLOCK_CATEGORIES.map((category) => category.name)).toEqual([
       "AI 伙伴",
       "交互入口",
       "消息",
       "工具",
+      "推理",
+      "知识库",
+      "模型",
+      "护栏",
+      "输出",
       "数据",
       "流程",
     ]);
@@ -26,7 +40,7 @@ describe("spike block catalog", () => {
     const categoryBlockIds = SPIKE_BLOCK_CATEGORIES.flatMap(
       (category) => category.blockIds,
     );
-    expect(new Set(categoryBlockIds).size).toBe(31);
+    expect(new Set(categoryBlockIds).size).toBe(38);
     expect([...categoryBlockIds].sort()).toEqual([...SPIKE_BLOCK_IDS].sort());
     expect(getSpikeBlockCategory("core.tool.call")?.id).toBe("tools");
     expect(getSpikeBlockColour("core.tool.call")).toBe("#ef6c00");

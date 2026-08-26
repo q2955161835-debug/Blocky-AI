@@ -6,6 +6,11 @@ export type SpikeBlockCategoryId =
   | "interactions"
   | "messages"
   | "tools"
+  | "reason"
+  | "knowledge"
+  | "model"
+  | "guardrails"
+  | "output"
   | "data"
   | "flow";
 
@@ -67,6 +72,36 @@ export const SPIKE_BLOCK_CATEGORIES = Object.freeze([
       "core.tool.result",
       "core.tool.require_approval",
     ],
+  },
+  {
+    id: "reason",
+    name: "推理",
+    colour: "#7e57c2",
+    blockIds: ["core.reason.plan"],
+  },
+  {
+    id: "knowledge",
+    name: "知识库",
+    colour: "#00897b",
+    blockIds: ["core.knowledge.retrieve", "core.knowledge.rerank", "core.knowledge.cite"],
+  },
+  {
+    id: "model",
+    name: "模型",
+    colour: "#3949ab",
+    blockIds: ["core.model.call"],
+  },
+  {
+    id: "guardrails",
+    name: "护栏",
+    colour: "#d81b60",
+    blockIds: ["core.guardrail.check_output"],
+  },
+  {
+    id: "output",
+    name: "输出",
+    colour: "#00796b",
+    blockIds: ["core.output.markdown"],
   },
   {
     id: "data",

@@ -929,6 +929,120 @@ input:focus-visible,
   border-bottom-left-radius: 4px;
 }
 
+.conversation-markdown {
+  width: min(94%, 560px);
+  padding: 14px 16px;
+}
+
+.conversation-markdown h2,
+.conversation-markdown h3,
+.conversation-markdown p,
+.conversation-markdown ul,
+.conversation-markdown blockquote {
+  margin: 0;
+}
+
+.conversation-model-evidence {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+}
+
+.conversation-model-report {
+  justify-self: start;
+  margin: 0;
+  padding: 5px 8px;
+  color: #a7eadc;
+  font-size: 11px;
+  line-height: 1.35;
+  background: #183c37;
+  border: 1px solid #2d6d62;
+  border-radius: 999px;
+}
+
+.conversation-model-details {
+  width: min(94%, 560px);
+  color: #9fabb9;
+  font-size: 11px;
+}
+
+.conversation-model-details summary {
+  width: max-content;
+  padding: 3px 5px;
+  cursor: pointer;
+}
+
+.conversation-model-details dl {
+  display: grid;
+  gap: 4px;
+  margin: 5px 0 0;
+  padding: 9px;
+  color: #cbd5e0;
+  background: #202a2b;
+  border: 1px solid #34514d;
+  border-radius: 7px;
+}
+
+.conversation-model-details dl > div {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.conversation-model-details dt,
+.conversation-model-details dd {
+  margin: 0;
+}
+
+.conversation-model-details dt {
+  color: #86c7ba;
+}
+
+.conversation-model-details dd {
+  overflow-wrap: anywhere;
+}
+
+.conversation-markdown h2 {
+  padding-bottom: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1.35;
+  border-bottom: 1px solid #4a5565;
+}
+
+.conversation-markdown h3 {
+  margin-top: 14px;
+  padding-left: 8px;
+  color: #eef4ff;
+  font-size: 14px;
+  line-height: 1.45;
+  border-left: 3px solid #4ea694;
+}
+
+.conversation-markdown p {
+  margin-top: 8px;
+}
+
+.conversation-markdown ul {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.conversation-markdown strong {
+  color: #f4f8ff;
+}
+
+.conversation-markdown blockquote {
+  margin-top: 12px;
+  padding: 7px 9px;
+  color: #b9c8d8;
+  background: #252b34;
+  border-left: 3px solid #667386;
+  border-radius: 4px;
+}
+
 .conversation-turn[data-status="running"] .conversation-message--assistant {
   color: #b9c8de;
 }

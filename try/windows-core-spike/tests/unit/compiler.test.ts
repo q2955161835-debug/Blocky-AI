@@ -104,6 +104,48 @@ describe("workspace compiler", () => {
     expect(stableStringify(reversed.program)).not.toBe(stableStringify(first.program));
   });
 
+  it("compiles the evidence-agent value chain without unknown blocks or incompatible sockets", () => {
+    const result = compileWorkspace({
+      blocks: { blocks: [{
+        id: "markdown",
+        type: "core.output.markdown",
+        inputs: { CONTENT: { block: {
+          id: "cite",
+          type: "core.knowledge.cite",
+          inputs: { ANSWER: { block: {
+            id: "guard",
+            type: "core.guardrail.check_output",
+            inputs: { OUTPUT: { block: {
+              id: "model",
+              type: "core.model.call",
+              inputs: { CONTEXT: { block: {
+                id: "rerank",
+                type: "core.knowledge.rerank",
+                inputs: { EVIDENCE: { block: {
+                  id: "retrieve",
+                  type: "core.knowledge.retrieve",
+                  inputs: { PLAN: { block: { id: "plan", type: "core.reason.plan" } } },
+                } } },
+              } } },
+            } } },
+          } } },
+        } } },
+      }] },
+    });
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.program.roots[0]?.type).toBe("core.output.markdown");
+    expect(result.sourceMap).toEqual({
+      markdown: { nodeId: "markdown" },
+      cite: { nodeId: "cite" },
+      guard: { nodeId: "guard" },
+      model: { nodeId: "model" },
+      rerank: { nodeId: "rerank" },
+      retrieve: { nodeId: "retrieve" },
+      plan: { nodeId: "plan" },
+    });
+  });
+
   it("reports duplicate stable block IDs", () => {
     const result = compileWorkspace({
       blocks: { blocks: [

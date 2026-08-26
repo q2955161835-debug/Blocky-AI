@@ -1,4 +1,25 @@
 import type { BlockyProgram, IrNode } from "./ir";
+import {
+  buildCourseModelRequest,
+  attachCourseCitations,
+  createCourseModelResult,
+  generateDeterministicCourseModel,
+  formatCourseMarkdown,
+  guardCourseModelResult,
+  isCourseEvidenceContext,
+  isCourseQueryPlan,
+  isCourseModelResult,
+  isGuardedCourseAnswer,
+  isCitedCourseAnswer,
+  isRankedCourseEvidenceContext,
+  parseCourseDraft,
+  planCourseQuestion,
+  PRIMARY_SCIENCE_SOURCE_ID,
+  retrieveCourseKnowledge,
+  rerankCourseEvidence,
+  type CourseEvidenceContext,
+  type CourseQueryPlan,
+} from "./deterministicCourseAgent";
 import { createRuntimeEvent, type RuntimeEvent, type RuntimeEventType } from "./runtimeEvents";
 import { resolveToolUsages, type ToolContract } from "./toolContract";
 
@@ -6,6 +27,7 @@ export interface RuntimeDependencies {
   runIdFactory(): string;
   model: {
     stream(input: string, signal: AbortSignal): AsyncIterable<string>;
+    takeLastCallReport?(): ModelCallReport | null;
   };
   tools: Map<string, Readonly<ToolContract>>;
   requestApproval(request: {
@@ -14,7 +36,27 @@ export interface RuntimeDependencies {
     callBlockId: string;
     permissions: string[];
   }): Promise<"approved" | "denied">;
+  knowledge?: {
+    retrieve(plan: CourseQueryPlan, sourceId: string, signal: AbortSignal): Promise<CourseEvidenceContext>;
+  };
   waitForStep?(blockId: string, signal: AbortSignal): Promise<void>;
+}
+
+export interface ModelCallReport {
+  readonly live: boolean;
+  readonly provider: string;
+  readonly model: string;
+  readonly requestId: string;
+  readonly promptTokens: number;
+  readonly completionTokens: number;
+  readonly totalTokens: number;
+}
+
+export class RuntimeModelError extends Error {
+  constructor(readonly code: string) {
+    super(code);
+    this.name = "RuntimeModelError";
+  }
 }
 
 export interface RunProgramOptions {
@@ -128,6 +170,7 @@ async function evaluateJsonNode(
   events: ReturnType<typeof emitFactory>,
   signal: AbortSignal,
   dependencies: RuntimeDependencies,
+  input: string,
 ): Promise<unknown> {
   if (!node) throw new RuntimeFailure("RUNTIME_VALUE_MISSING");
   await startBlock(node, events, signal, dependencies);
@@ -135,7 +178,58 @@ async function evaluateJsonNode(
   if (node.type === "core.data.literal") {
     value = node.fields.VALUE ?? null;
   } else if (node.type === "core.data.record") {
-    value = { value: await evaluateJsonNode(node.inputs.VALUE, events, signal, dependencies) };
+    value = { value: await evaluateJsonNode(node.inputs.VALUE, events, signal, dependencies, input) };
+  } else if (node.type === "core.reason.plan") {
+    value = planCourseQuestion(input);
+  } else if (node.type === "core.knowledge.retrieve") {
+    const plan = await evaluateJsonNode(node.inputs.PLAN, events, signal, dependencies, input);
+    if (!isCourseQueryPlan(plan)) throw new RuntimeFailure("RUNTIME_COURSE_PLAN_INVALID", node.id);
+    const sourceId = typeof node.fields.SOURCE_ID === "string" && node.fields.SOURCE_ID.trim() !== ""
+      ? node.fields.SOURCE_ID
+      : PRIMARY_SCIENCE_SOURCE_ID;
+    ensureActive(signal);
+    events.emit("tool.started", { toolId: sourceId }, node.id);
+    value = dependencies.knowledge
+      ? await dependencies.knowledge.retrieve(plan, sourceId, signal)
+      : retrieveCourseKnowledge(plan, sourceId);
+    ensureActive(signal);
+    if (!isCourseEvidenceContext(value)) throw new RuntimeFailure("RUNTIME_COURSE_CONTEXT_INVALID", node.id);
+    events.emit("tool.completed", { hitCount: value.evidence.length, toolId: sourceId }, node.id);
+  } else if (node.type === "core.knowledge.rerank") {
+    const context = await evaluateJsonNode(node.inputs.EVIDENCE, events, signal, dependencies, input);
+    if (!isCourseEvidenceContext(context)) {
+      throw new RuntimeFailure("RUNTIME_COURSE_CONTEXT_INVALID", node.id);
+    }
+    value = rerankCourseEvidence(context);
+  } else if (node.type === "core.model.call") {
+    const context = await evaluateJsonNode(node.inputs.CONTEXT, events, signal, dependencies, input);
+    if (!isRankedCourseEvidenceContext(context)) {
+      throw new RuntimeFailure("RUNTIME_COURSE_RANKED_CONTEXT_INVALID", node.id);
+    }
+    let response = "";
+    for await (const chunk of dependencies.model.stream(buildCourseModelRequest(context), signal)) {
+      ensureActive(signal);
+      response += chunk;
+    }
+    const modelReport = dependencies.model.takeLastCallReport?.() ?? null;
+    if (modelReport) events.emit("model.completed", { ...modelReport }, node.id);
+    const draft = parseCourseDraft(response);
+    if (!draft) throw new RuntimeFailure("MODEL_RESPONSE_INVALID", node.id);
+    value = createCourseModelResult(context, draft);
+  } else if (node.type === "core.guardrail.check_output") {
+    const result = await evaluateJsonNode(node.inputs.OUTPUT, events, signal, dependencies, input);
+    if (!isCourseModelResult(result)) {
+      throw new RuntimeFailure("RUNTIME_COURSE_DRAFT_INVALID", node.id);
+    }
+    value = guardCourseModelResult(result);
+  } else if (node.type === "core.knowledge.cite") {
+    const answer = await evaluateJsonNode(node.inputs.ANSWER, events, signal, dependencies, input);
+    if (!isGuardedCourseAnswer(answer)) throw new RuntimeFailure("RUNTIME_COURSE_ANSWER_INVALID", node.id);
+    value = attachCourseCitations(answer);
+  } else if (node.type === "core.output.markdown") {
+    const answer = await evaluateJsonNode(node.inputs.CONTENT, events, signal, dependencies, input);
+    if (!isCitedCourseAnswer(answer)) throw new RuntimeFailure("RUNTIME_COURSE_CITATIONS_INVALID", node.id);
+    value = formatCourseMarkdown(answer);
   } else {
     throw new RuntimeFailure("RUNTIME_VALUE_UNSUPPORTED", node.id);
   }
@@ -149,6 +243,7 @@ async function evaluateMessageNode(
   events: ReturnType<typeof emitFactory>,
   signal: AbortSignal,
   dependencies: RuntimeDependencies,
+  input: string,
 ): Promise<string> {
   if (!node) throw new RuntimeFailure("RUNTIME_MESSAGE_MISSING");
   await startBlock(node, events, signal, dependencies);
@@ -156,7 +251,7 @@ async function evaluateMessageNode(
     throw new RuntimeFailure("RUNTIME_MESSAGE_UNSUPPORTED", node.id);
   }
   const text = stringFromJsonValue(
-    await evaluateJsonNode(node.inputs.CONTENT, events, signal, dependencies),
+    await evaluateJsonNode(node.inputs.CONTENT, events, signal, dependencies, input),
   );
   ensureActive(signal);
   events.emit("block.completed", {}, node.id);
@@ -168,6 +263,7 @@ async function executeHandler(
   events: ReturnType<typeof emitFactory>,
   signal: AbortSignal,
   dependencies: RuntimeDependencies,
+  input: string,
 ): Promise<void> {
   const visited = new Set<IrNode>();
   let current: IrNode | null = handler;
@@ -180,11 +276,12 @@ async function executeHandler(
         events,
         signal,
         dependencies,
+        input,
       );
       ensureActive(signal);
       events.emit("model.chunk", { text }, current.id);
     } else if (current.type === "core.message.add_part") {
-      await evaluateJsonNode(current.inputs.PART, events, signal, dependencies);
+      await evaluateJsonNode(current.inputs.PART, events, signal, dependencies, input);
     } else if (!["core.message.send", "core.message.stream", "core.message.wait"].includes(current.type)) {
       throw new RuntimeFailure("RUNTIME_HANDLER_UNSUPPORTED", current.id);
     }
@@ -194,10 +291,29 @@ async function executeHandler(
   }
 }
 
+async function executeTextCapabilities(
+  entry: IrNode,
+  events: ReturnType<typeof emitFactory>,
+  signal: AbortSignal,
+  dependencies: RuntimeDependencies,
+): Promise<void> {
+  for (const capability of memberChain(entry.inputs.CAPABILITIES)) {
+    if (capability.type !== "core.interaction.accept_text") continue;
+    await startBlock(capability, events, signal, dependencies);
+    ensureActive(signal);
+    events.emit("block.completed", {}, capability.id);
+  }
+}
+
 export function createDeterministicModel(): RuntimeDependencies["model"] {
   return {
     async *stream(input: string): AsyncIterable<string> {
       if (input === "/error") throw new RuntimeFailure("MODEL_SIMULATED_FAILURE");
+      const courseResponse = generateDeterministicCourseModel(input);
+      if (courseResponse !== null) {
+        yield courseResponse;
+        return;
+      }
       yield "已收到：";
       yield input;
     },
@@ -205,7 +321,8 @@ export function createDeterministicModel(): RuntimeDependencies["model"] {
 }
 
 function failureCode(error: unknown): string {
-  return error instanceof RuntimeFailure ? error.code : "RUNTIME_SIMULATED_FAILURE";
+  if (error instanceof RuntimeFailure || error instanceof RuntimeModelError) return error.code;
+  return "RUNTIME_SIMULATED_FAILURE";
 }
 
 /** Runs only injected model/tool implementations and publishes frozen events through one outlet. */
@@ -279,7 +396,8 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
         throw new RuntimeFailure("MODEL_SIMULATED_FAILURE", agent.id);
       }
       await startBlock(entry, events, options.signal, options.dependencies);
-      await executeHandler(handler, events, options.signal, options.dependencies);
+      await executeTextCapabilities(entry, events, options.signal, options.dependencies);
+      await executeHandler(handler, events, options.signal, options.dependencies, options.input);
       ensureActive(options.signal);
       events.emit("block.completed", {}, entry.id);
       ensureActive(options.signal);

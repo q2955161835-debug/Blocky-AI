@@ -4,6 +4,7 @@ import {
 } from "@fluentui/react-icons";
 import { useState, type CSSProperties } from "react";
 import type { ConversationTurn } from "./conversationProjection";
+import { MarkdownMessage } from "./MarkdownMessage";
 
 interface ConversationPanelProps {
   readonly turns: readonly ConversationTurn[];
@@ -27,9 +28,28 @@ export function ConversationPanel({ turns }: ConversationPanelProps) {
             <p className="conversation-message conversation-message--user">
               {turn.userText}
             </p>
-            <p className="conversation-message conversation-message--assistant">
-              {turn.assistantText}
-            </p>
+            <MarkdownMessage
+              className="conversation-message conversation-message--assistant"
+              text={turn.assistantText}
+            />
+            {turn.modelReport ? (
+              <div className="conversation-model-evidence">
+                <p className="conversation-model-report">
+                  真实 API · DeepSeek · {turn.modelReport.model} · {turn.modelReport.totalTokens} Token
+                </p>
+                <details className="conversation-model-details">
+                  <summary>API 调用详情</summary>
+                  <dl>
+                    <div><dt>Provider</dt><dd>{turn.modelReport.provider}</dd></div>
+                    <div><dt>模型</dt><dd>{turn.modelReport.model}</dd></div>
+                    <div><dt>请求 ID</dt><dd>{turn.modelReport.requestId}</dd></div>
+                    <div><dt>输入 Token</dt><dd>{turn.modelReport.promptTokens}</dd></div>
+                    <div><dt>输出 Token</dt><dd>{turn.modelReport.completionTokens}</dd></div>
+                    <div><dt>总 Token</dt><dd>{turn.modelReport.totalTokens}</dd></div>
+                  </dl>
+                </details>
+              </div>
+            ) : null}
             <button
               type="button"
               className="conversation-trace__toggle"

@@ -134,6 +134,8 @@ describe("useSpikeController", () => {
       "block.started",
       "block.started",
       "block.started",
+      "block.completed",
+      "block.started",
       "block.started",
       "block.started",
       "block.completed",
@@ -147,6 +149,7 @@ describe("useSpikeController", () => {
     expect(highlight.mock.calls.map(([blockId]) => blockId)).toEqual([
       "agent-1",
       "entry-1",
+      "accept-text",
       "reply-1",
       "message-1",
       "literal-1",

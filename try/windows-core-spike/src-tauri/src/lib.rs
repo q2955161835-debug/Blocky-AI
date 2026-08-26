@@ -1,10 +1,24 @@
+pub mod deepseek;
 pub mod document_store;
 pub mod project_store;
 
+use deepseek::DeepSeekRequestRegistry;
+#[cfg(not(feature = "wdio"))]
+use deepseek::{cancel_deepseek_completion, deepseek_chat_completion};
 use document_store::{DocumentError, DocumentRecord, DocumentStore, SaveDocumentRequest};
 use project_store::{HostError, ProjectRecord, ProjectStore, SaveProjectRequest};
 use std::sync::Arc;
 use tauri::Manager;
+
+#[cfg(not(feature = "wdio"))]
+fn load_local_deepseek_env() {
+    let spike_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent();
+    if let Some(path) = spike_root.map(|root| root.join(".env"))
+        && path.is_file()
+    {
+        let _ = dotenvy::from_path(path);
+    }
+}
 
 fn store_for(app: &tauri::AppHandle) -> Result<ProjectStore, HostError> {
     let app_data_dir = app
@@ -104,6 +118,9 @@ async fn wdio_create_close_sentinel(app: tauri::AppHandle) -> Result<(), String>
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    #[cfg(not(feature = "wdio"))]
+    load_local_deepseek_env();
+
     let builder = tauri::Builder::default();
 
     #[cfg(feature = "wdio")]
@@ -111,7 +128,9 @@ pub fn run() {
         .plugin(tauri_plugin_wdio::init())
         .plugin(tauri_plugin_wdio_webdriver::init());
 
-    let builder = builder.manage(Arc::new(DocumentStore::new()));
+    let builder = builder
+        .manage(Arc::new(DocumentStore::new()))
+        .manage(DeepSeekRequestRegistry::default());
 
     #[cfg(not(feature = "wdio"))]
     let builder = builder.invoke_handler(tauri::generate_handler![
@@ -119,7 +138,9 @@ pub fn run() {
         load_project,
         open_project_document,
         save_project_document,
-        clear_project_document_association
+        clear_project_document_association,
+        deepseek_chat_completion,
+        cancel_deepseek_completion
     ]);
 
     #[cfg(feature = "wdio")]

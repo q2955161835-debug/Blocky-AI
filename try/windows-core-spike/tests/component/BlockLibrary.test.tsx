@@ -14,7 +14,7 @@ import {
 } from "../../src/blockly/BlockLibrary";
 
 describe("BlockLibrary", () => {
-  it("separates six categories from authentic Blockly previews", async () => {
+  it("separates eleven categories from authentic Blockly previews", async () => {
     const onInsert = vi.fn<(request: BlockInsertRequest) => void>();
     const view = render(
       <BlockLibrary
@@ -28,7 +28,7 @@ describe("BlockLibrary", () => {
       name: "积木分类",
     });
     expect(categoryNavigation).toBeInTheDocument();
-    expect(within(categoryNavigation).getAllByRole("button")).toHaveLength(6);
+    expect(within(categoryNavigation).getAllByRole("button")).toHaveLength(11);
     await waitFor(() => {
       expect(view.container.querySelectorAll(".block-preview .blocklySvg"))
         .toHaveLength(2);

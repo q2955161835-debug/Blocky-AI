@@ -138,6 +138,63 @@ function chatReplySourceMap() {
   ].map((id) => [id, { nodeId: id }]));
 }
 
+function agenticRagProgram(): BlockyProgram {
+  const acceptText = irNode("lesson-accept-text", "core.interaction.accept_text");
+  const plan = irNode("lesson-plan", "core.reason.plan");
+  const retrieval = irNode("lesson-retrieve", "core.knowledge.retrieve", {
+    fields: { SOURCE_ID: "knowledge.course.primary-science" },
+    inputs: { PLAN: plan },
+  });
+  const rerank = irNode("lesson-rerank", "core.knowledge.rerank", {
+    inputs: { EVIDENCE: retrieval },
+  });
+  const model = irNode("lesson-model", "core.model.call", {
+    inputs: { CONTEXT: rerank },
+  });
+  const guardrail = irNode("lesson-guardrail", "core.guardrail.check_output", {
+    fields: { POLICY: "只输出课程资料可支持的结论" },
+    inputs: { OUTPUT: model },
+  });
+  const citation = irNode("lesson-cite", "core.knowledge.cite", {
+    inputs: { ANSWER: guardrail },
+  });
+  const markdown = irNode("lesson-markdown", "core.output.markdown", {
+    inputs: { CONTENT: citation },
+  });
+  const message = irNode("lesson-message", "core.message.create", {
+    inputs: { CONTENT: markdown },
+  });
+  const reply = irNode("lesson-reply", "core.message.reply", {
+    inputs: { MESSAGE: message },
+  });
+  const entry = irNode("lesson-entry", "core.interaction.chat_entry", {
+    fields: { NAME: "课程问答" },
+    inputs: { CAPABILITIES: acceptText, HANDLER: reply },
+  });
+  const agent = irNode("lesson-agent", "core.agent.define", {
+    fields: { NAME: "自然科学课程助教" },
+    inputs: { MEMBERS: entry },
+  });
+  return { schemaVersion: "blocky.ir/v0-spike", roots: [agent] };
+}
+
+function agenticRagSourceMap() {
+  return Object.fromEntries([
+    "lesson-agent",
+    "lesson-entry",
+    "lesson-accept-text",
+    "lesson-reply",
+    "lesson-message",
+    "lesson-markdown",
+    "lesson-cite",
+    "lesson-guardrail",
+    "lesson-model",
+    "lesson-rerank",
+    "lesson-retrieve",
+    "lesson-plan",
+  ].map((id) => [id, { nodeId: id }]));
+}
+
 describe("deterministic runtime", () => {
   it("rejects non-record event data before it can violate the frozen event contract", () => {
     expect(() => createRuntimeEvent({
@@ -204,6 +261,127 @@ describe("deterministic runtime", () => {
       blockId: "lesson-reply",
       data: { text: replyText },
     });
+  });
+
+  it("answers a multi-topic course question through one reusable evidence pipeline", async () => {
+    const events = await run({
+      program: agenticRagProgram(),
+      sourceMap: agenticRagSourceMap(),
+      entryId: "lesson-entry",
+      input: "请分别解释树叶秋天变红和水循环形成降雨的原因，每个结论引用课程资料；课程资料是否说明树叶开始变红的具体摄氏温度？没有说明就标注“待核实”。",
+    });
+
+    const reply = events
+      .filter((event) => event.type === "model.chunk")
+      .map((event) => event.data.text)
+      .join("");
+    expect(reply).toContain("## 课程资料综合回答");
+    expect(reply).toContain("### 1. 树叶为什么会在秋天变红");
+    expect(reply).toContain("### 2. 水循环为什么会形成降雨");
+    expect(reply).toContain("### 3. 资料完整性检查");
+    expect(reply).toContain("- **课程依据：** [《水循环》§1]");
+    expect(reply).toContain("- **树叶开始变红的具体摄氏温度：** 待核实");
+    expect(events.filter((event) => event.type === "block.started").map((event) => event.blockId)).toEqual([
+      "lesson-agent",
+      "lesson-entry",
+      "lesson-accept-text",
+      "lesson-reply",
+      "lesson-message",
+      "lesson-markdown",
+      "lesson-cite",
+      "lesson-guardrail",
+      "lesson-model",
+      "lesson-rerank",
+      "lesson-retrieve",
+      "lesson-plan",
+    ]);
+    expect(events).toContainEqual(expect.objectContaining({
+      type: "tool.started",
+      blockId: "lesson-retrieve",
+      data: { toolId: "knowledge.course.primary-science" },
+    }));
+    expect(events).toContainEqual(expect.objectContaining({
+      type: "tool.completed",
+      blockId: "lesson-retrieve",
+      data: { hitCount: 2, toolId: "knowledge.course.primary-science" },
+    }));
+    expect(events.at(-1)?.type).toBe("run.completed");
+  });
+
+  it("publishes safe live-model identity and token usage from the provider report", async () => {
+    const deterministic = createDeterministicModel();
+    const events = await run({
+      program: agenticRagProgram(),
+      sourceMap: agenticRagSourceMap(),
+      entryId: "lesson-entry",
+      input: "水循环为什么会形成降雨？",
+      runtime: dependencies({
+        model: {
+          stream: deterministic.stream,
+          takeLastCallReport: () => ({
+            live: true,
+            provider: "deepseek",
+            model: "deepseek-v4-flash",
+            requestId: "response-test-001",
+            promptTokens: 120,
+            completionTokens: 80,
+            totalTokens: 200,
+          }),
+        },
+      }),
+    });
+
+    expect(events).toContainEqual(expect.objectContaining({
+      type: "model.completed",
+      blockId: "lesson-model",
+      data: {
+        live: true,
+        provider: "deepseek",
+        model: "deepseek-v4-flash",
+        requestId: "response-test-001",
+        promptTokens: 120,
+        completionTokens: 80,
+        totalTokens: 200,
+      },
+    }));
+  });
+
+  it("does not reuse another topic when the input asks only for unsupported detail", async () => {
+    const events = await run({
+      program: agenticRagProgram(),
+      sourceMap: agenticRagSourceMap(),
+      entryId: "lesson-entry",
+      input: "课程资料有没有说明叶片开始变红的具体温度？",
+    });
+
+    const reply = events
+      .filter((event) => event.type === "model.chunk")
+      .map((event) => event.data.text)
+      .join("");
+    expect(reply).toContain("### 1. 资料完整性检查");
+    expect(reply).toContain("- **叶片开始变红的具体温度：** 待核实");
+    expect(reply).not.toMatch(/叶绿素|花青素|水循环|§1|§2/);
+    expect(events).toContainEqual(expect.objectContaining({
+      type: "tool.completed",
+      data: { hitCount: 0, toolId: "knowledge.course.primary-science" },
+    }));
+  });
+
+  it("answers a separate course topic through the same Agent configuration", async () => {
+    const events = await run({
+      program: agenticRagProgram(),
+      sourceMap: agenticRagSourceMap(),
+      entryId: "lesson-entry",
+      input: "绿色植物怎样通过光合作用制造养分？",
+    });
+
+    const reply = events
+      .filter((event) => event.type === "model.chunk")
+      .map((event) => event.data.text)
+      .join("");
+    expect(reply).toContain("### 1. 光合作用怎样制造养分");
+    expect(reply).toContain("- **课程依据：** [《植物怎样获得养分》§1]");
+    expect(reply).not.toMatch(/叶绿素|降雨|花青素/);
   });
 
   it("keeps a handler block active until the visual step is released", async () => {
