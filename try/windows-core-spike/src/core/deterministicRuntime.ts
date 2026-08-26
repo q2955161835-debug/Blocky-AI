@@ -14,11 +14,13 @@ export interface RuntimeDependencies {
     callBlockId: string;
     permissions: string[];
   }): Promise<"approved" | "denied">;
+  waitForStep?(blockId: string, signal: AbortSignal): Promise<void>;
 }
 
 export interface RunProgramOptions {
   program: BlockyProgram;
   sourceMap: Record<string, { nodeId: string }>;
+  entryId?: string;
   input: string;
   signal: AbortSignal;
   dependencies: RuntimeDependencies;
@@ -42,6 +44,31 @@ function firstMappedBlock(program: BlockyProgram, sourceMap: Record<string, { no
   if (!blockId) return undefined;
   if (!sourceMap[blockId]) throw new RuntimeFailure("RUNTIME_SOURCE_MAP_MISSING");
   return blockId;
+}
+
+function memberChain(first: IrNode | null | undefined): IrNode[] {
+  const nodes: IrNode[] = [];
+  const visited = new Set<IrNode>();
+  let current = first;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    nodes.push(current);
+    current = current.next;
+  }
+  return nodes;
+}
+
+function selectedChatEntry(
+  program: BlockyProgram,
+  entryId: string,
+): { agent: IrNode; entry: IrNode } | null {
+  for (const agent of program.roots.filter((node) => node.type === "core.agent.define")) {
+    const entry = memberChain(agent.inputs.MEMBERS).find(
+      (member) => member.type === "core.interaction.chat_entry" && member.id === entryId,
+    );
+    if (entry) return { agent, entry };
+  }
+  return null;
 }
 
 function explicitToolCallsInOrder(program: BlockyProgram): IrNode[] {
@@ -77,6 +104,94 @@ function emitFactory(options: RunProgramOptions, runId: string) {
     },
     isTerminal: () => terminal,
   };
+}
+
+function stringFromJsonValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  return JSON.stringify(value);
+}
+
+async function startBlock(
+  node: IrNode,
+  events: ReturnType<typeof emitFactory>,
+  signal: AbortSignal,
+  dependencies: RuntimeDependencies,
+): Promise<void> {
+  ensureActive(signal);
+  events.emit("block.started", {}, node.id);
+  await dependencies.waitForStep?.(node.id, signal);
+  ensureActive(signal);
+}
+
+async function evaluateJsonNode(
+  node: IrNode | null | undefined,
+  events: ReturnType<typeof emitFactory>,
+  signal: AbortSignal,
+  dependencies: RuntimeDependencies,
+): Promise<unknown> {
+  if (!node) throw new RuntimeFailure("RUNTIME_VALUE_MISSING");
+  await startBlock(node, events, signal, dependencies);
+  let value: unknown;
+  if (node.type === "core.data.literal") {
+    value = node.fields.VALUE ?? null;
+  } else if (node.type === "core.data.record") {
+    value = { value: await evaluateJsonNode(node.inputs.VALUE, events, signal, dependencies) };
+  } else {
+    throw new RuntimeFailure("RUNTIME_VALUE_UNSUPPORTED", node.id);
+  }
+  ensureActive(signal);
+  events.emit("block.completed", {}, node.id);
+  return value;
+}
+
+async function evaluateMessageNode(
+  node: IrNode | null | undefined,
+  events: ReturnType<typeof emitFactory>,
+  signal: AbortSignal,
+  dependencies: RuntimeDependencies,
+): Promise<string> {
+  if (!node) throw new RuntimeFailure("RUNTIME_MESSAGE_MISSING");
+  await startBlock(node, events, signal, dependencies);
+  if (node.type !== "core.message.create") {
+    throw new RuntimeFailure("RUNTIME_MESSAGE_UNSUPPORTED", node.id);
+  }
+  const text = stringFromJsonValue(
+    await evaluateJsonNode(node.inputs.CONTENT, events, signal, dependencies),
+  );
+  ensureActive(signal);
+  events.emit("block.completed", {}, node.id);
+  return text;
+}
+
+async function executeHandler(
+  handler: IrNode,
+  events: ReturnType<typeof emitFactory>,
+  signal: AbortSignal,
+  dependencies: RuntimeDependencies,
+): Promise<void> {
+  const visited = new Set<IrNode>();
+  let current: IrNode | null = handler;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    await startBlock(current, events, signal, dependencies);
+    if (current.type === "core.message.reply") {
+      const text = await evaluateMessageNode(
+        current.inputs.MESSAGE,
+        events,
+        signal,
+        dependencies,
+      );
+      ensureActive(signal);
+      events.emit("model.chunk", { text }, current.id);
+    } else if (current.type === "core.message.add_part") {
+      await evaluateJsonNode(current.inputs.PART, events, signal, dependencies);
+    } else if (!["core.message.send", "core.message.stream", "core.message.wait"].includes(current.type)) {
+      throw new RuntimeFailure("RUNTIME_HANDLER_UNSUPPORTED", current.id);
+    }
+    ensureActive(signal);
+    events.emit("block.completed", {}, current.id);
+    current = current.next;
+  }
 }
 
 export function createDeterministicModel(): RuntimeDependencies["model"] {
@@ -147,6 +262,28 @@ export async function runProgram(options: RunProgramOptions): Promise<void> {
       events.emit("tool.completed", { result: contract.implementation.result, toolId: contract.id }, call.callBlockId);
       ensureActive(options.signal);
       events.emit("block.completed", {}, call.callBlockId);
+      ensureActive(options.signal);
+      events.emit("run.completed");
+      return;
+    }
+
+    if (options.entryId) {
+      const selected = selectedChatEntry(options.program, options.entryId);
+      if (!selected) throw new RuntimeFailure("RUNTIME_ENTRY_NOT_FOUND");
+      const { agent, entry } = selected;
+      const handler = entry.inputs.HANDLER;
+      if (!handler) throw new RuntimeFailure("RUNTIME_HANDLER_MISSING", entry.id);
+      activeBlockId = agent.id;
+      await startBlock(agent, events, options.signal, options.dependencies);
+      if (options.input === "/error") {
+        throw new RuntimeFailure("MODEL_SIMULATED_FAILURE", agent.id);
+      }
+      await startBlock(entry, events, options.signal, options.dependencies);
+      await executeHandler(handler, events, options.signal, options.dependencies);
+      ensureActive(options.signal);
+      events.emit("block.completed", {}, entry.id);
+      ensureActive(options.signal);
+      events.emit("block.completed", {}, agent.id);
       ensureActive(options.signal);
       events.emit("run.completed");
       return;

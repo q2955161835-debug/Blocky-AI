@@ -88,20 +88,54 @@ function dependencies(overrides: Partial<RuntimeDependencies> = {}): RuntimeDepe
 async function run(options: {
   program?: BlockyProgram;
   sourceMap?: Record<string, { nodeId: string }>;
+  entryId?: string;
   input: string;
   runtime?: RuntimeDependencies;
   signal?: AbortSignal;
 }): Promise<RuntimeEvent[]> {
   const events: RuntimeEvent[] = [];
-  await runProgram({
+  const request = {
     program: options.program ?? normalProgram,
     sourceMap: options.sourceMap ?? normalSourceMap,
+    ...(options.entryId ? { entryId: options.entryId } : {}),
     input: options.input,
     signal: options.signal ?? new AbortController().signal,
     dependencies: options.runtime ?? dependencies(),
-    onEvent: (event) => events.push(event),
-  });
+    onEvent: (event: RuntimeEvent) => events.push(event),
+  };
+  await runProgram(request);
   return events;
+}
+
+function chatReplyProgram(replyText: string): BlockyProgram {
+  const literal = irNode("lesson-literal", "core.data.literal", {
+    fields: { VALUE: replyText },
+  });
+  const message = irNode("lesson-message", "core.message.create", {
+    inputs: { CONTENT: literal },
+  });
+  const reply = irNode("lesson-reply", "core.message.reply", {
+    inputs: { MESSAGE: message },
+  });
+  const entry = irNode("lesson-entry", "core.interaction.chat_entry", {
+    fields: { NAME: "课程问答" },
+    inputs: { HANDLER: reply },
+  });
+  const agent = irNode("lesson-agent", "core.agent.define", {
+    fields: { NAME: "秋叶课堂讲解 Agent" },
+    inputs: { MEMBERS: entry },
+  });
+  return { schemaVersion: "blocky.ir/v0-spike", roots: [agent] };
+}
+
+function chatReplySourceMap() {
+  return Object.fromEntries([
+    "lesson-agent",
+    "lesson-entry",
+    "lesson-reply",
+    "lesson-message",
+    "lesson-literal",
+  ].map((id) => [id, { nodeId: id }]));
 }
 
 describe("deterministic runtime", () => {
@@ -135,6 +169,80 @@ describe("deterministic runtime", () => {
     expect(events.every(Object.isFrozen)).toBe(true);
   });
 
+  it("executes the selected chat handler and maps every evaluated block to the reply", async () => {
+    const replyText = "课程资料回答。[《秋天的叶子》§2]";
+    const events = await run({
+      program: chatReplyProgram(replyText),
+      sourceMap: chatReplySourceMap(),
+      entryId: "lesson-entry",
+      input: "叶子为什么会在秋天变红？",
+    });
+
+    expect(events.map((event) => event.type)).toEqual([
+      "run.started",
+      "block.started",
+      "block.started",
+      "block.started",
+      "block.started",
+      "block.started",
+      "block.completed",
+      "block.completed",
+      "model.chunk",
+      "block.completed",
+      "block.completed",
+      "block.completed",
+      "run.completed",
+    ]);
+    expect(events.filter((event) => event.type === "block.started").map((event) => event.blockId)).toEqual([
+      "lesson-agent",
+      "lesson-entry",
+      "lesson-reply",
+      "lesson-message",
+      "lesson-literal",
+    ]);
+    expect(events.find((event) => event.type === "model.chunk")).toMatchObject({
+      blockId: "lesson-reply",
+      data: { text: replyText },
+    });
+  });
+
+  it("keeps a handler block active until the visual step is released", async () => {
+    let releaseStep: (() => void) | undefined;
+    let settled = false;
+    const pacedRuntime = {
+      ...dependencies(),
+      waitForStep: async (blockId: string) => {
+        if (blockId !== "lesson-agent") return;
+        await new Promise<void>((resolve) => {
+          releaseStep = resolve;
+        });
+      },
+    };
+    const events: RuntimeEvent[] = [];
+    const task = runProgram({
+      program: chatReplyProgram("课程资料回答"),
+      sourceMap: chatReplySourceMap(),
+      entryId: "lesson-entry",
+      input: "叶子为什么会在秋天变红？",
+      signal: new AbortController().signal,
+      dependencies: pacedRuntime,
+      onEvent: (event) => events.push(event),
+    }).finally(() => {
+      settled = true;
+    });
+
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    expect(events.map((event) => event.type)).toEqual([
+      "run.started",
+      "block.started",
+    ]);
+    expect(releaseStep).toBeTypeOf("function");
+    releaseStep?.();
+    await task;
+    expect(events.at(-1)?.type).toBe("run.completed");
+  });
+
   it("ends cancelled after an abort between model chunks and never completes", async () => {
     const controller = new AbortController();
     const events: RuntimeEvent[] = [];
@@ -162,6 +270,27 @@ describe("deterministic runtime", () => {
       blockId: "entry",
       data: { code: "MODEL_SIMULATED_FAILURE" },
     });
+  });
+
+  it("preserves the simulated error command when a chat entry is selected", async () => {
+    const events = await run({
+      program: chatReplyProgram("不应输出的课程回复"),
+      sourceMap: chatReplySourceMap(),
+      entryId: "lesson-entry",
+      input: "/error",
+    });
+
+    expect(events.map((event) => event.type)).toEqual([
+      "run.started",
+      "block.started",
+      "run.failed",
+    ]);
+    expect(events.at(-1)).toMatchObject({
+      type: "run.failed",
+      blockId: "lesson-agent",
+      data: { code: "MODEL_SIMULATED_FAILURE" },
+    });
+    expect(events.some((event) => event.type === "model.chunk")).toBe(false);
   });
 
   it("requests approval before executing the first approved explicit tool call", async () => {

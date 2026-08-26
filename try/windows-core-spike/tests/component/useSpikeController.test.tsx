@@ -30,7 +30,27 @@ const VALID_WORKSPACE = {
                   },
                 },
                 HANDLER: {
-                  block: { id: "send-1", type: "core.message.send" },
+                  block: {
+                    id: "reply-1",
+                    type: "core.message.reply",
+                    inputs: {
+                      MESSAGE: {
+                        block: {
+                          id: "message-1",
+                          type: "core.message.create",
+                          inputs: {
+                            CONTENT: {
+                              block: {
+                                id: "literal-1",
+                                type: "core.data.literal",
+                                fields: { VALUE: "固定课程回复" },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -112,15 +132,58 @@ describe("useSpikeController", () => {
     expect(result.current.runtime.events.map((event) => event.type)).toEqual([
       "run.started",
       "block.started",
+      "block.started",
+      "block.started",
+      "block.started",
+      "block.started",
+      "block.completed",
+      "block.completed",
       "model.chunk",
-      "model.chunk",
+      "block.completed",
+      "block.completed",
       "block.completed",
       "run.completed",
     ]);
     expect(highlight.mock.calls.map(([blockId]) => blockId)).toEqual([
       "agent-1",
+      "entry-1",
+      "reply-1",
+      "message-1",
+      "literal-1",
       null,
     ]);
+  });
+
+  it("keeps the simulated error command failing through the selected UI entry", async () => {
+    const highlight = vi.fn();
+    const canvasRef = { current: canvasHandle(highlight) };
+    const { result } = renderHook(() =>
+      useSpikeController({
+        canvasRef,
+        hostBridge: new InMemoryHostBridge(),
+        projectId: "project-1",
+      }),
+    );
+
+    act(() => result.current.acceptProjection(buildEditorProjection(VALID_WORKSPACE)));
+    await waitFor(() => expect(result.current.activeEntryId).toBe("entry-1"));
+    highlight.mockClear();
+
+    await act(async () => {
+      await expect(result.current.runInput({
+        entryId: "entry-1",
+        text: "/error",
+        attachments: [],
+      })).rejects.toThrow("RUN_FAILED");
+    });
+
+    expect(result.current.runtime.events.at(-1)).toMatchObject({
+      type: "run.failed",
+      blockId: "agent-1",
+      data: { code: "MODEL_SIMULATED_FAILURE" },
+    });
+    expect(result.current.runtime.events.some((event) => event.type === "model.chunk")).toBe(false);
+    expect(highlight.mock.calls.map(([blockId]) => blockId)).toEqual(["agent-1", null]);
   });
 
   it("surfaces fixed operation errors while keeping rejection details private", async () => {

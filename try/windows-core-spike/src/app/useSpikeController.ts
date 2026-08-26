@@ -97,6 +97,7 @@ interface UseSpikeControllerOptions {
   hostBridge: HostBridge;
   projectId: string;
   runtimeModel?: RuntimeDependencies["model"];
+  runtimeStepDelayMs?: number;
   onRuntimeEvent?: (event: RuntimeEvent) => void;
 }
 
@@ -144,6 +145,7 @@ export function useSpikeController({
   hostBridge,
   projectId,
   runtimeModel,
+  runtimeStepDelayMs = 0,
   onRuntimeEvent,
 }: UseSpikeControllerOptions) {
   const [projection, setProjection] = useState<EditorProjection>(() =>
@@ -384,6 +386,27 @@ export function useSpikeController({
           model: runtimeModel ?? createDeterministicModel(),
           tools,
           requestApproval: (request) => requestApproval(binding, request),
+          ...(runtimeStepDelayMs > 0
+            ? {
+                waitForStep: (_blockId: string, signal: AbortSignal) =>
+                  new Promise<void>((resolve) => {
+                    if (signal.aborted) {
+                      resolve();
+                      return;
+                    }
+                    const timeout = window.setTimeout(() => {
+                      signal.removeEventListener("abort", onAbort);
+                      resolve();
+                    }, runtimeStepDelayMs);
+                    const onAbort = (): void => {
+                      window.clearTimeout(timeout);
+                      signal.removeEventListener("abort", onAbort);
+                      resolve();
+                    };
+                    signal.addEventListener("abort", onAbort, { once: true });
+                  }),
+              }
+            : {}),
         };
         const outcome: { terminalType: RunTerminalType | null } = {
           terminalType: null,
@@ -392,6 +415,7 @@ export function useSpikeController({
         await runProgram({
           program: latest.program,
           sourceMap: { ...latest.sourceMap },
+          entryId: input.entryId,
           input: inputText,
           signal: abortController.signal,
           dependencies,
@@ -429,6 +453,7 @@ export function useSpikeController({
       canvasRef,
       requestApproval,
       runtimeModel,
+      runtimeStepDelayMs,
       withRunTransition,
     ],
   );

@@ -50,6 +50,7 @@ export interface AppProps {
   initialWorkspace?: JsonValue;
   projectId?: string;
   runtimeModel?: RuntimeDependencies["model"];
+  runtimeStepDelayMs?: number;
   onRuntimeEvent?: (event: RuntimeEvent) => void;
   windowChrome?: WindowChromeBridge;
 }
@@ -77,6 +78,7 @@ export function App({
   initialWorkspace = EMPTY_WORKSPACE,
   projectId = "windows-core-spike",
   runtimeModel,
+  runtimeStepDelayMs = 0,
   onRuntimeEvent,
   windowChrome = NOOP_WINDOW_CHROME,
 }: AppProps) {
@@ -107,6 +109,7 @@ export function App({
     hostBridge,
     projectId,
     runtimeModel,
+    runtimeStepDelayMs,
     onRuntimeEvent,
   });
   const documentSession = useDocumentSession({

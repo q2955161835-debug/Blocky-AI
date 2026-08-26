@@ -83,7 +83,9 @@ describe("App professional workbench", () => {
     await user.type(screen.getByRole("textbox", { name: "发送给 Agent" }), "你好{Enter}");
 
     expect(await screen.findByText("你好")).toHaveClass("conversation-message--user");
-    expect(await screen.findByText("已收到：你好")).toHaveClass(
+    expect(await screen.findByText("Hello", {
+      selector: ".conversation-message--assistant",
+    })).toHaveClass(
       "conversation-message--assistant",
     );
     expect(screen.getByRole("button", { name: "执行过程" }))

@@ -637,9 +637,9 @@ describe("Blocky professional native workbench", () => {
     const completed = await waitForTerminal("run.completed");
     expect(completed.filter((event) => event.type === "model.chunk").map(
       (event) => (event.data as { text: string }).text,
-    )).toEqual(["已收到：", "你好"]);
+    )).toEqual(["Hello"]);
     await expect($(".conversation-message--user")).toHaveText("你好");
-    await expect($(".conversation-message--assistant")).toHaveText("已收到：你好");
+    await expect($(".conversation-message--assistant")).toHaveText("Hello");
     const traceToggle = await $("button.conversation-trace__toggle");
     await expect(traceToggle).toHaveAttribute("aria-expanded", "false");
     await traceToggle.click();

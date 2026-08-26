@@ -24,6 +24,7 @@ async function bootstrap(): Promise<void> {
       <App
         hostBridge={hostBridge}
         runtimeModel={runtimeModel}
+        runtimeStepDelayMs={650}
         onRuntimeEvent={onRuntimeEvent}
         windowChrome={windowChrome}
       />
