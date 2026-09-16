@@ -1,0 +1,190 @@
+
+> blocky-studio@0.1.0 check:core D:\1Folder\Blocky-AI
+> pnpm check && pnpm test:component && pnpm test:host && pnpm build:cli && pnpm test:cli && pnpm test:e2e:build && pnpm test:e2e && pwsh -NoProfile -File scripts/check-native-core.ps1 core
+
+
+> blocky-studio@0.1.0 check D:\1Folder\Blocky-AI
+> pnpm typecheck && pnpm test:unit && pnpm test:contracts
+
+
+> blocky-studio@0.1.0 typecheck D:\1Folder\Blocky-AI
+> tsc --noEmit
+
+
+> blocky-studio@0.1.0 test:unit D:\1Folder\Blocky-AI
+> vitest run packages
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  18 passed (18)
+      Tests  51 passed (51)
+   Start at  23:36:25
+   Duration  8.07s (transform 2.91s, setup 0ms, import 21.82s, tests 941ms, environment 2ms)
+
+
+> blocky-studio@0.1.0 test:contracts D:\1Folder\Blocky-AI
+> vitest run tests/contracts
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  23:36:34
+   Duration  852ms (transform 356ms, setup 0ms, import 801ms, tests 49ms, environment 0ms)
+
+
+> blocky-studio@0.1.0 test:component D:\1Folder\Blocky-AI
+> vitest run tests/component
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  5 passed (5)
+      Tests  14 passed (14)
+   Start at  23:36:36
+   Duration  11.50s (transform 1.67s, setup 0ms, import 9.68s, tests 4.03s, environment 31.97s)
+
+
+> blocky-studio@0.1.0 test:host D:\1Folder\Blocky-AI
+> cargo test --manifest-path apps/studio-host/Cargo.toml --lib --bin blocky-project-io
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.29s
+     Running unittests src\lib.rs (apps\studio-host\target\debug\deps\blocky_studio-440f99b7b598bd0c.exe)
+
+running 8 tests
+test project_store::tests::generic_credential_fields_are_rejected_but_references_remain_valid ... ok
+test strict_json::tests::nested_duplicate_keys_are_rejected ... ok
+test project_store::tests::undeclared_files_and_secrets_rejected ... ok
+test project_store::tests::traversal_missing_workspaces_and_unknown_version_rejected ... ok
+test project_store::tests::failed_commit_preserves_existing_bytes ... ok
+test project_store::tests::native_archive_round_trip ... ok
+test project_store::tests::creation_never_overwrites_an_existing_target ... ok
+test log_store::tests::rejects_bodies_and_persists_only_bounded_metadata ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.21s
+
+     Running unittests src\bin\blocky-project-io.rs (apps\studio-host\target\debug\deps\blocky_project_io-1349f5aba740c308.exe)
+
+running 1 test
+test tests::rejects_unknown_protocol_and_undeclared_arguments ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+> blocky-studio@0.1.0 build:cli D:\1Folder\Blocky-AI
+> cargo build --manifest-path apps/studio-host/Cargo.toml --release --bin blocky-project-io && pnpm --dir tools/blocky-cli build
+
+    Finished `release` profile [optimized] target(s) in 1.33s
+
+> @blocky/cli@0.1.0 build D:\1Folder\Blocky-AI\tools\blocky-cli
+> node build.mjs
+
+
+> blocky-studio@0.1.0 test:cli D:\1Folder\Blocky-AI
+> vitest run tests/cli
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  5 passed (5)
+      Tests  21 passed (21)
+   Start at  23:37:07
+   Duration  8.79s (transform 699ms, setup 0ms, import 1.53s, tests 10.15s, environment 0ms)
+
+
+> blocky-studio@0.1.0 test:e2e:build D:\1Folder\Blocky-AI
+> pwsh -NoProfile -File scripts/build-native-tests.ps1
+
+
+> @blocky/studio-host@0.1.0 tauri D:\1Folder\Blocky-AI\apps\studio-host
+> tauri "build" "--no-bundle" "--features" "wdio" "--config" "tauri.wdio.conf.json"
+
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `pnpm --dir ../studio-desktop exec vite build --mode native-test --outDir ../../try/native-test-web --emptyOutDir`
+vite v8.2.1 building client environment for native-test...
+transforming...
+✓ 172 modules transformed.
+rendering chunks...
+computing gzip size...
+../../try/native-test-web/index.html                             0.74 kB │ gzip:   0.35 kB
+../../try/native-test-web/assets/index-xcGp-icd.css             14.05 kB │ gzip:   3.99 kB
+../../try/native-test-web/assets/core-C0VTMVdH.js                0.05 kB │ gzip:   0.07 kB
+../../try/native-test-web/assets/event-CHfESvKx.js               0.06 kB │ gzip:   0.07 kB
+../../try/native-test-web/assets/core-Bb8Z72y_.js                0.25 kB │ gzip:   0.18 kB
+../../try/native-test-web/assets/rolldown-runtime-hePW80VL.js    0.71 kB │ gzip:   0.42 kB
+../../try/native-test-web/assets/event-DmJOk0qC.js               1.04 kB │ gzip:   0.54 kB
+../../try/native-test-web/assets/preload-helper-Czpn1I53.js      1.19 kB │ gzip:   0.67 kB
+../../try/native-test-web/assets/acceptance-Bi3j8Snv.js          6.08 kB │ gzip:   2.49 kB
+../../try/native-test-web/assets/dist-js-Bj_8Hk7L.js            16.38 kB │ gzip:   4.56 kB
+../../try/native-test-web/assets/index-CBMhOwGm.js             305.34 kB │ gzip:  99.36 kB
+../../try/native-test-web/assets/src-Cc1mHCsf.js               808.36 kB │ gzip: 224.86 kB
+
+✓ built in 351ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling blocky-studio v0.1.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 32.36s
+       Built application at: D:\1Folder\Blocky-AI\try\native-e2e-target\release\blocky-studio.exe
+
+> blocky-studio@0.1.0 test:e2e D:\1Folder\Blocky-AI
+> wdio run tests/e2e/wdio.conf.ts
+
+
+Execution of 1 workers started at 2026-09-16T15:38:34.326Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 216
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 133
+[0-0] WEBVIEW_ERROR Connecting to 'http://ipc.localhost/clear_diagnostics' violates the following Content Security Policy directive: "connect-src 'none'". The action has been blocked.
+[0-0] WEBVIEW_ERROR Fetch API cannot load http://ipc.localhost/clear_diagnostics. Refused to connect because it violates the document's Content Security Policy.
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: 05e772e6-b7e4-46eb-94b7-68be97c5c6fe
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\studio.e2e.ts
+[msedge 153.0.0.0 windows #0-0] Blocky native editor
+[msedge 153.0.0.0 windows #0-0]    ✓ creates editable canvases, runs a sourced answer and navigates across modules
+[msedge 153.0.0.0 windows #0-0]    ✓ focuses the canvas after a blank click so Tab opens block search
+[msedge 153.0.0.0 windows #0-0]    ✓ opens shared commands, restores closed tabs and keeps two workspaces
+[msedge 153.0.0.0 windows #0-0]    ✓ reviews explicit surface permissions, runs the actual isolated page and reopens its tab
+[msedge 153.0.0.0 windows #0-0]    ✓ keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 5 passing (6.6s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:11
+
+
+Execution of 1 workers started at 2026-09-16T15:39:25.297Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0","hardwareConcurrency":24,"width":1372,"height":858,"dpr":1.0499999523162842},"load":{"samplesMs":[56.20000000298023,41.5,36.20000000298023,48.100000001490116,37.100000001490116],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":41.5},"saveCompile":{"samplesMs":[2.899999998509884,2.7000000029802322,2.399999998509884,3,2.899999998509884],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":2.899999998509884},"runtime":{"samplesMs":[28.399999998509884,28.099999994039536,26.100000001490116,26,26.100000001490116],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":26.100000001490116}}
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: 57276c0d-d5b7-449a-912c-c58e31f98903
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\core.e2e.ts
+[msedge 153.0.0.0 windows #0-0] formal native Core gates
+[msedge 153.0.0.0 windows #0-0]    ✓ measures 100 blocks and 100 executed nodes with five post-warmup samples
+[msedge 153.0.0.0 windows #0-0]    ✓ preflights actual editor undo, runtime and a Rust archive round trip
+[msedge 153.0.0.0 windows #0-0]    ✓ rejects new runs while hidden and restores authorization through the existing instance
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 3 passing (6.2s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:11
