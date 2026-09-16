@@ -16,6 +16,18 @@
 
 本文件长期维护功能与场景基线，不复制一次性原始日志。新增、修改或删除相关功能时，更新对应场景，并以新的任务验收记录绑定当次命令、指标和人工证据。
 
+## 阶段 2 实现映射（已通过独立最终验收）
+
+阶段 2 实现检查点为 `f016afc`，目标版本为 `0.2.0`。下表把源码入口映射到本长期基线；阶段 2 独立最终验收 16/16 通过，Full 360/30 通过，安全补证通过，具体结论见[阶段 2 任务验收](../任务/验收-2026-09-17-Blocky阶段2.md)。协议边界见[阶段 2 语言与桌面地基契约](../../技术设计/正式契约/11-阶段2语言与桌面地基.md)。普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。
+
+| 阶段 2 能力 | 实现入口 | 本次读回范围 |
+|---|---|---|
+| v1 项目/模块/项目 IR、显式迁移与增量编译 | `packages/project-model/`、`packages/language-schema/`、`packages/project-migration/`、`packages/compiler/` | 迁移原件不变、全量/增量一致及跨模块边界已纳入通过的独立验收 |
+| 六个文本语言原子与确定性运行投影 | `packages/block-catalog/`、`packages/runtime-core/` | 阶段 2 组合门禁与最终验收通过；真实大模型 API 调用为“否” |
+| 统一命令、分层设置与项目/用户资源 | `packages/command-system/`、`packages/settings-core/`、`packages/resource-registry/`、`tools/blocky-cli/` | CLI/桌面共享入口、作用域、冲突、缺失引用和秘密绑定已纳入通过的独立验收 |
+| Windows ConPTY、类型化任务、日志、恢复与秘密边界 | `apps/studio-host/src/user_terminal/`、`apps/studio-host/src/task_host/`、`packages/terminal-protocol/`、`packages/observability/`、`packages/project-format/`、`apps/studio-host/src/secret_store.rs` | Full 360/30 4/4、安全补证及 16/16 最终验收通过 |
+| `0.2.0` 发行候选读回 | `dist/Blocky-Studio-0.2.0/`、`try/stage2-release/` | 8 个文件、19,112,686 字节；release 扫描 9 个物料且 `positiveControl=true`、`passed=true`，许可证覆盖 315/315 |
+
 ## 1. 本地 Blockly 编辑器
 
 ### 1.1 安装包本地加载

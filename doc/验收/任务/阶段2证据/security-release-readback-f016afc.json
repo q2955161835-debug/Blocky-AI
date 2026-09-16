@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "f016afc19457bf5631ad5a41c3c686478a4dd080",
+  "manifestFiles": 8,
+  "packageBytes": 19112686,
+  "hashChecks": 17,
+  "positiveControl": true,
+  "findings": [],
+  "scope": "package 8 plus production inputs 9; case-insensitive UTF8/UTF16 known paths/test/canary markers; not arbitrary secret detection"
+}

@@ -3,10 +3,10 @@
 | 项目 | 内容 |
 |---|---|
 | 契约代际 | 阶段 0 的 `v1alpha1` 与阶段 2 的项目/IR `v1` 共存 |
-| 当前阶段 | 阶段 2：语言与桌面地基开发/验证中 |
-| 当前检查点 | `codex/feat-stage2-foundations` / `dd17227` |
+| 当前阶段 | 阶段 2：语言与桌面地基已完成独立验收 |
+| 当前检查点 | `codex/feat-stage2-foundations` / `f016afc` |
 | 目标版本 | `0.2.0`（版本源码由阶段 2 主开发任务维护） |
-| 稳定性 | 当前实现候选；未完成阶段 2 验收，不得宣称完成或通过 |
+| 稳定性 | `0.2.0` 候选已通过阶段 2 独立验收；合并、分支清理和发布状态另行记录 |
 
 本目录是 Blocky 正式产品接口索引。它定义不同包、Host、桌面界面和 CLI 之间交换什么数据；契约登记与源码消费者不等于对应产品功能已经完成。Windows Core 技术尖峰目录已从当前工作区删除，相关结果只作为 Git 历史证据，不是正式契约或包边界。
 
@@ -107,10 +107,10 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 
 ## 6. 阶段 2 语言与桌面地基入口
 
-[阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md)记录当前源码检查点 `dd17227` 的实现边界。它是开发/验证中的契约补充，不是阶段 2 通过报告。
+[阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md)记录源码检查点 `f016afc` 的实现边界；它是正式契约补充，阶段 2 最终结论绑定[阶段 2 任务验收](../../验收/任务/验收-2026-09-17-Blocky阶段2.md)。
 
 当前已进入正式实现的部分包括：`blocky.project/v1`、`blocky.module-ir/v1` 与 `blocky.project-ir/v1`；显式 `blocky.migration/v1` 迁移候选；按模块缓存的增量编译；六个文本语言原子；统一命令/快捷键、分层设置、类型化资源；Windows ConPTY 用户终端；登记任务与 Agent capability 票据；结构化日志与有界存储；`blocky.recovery/v1` 恢复副本；以及只在 Host 内消费的秘密存储。实际 Provider、RAG、动态页面生成、RPA、完整构建助手、六套兼容适配器和官方 Skills 仍按后续阶段处理。
 
 除上述明确提升版本的项目、IR、迁移、恢复和设置文档外，`blocky.interaction/v1alpha1`、`blocky.tool/v1alpha1`、`blocky.resource/v1alpha1`、`blocky.command/v1alpha1`、`blocky.setting/v1alpha1`、`blocky.app-surface/v1alpha1`、`blocky.frontend-bridge/v1alpha1`、`blocky.rpa/v1alpha1`、`blocky.window/v1alpha1`、`blocky.log/v1alpha1`、`blocky.terminal/v1alpha1`、`blocky.task/v1alpha1` 与 `blocky.audit/v1alpha1` 保持原版本；本阶段不做无语义依据的批量改名。
 
-阶段 2 仍需完成源码、Host、CLI、桌面、原生 E2E、长稳、发行候选和独立验收的组合读回。没有当前提交的测试与验收证据时，只能报告“开发/验证中”；真实大模型 API 调用为“否”。
+阶段 2 的组成门禁均已通过：`pnpm check`、组件/Host/CLI 与原生构建/测试及 `scripts/check-native-core.ps1 core`；根 `pnpm check:core` 别名未重复跑。发行目录读回 8 个文件、19,112,686 字节，release 扫描读回 9 个物料（`positiveControl=true`、`passed=true`），许可证覆盖 315/315。Full 360/30 4/4 通过，独立最终验收 16/16 通过，安全补证通过；结论见[阶段 2 任务验收](../../验收/任务/验收-2026-09-17-Blocky阶段2.md)。普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，文档提交后的 HEAD 不替代该来源；真实大模型 API 调用为“否”。

@@ -2,6 +2,18 @@
 
 2026-09-17 实施关联：阶段 1 的 U01–U07/U15/U16/U18/U19 已有正式桌面/CLI 消费者，CLI 同源领域与安全分项优先验证；普通发行包主旅程已由独立最终验收 Agent 实际执行，Shift 多选、中键平移和通知区域恢复由用户直接确认，Core 与完整 360/30 Full 已通过。执行证据和限定结论见[阶段 1 任务验收](../任务/验收-2026-09-16-Blocky阶段1正式Demo.md)。下表只更新已独立验证的阶段 1 子范围，不把真实 RAG、完整专业交互、PTY、RPA 或兼容阶段等未来能力提前标为通过。
 
+## 阶段 2 实现映射（已通过独立最终验收）
+
+阶段 2 实现检查点为 `f016afc`，目标版本为 `0.2.0`。以下映射把跨模块场景连接到实际入口；阶段 2 独立最终验收 16/16 通过，Full 360/30 通过，安全补证通过，具体结论见[阶段 2 任务验收](../任务/验收-2026-09-17-Blocky阶段2.md)，契约边界见[阶段 2 语言与桌面地基契约](../../技术设计/正式契约/11-阶段2语言与桌面地基.md)。普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。
+
+| 跨模块链路 | 当前实现入口 | 当前读回与边界 |
+|---|---|---|
+| 项目 Manifest → 模块 Workspace → Module/Project IR → 迁移/增量编译 | `packages/project-model/`、`packages/language-schema/`、`packages/project-migration/`、`packages/compiler/` | v1 项目/IR、显式迁移、原件不变、全量/增量一致、链接诊断和保存重开已纳入通过的独立验收 |
+| 语言目录 → 命令/设置/资源 → CLI 与桌面共同消费 | `packages/block-catalog/`、`packages/command-system/`、`packages/settings-core/`、`packages/resource-registry/`、`tools/blocky-cli/` | 六个文本原子及迁移/module/settings/resource/user/shortcut/secret/task 命令已纳入通过的独立验收；真实大模型 API 调用为“否” |
+| 桌面 Host → ConPTY 用户终端 → 类型化任务与 capability | `apps/studio-host/src/user_terminal/`、`apps/studio-host/src/task_host/`、`packages/terminal-protocol/` | 用户 PTY 与 Agent 任务边界、输入输出、取消、超时、进程树结算和附加负例已纳入 Full/最终验收 |
+| Runtime/Host → Normalizer/Redactor → 日志、恢复、秘密 | `packages/observability/`、`packages/project-format/`、`apps/studio-host/src/secret_store.rs` | 结构化日志、有界存储、恢复副本、Host 秘密引用、背压、损坏恢复、退出刷新及敏感补证通过 |
+| `0.2.0` 发行候选 → 扫描/许可证 → 最终验收 | `dist/Blocky-Studio-0.2.0/`、`try/stage2-release/` | 8 个文件、19,112,686 字节；9 个物料 release 扫描 `positiveControl=true`、`passed=true`，许可证 315/315；Full 360/30、16/16 最终验收和安全补证通过 |
+
 ## 汇总表格
 
 | 编号 | 真实用户流程 | 阶段 | 等级 | 当前结果 |

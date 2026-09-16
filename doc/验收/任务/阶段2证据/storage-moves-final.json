@@ -1,0 +1,254 @@
+[
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\apps\\studio-host\\target",
+    "Relative": "apps/studio-host/target",
+    "Files": 12251,
+    "Bytes": 5277719758.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\apps\\studio-desktop\\dist",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\apps\\studio-desktop\\dist",
+    "Relative": "apps/studio-desktop/dist",
+    "Files": 5,
+    "Bytes": 1529192.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\native-e2e-target",
+    "Relative": "try/native-e2e-target",
+    "Files": 4043,
+    "Bytes": 1583394886.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\release-native-target",
+    "Relative": "try/release-native-target",
+    "Files": 3766,
+    "Bytes": 1482421355.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\native-test-web",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\native-test-web",
+    "Relative": "try/native-test-web",
+    "Files": 14,
+    "Bytes": 1553224.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2",
+    "Relative": "try/stage2",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-core",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-core",
+    "Relative": "try/stage2-core",
+    "Files": 4,
+    "Bytes": 54599.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-e2e",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-e2e",
+    "Relative": "try/stage2-e2e",
+    "Files": 8,
+    "Bytes": 493710.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-logs",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-logs",
+    "Relative": "try/stage2-logs",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-privacy",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-privacy",
+    "Relative": "try/stage2-privacy",
+    "Files": 7,
+    "Bytes": 23810.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-pty",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-pty",
+    "Relative": "try/stage2-pty",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-release",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-release",
+    "Relative": "try/stage2-release",
+    "Files": 4,
+    "Bytes": 2649787.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-secrets",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-secrets",
+    "Relative": "try/stage2-secrets",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-security",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-security",
+    "Relative": "try/stage2-security",
+    "Files": 44,
+    "Bytes": 30885.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-store",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-store",
+    "Relative": "try/stage2-store",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-tasks",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-tasks",
+    "Relative": "try/stage2-tasks",
+    "Files": 0,
+    "Bytes": null
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-build-cli.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-build-cli.log",
+    "Relative": "try/stage2-build-cli.log",
+    "Files": 1,
+    "Bytes": 413.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-build-native.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-build-native.log",
+    "Relative": "try/stage2-build-native.log",
+    "Files": 1,
+    "Bytes": 2629.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-build-release.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-build-release.log",
+    "Relative": "try/stage2-build-release.log",
+    "Files": 1,
+    "Bytes": 1723.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-check.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-check.log",
+    "Relative": "try/stage2-check.log",
+    "Files": 1,
+    "Bytes": 797.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-cli.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-cli.log",
+    "Relative": "try/stage2-cli.log",
+    "Files": 1,
+    "Bytes": 298.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-collect-evidence.mjs",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-collect-evidence.mjs",
+    "Relative": "try/stage2-collect-evidence.mjs",
+    "Files": 1,
+    "Bytes": 1127.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-collect-full.mjs",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-collect-full.mjs",
+    "Relative": "try/stage2-collect-full.mjs",
+    "Files": 1,
+    "Bytes": 1999.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-component.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-component.log",
+    "Relative": "try/stage2-component.log",
+    "Files": 1,
+    "Bytes": 314.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-core.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-core.log",
+    "Relative": "try/stage2-core.log",
+    "Files": 1,
+    "Bytes": 2124.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-e2e.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-e2e.log",
+    "Relative": "try/stage2-e2e.log",
+    "Files": 1,
+    "Bytes": 1985.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-foundation-cli.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-foundation-cli.log",
+    "Relative": "try/stage2-foundation-cli.log",
+    "Files": 1,
+    "Bytes": 214.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-full.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-full.log",
+    "Relative": "try/stage2-full.log",
+    "Files": 1,
+    "Bytes": 2689.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-host.log",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-host.log",
+    "Relative": "try/stage2-host.log",
+    "Files": 1,
+    "Bytes": 2838.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-privacy-evidence.mjs",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-privacy-evidence.mjs",
+    "Relative": "try/stage2-privacy-evidence.mjs",
+    "Files": 1,
+    "Bytes": 2584.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-storage-inventory.json",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-storage-inventory.json",
+    "Relative": "try/stage2-storage-inventory.json",
+    "Files": 1,
+    "Bytes": 688.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-storage-plan.ps1",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-storage-plan.ps1",
+    "Relative": "try/stage2-storage-plan.ps1",
+    "Files": 1,
+    "Bytes": 2126.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\stage2-update-progress.mjs",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\stage2-update-progress.mjs",
+    "Relative": "try/stage2-update-progress.mjs",
+    "Files": 1,
+    "Bytes": 4939.0
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\cleanup-stage2-plan.json",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\cleanup-stage2-plan.json",
+    "Relative": "try/cleanup-stage2-plan.json",
+    "Files": 1,
+    "Bytes": 8564
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\production-js-licenses.json",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\production-js-licenses.json",
+    "Relative": "try/production-js-licenses.json",
+    "Files": 1,
+    "Bytes": 20636
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\production-rust-metadata.json",
+    "Target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段2-2026-09-17\\try\\production-rust-metadata.json",
+    "Relative": "try/production-rust-metadata.json",
+    "Files": 1,
+    "Bytes": 1329459
+  }
+]

@@ -12,7 +12,7 @@ Blocky 是面向普通用户和学校教育的安装式积木 AI（人工智能�
 - 尖峰是可删除验证，不是正式 Blocky 应用、正式包边界或可发布产品；禁止恢复或改名后继续扩写为正式应用。
 - 品牌、积木分类、首批六个兼容模板、阶段 1 Demo 优先、多画布/应用界面/RPA/通知区域、底部面板/终端/日志方向和阶段 0–7 顺序已经确认。
 - 阶段 0 契约已通过独立文档验收并归档；正式入口是 `doc/技术设计/正式契约/README.md`，已完成计划与验收分别位于 `doc/归档/2026-08-23/` 和 `doc/验收/归档/2026-08-23/`。2026-09-16 用户已确认阶段 1 全部验收项和最终验收角色，阶段 1 已按实施计划 A–F 完成并归档。
-- 正式多模块最小纵切、确定性知识/Provider、个人蓝图/候选补丁、应用界面/生命周期与共享 CLI 已建立；阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 当前在 `codex/feat-stage2-foundations` 分支的 `dd17227` 检查点继续开发与验证，目标版本为 `0.2.0`，尚未完成或通过。当前已进入正式实现的范围包括 v1 项目/IR、显式迁移、模块增量编译、六个文本语言原子、统一命令、设置/资源、Windows ConPTY、类型化任务、日志、会话恢复和 Host 秘密存储；真实大模型 API 调用仍为“否”。完整积木目录、真实 RAG/Provider、RPA、官方 Skills、MCP、完整构建助手、兼容适配器、账号、发布和多平台仍未实现。
+- 正式多模块最小纵切、确定性知识/Provider、个人蓝图/候选补丁、应用界面/生命周期与共享 CLI 已建立；阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 在 `codex/feat-stage2-foundations` 分支的 `f016afc` 实现检查点完成开发并通过独立最终验收，目标版本为 `0.2.0`。16/16、Full 360/30 和安全补证均通过；真实大模型 API 调用仍为“否”。完整积木目录、真实 RAG/Provider、RPA、官方 Skills、MCP、完整构建助手、兼容适配器、账号、发布和多平台仍未实现。
 
 ## 2. 文档优先级与入口
 
@@ -31,7 +31,7 @@ Blocky 是面向普通用户和学校教育的安装式积木 AI（人工智能�
 - 当前方向与状态：`README.md`
 - 阶段 0 正式契约与 Schema 注册表：`doc/技术设计/正式契约/README.md`
 - 阶段 2 语言与桌面地基契约：[11-阶段2语言与桌面地基](doc/技术设计/正式契约/11-阶段2语言与桌面地基.md)
-- 阶段 2 实施安排：`doc/执行计划/2026-09-17-Blocky-阶段2实施安排.md`
+- 阶段 2 实施安排（已归档）：`doc/归档/2026-09-17/2026-09-17-Blocky-阶段2实施安排.md`
 - 阶段 1 接口与固定夹具替换矩阵：`doc/技术设计/正式契约/07-阶段1-Demo接口交接.md`
 - 阶段 1 实施计划（已归档）：`doc/归档/2026-09-17/2026-09-16-Blocky-阶段1正式Demo实施计划.md`
 - 阶段 1 已确认验收项：`doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md`；最终验收角色：`.agents/模版/Blocky阶段1桌面产品交付验收.md`
@@ -271,9 +271,9 @@ pnpm check:core
 pnpm check:full
 ```
 
-`check:core` 和 `check:full` 是正式 monorepo 的阶段门禁；`check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上，不得缩短后声称完整长稳通过。阶段 1 的历史构成命令和结果只绑定其原提交，不能作为阶段 2 `dd17227` 的验证结果。
+`check:core` 和 `check:full` 是正式 monorepo 的阶段门禁；`check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上，不得缩短后声称完整长稳通过。阶段 1 的历史构成命令和结果只绑定其原提交，不能作为阶段 2 `f016afc` 的验证结果。
 
-正式根命令还包括 `pnpm dev`、`pnpm build`、`pnpm build:release`、`pnpm check:release` 和 `pnpm package:release`；CLI 用 `./blocky.cmd --help` 发现。原生测试构建/执行为 `pnpm test:e2e:build` / `pnpm test:e2e`，产物隔离在 `try/native-e2e-target/`。阶段 1 的 Core/Full、普通候选 GUI、组件局部复验和隐藏/恢复短原生证明均为历史证据；阶段 2 当前仍在开发/验证，真实大模型 API 调用为“否”，远端 CI 未执行。尖峰测试不能代替正式应用验证。
+正式根命令还包括 `pnpm dev`、`pnpm build`、`pnpm build:release`、`pnpm check:release` 和 `pnpm package:release`；CLI 用 `./blocky.cmd --help` 发现。原生测试构建/执行为 `pnpm test:e2e:build` / `pnpm test:e2e`，产物隔离在 `try/native-e2e-target/`。阶段 2 `f016afc` 的组成门禁均通过：`pnpm check`、组件/Host/CLI 与原生构建/测试及 Full 命令内的 3 项 Core 场景；根 `pnpm check:core` 别名未重复跑。`dist/Blocky-Studio-0.2.0/` 读回 8 个文件、19,112,686 字节，release 扫描 9 个物料且 `positiveControl=true`、`passed=true`，许可证覆盖 315/315；Full 360/30 4/4 通过，`elapsedMs=1,803,382`、`heapDelta=-8,703,892`。独立最终验收 16/16 通过，以上普通候选产物绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源；真实大模型 API 调用为“否”，远端 CI 未执行。阶段 1 的 Core/Full、普通候选 GUI、组件局部复验和隐藏/恢复短原生证明均为历史证据；尖峰测试不能代替正式应用验证。
 
 ## 11. 复测映射
 
@@ -307,7 +307,7 @@ pnpm check:full
 
 锁定 Wry Windows 修复源码位于项目 `vendor/wry/`，由 Host Cargo patch 使用，来源与维护说明见 `vendor/WRY-PATCH.md`。工具缓存默认位于 `C:\Users\29551\.cargo\registry`；运行时数据为 `C:\Users\29551\AppData\Local\ai.blocky.studio`，测试包为 `C:\Users\29551\AppData\Local\ai.blocky.studio.test`。诊断仅保存白名单元数据；Full 测试原生档位于后者 `acceptance\full.blocky`，普通包不包含此测试命令。普通代码不得导入 `src/testing/`，测试注册同时受 Vite native-test 和 Rust wdio 编译门控，交付前扫描普通产物。
 
-交付构建用 `pnpm build:release` / `pnpm check:release` / `pnpm package:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。阶段 2 目标版本为 `0.2.0`，实际发行目录须以版本源码和构建读回为准。构建与扫描脚本在 `scripts/`，构建缓存候选在 `try/release-native-target/` 与 CLI `dist/`，阶段 2 扫描报告放入 `try/stage2/`。许可证读取锁定依赖和 `vendor/licenses/registry.json`，缺失或校验和不符即停止；发行目录已存在时不覆盖，内部验收材料不进入产品。
+交付构建用 `pnpm build:release` / `pnpm check:release` / `pnpm package:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。阶段 2 目标版本为 `0.2.0`，当前发行目录 `dist/Blocky-Studio-0.2.0/` 已读回 8 个文件、19,112,686 字节；构建与扫描脚本在 `scripts/`，构建缓存候选在 `try/release-native-target/` 与 CLI `dist/`，构建时阶段 2 扫描报告写入 `try/stage2-release/`；本轮固定证据见 `doc/验收/任务/阶段2证据/`，构建缓存及原始日志已按该目录 `storage-moves-final.json` 整理至 `try/待清理/阶段2-2026-09-17/`。许可证读取锁定依赖和 `vendor/licenses/registry.json`，当前覆盖读回 315/315；release 扫描 9 个物料并读回 `positiveControl=true`、`passed=true`。最终独立验收 16/16、Full 360/30 和安全补证均通过；普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。发行目录已存在时不覆盖，内部验收材料不进入产品。
 
 ## 14. 团队协作归属
 

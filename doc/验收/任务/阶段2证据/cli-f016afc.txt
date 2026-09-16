@@ -1,0 +1,12 @@
+
+> blocky-studio@0.2.0 test:cli D:\1Folder\Blocky-AI
+> vitest run tests/cli
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  6 passed (6)
+      Tests  24 passed (24)
+   Start at  02:24:14
+   Duration  8.30s (transform 789ms, setup 0ms, import 1.98s, tests 14.53s, environment 0ms)

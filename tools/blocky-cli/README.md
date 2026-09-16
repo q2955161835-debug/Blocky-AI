@@ -1,6 +1,6 @@
 # Blocky CLI
 
-与桌面端同步开发的命令行入口。当前使用同一 Project Model、Compiler、Runtime 和 Rust 项目存储；本地确定性适配器未真实调用外部大模型 API。
+与桌面端同步开发的命令行入口。当前使用同一 Project Model、Compiler、Runtime 和 Rust 项目存储；本地确定性适配器未真实调用外部大模型 API。阶段 2 `0.2.0` 的 CLI/桌面共享入口已纳入 16/16 独立最终验收；普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。
 
 从仓库根构建：`pnpm build:cli`。运行 `./blocky.cmd --help` 查看**实际已实现**的命令。需 Node.js 22.12 或以上；依赖位于项目环境，不全局安装。
 
@@ -19,7 +19,56 @@ $LASTEXITCODE
 
 `dist/` 包含入口脚本和 `bin/blocky-project-io.exe`，可整体移动到另一个目录运行；不依赖源码路径、不启动 WebView。源文件和工具协议不进入用户项目。
 
-当前不提供 live、官方 Skills 安装、六个原生兼容模板或任意仓库扫描。转换消费随包附带的锁定源码，不下载或执行上游代码。应用界面命令随 E 的共享领域实现补充。
+当前不提供 live、官方 Skills 安装、六个原生兼容模板或任意仓库扫描。转换消费随包附带的锁定源码，不下载或执行上游代码。`surface create`/`surface list` 已提供候选页面清单路径，但 CLI 不打开浏览器或发布站点。
+
+## 阶段 2 项目、模块、设置与资源
+
+以下示例只使用本地临时路径、示例 ID 和无秘密的演示值；写入类命令都输出新文件或本机用户配置，不覆盖输入。完整参数以 `.\blocky.cmd --help` 的当前输出为准。
+
+```powershell
+# 旧项目显式迁移为新候选；原文件保持不变
+.\blocky.cmd project migrate .\try\old-project.blocky --output .\try\migrated-project.blocky --json
+
+# 项目模块：列出模块，或创建、重命名、删除并写入新项目
+.\blocky.cmd project module list .\try\my-project.blocky --json
+.\blocky.cmd project module create .\try\my-project.blocky --id notes --name "课堂笔记" --output .\try\with-notes.blocky --json
+.\blocky.cmd project module rename .\try\with-notes.blocky --id notes --name "研究笔记" --output .\try\renamed.blocky --json
+.\blocky.cmd project module delete .\try\renamed.blocky --id notes --output .\try\without-notes.blocky --json
+
+# 项目设置与项目资源
+.\blocky.cmd project settings list .\try\my-project.blocky --json
+.\blocky.cmd project settings set .\try\my-project.blocky --id terminal.outputBudgetBytes --value 65536 --output .\try\with-setting.blocky --json
+.\blocky.cmd project settings reset .\try\with-setting.blocky --id terminal.outputBudgetBytes --output .\try\reset-setting.blocky --json
+.\blocky.cmd project resource list .\try\my-project.blocky --json
+.\blocky.cmd project resource set .\try\my-project.blocky --definition .\try\example-resource.json --output .\try\with-resource.blocky --json
+.\blocky.cmd project resource delete .\try\with-resource.blocky --id example-resource --output .\try\without-resource.blocky --json
+.\blocky.cmd project resource references .\try\my-project.blocky --id example-resource --json
+.\blocky.cmd project resource link-user .\try\my-project.blocky --id example-user-resource --output .\try\linked-resource.blocky --json
+```
+
+用户级配置写入本机用户存储。`settings` 的 `--value` 和 `shortcuts set` 的 `--keys` 接受 JSON；`resource set` 读取一个本地资源定义 JSON，示例文件内容不属于 CLI 固定字段。
+
+```powershell
+.\blocky.cmd settings list --json
+.\blocky.cmd settings set --id ui.reduceMotion --value true --json
+.\blocky.cmd settings reset --id ui.reduceMotion --json
+.\blocky.cmd shortcuts list --json
+.\blocky.cmd shortcuts set --id view.command-center --keys '["Ctrl+Alt+P"]' --json
+.\blocky.cmd shortcuts reset --id view.command-center --json
+.\blocky.cmd shortcuts export --output .\try\keys.json --json
+.\blocky.cmd shortcuts import --input .\try\keys.json --json
+.\blocky.cmd resource list --json
+.\blocky.cmd resource set --definition .\try\example-resource.json --json
+.\blocky.cmd resource delete --id example-user-resource --json
+```
+
+秘密命令只导入指定 `.env` 变量并返回配置状态，不打印秘密值；下面的文件、引用和变量名均为演示占位符。
+
+```powershell
+.\blocky.cmd secret import --id example-token --env-file .\try\example.env --variable BLOCKY_EXAMPLE_TOKEN --json
+.\blocky.cmd secret status --id example-token --json
+.\blocky.cmd secret remove --id example-token --json
+```
 
 ## 蓝图与候选变更
 
@@ -47,7 +96,8 @@ $LASTEXITCODE
 .\blocky.cmd patch apply .\try\my-project.blocky --patch .\try\page-patch.json --approve-permissions surface.preview,surface.invoke.ask --output .\try\with-page.blocky --json
 .\blocky.cmd surface list .\try\with-page.blocky --json
 .\blocky.cmd task list --json
-.\blocky.cmd task run .\try\my-project.blocky --passes 10 --interval 100 --timeout 30000 --output-budget 4096 --json
+.\blocky.cmd task run .\try\my-project.blocky --task blocky.project-check --passes 5 --interval 100 --timeout 30000 --output-budget 65536 --json
+.\blocky.cmd task run .\try\my-project.blocky --task blocky.project-inventory --limit 1000 --timeout 30000 --output-budget 65536 --json
 .\blocky.cmd diagnostics export .\try\logs.json --channel runtime --output .\try\diagnostics.json --json
 ```
 

@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "blocky.cli/v1",
+  "ok": true,
+  "command": "project.compile",
+  "data": {
+    "modules": [
+      {
+        "schemaVersion": "blocky.module-ir/v1",
+        "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+        "moduleId": "research-agent",
+        "roots": [
+          {
+            "nodeId": "research-root",
+            "blockType": "core.agent",
+            "fields": {
+              "ROLE": "用清晰可靠的中文回答，只引用资料中的事实"
+            },
+            "inputs": {
+              "BODY": {
+                "nodeId": "on-question",
+                "blockType": "core.interaction.chat",
+                "fields": {
+                  "NAME": "资料问答"
+                },
+                "inputs": {},
+                "next": {
+                  "nodeId": "call-citation",
+                  "blockType": "core.module.call",
+                  "fields": {
+                    "EXPORT": "lookup-v1",
+                    "INPUT": "schemas/query.json",
+                    "MODULE": "citation-service",
+                    "OUTPUT": "schemas/citations.json"
+                  },
+                  "inputs": {},
+                  "next": {
+                    "nodeId": "compose-answer",
+                    "blockType": "core.model.compose",
+                    "fields": {
+                      "RESOURCE": "local-composer"
+                    },
+                    "inputs": {},
+                    "next": {
+                      "nodeId": "reply-answer",
+                      "blockType": "core.output.answer",
+                      "fields": {
+                        "STYLE": "条目"
+                      },
+                      "inputs": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "exports": [
+          {
+            "exportId": "answer-with-citations",
+            "displayName": "生成带引用回答",
+            "kind": "agent",
+            "inputSchemaRef": "schemas/question.json",
+            "outputSchemaRef": "schemas/answer.json"
+          }
+        ],
+        "sourceMap": {
+          "research-root": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "research-root"
+          },
+          "on-question": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "on-question"
+          },
+          "call-citation": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "call-citation"
+          },
+          "compose-answer": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "compose-answer"
+          },
+          "reply-answer": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "reply-answer"
+          }
+        }
+      },
+      {
+        "schemaVersion": "blocky.module-ir/v1",
+        "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+        "moduleId": "citation-service",
+        "roots": [
+          {
+            "nodeId": "lookup-entry",
+            "blockType": "core.tool.entry",
+            "fields": {
+              "EXPORT": "lookup-v1"
+            },
+            "inputs": {
+              "BODY": {
+                "nodeId": "lookup-documents",
+                "blockType": "core.knowledge.retrieve",
+                "fields": {
+                  "RESOURCE": "product-handbook"
+                },
+                "inputs": {}
+              }
+            }
+          }
+        ],
+        "exports": [
+          {
+            "exportId": "lookup-v1",
+            "displayName": "检索引用",
+            "kind": "tool",
+            "inputSchemaRef": "schemas/query.json",
+            "outputSchemaRef": "schemas/citations.json"
+          }
+        ],
+        "sourceMap": {
+          "lookup-entry": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "citation-service",
+            "blockId": "lookup-entry"
+          },
+          "lookup-documents": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "citation-service",
+            "blockId": "lookup-documents"
+          }
+        }
+      }
+    ],
+    "project": {
+      "schemaVersion": "blocky.project-ir/v1",
+      "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+      "modules": [
+        {
+          "moduleId": "research-agent",
+          "digest": "5527dc68c5d344b17f925e579704a1afc51dc5387acbfbd217eb5e84a53f9e87"
+        },
+        {
+          "moduleId": "citation-service",
+          "digest": "bc0658596cba50856e681da8670f917a76a05d88c2ca31959e8f190ebbc25d44"
+        }
+      ],
+      "links": [
+        {
+          "linkId": "link-research-agent-call-citation",
+          "source": {
+            "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+            "moduleId": "research-agent",
+            "blockId": "call-citation",
+            "portId": "call"
+          },
+          "target": {
+            "moduleId": "citation-service",
+            "exportId": "lookup-v1"
+          },
+          "mode": "sync",
+          "timeoutMs": 5000
+        }
+      ]
+    },
+    "interaction": {
+      "schemaVersion": "blocky.interaction/v1alpha1",
+      "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+      "entries": [
+        {
+          "interactionId": "on-question",
+          "moduleId": "research-agent",
+          "ownerAgentId": "research-root",
+          "displayName": "资料问答",
+          "acceptedParts": [
+            "text"
+          ],
+          "exposedSkills": [],
+          "exposedActions": [],
+          "executionRequirements": []
+        }
+      ]
+    },
+    "tools": [
+      {
+        "schemaVersion": "blocky.tool/v1alpha1",
+        "toolId": "tool-citation-service-lookup-documents",
+        "moduleId": "citation-service",
+        "displayName": "自然科学资料",
+        "description": "检索带来源的资料",
+        "inputSchemaRef": "schemas/query.json",
+        "outputSchemaRef": "schemas/citations.json",
+        "permissions": [
+          "knowledge.read"
+        ],
+        "approval": "never",
+        "implementationRef": "adapter://deterministic/knowledge-v1"
+      }
+    ],
+    "diagnostics": [],
+    "digest": "79c61c4e6f90ef36d203ba09ae77c1f47c6a75c2cd0120432d4eb207fd3e40a8"
+  },
+  "warnings": [],
+  "artifacts": [],
+  "nextCursor": null
+}

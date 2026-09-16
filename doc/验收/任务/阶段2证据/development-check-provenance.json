@@ -1,0 +1,46 @@
+{
+  "sourceCommit": "f016afc19457bf5631ad5a41c3c686478a4dd080",
+  "scope": "Recorded component commands, not a new invocation of check:core/check:full aliases. Full evidence recorded separately after completion.",
+  "records": [
+    {
+      "source": "try/stage2-check.log",
+      "target": "doc/验收/任务/阶段2证据/check-f016afc.txt",
+      "rawSha256": "550b3b2b79a2ceedfda60d01ef6cec426e06756926879653a57daf1f28b254fe",
+      "normalizedSha256": "88d94299cf283c17a62b4ac572c8c12cf149bbd0eba82ce9120afe7a4a8f45ab",
+      "normalization": "ANSI color removal, CRLF to LF, trailing whitespace and blank EOF removal; one final LF",
+      "exitCode": 0
+    },
+    {
+      "source": "try/stage2-component.log",
+      "target": "doc/验收/任务/阶段2证据/component-f016afc.txt",
+      "rawSha256": "106102431335acf0a9d0b23a1da54d19daeea06376af1609a28cab888e934c41",
+      "normalizedSha256": "47df9668968668733f4f65599758476a159c18fde015d666251b6d885fd46df9",
+      "normalization": "ANSI color removal, CRLF to LF, trailing whitespace and blank EOF removal; one final LF",
+      "exitCode": 0
+    },
+    {
+      "source": "try/stage2-host.log",
+      "target": "doc/验收/任务/阶段2证据/host-f016afc.txt",
+      "rawSha256": "fd9cd50c76320c99d46f87859c502a1d597137bab2cd0e3b8e3e5fef737beabf",
+      "normalizedSha256": "b21c1e7d8fc61ea1eb191a6eac13e3a72de8d78a6d9235c625d15a66330a66eb",
+      "normalization": "ANSI color removal, CRLF to LF, trailing whitespace and blank EOF removal; one final LF",
+      "exitCode": 0
+    },
+    {
+      "source": "try/stage2-cli.log",
+      "target": "doc/验收/任务/阶段2证据/cli-f016afc.txt",
+      "rawSha256": "25ab84c8db32180cef389260ed3268dc20bddea7c8fd9b25d63f7a7f149c97e2",
+      "normalizedSha256": "14dc379a37e6c55038ba0aa6aa74cec9176d4ba1632b64e869ec4e6a8fe2c9ff",
+      "normalization": "ANSI color removal, CRLF to LF, trailing whitespace and blank EOF removal; one final LF",
+      "exitCode": 0
+    },
+    {
+      "source": "try/stage2-e2e.log",
+      "target": "doc/验收/任务/阶段2证据/e2e-f016afc.txt",
+      "rawSha256": "c850e6d94930f26d4eca96dc553ed82a4ccfd99eba38540cef99f13cbf7eebae",
+      "normalizedSha256": "003c5f4dd5bcb4869456abf4dd3dbbc2fe0fb8ca0502d91dc99baac64c75e91b",
+      "normalization": "ANSI color removal, CRLF to LF, trailing whitespace and blank EOF removal; one final LF",
+      "exitCode": 0
+    }
+  ]
+}

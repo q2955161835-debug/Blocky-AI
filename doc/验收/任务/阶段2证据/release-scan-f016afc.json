@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "blocky.release-scan/v1",
+  "checkedAt": "2026-09-16T18:26:37.278Z",
+  "commit": "f016afc19457bf5631ad5a41c3c686478a4dd080",
+  "positiveControl": true,
+  "scope": "ordinary binaries, CLI bundle and production browser assets; pattern checks are not a general secret detector",
+  "artifacts": [
+    {
+      "path": "try/release-native-target/release/blocky-studio.exe",
+      "bytes": 12500480,
+      "sha256": "319d3110119010b1295cbeecb4bb11d6f4d0d28837ae684239dc47651312f915",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/bin/blocky-project-io.exe",
+      "bytes": 3127296,
+      "sha256": "5e7142bd80b095fac8529271af29d4d0c62a5b1f45df505f0c4a82f97ec84046",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/main.mjs",
+      "bytes": 756458,
+      "sha256": "3442b5b3a80951526cdc56c3b3949ee260fb12b43ca43c593ba9830068dc4942",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/blocky.cmd",
+      "bytes": 58,
+      "sha256": "ee5ba59dd0c860351523efac7c7bb08f48cb1671d377d72f452c9a3eaa85e19a",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-1hEAXaPh.css",
+      "bytes": 15094,
+      "sha256": "609e13b7644fe3e0bbf3c2c13a3662edb619ac7241025aeeefbcd4b29e522532",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-Z6ZI0760.js",
+      "bytes": 1175575,
+      "sha256": "a78c3f3d935c039d6896f2b6f80538ee305c09cdd2645448a62357739e90e0db",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-B1njb2Cr.css",
+      "bytes": 3962,
+      "sha256": "c2de618f9656c020d82d4b20996ed7efcd03fd4621fe78804b060f38e003412f",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-DysOrZAa.js",
+      "bytes": 334202,
+      "sha256": "9fb0504d0ebf806c72dc24134c79854138d01116d1be03b03b368fafc8a827e9",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/index.html",
+      "bytes": 359,
+      "sha256": "f6bf1f8ed271b959a38b4695f857152c96783bb7038e1edaf52fdbc2f4926400",
+      "failures": []
+    }
+  ],
+  "passed": true
+}

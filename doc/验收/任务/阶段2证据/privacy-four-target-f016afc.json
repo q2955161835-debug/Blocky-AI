@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "f016afc19457bf5631ad5a41c3c686478a4dd080",
+  "canaryScope": "five explicit synthetic test values only; no real secrets read",
+  "tracked": {
+    "files": 539,
+    "allowedTestOrReportHits": [
+      "apps/studio-host/src/secret_store.rs",
+      "tests/cli/foundations.test.ts"
+    ],
+    "unexpected": []
+  },
+  "snapshot": {
+    "source": "ordinary packaged native reader and CLI compiler",
+    "files": [
+      "try/stage2-privacy/project-snapshot.json",
+      "try/stage2-privacy/ir.json"
+    ],
+    "structuredSnapshotCount": 2,
+    "independentDecodeEqual": true,
+    "independentCompileEqual": true,
+    "canaryMatches": 0
+  },
+  "frontendLog": {
+    "files": [
+      "try\\stage2-e2e\\logs\\wdio-2026-09-16T18-11-52-392Z.log",
+      "try\\stage2-e2e\\logs\\wdio-2026-09-16T18-26-16-767Z.log",
+      "try\\stage2-e2e\\logs\\wdio.log"
+    ],
+    "lines": 228,
+    "canaryMatches": 0
+  },
+  "backendLog": {
+    "source": "C:/Users/29551/AppData/Local/ai.blocky.studio.test/logs/diagnostics.json",
+    "kind": "native Host persisted structured metadata, not console",
+    "from": "2026-09-16T18:26:16.000Z",
+    "to": "2026-09-16T18:26:32.000Z",
+    "records": 45,
+    "strictWhitelist": true,
+    "canaryMatches": 0,
+    "originalSourceSha256": "ee401b2ff9de48b54ab7db1e64c2d87be6205e10c28a4517a21a75716f0f9db0",
+    "currentSourceSha256": "90fb04719cf3e1af3cd8edd51244c81ae59fc2f322de59a570589b59ab58cfb1",
+    "intervalReadbackEqual": true,
+    "storeWideCounters": "not interval counters"
+  },
+  "harnessLogs": {
+    "lines": 15,
+    "canaryMatches": 0,
+    "knownLocalPaths": "WDIO stack trace contains workspace path; internal evidence only, excluded from package"
+  },
+  "excluded": [
+    "try/stage2-security probe inputs and fixtures",
+    "try/待清理/stage2-initial-soak",
+    "all stage1 evidence"
+  ],
+  "complete": true,
+  "conclusion": "four scoped targets now have evidence; no listed synthetic canary leak. Not an exhaustive secret scan or fault-injection across every channel",
+  "supplementArtifacts": {
+    "try/stage2-privacy/project-snapshot.json": "57be14afcc5c81a72b831f59247c369636a55d10cfa6c2eabf0187f3e8b265f4",
+    "try/stage2-privacy/ir.json": "2c81a51f055c95c3461a60edcc5b6e006a81aaedd288769833789616bed741c2",
+    "try/stage2-privacy/backend-persisted-log.json": "f70cce80743cc5c38b34f34745739b7e035962300d05391a41a933acb954cd6e"
+  }
+}

@@ -1,0 +1,40 @@
+   Compiling blocky-studio v0.2.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.52s
+     Running unittests src\lib.rs (apps\studio-host\target\debug\deps\blocky_studio-1a9bd13af58a8742.exe)
+
+running 26 tests
+test project_store::tests::generic_credential_fields_are_rejected_but_references_remain_valid ... ok
+test strict_json::tests::nested_duplicate_keys_are_rejected ... ok
+test project_store::tests::undeclared_files_and_secrets_rejected ... ok
+test project_store::tests::traversal_missing_workspaces_and_unknown_version_rejected ... ok
+test task_host::tests::worker_entry ... ok
+test user_terminal::tests::utf8_split_and_tail_boundaries ... ok
+test project_store::tests::legacy_archives_are_only_available_at_explicit_migration_boundary ... ok
+test project_store::tests::failed_commit_preserves_existing_bytes ... ok
+test log_store::tests::corrupt_quarantine_is_never_overwritten_and_time_ranges_are_checked ... ok
+test project_store::tests::native_archive_round_trip ... ok
+test project_store::tests::creation_never_overwrites_an_existing_target ... ok
+test user_store::tests::native_scoped_settings_are_atomic_and_invalid_input_preserves_saved_values ... ok
+test log_store::tests::time_and_channel_selection_and_calendar_validation ... ok
+test log_store::tests::broken_document_blocks_until_explicit_clear_and_preserves_evidence ... ok
+test log_store::tests::corrupt_record_is_quarantined_without_losing_good_records ... ok
+test secret_store::tests::native_secret_import_is_encrypted_and_never_returned_by_status ... ok
+test log_store::tests::retention_bytes_and_disabled_storage ... ok
+test log_store::tests::explicit_clear_audit_survives_reopen_retention_and_legacy_documents ... ok
+test task_host::tests::host_tickets_are_scoped_single_use_and_not_caller_claims ... ok
+test task_host::tests::registry_concurrency_cancel_inventory_and_budget ... ok
+test log_store::tests::larger_policy_really_exceeds_old_cap_and_preserves_loss_contract ... ok
+test task_host::process::tests::job_settles_a_real_descendant_before_output_reader_finishes ... ok
+test user_terminal::tests::saturated_input_close_and_natural_exit ... ok
+test user_terminal::tests::bounds_and_overflow ... ok
+test user_terminal::tests::real_conpty_isolation_resize_and_settlement ... ok
+test user_terminal::tests::descendants_timeout_drop_and_capacity ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.63s
+
+     Running unittests src\bin\blocky-project-io.rs (apps\studio-host\target\debug\deps\blocky_project_io-2c42cc40f53db4ed.exe)
+
+running 1 test
+test tests::rejects_unknown_protocol_and_undeclared_arguments ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

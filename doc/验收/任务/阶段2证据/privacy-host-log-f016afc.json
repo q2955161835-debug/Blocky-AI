@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "blocky.diagnostics/v1",
+  "records": [
+    {
+      "timestamp": "2026-09-16T18:26:17.774Z",
+      "sequence": 1,
+      "level": "info",
+      "channel": "compiler"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:17.791Z",
+      "sequence": 2,
+      "level": "info",
+      "channel": "compiler"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.272Z",
+      "sequence": 3,
+      "level": "info",
+      "channel": "compiler"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.366Z",
+      "sequence": 4,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.367Z",
+      "sequence": 5,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.531Z",
+      "sequence": 6,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.692Z",
+      "sequence": 7,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.692Z",
+      "sequence": 8,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:24.856Z",
+      "sequence": 9,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.019Z",
+      "sequence": 10,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.181Z",
+      "sequence": 11,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.182Z",
+      "sequence": 12,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.182Z",
+      "sequence": 13,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.182Z",
+      "sequence": 14,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.182Z",
+      "sequence": 15,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.182Z",
+      "sequence": 16,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.344Z",
+      "sequence": 17,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.344Z",
+      "sequence": 18,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.344Z",
+      "sequence": 19,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.344Z",
+      "sequence": 20,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.506Z",
+      "sequence": 21,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.506Z",
+      "sequence": 22,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:25.506Z",
+      "sequence": 23,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.422Z",
+      "sequence": 24,
+      "level": "info",
+      "channel": "compiler"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.635Z",
+      "sequence": 25,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.635Z",
+      "sequence": 26,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.796Z",
+      "sequence": 27,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.965Z",
+      "sequence": 28,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:26.965Z",
+      "sequence": 29,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.136Z",
+      "sequence": 30,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.308Z",
+      "sequence": 31,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 32,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 33,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 34,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 35,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 36,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.482Z",
+      "sequence": 37,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.652Z",
+      "sequence": 38,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.652Z",
+      "sequence": 39,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.652Z",
+      "sequence": 40,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.652Z",
+      "sequence": 41,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.824Z",
+      "sequence": 42,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.824Z",
+      "sequence": 43,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:27.824Z",
+      "sequence": 44,
+      "level": "info",
+      "channel": "runtime"
+    },
+    {
+      "timestamp": "2026-09-16T18:26:30.193Z",
+      "sequence": 45,
+      "level": "info",
+      "channel": "terminal"
+    }
+  ],
+  "dropped": 27811,
+  "droppedImportant": 0,
+  "clearAudit": {
+    "count": 0,
+    "lastClearedAtMs": 0
+  }
+}

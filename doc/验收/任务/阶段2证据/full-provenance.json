@@ -1,0 +1,44 @@
+{
+  "sourceCommit": "f016afc19457bf5631ad5a41c3c686478a4dd080",
+  "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+  "exitCode": 0,
+  "runId": "a3cca3d1-ba1f-4f12-be2d-576a356b99be",
+  "binary": {
+    "bytes": 15475712,
+    "sha256": "ae5f0d98e9e425eb051053d548a6e4ffbb28fa3fa4c9633e8313f50560312ffd"
+  },
+  "files": [
+    {
+      "source": "try/stage2-core/full.json",
+      "target": "doc/验收/任务/阶段2证据/full-f016afc.json",
+      "bytes": 650,
+      "sha256": "b4ccc623ce8319f2e75c392165687d10b418c7b4501a7a30e55d656d300f7530"
+    },
+    {
+      "source": "try/stage2-core/performance.json",
+      "target": "doc/验收/任务/阶段2证据/performance-f016afc.json",
+      "bytes": 1511,
+      "sha256": "5f750f5ad0427ddea1729d0dab34811f3c4f10bf1dc98bf1a9266a69dffb181e"
+    },
+    {
+      "source": "try/stage2-core/window-policy.json",
+      "target": "doc/验收/任务/阶段2证据/window-policy-f016afc.json",
+      "bytes": 335,
+      "sha256": "6e10aca615b5efa12e4498191f11eba98f166d28cb9182cc2d1fafd1fc1c84de"
+    },
+    {
+      "source": "try/stage2-core/cycles.jsonl",
+      "target": "doc/验收/任务/阶段2证据/cycles-f016afc.jsonl",
+      "bytes": 52103,
+      "sha256": "12c5c8395e33b5e9dbd4458412d1422514e9446e9419f760bf6a78aeb6c777a4"
+    }
+  ],
+  "runnerLog": {
+    "source": "try/stage2-full.log",
+    "target": "doc/验收/任务/阶段2证据/full-f016afc.txt",
+    "rawSha256": "5aa7eed520f45607b04ef0dac2972b253cb5c9c1033f0ba12fb9c69df514eb04",
+    "normalizedSha256": "7ba915042e282ec41486a2ea17d759834c3f92a47cf33b8f88eb112deaa2fdc5",
+    "normalization": "CRLF to LF, trailing whitespace and blank EOF removal; one final LF. EOF-only cleanup after independent acceptance; raw log hash unchanged."
+  },
+  "sourceDiff": "apps/packages/tools CLI source/scripts/tests and root dependencies unchanged from sourceCommit; check:core/check:full aliases not rerun, constituent commands evidenced separately"
+}

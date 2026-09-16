@@ -1,0 +1,193 @@
+{
+  "project.json": {
+    "appSurfaces": [],
+    "displayName": "资料问答伙伴",
+    "format": {
+      "createdWith": "blocky-desktop/0.2.0",
+      "minimumReaderVersion": "0.2.0"
+    },
+    "modules": [
+      {
+        "displayName": "研究助手",
+        "exports": [
+          {
+            "displayName": "生成带引用回答",
+            "exportId": "answer-with-citations",
+            "inputSchemaRef": "schemas/question.json",
+            "kind": "agent",
+            "outputSchemaRef": "schemas/answer.json"
+          }
+        ],
+        "moduleId": "research-agent",
+        "purpose": "agent",
+        "workspaceRef": "workspaces/research-agent.workspace.json"
+      },
+      {
+        "displayName": "引用服务",
+        "exports": [
+          {
+            "displayName": "检索引用",
+            "exportId": "lookup-v1",
+            "inputSchemaRef": "schemas/query.json",
+            "kind": "tool",
+            "outputSchemaRef": "schemas/citations.json"
+          }
+        ],
+        "moduleId": "citation-service",
+        "purpose": "service",
+        "workspaceRef": "workspaces/citation-service.workspace.json"
+      }
+    ],
+    "projectId": "project-39824e4d-4f77-425d-8f00-9774e26956a7",
+    "resources": [
+      {
+        "definitionRef": "resources/product-handbook.json",
+        "kind": "knowledge",
+        "resourceId": "product-handbook",
+        "scope": "project",
+        "secretRefs": [
+          "handbook-access"
+        ]
+      },
+      {
+        "definitionRef": "resources/local-composer.json",
+        "kind": "model",
+        "resourceId": "local-composer",
+        "scope": "project",
+        "secretRefs": []
+      }
+    ],
+    "schemaVersion": "blocky.project/v1"
+  },
+  "resources/local-composer.json": {
+    "capabilityRequirements": [],
+    "definition": {
+      "implementationRef": "adapter://deterministic/composer-v1"
+    },
+    "displayName": "本地文本整理",
+    "kind": "model",
+    "resourceId": "local-composer",
+    "schemaVersion": "blocky.resource/v1alpha1",
+    "scope": "project",
+    "secretBindings": []
+  },
+  "resources/product-handbook.json": {
+    "capabilityRequirements": [
+      "knowledge.read"
+    ],
+    "definition": {
+      "collection": "science",
+      "implementationRef": "adapter://deterministic/knowledge-v1"
+    },
+    "displayName": "自然科学资料",
+    "kind": "knowledge",
+    "resourceId": "product-handbook",
+    "schemaVersion": "blocky.resource/v1alpha1",
+    "scope": "project",
+    "secretBindings": [
+      {
+        "fieldId": "access",
+        "secretRef": "handbook-access"
+      }
+    ]
+  },
+  "schemas/answer.json": {
+    "type": "object"
+  },
+  "schemas/citations.json": {
+    "type": "array"
+  },
+  "schemas/cited-answer.json": {
+    "type": "object"
+  },
+  "schemas/query.json": {
+    "type": "string"
+  },
+  "schemas/question.json": {
+    "type": "string"
+  },
+  "workspaces/citation-service.workspace.json": {
+    "blocks": {
+      "blocks": [
+        {
+          "fields": {
+            "EXPORT": "lookup-v1"
+          },
+          "id": "lookup-entry",
+          "inputs": {
+            "BODY": {
+              "block": {
+                "fields": {
+                  "RESOURCE": "product-handbook"
+                },
+                "id": "lookup-documents",
+                "type": "core.knowledge.retrieve"
+              }
+            }
+          },
+          "type": "core.tool.entry",
+          "x": 80,
+          "y": 70
+        }
+      ],
+      "languageVersion": 0
+    }
+  },
+  "workspaces/research-agent.workspace.json": {
+    "blocks": {
+      "blocks": [
+        {
+          "fields": {
+            "ROLE": "用清晰可靠的中文回答，只引用资料中的事实"
+          },
+          "id": "research-root",
+          "inputs": {
+            "BODY": {
+              "block": {
+                "fields": {
+                  "NAME": "资料问答"
+                },
+                "id": "on-question",
+                "next": {
+                  "block": {
+                    "fields": {
+                      "EXPORT": "lookup-v1",
+                      "INPUT": "schemas/query.json",
+                      "MODULE": "citation-service",
+                      "OUTPUT": "schemas/citations.json"
+                    },
+                    "id": "call-citation",
+                    "next": {
+                      "block": {
+                        "fields": {
+                          "RESOURCE": "local-composer"
+                        },
+                        "id": "compose-answer",
+                        "next": {
+                          "block": {
+                            "fields": {
+                              "STYLE": "条目"
+                            },
+                            "id": "reply-answer",
+                            "type": "core.output.answer"
+                          }
+                        },
+                        "type": "core.model.compose"
+                      }
+                    },
+                    "type": "core.module.call"
+                  }
+                },
+                "type": "core.interaction.chat"
+              }
+            }
+          },
+          "type": "core.agent",
+          "x": 80,
+          "y": 70
+        }
+      ],
+      "languageVersion": 0
+    }
+  }
+}
