@@ -44,7 +44,8 @@ export function redact(input: unknown): {
       if (v.length > 1000) categories.add("oversize");
       return v.slice(0, 1000).map((x) => visit(x, depth + 1));
     }
-    if (v && typeof v === "object")
+    if (v && typeof v === "object") {
+      if (Object.keys(v).length > 1000) categories.add("oversize");
       return Object.fromEntries(
         Object.entries(v)
           .slice(0, 1000)
@@ -56,6 +57,7 @@ export function redact(input: unknown): {
             return [k, visit(x, depth + 1)];
           }),
       );
+    }
     return null;
   };
   const value = visit(input);

@@ -138,6 +138,12 @@ it("sensitive structured credential keys cannot reach bus or export", () => {
 it("truncation produces an explicit structured signal", () => {
   const r = redact({ message: "中".repeat(17000) });
   expect(r.redaction.categories).toContain("oversize");
+  const manyKeys = redact(
+    Object.fromEntries(
+      Array.from({ length: 1001 }, (_, i) => [`field-${i}`, i]),
+    ),
+  );
+  expect(manyKeys.redaction.categories).toContain("oversize");
 });
 it("bus bounds encoded bytes and reports high-level drops", () => {
   const b = new RedactedBus(2, 1000);
