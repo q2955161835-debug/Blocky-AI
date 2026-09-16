@@ -4,7 +4,11 @@ import { mkdtemp, readFile, rm, writeFile, copyFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { compileProject } from "../../packages/compiler/src";
-import { readProject } from "../../tools/blocky-cli/src/native-store";
+import {
+  readProject,
+  createProject,
+} from "../../tools/blocky-cli/src/native-store";
+import { createStarter } from "../../packages/test-fixtures/src";
 import { digest } from "../../packages/language-schema/src";
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
 let directory: string, file: string;
@@ -176,4 +180,19 @@ it("fails explicitly when the installed native companion is absent", async () =>
   });
   expect(result.status).toBe(6);
   expect(JSON.parse(result.stdout).error.code).toBe("BLK-CLI-006");
+});
+it("redacts path-bearing user labels on stdout without changing the saved project", async () => {
+  const p = createStarter();
+  p.manifest.displayName = "C:\\FICTIONAL_PRIVATE_FOLDER\\private-document";
+  const target = join(directory, "label.blocky");
+  await createProject(target, p);
+  const result = run(["project", "inspect", target, "--json"]);
+  expect(result.code).toBe(0);
+  expect(JSON.stringify(result.lines)).not.toContain(
+    "FICTIONAL_PRIVATE_FOLDER",
+  );
+  expect(result.lines[0].warnings.length).toBeGreaterThan(0);
+  expect((await readProject(target)).manifest.displayName).toBe(
+    p.manifest.displayName,
+  );
 });

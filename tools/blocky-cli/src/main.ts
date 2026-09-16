@@ -1,11 +1,12 @@
 import { parse } from "./arguments";
 import { dispatch } from "./commands";
 import { failure } from "./protocol";
+import { output } from "./output";
 const abort = new AbortController();
 process.on("SIGINT", () => abort.abort());
 process.on("SIGTERM", () => abort.abort());
 const write = (value: unknown) =>
-  process.stdout.write(JSON.stringify(value) + "\n");
+  process.stdout.write(output(value));
 try {
   const args = parse(process.argv.slice(2));
   const result = await dispatch(args, write, abort.signal);

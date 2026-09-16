@@ -88,6 +88,13 @@ fn check_secrets(value: &Value, depth: usize) -> Result<(), String> {
                     "refreshtoken",
                     "clientsecret",
                     "privatekey",
+                    "token",
+                    "secret",
+                    "credential",
+                    "credentials",
+                    "bearer",
+                    "sessiontoken",
+                    "signingkey",
                 ]
                 .contains(&k.as_str())
                 {
@@ -399,5 +406,20 @@ mod tests {
         let v = newer.get_mut("project.json").unwrap();
         *v = v.replace("v1alpha1", "v2");
         assert!(validate_files(&newer).is_err());
+    }
+    #[test]
+    fn generic_credential_fields_are_rejected_but_references_remain_valid() {
+        for key in [
+            "token",
+            "SECRET",
+            "access_token",
+            "client-secret",
+            "credential",
+            "credentials",
+        ] {
+            let value = serde_json::json!({"definition": { key: "FICTIONAL_SECRET_VALUE" }});
+            assert_eq!(check_secrets(&value, 0).unwrap_err(), "BLK-SECRET-001");
+        }
+        assert!(check_secrets(&serde_json::json!({"secretRefs":["secret-reference"], "secretBindings":[{"fieldId":"key","secretRef":"secret-reference"}]}), 0).is_ok());
     }
 }

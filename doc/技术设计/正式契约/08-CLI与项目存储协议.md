@@ -8,6 +8,8 @@
 
 列表默认最多 20 项，`--limit` 上限 100，`--cursor` 为目录偏移。运行必须显式 `--simulate --jsonl`；每行正式 RuntimeEvent，最后一行为 CLI 响应，包含运行状态、引用和 `modelApiCalled:false`。超时/取消不丢弃终态事件。旧读取器忽略新增字段，未知 schemaVersion 拒绝。
 
+CLI 输出边界统一脱敏项目显示文本、诊断、事件和工件名称中的凭据模式与本机绝对路径；发生替换时响应 warnings 明确说明。结构字段和安全引用保留，digest/sha256 始终对应未修改的原始项目语义或文件字节；不能将脱敏后的显示结果当作项目写回。Host 同时拒绝 token、secret 等凭据值字段，secretRef/secretRefs/secretBindings 只保存引用。
+
 ## 原生存储 `blocky.project-io/v1alpha1`
 
 CLI 创建受控子进程，经 stdin 发送一个 UTF-8 JSON 请求；stdout 一个 JSON 响应后退出。请求/响应必含 schemaVersion。不使用 TCP、不监听端口、不启动 UI。请求上限 20 MiB，项目展开内容上限 8 MiB/1000 文件，调用上限 30 秒。
