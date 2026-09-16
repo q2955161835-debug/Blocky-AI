@@ -4,10 +4,15 @@ import { chromium, type Browser, type Page } from "playwright-core";
 import { mkdir, writeFile, appendFile } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { resolve } from "node:path";
 type Api = {
   performance(): Promise<any>;
   startSoak(): Promise<any>;
   cycle(n: number): Promise<any>;
+  hiddenRunProbe(): Promise<{ status: string; hostAllowsNewRun: boolean }>;
+  windowAllowsRun(): Promise<boolean>;
 };
 type InputObservation = { type: string; timeMs: number; targetTag: string };
 type TestWindow = Window & {
@@ -30,6 +35,7 @@ describe("formal native Core gates", function () {
     await mkdir("try/stage1-core", { recursive: true });
     for (const name of [
       "performance",
+      "window-policy",
       ...(process.env.BLOCKY_NATIVE_SUITE === "full" ? ["full"] : []),
     ])
       await writeFile(
@@ -93,6 +99,41 @@ describe("formal native Core gates", function () {
       (window as TestWindow).__BLOCKY_ACCEPTANCE__.cycle(12),
     );
     expect(result).toMatchObject({ blocks: 100, nodes: 100, roundTrip: true });
+  });
+  it("rejects new runs while hidden and restores authorization through the existing instance", async () => {
+    let hidden: { status: string; hostAllowsNewRun: boolean } | undefined;
+    try {
+      hidden = await page.evaluate(() =>
+        (window as TestWindow).__BLOCKY_ACCEPTANCE__.hiddenRunProbe(),
+      );
+    } finally {
+      // The shipped single-instance handler restores this same test window.
+      await promisify(execFile)(
+        resolve("try/native-e2e-target/release/blocky-studio.exe"),
+        [],
+        { windowsHide: true, timeout: 15000 },
+      );
+    }
+    await page.waitForFunction(() =>
+      (window as TestWindow).__BLOCKY_ACCEPTANCE__.windowAllowsRun(),
+    );
+    const restored = await page.evaluate(() =>
+      (window as TestWindow).__BLOCKY_ACCEPTANCE__.cycle(12),
+    );
+    const evidence = { runId, hidden, restored, passed: false };
+    await writeFile(
+      "try/stage1-core/window-policy.json",
+      JSON.stringify(evidence, null, 2),
+    );
+    expect(hidden).toEqual({ status: "not-started", hostAllowsNewRun: false });
+    expect(restored.blocks).toBe(100);
+    expect(restored.nodes).toBe(100);
+    expect(restored.roundTrip).toBe(true);
+    evidence.passed = true;
+    await writeFile(
+      "try/stage1-core/window-policy.json",
+      JSON.stringify(evidence, null, 2),
+    );
   });
   if (process.env.BLOCKY_NATIVE_SUITE === "full")
     it("completes all 360 five-second cycles and 30 native archive round trips", async () => {

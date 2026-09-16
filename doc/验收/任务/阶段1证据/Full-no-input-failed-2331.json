@@ -1,0 +1,26 @@
+{
+  "runId": "f202d6d9-ae24-4154-92f0-36f6dbba8cc9",
+  "passed": false,
+  "schemaVersion": "blocky.soak/v1",
+  "startedAt": "2026-09-16T15:03:24.073Z",
+  "cycles": 331,
+  "roundTrips": 27,
+  "binary": {
+    "bytes": 14920704,
+    "sha256": "a9f61a605f7f143326130de6601b539c3f4d07be9cad4fca6ffea6d21f5a9a39"
+  },
+  "preparation": {
+    "baseline": "e65c2eccf8002ad33b9e50d7e9d2e6a1efe959152e9e54edc35c6510739fe895",
+    "blocks": 100,
+    "nodes": 100
+  },
+  "failure": "page.evaluate: Error: studio runtime did not finish\n    at Object.cycle (http://tauri.localhost/assets/acceptance-BYV_hHdE.js:1:4312)\n    at async <anonymous>:337:30",
+  "elapsedMs": 1658227,
+  "warmHeap": 21869720,
+  "finalHeap": 0,
+  "heapDelta": null,
+  "trustedInput": [],
+  "errors": [],
+  "outbound": [],
+  "endedAt": "2026-09-16T15:31:02.300Z"
+}

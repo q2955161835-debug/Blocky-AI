@@ -206,6 +206,21 @@ export function install(get: () => Studio) {
       baseline = await digest(get().controller.getSnapshot().project);
       return { baseline, ...counts() };
     },
+    async hiddenRunProbe() {
+      await api.startSoak();
+      await invoke("hide_window");
+      const result = await get().run();
+      return {
+        status: result?.status ?? "not-started",
+        hostAllowsNewRun: await api.windowAllowsRun(),
+      };
+    },
+    async windowAllowsRun() {
+      return invoke("authorize_run").then(
+        () => true,
+        () => false,
+      );
+    },
     async cycle(cycle: number) {
       if (!Number.isInteger(cycle) || cycle < 1 || cycle > 360)
         throw Error("invalid cycle");
@@ -223,8 +238,35 @@ export function install(get: () => Studio) {
       const changed = await digest(get().controller.getSnapshot().project);
       if (changed === baseline) throw Error("edit did not change project");
       const result = await get().run();
-      if (result?.status !== "completed")
-        throw Error("studio runtime did not finish");
+      if (result?.status !== "completed") {
+        const hostAllowsNewRun = await invoke("authorize_run").then(
+          () => true,
+          () => false,
+        );
+        const state = get();
+        throw Error(
+          `studio runtime did not finish: ${JSON.stringify({
+            cycle,
+            status: result?.status ?? "not-started",
+            hostAllowsNewRun,
+            visibility: document.visibilityState,
+            focused: document.hasFocus(),
+            compiling: state.compiling,
+            compiled: !!state.compiled,
+            canRun: state.canRun,
+            running: state.running,
+            busy: state.busy,
+            exiting: state.exiting,
+            editedRevision,
+            renderedRevision: state.snapshot.revision,
+            controllerRevision: state.controller.getSnapshot().revision,
+            paths: differencePaths(
+              baselineProject,
+              state.controller.getSnapshot().project,
+            ),
+          })}`,
+        );
+      }
       let roundTrip = false;
       let restoredProject: typeof original | undefined;
       if (cycle % 12 === 0) {
