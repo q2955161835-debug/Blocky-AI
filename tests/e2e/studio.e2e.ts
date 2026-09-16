@@ -53,6 +53,29 @@ describe("Blocky native editor", () => {
     await mkdir("try/stage1-e2e", { recursive: true });
     await browser.saveScreenshot("try/stage1-e2e/native-editor.png");
   });
+  it("focuses the canvas after a blank click so Tab opens block search", async () => {
+    const starter = page.getByRole("button", { name: /资料问答伙伴/ });
+    if (await starter.isVisible()) await starter.click();
+    const canvas = page.locator(".blockly-host");
+    const background = page.locator(".blocklyMainBackground");
+    const bounds = await background.boundingBox();
+    if (!bounds) throw Error("Canvas background is not visible");
+    await background.click({
+      position: { x: bounds.width - 35, y: bounds.height - 50 },
+    });
+    expect(
+      await canvas.evaluate((el) => el.contains(document.activeElement)),
+    ).toBe(true);
+    await page.keyboard.press("Tab");
+    await page.getByRole("dialog", { name: "搜索积木" }).waitFor();
+    await page.getByRole("button", { name: "关闭弹层" }).click();
+    const name = page.getByLabel("画布名称");
+    await name.click();
+    await page.keyboard.press("Tab");
+    expect(await page.getByRole("dialog", { name: "搜索积木" }).count()).toBe(
+      0,
+    );
+  });
   it("opens shared commands, restores closed tabs and keeps two workspaces", async () => {
     await $("[aria-label='关闭 引用服务']").click();
     await $(

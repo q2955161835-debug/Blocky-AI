@@ -134,6 +134,8 @@ export function Canvas(props: Props) {
       if (e.code === "Space") space = false;
     };
     const down = (e: PointerEvent) => {
+      // Selection/panning cancel pointer defaults, including native focus.
+      if (!isInput(e.target)) el.focus({ preventScroll: true });
       if (e.button === 1 || (e.button === 0 && space)) {
         e.preventDefault();
         e.stopImmediatePropagation();
