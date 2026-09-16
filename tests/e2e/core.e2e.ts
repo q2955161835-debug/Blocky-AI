@@ -9,7 +9,14 @@ type Api = {
   startSoak(): Promise<any>;
   cycle(n: number): Promise<any>;
 };
-type TestWindow = Window & { __BLOCKY_ACCEPTANCE__: Api };
+type InputObservation = { type: string; timeMs: number; targetTag: string };
+type TestWindow = Window & {
+  __BLOCKY_ACCEPTANCE__: Api;
+  __BLOCKY_SOAK_INPUT__?: {
+    observations: InputObservation[];
+    stop(): void;
+  };
+};
 declare global {
   interface Window {
     __BLOCKY_ACCEPTANCE__: Api;
@@ -107,6 +114,29 @@ describe("formal native Core gates", function () {
       expect(preparation.blocks).toBe(100);
       expect(preparation.nodes).toBe(100);
       const session = await page.context().newCDPSession(page);
+      // Observe contamination without preventing or changing any user input.
+      // Never retain keys, text, values, coordinates, or accessible names.
+      await page.evaluate(() => {
+        const observations: InputObservation[] = [];
+        const types = ["pointerdown", "keydown", "wheel"];
+        const observe = (event: Event) => {
+          if (event.isTrusted && observations.length < 30)
+            observations.push({
+              type: event.type,
+              timeMs: performance.now(),
+              targetTag:
+                event.target instanceof Element ? event.target.tagName : "",
+            });
+        };
+        for (const type of types) window.addEventListener(type, observe, true);
+        (window as TestWindow).__BLOCKY_SOAK_INPUT__ = {
+          observations,
+          stop() {
+            for (const type of types)
+              window.removeEventListener(type, observe, true);
+          },
+        };
+      });
       const started = Date.now();
       let warmHeap = 0,
         finalHeap = 0,
@@ -116,6 +146,7 @@ describe("formal native Core gates", function () {
       );
       const report: any = {
         runId,
+        passed: false,
         schemaVersion: "blocky.soak/v1",
         startedAt: new Date(started).toISOString(),
         cycles: 0,
@@ -134,6 +165,10 @@ describe("formal native Core gates", function () {
             (n) => (window as TestWindow).__BLOCKY_ACCEPTANCE__.cycle(n),
             cycle,
           );
+          const input = await page.evaluate(
+            () => (window as TestWindow).__BLOCKY_SOAK_INPUT__!.observations,
+          );
+          expect(input).toEqual([]);
           expect(result.blocks).toBe(100);
           expect(result.nodes).toBe(100);
           expect(result.viewEvents).toBeLessThanOrEqual(500);
@@ -171,12 +206,25 @@ describe("formal native Core gates", function () {
         expect(finalHeap).toBeGreaterThan(0);
         expect(finalHeap - warmHeap).toBeLessThanOrEqual(32 * 1024 * 1024);
         report.passed = true;
+      } catch (error) {
+        report.failure = error instanceof Error ? error.message : String(error);
+        throw error;
       } finally {
+        const trustedInput = await page
+          .evaluate(() => {
+            const monitor = (window as TestWindow).__BLOCKY_SOAK_INPUT__;
+            if (!monitor) return null;
+            monitor.stop();
+            delete (window as TestWindow).__BLOCKY_SOAK_INPUT__;
+            return monitor.observations;
+          })
+          .catch(() => null);
         Object.assign(report, {
           elapsedMs: Date.now() - started,
           warmHeap,
           finalHeap,
-          heapDelta: finalHeap - warmHeap,
+          heapDelta: finalHeap && warmHeap ? finalHeap - warmHeap : null,
+          trustedInput,
           errors,
           outbound,
           endedAt: new Date().toISOString(),

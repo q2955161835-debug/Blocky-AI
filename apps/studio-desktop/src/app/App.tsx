@@ -19,6 +19,7 @@ import { SurfacePreview } from "./SurfacePreview";
 import { useLogs } from "../composition/useLogs";
 import { useLifecycle } from "../composition/useLifecycle";
 import { ExitDialog } from "./ExitDialog";
+import { MenuBar } from "./MenuBar";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -48,7 +49,7 @@ export function App() {
       construction.reject();
     }
   }, [lifecycle.requested]);
-  const show = (kind: NonNullable<Popup>["kind"]) => {
+  const show = (kind: Exclude<NonNullable<Popup>["kind"], "menu">) => {
     setQuery("");
     setPopup({ kind });
   };
@@ -192,24 +193,26 @@ export function App() {
             Blocky <span>Studio</span>
           </strong>
         </button>
-        <nav>
-          {[
-            ["file", "文件"],
-            ["edit", "编辑"],
-            ["view", "视图"],
-            ["run", "运行"],
-          ].map(([cat, label]) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setQuery(cat);
-                setPopup({ kind: "commands" });
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
+        <MenuBar
+          active={
+            popup?.kind === "menu" && !s.confirmation ? popup.category : null
+          }
+          open={(category) =>
+            setPopup(category ? { kind: "menu", category } : null)
+          }
+          enabled={enabled}
+          execute={execute}
+          disabled={
+            s.exiting ||
+            lifecycle.requested ||
+            !!s.confirmation ||
+            construction.busy ||
+            (!!popup &&
+              ["blueprint-save", "blueprint-insert", "patch-review"].includes(
+                popup.kind,
+              ))
+          }
+        />
         <button className="command-search" onClick={() => show("commands")}>
           ⌕ 搜索命令 <kbd>Ctrl ⇧ P</kbd>
         </button>
@@ -488,6 +491,7 @@ export function App() {
           />
         )}
       {popup &&
+        popup.kind !== "menu" &&
         !["blueprint-save", "blueprint-insert", "patch-review"].includes(
           popup.kind,
         ) &&

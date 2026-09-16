@@ -4,11 +4,15 @@ import { commands } from "@blocky/command-system";
 import type { Studio } from "../composition/useStudio";
 import { defaults } from "../composition/host";
 import type { ConstructionKind } from "./ConstructionDialog";
-export type Popup = {
-  kind: "commands" | "blocks" | "settings" | "context" | ConstructionKind;
-  x?: number;
-  y?: number;
-} | null;
+import type { MenuCategory } from "./MenuBar";
+export type Popup =
+  | {
+      kind: "commands" | "blocks" | "settings" | "context" | ConstructionKind;
+      x?: number;
+      y?: number;
+    }
+  | { kind: "menu"; category: MenuCategory }
+  | null;
 export function StudioDialog({
   studio: s,
   popup,
@@ -21,7 +25,7 @@ export function StudioDialog({
   add,
 }: {
   studio: Studio;
-  popup: NonNullable<Popup>;
+  popup: Exclude<NonNullable<Popup>, { kind: "menu" }>;
   setPopup: Dispatch<SetStateAction<Popup>>;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;

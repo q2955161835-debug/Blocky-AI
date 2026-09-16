@@ -131,6 +131,20 @@ export function install(get: () => Studio) {
     medianMs: 0,
   });
   let baseline = "";
+  let baselineProject: ReturnType<typeof fixture>;
+  const differencePaths = (a: unknown, b: unknown, path = ""): string[] => {
+    if (a === undefined || b === undefined) return a === b ? [] : [path];
+    if (canonicalJson(a) === canonicalJson(b)) return [];
+    if (!a || !b || typeof a !== "object" || typeof b !== "object")
+      return [path];
+    const left = a as Record<string, unknown>,
+      right = b as Record<string, unknown>;
+    return [...new Set([...Object.keys(left), ...Object.keys(right)])]
+      .flatMap((key) =>
+        differencePaths(left[key], right[key], `${path}/${key}`),
+      )
+      .slice(0, 30);
+  };
   const api = {
     async performance() {
       const loadMetric = metric(),
@@ -188,6 +202,7 @@ export function install(get: () => Studio) {
     },
     async startSoak() {
       await load();
+      baselineProject = structuredClone(get().controller.getSnapshot().project);
       baseline = await digest(get().controller.getSnapshot().project);
       return { baseline, ...counts() };
     },
@@ -195,11 +210,16 @@ export function install(get: () => Studio) {
       if (!Number.isInteger(cycle) || cycle < 1 || cycle > 360)
         throw Error("invalid cycle");
       const original = get().controller.getSnapshot().project;
+      if ((await digest(original)) !== baseline)
+        throw Error(
+          `baseline changed before cycle ${cycle}: ${JSON.stringify(differencePaths(baselineProject, original))}`,
+        );
       get().controller.edit((p) => {
         p.workspaces["research-agent"].blocks.blocks[0].fields!.ROLE =
           `循环 ${cycle}`;
       });
       await ready();
+      const editedRevision = get().controller.getSnapshot().revision;
       const changed = await digest(get().controller.getSnapshot().project);
       if (changed === baseline) throw Error("edit did not change project");
       const result = await get().run();
@@ -219,10 +239,13 @@ export function install(get: () => Studio) {
         restoredProject = restored;
         roundTrip = true;
       }
+      const beforeUndoRevision = get().controller.getSnapshot().revision;
       get().controller.undo();
       await ready();
       if ((await digest(get().controller.getSnapshot().project)) !== baseline)
-        throw Error("undo failed");
+        throw Error(
+          `undo failed: ${JSON.stringify({ cycle, editedRevision, beforeUndoRevision, afterUndoRevision: get().controller.getSnapshot().revision, paths: differencePaths(baselineProject, get().controller.getSnapshot().project) })}`,
+        );
       if (restoredProject) {
         get().controller.replace(restoredProject);
         await ready();

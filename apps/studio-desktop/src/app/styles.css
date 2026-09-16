@@ -646,12 +646,72 @@ kbd {
   backdrop-filter: blur(2px);
 }
 .popup {
+  color: #eef2f7;
   width: 480px;
   background: #292f3a;
   border: 1px solid #475269;
   border-radius: 10px;
   box-shadow: 0 20px 70px #0008;
   padding: 12px;
+}
+.menu-anchor {
+  position: relative;
+}
+.menu-bar > .menu-anchor > button[aria-expanded="true"] {
+  background: #3a4454;
+}
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 110;
+  min-width: 240px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 6px;
+  background: #292f3a;
+  color: #eef2f7;
+  border: 1px solid #475269;
+  border-radius: 7px;
+  box-shadow: 0 12px 32px #0006;
+}
+.topbar .menu-dropdown button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 9px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+.menu-dropdown button:focus-visible {
+  background: #3b4b64;
+  outline-offset: -2px;
+}
+.menu-dropdown kbd {
+  color: #b7c2d2;
+}
+.menu-separator {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--border);
+}
+dialog.popup::backdrop {
+  background: #0a0d13bb;
+}
+.exit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.exit-actions button {
+  border-color: #56647a;
+}
+dialog.popup p {
+  line-height: 1.7;
 }
 .popup header {
   display: flex;
