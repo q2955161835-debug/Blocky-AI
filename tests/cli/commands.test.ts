@@ -82,6 +82,8 @@ it("compiles with the exact desktop compiler and does not rewrite project bytes"
   expect(compiled.code).toBe(0);
   expect(compiled.lines[0].data.digest).toBe(await digest(direct.ir));
   expect(compiled.lines[0].data.interaction).toEqual(direct.interaction);
+  expect(compiled.lines[0].data.tools).toEqual(direct.tools);
+  expect(compiled.lines[0].warnings).toEqual([]);
   expect(hash(await readFile(file))).toBe(before);
   expect(run(["project", "validate", file, "--json"]).code).toBe(0);
   expect(

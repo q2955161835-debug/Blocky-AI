@@ -15,7 +15,7 @@ export function redact(input: unknown): {
           return "[已脱敏]";
         },
       )
-      .replace(/[A-Za-z]:[\\/][^\s"<>]+/g, () => {
+      .replace(/(?<![A-Za-z0-9+.-])[A-Za-z]:[\\/][^\s"<>]+/g, () => {
         categories.add("private-path");
         return "[本机路径]";
       });

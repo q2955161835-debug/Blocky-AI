@@ -6,7 +6,7 @@ export function output(value: unknown): string {
     if (typeof v === "string") {
       // A Windows drive/UNC path can contain spaces; redact its entire remainder.
       const pathSafe = v.replace(
-        /(?:[A-Za-z]:[\\/]|\\\\)[^\r\n"<>]*/g,
+        /(?:(?<![A-Za-z0-9+.-])[A-Za-z]:[\\/]|\\\\)[^\r\n"<>]*/g,
         "[本机路径]",
       );
       const safe = redact(pathSafe).value;
