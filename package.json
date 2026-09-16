@@ -1,0 +1,22 @@
+{
+  "name": "blocky-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.23.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run packages",
+    "test:contracts": "vitest run tests/contracts",
+    "check": "pnpm typecheck && pnpm test:unit && pnpm test:contracts"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "prettier": "3.6.2",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}
