@@ -85,7 +85,9 @@ describe("runtime executes edited project through injected adapters", () => {
     expect(result.events.some((e) => e.type === "block.failed")).toBe(true);
   });
   it("creates reproducible events from a fixed clock and identity source", async () => {
+    let sequence = 0;
     const options = {
+      nextSequence: () => ++sequence,
       now: () => "2026-09-16T00:00:00.000Z",
       newId: () => "run-fixed",
     };
@@ -94,6 +96,7 @@ describe("runtime executes edited project through injected adapters", () => {
       "on-question",
       "水循环",
     );
+    sequence = 0;
     const b = await new Runtime(options).run(
       createStarter(),
       "on-question",
@@ -124,7 +127,11 @@ describe("observability consumes contracts, not display text", () => {
     }
   });
   it("prevents events after a terminal state and keeps process event sequence monotonic", () => {
-    const factory = new EventFactory(() => "2026-09-16T00:00:00.000Z");
+    let sequence = 0;
+    const factory = new EventFactory(
+      () => "2026-09-16T00:00:00.000Z",
+      () => ++sequence,
+    );
     const base = { projectId: "project", runId: "run-one" };
     factory.create({ ...base, type: "run.started", data: {} });
     factory.create({ ...base, type: "run.completed", data: {} });

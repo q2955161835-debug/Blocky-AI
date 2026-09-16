@@ -1,6 +1,6 @@
 import type { Json } from "@blocky/language-schema";
 const sensitiveKey =
-  /^(?:authorization|cookie|set-cookie|password|api[_-]?key|token|access[_-]?token|secret|prompt|body|stdout|stderr|environment)$/i;
+  /authorization|cookie|password|api[_-]?key|token|secret|^(?:prompt|body|stdout|stderr|environment)$/i;
 export function redact(input: unknown): {
   value: Json;
   redaction: { applied: boolean; categories: string[] };
@@ -24,11 +24,26 @@ export function redact(input: unknown): {
       categories.add("oversize");
       return "[已截断]";
     }
-    if (typeof v === "string") return text(v.slice(0, 16000));
+    if (typeof v === "string") {
+      const safe = text(v);
+      if (new TextEncoder().encode(safe).length <= 16000) return safe;
+      categories.add("oversize");
+      let result = "",
+        bytes = 0;
+      for (const char of safe) {
+        const size = new TextEncoder().encode(char).length;
+        if (bytes + size > 15950) break;
+        result += char;
+        bytes += size;
+      }
+      return result + "[已截断]";
+    }
     if (v === null || typeof v === "boolean") return v;
     if (typeof v === "number") return Number.isFinite(v) ? v : null;
-    if (Array.isArray(v))
+    if (Array.isArray(v)) {
+      if (v.length > 1000) categories.add("oversize");
       return v.slice(0, 1000).map((x) => visit(x, depth + 1));
+    }
     if (v && typeof v === "object")
       return Object.fromEntries(
         Object.entries(v)

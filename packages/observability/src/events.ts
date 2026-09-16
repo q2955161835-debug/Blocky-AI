@@ -39,11 +39,14 @@ type EventInput = Omit<
   RuntimeEvent,
   "eventVersion" | "sequence" | "timestamp" | "redaction"
 >;
+let processSequence = 0;
 export class EventFactory {
-  private sequence = 0;
   private active = new Set<string>();
   private completed = new Set<string>();
-  constructor(private now = () => new Date().toISOString()) {}
+  constructor(
+    private now = () => new Date().toISOString(),
+    private nextSequence = () => ++processSequence,
+  ) {}
   create(input: EventInput): RuntimeEvent {
     for (const id of [
       input.projectId,
@@ -64,7 +67,7 @@ export class EventFactory {
       data: clean.value as Record<string, Json>,
       eventVersion: "blocky.event/v1alpha1",
       timestamp: this.now(),
-      sequence: ++this.sequence,
+      sequence: this.nextSequence(),
       redaction: clean.redaction,
     };
     if (["run.completed", "run.failed", "run.cancelled"].includes(input.type)) {

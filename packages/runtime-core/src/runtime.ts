@@ -19,6 +19,7 @@ type Options = {
   now?: () => string;
   newId?: () => string;
   delayMs?: number;
+  nextSequence?: () => number;
 };
 export type RunResult = {
   status: "completed" | "failed" | "cancelled";
@@ -32,7 +33,7 @@ export class Runtime {
   private running = false;
   constructor(options: Options = {}) {
     this.options = options;
-    this.factory = new EventFactory(options.now);
+    this.factory = new EventFactory(options.now, options.nextSequence);
   }
   async run(
     input: Project,
@@ -123,7 +124,9 @@ export class Runtime {
               );
               if (
                 !contract ||
-                !contract.permissions.every((p) => capabilities.includes(p))
+                ![...contract.permissions, "knowledge.read"].every((p) =>
+                  capabilities.includes(p),
+                )
               )
                 throw Error("BLK-TOOL-001");
               const adapter = adapters.knowledge.get(
@@ -138,30 +141,44 @@ export class Runtime {
                 { toolId: contract.toolId },
                 correlationId,
               );
-              citations = await adapter(
-                question,
-                String(resource.definition.collection),
-                signal,
-              );
-              signal.throwIfAborted();
-              if (
-                !Array.isArray(citations) ||
-                citations.some(
-                  (c) =>
-                    typeof c.id !== "string" ||
-                    typeof c.title !== "string" ||
-                    typeof c.text !== "string",
+              try {
+                citations = await adapter(
+                  question,
+                  String(resource.definition.collection),
+                  signal,
+                );
+                signal.throwIfAborted();
+                if (
+                  !Array.isArray(citations) ||
+                  citations.some(
+                    (c) =>
+                      typeof c.id !== "string" ||
+                      typeof c.title !== "string" ||
+                      typeof c.text !== "string",
+                  )
                 )
-              )
-                throw Error("BLK-TOOL-003");
-              citations = citations.slice(0, 20);
-              emit(
-                "tool.completed",
-                moduleId,
-                node.nodeId,
-                { resultCount: citations.length },
-                correlationId,
-              );
+                  throw Error("BLK-TOOL-003");
+                citations = citations.slice(0, 20);
+                emit(
+                  "tool.completed",
+                  moduleId,
+                  node.nodeId,
+                  { resultCount: citations.length },
+                  correlationId,
+                );
+              } catch (error) {
+                emit(
+                  "tool.failed",
+                  moduleId,
+                  node.nodeId,
+                  {
+                    code: signal.aborted ? "BLK-RUN-005" : safeCode(error),
+                    summary: signal.aborted ? "工具调用已取消" : "工具调用失败",
+                  },
+                  correlationId,
+                );
+                throw error;
+              }
               if (!citations.length)
                 emit("block.warning", moduleId, node.nodeId, {
                   code: "BLK-RUN-101",
@@ -193,26 +210,40 @@ export class Runtime {
                 { summary: "整理资料" },
                 correlationId,
               );
-              const proposed = await adapter(
-                { question, role, citations: structuredClone(citations) },
-                signal,
-              );
-              signal.throwIfAborted();
-              citations = proposed.filter((c) =>
-                citations.some(
-                  (source) =>
-                    source.id === c.id &&
-                    source.text === c.text &&
-                    source.title === c.title,
-                ),
-              );
-              emit(
-                "model.completed",
-                moduleId,
-                node.nodeId,
-                { summary: "资料整理完成", transport: "local" },
-                correlationId,
-              );
+              try {
+                const proposed = await adapter(
+                  { question, role, citations: structuredClone(citations) },
+                  signal,
+                );
+                signal.throwIfAborted();
+                citations = proposed.filter((c) =>
+                  citations.some(
+                    (source) =>
+                      source.id === c.id &&
+                      source.text === c.text &&
+                      source.title === c.title,
+                  ),
+                );
+                emit(
+                  "model.completed",
+                  moduleId,
+                  node.nodeId,
+                  { summary: "资料整理完成", transport: "local" },
+                  correlationId,
+                );
+              } catch (error) {
+                emit(
+                  "model.failed",
+                  moduleId,
+                  node.nodeId,
+                  {
+                    code: signal.aborted ? "BLK-RUN-005" : safeCode(error),
+                    summary: signal.aborted ? "整理调用已取消" : "整理调用失败",
+                  },
+                  correlationId,
+                );
+                throw error;
+              }
               break;
             }
             case "core.output.answer":
