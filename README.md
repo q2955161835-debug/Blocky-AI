@@ -10,9 +10,9 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 
 ## 当前开发入口（2026-09-16）
 
-22:04 用户已授权恢复电脑操控验收，正在继续普通发行窗口、画布手势、保存重开和通知区域/退出检查。下述“暂停”说明保留上一轮验收时点；当前不再受暂停限制，阶段1仍须补齐验收后才可关闭。
+正式 monorepo 已建立：A/B 领域、C 编辑/会话、D 蓝图/候选补丁与 E 页面/任务/诊断已有实现和独立限定范围验收。普通包已执行主要桌面旅程；Shift多选、中键平移和通知区域恢复由用户确认正常。Tab聚焦问题已修复；用户随后发现的顶部菜单与关闭弹窗对比问题在提交 `db47375` 修复，当前局部复验中，证据见[本次验收](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)。Windows 工具链检查26/26。
 
-正式 monorepo 已建立：A/B 领域、C 编辑/会话、D 蓝图/候选补丁与 E 页面/任务/诊断已有实现和独立限定范围验收。F 的100积木性能、360循环/30次原生保存重开的无输入长稳、普通包隔离扫描和发行候选构建已完成，证据见[本次验收](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)。2026-09-16 用户暂缓电脑操控验收，普通窗口与通知区域场景保留未执行；阶段 1 尚未全部验收通过。Windows 工具链检查 26/26。
+F曾在原始提交完成360循环/30次原生重开的无输入Full。Tab修复后的根Core链已通过，但随后Full第113轮撤销失败；原始证据保留，新一轮完整长稳正在执行，不能用旧通过覆盖当前失败。阶段1尚未全部验收通过，不进入阶段2。用户已再次授权仅检查Blocky新版并保留未保存修改，普通窗口局部复验继续。
 
 用户要求 CLI 与领域同步开发，优先通过 CLI 验证。CLI 支持目录、个人蓝图、项目创建/配置/检查/编译/运行、锁定仓库候选、页面补丁、注册任务及诊断导出，共用桌面领域和 Rust 存储；用法见 [CLI 说明](tools/blocky-cli/README.md)。真实大模型 API 调用：否；未真实调用外部大模型 API。
 
@@ -31,13 +31,13 @@ pnpm build
 
 原生自动化包：`pnpm test:e2e:build` 后运行 `pnpm test:e2e`。完整门禁入口为 `pnpm check:core` / `pnpm check:full`，后者含完整 360 个五秒循环及 30 次不同内容的 Rust 保存重开。仅运行无需鼠标键盘输入的 Core/Full 端口检查时，可在已构建测试包上执行 `pwsh -NoProfile -File scripts/check-native-core.ps1 core` / `full`；它不替代普通窗口验收，也不等同于整个聚合命令已通过。
 
-普通包从默认 `apps/studio-host/target/release/blocky-studio.exe` 输出；本次候选隔离构建在 `try/ordinary-native-target/release/`，测试包在 `try/native-e2e-target/release/`。Windows iframe 隔离使用锁定 Wry 修复，来源和维护责任见 [补丁说明](vendor/WRY-PATCH.md)。
+普通开发包从默认 `apps/studio-host/target/release/blocky-studio.exe` 输出；发行隔离构建在 `try/release-native-target/release/`，测试包在 `try/native-e2e-target/release/`。Windows iframe 隔离使用锁定 Wry 修复，来源和维护责任见 [补丁说明](vendor/WRY-PATCH.md)。
 
 可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出 `try/release-native-target/release/blocky-studio.exe` 及 `tools/blocky-cli/dist/`，随后运行 `pnpm check:release`。常规开发构建可能含本机构建路径，不能直接代替此候选；扫描范围与限制写在 `try/stage1-release/artifacts.json`，报告不进入产品目录。
 
 通过候选扫描后，`pnpm package:release` 生成 `dist/Blocky-Studio-0.1.0/`，包含桌面程序、CLI、使用说明、第三方许可证和 selectors 对应源码；目标已存在时拒绝覆盖。许可证从锁定依赖及 `vendor/licenses/registry.json` 校验收集，缺失即停止构建。此命令不安装、启动或发布应用，也不代表普通窗口验收通过。
 
-本轮收尾已将构建缓存与中间证据归入 `try/待清理/阶段1-2026-09-16/`，可用候选保留在上述 `dist/` 目录。重新执行隔离扫描前，应先运行 `pnpm test:e2e:build` 和 `pnpm build:release` 重新产生测试正控制与普通包；生成测试包不等于运行界面验收。
+本轮菜单/弹窗修复候选位于 `dist/Blocky-Studio-0.1.0-ui-fix/`；原 `dist/Blocky-Studio-0.1.0/` 仍供用户旧窗口使用，未覆盖。运行新版本前需保存项目并退出旧实例。构建缓存此前整理到 `try/待清理/阶段1-2026-09-16/`，其中本轮所需缓存已移回原构建位置；历史整理清单不代表当前目录状态。重新执行隔离扫描前，应先运行 `pnpm test:e2e:build` 和 `pnpm build:release` 产生测试正控制与普通包；生成测试包不等于运行界面验收。
 
 CLI 增补计划见 [同步开发补充](doc/执行计划/2026-09-16-CLI同步开发补充.md)。团队项目；最终验收通过后仍须询问是否合并 main，push 单独授权。
 
