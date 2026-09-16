@@ -43,6 +43,8 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["run.stop", "run", "停止", "Escape"],
   ["build.convert", "build", "从仓库快照生成候选", ""],
   ["build.surface", "build", "创建应用界面", ""],
+  ["terminal.create", "terminal", "运行项目检查", ""],
+  ["terminal.stop", "terminal", "停止任务", ""],
   ["settings.open", "settings", "设置", "Ctrl+,"],
 ];
 export const commands: CommandDefinition[] = specs.map(
@@ -55,7 +57,16 @@ export const commands: CommandDefinition[] = specs.map(
     contexts: ["studio"],
     selection: commandId === "edit.blueprint" ? "multiple" : "any",
     danger: "none",
-    undo: category === "edit" && !["edit.copy", "edit.select-all", "edit.clear-selection", "edit.blueprint"].includes(commandId) ? "undoable" : "not-applicable",
+    undo:
+      category === "edit" &&
+      ![
+        "edit.copy",
+        "edit.select-all",
+        "edit.clear-selection",
+        "edit.blueprint",
+      ].includes(commandId)
+        ? "undoable"
+        : "not-applicable",
   }),
 );
 export function shortcut(event: {

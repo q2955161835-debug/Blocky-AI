@@ -1,12 +1,20 @@
 import { projectLog } from "@blocky/observability";
 import type { Studio } from "../composition/useStudio";
+import type { StudioTask } from "../composition/useTask";
+import { TaskPanel } from "./TaskPanel";
 const views = [
   ["problems", "问题"],
   ["logs", "运行日志"],
   ["terminal", "终端"],
   ["output", "输出"],
 ] as const;
-export function BottomPanel({ studio: s }: { studio: Studio }) {
+export function BottomPanel({
+  studio: s,
+  task,
+}: {
+  studio: Studio;
+  task?: StudioTask;
+}) {
   return (
     <section
       className="bottom-panel"
@@ -85,9 +93,12 @@ export function BottomPanel({ studio: s }: { studio: Studio }) {
                 <span>{r.message}</span>
               </div>
             ))}
-          {s.session.view === "terminal" && (
-            <div className="panel-empty">尚无任务运行</div>
-          )}
+          {s.session.view === "terminal" &&
+            (task ? (
+              <TaskPanel task={task} />
+            ) : (
+              <div className="panel-empty">尚无任务运行</div>
+            ))}
         </div>
       )}
       {s.session.panel && (

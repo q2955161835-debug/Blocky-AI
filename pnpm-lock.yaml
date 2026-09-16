@@ -110,6 +110,9 @@ importers:
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core
+      '@blocky/terminal-protocol':
+        specifier: workspace:*
+        version: link:../../packages/terminal-protocol
       '@blocky/test-fixtures':
         specifier: workspace:*
         version: link:../../packages/test-fixtures
@@ -325,6 +328,9 @@ importers:
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core
+      '@blocky/terminal-protocol':
+        specifier: workspace:*
+        version: link:../../packages/terminal-protocol
       '@blocky/test-fixtures':
         specifier: workspace:*
         version: link:../../packages/test-fixtures

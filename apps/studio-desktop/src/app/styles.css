@@ -772,6 +772,30 @@ kbd {
 .construction-dialog::backdrop {
   background: #090c12aa;
 }
+.task-panel {
+  padding: 8px 12px;
+}
+.task-controls {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.task-controls label {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+}
+.task-controls input {
+  width: 90px;
+  padding: 4px;
+}
+.task-output {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
 .patch-review {
   padding: 20px;
 }

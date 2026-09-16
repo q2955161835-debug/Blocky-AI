@@ -12,10 +12,12 @@ import { envelope, CliError } from "./protocol";
 import { createProject, readProject, doctor } from "./native-store";
 import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
+import { taskCommand, taskHelp } from "./tasks";
 export const help = {
   version: "0.1.0",
   commands: [
     ...constructionHelp,
+    ...taskHelp,
     "doctor --json",
     "catalog list [--limit 20] [--cursor 0] --json",
     "catalog show <block-id> --json",
@@ -145,6 +147,8 @@ export async function dispatch(
   }
   const moduleList = args.words.slice(0, 3).join(".") === "project.module.list";
   const constructed = await construction(args, signal);
+  const task = await taskCommand(args, signal);
+  if (task) return task;
   if (constructed) return constructed;
   if (command === "project.configure") return configure(args);
   const known = [

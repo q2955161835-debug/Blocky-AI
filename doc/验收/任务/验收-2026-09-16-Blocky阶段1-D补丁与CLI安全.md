@@ -1,6 +1,11 @@
 # 阶段 1 D 补丁、转换与 CLI 安全独立局部验收
 
-## 汇总表格
+## 当前限定结论：通过
+
+D-SEC-01 已于复验一关闭；D-SEC-02 的原生语义残项已于 `cc809d19f4665d02771f9b3b49a79c7495d108a4` 复验关闭。**最终结论：通过**，限定本报告 D 补丁与 CLI 安全范围。以下保留初验和复验一失败证据；不代表普通桌面 GUI、E 或阶段 1 总验收通过。
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+## 初验汇总表格
 
 | 项目 | 内容 |
 |---|---|
@@ -97,7 +102,12 @@ validateSnapshot 限定 repository/commit/version/license、恰好三个文件�
 
 本地时间段：2026-09-16 19:09 ~ 2026-09-16 19:11。目标提交：`026a22717342d60034a454c56ed3f86516b50ff6`；执行时 HEAD 为 `372c2ab5341b0fa538c68286326691c90eec9a9c`，目标 D 修复范围相对 026a227 无 diff。没有把后续 E 的实现列入验收。
 
-### 汇总表格
+### 当前限定结论：通过
+
+D-SEC-01 已于复验一关闭；D-SEC-02 的原生语义残项已于 `cc809d19f4665d02771f9b3b49a79c7495d108a4` 复验关闭。**最终结论：通过**，限定本报告 D 补丁与 CLI 安全范围。以下保留初验和复验一失败证据；不代表普通桌面 GUI、E 或阶段 1 总验收通过。
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+## 初验汇总表格
 
 | 项目 | 复验结论 |
 |---|---|
@@ -130,3 +140,34 @@ validateSnapshot 限定 repository/commit/version/license、恰好三个文件�
 | 内联 native guard 独立断言 | 退出 0；无批准/伪造差异/错误基线拒绝、正常批准、源重读、原子冲突和两层 extraState 拒绝均通过 |
 
 保留一个安全重验输出包 `D:\1Folder\Blocky-AI\try\accept-stage1-d-security\recheck-native.blocky`，其余被拒绝目标未产生。未改源码、未用 GUI、未跑全盘、无工作区外主动读写。真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+
+
+## 复验二：Host 语义残项与合法蓝图插入
+
+本地时间段：2026-09-16 19:16 ~ 2026-09-16 19:16。精确提交：`cc809d19f4665d02771f9b3b49a79c7495d108a4`。
+
+### 汇总表格
+
+| 场景 | 结果 |
+|---|---|
+| 原 EXPORT 反例 | 通过；直接 native validate-patch 退出 3 / BLK-PATCH-004 |
+| 原 STYLE 反例 | 通过；直接 native validate-patch 退出 3 / BLK-PATCH-002 |
+| Schema、不成立循环/孤立聊天边界 | 通过；本次正式原生语义测试逐项拒绝 |
+| 合法蓝图插入 | 通过；显式绑定后真实 CLI 插入保存，目标有新增根；缺绑定拒绝，重复目标不覆盖，源哈希不变 |
+| D-SEC-01 | 保留复验一关闭结论；本轮未重跑无关凭据全套 |
+| D-SEC-02 / 最终结论 | **通过**，限定本报告范围 |
+
+### 详细报告与执行证据
+
+源码读回确认新 patch_links 在 Host 返回候选前执行目标导出、实现入口、Schema 等价、同步环和孤立聊天检查；STYLE 枚举从共享 definitions.json 由 TS 与 Rust 共同消费。激活资源还核对 Manifest 引用、scope、resourceId 和 secretBindings 与 secretRefs 一致性。
+
+执行 `pnpm exec vitest run tests/cli/commands.test.ts -t 'native patch checks reject|creates a real archive|saves and inserts personal blueprints'`，退出码 0，3/3 通过，13 项按筛选未执行。其中创建测试为蓝图正向流程的源包准备，不扩展到全盘 Host 验收。
+
+再独立内联执行原来的两个 native 反例，保留相同错误值 does-not-exist / unsupported-style，直接读取 companion 退出码及 JSON。当前均拒绝：EXPORT 为 BLK-PATCH-004，STYLE 为 BLK-PATCH-002。没有经 TypeScript 先行拒绝来冒充原生修复。
+
+| 本次 CLI 工件 | 字节数 | SHA-256 |
+|---|---:|---|
+| `tools/blocky-cli/dist/main.mjs` | 672457 | `5525b2770c94483a2a391a93b2e1b264171feefa750a79fc8a6062e21626ca57` |
+| `tools/blocky-cli/dist/bin/blocky-project-io.exe` | 2765312 | `77fdca2b93c48a576f4e41a81c2b68bc5cff243348645937a66c0b00ff95d2d7` |
+
+没有 GUI、E 协议/任务包、未跟踪 Task Host 或全盘安全验收；没有改实现、没有新增持久探针。本轮 CLI 测试自行清除 try 临时目录，仅本报告更新。无工作区外主动读写，未提交、合并或推送。真实大模型 API 调用：**否；未真实调用外部大模型 API**。

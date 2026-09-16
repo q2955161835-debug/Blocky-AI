@@ -8,6 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@blocky/terminal-protocol": "workspace:*",
     "@blocky/builder-protocol": "workspace:*",
     "@blocky/conversion-core": "workspace:*",
     "@blocky/language-schema": "workspace:*",

@@ -92,6 +92,11 @@ fn execute(bytes: &[u8]) -> Value {
     }
 }
 fn main() {
+    match std::env::args().nth(1).as_deref() {
+        Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
+        Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
+        _ => {}
+    }
     let mut bytes = Vec::new();
     let input = std::io::stdin()
         .take(20 * 1024 * 1024 + 1)

@@ -14,10 +14,12 @@ import {
   type ConstructionKind,
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
+import { useTask } from "../composition/useTask";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
   const construction = useConstruction(s);
+  const task = useTask(s);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
   const show = (kind: NonNullable<Popup>["kind"]) => {
@@ -50,6 +52,8 @@ export function App() {
     "build.convert": async () => {
       if (await construction.convert()) show("patch-review");
     },
+    "terminal.create": task.start,
+    "terminal.stop": task.cancel,
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
     "view.show-problems": () =>
@@ -372,7 +376,7 @@ export function App() {
                   从左侧项目画布列表重新打开画布。
                 </div>
               )}
-              <BottomPanel studio={s} />
+              <BottomPanel studio={s} task={task} />
             </section>
             <aside className="right-sidebar">
               <RunPanel studio={s} />
