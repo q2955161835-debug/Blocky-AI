@@ -16,6 +16,7 @@ import {
   type RuntimeEvent,
 } from "@blocky/observability";
 import { interactionKey, type SourceRef } from "@blocky/language-schema";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
   saveProject,
@@ -32,6 +33,9 @@ export function useStudio() {
   const [started, setStarted] = useState(false),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
+  const closing = useRef(false),
+    [exiting, setExiting] = useState(false),
+    [paused, setPaused] = useState(false);
   const [compiled, setCompiled] =
       useState<Awaited<ReturnType<typeof compileProject>>>(),
     [compiling, setCompiling] = useState(true);
@@ -185,6 +189,7 @@ export function useStudio() {
     signal: AbortSignal;
   }) => {
     if (
+      closing.current ||
       runBusy.current ||
       ioBusy.current ||
       compiling ||
@@ -213,6 +218,8 @@ export function useStudio() {
     request?.signal.addEventListener("abort", cancel, { once: true });
     if (request?.signal.aborted) cancel();
     try {
+      if (isTauri()) await invoke("authorize_run");
+      if (closing.current || controller.signal.aborted) throw Error();
       const value = await runtime.run(
         snapshot.project,
         entry.interactionId,
@@ -240,6 +247,7 @@ export function useStudio() {
       request?.signal.removeEventListener("abort", cancel);
       runBusy.current = false;
       setRunning(false);
+      setPaused(false);
       abort.current = null;
     }
   };
@@ -265,7 +273,7 @@ export function useStudio() {
     }
   };
   const open = async () => {
-    if (ioBusy.current || runBusy.current) return;
+    if (closing.current || ioBusy.current || runBusy.current) return;
     ioBusy.current = true;
     setBusy(true);
     try {
@@ -304,7 +312,7 @@ export function useStudio() {
     }
   };
   const fresh = async () => {
-    if (runBusy.current || ioBusy.current) return;
+    if (closing.current || runBusy.current || ioBusy.current) return;
     ioBusy.current = true;
     setBusy(true);
     try {
@@ -336,6 +344,28 @@ export function useStudio() {
       setMessage("此配置值无效或超出长度限制，原配置保持不变。");
     }
   };
+  const settle = async () => {
+    closing.current = true;
+    setExiting(true);
+    answerConfirmation(false);
+    abort.current?.abort();
+    runtime.resume();
+    const until = Date.now() + 5000;
+    while (runBusy.current || ioBusy.current) {
+      if (Date.now() > until) throw Error("BLK-WINDOW-001");
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+  };
+  const togglePause = () => {
+    if (!running) return;
+    if (paused) {
+      runtime.resume();
+      setPaused(false);
+    } else {
+      runtime.pause();
+      setPaused(true);
+    }
+  };
   return {
     controller,
     snapshot,
@@ -344,6 +374,10 @@ export function useStudio() {
     message,
     setMessage,
     busy,
+    exiting,
+    settle,
+    paused,
+    togglePause,
     compiled,
     compiling,
     session,
@@ -373,6 +407,7 @@ export function useStudio() {
     updateField,
     interactionId: activeEntry ? interactionKey(activeEntry) : "",
     canRun:
+      !exiting &&
       !busy &&
       !running &&
       !compiling &&

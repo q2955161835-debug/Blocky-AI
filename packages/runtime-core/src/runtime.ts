@@ -31,6 +31,13 @@ export class Runtime {
   private factory: EventFactory;
   private options: Options;
   private running = false;
+  private paused = false;
+  pause() {
+    if (this.running) this.paused = true;
+  }
+  resume() {
+    this.paused = false;
+  }
   constructor(options: Options = {}) {
     this.options = options;
     this.factory = new EventFactory(options.now, options.nextSequence);
@@ -98,8 +105,18 @@ export class Runtime {
       const selectedEntry = root && findEntry(root, entry.interactionId);
       if (!root || !selectedEntry) throw Error("BLK-RUN-001");
       let budget = 0;
+      const pauseBoundary = async () => {
+        if (!this.paused) return;
+        emit("run.paused", undefined, undefined, { summary: "运行已暂停" });
+        while (this.paused) {
+          await wait(20, signal);
+        }
+        signal.throwIfAborted();
+        emit("run.resumed", undefined, undefined, { summary: "运行已继续" });
+      };
       const execute = async (node: IrNode, moduleId: string): Promise<void> => {
         signal.throwIfAborted();
+        await pauseBoundary();
         // Each chat block starts its own stack. A different entry is a boundary.
         if (
           node.blockType === "core.interaction.chat" &&
@@ -111,6 +128,7 @@ export class Runtime {
         try {
           await wait(this.options.delayMs ?? 0, signal);
           signal.throwIfAborted();
+          await pauseBoundary();
           switch (node.blockType) {
             case "core.agent":
               role = String(node.fields.ROLE);
@@ -307,6 +325,7 @@ export class Runtime {
       );
     } finally {
       this.running = false;
+      this.paused = false;
     }
     return { status, answer, citations, events };
   }

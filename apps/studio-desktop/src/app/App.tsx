@@ -16,13 +16,24 @@ import {
 import { useConstruction } from "../composition/useConstruction";
 import { useTask } from "../composition/useTask";
 import { SurfacePreview } from "./SurfacePreview";
+import { useLogs } from "../composition/useLogs";
+import { useLifecycle } from "../composition/useLifecycle";
+import { ExitDialog } from "./ExitDialog";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
   const construction = useConstruction(s);
   const task = useTask(s);
+  const logs = useLogs(s),
+    lifecycle = useLifecycle(s, logs, task);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
+  useEffect(() => {
+    if (lifecycle.requested) {
+      setPopup(null);
+      construction.reject();
+    }
+  }, [lifecycle.requested]);
   const show = (kind: NonNullable<Popup>["kind"]) => {
     setQuery("");
     setPopup({ kind });
@@ -58,6 +69,8 @@ export function App() {
       if (await construction.createSurface()) show("patch-review");
     },
     "terminal.stop": task.cancel,
+    "window.exit": lifecycle.request,
+    "run.pause": s.togglePause,
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
     "view.show-problems": () =>
@@ -70,6 +83,8 @@ export function App() {
     "settings.open": () => show("settings"),
   };
   const enabled = (id: string) =>
+    !s.exiting &&
+    !lifecycle.requested &&
     !s.confirmation &&
     !construction.busy &&
     (!popup ||
@@ -106,6 +121,7 @@ export function App() {
     (id !== "edit.redo" || s.snapshot.canRedo) &&
     (id !== "run.start" || (s.started && s.canRun)) &&
     (id !== "run.stop" || s.running) &&
+    (id !== "run.pause" || s.running) &&
     (id !== "view.back" || s.canGoBack);
   const execute = (id: string) => {
     setPopup(null);
@@ -402,17 +418,18 @@ export function App() {
                   从左侧项目画布列表重新打开画布。
                 </div>
               )}
-              {s.session.tabs
-                .filter((id) => id.startsWith("surface:"))
-                .map((id) => (
-                  <SurfacePreview
-                    key={`${s.snapshot.project.manifest.projectId}-${id}`}
-                    studio={s}
-                    surfaceId={id.slice(8)}
-                    hidden={s.session.active !== id}
-                  />
-                ))}
-              <BottomPanel studio={s} task={task} />
+              {!s.exiting &&
+                s.session.tabs
+                  .filter((id) => id.startsWith("surface:"))
+                  .map((id) => (
+                    <SurfacePreview
+                      key={`${s.snapshot.project.manifest.projectId}-${id}`}
+                      studio={s}
+                      surfaceId={id.slice(8)}
+                      hidden={s.session.active !== id}
+                    />
+                  ))}
+              <BottomPanel studio={s} task={task} logs={logs} />
             </section>
             <aside className="right-sidebar">
               <RunPanel studio={s} />
@@ -438,6 +455,9 @@ export function App() {
           message={s.confirmation}
           answer={s.answerConfirmation}
         />
+      )}
+      {lifecycle.requested && (
+        <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}
       {popup &&
         ["blueprint-save", "blueprint-insert", "patch-review"].includes(

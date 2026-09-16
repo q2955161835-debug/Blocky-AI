@@ -3,6 +3,7 @@ use blocky_studio::{
     task_host::{TaskHost, TaskRequest, TaskSnapshot},
 };
 fn main_visible(window: &tauri::WebviewWindow) -> Result<(), String> {
+    crate::window_lifecycle::visible(window)?;
     if window.label() != "main" {
         return Err("BLK-TERM-003".into());
     }
@@ -48,4 +49,20 @@ pub fn cancel_task(
 #[tauri::command]
 pub fn attach_user_terminal() -> Result<(), String> {
     Err("BLK-TERM-003".into())
+}
+#[tauri::command]
+pub fn settle_tasks(
+    window: tauri::WebviewWindow,
+    host: tauri::State<'_, TaskHost>,
+) -> Result<(), String> {
+    use tauri::Manager;
+    if window.label() != "main"
+        || !window
+            .state::<crate::window_lifecycle::Lifecycle>()
+            .closing
+            .load(std::sync::atomic::Ordering::SeqCst)
+    {
+        return Err("BLK-WINDOW-001".into());
+    }
+    host.shutdown()
 }

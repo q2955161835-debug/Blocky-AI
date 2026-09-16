@@ -1,4 +1,5 @@
 import { redact } from "./redact";
+import { diagnosticRecord } from "./diagnostics";
 import type { Json } from "@blocky/language-schema";
 export type LogRecord = {
   schemaVersion: "blocky.log/v1alpha1";
@@ -19,6 +20,16 @@ export class RedactedBus {
   dropped = 0;
   droppedImportant = 0;
   private sequence = 0;
+  private listeners = new Set<(record?: LogRecord) => void>();
+  subscribe = (listener: (record?: LogRecord) => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+  private notify(record?: LogRecord) {
+    for (const listener of this.listeners) listener(record);
+  }
   constructor(
     private count = 500,
     private bytes = 262144,
@@ -72,6 +83,7 @@ export class RedactedBus {
     if (size(record) > this.bytes) {
       this.dropped++;
       if (record.level !== "info") this.droppedImportant++;
+      this.notify();
       return;
     }
     this.records.push(record);
@@ -84,14 +96,16 @@ export class RedactedBus {
       this.dropped++;
       if (removed.level !== "info") this.droppedImportant++;
     }
+    this.notify(record);
   }
   clearView() {
     this.records = [];
+    this.notify();
   }
   export() {
     return {
       schemaVersion: "blocky.diagnostics/v1",
-      records: redact(this.records).value,
+      records: this.records.map(diagnosticRecord),
       dropped: this.dropped,
       droppedImportant: this.droppedImportant,
     };

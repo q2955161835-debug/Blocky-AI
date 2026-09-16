@@ -1,7 +1,30 @@
 /// <reference types="mocha" />
 import { browser, $, $$, expect } from "@wdio/globals";
 import { mkdir } from "node:fs/promises";
+import {
+  chromium,
+  type Browser as CdpBrowser,
+  type Page,
+} from "playwright-core";
 describe("Blocky native editor", () => {
+  let cdp: CdpBrowser, page: Page;
+  before(async () => {
+    cdp = await chromium.connectOverCDP(
+      `http://127.0.0.1:${process.env.BLOCKY_TEST_CDP_PORT}`,
+    );
+    page = cdp
+      .contexts()[0]
+      .pages()
+      .find(
+        (p) =>
+          p.url().startsWith("http://tauri.localhost") ||
+          p.url().startsWith("tauri://"),
+      )!;
+    if (!page) throw Error("Blocky test page not found");
+  });
+  after(async () => {
+    await cdp?.close();
+  });
   it("creates editable canvases, runs a sourced answer and navigates across modules", async () => {
     await $("button*=资料问答伙伴").click();
     await $(".blocklyDraggable").waitForDisplayed();
@@ -36,5 +59,84 @@ describe("Blocky native editor", () => {
     ).click();
     await expect($(".bottom-panel")).toBeDisplayed();
     await expect($$(".workspace-tabs > div")).toBeElementsArrayOfSize(2);
+  });
+  it("reviews explicit surface permissions, runs the actual isolated page and reopens its tab", async () => {
+    await $(
+      "//aside[contains(@class,'library')]//button[contains(.,'研究助手')]",
+    ).click();
+    await $("button=创建应用界面").click();
+    await $("dialog[aria-label='审阅变更']").waitForDisplayed();
+    await expect($("[aria-label='应用界面文件变更']")).toBeDisplayed();
+    for (const checkbox of await $$(".permission-choice input"))
+      await checkbox.click();
+    await $("//dialog//button[contains(.,'接受变更')]").click();
+    await $("iframe[title='资料问答']").waitForDisplayed();
+    const frame = page.frameLocator("iframe[title='资料问答']");
+    await page.screenshot({ path: "try/stage1-e2e/surface-loading.png" });
+    const isolation = await frame.locator("body").evaluate(() => {
+      let storage = false,
+        cookie = false;
+      try {
+        localStorage.setItem("blocky-isolation-probe", "x");
+        storage = true;
+      } catch {}
+      try {
+        document.cookie = "blocky_isolation=x";
+        cookie = document.cookie.includes("blocky_isolation");
+      } catch {}
+      return {
+        storage,
+        cookie,
+        tauri: "__TAURI__" in window,
+        internals: "__TAURI_INTERNALS__" in window,
+      };
+    });
+    expect(isolation).toEqual({
+      storage: false,
+      cookie: false,
+      tauri: false,
+      internals: false,
+    });
+    await frame.locator("#question").fill("水循环如何形成？");
+    await frame.locator("#submit").click({ timeout: 15000 });
+    await browser.waitUntil(
+      async () => (await frame.locator("#answer").innerText()).includes("蒸发"),
+      { timeout: 15000 },
+    );
+    expect(await frame.locator("#citations").innerText()).toContain("水循环");
+    await browser.saveScreenshot("try/stage1-e2e/native-surface.png");
+    await $("[aria-label='关闭 问答页面']").click();
+    await expect($$("iframe")).toBeElementsArrayOfSize(0);
+    await $(
+      "//aside[contains(@class,'library')]//button[contains(.,'问答页面')]",
+    ).click();
+    await $("iframe[title='资料问答']").waitForDisplayed();
+  });
+  it("keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls", async () => {
+    await $(
+      "//div[contains(@class,'panel-tabs')]//button[normalize-space()='终端']",
+    ).click();
+    await $("[aria-label='任务检查次数']").setValue("20");
+    await $("[aria-label='任务间隔']").setValue("100");
+    await $("[aria-label='任务输出上限']").setValue("256");
+    await $("button=运行检查").click();
+    await $("[aria-label='折叠面板']").click();
+    await $("[aria-label='展开面板']").click();
+    await browser.waitUntil(
+      async () =>
+        (await $(".task-panel [role='status']").getText()).includes("检查通过"),
+      { timeout: 15000 },
+    );
+    await expect($(".task-panel [role='status']")).toHaveText(
+      expect.stringContaining("输出已截断"),
+    );
+    await $(
+      "//div[contains(@class,'panel-tabs')]//button[normalize-space()='输出']",
+    ).click();
+    await page.getByLabel("输出通道").selectOption({ label: "terminal" });
+    await expect($(".panel-body .log-row code")).toHaveText("terminal");
+    await $("button=清除视图").click();
+    await expect($$(".panel-body .log-row")).toBeElementsArrayOfSize(0);
+    await browser.saveScreenshot("try/stage1-e2e/native-output.png");
   });
 });

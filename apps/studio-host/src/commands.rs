@@ -32,6 +32,7 @@ pub fn authorize_surface(
     surface_id: String,
 ) -> Result<(), String> {
     main_only(&window)?;
+    crate::window_lifecycle::visible(&window)?;
     if !window.is_visible().map_err(|_| "BLK-WINDOW-001")?
         || window.is_minimized().map_err(|_| "BLK-WINDOW-001")?
     {

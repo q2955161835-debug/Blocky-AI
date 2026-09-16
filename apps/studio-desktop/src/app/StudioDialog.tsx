@@ -103,6 +103,19 @@ export function StudioDialog({
             <button onClick={() => s.setPreferences({ ...defaults })}>
               恢复应用默认值
             </button>
+            <label>
+              <input
+                type="checkbox"
+                checked={s.preferences.minimizeToTray}
+                onChange={(e) =>
+                  s.setPreferences((v) => ({
+                    ...v,
+                    minimizeToTray: e.target.checked,
+                  }))
+                }
+              />
+              最小化到通知区域
+            </label>
           </div>
         ) : (
           <>

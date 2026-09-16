@@ -1,4 +1,5 @@
-import { projectLog } from "@blocky/observability";
+import { projectLog, logChannels } from "@blocky/observability";
+import type { StudioLogs } from "../composition/useLogs";
 import type { Studio } from "../composition/useStudio";
 import type { StudioTask } from "../composition/useTask";
 import { TaskPanel } from "./TaskPanel";
@@ -11,9 +12,11 @@ const views = [
 export function BottomPanel({
   studio: s,
   task,
+  logs,
 }: {
   studio: Studio;
   task?: StudioTask;
+  logs?: StudioLogs;
 }) {
   return (
     <section
@@ -46,6 +49,32 @@ export function BottomPanel({
       </div>
       {s.session.panel && (
         <div className="panel-body">
+          {s.session.view === "output" && logs && (
+            <div className="output-controls">
+              <label>
+                通道{" "}
+                <select
+                  aria-label="输出通道"
+                  value={logs.channel}
+                  onChange={(e) => logs.setChannel(e.target.value)}
+                >
+                  <option value="">全部</option>
+                  {logChannels.map((channel) => (
+                    <option key={channel}>{channel}</option>
+                  ))}
+                </select>
+              </label>
+              <button onClick={logs.clearView}>清除视图</button>
+              <button onClick={() => void logs.clearStorage()}>清除存储</button>
+              <button onClick={() => void logs.exportLogs()}>
+                导出诊断摘要
+              </button>
+              <span>
+                已截断 {s.bus.dropped} 条 · 警告/错误 {s.bus.droppedImportant}{" "}
+                条
+              </span>
+            </div>
+          )}
           {s.session.view === "problems" &&
             (s.diagnostics.length ? (
               s.diagnostics.map((d) => (
@@ -86,13 +115,15 @@ export function BottomPanel({
               <div className="panel-empty">运行项目后，日志会出现在这里。</div>
             ))}
           {s.session.view === "output" &&
-            s.bus.records.map((r) => (
-              <div className="log-row" key={r.logId}>
-                <time>{r.timestamp.slice(11, 19)}</time>
-                <code>{r.channel}</code>
-                <span>{r.message}</span>
-              </div>
-            ))}
+            s.bus.records
+              .filter((r) => !logs?.channel || r.channel === logs.channel)
+              .map((r) => (
+                <div className="log-row" key={r.logId}>
+                  <time>{r.timestamp.slice(11, 19)}</time>
+                  <code>{r.channel}</code>
+                  <span>{r.message}</span>
+                </div>
+              ))}
           {s.session.view === "terminal" &&
             (task ? (
               <TaskPanel task={task} />

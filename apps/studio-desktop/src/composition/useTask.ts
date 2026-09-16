@@ -12,6 +12,10 @@ export function useTask(studio: Studio) {
     [timeout, setTimeoutMs] = useState(30000),
     [budget, setBudget] = useState(65536);
   const gate = useRef(false);
+  const stopping = useRef(false),
+    lastId = useRef<string | undefined>(undefined),
+    reported = useRef(""),
+    starting = useRef<Promise<string> | undefined>(undefined);
   const current = useRef(studio);
   current.current = studio;
   useEffect(() => {
@@ -23,7 +27,7 @@ export function useTask(studio: Studio) {
         const snapshot = await invoke<TaskSnapshot>("task_status", {
           requestId,
         });
-        if (!active) return;
+        if (!active || stopping.current) return;
         setState(snapshot);
         if (snapshot.activeProcesses) {
           timer = setTimeout(poll, 200);
@@ -32,6 +36,7 @@ export function useTask(studio: Studio) {
         setRequestId(undefined);
         gate.current = false;
         setPending(false);
+        reported.current = snapshot.requestId;
         current.current.bus.write(
           "terminal",
           snapshot.status === "exited" ? "info" : "warning",
@@ -61,7 +66,8 @@ export function useTask(studio: Studio) {
     };
   }, [requestId]);
   const start = async () => {
-    if (gate.current || studio.busy) return;
+    if (stopping.current || gate.current || studio.busy || studio.exiting)
+      return;
     gate.current = true;
     setPending(true);
     try {
@@ -71,17 +77,22 @@ export function useTask(studio: Studio) {
         timeoutMs: timeout,
         outputBudgetBytes: budget,
       });
-      const id = await invoke<string>("start_task", {
+      const launched = invoke<string>("start_task", {
         request,
         files: encodeProject(studio.controller.getSnapshot().project),
       });
+      starting.current = launched;
+      const id = await launched;
       setRequestId(id);
+      lastId.current = id;
       setState(undefined);
       studio.setSession((v) => ({ ...v, panel: true, view: "terminal" }));
     } catch {
       gate.current = false;
       setPending(false);
       studio.setMessage("无法启动任务，请检查参数、窗口状态或正在运行的任务。");
+    } finally {
+      starting.current = undefined;
     }
   };
   const cancel = async () => {
@@ -91,6 +102,28 @@ export function useTask(studio: Studio) {
       } catch {
         studio.setMessage("任务停止请求失败，退出前仍需结算。");
       }
+  };
+  const settle = async () => {
+    stopping.current = true;
+    if (starting.current) await starting.current.catch(() => {});
+    await invoke("settle_tasks");
+    if (lastId.current && reported.current !== lastId.current) {
+      const snapshot = await invoke<TaskSnapshot>("task_status", {
+        requestId: lastId.current,
+      });
+      if (snapshot.activeProcesses) throw Error("BLK-WINDOW-001");
+      setState(snapshot);
+      reported.current = snapshot.requestId;
+      current.current.bus.write(
+        "terminal",
+        snapshot.status === "exited" ? "info" : "warning",
+        "任务已结束",
+        { status: snapshot.status, exitCode: snapshot.exitCode },
+      );
+    }
+    setRequestId(undefined);
+    setPending(false);
+    gate.current = false;
   };
   return {
     state,
@@ -106,6 +139,7 @@ export function useTask(studio: Studio) {
     setBudget,
     start,
     cancel,
+    settle,
   };
 }
 export type StudioTask = ReturnType<typeof useTask>;

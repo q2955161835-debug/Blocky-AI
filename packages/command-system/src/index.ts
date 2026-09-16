@@ -41,6 +41,8 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["view.back", "view", "返回上一位置", "Alt+ArrowLeft"],
   ["run.start", "run", "运行", "Ctrl+Enter"],
   ["run.stop", "run", "停止", "Escape"],
+  ["run.pause", "run", "暂停 / 继续问答运行", ""],
+  ["window.exit", "window", "退出 Blocky Studio", ""],
   ["build.convert", "build", "从仓库快照生成候选", ""],
   ["build.surface", "build", "创建应用界面", ""],
   ["terminal.create", "terminal", "运行项目检查", ""],
