@@ -59,12 +59,12 @@ textarea {
   line-height: 1.65;
 }
 button.primary {
-  background: #4b83f5;
+  background: #2862cf;
   color: white;
   border: 1px solid #6392ef;
 }
 button.primary:hover {
-  background: #6092f5;
+  background: #326cdc;
 }
 small,
 .muted {
