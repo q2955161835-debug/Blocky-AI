@@ -8,3 +8,4 @@
 - Cargo 的项目级 `[patch.crates-io]` 使构建使用这份锁定源码；不修改用户 Cargo 缓存或系统依赖。约 0.84 MB 的完整发布源码为构建输入。
 - 维护责任：后续升级 Wry 时先确认上游是否支持此约束，再执行普通/测试包主帧功能、sandbox 子帧对象和 IPC 负例；上游修复后移除此补丁。当前这是明确的第三方维护成本，禁止当作零技术债。
 - 验证入口：`tests/e2e/studio.e2e.ts` 通过专用测试进程的 Playwright CDP 进入真实 opaque iframe，不用父窗口 DOM 访问模拟子帧。
+- 字节保留：上游 `wry/SECURITY.md:18` 原有一处尾随空格，未为满足空白检查而修改原始来源；项目自身 `git diff --check` 排除 `vendor/wry/**` 后检查，依赖源码仍按上游工件和上述两处补丁核对。
