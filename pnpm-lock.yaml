@@ -263,6 +263,15 @@ importers:
         specifier: workspace:*
         version: link:../resource-registry
 
+  packages/terminal-protocol:
+    dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
   packages/test-fixtures:
     dependencies:
       '@blocky/language-schema':

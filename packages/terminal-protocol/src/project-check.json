@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "blocky.task/v1alpha1",
+  "taskId": "blocky.project-check",
+  "displayName": "检查项目文件",
+  "source": "blocky",
+  "parameters": [
+    {"parameterId":"passes","valueType":"number","required":true,"validationRules":[{"ruleId":"passes-integer","kind":"integer","argument":true,"code":"BLK-TERM-101","message":"检查次数须为整数"},{"ruleId":"passes-min","kind":"minimum","argument":1,"code":"BLK-TERM-101","message":"至少检查一次"},{"ruleId":"passes-max","kind":"maximum","argument":360,"code":"BLK-TERM-101","message":"最多检查360次"}]},
+    {"parameterId":"interval-ms","valueType":"number","required":true,"validationRules":[{"ruleId":"interval-integer","kind":"integer","argument":true,"code":"BLK-TERM-101","message":"间隔须为整数"},{"ruleId":"interval-min","kind":"minimum","argument":0,"code":"BLK-TERM-101","message":"间隔不能为负数"},{"ruleId":"interval-max","kind":"maximum","argument":1000,"code":"BLK-TERM-101","message":"间隔最多1000毫秒"}]}
+  ],
+  "command":{"executableRef":"blocky.project-check","arguments":["${passes}","${interval-ms}"]},
+  "workingDirectoryRef":"project",
+  "allowedEnvironmentKeys":[],
+  "secretRefs":[],
+  "timeoutMs":30000,
+  "outputBudgetBytes":65536,
+  "concurrency":{"maxInstances":1,"overflow":"reject"},
+  "cancellation":{"gracePeriodMs":200,"terminateProcessGroup":true},
+  "successExitCodes":[0],
+  "platforms":["windows"],
+  "agentPolicy":"allow-scoped"
+}
