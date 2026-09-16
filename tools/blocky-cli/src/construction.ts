@@ -1,3 +1,4 @@
+import { userRegistryMap } from "./user-config";
 import {
   captureBlueprint,
   parseBlueprint,
@@ -6,9 +7,13 @@ import {
   type BlueprintBindings,
 } from "@blocky/block-catalog";
 import { ProjectController, projectDigest } from "@blocky/project-model";
-import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
-import { conversionCandidate } from "@blocky/conversion-core";
-import { draftSurface } from "@blocky/app-surface";
+import {
+  makePatch as makePatchDomain,
+  previewPatch as previewPatchDomain,
+  applyPatch as applyPatchDomain,
+} from "@blocky/builder-protocol";
+import { conversionCandidate as conversionCandidateDomain } from "@blocky/conversion-core";
+import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
 import { readProject, applyProjectPatch, validatePatch } from "./native-store";
 import { type Args, allow, required } from "./arguments";
 import { envelope, CliError } from "./protocol";
@@ -86,6 +91,50 @@ export async function construction(args: Args, signal: AbortSignal) {
     };
     allow(args, allowed[command], 3);
     const project = await readProject(args.words[2]);
+    const userRegistry = project.manifest.resources.some(
+      (r) => r.scope === "user",
+    )
+      ? await userRegistryMap()
+      : undefined;
+    const makePatch = (
+      project: Parameters<typeof makePatchDomain>[0],
+      operations: Parameters<typeof makePatchDomain>[1],
+    ) => makePatchDomain(project, operations, userRegistry);
+    const previewPatch = (
+      project: Parameters<typeof previewPatchDomain>[0],
+      patch: unknown,
+    ) => previewPatchDomain(project, patch, userRegistry);
+    const applyPatch = (
+      ...args: [
+        Parameters<typeof applyPatchDomain>[0],
+        unknown,
+        string[],
+        Parameters<typeof applyPatchDomain>[3]?,
+      ]
+    ) => applyPatchDomain(args[0], args[1], args[2], args[3], userRegistry);
+    const draftSurface = (
+      ...args: [
+        Parameters<typeof draftSurfaceDomain>[0],
+        string,
+        Parameters<typeof draftSurfaceDomain>[2],
+      ]
+    ) => draftSurfaceDomain(...args, userRegistry);
+    const conversionCandidate = (
+      ...args: [
+        Parameters<typeof conversionCandidateDomain>[0],
+        string,
+        string,
+        AbortSignal?,
+      ]
+    ) =>
+      conversionCandidateDomain(
+        args[0],
+        args[1],
+        args[2],
+        args[3],
+        userRegistry,
+      );
+
     if (command === "surface.create") {
       const draft = await draftSurface(
         project,

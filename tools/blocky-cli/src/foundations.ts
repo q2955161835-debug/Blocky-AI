@@ -18,11 +18,13 @@ import {
   upsertProjectResource,
   removeProjectResource,
   analyzeResourceReferences,
+  referenceUserResource,
 } from "@blocky/resource-registry";
 import { compileProject } from "@blocky/compiler";
 import { readProject, createProject } from "./native-store";
 import { allow, required, type Args } from "./arguments";
 import { envelope, CliError } from "./protocol";
+import { readUserRegistry, userRegistryMap } from "./user-config";
 export const foundationsHelp = [
   "project module create <file.blocky> --id <id> --name <name> --output <new.blocky> --json",
   "project module rename <file.blocky> --id <id> --name <name> --output <new.blocky> --json",
@@ -34,6 +36,7 @@ export const foundationsHelp = [
   "project resource set <file.blocky> --definition <resource.json> --output <new.blocky> --json",
   "project resource delete <file.blocky> --id <id> --output <new.blocky> --json",
   "project resource references <file.blocky> --id <id> --json",
+  "project resource link-user <file.blocky> --id <id> --output <new.blocky> --json",
 ];
 export async function foundationsCommand(args: Args) {
   if (args.words[0] !== "project") return;
@@ -56,6 +59,7 @@ export async function foundationsCommand(args: Args) {
     "resource.set": ["definition", "output"],
     "resource.delete": ["id", "output"],
     "resource.references": ["id"],
+    "resource.link-user": ["id", "output"],
   };
   const allowed = options[`${family}.${action}`];
   if (!allowed) throw new CliError(2, "BLK-CLI-002", "命令不存在。");
@@ -110,6 +114,11 @@ export async function foundationsCommand(args: Args) {
             );
       project.settings = { ...next, scope: "project" };
       project.manifest.settingsRef = "settings.json";
+    } else if (action === "link-user") {
+      const resource = (await readUserRegistry()).resources.find(
+        (r) => r.resourceId === required(args, "id"),
+      );
+      project = referenceUserResource(project, resource);
     } else if (action === "set") {
       const bytes = await readFile(required(args, "definition"));
       if (bytes.length > 1024 * 1024) throw Error();
@@ -125,7 +134,12 @@ export async function foundationsCommand(args: Args) {
       "输入的模块、设置或资源定义无效；原项目未改变。",
     );
   }
-  const compiled = await compileProject(project);
+  const compiled = await compileProject(
+    project,
+    project.manifest.resources.some((r) => r.scope === "user")
+      ? await userRegistryMap()
+      : undefined,
+  );
   await createProject(required(args, "output"), project);
   const result = envelope(command, {
     digest: await projectDigest(project),

@@ -103,10 +103,17 @@ fn execute(bytes: &[u8]) -> Value {
                 return Err("BLK-CLI-002".into());
             }
             let original = r.original_json.as_deref().ok_or("BLK-CLI-002")?;
-            let next = blocky_studio::patch_guard::validate(
+            let root = std::env::var_os("LOCALAPPDATA")
+                .map(std::path::PathBuf::from)
+                .ok_or("BLK-SET-001")?;
+            let store =
+                blocky_studio::user_store::UserStore::new(root.join("ai.blocky.studio/user"));
+            let registry = store.read("resources", "app")?.unwrap_or(Value::Null);
+            let next = blocky_studio::patch_guard::validate_with_registry(
                 original,
                 r.patch.as_ref().ok_or("BLK-CLI-002")?,
                 r.approved.as_deref().ok_or("BLK-CLI-002")?,
+                &registry,
             )?;
             if r.operation == "apply-patch" {
                 let source = Path::new(r.source.as_deref().ok_or("BLK-CLI-002")?);
@@ -153,7 +160,7 @@ fn execute(bytes: &[u8]) -> Value {
         return json!({"ok":false,"code":"BLK-CLI-002"});
     }
     match (r.operation.as_str(), r.path, r.files) {
-        ("version", None, None) => json!({"ok":true,"version":"0.1.0"}),
+        ("version", None, None) => json!({"ok":true,"version":"0.2.0"}),
         ("read", Some(path), None) => match project_store::read_archive(Path::new(&path)) {
             Ok(files) => json!({"ok":true,"files":files}),
             Err(_) => json!({"ok":false,"code":"BLK-LOAD-001"}),

@@ -1,1 +1,11 @@
-{"name":"@blocky/studio-host","version":"0.1.0","private":true,"scripts":{"tauri":"tauri"},"devDependencies":{"@tauri-apps/cli":"2.11.4"}}
+{
+  "name": "@blocky/studio-host",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4"
+  }
+}

@@ -39,6 +39,14 @@ pub struct Diagnostics {
     records: Vec<Record>,
     dropped: u64,
     dropped_important: u64,
+    #[serde(default)]
+    clear_audit: ClearAudit,
+}
+#[derive(Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct ClearAudit {
+    count: u64,
+    last_cleared_at_ms: u64,
 }
 impl Default for Diagnostics {
     fn default() -> Self {
@@ -47,6 +55,7 @@ impl Default for Diagnostics {
             records: vec![],
             dropped: 0,
             dropped_important: 0,
+            clear_audit: ClearAudit::default(),
         }
     }
 }
@@ -260,6 +269,9 @@ impl LogStore {
             if data.schema_version != "blocky.diagnostics/v1"
                 || data.dropped > SAFE_INTEGER
                 || data.dropped_important > data.dropped
+                || data.clear_audit.count > SAFE_INTEGER
+                || data.clear_audit.last_cleared_at_ms > SAFE_INTEGER
+                || (data.clear_audit.count == 0) != (data.clear_audit.last_cleared_at_ms == 0)
             {
                 return Err(ERROR.into());
             }
@@ -431,7 +443,18 @@ impl LogStore {
             quarantine(&self.path)?;
             state.health.quarantine_present = true;
         }
-        let next = Diagnostics::default();
+        let next = Diagnostics {
+            clear_audit: ClearAudit {
+                count: state
+                    .data
+                    .clear_audit
+                    .count
+                    .saturating_add(1)
+                    .min(SAFE_INTEGER),
+                last_cleared_at_ms: now_ms()?.min(SAFE_INTEGER),
+            },
+            ..Diagnostics::default()
+        };
         self.persist(&next, state.retention)?;
         state.data = next;
         state.health.corrupt_store = false;

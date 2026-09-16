@@ -1,14 +1,15 @@
 import { compileProject } from "@blocky/compiler";
-import type { Project, Json } from "@blocky/language-schema";
+import type { Project, Json, Resource } from "@blocky/language-schema";
 import { sourceFiles, validateSurface, type SurfaceDraft } from "./manifest";
 export async function draftSurface(
   project: Project,
   moduleId: string,
   intent: "explicit-user-command" | "agent-request",
+  userRegistry?: Map<string, Resource>,
 ): Promise<SurfaceDraft> {
   if (intent !== "explicit-user-command") throw Error("BLK-SURFACE-001");
   if (project.manifest.appSurfaces.length) throw Error("BLK-SURFACE-002");
-  const compiled = await compileProject(project),
+  const compiled = await compileProject(project, userRegistry),
     entries = compiled.interaction.entries.filter(
       (e) => e.moduleId === moduleId,
     );

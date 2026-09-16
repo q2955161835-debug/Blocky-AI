@@ -1,6 +1,6 @@
 import fixture from "../fixtures/haystack-bm25.json";
 import { z } from "zod";
-import { validRef, type Project } from "@blocky/language-schema";
+import { validRef, type Project, type Resource } from "@blocky/language-schema";
 import { projectDigest } from "@blocky/project-model";
 import { makePatch } from "@blocky/builder-protocol";
 export const lockedSnapshot = fixture;
@@ -60,6 +60,7 @@ export async function conversionCandidate(
   moduleId: string,
   resourceId: string,
   signal = new AbortController().signal,
+  userRegistry?: Map<string, Resource>,
 ) {
   signal.throwIfAborted();
   const snapshot = await validateSnapshot(fixture);
@@ -81,20 +82,24 @@ export async function conversionCandidate(
   if (!lineStart || !lines.some((line) => /^    def run\(/.test(line)))
     throw Error("BLK-CONVERT-001");
   const blockId = `block-${crypto.randomUUID()}`;
-  const patch = await makePatch(project, [
-    {
-      op: "block.add",
-      moduleId,
-      blockId,
-      payload: {
-        type: "core.knowledge.retrieve",
-        id: blockId,
-        fields: { RESOURCE: resourceId },
-        x: 420,
-        y: 100,
+  const patch = await makePatch(
+    project,
+    [
+      {
+        op: "block.add",
+        moduleId,
+        blockId,
+        payload: {
+          type: "core.knowledge.retrieve",
+          id: blockId,
+          fields: { RESOURCE: resourceId },
+          x: 420,
+          y: 100,
+        },
       },
-    },
-  ]);
+    ],
+    userRegistry,
+  );
   signal.throwIfAborted();
   return {
     schemaVersion: "blocky.conversion/v1alpha1" as const,

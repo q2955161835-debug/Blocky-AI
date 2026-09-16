@@ -7,6 +7,22 @@ export const emptyBindings = (): ShortcutBindings => ({
   schemaVersion: "blocky.shortcuts/v1",
   overrides: {},
 });
+export function shortcutNotice(keys: string[]): string | undefined {
+  return keys.some((key) =>
+    [
+      "Ctrl+W",
+      "Ctrl+T",
+      "Ctrl+L",
+      "Ctrl+R",
+      "Ctrl+Shift+R",
+      "F5",
+      "Ctrl+F",
+      "Ctrl+P",
+    ].includes(key),
+  )
+    ? "此组合由工作台接管；浏览器页面和用户终端保留自身按键行为。"
+    : undefined;
+}
 export function normalizeShortcut(value: string): string {
   const parts = value.trim().split("+");
   const key = parts.pop() ?? "";

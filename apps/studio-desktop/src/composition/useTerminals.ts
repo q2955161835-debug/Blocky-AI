@@ -66,6 +66,16 @@ export function useTerminals(studio: Studio) {
       studio.setMessage("终端结算未完成，请重试。");
     }
   };
-  return { sessions, selected, setSelected, pending, create, close };
+  return {
+    sessions,
+    selected,
+    setSelected,
+    pending,
+    create,
+    close,
+    direction: studio.session.terminalDirection,
+    setDirection: (direction: "single" | "horizontal" | "vertical") =>
+      studio.setSession((s) => ({ ...s, terminalDirection: direction })),
+  };
 }
 export type StudioTerminals = ReturnType<typeof useTerminals>;

@@ -2,12 +2,13 @@
 
 | 项目 | 内容 |
 |---|---|
-| 契约代际 | `v1alpha1` |
-| 冻结阶段 | 阶段 0 |
-| 首个代码消费者 | 阶段 1 Demo 正式 monorepo 最小纵切 |
-| 稳定性 | 可实现候选；阶段 2 稳定前允许显式迁移，不允许静默改义 |
+| 契约代际 | 阶段 0 的 `v1alpha1` 与阶段 2 的项目/IR `v1` 共存 |
+| 当前阶段 | 阶段 2：语言与桌面地基开发/验证中 |
+| 当前检查点 | `codex/feat-stage2-foundations` / `dd17227` |
+| 目标版本 | `0.2.0`（版本源码由阶段 2 主开发任务维护） |
+| 稳定性 | 当前实现候选；未完成阶段 2 验收，不得宣称完成或通过 |
 
-本目录是 Blocky 正式产品接口的唯一阶段 0 索引。它定义不同包、Host、桌面界面和未来 CLI 之间交换什么数据，不代表对应产品功能已经实现。`try/windows-core-spike/` 只提供验证证据，不是正式契约或包边界。
+本目录是 Blocky 正式产品接口索引。它定义不同包、Host、桌面界面和 CLI 之间交换什么数据；契约登记与源码消费者不等于对应产品功能已经完成。Windows Core 技术尖峰目录已从当前工作区删除，相关结果只作为 Git 历史证据，不是正式契约或包边界。
 
 ## 1. 事实优先级
 
@@ -17,7 +18,7 @@
 2. [竞品驱动完整开发计划](../../执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)；
 3. [ADR-005](../ADR-005-多模块应用界面与RPA边界.md)、[ADR-006](../ADR-006-底部面板终端与日志系统边界.md)及其专项产品设计；
 4. 设置中心、积木语言、兼容模板和 CLI/Skills 产品设计；
-5. Windows Core 尖峰及归档验收证据。
+5. Git 历史中的 Windows Core 尖峰及归档验收证据。
 
 发现冲突时必须修订当前基线或记录明确决策点，不能用未验证实现反向覆盖产品契约。
 
@@ -25,11 +26,13 @@
 
 | Schema 标识 | 负责对象 | 正文 | 存储边界 | 派生 | 首个消费者 |
 |---|---|---|---|---|---|
-| `blocky.project/v1alpha1` | Project Manifest 与模块索引 | [项目、模块与会话](01-项目模块与会话-v1alpha1.md) | 项目 | 否 | `project-model` |
+| `blocky.project/v1` | Project Manifest 与模块索引 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 项目 | 否 | `project-model` |
 | `blocky.workspace-session/v1alpha1` | 标签、底部面板与视图会话 | [项目、模块与会话](01-项目模块与会话-v1alpha1.md) | 本机用户会话 | 否 | `studio-desktop` |
-| `blocky.module-ir/v1alpha1` | 单模块 IR 与 source map | [IR、链接与诊断](02-IR链接与诊断-v1alpha1.md) | 缓存/内存 | 是 | `compiler` |
-| `blocky.project-ir/v1alpha1` | 跨模块链接结果 | [IR、链接与诊断](02-IR链接与诊断-v1alpha1.md) | 缓存/内存 | 是 | `runtime-core` |
+| `blocky.module-ir/v1` | 单模块 IR 与 source map | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 缓存/内存 | 是 | `compiler` |
+| `blocky.project-ir/v1` | 跨模块链接结果 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 缓存/内存 | 是 | `runtime-core` |
 | `blocky.diagnostic/v1alpha1` | 编译、配置、权限与迁移诊断 | [IR、链接与诊断](02-IR链接与诊断-v1alpha1.md) | 会话/诊断存储 | 是 | `ui-editor` |
+| `blocky.migration/v1` | 旧项目/尖峰格式到当前 v1 的显式迁移候选 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 临时候选 | 是 | `project-migration` |
+| `blocky.recovery/v1` | 崩溃后恢复副本与项目摘要 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 本机恢复存储 | 是 | `project-format` |
 | `blocky.interaction/v1alpha1` | Agent 运行入口 | [交互、工具与运行](03-交互工具运行与可观察性-v1alpha1.md) | 缓存/内存 | 是 | `ui-runtime` |
 | `blocky.tool/v1alpha1` | Tool 类型、权限与实现引用 | [交互、工具与运行](03-交互工具运行与可观察性-v1alpha1.md) | 项目引用/注册表 | 部分 | `runtime-core` |
 | `blocky.event/v1alpha1` | 运行时事实事件 | [交互、工具与运行](03-交互工具运行与可观察性-v1alpha1.md) | 有界运行存储 | 是 | `runtime-observability` |
@@ -46,10 +49,11 @@
 | `blocky.terminal/v1alpha1` | 用户终端会话与 Agent 进程隔离 | [底部面板、终端、日志与审计](06-底部面板终端日志与审计-v1alpha1.md) | 本机会话 | 否 | `terminal-protocol` |
 | `blocky.task/v1alpha1` | 项目具名任务 | [底部面板、终端、日志与审计](06-底部面板终端日志与审计-v1alpha1.md) | 项目/扩展资源 | 否 | `terminal-protocol` |
 | `blocky.audit/v1alpha1` | 高风险授权与外部副作用审计元数据 | [底部面板、终端、日志与审计](06-底部面板终端日志与审计-v1alpha1.md) | 有界本机审计存储 | 是 | `observability` |
+| `blocky.settings/v1` | 分层设置文档与继承值 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 应用/项目设置 | 否 | `settings-core` |
 
 ## 3. 唯一数据流
 
-阶段 1 新增注册（2026-09-16 用户授权同步 CLI）：`blocky.cli/v1` 和 `blocky.project-io/v1alpha1`，定义与消费者见 [CLI 与项目存储协议](08-CLI与项目存储协议.md)。不改变上述阶段 0 冻结 Schema。
+阶段 1 新增注册（2026-09-16 用户授权同步 CLI）：`blocky.cli/v1` 和 `blocky.project-io/v1alpha1`，定义与消费者见 [CLI 与项目存储协议](08-CLI与项目存储协议.md)。阶段 2 将项目、模块 IR 与项目 IR 提升为 `v1`，旧 `v1alpha1` 和尖峰格式只能经 `blocky.migration/v1` 显式迁移，不改变未改协议的 alpha 版本。
 
 D 增补注册：`blocky.blueprint/v1alpha1`、`blocky.source-snapshot/v1alpha1`、`blocky.conversion/v1alpha1`，以及冻结 SemanticPatch 的当前支持子集，见 [蓝图与候选补丁](09-蓝图与候选补丁.md)。
 
@@ -100,3 +104,13 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 - `fixtures/invalid/`：缺失导出、隐式应用界面、Agent 附加用户终端、无人值守 RPA、未脱敏日志。
 
 夹具是正式接口的长期回归输入，不代表相应真实服务已经实现。
+
+## 6. 阶段 2 语言与桌面地基入口
+
+[阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md)记录当前源码检查点 `dd17227` 的实现边界。它是开发/验证中的契约补充，不是阶段 2 通过报告。
+
+当前已进入正式实现的部分包括：`blocky.project/v1`、`blocky.module-ir/v1` 与 `blocky.project-ir/v1`；显式 `blocky.migration/v1` 迁移候选；按模块缓存的增量编译；六个文本语言原子；统一命令/快捷键、分层设置、类型化资源；Windows ConPTY 用户终端；登记任务与 Agent capability 票据；结构化日志与有界存储；`blocky.recovery/v1` 恢复副本；以及只在 Host 内消费的秘密存储。实际 Provider、RAG、动态页面生成、RPA、完整构建助手、六套兼容适配器和官方 Skills 仍按后续阶段处理。
+
+除上述明确提升版本的项目、IR、迁移、恢复和设置文档外，`blocky.interaction/v1alpha1`、`blocky.tool/v1alpha1`、`blocky.resource/v1alpha1`、`blocky.command/v1alpha1`、`blocky.setting/v1alpha1`、`blocky.app-surface/v1alpha1`、`blocky.frontend-bridge/v1alpha1`、`blocky.rpa/v1alpha1`、`blocky.window/v1alpha1`、`blocky.log/v1alpha1`、`blocky.terminal/v1alpha1`、`blocky.task/v1alpha1` 与 `blocky.audit/v1alpha1` 保持原版本；本阶段不做无语义依据的批量改名。
+
+阶段 2 仍需完成源码、Host、CLI、桌面、原生 E2E、长稳、发行候选和独立验收的组合读回。没有当前提交的测试与验收证据时，只能报告“开发/验证中”；真实大模型 API 调用为“否”。

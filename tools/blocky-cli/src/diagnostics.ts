@@ -15,7 +15,11 @@ export async function exportDiagnostics(args: Args) {
     if (!Array.isArray(raw) || raw.length > 100000) throw Error();
     const counts =
       input && !Array.isArray(input) && typeof input === "object"
-        ? (input as { dropped?: unknown; droppedImportant?: unknown })
+        ? (input as {
+            dropped?: unknown;
+            droppedImportant?: unknown;
+            clearAudit?: unknown;
+          })
         : {};
     const dropped = counts.dropped ?? 0,
       droppedImportant = counts.droppedImportant ?? 0;
@@ -29,6 +33,30 @@ export async function exportDiagnostics(args: Args) {
       droppedImportant > dropped
     )
       throw Error();
+    let clearAudit: { count: number; lastClearedAtMs: number } | undefined;
+    if (counts.clearAudit !== undefined) {
+      const audit = counts.clearAudit as Record<string, unknown>;
+      if (
+        !audit ||
+        typeof audit !== "object" ||
+        Array.isArray(audit) ||
+        Object.keys(audit).some(
+          (key) => !["count", "lastClearedAtMs"].includes(key),
+        ) ||
+        typeof audit.count !== "number" ||
+        !Number.isSafeInteger(audit.count) ||
+        audit.count < 0 ||
+        typeof audit.lastClearedAtMs !== "number" ||
+        !Number.isSafeInteger(audit.lastClearedAtMs) ||
+        audit.lastClearedAtMs < 0 ||
+        (audit.count === 0) !== (audit.lastClearedAtMs === 0)
+      )
+        throw Error();
+      clearAudit = {
+        count: audit.count,
+        lastClearedAtMs: audit.lastClearedAtMs,
+      };
+    }
     let records = raw.map((record) => diagnosticRecord(record as LogRecord));
     const from = args.options.get("from"),
       to = args.options.get("to");
@@ -68,6 +96,7 @@ export async function exportDiagnostics(args: Args) {
       records,
       dropped,
       droppedImportant,
+      ...(clearAudit ? { clearAudit } : {}),
     };
     const result = envelope("diagnostics.export", {
       recordCount: records.length,

@@ -4,6 +4,36 @@ fn dir() -> tempfile::TempDir {
     std::fs::create_dir_all(&p).unwrap();
     tempfile::tempdir_in(p).unwrap()
 }
+#[test]
+fn explicit_clear_audit_survives_reopen_retention_and_legacy_documents() {
+    let d = dir();
+    let p = d.path().join("diagnostics.json");
+    std::fs::write(&p, br#"{"schemaVersion":"blocky.diagnostics/v1","records":[],"dropped":0,"droppedImportant":0}"#).unwrap();
+    let s = LogStore::open(p.clone());
+    assert_eq!(s.read(None).unwrap().clear_audit.count, 0);
+    s.clear().unwrap();
+    let first = s.read(None).unwrap().clear_audit;
+    assert_eq!(first.count, 1);
+    assert!(first.last_cleared_at_ms > 0);
+    drop(s);
+    let s = LogStore::open(p.clone());
+    s.configure(0, 1024).unwrap();
+    assert_eq!(s.read(None).unwrap().clear_audit.count, 1);
+    s.clear().unwrap();
+    assert_eq!(
+        LogStore::open(p.clone())
+            .read(None)
+            .unwrap()
+            .clear_audit
+            .count,
+        2
+    );
+    assert!(std::fs::metadata(&p).unwrap().len() <= 1024);
+    let mut invalid = serde_json::to_value(s.read(None).unwrap()).unwrap();
+    invalid["clearAudit"]["count"] = serde_json::json!(SAFE_INTEGER + 1);
+    std::fs::write(&p, serde_json::to_vec(&invalid).unwrap()).unwrap();
+    assert!(LogStore::open(p).read(None).is_err());
+}
 fn record(timestamp: &str, channel: &str, level: &str) -> Record {
     Record {
         timestamp: timestamp.into(),

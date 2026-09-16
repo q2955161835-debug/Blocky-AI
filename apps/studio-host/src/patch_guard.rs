@@ -76,8 +76,13 @@ fn definition(kind: &str) -> Result<Value, String> {
         "../../../packages/block-catalog/src/definitions.json"
     ))
     .map_err(|_| INVALID)?;
+    let text_catalog: Value = serde_json::from_str(include_str!(
+        "../../../packages/block-catalog/src/text-primitives.json"
+    ))
+    .map_err(|_| INVALID)?;
     array(&catalog)?
         .iter()
+        .chain(array(&text_catalog)?.iter())
         .find(|v| v["type"] == kind)
         .cloned()
         .ok_or_else(|| INVALID.into())
@@ -114,17 +119,39 @@ fn block_shape(
     let def = definition(text(&block["type"])?)?;
     if let Some(fields) = block.get("fields") {
         for (key, value) in fields.as_object().ok_or(INVALID)? {
+            let is_json = def["jsonFields"]
+                .as_array()
+                .is_some_and(|a| a.iter().any(|f| f == key));
             if !array(&def["fields"])?.iter().any(|f| f == key)
-                || value
-                    .as_str()
-                    .is_none_or(|s| s.is_empty() || s.len() > 64000)
+                || (!is_json
+                    && value
+                        .as_str()
+                        .is_none_or(|s| s.is_empty() || s.len() > 64000))
+                || (is_json && value.to_string().len() > 64000)
             {
                 return Err(INVALID.into());
             }
         }
     }
     for field in array(&def["fields"])? {
-        text(&block["fields"][text(field)?])?;
+        let field_name = text(field)?;
+        if block["fields"].get(field_name).is_none()
+            && def["optionalFields"]
+                .as_array()
+                .is_some_and(|a| a.iter().any(|f| f == field))
+        {
+            continue;
+        }
+        if def["jsonFields"]
+            .as_array()
+            .is_some_and(|a| a.iter().any(|f| f == field))
+        {
+            if block["fields"].get(field_name).is_none() {
+                return Err(INVALID.into());
+            }
+        } else {
+            text(&block["fields"][field_name])?;
+        }
         if let Some(options) = def["fieldOptions"].get(text(field)?) {
             if !array(options)?.contains(&block["fields"][text(field)?]) {
                 return Err(INVALID.into());
@@ -187,30 +214,42 @@ fn find_mut<'a>(block: &'a mut Value, id: &str) -> Option<&'a mut Value> {
     }
     None
 }
-fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
-    fn visit(b: &Value, p: &Value, out: &mut BTreeSet<String>) -> Result<(), String> {
+fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, String> {
+    fn visit(
+        b: &Value,
+        p: &Value,
+        registry: &Value,
+        out: &mut BTreeSet<String>,
+    ) -> Result<(), String> {
         if b["disabled"] != true {
             let kind = text(&b["type"])?;
             if kind == "core.knowledge.retrieve" || kind == "core.model.compose" {
                 let resource_id = text(&b["fields"]["RESOURCE"])?;
-                let resource = &p["resources"][resource_id];
                 let expected = if kind == "core.knowledge.retrieve" {
                     "knowledge"
                 } else {
                     "model"
                 };
-                if resource["kind"] != expected || resource["scope"] != "project" {
-                    return Err(INVALID.into());
-                }
                 let reference = array(&p["manifest"]["resources"])?
                     .iter()
-                    .find(|r| {
-                        r["resourceId"] == resource_id
-                            && r["kind"] == expected
-                            && r["scope"] == "project"
-                    })
+                    .find(|r| r["resourceId"] == resource_id && r["kind"] == expected)
                     .ok_or(INVALID)?;
-                if resource["resourceId"] != resource_id {
+                let resource = if reference["scope"] == "project" {
+                    &p["resources"][resource_id]
+                } else if reference["scope"] == "user"
+                    && registry["schemaVersion"] == "blocky.resource-registry/v1"
+                {
+                    array(&registry["resources"])?
+                        .iter()
+                        .find(|r| r["resourceId"] == reference["definitionRef"])
+                        .ok_or(INVALID)?
+                } else {
+                    return Err(INVALID.into());
+                };
+                if resource["resourceId"] != resource_id
+                    || resource["kind"] != expected
+                    || resource["scope"] != reference["scope"]
+                {
                     return Err(INVALID.into());
                 }
                 for binding in array(&resource["secretBindings"])? {
@@ -228,13 +267,13 @@ fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
             if let Some(inputs) = b.get("inputs") {
                 for input in inputs.as_object().ok_or(INVALID)?.values() {
                     if let Some(child) = input.get("block").or_else(|| input.get("shadow")) {
-                        visit(child, p, out)?;
+                        visit(child, p, registry, out)?;
                     }
                 }
             }
         }
         if let Some(next) = b.get("next") {
-            visit(&next["block"], p, out)?;
+            visit(&next["block"], p, registry, out)?;
         }
         Ok(())
     }
@@ -247,12 +286,20 @@ fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
     }
     for workspace in project["workspaces"].as_object().ok_or(INVALID)?.values() {
         for block in array(&workspace["blocks"]["blocks"])? {
-            visit(block, project, &mut result)?;
+            visit(block, project, registry, &mut result)?;
         }
     }
     Ok(result)
 }
 pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Result<Value, String> {
+    validate_with_registry(original_json, patch, approved, &Value::Null)
+}
+pub fn validate_with_registry(
+    original_json: &str,
+    patch: &Value,
+    approved: &[String],
+    registry: &Value,
+) -> Result<Value, String> {
     if original_json.len() > 8 * 1024 * 1024
         || patch.to_string().len() > 2 * 1024 * 1024
         || approved.len() > 100
@@ -320,7 +367,7 @@ pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Resu
     {
         return Err(INVALID.into());
     }
-    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != "0.1.0" {
+    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != "0.2.0" {
         return Err(INVALID.into());
     }
     if patch["projectId"] != original["manifest"]["projectId"]
@@ -371,8 +418,16 @@ pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Resu
                     .iter_mut()
                     .find_map(|b| find_mut(b, id))
                     .ok_or(INVALID)?;
+                let def = definition(text(&block["type"])?)?;
                 for (key, value) in op["payload"]["fields"].as_object().ok_or(INVALID)? {
-                    block["fields"][key] = value.clone();
+                    block["fields"][key] = if def["jsonFields"]
+                        .as_array()
+                        .is_some_and(|a| a.iter().any(|f| f == key))
+                    {
+                        strict_json::parse(text(value)?.as_bytes())?
+                    } else {
+                        value.clone()
+                    };
                 }
             }
             _ => return Err(INVALID.into()),
@@ -386,8 +441,8 @@ pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Resu
     }
     project_files(&next)?;
     crate::patch_links::validate(&next)?;
-    let before = permissions(&original)?;
-    let after = permissions(&next)?;
+    let before = permissions(&original, registry)?;
+    let after = permissions(&next, registry)?;
     let delta: BTreeSet<String> = after.difference(&before).cloned().collect();
     let declared: BTreeSet<String> = array(&patch["permissionDelta"])?
         .iter()

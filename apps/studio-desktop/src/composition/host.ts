@@ -47,25 +47,3 @@ export type Preferences = {
   view: "beginner" | "professional";
   minimizeToTray: boolean;
 };
-export const defaults: Preferences = {
-  reduceMotion: false,
-  view: "professional",
-  minimizeToTray: true,
-};
-export function readPreferences(): Preferences {
-  try {
-    const value = JSON.parse(
-      localStorage.getItem("blocky.preferences") ?? "{}",
-    );
-    return {
-      reduceMotion: value.reduceMotion === true,
-      view: value.view === "beginner" ? "beginner" : "professional",
-      minimizeToTray: value.minimizeToTray !== false,
-    };
-  } catch {
-    return { ...defaults };
-  }
-}
-export function writePreferences(value: Preferences) {
-  localStorage.setItem("blocky.preferences", JSON.stringify(value));
-}

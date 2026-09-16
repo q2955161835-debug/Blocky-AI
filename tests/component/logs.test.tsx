@@ -28,6 +28,8 @@ it("persists overflow counts after a failed write without exceeding the queue bo
     },
   };
   const studio = {
+    session: { outputChannel: "" },
+    setSession: vi.fn(),
     settings: { ready: true, layers: {} },
     bus: {
       subscribe: (fn: typeof receive) => {

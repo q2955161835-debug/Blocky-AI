@@ -15,8 +15,10 @@ type LogStats = {
   };
 };
 export function useLogs(studio: Studio) {
-  const [revision, bump] = useState(0),
-    [channel, setChannel] = useState("");
+  const [revision, bump] = useState(0);
+  const channel = studio.session.outputChannel;
+  const setChannel = (channel: string) =>
+    studio.setSession((s) => ({ ...s, outputChannel: channel }));
   const [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [stats, setStats] = useState<LogStats>();
@@ -126,10 +128,19 @@ export function useLogs(studio: Studio) {
     clearing.current = true;
     try {
       if (writing.current) await writing.current.catch(() => {});
+      await policy.current.catch(() => {});
       await invoke("clear_diagnostics");
       queue.current = [];
       losses.current = { dropped: 0, droppedImportant: 0 };
       error.current = false;
+      policy.current = invoke<LogStats>("configure_diagnostics", {
+        days,
+        maxBytes,
+      }).then((value) => {
+        setStats(value);
+        policyReady.current = true;
+      });
+      await policy.current;
       studio.setMessage("已清除本机诊断存储，当前视图保留。");
     } catch {
       studio.setMessage("诊断存储清除失败。");

@@ -24,6 +24,11 @@ test("migration rejects future versions and unsupported blocks with source diagn
   manifest.schemaVersion = "blocky.project/v7";
   files["project.json"] = JSON.stringify(manifest);
   expect((await migration.migrateProject(files)).project).toBeUndefined();
+  manifest.schemaVersion = "blocky.project/v1";
+  manifest.format.minimumReaderVersion = "99.0.0";
+  files["project.json"] = JSON.stringify(manifest);
+  expect((await migration.migrateProject(files)).project).toBeUndefined();
+  manifest.format.minimumReaderVersion = "0.1.0";
   manifest.schemaVersion = "blocky.project/v1alpha1";
   files["project.json"] = JSON.stringify(manifest);
   const path = manifest.modules[0].workspaceRef;

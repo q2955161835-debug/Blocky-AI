@@ -5,6 +5,7 @@ import {
   parseBindings,
   normalizeShortcut,
   bindingsFor,
+  shortcutNotice,
 } from "../src/index";
 describe("custom keyboard bindings", () => {
   it("normalizes, persists, disables and restores commands without mutating defaults", () => {
@@ -29,5 +30,10 @@ describe("custom keyboard bindings", () => {
     expect(
       bindingsFor(changeBinding(disabled, "file.save", undefined), "file.save"),
     ).toEqual(["Ctrl+S"]);
+  });
+  it("reports host takeover for browser/WebView reserved combinations", () => {
+    expect(shortcutNotice(["Ctrl+W"])).toContain("工作台接管");
+    expect(shortcutNotice(["Ctrl+Shift+R", "F5"])).toContain("工作台接管");
+    expect(shortcutNotice(["Ctrl+Shift+L"])).toBeUndefined();
   });
 });

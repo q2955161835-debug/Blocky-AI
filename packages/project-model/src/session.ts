@@ -20,6 +20,8 @@ export type Session = {
   width: number;
   leftWidth: number;
   rightWidth: number;
+  outputChannel: string;
+  terminalDirection: "single" | "horizontal" | "vertical";
   recentTabs: string[];
   closedTabs: string[];
   viewports: Record<string, CanvasViewport>;
@@ -89,6 +91,8 @@ export function restoreSession(project: Project, input: unknown): Session {
         width: panel.widthPx,
         leftWidth: object(raw.sidebars).leftWidth,
         rightWidth: object(raw.sidebars).rightWidth,
+        outputChannel: object(panel.filters).channel,
+        terminalDirection: object(raw.terminalLayout).direction,
         recentTabs: raw.recentTabs,
         closedTabs: raw.closedTabs,
         tabs: tabs.map(key),
@@ -132,6 +136,21 @@ export function restoreSession(project: Project, input: unknown): Session {
     width: bounded(raw.width, 360, 240, 700),
     leftWidth: bounded(raw.leftWidth, 240, 180, 400),
     rightWidth: bounded(raw.rightWidth, 340, 240, 520),
+    outputChannel: [
+      "runtime",
+      "compiler",
+      "host",
+      "terminal",
+      "preview",
+      "builder",
+    ].includes(String(raw.outputChannel))
+      ? String(raw.outputChannel)
+      : "",
+    terminalDirection:
+      raw.terminalDirection === "horizontal" ||
+      raw.terminalDirection === "vertical"
+        ? raw.terminalDirection
+        : "single",
     recentTabs: list(raw.recentTabs, ids, 100),
     closedTabs: list(raw.closedTabs, ids, 20),
     diagnostics,
@@ -184,7 +203,7 @@ export function serializeSession(project: Project, session: Session) {
       maximized: s.maximized,
       dock: s.dock,
       widthPx: s.width,
-      filters: {},
+      filters: { channel: s.outputChannel },
     },
     canvasViews: Object.entries(s.viewports).map(([id, v]) => ({
       tabId: `tab-${id}`,
@@ -194,7 +213,7 @@ export function serializeSession(project: Project, session: Session) {
     recentTabs: s.recentTabs,
     closedTabs: s.closedTabs,
     sidebars: { leftWidth: s.leftWidth, rightWidth: s.rightWidth },
-    terminalLayout: { direction: "single", sessionIds: [] },
+    terminalLayout: { direction: s.terminalDirection, sessionIds: [] },
   };
 }
 function bounded(value: unknown, fallback: number, min: number, max: number) {

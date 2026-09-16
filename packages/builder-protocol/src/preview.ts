@@ -1,4 +1,8 @@
-import { canonicalJson, type Project } from "@blocky/language-schema";
+import {
+  canonicalJson,
+  type Project,
+  type Resource,
+} from "@blocky/language-schema";
 import { projectDigest, findBlock } from "@blocky/project-model";
 import { compileProject, walkNodes } from "@blocky/compiler";
 import { resolveResource } from "@blocky/resource-registry";
@@ -9,8 +13,11 @@ import { surfaceFromProject } from "@blocky/app-surface";
 const same = (a: string[], b: string[]) =>
   canonicalJson([...new Set(a)].sort()) ===
   canonicalJson([...new Set(b)].sort());
-async function permissions(project: Project) {
-  const compiled = await compileProject(project),
+async function permissions(
+  project: Project,
+  userRegistry?: Map<string, Resource>,
+) {
+  const compiled = await compileProject(project, userRegistry),
     values = new Set(compiled.tools.flatMap((t) => t.permissions));
   for (const surface of project.manifest.appSurfaces)
     surfaceFromProject(project, surface.surfaceId).manifest.permissions.forEach(
@@ -23,13 +30,18 @@ async function permissions(project: Project) {
           project,
           String(node.fields.RESOURCE),
           "model",
+          userRegistry,
         );
         resource.capabilityRequirements.forEach((p) => values.add(p));
       }
     }
   return { compiled, values };
 }
-export async function previewPatch(project: Project, input: unknown) {
+export async function previewPatch(
+  project: Project,
+  input: unknown,
+  userRegistry?: Map<string, Resource>,
+) {
   const patch = parsePatch(input);
   if (
     patch.projectId !== project.manifest.projectId ||
@@ -39,8 +51,8 @@ export async function previewPatch(project: Project, input: unknown) {
   if (patch.catalogVersion !== catalogVersion) throw Error("BLK-PATCH-002");
   const next = projectWithOperations(project, patch.operations);
   const [before, after] = await Promise.all([
-    permissions(project),
-    permissions(next),
+    permissions(project, userRegistry),
+    permissions(next, userRegistry),
   ]);
   if (after.compiled.diagnostics.some((d) => d.severity === "error"))
     throw Error("BLK-PATCH-004");
@@ -87,11 +99,12 @@ export async function previewPatch(project: Project, input: unknown) {
 export async function makePatch(
   project: Project,
   operations: PatchOperation[],
+  userRegistry?: Map<string, Resource>,
 ) {
   const next = projectWithOperations(project, operations);
   const [before, after] = await Promise.all([
-    permissions(project),
-    permissions(next),
+    permissions(project, userRegistry),
+    permissions(next, userRegistry),
   ]);
   const patch = {
     schemaVersion: "blocky.patch/v1alpha1" as const,

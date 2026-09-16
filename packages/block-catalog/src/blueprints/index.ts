@@ -14,7 +14,7 @@ const block: z.ZodType<WorkspaceBlock> = z.lazy(() =>
     .object({
       type: z.string().max(200),
       id,
-      fields: z.record(z.string(), z.string().max(16000)).optional(),
+      fields: z.record(z.string(), z.json()).optional(),
       inputs: z
         .record(
           z.string(),
@@ -38,7 +38,7 @@ const schema = z
     blueprintId: id,
     displayName: z.string().min(1).max(100),
     version: z.literal(1),
-    catalogVersion: z.literal(catalogVersion),
+    catalogVersion: z.enum([catalogVersion, "0.1.0"]),
     source: z
       .object({ kind: z.literal("personal"), projectId: id, moduleId: id })
       .strict(),
@@ -91,8 +91,36 @@ function guard(input: unknown) {
   let count = 0;
   const visit = (v: unknown, depth: number) => {
     if (++count > 10000 || depth > 60) throw Error("BLK-BLUEPRINT-001");
-    if (v && typeof v === "object")
-      Object.values(v).forEach((value) => visit(value, depth + 1));
+    if (
+      typeof v === "string" &&
+      /\bBearer\s+\S+|(?:password|token|api[_-]?key)\s*[=:]\s*\S+/i.test(v)
+    )
+      throw Error("BLK-BLUEPRINT-001");
+    if (v && typeof v === "object") {
+      for (const [key, value] of Object.entries(v)) {
+        if (
+          [
+            "apikey",
+            "authorization",
+            "password",
+            "cookie",
+            "accesstoken",
+            "refreshtoken",
+            "clientsecret",
+            "privatekey",
+            "token",
+            "secret",
+            "credential",
+            "credentials",
+            "bearer",
+            "sessiontoken",
+            "signingkey",
+          ].includes(key.toLowerCase().replace(/[_-]/g, ""))
+        )
+          throw Error("BLK-BLUEPRINT-001");
+        visit(value, depth + 1);
+      }
+    }
   };
   visit(input, 0);
 }
@@ -114,8 +142,16 @@ function validateRoots(roots: WorkspaceBlock[]) {
       throw Error("BLK-BLUEPRINT-001");
     for (const field of definition.fields) {
       const value = b.fields?.[field];
+      if (value === undefined && definition.optionalFields?.includes(field))
+        continue;
+      if (definition.jsonFields?.includes(field)) {
+        if (value === undefined || JSON.stringify(value).length > 16000)
+          throw Error("BLK-BLUEPRINT-001");
+        continue;
+      }
       if (
         typeof value !== "string" ||
+        value.length > 16000 ||
         !value ||
         /\bBearer\s+\S+|(?:password|token|api[_-]?key)\s*[=:]\s*\S+/i.test(
           value,

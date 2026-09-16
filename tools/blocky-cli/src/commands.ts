@@ -22,7 +22,7 @@ import {
   userRegistryMap,
 } from "./user-config";
 export const help = {
-  version: "0.1.0",
+  version: "0.2.0",
   commands: [
     ...foundationsHelp,
     ...userConfigHelp,
@@ -73,8 +73,8 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope("version", {
-        cli: "0.1.0",
-        core: "0.1.0",
+        cli: "0.2.0",
+        core: "0.2.0",
         projectSchema: "blocky.project/v1",
         skills: null,
       }),
@@ -92,7 +92,7 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        cli: "0.1.0",
+        cli: "0.2.0",
         nativeStore: await doctor(),
         runtime: "deterministic",
         modelApiCalled: false,

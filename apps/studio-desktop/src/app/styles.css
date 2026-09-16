@@ -921,14 +921,28 @@ dialog.popup p {
   overflow: hidden;
   padding: 6px 10px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .user-terminals[hidden],
 .user-terminal-view[hidden] {
   display: none;
 }
 .user-terminal-view {
-  height: calc(100% - 34px);
+  height: 100%;
+  flex: 1;
+  min-width: 0;
   min-height: 100px;
+}
+.terminal-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 8px;
+  overflow: auto;
+}
+.terminal-layout-vertical {
+  flex-direction: column;
 }
 .terminal-toolbar {
   display: flex;

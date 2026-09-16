@@ -2,7 +2,7 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 const INVALID: &str = "BLK-PATCH-004";
 fn active<'a>(block: &'a Value, owner: bool, out: &mut Vec<(&'a Value, bool)>) {
-    let owner = owner || block["type"] == "core.agent";
+    let owner = owner || block["type"] == "core.agent" || block["type"] == "core.agent.define";
     if block["disabled"] != true {
         out.push((block, owner));
         if let Some(inputs) = block["inputs"].as_object() {
@@ -52,7 +52,10 @@ pub fn validate(project: &Value) -> Result<(), String> {
                     }
                 }
             }
-            if block["type"] == "core.interaction.chat" && !owner {
+            if (block["type"] == "core.interaction.chat"
+                || block["type"] == "core.interaction.chat_entry")
+                && !owner
+            {
                 return Err(INVALID.into());
             }
             if block["type"] != "core.module.call" {
@@ -85,7 +88,7 @@ pub fn validate(project: &Value) -> Result<(), String> {
             if export["kind"] == "agent"
                 && target_roots
                     .iter()
-                    .filter(|b| b["type"] == "core.agent")
+                    .filter(|b| b["type"] == "core.agent" || b["type"] == "core.agent.define")
                     .count()
                     != 1
             {

@@ -1,1 +1,11 @@
-{"name":"@blocky/terminal-protocol","version":"0.1.0","private":true,"type":"module","exports":"./src/index.ts","dependencies":{"@blocky/language-schema":"workspace:*","zod":"4.4.3"}}
+{
+  "name": "@blocky/terminal-protocol",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "zod": "4.4.3"
+  }
+}

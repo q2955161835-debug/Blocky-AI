@@ -4,15 +4,15 @@ Blocky 是一款面向普通人和学校教育的“积木式 AI 创作软件”
 
 ![Blocky 已批准的 Windows Logo（标识）](logo/logo.png)
 
-当前阶段已形成完整积木与主流 Agent 兼容设计基线，并在 `try/windows-core-spike/` 完成一个可删除的 Windows Core（Windows 核心）原生技术尖峰。该尖峰已通过 L3 验收，但不是正式 Blocky 应用，也不是可分发产品。
+当前阶段进入阶段 2“语言与桌面地基”开发。Windows Core（Windows 核心）技术尖峰曾作为可删除实验完成验证，目录已从当前工作区删除，相关结论只保留在 Git 历史中；它不是正式 Blocky 应用，也不是可分发产品。
 
-Windows Core 与未来移动使用端所需的本机开发工具链已准备，并提供可复现的[开发环境检查入口](doc/开发/开发环境.md)。Windows Core 技术结论为 GO（继续）；阶段 1 正式 monorepo 与共享包已按确认范围建立并完成独立验收。尖峰不作为正式产品代码入口；完整积木目录和后续发行能力仍未完成。
+本机开发工具链提供可复现的[开发环境检查入口](doc/开发/开发环境.md)。阶段 1 正式 monorepo 与共享包已按确认范围建立并完成独立验收；阶段 2 在 `codex/feat-stage2-foundations` 的 `dd17227` 检查点继续开发与验证，目标版本为 `0.2.0`，当前尚未完成或通过。
 
 ## 当前开发入口（2026-09-17）
 
-正式 monorepo 已建立，阶段 1 已按用户确认范围通过 S1-01–S1-12。最终普通候选来源为 `1e106a2`，发行目录为 `dist/Blocky-Studio-0.1.0-ui-fix/`，已完成独立 GUI、组件、CLI、Host、发行扫描和包装复验；详见[阶段 1 正式验收报告](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)及[验收证据清单](doc/验收/任务/阶段1证据/)。Windows 工具链检查26/26。
+正式 monorepo 已建立，阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 当前源码检查点为 `dd17227`，已进入 v1 项目/IR、显式迁移、增量编译、六个文本语言原子、统一命令、设置/资源、真实 Windows ConPTY、类型化任务、日志、会话恢复和秘密存储的开发/验证；阶段 2 尚无通过结论。阶段 1 的 GUI、组件、CLI、Host、发行扫描和包装证据见[阶段 1 正式验收报告](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)及[验收证据清单](doc/验收/任务/阶段1证据/)。
 
-最新测试/诊断源码 `970d815` 的 `pnpm check:core` 与 Full 组成命令均退出 0；Full 完成 360/360 个五秒循环、30/30 次真实 Host 保存重开，耗时 1,803,544 ms，堆增长 6,660,204 字节。前两次中止和首次 `undo failed` 原因不明的残余波动风险仍按正式报告保留；根 `pnpm check:full` 别名未另行重复执行。真实大模型 API 调用为“否”，远端 CI 未执行。后续阶段能力仍未实现。
+阶段 1 的 `970d815` Core/Full 结果、首次 `undo failed` 残余风险和普通候选证据均为绑定历史提交的记录，不能作为阶段 2 当前结果。阶段 2 本轮不宣称测试、验收或发行通过；真实大模型 API 调用为“否”，远端 CI 未执行。
 
 用户要求 CLI 与领域同步开发，优先通过 CLI 验证。CLI 支持目录、个人蓝图、项目创建/配置/检查/编译/运行、锁定仓库候选、页面补丁、注册任务及诊断导出，共用桌面领域和 Rust 存储；用法见 [CLI 说明](tools/blocky-cli/README.md)。真实大模型 API 调用：否；未真实调用外部大模型 API。
 
@@ -29,17 +29,17 @@ pnpm dev
 pnpm build
 ```
 
-原生自动化包：`pnpm test:e2e:build` 后运行 `pnpm test:e2e`。`pnpm check:core` 与 `pwsh -NoProfile -File scripts/check-native-core.ps1 full` 已按组成命令分别执行并通过；`pnpm check:full` 是顺序别名，未另行重复执行。完整 Full 含 360 个五秒循环及 30 次不同内容的 Rust 保存重开。端口检查可单独执行 `scripts/check-native-core.ps1 core|full`，不能替代普通窗口验收或冒充聚合命令单独通过。
+原生自动化包：`pnpm test:e2e:build` 后运行 `pnpm test:e2e`。阶段 2 的正式门禁仍按 `pnpm check:core`、`pnpm check:full`、`pnpm build:release`、`pnpm check:release` 和 `pnpm package:release` 执行；本轮未重复运行。完整 Full 含 360 个五秒循环及 30 次不同内容的 Rust 保存重开，不能缩短后声称完整长稳通过。
 
 普通开发包从默认 `apps/studio-host/target/release/blocky-studio.exe` 输出；发行隔离构建在 `try/release-native-target/release/`，测试包在 `try/native-e2e-target/release/`。Windows iframe 隔离使用锁定 Wry 修复，来源和维护责任见 [补丁说明](vendor/WRY-PATCH.md)。
 
-可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出 `try/release-native-target/release/blocky-studio.exe` 及 `tools/blocky-cli/dist/`，随后运行 `pnpm check:release`。常规开发构建可能含本机构建路径，不能直接代替此候选；构建时扫描报告写入 `try/stage1-release/artifacts.json`；本次交付的固定证据见[发行扫描记录](doc/验收/任务/阶段1证据/release-artifacts-menu-contrast-final.json)，报告不进入产品目录。
+可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出隔离在 `try/release-native-target/` 及 CLI `dist/`，随后运行 `pnpm check:release`。阶段 2 目标版本为 `0.2.0`，实际目录以版本源码和构建读回为准；常规开发构建不能直接代替此候选。阶段 1 的扫描报告和固定证据继续留在阶段 1 验收目录，不能替代阶段 2 证据。
 
-通过候选扫描后，`pnpm package:release` 生成 `dist/Blocky-Studio-0.1.0/`，包含桌面程序、CLI、使用说明、第三方许可证和 selectors 对应源码；目标已存在时拒绝覆盖。许可证从锁定依赖及 `vendor/licenses/registry.json` 校验收集，缺失即停止构建。此命令不安装、启动或发布应用，也不代表普通窗口验收通过。
+通过候选扫描后，`pnpm package:release` 生成与版本源码对应的发行目录，包含桌面程序、CLI、使用说明、第三方许可证和 selectors 对应源码；目标已存在时拒绝覆盖。许可证从锁定依赖及 `vendor/licenses/registry.json` 校验收集，缺失即停止构建。此命令不安装、启动或发布应用，也不代表普通窗口验收通过。
 
 最终普通候选位于 `dist/Blocky-Studio-0.1.0-ui-fix/`，来源为 `1e106a2`，已完成 GUI 与组件局部复验。22 项、共 10,666,833,465 字节的构建缓存按 [storage-moves-final.json](doc/验收/任务/阶段1证据/storage-moves-final.json) 记录整理，9 月 16 日的旧映射仅作历史证据。重新执行隔离扫描前，应先运行 `pnpm test:e2e:build` 和 `pnpm build:release` 产生测试正控制与普通包；生成测试包不等于运行界面验收。
 
-CLI 增补计划见[已归档同步开发补充](doc/归档/2026-09-17/2026-09-16-CLI同步开发补充.md)。团队项目；2026-09-17 用户已授权合并、删除任务分支和推送。本次已将验收提交快进合并至 main 并删除任务分支；收尾记录随本轮授权的 main 推送同步。
+CLI 增补计划见[已归档同步开发补充](doc/归档/2026-09-17/2026-09-16-CLI同步开发补充.md)。当前为团队项目；阶段 2 工作在 `codex/feat-stage2-foundations` 分支继续，尚未合并 `main` 或推送。
 
 ## 已确认方向
 
@@ -66,6 +66,8 @@ CLI 增补计划见[已归档同步开发补充](doc/归档/2026-09-17/2026-09-1
 
 - [竞品驱动完整开发计划](doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)
 - [阶段 0 正式契约索引](doc/技术设计/正式契约/README.md)
+- [阶段 2 语言与桌面地基契约](doc/技术设计/正式契约/11-阶段2语言与桌面地基.md)
+- [阶段 2 实施安排](doc/执行计划/2026-09-17-Blocky-阶段2实施安排.md)
 - [阶段 1 Demo 正式接口交接](doc/技术设计/正式契约/07-阶段1-Demo接口交接.md)
 - [阶段 1 正式 Demo 实施计划（已归档）](doc/归档/2026-09-17/2026-09-16-Blocky-阶段1正式Demo实施计划.md)
 - [阶段 1 任务验收](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)
@@ -96,4 +98,4 @@ CLI 增补计划见[已归档同步开发补充](doc/归档/2026-09-17/2026-09-1
 
 ## 当前结论
 
-`try/` 中的 Windows Blockly/本地 WebView（网页视图）技术尖峰已完成独立技术验收，作为可删除的历史证据保留，不是正式产品入口。阶段 0 契约已通过并归档；阶段 1 正式 monorepo、同步 CLI、桌面候选和配套证据已按用户确认范围通过 S1-01–S1-12，正式入口见[阶段 1 任务验收](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)与[验收证据清单](doc/验收/任务/阶段1证据/)。阶段 2 起再按替换账本逐项实现真实多模块语言、知识/RAG、项目积木化、模型、轨迹、应用界面、RPA 和官方 Skills；这些后续能力及 ADR-001 第二阶段 Windows 完整能力、第三阶段后续平台仍未实现或验证。完整产品通过后再切分订阅权益。
+Windows Blockly/本地 WebView（网页视图）技术尖峰已从当前工作区删除，独立验收结果只作为 Git 历史证据保留，不是正式产品入口。阶段 0 契约已通过并归档；阶段 1 正式 monorepo、同步 CLI、桌面候选和配套证据已按用户确认范围通过 S1-01–S1-12。阶段 2 当前在 `dd17227` 基础上开发/验证，目标版本为 `0.2.0`，不得据此宣称完成或通过；正式实现范围与 alpha 协议保留见[阶段 2 语言与桌面地基契约](doc/技术设计/正式契约/11-阶段2语言与桌面地基.md)和[状态与阶段替换账本](doc/产品设计/Blocky-状态与阶段替换账本.md)。

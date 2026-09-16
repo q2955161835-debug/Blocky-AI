@@ -19,7 +19,17 @@ pub fn save(window: &tauri::Window, force: bool) {
     if size.width < 640 || size.height < 480 {
         return;
     }
-    let value = json!({"schemaVersion":"blocky.window/v1", "x":position.x,"y":position.y,"width":size.width,"height":size.height,"maximized":window.is_maximized().unwrap_or(false)});
+    let maximized = window.is_maximized().unwrap_or(false);
+    let store = window.state::<blocky_studio::user_store::UserStore>();
+    let mut value = json!({"schemaVersion":"blocky.window/v1", "x":position.x,"y":position.y,"width":size.width,"height":size.height,"maximized":maximized});
+    if maximized {
+        if let Ok(Some(mut previous)) = store.read("window", "main") {
+            if previous["schemaVersion"] == "blocky.window/v1" {
+                previous["maximized"] = json!(true);
+                value = previous;
+            }
+        }
+    }
     if window
         .state::<blocky_studio::user_store::UserStore>()
         .write("window", "main", value)

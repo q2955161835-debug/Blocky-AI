@@ -116,7 +116,8 @@ const definitions: SettingDefinition[] = [
     ...base,
     id: "terminal.outputBudgetBytes",
     title: "终端输出预算",
-    description: "限制终端输出字节数；类型化任务还受各自更严格的输出上限约束",
+    description:
+      "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
     category: "底部面板与终端",
     allowedScopes: ["app", "project"],
     valueType: "number",
@@ -137,7 +138,8 @@ const definitions: SettingDefinition[] = [
     ...base,
     id: "logs.maxStoredBytes",
     title: "日志存储上限",
-    description: "限制本机诊断日志字节数，超限回收最早记录；不影响审计底线",
+    description:
+      "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
     category: "日志与诊断",
     valueType: "number",
     defaultValue: 10485760,

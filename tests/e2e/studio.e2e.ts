@@ -50,8 +50,8 @@ describe("Blocky native editor", () => {
     await expect($("[aria-label='画布名称']")).toHaveValue("引用服务");
     await $("[aria-label='返回上一位置']").click();
     await expect($("[aria-label='画布名称']")).toHaveValue("研究助手");
-    await mkdir("try/stage1-e2e", { recursive: true });
-    await browser.saveScreenshot("try/stage1-e2e/native-editor.png");
+    await mkdir("try/stage2-e2e", { recursive: true });
+    await browser.saveScreenshot("try/stage2-e2e/native-editor.png");
   });
   it("focuses the canvas after a blank click so Tab opens block search", async () => {
     const starter = page.getByRole("button", { name: /资料问答伙伴/ });
@@ -102,7 +102,7 @@ describe("Blocky native editor", () => {
     await $("//dialog//button[contains(.,'接受变更')]").click();
     await $("iframe[title='资料问答']").waitForDisplayed();
     const frame = page.frameLocator("iframe[title='资料问答']");
-    await page.screenshot({ path: "try/stage1-e2e/surface-loading.png" });
+    await page.screenshot({ path: "try/stage2-e2e/surface-loading.png" });
     const isolation = await frame.locator("body").evaluate(() => {
       let storage = false,
         cookie = false;
@@ -192,11 +192,11 @@ describe("Blocky native editor", () => {
         answer: await frame.locator("#answer").innerText(),
         studio: await page.locator(".statusbar").innerText(),
       });
-      await page.screenshot({ path: "try/stage1-e2e/surface-run-failure.png" });
+      await page.screenshot({ path: "try/stage2-e2e/surface-run-failure.png" });
       throw error;
     }
     expect(await frame.locator("#citations").innerText()).toContain("水循环");
-    await browser.saveScreenshot("try/stage1-e2e/native-surface.png");
+    await browser.saveScreenshot("try/stage2-e2e/native-surface.png");
     await $("[aria-label='关闭 问答页面']").click();
     await expect($$("iframe")).toBeElementsArrayOfSize(0);
     await $(
@@ -229,6 +229,6 @@ describe("Blocky native editor", () => {
     await expect($(".panel-body .log-row code")).toHaveText("terminal");
     await $("button=清除视图").click();
     await expect($$(".panel-body .log-row")).toBeElementsArrayOfSize(0);
-    await browser.saveScreenshot("try/stage1-e2e/native-output.png");
+    await browser.saveScreenshot("try/stage2-e2e/native-output.png");
   });
 });

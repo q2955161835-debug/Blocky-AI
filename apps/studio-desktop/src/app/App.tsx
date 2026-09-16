@@ -27,6 +27,7 @@ import { useLogs } from "../composition/useLogs";
 import { useLifecycle } from "../composition/useLifecycle";
 import { ExitDialog } from "./ExitDialog";
 import { MenuBar } from "./MenuBar";
+import { useModalFocus } from "../composition/useModalFocus";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -51,6 +52,15 @@ export function App() {
     lifecycle = useLifecycle(s, logs, task);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
+  useModalFocus(
+    s.confirmation
+      ? "confirmation"
+      : lifecycle.requested
+        ? "exit"
+        : popup?.kind === "menu"
+          ? ""
+          : (popup?.kind ?? ""),
+  );
   useEffect(() => {
     if (lifecycle.requested) {
       setPopup(null);
@@ -268,11 +278,14 @@ export function App() {
               ))
           }
         />
-        <button className="command-search" onClick={() => show("commands")}>
+        <button
+          className="command-search"
+          onClick={() => execute("view.command-center")}
+        >
           ⌕ 搜索命令 <kbd>Ctrl K</kbd>
         </button>
         <span className="spacer" />
-        <button onClick={() => show("settings")} aria-label="打开设置">
+        <button onClick={() => execute("settings.open")} aria-label="打开设置">
           ⚙
         </button>
       </header>
@@ -308,26 +321,29 @@ export function App() {
                   {c.label}
                 </button>
               ))}
-            <button disabled={s.busy} onClick={() => void s.save()}>
+            <button
+              disabled={!enabled("file.save")}
+              onClick={() => execute("file.save")}
+            >
               保存
             </button>
             <button
-              disabled={!s.snapshot.canUndo}
-              onClick={() => s.controller.undo()}
+              disabled={!enabled("edit.undo")}
+              onClick={() => execute("edit.undo")}
               aria-label="撤销"
             >
               ↶
             </button>
             <button
-              disabled={!s.snapshot.canRedo}
-              onClick={() => s.controller.redo()}
+              disabled={!enabled("edit.redo")}
+              onClick={() => execute("edit.redo")}
               aria-label="重做"
             >
               ↷
             </button>
             <button
               className="primary"
-              onClick={() => void s.run()}
+              onClick={() => execute("run.start")}
               disabled={!enabled("run.start")}
             >
               ▶ 运行
@@ -510,7 +526,10 @@ export function App() {
             </section>
             <aside className="right-sidebar">
               <RunPanel studio={s} />
-              <Inspector studio={s} />
+              <Inspector
+                studio={s}
+                configureResource={() => execute("settings.resources")}
+              />
             </aside>
           </div>
         </>

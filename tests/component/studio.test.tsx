@@ -10,6 +10,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
+import { useSession } from "../../apps/studio-desktop/src/composition/useSession";
 import { Inspector } from "../../apps/studio-desktop/src/app/Inspector";
 import { BottomPanel } from "../../apps/studio-desktop/src/app/BottomPanel";
 import { createStarter } from "../../packages/test-fixtures/src";
@@ -185,4 +186,26 @@ it("opening another project retains its own saved session without overwriting it
         .activeTabId,
     ).toBe("tab-citation-service"),
   );
+});
+it("persists the previous project's edited session when switching immediately", async () => {
+  const first = createStarter();
+  first.manifest.projectId = "first-session-project";
+  const second = createStarter();
+  second.manifest.projectId = "second-session-project";
+  const hook = renderHook(({ project }) => useSession(project, () => {}), {
+    initialProps: { project: first },
+  });
+  await waitFor(() =>
+    expect(hook.result.current.session.active).toBe("research-agent"),
+  );
+  act(() =>
+    hook.result.current.setSession((session) => ({ ...session, height: 333 })),
+  );
+  hook.rerender({ project: second });
+  await waitFor(() => {
+    const saved = JSON.parse(
+      localStorage.getItem("blocky.session.first-session-project")!,
+    );
+    expect(saved.bottomPanel.heightPx).toBe(333);
+  });
 });

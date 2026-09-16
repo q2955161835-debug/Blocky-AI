@@ -91,8 +91,8 @@ export function createStarter(): Project {
       ],
       appSurfaces: [],
       format: {
-        createdWith: "blocky-desktop/0.1.0",
-        minimumReaderVersion: "0.1.0",
+        createdWith: "blocky-desktop/0.2.0",
+        minimumReaderVersion: "0.2.0",
       },
     },
     workspaces: {

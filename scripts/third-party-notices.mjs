@@ -78,9 +78,9 @@ for (const p of entries.sort(
     `\n${"=".repeat(72)}\n${id}\nDeclared license: ${p.license ?? "see text"}\n${"=".repeat(72)}\n${texts.join("\n\n")}`,
   );
 }
-await mkdir("try/stage1-release", { recursive: true });
+await mkdir("try/stage2-release", { recursive: true });
 await writeFile(
-  "try/stage1-release/license-coverage.json",
+  "try/stage2-release/license-coverage.json",
   JSON.stringify(
     { packages: seen.size, included: sections.length, missing },
     null,
@@ -92,7 +92,7 @@ if (missing.length) {
   process.exitCode = 1;
 } else {
   await writeFile(
-    "try/stage1-release/THIRD_PARTY_NOTICES.txt",
+    "try/stage2-release/THIRD_PARTY_NOTICES.txt",
     `Blocky Studio - Third-party notices\nThis file preserves notices for the locked JavaScript and Rust dependencies.\n${sections.join("\n")}\n\nHaystack source fixture\n${await readFile("packages/conversion-core/fixtures/LICENSE.haystack", "utf8")}`,
   );
   console.log(JSON.stringify({ packages: seen.size, missing: 0 }));

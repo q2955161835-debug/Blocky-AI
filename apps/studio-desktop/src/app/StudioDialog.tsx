@@ -126,6 +126,9 @@ export function StudioDialog({
                     .filter(
                       (c) =>
                         actions[c.commandId] &&
+                        (popup.kind !== "context" ||
+                          c.category === "edit" ||
+                          c.category === "run") &&
                         (c.label.includes(query) ||
                           c.category === query ||
                           c.commandId.includes(query)),
@@ -134,6 +137,11 @@ export function StudioDialog({
                       <button
                         key={c.commandId}
                         disabled={!enabled(c.commandId)}
+                        title={
+                          enabled(c.commandId)
+                            ? undefined
+                            : "当前状态或选择不适用"
+                        }
                         onClick={() => execute(c.commandId)}
                       >
                         {c.label}

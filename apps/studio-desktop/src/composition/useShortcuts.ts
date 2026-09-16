@@ -40,6 +40,26 @@ export function useShortcuts(report: (text: string) => void) {
     ready,
     error,
     keys: (id: string) => bindingsFor(document, id),
+    exportConfig: () => JSON.stringify(document, null, 2),
+    importConfig: (text: string) => {
+      if (!ready) throw Error("快捷键存储尚未就绪");
+      const imported = parseBindings(JSON.parse(text));
+      for (const [id, keys] of Object.entries(imported.overrides)) {
+        if (
+          document.overrides[id] !== undefined &&
+          JSON.stringify(document.overrides[id]) !== JSON.stringify(keys)
+        )
+          throw Error(
+            "导入包含已有命令的不同绑定，请先恢复该命令默认值或清除导入中的该项。",
+          );
+      }
+      persist(
+        parseBindings({
+          schemaVersion: document.schemaVersion,
+          overrides: { ...document.overrides, ...imported.overrides },
+        }),
+      );
+    },
     change: (id: string, keys: string[] | undefined) => {
       if (!ready) throw Error("快捷键存储尚未就绪");
       persist(changeBinding(document, id, keys));

@@ -1,6 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { searchSettings, resolveSetting } from "@blocky/settings-core";
 import type { Studio } from "../composition/useStudio";
+function NumericSetting({
+  title,
+  value,
+  disabled,
+  change,
+}: {
+  title: string;
+  value: number;
+  disabled: boolean;
+  change(value: number): void;
+}) {
+  const [text, setText] = useState(String(value));
+  useEffect(() => setText(String(value)), [value]);
+  return (
+    <input
+      aria-label={title}
+      type="number"
+      disabled={disabled}
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={() => change(text.trim() ? Number(text) : NaN)}
+    />
+  );
+}
 export function SettingsPanel({ studio: s }: { studio: Studio }) {
   const [query, setQuery] = useState(""),
     [scope, setScope] = useState<"app" | "project">("app"),
@@ -73,12 +97,11 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
                   <option value="beginner">入门</option>
                 </select>
               ) : (
-                <input
-                  aria-label={def.title}
-                  type="number"
+                <NumericSetting
+                  title={def.title}
                   disabled={disabled}
                   value={Number(resolved.value)}
-                  onChange={(e) => change(def.id, Number(e.target.value))}
+                  change={(value) => change(def.id, value)}
                 />
               )}
             </label>

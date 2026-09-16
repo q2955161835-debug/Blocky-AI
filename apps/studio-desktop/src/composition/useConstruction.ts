@@ -7,15 +7,63 @@ import {
   type Blueprint,
   type BlueprintBindings,
 } from "@blocky/block-catalog";
-import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
-import { conversionCandidate } from "@blocky/conversion-core";
-import { draftSurface } from "@blocky/app-surface";
+import {
+  makePatch as makePatchDomain,
+  previewPatch as previewPatchDomain,
+  applyPatch as applyPatchDomain,
+} from "@blocky/builder-protocol";
+import { conversionCandidate as conversionCandidateDomain } from "@blocky/conversion-core";
+import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
-import { validatePatch } from "./host";
-type Review = Awaited<ReturnType<typeof previewPatch>>;
-type Candidate = Awaited<ReturnType<typeof conversionCandidate>>;
+import { validatePatch as validatePatchHost } from "./host";
+type Review = Awaited<ReturnType<typeof previewPatchDomain>>;
+type Candidate = Awaited<ReturnType<typeof conversionCandidateDomain>>;
 export function useConstruction(studio: Studio) {
+  const validatePatch: typeof validatePatchHost = async (...args) => {
+    await studio.resources.flush();
+    return validatePatchHost(...args);
+  };
+  const makePatch = (
+    project: Parameters<typeof makePatchDomain>[0],
+    operations: Parameters<typeof makePatchDomain>[1],
+  ) => makePatchDomain(project, operations, studio.resources.map);
+  const previewPatch = (
+    project: Parameters<typeof previewPatchDomain>[0],
+    patch: unknown,
+  ) => previewPatchDomain(project, patch, studio.resources.map);
+  const applyPatch = (
+    ...args: [
+      Parameters<typeof applyPatchDomain>[0],
+      unknown,
+      string[],
+      Parameters<typeof applyPatchDomain>[3]?,
+    ]
+  ) =>
+    applyPatchDomain(args[0], args[1], args[2], args[3], studio.resources.map);
+  const draftSurface = (
+    ...args: [
+      Parameters<typeof draftSurfaceDomain>[0],
+      string,
+      Parameters<typeof draftSurfaceDomain>[2],
+    ]
+  ) => draftSurfaceDomain(...args, studio.resources.map);
+  const conversionCandidate = (
+    ...args: [
+      Parameters<typeof conversionCandidateDomain>[0],
+      string,
+      string,
+      AbortSignal?,
+    ]
+  ) =>
+    conversionCandidateDomain(
+      args[0],
+      args[1],
+      args[2],
+      args[3],
+      studio.resources.map,
+    );
+
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [captured, setCaptured] = useState<Blueprint>();
   const [inserting, setInserting] = useState<Blueprint>();

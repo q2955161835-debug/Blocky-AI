@@ -79,9 +79,9 @@ const report = {
   artifacts,
   passed: positiveControl && artifacts.every((a) => !a.failures.length),
 };
-await mkdir("try/stage1-release", { recursive: true });
+await mkdir("try/stage2-release", { recursive: true });
 await writeFile(
-  "try/stage1-release/artifacts.json",
+  "try/stage2-release/artifacts.json",
   JSON.stringify(report, null, 2),
 );
 console.log(

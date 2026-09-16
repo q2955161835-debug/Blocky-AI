@@ -61,7 +61,7 @@ export async function migrateSpike(
       appSurfaces: [],
       format: {
         createdWith: "blocky-migration/0.2.0",
-        minimumReaderVersion: "0.1.0",
+        minimumReaderVersion: "0.2.0",
       },
     },
     workspaces: { main: old.workspace },

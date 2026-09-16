@@ -1,6 +1,48 @@
 import { getBlock } from "@blocky/block-catalog";
+import { useEffect, useState } from "react";
+function JsonInput({
+  value,
+  save,
+}: {
+  value: unknown;
+  save(text: string): void;
+}) {
+  const [text, setText] = useState(JSON.stringify(value ?? null));
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    setText(JSON.stringify(value ?? null));
+    setError(false);
+  }, [value]);
+  return (
+    <>
+      <textarea
+        aria-label="JSON 值"
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          setError(false);
+        }}
+        onBlur={() => {
+          try {
+            JSON.parse(text);
+            save(text);
+          } catch {
+            setError(true);
+          }
+        }}
+      />
+      {error && <small role="alert">JSON 无效，原值保持不变。</small>}
+    </>
+  );
+}
 import { findBlock, type Studio } from "../composition/useStudio";
-export function Inspector({ studio: s }: { studio: Studio }) {
+export function Inspector({
+  studio: s,
+  configureResource,
+}: {
+  studio: Studio;
+  configureResource?: () => void;
+}) {
   const block = s.selected
     ? findBlock(
         s.snapshot.project.workspaces[s.session.active]?.blocks.blocks ?? [],
@@ -15,10 +57,14 @@ export function Inspector({ studio: s }: { studio: Studio }) {
       </section>
     );
   const def = getBlock(block.type);
-  const resource =
-    typeof block.fields?.RESOURCE === "string"
-      ? s.snapshot.project.resources[block.fields.RESOURCE]
-      : undefined;
+  const reference = s.snapshot.project.manifest.resources.find(
+    (r) => r.resourceId === block.fields?.RESOURCE,
+  );
+  const resource = reference
+    ? reference.scope === "project"
+      ? s.snapshot.project.resources[reference.resourceId]
+      : s.resources.map.get(reference.definitionRef)
+    : undefined;
   return (
     <section className="inspector">
       <div className="section-label">
@@ -40,7 +86,37 @@ export function Inspector({ studio: s }: { studio: Studio }) {
               } as Record<string, string>
             )[field]
           }
-          {field === "STYLE" ? (
+          {def?.jsonFields?.includes(field) ? (
+            <JsonInput
+              value={block.fields?.[field]}
+              save={(text) => s.updateField(block.id, field, text)}
+            />
+          ) : field === "RESOURCE" ? (
+            <select
+              aria-label="资源"
+              value={String(block.fields?.RESOURCE ?? "")}
+              onChange={(e) => s.updateField(block.id, field, e.target.value)}
+            >
+              <option value="">选择资源</option>
+              {s.snapshot.project.manifest.resources
+                .filter(
+                  (r) =>
+                    r.kind ===
+                    (block.type === "core.knowledge.retrieve"
+                      ? "knowledge"
+                      : "model"),
+                )
+                .map((r) => (
+                  <option key={r.resourceId} value={r.resourceId}>
+                    {(r.scope === "project"
+                      ? s.snapshot.project.resources[r.resourceId]
+                      : s.resources.map.get(r.definitionRef)
+                    )?.displayName ?? r.resourceId}{" "}
+                    · {r.scope === "project" ? "项目" : "本机"}
+                  </option>
+                ))}
+            </select>
+          ) : field === "STYLE" ? (
             <select
               aria-label="回答方式"
               value={String(block.fields?.[field] ?? "条目")}
@@ -79,8 +155,13 @@ export function Inspector({ studio: s }: { studio: Studio }) {
       {resource && (
         <div className="resource-config">
           <div className="section-label">{resource.displayName}</div>
-          <small>配置来源：项目资源</small>
-          {resource.kind === "knowledge" ? (
+          <small>
+            配置来源：{reference?.scope === "user" ? "本机资源" : "项目资源"}
+          </small>
+          {configureResource && (
+            <button onClick={configureResource}>配置资源</button>
+          )}
+          {resource.kind === "knowledge" && reference?.scope === "project" ? (
             <label>
               资料集合
               <select
@@ -97,7 +178,7 @@ export function Inspector({ studio: s }: { studio: Studio }) {
               </select>
             </label>
           ) : (
-            <p>本地确定性回答器</p>
+            <p>{String(resource.definition.provider ?? resource.kind)}</p>
           )}
           <p className="muted">资源引用：{resource.resourceId}</p>
         </div>

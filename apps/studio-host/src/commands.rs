@@ -58,12 +58,16 @@ pub fn authorize_surface(
 #[tauri::command]
 pub fn validate_patch(
     window: tauri::WebviewWindow,
+    user_store: tauri::State<'_, blocky_studio::user_store::UserStore>,
     original_json: String,
     patch: serde_json::Value,
     approved: Vec<String>,
 ) -> Result<serde_json::Value, String> {
     main_only(&window)?;
-    blocky_studio::patch_guard::validate(&original_json, &patch, &approved)
+    let registry = user_store
+        .read("resources", "app")?
+        .unwrap_or(serde_json::Value::Null);
+    blocky_studio::patch_guard::validate_with_registry(&original_json, &patch, &approved, &registry)
 }
 #[tauri::command]
 pub async fn open_project(

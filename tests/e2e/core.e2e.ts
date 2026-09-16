@@ -32,14 +32,14 @@ describe("formal native Core gates", function () {
   let cdp: Browser, page: Page;
   const runId = randomUUID();
   before(async () => {
-    await mkdir("try/stage1-core", { recursive: true });
+    await mkdir("try/stage2-core", { recursive: true });
     for (const name of [
       "performance",
       "window-policy",
       ...(process.env.BLOCKY_NATIVE_SUITE === "full" ? ["full"] : []),
     ])
       await writeFile(
-        `try/stage1-core/${name}.json`,
+        `try/stage2-core/${name}.json`,
         JSON.stringify({
           runId,
           passed: false,
@@ -62,7 +62,7 @@ describe("formal native Core gates", function () {
     await page.waitForFunction(
       () => !!(window as TestWindow).__BLOCKY_ACCEPTANCE__,
     );
-    await mkdir("try/stage1-core", { recursive: true });
+    await mkdir("try/stage2-core", { recursive: true });
   });
   after(async () => {
     await cdp?.close();
@@ -72,7 +72,7 @@ describe("formal native Core gates", function () {
       (window as TestWindow).__BLOCKY_ACCEPTANCE__.performance(),
     );
     await writeFile(
-      "try/stage1-core/performance.json",
+      "try/stage2-core/performance.json",
       JSON.stringify({ runId, ...metrics }, null, 2),
     );
     console.log("BLOCKY_PERFORMANCE", JSON.stringify(metrics));
@@ -122,7 +122,7 @@ describe("formal native Core gates", function () {
     );
     const evidence = { runId, hidden, restored, passed: false };
     await writeFile(
-      "try/stage1-core/window-policy.json",
+      "try/stage2-core/window-policy.json",
       JSON.stringify(evidence, null, 2),
     );
     expect(hidden).toEqual({ status: "not-started", hostAllowsNewRun: false });
@@ -131,7 +131,7 @@ describe("formal native Core gates", function () {
     expect(restored.roundTrip).toBe(true);
     evidence.passed = true;
     await writeFile(
-      "try/stage1-core/window-policy.json",
+      "try/stage2-core/window-policy.json",
       JSON.stringify(evidence, null, 2),
     );
   });
@@ -198,7 +198,7 @@ describe("formal native Core gates", function () {
         },
         preparation,
       };
-      await writeFile("try/stage1-core/cycles.jsonl", "");
+      await writeFile("try/stage2-core/cycles.jsonl", "");
       try {
         for (let cycle = 1; cycle <= 360; cycle++) {
           const start = Date.now();
@@ -223,7 +223,7 @@ describe("formal native Core gates", function () {
             else finalHeap = heap.usedSize;
           }
           await appendFile(
-            "try/stage1-core/cycles.jsonl",
+            "try/stage2-core/cycles.jsonl",
             JSON.stringify({ ...result, elapsedMs: Date.now() - started }) +
               "\n",
           );
@@ -278,7 +278,7 @@ describe("formal native Core gates", function () {
           endedAt: new Date().toISOString(),
         });
         await writeFile(
-          "try/stage1-core/full.json",
+          "try/stage2-core/full.json",
           JSON.stringify(report, null, 2),
         );
         await session.detach();

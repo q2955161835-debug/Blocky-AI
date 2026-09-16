@@ -10,6 +10,7 @@ import { envelope, CliError } from "./protocol";
 import { basename } from "node:path";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { userRegistryMap } from "./user-config";
 export async function configure(args: Args) {
   allow(args, ["module", "block", "field", "value", "output", "json"], 3);
   const project = await readProject(args.words[2]);
@@ -25,7 +26,12 @@ export async function configure(args: Args) {
     throw new CliError(3, "BLK-CONFIG-001", "目标积木、字段或配置值无效。");
   }
   const next = controller.getSnapshot().project;
-  const compiled = await compileProject(next);
+  const compiled = await compileProject(
+    next,
+    next.manifest.resources.some((r) => r.scope === "user")
+      ? await userRegistryMap()
+      : undefined,
+  );
   await createProject(target, next);
   const bytes = await readFile(target);
   const result = envelope("project.configure", {

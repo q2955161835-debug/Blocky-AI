@@ -16,6 +16,10 @@ export function useSession(project: Project, report: (text: string) => void) {
   const latest = useRef(session);
   latest.current = session;
   const id = project.manifest.projectId;
+  const pending = useRef<
+    { id: string; project: Project; session: Session } | undefined
+  >(undefined);
+  if (loaded === id) pending.current = { id, project, session };
   const setSession = (action: SetStateAction<Session>) => {
     touched.current = true;
     rawSet(action);
@@ -52,6 +56,14 @@ export function useSession(project: Project, report: (text: string) => void) {
       });
     return () => {
       active = false;
+      const previous = pending.current;
+      if (previous?.id === id) {
+        const value = serializeSession(previous.project, previous.session);
+        queue.current = queue.current
+          .catch(() => {})
+          .then(() => writeUserState("session", previous.id, value));
+        void queue.current.catch(() => report("上一个项目的布局未能保存。"));
+      }
     };
   }, [id]);
   useEffect(() => {
@@ -77,6 +89,7 @@ export function useSession(project: Project, report: (text: string) => void) {
     setSession,
     flush: persist,
     reset: () => {
+      touched.current = true;
       rawSet(restoreSession(projectRef.current, null));
       setLoaded(id);
       report("已恢复默认工作台布局。");

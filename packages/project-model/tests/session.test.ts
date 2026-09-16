@@ -27,6 +27,8 @@ it("restores closed tabs, MRU and panel layout as session-only data", () => {
   s.width = 420;
   s.leftWidth = 245;
   s.rightWidth = 320;
+  s.outputChannel = "compiler";
+  s.terminalDirection = "horizontal";
   const saved = serializeSession(p, s);
   expect(restoreSession(p, saved)).toMatchObject({
     maximized: true,
@@ -34,6 +36,8 @@ it("restores closed tabs, MRU and panel layout as session-only data", () => {
     width: 420,
     leftWidth: 245,
     rightWidth: 320,
+    outputChannel: "compiler",
+    terminalDirection: "horizontal",
     recentTabs: s.recentTabs,
   });
   expect(JSON.stringify(p)).toBe(before);
