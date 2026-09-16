@@ -187,6 +187,7 @@ export function parseProject(input: unknown): Project {
   return p;
 }
 export { ProjectController } from "./controller";
+export { configureBlock, findBlock } from "./configure";
 export {
   restoreSession,
   serializeSession,

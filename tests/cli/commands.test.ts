@@ -198,3 +198,50 @@ it("redacts path-bearing user labels on stdout without changing the saved projec
     p.manifest.displayName,
   );
 });
+it("configures a declared field through the shared editor and keeps the source archive unchanged", async () => {
+  const before = hash(await readFile(file));
+  const target = join(directory, "configured.blocky");
+  const args = [
+    "project",
+    "configure",
+    file,
+    "--module",
+    "research-agent",
+    "--block",
+    "research-root",
+    "--field",
+    "ROLE",
+    "--value",
+    "科学教师",
+    "--output",
+    target,
+    "--json",
+  ];
+  const configured = run(args);
+  expect(configured.code).toBe(0);
+  expect(configured.lines[0].data.changed).toBe(true);
+  expect(configured.lines[0].data.diagnostics).toEqual([]);
+  expect(hash(await readFile(file))).toBe(before);
+  expect(
+    (await readProject(target)).workspaces["research-agent"].blocks.blocks[0]
+      .fields!.ROLE,
+  ).toBe("科学教师");
+  const executed = run([
+    "run",
+    "start",
+    target,
+    "--simulate",
+    "--input",
+    "水循环",
+    "--jsonl",
+  ]);
+  expect(executed.code).toBe(0);
+  expect(executed.lines.at(-1).data.answer).toContain("学习要点");
+  const saved = hash(await readFile(target));
+  expect(run(args).code).toBe(5);
+  expect(hash(await readFile(target))).toBe(saved);
+  const invalid = [...args];
+  invalid[invalid.indexOf("ROLE")] = "API_KEY";
+  invalid[invalid.indexOf(target)] = join(directory, "invalid-field.blocky");
+  expect(run(invalid).code).toBe(3);
+});

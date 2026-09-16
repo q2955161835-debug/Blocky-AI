@@ -101,11 +101,42 @@ it("save completion cannot mark later edits as saved and cancelled open preserve
     await pending;
   });
   expect(hook.result.current.snapshot.dirty).toBe(true);
-  vi.spyOn(window, "confirm").mockReturnValue(true);
   io.open.mockResolvedValue(null);
   const before = hook.result.current.snapshot.project;
-  await act(() => hook.result.current.open());
+  let opening!: Promise<void>;
+  act(() => {
+    opening = hook.result.current.open();
+  });
+  expect(hook.result.current.confirmation).not.toBeNull();
+  await act(async () => {
+    hook.result.current.answerConfirmation(true);
+    await opening;
+  });
   expect(hook.result.current.snapshot.project).toBe(before);
+});
+it("cancelling unsaved changes keeps the project and never opens a native dialog", async () => {
+  const hook = renderHook(() => useStudio());
+  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
+  act(() =>
+    hook.result.current.controller.edit((p) => {
+      p.manifest.displayName = "未保存的内容";
+    }),
+  );
+  const before = hook.result.current.snapshot.project;
+  let opening!: Promise<void>;
+  act(() => {
+    opening = hook.result.current.open();
+  });
+  expect(hook.result.current.confirmation).not.toBeNull();
+  expect(io.open).not.toHaveBeenCalled();
+  await act(async () => {
+    hook.result.current.answerConfirmation(false);
+    await opening;
+  });
+  expect(hook.result.current.snapshot.project).toBe(before);
+  expect(hook.result.current.snapshot.dirty).toBe(true);
+  expect(hook.result.current.busy).toBe(false);
+  expect(io.open).not.toHaveBeenCalled();
 });
 it("opening another project retains its own saved session without overwriting it first", async () => {
   const next = createStarter();

@@ -20,3 +20,6 @@ $LASTEXITCODE
 `dist/` 包含入口脚本和 `bin/blocky-project-io.exe`，可整体移动到另一个目录运行；不依赖源码路径、不启动 WebView。源文件和工具协议不进入用户项目。
 
 当前不提供 live、官方 Skills 安装、六个原生兼容模板或真实仓库扫描。候选补丁、应用界面命令随 D/E 的共享领域实现补充；帮助列表不会提前显示未实现操作。
+# 修改配置
+
+`blocky project configure input.blocky --module research-agent --block research-root --field ROLE --value 科学教师 --output revised.blocky --json` 使用与桌面相同的编辑函数，只允许积木目录声明的字段。输出为新项目，原文件不变；目标存在时退出 5。允许保存含编译诊断的编辑中项目，响应列出 diagnostics/warnings，运行仍按原门禁拒绝错误项目。

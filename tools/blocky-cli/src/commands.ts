@@ -10,6 +10,7 @@ import { basename } from "node:path";
 import { type Args, allow, required, integer } from "./arguments";
 import { envelope, CliError } from "./protocol";
 import { createProject, readProject, doctor } from "./native-store";
+import { configure } from "./configure";
 export const help = {
   version: "0.1.0",
   commands: [
@@ -23,6 +24,7 @@ export const help = {
     "project module list <file.blocky> --json",
     "project validate <file.blocky> --json",
     "project compile <file.blocky> --json",
+    "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
     "run start <file.blocky> --simulate --input <question> [--entry <id>] [--timeout 30000] --jsonl",
@@ -140,6 +142,7 @@ export async function dispatch(
     return { code: 0, result };
   }
   const moduleList = args.words.slice(0, 3).join(".") === "project.module.list";
+  if (command === "project.configure") return configure(args);
   const known = [
     "project.inspect",
     "project.validate",

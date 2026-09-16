@@ -8,6 +8,7 @@ import { useStudio } from "../composition/useStudio";
 import { Inspector } from "./Inspector";
 import { RunPanel } from "./RunPanel";
 import { BottomPanel } from "./BottomPanel";
+import { ConfirmationDialog } from "./ConfirmationDialog";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -35,6 +36,7 @@ export function App() {
     "settings.open": () => show("settings"),
   };
   const enabled = (id: string) =>
+    !s.confirmation &&
     !!actions[id] &&
     !(s.busy && id.startsWith("file.")) &&
     !(s.running && (id === "file.new" || id === "file.open")) &&
@@ -186,9 +188,12 @@ export function App() {
                           onClick={() =>
                             s.setSession((v) => {
                               const tabs = v.tabs.filter((t) => t !== id);
+                              const viewports = { ...v.viewports };
+                              delete viewports[id];
                               return {
                                 ...v,
                                 tabs,
+                                viewports,
                                 active:
                                   v.active === id ? (tabs[0] ?? "") : v.active,
                               };
@@ -311,7 +316,13 @@ export function App() {
         <span className="spacer" />
         <span>{s.running ? "● 正在运行" : "Blocky Studio"}</span>
       </footer>
-      {popup && (
+      {s.confirmation && (
+        <ConfirmationDialog
+          message={s.confirmation}
+          answer={s.answerConfirmation}
+        />
+      )}
+      {popup && !s.confirmation && (
         <StudioDialog
           studio={s}
           popup={popup}

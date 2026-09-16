@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useConfirmation } from "./useConfirmation";
 import {
   ProjectController,
   restoreSession,
   serializeSession,
+  configureBlock,
   type Session,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
@@ -13,7 +15,7 @@ import {
   projectLog,
   type RuntimeEvent,
 } from "@blocky/observability";
-import type { SourceRef, WorkspaceBlock } from "@blocky/language-schema";
+import type { SourceRef } from "@blocky/language-schema";
 import {
   openProject,
   saveProject,
@@ -21,6 +23,7 @@ import {
   writePreferences,
 } from "./host";
 export function useStudio() {
+  const { confirmation, answerConfirmation, confirm } = useConfirmation();
   const [controller] = useState(() => new ProjectController(createStarter()));
   const snapshot = useSyncExternalStore(
     controller.subscribe,
@@ -107,7 +110,11 @@ export function useStudio() {
       }
   }, [session, sessionProjectId, snapshot.project]);
   useEffect(() => {
-    writePreferences(preferences);
+    try {
+      writePreferences(preferences);
+    } catch {
+      setMessage("本机设置未能保存，本次会话仍可继续使用。");
+    }
   }, [preferences]);
   useEffect(() => () => abort.current?.abort(), []);
   const navigate = (source: SourceRef, remember = true) => {
@@ -213,16 +220,27 @@ export function useStudio() {
   };
   const open = async () => {
     if (ioBusy.current || runBusy.current) return;
-    if (
-      snapshot.dirty &&
-      !window.confirm("当前项目有未保存的修改，是否放弃修改并打开其他项目？")
-    )
-      return;
     ioBusy.current = true;
     setBusy(true);
     try {
+      if (
+        controller.getSnapshot().dirty &&
+        !(await confirm(
+          "当前项目有未保存的修改。继续打开其他项目将放弃这些修改。",
+        ))
+      )
+        return;
+      const revision = controller.getSnapshot().revision;
       const opened = await openProject();
       if (opened) {
+        if (
+          controller.getSnapshot().revision !== revision &&
+          controller.getSnapshot().dirty &&
+          !(await confirm(
+            "选择文件期间当前项目发生了新修改。继续打开将放弃这些修改。",
+          ))
+        )
+          return;
         controller.replace(opened.project);
         handle.current = opened.handle;
         setStarted(true);
@@ -238,30 +256,39 @@ export function useStudio() {
       setBusy(false);
     }
   };
-  const fresh = () => {
-    if (runBusy.current) return;
-    if (snapshot.dirty && !window.confirm("是否放弃当前未保存的修改？")) return;
-    const p = createStarter();
-    p.manifest.projectId = `project-${crypto.randomUUID()}`;
-    controller.replace(p);
-    handle.current = undefined;
-    setStarted(true);
-    setEvents([]);
-    setResult(undefined);
-    setSelected(null);
-    setSession(restoreSession(p, null));
+  const fresh = async () => {
+    if (runBusy.current || ioBusy.current) return;
+    ioBusy.current = true;
+    setBusy(true);
+    try {
+      if (
+        controller.getSnapshot().dirty &&
+        !(await confirm("新建项目将放弃当前未保存的修改。"))
+      )
+        return;
+      const p = createStarter();
+      p.manifest.projectId = `project-${crypto.randomUUID()}`;
+      controller.replace(p);
+      handle.current = undefined;
+      setStarted(true);
+      setEvents([]);
+      setResult(undefined);
+      setSelected(null);
+      setSession(restoreSession(p, null));
+    } finally {
+      ioBusy.current = false;
+      setBusy(false);
+    }
   };
-  const updateField = (id: string, field: string, value: string) =>
-    controller.edit((p) => {
-      const block = findBlock(
-        p.workspaces[session.active]?.blocks.blocks ?? [],
-        id,
-      );
-      if (block) {
-        block.fields ??= {};
-        block.fields[field] = value;
-      }
-    });
+  const updateField = (id: string, field: string, value: string) => {
+    try {
+      controller.edit((p) => {
+        configureBlock(p, session.active, id, field, value);
+      });
+    } catch {
+      setMessage("此配置值无效或超出长度限制，原配置保持不变。");
+    }
+  };
   return {
     controller,
     snapshot,
@@ -294,24 +321,9 @@ export function useStudio() {
     open,
     fresh,
     updateField,
+    confirmation,
+    answerConfirmation,
   };
 }
-export function findBlock(
-  blocks: WorkspaceBlock[],
-  id: string,
-): WorkspaceBlock | undefined {
-  for (const block of blocks) {
-    if (block.id === id) return block;
-    const child = findBlock(
-      [
-        ...Object.values(block.inputs ?? {}).flatMap(
-          (v) => [v.block, v.shadow].filter(Boolean) as WorkspaceBlock[],
-        ),
-        ...(block.next ? [block.next.block] : []),
-      ],
-      id,
-    );
-    if (child) return child;
-  }
-}
+export { findBlock } from "@blocky/project-model";
 export type Studio = ReturnType<typeof useStudio>;

@@ -180,6 +180,9 @@ importers:
 
   packages/project-model:
     dependencies:
+      '@blocky/block-catalog':
+        specifier: workspace:*
+        version: link:../block-catalog
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema

@@ -5,6 +5,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@blocky/block-catalog": "workspace:*",
     "@blocky/language-schema": "workspace:*",
     "zod": "4.4.3"
   }
