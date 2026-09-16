@@ -8,11 +8,11 @@
 |---|---|
 | 涉及模块 | 正式项目/编译/运行、编辑器、资源、蓝图、候选补丁、原生保存、AppSurface、终端/日志、Windows 生命周期 |
 | 验收等级 | L2 用户流程；保存、权限、预览隔离、脱敏、终端及退出为 L3 |
-| 代码基线 | 起点 `8ac926fc9affafeab7a0bc58e0006b5c5a54d0ad`；当前候选源码 `1e106a2cf5a4792a95df9d0991a7f302933a0adc`；当前工作区另有交付文档与精选证据差异 |
-| 验证结果 | A–E、21 项 CLI、发行构建/扫描/包装和包装 CLI 通过；普通 GUI 主旅程、顶部菜单与弹窗可读性复验通过，用户直接确认 Shift 多选、中键平移和通知区域恢复正常；根 `check:core` 通过，但当前根 `check:full` 仍有第 113 轮失败记录，新的非输入 Full 尚未形成最终结果 |
-| 问题与风险 | 当前 `check:full` 失败证据只完成 112/360 循环与 9/30 次保存，第 113 轮报 `undo failed`，新的非输入复跑仍在进行；远端 CI 未执行 |
+| 代码基线 | 起点 `8ac926fc9affafeab7a0bc58e0006b5c5a54d0ad`；最终普通产品源码 `1e106a2cf5a4792a95df9d0991a7f302933a0adc`；当前 Full 测试/诊断源码 `970d8154569b56784b773301105b9fb8f1a8548f`；当前工作区另有交付文档与精选证据差异 |
+| 验证结果 | A–E、21 项 CLI、发行构建/扫描/包装和包装 CLI、普通 GUI 主旅程、顶部菜单与弹窗可读性均通过；用户直接确认 Shift 多选、中键平移和通知区域恢复正常；`970d815…` 的 Core 及最终 Full 360/360 循环、30/30 保存重开通过 |
+| 问题与风险 | 前两次 Full 分别在第 113、332 轮中止；第 113 轮 `undo failed` 原因未证实，作为非阻塞残余波动风险保留；第 332 轮与用户确认的窗口隐藏操作及 Host 拒绝策略相符但不能追溯唯一原因；远端 CI 未执行 |
 | 真实大模型 API 调用 | 否；本阶段默认确定性适配器，未真实调用外部大模型 API |
-| 最终结论 | 不通过 |
+| 最终结论 | 通过 |
 
 | 编号 | 用户功能与场景 | 等级 | 对应批次 | 当前结果 |
 |---|---|---|---|---|
@@ -26,25 +26,27 @@
 | S1-08 | 显式创建应用页面并隔离预览（U16） | L3 | E | 通过；普通包拒绝、权限批准、页面内问答、关闭重开与独立隔离负例均有证据 |
 | S1-09 | 通知区域、后台运行和真正退出（U18） | L3 | E/F | 通过；通知区域恢复由用户直接确认，关闭保护与进程结算已有证据，最终普通包 ExitDialog 标题/正文/按钮实际复验清晰可读 |
 | S1-10 | 底部面板、具名任务与诊断导出（U19） | L3 | B/E | 通过；普通包四视图、30 次具名检查与独立任务/日志安全证据一致 |
-| S1-11 | 普通 Windows 产品包可重复运行 | L3 | F | 不通过；当前普通包 GUI、扫描、许可证与包装已通过，但根 `check:full` 仍保留第 113 轮 `undo failed`，新 Full 尚未完成 |
+| S1-11 | 普通 Windows 产品包可重复运行 | L3 | F | 通过；普通包 GUI、扫描、许可证、包装及 `970d815…` 最终 Full 360/360、30/30 均通过，历史两次中止继续保留 |
 | S1-12 | CLI 操作、机器输出与桌面领域一致性 | L3 | C–F | 通过；21 项 CLI 与包装后跨目录独立旅程均通过 |
 
 ## 最终验收执行状态
 
-本段由未参与实现的最终验收 Agent 汇总，时间为 2026-09-16 20:33 ~ 23:12（Asia/Shanghai）。先完成磁盘、CLI、测试工件与既有独立报告审查；用户恢复电脑操控授权后，再对普通发行包执行真实鼠标、键盘、原生文件选择器、窗口与退出旅程。Computer Use 无法表达按住 Shift 后点击、中键按住拖动，也不能枚举 Windows 通知区域图标，因此这三项由用户按既定步骤直接操作并于 22:55 确认“要求的测试项均正常”；本报告将该来源与独立 Agent 实际操作严格分开。
+本段由未参与实现的最终验收 Agent 汇总，时间为 2026-09-16 20:33 ~ 2026-09-17 00:12（Asia/Shanghai）。先完成磁盘、CLI、测试工件与既有独立报告审查；用户恢复电脑操控授权后，再对普通发行包执行真实鼠标、键盘、原生文件选择器、窗口与退出旅程。Computer Use 无法表达按住 Shift 后点击、中键按住拖动，也不能枚举 Windows 通知区域图标，因此这三项由用户按既定步骤直接操作并于 22:55 确认“要求的测试项均正常”；本报告将该来源与独立 Agent 实际操作严格分开。
 
 ### 候选身份与工作区
 
 - 当前候选源码为 `1e106a2cf5a4792a95df9d0991a7f302933a0adc`，分支 `codex/feat-stage1-formal-demo`。该提交包含 Canvas Tab 聚焦、顶部锚点菜单、弹窗前景色以及共享 primary 普通/悬停对比修复。
 - 当前普通候选为 `dist/Blocky-Studio-0.1.0-ui-fix/Blocky Studio.exe`：12,050,432 字节，SHA-256 `EA497F11FECD20E3750A8E9917A5DBF34CA9250436F41A2151AB6B508D8C92F7`。当前包装为 8 个文件、18,501,138 字节；[package-menu-contrast-final.json](阶段1证据/package-menu-contrast-final.json)和[release-artifacts-menu-contrast-final.json](阶段1证据/release-artifacts-menu-contrast-final.json)绑定最终普通字节。`EC684…`、`89C334…` 及 `B954…` 均只保留为修复前历史候选，不冒充最终包。
-- F harness 将测试包与普通包分开构建：`native-test`/WDIO 入口只用于 `try/native-e2e-target`；普通构建使用默认 feature、生产 Web 与独立 `try/release-native-target`。`check-release` 同时要求普通产物无测试标记，并要求测试包存在测试标记作为正控制。
+- 最终收口时普通包 PID 103980 仍因保留用户未保存测试内容而有意运行，不属于真正退出后的孤儿进程证据，也未在只读收口中被擅自关闭。真正退出的进程树结算证据及其候选绑定在下文单列。
+- 最终长稳使用测试/诊断源码 `970d8154569b56784b773301105b9fb8f1a8548f`；它只增加失败诊断以及隐藏拒绝/单实例恢复回归，没有改变 `1e106a2…` 的生产产品模块。最终 Full 的测试 EXE 为 14,921,216 字节、SHA-256 `F78109D93FC5E16793D9381EB9375C49B060A1E31109EC13E809B996A6C798EA`，runId `33a8539a-823b-4615-982f-86641a755506`。普通产品字节、测试字节和测试诊断提交不得互相冒用。
+- F harness 将测试包与普通包分开构建：执行时 `native-test`/WDIO 入口只用于 `try/native-e2e-target`，普通构建使用默认 feature、生产 Web 与独立 `try/release-native-target`；验收完成后两处构建缓存均按 [storage-moves-final.json](阶段1证据/storage-moves-final.json)可逆移入 `try/待清理/阶段1-2026-09-17/最终复验缓存/`。`check-release` 同时要求普通产物无测试标记，并要求测试包存在测试标记作为正控制。
 
 ### 已有独立证据映射
 
 - S1-01/S1-02：A 编译与项目报告、C 编辑与会话报告及运行入口复验已关闭分层编译、无效链接、入口歧义、配置、诊断和组件导航问题；当前普通包又实际完成双画布导航、重命名后稳定引用、角色输入、滚轮缩放、双击搜索和 Tab 搜索修复复验。中键平移由用户直接确认正常。
 - S1-03/S1-05：B 运行与日志报告已关闭适配器最低权限、结构化脱敏、调用失败结算、进程序号和对象截断问题；当前确定性运行证据明确不包含外部模型调用。
 - S1-04/S1-06：D 蓝图与编辑、D 补丁与 CLI 安全报告已覆盖 ID 重生、插槽、布局、撤销、来源锁定、拒绝不写入、权限差异和原生补丁门禁；普通包又实际完成框选、整栈拖动、个人蓝图保存/插入/撤销及仓库候选拒绝/接受。Shift 点击 1→2→1 由用户直接确认正常。
-- S1-07/S1-12：CLI 与 Host 报告已覆盖真实 ZIP、原子替换、冲突不覆盖、损坏输入、路径边界、退出码和机器输出；普通包通过原生选择器保存并重开。根 `check:core` 已通过；当前根 `check:full` 未通过。
+- S1-07/S1-12：CLI 与 Host 报告已覆盖真实 ZIP、原子替换、冲突不覆盖、损坏输入、路径边界、退出码和机器输出；普通包通过原生选择器保存并重开。测试/诊断源码 `970d815…` 的 Core 与完整 Full 均已通过。
 - S1-08/S1-10：E 应用界面安全、E 注册任务、E 日志与窗口安全报告已覆盖显式页面补丁、原生边界、测试包 iframe 隔离、任务限制、终端隔离、日志丢失计数和诊断导出；普通包又实际完成页面拒绝/批准/问答/重开、四视图和 30 次具名检查。
 
 ### 普通发行包 GUI 实际验收
@@ -62,7 +64,7 @@
 
 Computer Use API 没有修饰键按住后点击或中键按住拖动能力，Windows 通知区域也没有可枚举窗口句柄。用户按已确认步骤亲自操作并直接回复“你要求的测试项均正常”，因此以下三项的证据来源记为**用户直接确认**，不写成独立 Agent 亲自操作：Shift 点击主栈/工具栈显示选择数 1→2→1 且不拖动；中键拖动画布时两栈与背景等量平移、相对布局不变；最小化到通知区域后点击 Blocky 图标恢复同一项目且不产生第二实例。
 
-用户曾提供旧普通包截图并直接指出两项缺陷：ExitDialog 在深色背景上使用黑色标题、正文或按钮文字，内容不可读；顶部“文件/编辑/视图/运行”点击后误用居中的命令中心形态。最终源码 `1e106a2…` 已完成独立隔离渲染与普通包复验：真实 `MenuBar` 的文件下拉左边缘与触发按钮对齐、位于按钮下方，右箭头切换到编辑菜单，禁用的撤销保持禁用，Escape 关闭并把焦点还给触发项，外点关闭，独立命令中心不同时出现；最终普通包实际点击“文件”亦显示锚点下拉。真实 ExitDialog、ConfirmationDialog 与候选 ConstructionDialog 在 Windows 系统浅/深偏好下均保持固定深色产品配色，普通文字对比为 11.64–11.96:1；共享 primary 修复后的普通态为 5.62:1、悬停态为 4.87:1。最终普通包 ExitDialog 的标题、正文、“返回工作台/隐藏并继续/停止并退出”均实际可读，返回工作台后保留项目仍显示问答页面、引用资料服务和角色配置。隔离夹具、截图、显式 Chrome profile 与结果位于 `try/stage1-ui-isolated/`；这些组件证据不冒充普通包实操。
+用户曾提供旧普通包截图并直接指出两项缺陷：ExitDialog 在深色背景上使用黑色标题、正文或按钮文字，内容不可读；顶部“文件/编辑/视图/运行”点击后误用居中的命令中心形态。最终源码 `1e106a2…` 已完成独立隔离渲染与普通包复验：真实 `MenuBar` 的文件下拉左边缘与触发按钮对齐、位于按钮下方，右箭头切换到编辑菜单，禁用的撤销保持禁用，Escape 关闭并把焦点还给触发项，外点关闭，独立命令中心不同时出现；最终普通包实际点击“文件”亦显示锚点下拉。真实 ExitDialog、ConfirmationDialog 与候选 ConstructionDialog 在 Windows 系统浅/深偏好下均保持固定深色产品配色，普通文字对比为 11.64–11.96:1；共享 primary 修复后的普通态为 5.62:1、悬停态为 4.87:1。最终普通包 ExitDialog 的标题、正文、“返回工作台/隐藏并继续/停止并退出”均实际可读，返回工作台后保留项目仍显示问答页面、引用资料服务和角色配置。隔离夹具执行时位于 `try/stage1-ui-isolated/`，验收完成后已按 [storage-moves-final.json](阶段1证据/storage-moves-final.json)可逆迁移；精选截图和 JSON 继续保留在阶段 1 证据目录。这些组件证据不冒充普通包实操。
 
 ### 本轮代表性 CLI 读回
 
@@ -80,26 +82,31 @@ Computer Use API 没有修饰键按住后点击或中键按住拖动能力，Win
 ### F 门禁最终结果
 
 - [performance.json](阶段1证据/performance.json) 使用 100 块、100 个执行节点和 5 个预热后样本；中位数为加载 56.9 ms、保存并编译 3.7 ms、运行 38.1 ms，分别低于 1,500 / 750 / 1,500 ms 阈值。
-- 历史源码 `d8a521f…` 上，`pwsh -NoProfile -File scripts/check-native-core.ps1 full` 曾退出 0、3 项通过。[Full.json](阶段1证据/Full.json) 记录 360 个循环、30 次真实原生归档保存重开、1,803,268 ms、堆增长 8,679,064 字节、`errors=[]`、`outbound=[]`、`passed=true`；[cycles.jsonl](阶段1证据/cycles.jsonl) 含 360 条逐轮记录。该证据继续保留为历史通过事实，但不能冒充当前 `6708df…` 的根聚合结果。
-- 当前源码的根 `pnpm check:core` 已通过：51 项单元、27 项契约、12 项组件、9 项 Rust、21 项 CLI、5 项 native E2E 与 2 项 Core 性能全部退出 0。随后根 `pnpm check:full` 的长稳部分完成 112/360 循环与 9/30 次保存，在第 113 轮因 `undo failed` 退出；原始证据见 [Full-tab-focus-failed-2243.json](阶段1证据/Full-tab-focus-failed-2243.json)。失败原因尚未确认，不能归因于产品、测试夹具或人工干扰中的任何一方，也不能写成 Full 通过。
-- 当前分项结果为 51 项单元、27 项契约、12 项组件和 21 项 CLI 测试退出 0；`build:cli` 成功。21 项 CLI 完整命令于 21:08 结束，包含最终 launcher 用例。
+- 根 `package.json` 的 `check:full` 只是顺序别名：先执行 `pnpm check:core`，再执行 `pwsh -NoProfile -File scripts/check-native-core.ps1 full`。本轮在同一测试/诊断源码 `970d815…` 上已按该顺序分别执行，两个组成命令均退出 0；[final-run-provenance.json](阶段1证据/final-run-provenance.json)记录两条实际命令、退出码、未变源码及原始日志 SHA-256。本报告分别依据两个组成命令的原始证据评定，不冒称聚合别名被单独调用，也不把以别名重复执行同样约 34 分钟流程新增为门禁。
+- 历史源码 `d8a521f…` 上，`pwsh -NoProfile -File scripts/check-native-core.ps1 full` 曾退出 0、3 项通过。[Full.json](阶段1证据/Full.json) 记录 360 个循环、30 次真实原生归档保存重开、1,803,268 ms、堆增长 8,679,064 字节、`errors=[]`、`outbound=[]`、`passed=true`；[cycles.jsonl](阶段1证据/cycles.jsonl) 含 360 条逐轮记录。该证据继续保留为历史通过事实，但不能冒充当前普通产品源码或当前测试/诊断源码的根聚合结果。
+- 第一次当前代根 `pnpm check:full` 的长稳部分完成 112/360 循环与 9/30 次保存，在第 113 轮报 `undo failed`；原始证据见 [Full-tab-focus-failed-2243.json](阶段1证据/Full-tab-focus-failed-2243.json)。其原因至今未证实，不能归因于产品、测试夹具或人工干扰中的任何一方；即使后续完整复跑通过，也应保留为一次未解释的历史中止与残余波动风险。
+- 第二次 Full 完成 331/360 循环、27/30 次保存和 1,658,227 ms，在第 332 轮报 `studio runtime did not finish`；[Full-no-input-failed-2331.json](阶段1证据/Full-no-input-failed-2331.json)同时记录 `errors=[]`、`outbound=[]`。其中 `trustedInput=[]` 只证明 WebView 内没有可信输入，不能证明原生窗口未被最小化、隐藏或被系统“显示桌面”影响。用户随后直接确认当时曾最小化/隐藏 Test 或显示桌面；现有 Host 策略本就拒绝隐藏/最小化窗口启动新任务，短回归也证明隐藏时 `not-started/hostAllowsNewRun=false`、单实例恢复后运行成功，但这些事实不能追溯证明第 332 轮的唯一原因，故该轮仍是未完成而非产品缺陷定论或通过证据。
+- 测试/诊断源码 `970d815…` 的最新根 `check:core` 于 23:39 退出 0：[core-970d815.log](阶段1证据/core-970d815.log)记录 51 项单元、27 项契约、14 项组件、Rust 8+1、21 项 CLI、5 项原生 UI 与 3 项 Core 通过；[window-policy-2339.json](阶段1证据/window-policy-2339.json)和[performance-core-2339.json](阶段1证据/performance-core-2339.json)绑定同一 runId `54d9e480-15de-4157-8ca7-daad488ae793`。这些精选证据由提交 `bfee7d3` 保留；原始未规范化日志现位于 `try/待清理/阶段1-2026-09-17/最终复验缓存/try--stage1-final-core.log`，迁移关系和原始哈希分别见 [storage-moves-final.json](阶段1证据/storage-moves-final.json)与 [final-run-provenance.json](阶段1证据/final-run-provenance.json)。
+- 最终 Full 使用测试/诊断源码 `970d815…`、上述 `F78109…` 测试 EXE 和 runId `33a8539a-823b-4615-982f-86641a755506`，退出 0、4 项通过。[Full-970d815-final.json](阶段1证据/Full-970d815-final.json)记录 `passed=true`、360/360 个 5 秒循环、30/30 次真实原生归档保存重开、1,803,544 ms、堆增长 6,660,204 字节以及 `trustedInput=[]`、`errors=[]`、`outbound=[]`；[performance-970d815-final.json](阶段1证据/performance-970d815-final.json)和[window-policy-970d815-final.json](阶段1证据/window-policy-970d815-final.json)与其 runId 完全一致。
+- [cycles-970d815-final.jsonl](阶段1证据/cycles-970d815-final.jsonl)含 360 行可解析记录，cycle 1–360 连续且唯一，每轮均为 100 块/100 执行节点；round-trip 恰好出现在每 12 轮，共 30 次，最后一轮 elapsed 为 1,803,541 ms，`droppedImportant` 始终为 0。逐轮 Schema 本身不含 runId，因此不声称每行自带 runId；它通过同批保留工件、相同 360/30 终态和相邻最终时长与汇总/日志绑定。[full-970d815.log](阶段1证据/full-970d815.log)记录 60 轮一档进度、最终 360/30 与 4 passing；原始未规范化日志现位于 `try/待清理/阶段1-2026-09-17/最终复验缓存/try--stage1-final-full.log`，其 SHA-256 见 [final-run-provenance.json](阶段1证据/final-run-provenance.json)。
+- 当前 `970d815…` Core 分项结果以 [core-970d815.log](阶段1证据/core-970d815.log) 为准：51 项单元、27 项契约、14 项组件、Rust 8+1、21 项 CLI、5 项原生 UI 与 3 项 Core 全部通过；`build:cli` 成功。21 项 CLI 完整命令于 21:08 结束，包含最终 launcher 用例。
 - 最终 `pnpm build:release`、`pnpm check:release`、`pnpm package:release` 均退出 0；[license-coverage.json](阶段1证据/license-coverage.json) 记录 313 个生产依赖全部覆盖、`missing=[]`。[release-artifacts-menu-contrast-final.json](阶段1证据/release-artifacts-menu-contrast-final.json)绑定最终 7 个扫描对象，未发现普通包测试入口；测试包正控制仍存在。
-- 当前 `dist/Blocky-Studio-0.1.0-ui-fix/` 由 [package-menu-contrast-final.json](阶段1证据/package-menu-contrast-final.json)绑定：8 个文件、合计 18,501,138 字节；交付目录没有 `AGENTS.md`、验收材料、内部日志或 JSONL。历史包的独立逐项哈希核对、同目录重复包装拒绝且原文件不变证据继续保留。
-- 当前交付包普通 EXE 为 12,050,432 字节、SHA-256 `EA497F11FECD20E3750A8E9917A5DBF34CA9250436F41A2151AB6B508D8C92F7`；CLI helper 为 3,031,040 字节、SHA-256 `1036CCFD0E577AAC0AE7040F384D8D1D3CB37620621A8FAA84B21CE35411CF7D`；CLI `main.mjs` 为 694,404 字节、SHA-256 `CF2F4757B240A8A83FCA4CD9F681BCD47149951C902F44D3B7881D1B2251DCD2`。
+- 当前 `dist/Blocky-Studio-0.1.0-ui-fix/` 由 [package-menu-contrast-final.json](阶段1证据/package-menu-contrast-final.json)绑定：8 个文件、合计 18,501,138 字节；最终收口再次对磁盘 8 个真实文件逐项计算大小与 SHA-256，结果与清单完全一致。交付目录没有 `AGENTS.md`、验收材料、内部日志或 JSONL。历史包的独立逐项哈希核对、同目录重复包装拒绝且原文件不变证据继续保留。
+- 当前交付包普通 EXE 为 12,050,432 字节、SHA-256 `EA497F11FECD20E3750A8E9917A5DBF34CA9250436F41A2151AB6B508D8C92F7`；CLI helper 为 3,031,040 字节、SHA-256 `7D08F4FFD091B9CEED4E31A2F2EDECD92B05E4A2FBE1B542F8D7CC1E9BFBDFE4`；CLI `main.mjs` 为 694,404 字节、SHA-256 `CF2F4757B240A8A83FCA4CD9F681BCD47149951C902F44D3B7881D1B2251DCD2`。三者均从最终 [package-menu-contrast-final.json](阶段1证据/package-menu-contrast-final.json)读回，不沿用旧包装哈希。
 
 ### 包装后 CLI 独立验收
 
-本 Agent 从仓库外工作目录 `D:\` 调用交付包绝对 CLI 入口，结果记录于 `try/stage1-release/packaged-cli-independent.json`：帮助、项目创建、编译和模拟运行均退出 0；模拟运行输出 20 条连续 RuntimeEvent 和 1 条 CLI 终态，事件共用同一 `runId`、序号连续，终态为 completed 且 `modelApiCalled:false`。重复创建同一目标退出 5、错误 `BLK-CONFLICT-001`，项目 SHA-256 `D7B7916A6BBF512C157D012344D00CB4AEFB2FD98870A443BC894BB48AA990B` 前后不变。
+本 Agent 从仓库外工作目录 `D:\` 调用交付包绝对 CLI 入口，精选结果见 [packaged-cli-independent.json](阶段1证据/packaged-cli-independent.json)：帮助、项目创建、编译和模拟运行均退出 0；模拟运行输出 20 条连续 RuntimeEvent 和 1 条 CLI 终态，事件共用同一 `runId`、序号连续，终态为 completed 且 `modelApiCalled:false`。重复创建同一目标退出 5、错误 `BLK-CONFLICT-001`，项目 SHA-256 `D7B7916A6BBF512C157D012344D00CB4AEFB2FD98870A443BC894BB48AA990B` 前后不变。
 
-仓库原有 `try/stage1-release/check-packaged-cli.mjs` 首次执行退出 1，因为脚本把目标冲突的正式退出码错误地期望为 3；实际产品返回 5，与冻结 CLI 分类和既有独立验收一致。本 Agent 未修改产品或原脚本，新增 `try/stage1-release/check-packaged-cli-independent.mjs` 按正式退出码复验并通过。该异常属于一次性验收脚本错误，不计为产品失败；原始失败与修正后的独立通过均保留在本报告。
+仓库原有 `try/stage1-release/check-packaged-cli.mjs` 首次执行退出 1，因为脚本把目标冲突的正式退出码错误地期望为 3；实际产品返回 5，与冻结 CLI 分类和既有独立验收一致。本 Agent 未修改产品或原脚本，新增 `try/stage1-release/check-packaged-cli-independent.mjs` 按正式退出码复验并通过。该目录已按 [storage-moves-final.json](阶段1证据/storage-moves-final.json)可逆迁移到最终复验缓存。该异常属于一次性验收脚本错误，不计为产品失败；原始失败与修正后的独立通过均保留在本报告。
 
-### 最终结论与剩余阻塞
+### 最终结论与残余风险
 
 当前已通过的范围包括：A–E 的领域/组件/CLI/Host/安全复验、100 块性能、21 项 CLI、根 `check:core`、普通构建与测试入口隔离扫描、313 项许可证覆盖、8 文件发行包装、包装后跨目录 CLI，以及普通发行包的创作、蓝图、问答、页面、保存重开、候选审阅和主要生命周期旅程。Shift 多选、中键平移和通知区域恢复由用户直接确认正常；来源已与独立 Agent 操作分开记录。
 
-ExitDialog 可读性与顶部菜单形态缺陷已经在最终源码、隔离真实组件和最终普通包三个层次复验关闭。当前仅剩根 `check:full` 失败未关闭：现有失败证据在第 113 轮报 `undo failed`，只完成 112/360 循环和 9/30 次保存；新的非输入 Full 已开始但尚未形成最终结果。历史 `d8a521f…` 的 360/30 Full 通过事实继续保留，但不能覆盖当前候选失败。远端 CI 未执行。
+ExitDialog 可读性与顶部菜单形态缺陷已经在最终源码、隔离真实组件和最终普通包三个层次复验关闭。当前 `970d815…` 的 Core 与最终 Full 已按 `check:full` 的两个组成命令顺序取得完整通过证据，无需仅为命令别名再次重复相同约 34 分钟流程。第一次第 113 轮 `undo failed` 的原因仍未证实，第二次第 332 轮中止也不能追溯证明唯一原因；两者作为历史中止和残余波动风险继续保留，不被最终通过记录覆盖。远端 CI 未执行。
 
-因此本任务当前最终结论仍为 **不通过**。必须取得当前测试源码新的 360/360 循环与 30/30 次真实 Host 保存重开完整通过证据，才能改变结论。当前不授权合并 `main`、删除任务分支、推送、发布或进入阶段 2。
+因此本任务阶段 1 已确认范围的最终结论为 **通过**。该结论覆盖 S1-01–S1-12、当前普通 Windows 发行包、当前阶段的确定性本地适配器和已声明安全边界，不代表真实大模型 API、真实 RAG、六个兼容模板、完整交互式 PTY、RPA、发布部署或其他后续阶段能力已经完成。允许将阶段 1 实施计划标记完成并归档；本项目为团队项目，仍须先取得用户授权才能合并 `main` 和删除任务分支，push、发布及进入阶段 2 也分别需要相应授权或新任务指令。
 
 真实大模型 API 调用：**否；未真实调用外部大模型 API**。所有问答证据使用确定性本地适配器，无供应商请求、响应 ID 或 Token 消耗。
 
@@ -222,4 +229,4 @@ ExitDialog 可读性与顶部菜单形态缺陷已经在最终源码、隔离真
 
 ## 当前实施与验收记录
 
-2026-09-16：A–E 的正式项目/编译/运行、资源、编辑与会话、蓝图/转换补丁、注册任务、应用页面、日志和窗口安全子范围已经实现，并分别由未参与实现的 Agent 完成局部验收与缺陷复验。F 已完成 100 块性能、21 项 CLI、根 `check:core`、发行测试入口隔离扫描、许可证覆盖、8 文件包装及包装后跨目录 CLI。普通发行包主旅程已由最终验收 Agent 实际执行；Shift 多选、中键平移和通知区域恢复由用户直接确认正常。源码 `1e106a2…` / 普通包 `EA497F…` 已复验关闭 Tab 搜索焦点、ExitDialog 可读性、顶部锚点菜单和 primary 对比问题；当前只剩根 `check:full` 第 113 轮 `undo failed` 尚未由新完整复跑关闭。因此阶段 1 当前结论仍为“不通过”。协议边界见正式契约 09；历史 Full 通过、自动化或 CLI 结果不覆盖当前 Full 失败。
+2026-09-16 ~ 2026-09-17：A–E 的正式项目/编译/运行、资源、编辑与会话、蓝图/转换补丁、注册任务、应用页面、日志和窗口安全子范围已经实现，并分别由未参与实现的 Agent 完成局部验收与缺陷复验。F 已完成 100 块性能、21 项 CLI、测试/诊断源码 `970d815…` 的 Core 与最终 360/30 Full、发行测试入口隔离扫描、许可证覆盖、8 文件包装及包装后跨目录 CLI。普通发行包主旅程已由最终验收 Agent 实际执行；Shift 多选、中键平移和通知区域恢复由用户直接确认正常。产品源码 `1e106a2…` / 普通包 `EA497F…` 已复验关闭 Tab 搜索焦点、ExitDialog 可读性、顶部锚点菜单和 primary 对比问题。阶段 1 当前结论为“通过”；两次历史 Full 中止及首次 `undo failed` 原因未证实继续作为残余风险保留，不改写为已解释。协议边界见正式契约 09；该结论不扩展到后续阶段能力。

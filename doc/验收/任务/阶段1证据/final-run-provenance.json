@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-09-17T00:12:01.2869114+08:00",
+  "testSourceCommit": "970d8154569b56784b773301105b9fb8f1a8548f",
+  "productSourceCommit": "1e106a2cf5a4792a95df9d0991a7f302933a0adc",
+  "coreCommand": "pnpm check:core",
+  "coreExitCode": 0,
+  "fullCommand": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+  "fullExitCode": 0,
+  "composition": "The two commands are the complete check:full sequence; executed separately in order on unchanged test source. The check:full alias was not rerun.",
+  "coreRawLogSha256": "45519478ba1bdd028798df9ab059aaa856bc2bb5885b5b941f4dd1ee36b6e21c",
+  "fullRawLogSha256": "1772c7c80cc2ee80a302f6bfee41d5fa932fe4d63c52cdad37d38232eacfba5e",
+  "logCopies": "Evidence log copies normalize line endings and trailing whitespace only. Original bytes retained via storage-moves-final.json.",
+  "externalModelApiCalled": false
+}

@@ -1,0 +1,168 @@
+{
+  "createdAt": "2026-09-17T00:12:34.013048+08:00",
+  "operation": "reversible move only",
+  "preserved": [
+    "dist/Blocky-Studio-0.1.0-ui-fix",
+    "try/stage1-gui-resume",
+    "tools/blocky-cli/dist",
+    "node_modules",
+    ".pnpm-store",
+    "try/windows-core-spike"
+  ],
+  "items": [
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\apps--studio-host--target",
+      "files": 15179,
+      "bytes": 7356327740,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\gen",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\apps--studio-host--gen",
+      "files": 4,
+      "bytes": 298220,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\apps\\studio-desktop\\dist",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\apps--studio-desktop--dist",
+      "files": 3,
+      "bytes": 1129274,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--native-e2e-target",
+      "files": 4319,
+      "bytes": 1785029222,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\native-test-web",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--native-test-web",
+      "files": 12,
+      "bytes": 1154312,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--release-native-target",
+      "files": 3768,
+      "bytes": 1463997103,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-core",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-core",
+      "files": 4,
+      "bytes": 54572,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-e2e",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-e2e",
+      "files": 13,
+      "bytes": 509730,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-full-failure-2243",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-full-failure-2243",
+      "files": 3,
+      "bytes": 18054,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-full-failure-2331",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-full-failure-2331",
+      "files": 3,
+      "bytes": 50157,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-release",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-release",
+      "files": 4,
+      "bytes": 2646416,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-ui-isolated",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-ui-isolated",
+      "files": 448,
+      "bytes": 35740712,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\accept-stage1-e-surface",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--accept-stage1-e-surface",
+      "files": 1,
+      "bytes": 4462,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.1.0",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\dist--Blocky-Studio-0.1.0",
+      "files": 8,
+      "bytes": 18500114,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-final-core.log",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-final-core.log",
+      "files": 1,
+      "bytes": 9855,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-final-full.log",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-final-full.log",
+      "files": 1,
+      "bytes": 2664,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\production-js-licenses.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--production-js-licenses.json",
+      "files": 1,
+      "bytes": 19877,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\production-rust-metadata.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--production-rust-metadata.json",
+      "files": 1,
+      "bytes": 1329255,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-storage-inventory-2320.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-storage-inventory-2320.json",
+      "files": 1,
+      "bytes": 1011,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-cleanup-preflight.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\try--stage1-cleanup-preflight.json",
+      "files": 1,
+      "bytes": 1293,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-final-cleanup.ps1",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\stage1-final-cleanup.ps1",
+      "files": 1,
+      "bytes": 3985,
+      "moved": true
+    },
+    {
+      "original": "D:\\1Folder\\Blocky-AI\\try\\stage1-cleanup-dry-run.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段1-2026-09-17\\最终复验缓存\\stage1-cleanup-dry-run.json",
+      "files": 1,
+      "bytes": 5437,
+      "moved": true
+    }
+  ]
+}
