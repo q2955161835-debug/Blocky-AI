@@ -21,6 +21,13 @@ describe("Blocky native editor", () => {
           p.url().startsWith("tauri://"),
       )!;
     if (!page) throw Error("Blocky test page not found");
+    const errors = new Set<string>();
+    page.on("console", (message) => {
+      if (message.type() === "error" && !errors.has(message.text())) {
+        errors.add(message.text());
+        console.log("WEBVIEW_ERROR", message.text());
+      }
+    });
   });
   after(async () => {
     await cdp?.close();
@@ -89,6 +96,7 @@ describe("Blocky native editor", () => {
         cookie,
         tauri: "__TAURI__" in window,
         internals: "__TAURI_INTERNALS__" in window,
+        ipc: "ipc" in window,
       };
     });
     expect(isolation).toEqual({
@@ -96,13 +104,74 @@ describe("Blocky native editor", () => {
       cookie: false,
       tauri: false,
       internals: false,
+      ipc: false,
     });
+    await browser.tauri.execute(async ({ core }) =>
+      core.invoke("append_diagnostics", {
+        records: [
+          {
+            timestamp: "2026-09-16T00:00:00.000Z",
+            sequence: 888888,
+            level: "warning",
+            channel: "preview",
+          },
+        ],
+      }),
+    );
+    const denied = await frame.locator("body").evaluate(async () => {
+      let parentAccess = false,
+        httpReached = false;
+      try {
+        parentAccess = !!(parent as unknown as { __TAURI_INTERNALS__: unknown })
+          .__TAURI_INTERNALS__;
+      } catch {}
+      const message = {
+        cmd: "clear_diagnostics",
+        callback: 1,
+        error: 2,
+        payload: {},
+        __TAURI_INVOKE_KEY__: "fixture-invalid-invoke-key",
+      };
+      const native = window as unknown as {
+        chrome?: { webview?: { postMessage(value: string): void } };
+      };
+      try {
+        native.chrome?.webview?.postMessage(JSON.stringify(message));
+      } catch {}
+      try {
+        await fetch("http://ipc.localhost/clear_diagnostics", {
+          method: "POST",
+          body: JSON.stringify(message),
+        });
+        httpReached = true;
+      } catch {}
+      return { parentAccess, httpReached };
+    });
+    expect(denied).toEqual({ parentAccess: false, httpReached: false });
+    const preserved = await browser.tauri.execute(async ({ core }) => {
+      const data = (await core.invoke("read_diagnostics", {
+        channel: "preview",
+      })) as { records: { sequence: number }[] };
+      return data.records.some((r) => r.sequence === 888888);
+    });
+    expect(preserved).toBe(true);
     await frame.locator("#question").fill("水循环如何形成？");
     await frame.locator("#submit").click({ timeout: 15000 });
-    await browser.waitUntil(
-      async () => (await frame.locator("#answer").innerText()).includes("蒸发"),
-      { timeout: 15000 },
-    );
+    try {
+      await browser.waitUntil(
+        async () =>
+          (await frame.locator("#answer").innerText()).includes("蒸发"),
+        { timeout: 15000 },
+      );
+    } catch (error) {
+      console.log("SURFACE_RUN_STATE", {
+        status: await frame.locator("#status").innerText(),
+        answer: await frame.locator("#answer").innerText(),
+        studio: await page.locator(".statusbar").innerText(),
+      });
+      await page.screenshot({ path: "try/stage1-e2e/surface-run-failure.png" });
+      throw error;
+    }
     expect(await frame.locator("#citations").innerText()).toContain("水循环");
     await browser.saveScreenshot("try/stage1-e2e/native-surface.png");
     await $("[aria-label='关闭 问答页面']").click();

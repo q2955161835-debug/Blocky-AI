@@ -17,8 +17,9 @@
     };
     port.start();
   });
-  form.addEventListener("submit", event => {
-    event.preventDefault(); if (!port || pending) return;
+  submit.type = "button";
+  submit.addEventListener("click", () => {
+    if (!port || pending || !form.reportValidity()) return;
     const question = document.getElementById("question").value.trim(); if (!question) return;
     pending = `request-${++sequence}`; submit.disabled = true; status.textContent = "正在查找资料…";
     port.postMessage({ schemaVersion: "blocky.bridge-request/v1alpha1", requestId: pending, endpointId: "ask", question });

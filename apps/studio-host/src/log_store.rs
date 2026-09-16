@@ -89,6 +89,17 @@ impl LogStore {
         Ok(())
     }
     pub fn append(&self, records: Vec<Record>) -> Result<(), String> {
+        self.append_with_losses(records, 0, 0)
+    }
+    pub fn append_with_losses(
+        &self,
+        records: Vec<Record>,
+        dropped: u64,
+        dropped_important: u64,
+    ) -> Result<(), String> {
+        if dropped_important > dropped || dropped > 9007199254740991 {
+            return Err(ERROR.into());
+        }
         if records.len() > 500 {
             return Err(ERROR.into());
         }
@@ -100,6 +111,8 @@ impl LogStore {
             return Err(ERROR.into());
         }
         let mut next = state.0.clone();
+        next.dropped = next.dropped.saturating_add(dropped);
+        next.dropped_important = next.dropped_important.saturating_add(dropped_important);
         next.records.extend(records);
         while next.records.len() > 1000 {
             let index = next
@@ -170,6 +183,11 @@ mod tests {
         let data = loaded.read(None).unwrap();
         assert_eq!(data.records.len(), 1000);
         assert_eq!(data.dropped, 500);
+        loaded.append_with_losses(vec![], 2, 1).unwrap();
+        let data = LogStore::open(path.clone()).read(None).unwrap();
+        assert_eq!(data.dropped, 502);
+        assert_eq!(data.dropped_important, 1);
+        assert!(loaded.append_with_losses(vec![], 1, 2).is_err());
         loaded.clear().unwrap();
         assert!(LogStore::open(path).read(None).unwrap().records.is_empty());
     }

@@ -70,8 +70,8 @@ export function BottomPanel({
                 导出诊断摘要
               </button>
               <span>
-                已截断 {s.bus.dropped} 条 · 警告/错误 {s.bus.droppedImportant}{" "}
-                条
+                已截断 {s.bus.dropped + logs.queueDropped} 条 · 警告/错误{" "}
+                {s.bus.droppedImportant + logs.queueDroppedImportant} 条
               </span>
             </div>
           )}

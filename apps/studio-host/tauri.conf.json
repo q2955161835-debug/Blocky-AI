@@ -26,7 +26,7 @@
       "capabilities": [
         "main"
       ],
-      "csp": "default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-9c1o1HmKWCOwroufp7kKi+BzfrHV9oqeilyMj0Hdv6c='; connect-src ipc: http://ipc.localhost; frame-src 'self'"
+      "csp": "default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-U50efV7Bkv9x8dIhIzpF+EQcHTo7ixuQounKy51hR+Y='; connect-src ipc: http://ipc.localhost; frame-src 'self'"
     }
   },
   "bundle": {

@@ -13,6 +13,22 @@ export async function exportDiagnostics(args: Args) {
         ? input.records
         : undefined;
     if (!Array.isArray(raw) || raw.length > 1000) throw Error();
+    const counts =
+      input && !Array.isArray(input) && typeof input === "object"
+        ? (input as { dropped?: unknown; droppedImportant?: unknown })
+        : {};
+    const dropped = counts.dropped ?? 0,
+      droppedImportant = counts.droppedImportant ?? 0;
+    if (
+      typeof dropped !== "number" ||
+      typeof droppedImportant !== "number" ||
+      !Number.isSafeInteger(dropped) ||
+      !Number.isSafeInteger(droppedImportant) ||
+      dropped < 0 ||
+      droppedImportant < 0 ||
+      droppedImportant > dropped
+    )
+      throw Error();
     let records = raw.map((record) => diagnosticRecord(record as LogRecord));
     const channel = args.options.get("channel");
     if (channel !== undefined) {
@@ -32,8 +48,8 @@ export async function exportDiagnostics(args: Args) {
     const artifact = {
       schemaVersion: "blocky.diagnostics/v1",
       records,
-      dropped: 0,
-      droppedImportant: 0,
+      dropped,
+      droppedImportant,
     };
     const result = envelope("diagnostics.export", {
       recordCount: records.length,

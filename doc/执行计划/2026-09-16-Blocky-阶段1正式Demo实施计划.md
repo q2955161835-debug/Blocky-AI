@@ -15,7 +15,7 @@
 - 起始提交：`8ac926fc9affafeab7a0bc58e0006b5c5a54d0ad`；开始时 `main` 工作区干净。
 - 任务分支：`codex/feat-stage1-formal-demo`；变更前检查点：`25f0117`。
 - 阶段 0 契约完成；课程助教 POC 的历史验收属于尖峰，不计为本次正式产品通过。
-- 当前没有正式根 `package.json`、`pnpm-workspace.yaml`、`apps/` 或 `packages/`，本文件下述命令均是拟建立命令，不能宣称现在可运行。
+- 起点提交尚无正式 monorepo；A–E 已建立正式根命令与包，当前可执行命令以根 `package.json` 为准。下述勾选清单保留最终逐项核对，不能用实现完成替代验收。
 - 技术栈沿用 React、TypeScript、Blockly、Tauri 2/Rust、pnpm、Vitest 和 Windows 原生测试。实施 A 时从已锁定尖峰依赖核对实际可安装版本，正式根独立锁定；不整体复制尖峰或依赖尖峰源码。
 - 数据事实为 Project Manifest 与每模块 Blockly Workspace JSON；会话、IR、日志、终端历史和审计不进入项目事实。
 - `v1alpha1` 不静默改义。需要补充类型或错误码时，先同步正文、正反夹具、消费者和迁移说明。

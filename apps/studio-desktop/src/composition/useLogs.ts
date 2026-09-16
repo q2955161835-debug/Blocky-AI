@@ -8,19 +8,31 @@ export function useLogs(studio: Studio) {
   const queue = useRef<DiagnosticRecord[]>([]),
     writing = useRef<Promise<void> | null>(null),
     error = useRef(false);
+  const losses = useRef({ dropped: 0, droppedImportant: 0 }),
+    inflight = useRef(0),
+    clearing = useRef(false);
+  const [queueDropped, setQueueDropped] = useState(0),
+    [queueDroppedImportant, setQueueDroppedImportant] = useState(0);
   const flush = async () => {
+    if (clearing.current) return;
     if (writing.current) await writing.current;
-    if (!queue.current.length) {
+    if (clearing.current) return;
+    if (!queue.current.length && !losses.current.dropped) {
       if (error.current) throw Error("BLK-LOG-004");
       return;
     }
     const batch = queue.current.splice(0, 500);
-    const pending = invoke("append_diagnostics", { records: batch })
+    inflight.current = batch.length;
+    const loss = { ...losses.current };
+    losses.current = { dropped: 0, droppedImportant: 0 };
+    const pending = invoke("append_diagnostics", { records: batch, ...loss })
       .then(() => {
         error.current = false;
       })
       .catch(() => {
         queue.current.unshift(...batch);
+        losses.current.dropped += loss.dropped;
+        losses.current.droppedImportant += loss.droppedImportant;
         error.current = true;
         throw Error("BLK-LOG-004");
       });
@@ -29,15 +41,21 @@ export function useLogs(studio: Studio) {
       await pending;
     } finally {
       if (writing.current === pending) writing.current = null;
+      inflight.current = 0;
     }
-    if (queue.current.length) await flush();
+    if (queue.current.length || losses.current.dropped) await flush();
   };
   useEffect(() => {
     const unsubscribe = studio.bus.subscribe((record) => {
       bump((v) => v + 1);
       if (record) {
-        if (queue.current.length >= 1000) {
-          error.current = true;
+        if (queue.current.length + inflight.current >= 1000) {
+          losses.current.dropped++;
+          setQueueDropped((v) => v + 1);
+          if (record.level !== "info") {
+            losses.current.droppedImportant++;
+            setQueueDroppedImportant((v) => v + 1);
+          }
           studio.setMessage("诊断存储积压，请检查本机空间。");
         } else queue.current.push(diagnosticRecord(record));
       }
@@ -55,14 +73,19 @@ export function useLogs(studio: Studio) {
     };
   }, [studio.bus]);
   const clearStorage = async () => {
+    if (clearing.current) return;
+    clearing.current = true;
     try {
       if (writing.current) await writing.current.catch(() => {});
       await invoke("clear_diagnostics");
       queue.current = [];
+      losses.current = { dropped: 0, droppedImportant: 0 };
       error.current = false;
       studio.setMessage("已清除本机诊断存储，当前视图保留。");
     } catch {
       studio.setMessage("诊断存储清除失败。");
+    } finally {
+      clearing.current = false;
     }
   };
   const exportLogs = async () => {
@@ -76,6 +99,8 @@ export function useLogs(studio: Studio) {
   };
   return {
     revision,
+    queueDropped,
+    queueDroppedImportant,
     channel,
     setChannel,
     flush,

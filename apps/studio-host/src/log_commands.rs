@@ -10,9 +10,15 @@ pub fn append_diagnostics(
     window: tauri::WebviewWindow,
     store: tauri::State<'_, LogStore>,
     records: Vec<Record>,
+    dropped: Option<u64>,
+    dropped_important: Option<u64>,
 ) -> Result<(), String> {
     main_only(&window)?;
-    store.append(records)
+    store.append_with_losses(
+        records,
+        dropped.unwrap_or(0),
+        dropped_important.unwrap_or(0),
+    )
 }
 #[tauri::command]
 pub fn read_diagnostics(
