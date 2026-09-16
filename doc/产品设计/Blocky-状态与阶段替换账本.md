@@ -27,7 +27,7 @@
 | 用户终端与具名任务 | 常见开发工具终端 | Agent 不能控制用户终端 | 窄 Host 命令能力，非正式 PTY | TerminalSessionContract、TaskDefinition、AgentProcessRequest 隔离 | Agent 附加 PTY 负例与锁定任务 | 2 | 契约已形成；正式 PTY/多终端未实现 | [终端/日志契约](../技术设计/正式契约/06-底部面板终端日志与审计-v1alpha1.md) | 阶段 1 只运行锁定任务并拒绝附加用户终端 |
 | 日志、诊断与审计 | 可理解运行问题 | 结构化通道、背压、保留、导出、退出结算 | 尖峰已有事件脱敏与日志审计证据 | Diagnostic、RuntimeEvent、LogEnvelope、AuditRecord 分层 | 未脱敏日志负例、确定运行正例 | 2 日志地基；6 完整诊断包 | 契约已形成；正式总线/存储未实现 | [终端/日志契约](../技术设计/正式契约/06-底部面板终端日志与审计-v1alpha1.md) | 阶段 1 验证有界、脱敏、可追踪输出 |
 | 六个内置兼容模板 | 复用主流 Agent 能力 | Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness 分别适配 | 无正式适配器 | 共用项目、资源、工具、事件和任务边界；不定义为运行模式 | 阶段 1 不实现六个适配器 | 8 | 产品设计已确认；模板和原生适配器未实现 | [内置兼容模板](Blocky-内置兼容模板.md) | 阶段 8 逐上游完成独立兼容矩阵 |
-| CLI、四个官方 Skills 与 Codex 插件 | 编程 Agent 操作同一 Blocky 项目 | 四个分工入口，转换 Skill 为项目积木化核心 | 无正式实现 | 共用 Build/Patch/Resource/Task/Host 权限边界 | U06 只覆盖桌面共用领域接口 | 9 | 产品设计已确认；CLI、Skills 包和插件未实现 | [CLI 与官方 Skills](CLI与官方Agent-Skill.md) | 阶段 9 发布 `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
+| CLI、四个官方 Skills 与 Codex 插件 | 编程 Agent 操作同一 Blocky 项目 | 四个分工入口，转换 Skill 为项目积木化核心 | tools/blocky-cli 已接入项目、编译、确定性运行与共享原生存储 | 共用 Build/Patch/Resource/Task/Host 权限边界 | 用户确认阶段 1 同步 CLI 并优先验收；仅开放已实现领域 | 1 / 9 | CLI 最小操作接口开发中；Skills 与插件未实现 | [CLI 与官方 Skills](CLI与官方Agent-Skill.md) | 阶段 9 发布 `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 设置中心与最终盘点 | 为常见能力提供专业设置 | 先给模板，随最终成品再修改项目 | 无正式设置中心 | SettingDefinition、作用域、secretRef 和首批真实消费者 | 阶段 1 只显示窗口/面板/终端预算/资源引用 | 2 起逐步实现；发布候选前盘点 | Schema 已形成；UI/存储未实现；最终盘点保留 | [设置中心模板](Blocky-设置中心设计模板.md)、[设置契约](../技术设计/正式契约/04-构建补丁命令设置与资源-v1alpha1.md) | 阶段 1 不展示无消费者开关；发布候选前执行最终盘点 |
 
 ## 阶段状态
@@ -40,3 +40,4 @@
 | 阶段 2–14 | 未开始 | 按完整开发计划和替换账本依次进入 |
 
 本账本在每个阶段门禁后更新。任何状态变化必须链接到任务验收与精确提交，不能用计划文案替代实现证据。
+

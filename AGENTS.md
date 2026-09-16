@@ -217,6 +217,9 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 
 ## 8. 实施顺序
 
+2026-09-16 用户补充：CLI 与桌面领域同步开发，优先使用 CLI 操作验证/验收；已实现能力通过同一领域接口开放，详见 `doc/执行计划/2026-09-16-CLI同步开发补充.md`。CLI 不替代画布、鼠标、通知区域等必须观察的界面验收，也不提前宣称阶段 9 全量能力完成。
+
+
 严格按照完整开发计划执行：
 
 - R0 / 阶段 0–2：产品契约与 ADR-005/006；阶段 1 可展示 Demo、多画布/浏览器标签、底部面板、正式日志/终端接口、显式应用界面夹具、通知区域和正式 monorepo 最小纵切；阶段 2 稳定多模块语言、命令、设置、资源、终端、日志与窗口地基。
@@ -224,7 +227,7 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 - R2 / 阶段 8–11：六个兼容模板、Blocks ↔ Text、CLI、官方 Skills/Codex 插件、教育、应用界面部署和企业无人值守 RPA。
 - R3 / 阶段 12–14：社区供应链、macOS/移动运行端、权益和商业化。
 
-阶段 0 契约已完成；下一步是阶段 1 可展示 Demo 的计划与正式 monorepo 最小纵切。阶段 2–9 按替换账本将固定夹具逐项换成真实能力。Demo 只在版本说明、开发计划和验收结论中称为 Demo，界面、项目、运行事件、设置和代码不得增加以后需要删除的徽标、横幅、水印、`demoMode` 字段或专用分支。进入后续阶段前必须完成前置阶段门禁；禁止并行铺开六个半成品适配器，也禁止先铺满积木目录再补最小运行闭环。
+阶段 0 契约已完成；当前执行阶段 1 可展示 Demo 与正式 monorepo 最小纵切。阶段 2–9 按替换账本将固定夹具逐项换成真实能力。Demo 只在版本说明、开发计划和验收结论中称为 Demo，界面、项目、运行事件、设置和代码不得增加以后需要删除的徽标、横幅、水印、`demoMode` 字段或专用分支。进入后续阶段前必须完成前置阶段门禁；禁止并行铺开六个半成品适配器，也禁止先铺满积木目录再补最小运行闭环。
 
 ## 9. 目录职责
 
@@ -242,7 +245,7 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 | `scripts/`、`tests/dev-environment/` | 开发环境检查及其稳定契约 |
 | `try/windows-core-spike/` | 可删除 Windows Core 技术尖峰和尖峰测试，不是正式包 |
 
-正式 `apps/`、`packages/`、`tools/` 目录在阶段 1 按计划创建。不存在的正式命令、包或构建产物不得在文档中写成已经可用。
+正式 `apps/studio-desktop/`、`apps/studio-host/`、`packages/` 与 `tools/blocky-cli/` 已创建。CLI 使用同一领域与原生项目存储。不存在的正式命令、包或构建产物不得在文档中写成已经可用。
 
 ## 10. 当前命令与验证
 
@@ -266,7 +269,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 
 `check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上；不得缩短后声称完整长稳通过。
 
-阶段 1 必须为正式 monorepo 建立根命令并立即更新本节；在此之前不能把尖峰命令描述为正式产品测试。
+正式根命令现为 `pnpm check`、`pnpm test:component`、`pnpm test:host`、`pnpm build:cli`、`pnpm test:cli`、`pnpm dev`、`pnpm build`；CLI 用 `./blocky.cmd --help` 发现。原生 E2E 与正式长稳命令仍待建立；尖峰测试不能代替正式应用验证。
 
 ## 11. 复测映射
 

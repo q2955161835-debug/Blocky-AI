@@ -1,0 +1,23 @@
+{
+  "name": "@blocky/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "blocky": "dist/main.mjs"
+  },
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "@blocky/project-model": "workspace:*",
+    "@blocky/compiler": "workspace:*",
+    "@blocky/block-catalog": "workspace:*",
+    "@blocky/runtime-core": "workspace:*",
+    "@blocky/observability": "workspace:*",
+    "@blocky/test-fixtures": "workspace:*",
+    "@blocky/project-format": "workspace:*"
+  }
+}

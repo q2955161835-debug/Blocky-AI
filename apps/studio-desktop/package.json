@@ -1,0 +1,32 @@
+{
+  "name": "@blocky/studio-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1421 --strictPort",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "@blocky/project-model": "workspace:*",
+    "@blocky/compiler": "workspace:*",
+    "@blocky/block-catalog": "workspace:*",
+    "@blocky/runtime-core": "workspace:*",
+    "@blocky/observability": "workspace:*",
+    "@blocky/test-fixtures": "workspace:*",
+    "@blocky/project-format": "workspace:*",
+    "@tauri-apps/api": "2.11.1",
+    "blockly": "13.2.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "@blocky/ui-editor": "workspace:*",
+    "@blocky/command-system": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "vite": "8.2.1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@blocky/ui-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "@blocky/block-catalog": "workspace:*",
+    "@blocky/observability": "workspace:*",
+    "react": "19.2.8",
+    "blockly": "13.2.1"
+  }
+}

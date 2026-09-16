@@ -186,6 +186,8 @@ export function parseProject(input: unknown): Project {
       throw Error("BLK-SURFACE-002: 缺失页面");
   return p;
 }
+export { ProjectController } from "./controller";
+export { restoreSession, type Session } from "./session";
 export const projectDigest = (project: Project) =>
   digest(parseProject(project));
 export function createSession(project: Project) {

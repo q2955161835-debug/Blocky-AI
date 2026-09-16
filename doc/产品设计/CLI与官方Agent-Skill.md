@@ -4,12 +4,14 @@
 |---|---|
 | 版本 | v0.4 |
 | 日期 | 2026-08-23 |
-| 状态 | 产品与命令面设计已确认，尚未实现 |
+| 状态 | 产品与命令面设计已确认；2026-09-16 起按用户要求同步实现 CLI 的已完成领域入口，完整命令面/Skills/插件未完成 |
 | 命令名 | `blocky` |
 | 官方 Skills 入口 | `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 首发环境 | Windows；从任意本地项目目录调用 |
 
 > 更新说明（2026-08-23）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为四个 Skills 与 Codex 等客户端的官方插件；`$convert-github-project-to-blocky` 固定为核心项目积木化入口，可输出自定义积木、可展开蓝图、兼容模板草案或原生保留报告。具体证据链、RAG 积木和 Harness 夹具见[《Blocky GitHub 项目积木化与 Agent 组件设计》](Blocky-GitHub项目积木化与Agent组件设计.md)。
+
+当前已实现命令以 [`tools/blocky-cli/README.md`](../../tools/blocky-cli/README.md) 与 `blocky --help` 为准；本文后续命令表为完整目标，未进入帮助列表的命令不得宣称可用。
 
 ## 1. 产品目标
 

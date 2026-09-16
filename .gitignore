@@ -45,3 +45,4 @@ try/windows-core-spike/src-tauri/target/
 
 # Local handoff binary copied to the workspace root
 /Blocky.exe
+/apps/studio-host/gen/

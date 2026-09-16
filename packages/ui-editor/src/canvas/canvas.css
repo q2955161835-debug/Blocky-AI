@@ -1,0 +1,56 @@
+.canvas-shell {
+  position: relative;
+  flex: 1;
+  min-height: 180px;
+  background: #1d2128;
+  overflow: hidden;
+}
+.blockly-host {
+  position: absolute;
+  inset: 0;
+  outline: none;
+}
+.blocklySvg {
+  background: #1d2128 !important;
+}
+.canvas-hint {
+  position: absolute;
+  bottom: 13px;
+  left: 18px;
+  pointer-events: none;
+  color: #6c7c92;
+  font:
+    10px "Microsoft YaHei UI",
+    sans-serif;
+}
+.runtime-status {
+  position: absolute;
+  right: 18px;
+  bottom: 13px;
+  pointer-events: none;
+  color: #a9c9b9;
+  font-size: 11px;
+}
+.blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+  stroke: #48e290 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 4px #2fc46f88);
+}
+.blocklyDraggable[data-runtime-state="warning"] > .blocklyPath {
+  stroke: #f3b95f !important;
+  stroke-width: 4px !important;
+}
+.blocklyDraggable[data-runtime-state="error"] > .blocklyPath {
+  stroke: #ff817a !important;
+  stroke-width: 4px !important;
+}
+.blocklyText {
+  font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif !important;
+}
+.blocklyHtmlInput {
+  color: #1c2430 !important;
+}
+.blocklyWidgetDiv,
+.blocklyDropDownDiv {
+  z-index: 90 !important;
+}

@@ -6,6 +6,8 @@
     "apps/studio-desktop/**/*.ts",
     "apps/studio-desktop/**/*.tsx",
     "tests/contracts/**/*.ts",
+    "tests/component/**/*.tsx",
+    "tools/blocky-cli/**/*.ts",
     "vitest.config.ts"
   ]
 }
