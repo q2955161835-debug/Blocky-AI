@@ -5,7 +5,7 @@ use std::path::Path;
 pub type ProjectFiles = BTreeMap<String, String>;
 const LIMIT: usize = 8 * 1024 * 1024;
 const REJECT: &str = "BLK-REF-001: invalid project archive";
-fn reference(s: &str) -> bool {
+pub(crate) fn reference(s: &str) -> bool {
     !s.is_empty()
         && !s.chars().any(|c| c.is_control() || ":\\<>|?*".contains(c))
         && s.split('/').all(|p| {

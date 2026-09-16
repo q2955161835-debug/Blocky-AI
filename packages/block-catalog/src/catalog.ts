@@ -6,6 +6,7 @@ export type BlockDefinition = {
   color: string;
   fields: string[];
   inputs: string[];
+  fieldOptions?: Record<string, string[]>;
   output?: string;
   statement?: boolean;
 };

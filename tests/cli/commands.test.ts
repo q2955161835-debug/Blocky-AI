@@ -518,3 +518,84 @@ it("routes --entry to exactly one adjacent interaction stack", async () => {
     .map((e) => e.blockId);
   expect(blocks).toEqual(["research-root", "second-question", "second-answer"]);
 });
+it("native patch checks reject broken exports, schema mismatches, cycles and field enums", async () => {
+  const project = createStarter();
+  const patch = await makePatch(project, [
+    {
+      op: "block.update",
+      moduleId: "research-agent",
+      blockId: "research-root",
+      payload: { fields: { ROLE: "教师" } },
+    },
+  ]);
+  const check = (operations: unknown[]) =>
+    nativeRequest({
+      operation: "validate-patch",
+      originalJson: canonicalJson(project),
+      patch: { ...patch, operations },
+      approved: [],
+    });
+  expect(
+    check([
+      {
+        op: "block.update",
+        moduleId: "research-agent",
+        blockId: "call-citation",
+        payload: { fields: { EXPORT: "missing" } },
+      },
+    ]).code,
+  ).toBe(3);
+  expect(
+    check([
+      {
+        op: "block.update",
+        moduleId: "research-agent",
+        blockId: "reply-answer",
+        payload: { fields: { STYLE: "unknown" } },
+      },
+    ]).code,
+  ).toBe(3);
+  expect(
+    check([
+      {
+        op: "block.update",
+        moduleId: "research-agent",
+        blockId: "call-citation",
+        payload: { fields: { INPUT: "schemas/answer.json" } },
+      },
+    ]).code,
+  ).toBe(3);
+  expect(
+    check([
+      {
+        op: "block.add",
+        moduleId: "research-agent",
+        blockId: "orphan-chat",
+        payload: {
+          type: "core.interaction.chat",
+          id: "orphan-chat",
+          fields: { NAME: "没有智能体" },
+        },
+      },
+    ]).code,
+  ).toBe(3);
+  expect(
+    check([
+      {
+        op: "block.add",
+        moduleId: "citation-service",
+        blockId: "self-call",
+        payload: {
+          type: "core.module.call",
+          id: "self-call",
+          fields: {
+            MODULE: "citation-service",
+            EXPORT: "lookup-v1",
+            INPUT: "schemas/query.json",
+            OUTPUT: "schemas/citations.json",
+          },
+        },
+      },
+    ]).code,
+  ).toBe(3);
+});

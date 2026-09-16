@@ -92,3 +92,41 @@ validateSnapshot 限定 repository/commit/version/license、恰好三个文件�
 报告结束时目标实现相对该提交无 diff。没有 GUI、蓝图普通组件全盘、A/B/C 全套重复或最终普通 Windows 包验收。真正的阶段 1 总验收仍未执行。
 
 探针和虚构数据包保留在 `D:\1Folder\Blocky-AI\try\accept-stage1-d-security`，8 文件共 16,758 字节，供修复复验；未更改实现。没有主动工作区外读写，没有提交、合并或推送。初次检索使用 Windows 通配路径及一个不存在的测试文件名而退出 1，随后改为实际目录和 commands.test.ts，未把该检索错误当产品问题。真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+
+## 复验一：026a227 的两项安全修复
+
+本地时间段：2026-09-16 19:09 ~ 2026-09-16 19:11。目标提交：`026a22717342d60034a454c56ed3f86516b50ff6`；执行时 HEAD 为 `372c2ab5341b0fa538c68286326691c90eec9a9c`，目标 D 修复范围相对 026a227 无 diff。没有把后续 E 的实现列入验收。
+
+### 汇总表格
+
+| 项目 | 复验结论 |
+|---|---|
+| D-SEC-01 原 diagnostics 凭据反例 | 通过；领域拒绝 BLK-PATCH-002，CLI preview 退出 3，stdout 无原虚构凭据 |
+| D-SEC-01 block.add.extraState 凭据 | 通过；TypeScript 与新 native validate-patch 均拒绝 |
+| D-SEC-02 Host 端口与生产接入 | 已补齐；桌面两个 apply 路径必经 validatePatch，CLI validate/apply 分别调用 native guard；不再用普通 create 发布 Builder 补丁 |
+| Host 基线/权限差异 | 通过；无批准、伪造 permissionDelta、错误 baseDigest 均独立拒绝；合法批准通过 |
+| Host 文件原子与源重验 | 通过；apply-patch 重读不一致源拒绝，无新文件；重复目标 no-clobber 拒绝，源/目标哈希不变 |
+| Host 语义拒绝等价性 | 不通过；未知 EXPORT 和非法 STYLE 被 TypeScript 拒绝，却被 native validate-patch 返回 ok=true |
+| 当前限定结论 | **不通过**；D-SEC-01 关闭，D-SEC-02 剩余语义复核缺口 |
+
+### 详细报告
+
+当前 Host 已独立应用操作、核验原 JSON 摘要、共享目录字段、重算激活资源能力，并在 CLI 落盘前再次执行 guard、重读源文件和 no-clobber。通过原本具备文件权限的普通 create 导入项目，不再用来推断 Builder 专用路径仍绕过；初验观察应结合本次明确分开的调用边界理解。
+
+剩余问题是此次可信 guard 的直接语义差异：
+
+1. 将 call-citation 的 EXPORT 更新为 does-not-exist。previewPatch 拒绝；native validate-patch 对同原始项目和同补丁返回退出 0、ok=true。
+2. 将 reply-answer 的 STYLE 更新为 unsupported-style。previewPatch 拒绝；native validate-patch 同样退出 0、ok=true。
+
+共享 definitions.json 只含字段名，Rust block_shape 未实现该枚举约束，且 patch_guard 未复核跨模块导出引用。冻结契约要求引用校验与原子应用后重编译；新可信边界不能将 TypeScript 已认定无效的语义补丁标为合法。需在 Host 中补齐等价引用/字段值检查或用明确可信的共享语义校验端口完成，而非单纯字段存在性。此残项不声称已运行非法能力或泄漏真实数据。
+
+### 执行证据
+
+| 命令 | 结果 |
+|---|---|
+| `pnpm exec vitest run packages/builder-protocol/tests/patch.test.ts` | 退出 0；4/4 |
+| `pnpm exec vitest run tests/cli/commands.test.ts -t 'independent native patch gate'` | 退出 0；1/1，其余 14 项未执行 |
+| 内联 `node --import tsx --input-type=module` 原漏洞复现 | 原 diagnostics 拒绝且不泄漏；未知 EXPORT / STYLE 两项 hostAccepted=true |
+| 内联 native guard 独立断言 | 退出 0；无批准/伪造差异/错误基线拒绝、正常批准、源重读、原子冲突和两层 extraState 拒绝均通过 |
+
+保留一个安全重验输出包 `D:\1Folder\Blocky-AI\try\accept-stage1-d-security\recheck-native.blocky`，其余被拒绝目标未产生。未改源码、未用 GUI、未跑全盘、无工作区外主动读写。真实大模型 API 调用：**否；未真实调用外部大模型 API**。

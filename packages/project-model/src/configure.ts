@@ -36,7 +36,8 @@ export function configureBlock(
     !definition?.fields.includes(field) ||
     typeof value !== "string" ||
     value.length > 16000 ||
-    (field === "STYLE" && !["条目", "段落"].includes(value))
+    (definition.fieldOptions?.[field] !== undefined &&
+      !definition.fieldOptions[field].includes(value))
   )
     throw Error("BLK-CONFIG-001");
   block.fields ??= {};

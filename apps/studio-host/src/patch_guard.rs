@@ -105,6 +105,11 @@ fn block_shape(
     }
     for field in array(&def["fields"])? {
         text(&block["fields"][text(field)?])?;
+        if let Some(options) = def["fieldOptions"].get(text(field)?) {
+            if !array(options)?.contains(&block["fields"][text(field)?]) {
+                return Err(INVALID.into());
+            }
+        }
     }
     if let Some(inputs) = block.get("inputs") {
         for (key, input) in inputs.as_object().ok_or(INVALID)? {
@@ -167,7 +172,8 @@ fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
         if b["disabled"] != true {
             let kind = text(&b["type"])?;
             if kind == "core.knowledge.retrieve" || kind == "core.model.compose" {
-                let resource = &p["resources"][text(&b["fields"]["RESOURCE"])?];
+                let resource_id = text(&b["fields"]["RESOURCE"])?;
+                let resource = &p["resources"][resource_id];
                 let expected = if kind == "core.knowledge.retrieve" {
                     "knowledge"
                 } else {
@@ -175,6 +181,22 @@ fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
                 };
                 if resource["kind"] != expected || resource["scope"] != "project" {
                     return Err(INVALID.into());
+                }
+                let reference = array(&p["manifest"]["resources"])?
+                    .iter()
+                    .find(|r| {
+                        r["resourceId"] == resource_id
+                            && r["kind"] == expected
+                            && r["scope"] == "project"
+                    })
+                    .ok_or(INVALID)?;
+                if resource["resourceId"] != resource_id {
+                    return Err(INVALID.into());
+                }
+                for binding in array(&resource["secretBindings"])? {
+                    if !array(&reference["secretRefs"])?.contains(&binding["secretRef"]) {
+                        return Err(INVALID.into());
+                    }
                 }
                 if kind == "core.knowledge.retrieve" {
                     out.insert("knowledge.read".into());
@@ -333,6 +355,7 @@ pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Resu
         }
     }
     project_files(&next)?;
+    crate::patch_links::validate(&next)?;
     let before = permissions(&original)?;
     let after = permissions(&next)?;
     let delta: BTreeSet<String> = after.difference(&before).cloned().collect();
