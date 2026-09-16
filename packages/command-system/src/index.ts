@@ -29,6 +29,7 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["view.toggle-bottom-panel", "view", "切换底部面板", "Ctrl+J"],
   ["view.show-problems", "view", "问题", ""],
   ["view.show-run-log", "view", "运行日志", ""],
+  ["view.back", "view", "返回上一位置", "Alt+ArrowLeft"],
   ["run.start", "run", "运行", "Ctrl+Enter"],
   ["run.stop", "run", "停止", "Escape"],
   ["build.convert", "build", "从仓库快照生成候选", ""],

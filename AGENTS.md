@@ -269,7 +269,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 
 `check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上；不得缩短后声称完整长稳通过。
 
-正式根命令现为 `pnpm check`、`pnpm test:component`、`pnpm test:host`、`pnpm build:cli`、`pnpm test:cli`、`pnpm dev`、`pnpm build`；CLI 用 `./blocky.cmd --help` 发现。原生 E2E 与正式长稳命令仍待建立；尖峰测试不能代替正式应用验证。
+正式根命令现为 `pnpm check`、`pnpm test:component`、`pnpm test:host`、`pnpm build:cli`、`pnpm test:cli`、`pnpm dev`、`pnpm build`；CLI 用 `./blocky.cmd --help` 发现。原生测试构建命令为 `pnpm test:e2e:build`，执行命令为 `pnpm test:e2e`，产物隔离在 `try/native-e2e-target/`，当前尚未通过；正式长稳命令仍待建立。尖峰测试不能代替正式应用验证。
 
 ## 11. 复测映射
 

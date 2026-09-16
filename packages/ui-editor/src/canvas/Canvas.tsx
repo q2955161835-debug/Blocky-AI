@@ -18,6 +18,8 @@ type Props = {
   event?: RuntimeEvent;
   focusId?: string;
   reduceMotion: boolean;
+  viewport?: { offsetX: number; offsetY: number; scale: number };
+  onViewport(value: { offsetX: number; offsetY: number; scale: number }): void;
 };
 export function Canvas(props: Props) {
   const root = useRef<HTMLDivElement>(null),
@@ -50,6 +52,14 @@ export function Canvas(props: Props) {
     editor.current = ws;
     ws.MAX_UNDO = 0;
     const listener = (event: Blockly.Events.Abstract) => {
+      if (event.type === Blockly.Events.VIEWPORT_CHANGE) {
+        latest.current.onViewport({
+          offsetX: ws.scrollX,
+          offsetY: ws.scrollY,
+          scale: ws.scale,
+        });
+        return;
+      }
       if (event.type === Blockly.Events.SELECTED) {
         latest.current.onSelect(
           (event as Blockly.Events.Selected).newElementId ?? null,
@@ -203,7 +213,19 @@ export function Canvas(props: Props) {
     }
   }, [props.workspace, props.moduleId]);
   useEffect(() => {
-    if (props.focusId) editor.current?.centerOnBlock(props.focusId);
+    const ws = editor.current;
+    const view = latest.current.viewport;
+    if (ws && view) {
+      ws.setScale(view.scale);
+      ws.scroll(view.offsetX, view.offsetY);
+    }
+  }, [props.moduleId]);
+  useEffect(() => {
+    const ws = editor.current;
+    if (props.focusId && ws?.getBlockById(props.focusId)) {
+      ws.getBlockById(props.focusId)!.select();
+      ws.centerOnBlock(props.focusId);
+    }
   }, [props.focusId]);
   useEffect(() => {
     const ws = editor.current;

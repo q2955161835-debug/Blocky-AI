@@ -17,6 +17,8 @@
     "test:component": "vitest run tests/component",
     "test:host": "cargo test --manifest-path apps/studio-host/Cargo.toml --lib --bin blocky-project-io",
     "test:cli": "vitest run tests/cli",
+    "test:e2e:build": "pwsh -NoProfile -File scripts/build-native-tests.ps1",
+    "test:e2e": "wdio run tests/e2e/wdio.conf.ts",
     "dev": "pnpm --dir apps/studio-host tauri dev",
     "build": "pnpm --dir apps/studio-host tauri build --no-bundle"
   },

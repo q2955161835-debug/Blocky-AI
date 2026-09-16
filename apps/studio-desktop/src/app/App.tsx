@@ -29,6 +29,7 @@ export function App() {
       s.setSession((v) => ({ ...v, panel: true, view: "problems" })),
     "view.show-run-log": () =>
       s.setSession((v) => ({ ...v, panel: true, view: "logs" })),
+    "view.back": s.back,
     "run.start": () => void s.run(),
     "run.stop": s.stop,
     "settings.open": () => show("settings"),
@@ -41,7 +42,8 @@ export function App() {
     (id !== "edit.redo" || s.snapshot.canRedo) &&
     (id !== "run.start" ||
       (!s.running && !s.compiling && !s.compiled?.diagnostics.length)) &&
-    (id !== "run.stop" || s.running);
+    (id !== "run.stop" || s.running) &&
+    (id !== "view.back" || s.canGoBack);
   const execute = (id: string) => {
     setPopup(null);
     if (enabled(id)) actions[id]();
@@ -204,6 +206,13 @@ export function App() {
               s.snapshot.project.workspaces[s.session.active] ? (
                 <>
                   <div className="canvas-toolbar">
+                    <button
+                      aria-label="返回上一位置"
+                      disabled={!enabled("view.back")}
+                      onClick={() => execute("view.back")}
+                    >
+                      ←
+                    </button>
                     <input
                       aria-label="画布名称"
                       value={
@@ -255,6 +264,25 @@ export function App() {
                         : undefined
                     }
                     reduceMotion={s.preferences.reduceMotion}
+                    viewport={s.session.viewports[s.session.active]}
+                    onViewport={(value) =>
+                      s.setSession((v) => {
+                        const old = v.viewports[s.session.active];
+                        if (
+                          old?.offsetX === value.offsetX &&
+                          old.offsetY === value.offsetY &&
+                          old.scale === value.scale
+                        )
+                          return v;
+                        return {
+                          ...v,
+                          viewports: {
+                            ...v.viewports,
+                            [s.session.active]: value,
+                          },
+                        };
+                      })
+                    }
                   />
                 </>
               ) : (

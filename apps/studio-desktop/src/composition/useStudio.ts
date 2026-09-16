@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ProjectController,
   restoreSession,
+  serializeSession,
   type Session,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
@@ -38,6 +39,7 @@ export function useStudio() {
   const [preferences, setPreferences] = useState(readPreferences);
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
+  const [history, setHistory] = useState<SourceRef[]>([]);
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
     [result, setResult] = useState<RunResult>(),
     [running, setRunning] = useState(false),
@@ -89,22 +91,43 @@ export function useStudio() {
       setSession(restoreSession(snapshot.project, raw));
       setSessionProjectId(id);
       sessionLoaded.current = id;
+      setHistory([]);
+      setFocus(undefined);
     }
   }, [snapshot.project]);
   useEffect(() => {
     if (sessionProjectId === snapshot.project.manifest.projectId)
-      localStorage.setItem(
-        `blocky.session.${sessionProjectId}`,
-        JSON.stringify(session),
-      );
-  }, [session, sessionProjectId, snapshot.project.manifest.projectId]);
+      try {
+        localStorage.setItem(
+          `blocky.session.${sessionProjectId}`,
+          JSON.stringify(serializeSession(snapshot.project, session)),
+        );
+      } catch {
+        setMessage("本机会话空间不足，项目内容不受影响。");
+      }
+  }, [session, sessionProjectId, snapshot.project]);
   useEffect(() => {
     writePreferences(preferences);
   }, [preferences]);
   useEffect(() => () => abort.current?.abort(), []);
-  const navigate = (source: SourceRef) => {
-    if (!source.moduleId || !snapshot.project.workspaces[source.moduleId])
+  const navigate = (source: SourceRef, remember = true) => {
+    if (
+      source.projectId !== snapshot.project.manifest.projectId ||
+      !source.moduleId ||
+      !snapshot.project.workspaces[source.moduleId]
+    )
       return;
+    if (remember && session.active)
+      setHistory((h) =>
+        [
+          ...h,
+          {
+            projectId: snapshot.project.manifest.projectId,
+            moduleId: session.active,
+            ...(selected ? { blockId: selected } : {}),
+          },
+        ].slice(-50),
+      );
     setSession((s) => ({
       ...s,
       tabs: s.tabs.includes(source.moduleId!)
@@ -114,6 +137,12 @@ export function useStudio() {
     }));
     setSelected(source.blockId ?? null);
     setFocus({ ...source });
+  };
+  const back = () => {
+    const previous = history.at(-1);
+    if (!previous) return;
+    setHistory((h) => h.slice(0, -1));
+    navigate(previous, false);
   };
   const run = async () => {
     if (
@@ -251,6 +280,8 @@ export function useStudio() {
     setSelected,
     focus,
     navigate,
+    back,
+    canGoBack: history.length > 0,
     events,
     result,
     running,

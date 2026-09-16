@@ -35,6 +35,20 @@
   stroke: #48e290 !important;
   stroke-width: 4px !important;
   filter: drop-shadow(0 0 4px #2fc46f88);
+  animation: blocky-active-glow 1.2s ease-in-out infinite alternate;
+}
+@keyframes blocky-active-glow {
+  to {
+    filter: drop-shadow(0 0 8px #2fc46fcc);
+  }
+}
+.reduce-motion .blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+    animation: none;
+  }
 }
 .blocklyDraggable[data-runtime-state="warning"] > .blocklyPath {
   stroke: #f3b95f !important;

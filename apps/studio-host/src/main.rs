@@ -2,7 +2,12 @@
 mod commands;
 use blocky_studio::project_store;
 fn main() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+    #[cfg(feature = "wdio")]
+    let builder = builder
+        .plugin(tauri_plugin_wdio::init())
+        .plugin(tauri_plugin_wdio_webdriver::init());
+    builder
         .manage(commands::Handles::default())
         .invoke_handler(tauri::generate_handler![
             commands::open_project,

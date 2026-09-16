@@ -7,6 +7,8 @@
     "apps/studio-desktop/**/*.tsx",
     "tests/contracts/**/*.ts",
     "tests/component/**/*.tsx",
+    "tests/cli/**/*.ts",
+    "tests/e2e/**/*.ts",
     "tools/blocky-cli/**/*.ts",
     "vitest.config.ts"
   ]

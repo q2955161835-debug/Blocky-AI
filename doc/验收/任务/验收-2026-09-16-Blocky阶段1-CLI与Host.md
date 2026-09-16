@@ -1,6 +1,11 @@
 # 阶段 1 CLI 与 Host 独立局部验收
 
-## 汇总表格
+## 当前限定结论：通过
+
+截至 `bdc90e96dff78f270d7e1e29d7b26068747f3848`，CLI-01、CLI-02 及修复引入的 URI 误脱敏均已复验关闭，**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+## 初验汇总表格
 
 | 项目 | 内容 |
 |---|---|
@@ -112,3 +117,62 @@ Host 在内存读包，没有解压至任意文件路径。strict_json 对重复
 - 复现、ZIP 与摘要存放 `D:\1Folder\Blocky-AI\try\accept-stage1-cli`，约 64.7 KB，因两项未通过仍需修复复验而保留。它们仅含虚构敏感标记，不含真实凭据。
 - 仅新增本验收报告和上述 try 证据，没有修改实现或进展记录，没有提交、合并、推送。主 Agent 负责集中记录和处理临时产物。
 - 当前结论仅为 CLI/Host 局部不通过；不替代阶段 1 总验收。
+
+## 复验一：CLI-01/02 修复及直接影响
+
+本地时间段：2026-09-16 17:44 ~ 2026-09-16 17:46。目标提交：`984220e0235e6d9decb10e06a460e888f2c00da4`。仅复验既有问题与输出修复直接影响，未运行全盘测试。
+
+### 当前限定结论：通过
+
+截至 `bdc90e96dff78f270d7e1e29d7b26068747f3848`，CLI-01、CLI-02 及修复引入的 URI 误脱敏均已复验关闭，**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。
+## 初验汇总表格
+
+| 项目 | 结果 | 证据 |
+|---|---|---|
+| CLI-01 创建拒绝 | 通过 | token、secret、credential、credentials 四个虚构字段分别经 native create 返回 3 / BLK-SECRET-001，目标文件均未生成 |
+| CLI-01 读取拒绝 | 通过 | 保留的 token/secret 两包经 native read 返回 3 且无 files；直接 blocky.cmd validate 均退出 3 |
+| 引用与原子冲突直接影响 | 通过 | 原知识资源 secretBindings/secretRef 保留；已有目标 native create 返回 BLK-CONFLICT-001，原 SHA-256 不变 |
+| CLI-02 原始路径反例 | 通过 | inspect 移除虚构路径、产生 warnings；磁盘字节不变，输出 digest 匹配原始项目领域摘要 |
+| CLI-02 正常安全编译直接影响 | 不通过 | 初次正常项目 compile 的 implementationRef 被从 `adapter://deterministic/knowledge-v1` 改为 `adapte[本机路径]` |
+| 本轮结论 | **不通过** | 路径匹配误判 URI，需要修复后再次验证 |
+
+### 详细报告
+
+通过 stdin 提交内联 Node/tsx 断言，直接调用已更新 companion 与 CLI 产物；没有新增复现脚本或修改实现。秘密创建、秘密读取、引用和原子冲突断言通过后，正常项目编译的 warnings 应为空断言失败，Node 退出 1。进一步直接执行 `blocky.cmd project compile ... --json`，观察工具 implementationRef 为 `adapte[本机路径]`。
+
+根因属于本次修复直接影响：Windows 盘符正则缺少前缀边界，将 URI 末端 `r:/` 当作盘符，且下层 redact 同样匹配。CLI 的普通安全 ToolContract 输出因此不再与领域结果一致。本次未以加入 warning 掩盖正常引用损坏。
+
+随后主 Agent 并行修改这两个正则并重建产物；过程中额外对照的结果已恢复 URI，但当时源码未提交，不能绑定为 984220e 的通过证据。待精确新提交后单独记录最终复验和产物哈希。原始路径反例中，原包字节、原始显示名和 projectDigest 均保持不变。
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。本轮未调用 GUI；未主动在工作区外读写。仅报告被修改，拒绝创建的测试路径均未产生文件。没有重跑 CLI/Host 全套；主 Agent 所述先红后绿及全套结果未冒充本 Agent 新运行。
+
+
+## 复验二：正常安全编译输出
+
+本地时间段：2026-09-16 17:47 ~ 2026-09-16 17:47。精确提交：`bdc90e96dff78f270d7e1e29d7b26068747f3848`。
+
+### 汇总表格
+
+| 项目 | 验证结果 |
+|---|---|
+| 正常编译 ToolContract | 通过；CLI tools 与直接 Compiler 的完整数组深度相等，adapter URI 保持原值 |
+| IR、InteractionManifest、摘要 | 通过；分别深度相等/摘要相等 |
+| 正常安全输入 warnings | 通过；空数组 |
+| 源项目字节 | 通过；命令前后 SHA-256 相等 |
+| CLI-01 与路径隐私反例 | 沿用复验一有效证据；本次范围内变更只有两处盘符正则前置边界，Host 无变更 |
+| 最终结论 | **通过**，限本报告范围 |
+
+### 详细报告与工件
+
+按约定仅重跑安全编译对照：通过 stdin 执行 `node --import tsx --input-type=module` 内联断言，启动当前 CLI/companion；退出码 0，输出摘要 `compileExit=0, toolsEqual=true, irEqual=true, interactionEqual=true, digestEqual=true, warnings=0, bytesUnchanged=true`。未把旧的全套测试结果写成本提交新运行。
+
+当前 CLI 产物读回：
+
+| 工件 | 字节数 | SHA-256 |
+|---|---:|---|
+| `tools/blocky-cli/dist/main.mjs` | 604394 | `8f97d0c9bc2d3a72e0e8fab25403e8019e4c387200cacefb0588acf4b1ec2343` |
+| `tools/blocky-cli/dist/bin/blocky-project-io.exe` | 919552 | `dc891bc58934c9c7cfbcfd2c59cf18ef5e5c0a2af9506e7b06727cbcb2ea976f` |
+
+这不是普通最终桌面包的验收结论。真实大模型 API 调用：**否；未真实调用外部大模型 API**。本轮仅修改此报告，未新增工件或工作区外读写，未调用 GUI、根 check 或其他模块回归，没有提交、合并或推送。

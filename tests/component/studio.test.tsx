@@ -61,6 +61,8 @@ it("navigation reopens a closed tab and the problem panel uses compiler diagnost
   });
   expect(hook.result.current.session.tabs).toContain("citation-service");
   expect(hook.result.current.session.active).toBe("citation-service");
+  act(() => hook.result.current.back());
+  expect(hook.result.current.session.active).toBe("research-agent");
   act(() =>
     hook.result.current.controller.edit((p) => {
       p.manifest.modules[1].exports = [];
@@ -125,6 +127,7 @@ it("opening another project retains its own saved session without overwriting it
   expect(hook.result.current.session.active).toBe("citation-service");
   expect(hook.result.current.session.panel).toBe(false);
   expect(
-    JSON.parse(localStorage.getItem("blocky.session.second-project")!).active,
-  ).toBe("citation-service");
+    JSON.parse(localStorage.getItem("blocky.session.second-project")!)
+      .activeTabId,
+  ).toBe("tab-citation-service");
 });

@@ -187,7 +187,12 @@ export function parseProject(input: unknown): Project {
   return p;
 }
 export { ProjectController } from "./controller";
-export { restoreSession, type Session } from "./session";
+export {
+  restoreSession,
+  serializeSession,
+  type Session,
+  type CanvasViewport,
+} from "./session";
 export const projectDigest = (project: Project) =>
   digest(parseProject(project));
 export function createSession(project: Project) {
