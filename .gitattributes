@@ -1,3 +1,4 @@
 # Preserve the published dependency bytes for provenance verification.
 vendor/wry/** -text
 vendor/licenses/** -text
+doc/验收/任务/阶段1证据/** -text

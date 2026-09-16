@@ -1,0 +1,134 @@
+[
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\apps--studio-host--target",
+    "bytes": 7248268227.0,
+    "source": "apps/studio-host/target",
+    "files": 14485
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--ordinary-native-target",
+    "bytes": 1971777831.0,
+    "source": "try/ordinary-native-target",
+    "files": 4188
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--stage1-native",
+    "bytes": 4195.0,
+    "source": "try/stage1-native",
+    "files": 3
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--toolchain-install",
+    "bytes": 4481767.0,
+    "source": "try/toolchain-install",
+    "files": 4
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--source-snapshot-haystack",
+    "bytes": 29174.0,
+    "source": "try/source-snapshot-haystack",
+    "files": 4
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--native-e2e-target",
+    "files": 4306,
+    "source": "try/native-e2e-target",
+    "bytes": 1784650921.0
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--release-native-target",
+    "files": 3761,
+    "source": "try/release-native-target",
+    "bytes": 1463428692.0
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--native-test-web",
+    "files": 12,
+    "source": "try/native-test-web",
+    "bytes": 1149437.0
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--stage1-e2e",
+    "files": 21,
+    "source": "try/stage1-e2e",
+    "bytes": 1008107.0
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-b",
+    "bytes": 4702.0,
+    "files": 2,
+    "source": "try/accept-stage1-b"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-cli",
+    "bytes": 64691.0,
+    "files": 22,
+    "source": "try/accept-stage1-cli"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-d",
+    "bytes": null,
+    "files": 0,
+    "source": "try/accept-stage1-d"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-d-security",
+    "bytes": 19634.0,
+    "files": 9,
+    "source": "try/accept-stage1-d-security"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-e-surface",
+    "bytes": 5830.0,
+    "files": 6,
+    "source": "try/accept-stage1-e-surface"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--accept-stage1-final",
+    "bytes": 19498.0,
+    "files": 4,
+    "source": "try/accept-stage1-final"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--acceptance-stage1-a",
+    "bytes": null,
+    "files": 0,
+    "source": "try/acceptance-stage1-a"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--production-js-licenses.json",
+    "bytes": 19877.0,
+    "files": 1,
+    "source": "try/production-js-licenses.json"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--production-rust-metadata.json",
+    "bytes": 1329255.0,
+    "files": 1,
+    "source": "try/production-rust-metadata.json"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--stage1-core",
+    "bytes": 54222.0,
+    "files": 3,
+    "source": "try/stage1-core"
+  },
+  {
+    "destination": "try\\待清理\\阶段1-2026-09-16\\try--stage1-release",
+    "bytes": 2662889.0,
+    "files": 14,
+    "source": "try/stage1-release"
+  },
+  {
+    "bytes": 298220.0,
+    "source": "apps/studio-host/gen",
+    "destination": "try\\待清理\\阶段1-2026-09-16\\apps--studio-host--gen",
+    "files": 4
+  },
+  {
+    "bytes": 1125787.0,
+    "source": "apps/studio-desktop/dist",
+    "destination": "try\\待清理\\阶段1-2026-09-16\\apps--studio-desktop--dist",
+    "files": 3
+  }
+]

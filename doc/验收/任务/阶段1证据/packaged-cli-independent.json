@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checkedAt": "2026-09-16T13:15:43.940Z",
+  "cwd": "D:\\",
+  "cli": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.1.0\\cli\\main.mjs",
+  "results": [
+    {
+      "command": "--help",
+      "exitCode": 0
+    },
+    {
+      "command": "project create",
+      "exitCode": 0
+    },
+    {
+      "command": "project compile",
+      "exitCode": 0
+    },
+    {
+      "command": "project create",
+      "exitCode": 5
+    },
+    {
+      "command": "run start",
+      "exitCode": 0
+    }
+  ],
+  "eventLines": 21,
+  "projectSha256": "d7b7916a6bbf512c157d012344d00cb4aefbd2fd98870a443bc894bb48aa990b",
+  "modelApiCalled": false
+}
