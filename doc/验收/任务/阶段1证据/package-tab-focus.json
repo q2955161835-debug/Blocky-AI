@@ -1,0 +1,47 @@
+{
+  "directory": "dist/Blocky-Studio-0.1.0",
+  "createdAt": "2026-09-16T14:40:09.676Z",
+  "sourceCommit": "6708dfbea7b26947e94a640d6cad40ec66c03836",
+  "files": [
+    {
+      "path": "Blocky Studio.exe",
+      "bytes": 12049408,
+      "sha256": "89c334ade3c6e247eb6be9853d09b7878fc974d0f07b512f24d3e6e2b05d3436"
+    },
+    {
+      "path": "cli/bin/blocky-project-io.exe",
+      "bytes": 3031040,
+      "sha256": "0ddb64fc9b1e955ef1af4012ee8164e9cdc2fffad4ceb00d587630d7292dc326"
+    },
+    {
+      "path": "cli/blocky.cmd",
+      "bytes": 58,
+      "sha256": "ee5ba59dd0c860351523efac7c7bb08f48cb1671d377d72f452c9a3eaa85e19a"
+    },
+    {
+      "path": "cli/main.mjs",
+      "bytes": 694404,
+      "sha256": "cf2f4757b240a8a83fca4cd9f681bcd47149951c902f44d3b7881d1b2251dcd2"
+    },
+    {
+      "path": "licenses/LICENSE.haystack",
+      "bytes": 11343,
+      "sha256": "3f0a3af7e9b0f3b6358aaa3c7501ab522a67dc5483b870e9a8b3db41ea42e249"
+    },
+    {
+      "path": "licenses/sources/selectors-0.36.1.crate",
+      "bytes": 69832,
+      "sha256": "c5d9c0c92a92d33f08817311cf3f2c29a3538a8240e94a6a3c622ce652d7e00c"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_NOTICES.txt",
+      "bytes": 2643171,
+      "sha256": "39f05a4801a59c24ac8cb143211a97b9c34c24036ad06e3b5a48f0edd6cdf9bc"
+    },
+    {
+      "path": "使用说明.txt",
+      "bytes": 858,
+      "sha256": "ee1d21cb3a2e9653a0ad9f86c881cbd809c031183efe8f748b8417368ccf044e"
+    }
+  ]
+}

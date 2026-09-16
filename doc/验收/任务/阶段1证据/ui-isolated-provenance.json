@@ -1,0 +1,21 @@
+{
+  "kind": "isolated-component-rendering",
+  "ordinaryPackageScreenshot": false,
+  "initialSourceCommit": "db47375",
+  "initialEvidence": [
+    "ui-isolated-result.json",
+    "ui-isolated-menu-open.png",
+    "ui-isolated-exit-dark.png",
+    "ui-isolated-confirmation-dark.png",
+    "ui-isolated-candidate-dark.png"
+  ],
+  "initialLimitation": "Candidate primary button contrast was 3.58:1 before the follow-up CSS fix.",
+  "finalPrimarySourceCommit": "1e106a2cf5a4792a95df9d0991a7f302933a0adc",
+  "finalPrimaryEvidence": [
+    "ui-isolated-primary-result.json",
+    "ui-isolated-candidate-primary-hover.png"
+  ],
+  "fixtureComponents": ["MenuBar", "ExitDialog", "ConfirmationDialog", "ConstructionDialog"],
+  "stylesheet": "apps/studio-desktop/src/app/styles.css",
+  "scope": "Real components and stylesheet with isolated fixture props; ordinary-package interaction is separately recorded in the task acceptance report."
+}

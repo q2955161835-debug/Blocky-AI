@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "blocky.release-scan/v1",
+  "checkedAt": "2026-09-16T14:34:17.069Z",
+  "commit": "6708dfbea7b26947e94a640d6cad40ec66c03836",
+  "positiveControl": true,
+  "scope": "ordinary binaries, CLI bundle and production browser assets; pattern checks are not a general secret detector",
+  "artifacts": [
+    {
+      "path": "try/release-native-target/release/blocky-studio.exe",
+      "bytes": 12049408,
+      "sha256": "89c334ade3c6e247eb6be9853d09b7878fc974d0f07b512f24d3e6e2b05d3436",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/bin/blocky-project-io.exe",
+      "bytes": 3031040,
+      "sha256": "0ddb64fc9b1e955ef1af4012ee8164e9cdc2fffad4ceb00d587630d7292dc326",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/main.mjs",
+      "bytes": 694404,
+      "sha256": "cf2f4757b240a8a83fca4cd9f681bcd47149951c902f44d3b7881d1b2251dcd2",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/blocky.cmd",
+      "bytes": 58,
+      "sha256": "ee5ba59dd0c860351523efac7c7bb08f48cb1671d377d72f452c9a3eaa85e19a",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-BP67kR_N.css",
+      "bytes": 13136,
+      "sha256": "481385eb6362aa181717f9d0e88e63ff5151ba6b1bd7d43498a1953341e1ba19",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-ODbZgYfs.js",
+      "bytes": 1112335,
+      "sha256": "b8b680d532c35c9461b9459e82e0055ba215f40c414a73de8e3c440a6be463fa",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/index.html",
+      "bytes": 358,
+      "sha256": "867d0f556d06fdfd8fae5ba6c016d2b1e63b3dd15226cda143219761384bb7be",
+      "failures": []
+    }
+  ],
+  "passed": true
+}

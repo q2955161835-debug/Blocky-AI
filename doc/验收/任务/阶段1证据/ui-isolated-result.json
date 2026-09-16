@@ -1,0 +1,220 @@
+{
+  "menu": {
+    "anchor": {
+      "triggerBox": {
+        "x": 16,
+        "y": 9,
+        "width": 46,
+        "height": 29
+      },
+      "menuBox": {
+        "x": 16,
+        "y": 42,
+        "width": 240,
+        "height": 167
+      },
+      "below": true,
+      "leftDelta": 0
+    },
+    "commandCenterAbsent": true,
+    "switchedToEdit": true,
+    "undoDisabled": true,
+    "escapeClosed": true,
+    "escapeFocus": "编辑",
+    "outsideClosed": true
+  },
+  "dialogs": {
+    "exit-dark": [
+      {
+        "text": "关闭 Blocky Studio",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "当前项目有未保存的修改。停止并退出将放弃这些修改。",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "返回工作台",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "隐藏并继续",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "停止并退出",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      }
+    ],
+    "confirmation-dark": [
+      {
+        "text": "保留当前修改？",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "当前修改尚未保存。",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "返回编辑",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "放弃修改并继续",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      }
+    ],
+    "candidate-dark": [
+      {
+        "text": "×",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "源码证据可映射为通用查找资料积木。",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "源仓库：https://example.invalid/repository · v1 · Apache-2.0",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "无新增权限",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "拒绝",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "接受变更",
+        "foreground": "rgb(255, 255, 255)",
+        "background": "rgb(75, 131, 245)",
+        "contrast": 3.5810478049508476
+      }
+    ],
+    "exit-light": [
+      {
+        "text": "关闭 Blocky Studio",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "当前项目有未保存的修改。停止并退出将放弃这些修改。",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "返回工作台",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "隐藏并继续",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "停止并退出",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      }
+    ],
+    "confirmation-light": [
+      {
+        "text": "保留当前修改？",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "当前修改尚未保存。",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "返回编辑",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      },
+      {
+        "text": "放弃修改并继续",
+        "foreground": "rgb(230, 234, 240)",
+        "background": "rgb(37, 44, 55)",
+        "contrast": 11.640416818064638
+      }
+    ],
+    "candidate-light": [
+      {
+        "text": "×",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "源码证据可映射为通用查找资料积木。",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "源仓库：https://example.invalid/repository · v1 · Apache-2.0",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "无新增权限",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "拒绝",
+        "foreground": "rgb(238, 242, 247)",
+        "background": "rgb(41, 47, 58)",
+        "contrast": 11.958716482231694
+      },
+      {
+        "text": "接受变更",
+        "foreground": "rgb(255, 255, 255)",
+        "background": "rgb(75, 131, 245)",
+        "contrast": 3.5810478049508476
+      }
+    ]
+  }
+}

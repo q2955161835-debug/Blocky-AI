@@ -1,0 +1,12 @@
+{
+  "normal": {
+    "foreground": "rgb(255, 255, 255)",
+    "background": "rgb(40, 98, 207)",
+    "contrast": 5.617534143138428
+  },
+  "hover": {
+    "foreground": "rgb(255, 255, 255)",
+    "background": "rgb(50, 108, 220)",
+    "contrast": 4.867749977485085
+  }
+}
