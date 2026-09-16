@@ -30,7 +30,7 @@ describe("Blocky native editor", () => {
     });
   });
   after(async () => {
-    await cdp?.close();
+    await cdp?.close().catch(() => {});
   });
   it("creates editable canvases, runs a sourced answer and navigates across modules", async () => {
     await $("button*=资料问答伙伴").click();

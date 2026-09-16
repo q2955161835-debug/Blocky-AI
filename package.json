@@ -12,6 +12,8 @@
     "test:unit": "vitest run packages",
     "test:contracts": "vitest run tests/contracts",
     "check": "pnpm typecheck && pnpm test:unit && pnpm test:contracts",
+    "check:core": "pnpm check && pnpm test:component && pnpm test:host && pnpm build:cli && pnpm test:cli && pnpm test:e2e:build && pnpm test:e2e && pwsh -NoProfile -File scripts/check-native-core.ps1 core",
+    "check:full": "pnpm check:core && pwsh -NoProfile -File scripts/check-native-core.ps1 full",
     "blocky": "node tools/blocky-cli/dist/main.mjs",
     "build:cli": "cargo build --manifest-path apps/studio-host/Cargo.toml --release --bin blocky-project-io && pnpm --dir tools/blocky-cli build",
     "test:component": "vitest run tests/component",
@@ -20,7 +22,9 @@
     "test:e2e:build": "pwsh -NoProfile -File scripts/build-native-tests.ps1",
     "test:e2e": "wdio run tests/e2e/wdio.conf.ts",
     "dev": "pnpm --dir apps/studio-host tauri dev",
-    "build": "pnpm --dir apps/studio-host tauri build --no-bundle"
+    "build": "pnpm --dir apps/studio-host tauri build --no-bundle",
+    "build:release": "pwsh -NoProfile -File scripts/build-release.ps1",
+    "check:release": "node scripts/check-release.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "7.0.0",

@@ -38,3 +38,17 @@ $LASTEXITCODE
 # 修改配置
 
 `blocky project configure input.blocky --module research-agent --block research-root --field ROLE --value 科学教师 --output revised.blocky --json` 使用与桌面相同的编辑函数，只允许积木目录声明的字段。输出为新项目，原文件不变；目标存在时退出 5。允许保存含编译诊断的编辑中项目，响应列出 diagnostics/warnings，运行仍按原门禁拒绝错误项目。
+
+## 应用页面、任务与诊断
+
+```powershell
+.\blocky.cmd surface create .\try\my-project.blocky --module research-agent --output .\try\page-patch.json --json
+.\blocky.cmd patch preview .\try\my-project.blocky --patch .\try\page-patch.json --json
+.\blocky.cmd patch apply .\try\my-project.blocky --patch .\try\page-patch.json --approve-permissions surface.preview,surface.invoke.ask --output .\try\with-page.blocky --json
+.\blocky.cmd surface list .\try\with-page.blocky --json
+.\blocky.cmd task list --json
+.\blocky.cmd task run .\try\my-project.blocky --passes 10 --interval 100 --timeout 30000 --output-budget 4096 --json
+.\blocky.cmd diagnostics export .\try\logs.json --channel runtime --output .\try\diagnostics.json --json
+```
+
+页面命令先生成可审阅候选，授权应用后才写入新项目；CLI 不打开浏览器或发布站点。具名任务执行真实受限 Rust 子进程，取消和超时等待结算，没有任意 Shell 或用户 PTY。诊断导出只保留时间、序号、级别、通道及合法丢弃计数，排除问题、答案、消息正文与属性；输出仍拒绝覆盖。所有本阶段模型结果来自确定性本地适配器，未真实调用外部大模型 API。

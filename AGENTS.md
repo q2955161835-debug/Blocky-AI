@@ -269,7 +269,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 
 `check:full` 包含 360 个 5 秒循环和 30 次真实 Rust Host 保存/重载，约 30 分钟以上；不得缩短后声称完整长稳通过。
 
-正式根命令现为 `pnpm check`、`pnpm test:component`、`pnpm test:host`、`pnpm build:cli`、`pnpm test:cli`、`pnpm dev`、`pnpm build`；CLI 用 `./blocky.cmd --help` 发现。原生测试构建命令为 `pnpm test:e2e:build`，执行命令为 `pnpm test:e2e`，产物隔离在 `try/native-e2e-target/`，当前尚未通过；正式长稳命令仍待建立。尖峰测试不能代替正式应用验证。
+正式根命令现为 `pnpm check`、`pnpm test:component`、`pnpm test:host`、`pnpm build:cli`、`pnpm test:cli`、`pnpm dev`、`pnpm build`；CLI 用 `./blocky.cmd --help` 发现。原生测试构建/执行为 `pnpm test:e2e:build` / `pnpm test:e2e`，产物隔离在 `try/native-e2e-target/`。正式聚合门禁 `pnpm check:core` / `pnpm check:full` 已建立，后者包含 360 个五秒循环与 30 次不同内容的 Rust 保存重开。端口检查可单独执行 `scripts/check-native-core.ps1 core|full`，不可描述成聚合门禁或普通界面全部通过。2026-09-16 用户暂缓电脑操控验收，继续代码/CLI/无鼠标键盘自动化，普通界面/通知区域保留未执行。尖峰测试不能代替正式应用验证。
 
 ## 11. 复测映射
 
@@ -300,6 +300,10 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 ## 13. 工作区外依赖
 
 当前正式构建不依赖工作区外业务文件。用户提供的研究报告、临时截图和本机参考项目只能作为设计证据，不能成为构建输入或运行时依赖；若未来确需工作区外文件，必须在本节记录完整路径、用途、版本和安全边界。
+
+锁定 Wry Windows 修复源码位于项目 `vendor/wry/`，由 Host Cargo patch 使用，来源与维护说明见 `vendor/WRY-PATCH.md`。工具缓存默认位于 `C:\Users\29551\.cargo\registry`；运行时数据为 `C:\Users\29551\AppData\Local\ai.blocky.studio`，测试包为 `C:\Users\29551\AppData\Local\ai.blocky.studio.test`。诊断仅保存白名单元数据；Full 测试原生档位于后者 `acceptance\full.blocky`，普通包不包含此测试命令。普通代码不得导入 `src/testing/`，测试注册同时受 Vite native-test 和 Rust wdio 编译门控，交付前扫描普通产物。
+
+交付构建用 `pnpm build:release` / `pnpm check:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。构建与扫描脚本在 `scripts/`，候选在 `try/release-native-target/` 与 CLI `dist/`，扫描报告在 `try/stage1-release/`。
 
 ## 14. 团队协作归属
 

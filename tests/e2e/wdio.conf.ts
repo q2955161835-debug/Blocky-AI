@@ -19,7 +19,13 @@ export const config: Options.Testrunner & {
   capabilities: TauriCapabilities[];
 } = {
   runner: "local",
-  specs: [resolve("tests/e2e/studio.e2e.ts")],
+  specs: [
+    resolve(
+      process.env.BLOCKY_NATIVE_SUITE
+        ? "tests/e2e/core.e2e.ts"
+        : "tests/e2e/studio.e2e.ts",
+    ),
+  ],
   maxInstances: 1,
   services: [
     [

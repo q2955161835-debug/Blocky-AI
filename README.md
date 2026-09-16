@@ -10,9 +10,9 @@ Windows Core 与未来移动使用端所需的本机开发工具链已准备，�
 
 ## 当前开发入口（2026-09-16）
 
-正式 monorepo 已建立：A/B 领域、C 编辑/会话及运行入口通过各自独立局部验收；D 个人蓝图与候选补丁已接入桌面和 CLI，等待独立验证。用户已要求继续 D/E，普通窗口验收留到 F。Windows 工具链检查 26/26；E/F 尚未完成，当前程序不是已验收的完整阶段 1 产品。
+正式 monorepo 已建立：A/B 领域、C 编辑/会话、D 蓝图/候选补丁与 E 页面/任务/诊断已有实现和独立限定范围验收。当前执行 F 性能、长稳与交付检查。2026-09-16 用户暂缓电脑操控验收，普通窗口与通知区域场景保留未执行；阶段 1 尚未全部验收通过。Windows 工具链检查 26/26。
 
-用户要求 CLI 与领域同步开发，优先通过 CLI 验证。首批 CLI 支持目录、蓝图、项目创建/检查/编译/校验及确定性运行，共用桌面领域和 Rust 存储；用法见 [CLI 说明](tools/blocky-cli/README.md)。真实大模型 API 调用：否。
+用户要求 CLI 与领域同步开发，优先通过 CLI 验证。CLI 支持目录、个人蓝图、项目创建/配置/检查/编译/运行、锁定仓库候选、页面补丁、注册任务及诊断导出，共用桌面领域和 Rust 存储；用法见 [CLI 说明](tools/blocky-cli/README.md)。真实大模型 API 调用：否；未真实调用外部大模型 API。
 
 ```powershell
 pnpm install --frozen-lockfile
@@ -26,6 +26,12 @@ pnpm test:cli
 pnpm dev
 pnpm build
 ```
+
+原生自动化包：`pnpm test:e2e:build` 后运行 `pnpm test:e2e`。完整门禁入口为 `pnpm check:core` / `pnpm check:full`，后者含完整 360 个五秒循环及 30 次不同内容的 Rust 保存重开。仅运行无需鼠标键盘输入的 Core/Full 端口检查时，可在已构建测试包上执行 `pwsh -NoProfile -File scripts/check-native-core.ps1 core` / `full`；它不替代普通窗口验收，也不等同于整个聚合命令已通过。
+
+普通包从默认 `apps/studio-host/target/release/blocky-studio.exe` 输出；本次候选隔离构建在 `try/ordinary-native-target/release/`，测试包在 `try/native-e2e-target/release/`。Windows iframe 隔离使用锁定 Wry 修复，来源和维护责任见 [补丁说明](vendor/WRY-PATCH.md)。
+
+可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出 `try/release-native-target/release/blocky-studio.exe` 及 `tools/blocky-cli/dist/`，随后运行 `pnpm check:release`。常规开发构建可能含本机构建路径，不能直接代替此候选；扫描范围与限制写在 `try/stage1-release/artifacts.json`，报告不进入产品目录。
 
 CLI 增补计划见 [同步开发补充](doc/执行计划/2026-09-16-CLI同步开发补充.md)。团队项目；最终验收通过后仍须询问是否合并 main，push 单独授权。
 

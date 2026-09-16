@@ -43,7 +43,7 @@ it("exports only whitelisted diagnostic metadata and refuses overwriting an exis
     const text = await readFile(output, "utf8");
     expect(text).not.toContain("PRIVATE_TEST");
     expect(JSON.parse(text).records[0].channel).toBe("runtime");
-    expect(JSON.parse(text)).toMatchObject({dropped:4,droppedImportant:2});
+    expect(JSON.parse(text)).toMatchObject({ dropped: 4, droppedImportant: 2 });
     expect(run().status).toBe(5);
     expect(await readFile(output, "utf8")).toBe(text);
   } finally {

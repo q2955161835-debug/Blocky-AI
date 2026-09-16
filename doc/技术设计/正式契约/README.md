@@ -53,6 +53,8 @@
 
 D 增补注册：`blocky.blueprint/v1alpha1`、`blocky.source-snapshot/v1alpha1`、`blocky.conversion/v1alpha1`，以及冻结 SemanticPatch 的当前支持子集，见 [蓝图与候选补丁](09-蓝图与候选补丁.md)。
 
+E 增补消费者与当前支持配置：AppSurface、MessagePort、注册 TaskHost、诊断元数据存储及窗口退出，见 [应用界面与任务 Host](10-阶段1应用界面与任务Host.md)。固定页面源文件和 TaskDefinition 均有 TS/Rust 共用注册表；`blocky.diagnostics/v1` 仅持久化时间/序号/级别/通道和损失计数。
+
 ```text
 Project Manifest + per-module Blockly Workspace JSON
                        ↓ compile

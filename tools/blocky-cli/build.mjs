@@ -17,7 +17,7 @@ await copyFile(
   "dist/licenses/LICENSE.haystack",
 );
 await copyFile(
-  "../../apps/studio-host/target/release/blocky-project-io.exe",
+  process.argv[2] ?? "../../apps/studio-host/target/release/blocky-project-io.exe",
   "dist/bin/blocky-project-io.exe",
 );
 await writeFile(

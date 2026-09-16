@@ -22,6 +22,20 @@ import { ExitDialog } from "./ExitDialog";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
+  const currentStudio = useRef(s);
+  currentStudio.current = s;
+  useEffect(() => {
+    if (import.meta.env.MODE !== "native-test") return;
+    let active = true,
+      dispose: (() => void) | undefined;
+    void import("../testing/acceptance").then(({ install }) => {
+      if (active) dispose = install(() => currentStudio.current);
+    });
+    return () => {
+      active = false;
+      dispose?.();
+    };
+  }, []);
   const construction = useConstruction(s);
   const task = useTask(s);
   const logs = useLogs(s),

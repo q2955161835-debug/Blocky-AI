@@ -209,7 +209,7 @@ export function useStudio() {
       return;
     }
     runBusy.current = true;
-    if(request)setQuestion(request.question);
+    if (request) setQuestion(request.question);
     setRunning(true);
     setEvents([]);
     setResult(undefined);

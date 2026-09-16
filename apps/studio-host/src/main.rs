@@ -1,4 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#[cfg(feature = "wdio")]
+mod acceptance;
 mod commands;
 mod log_commands;
 mod task_commands;
@@ -33,6 +35,8 @@ fn main() {
         })
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
+            #[cfg(feature = "wdio")]
+            acceptance::acceptance_round_trip,
             commands::open_project,
             commands::save_project,
             commands::validate_patch,
