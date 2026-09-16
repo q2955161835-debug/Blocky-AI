@@ -1,0 +1,51 @@
+import type { Json } from "@blocky/language-schema";
+const sensitiveKey =
+  /^(?:authorization|cookie|set-cookie|password|api[_-]?key|token|access[_-]?token|secret|prompt|body|stdout|stderr|environment)$/i;
+export function redact(input: unknown): {
+  value: Json;
+  redaction: { applied: boolean; categories: string[] };
+} {
+  const categories = new Set<string>();
+  const text = (v: string) =>
+    v
+      .replace(
+        /\bBearer\s+\S+|(?:password|token|api[_-]?key)\s*[=:]\s*[^\s,;]+|<fixture-invalid-[^>]+>/gi,
+        () => {
+          categories.add("credential");
+          return "[已脱敏]";
+        },
+      )
+      .replace(/[A-Za-z]:[\\/][^\s"<>]+/g, () => {
+        categories.add("private-path");
+        return "[本机路径]";
+      });
+  const visit = (v: unknown, depth = 0): Json => {
+    if (depth > 30) {
+      categories.add("oversize");
+      return "[已截断]";
+    }
+    if (typeof v === "string") return text(v.slice(0, 16000));
+    if (v === null || typeof v === "boolean") return v;
+    if (typeof v === "number") return Number.isFinite(v) ? v : null;
+    if (Array.isArray(v))
+      return v.slice(0, 1000).map((x) => visit(x, depth + 1));
+    if (v && typeof v === "object")
+      return Object.fromEntries(
+        Object.entries(v)
+          .slice(0, 1000)
+          .map(([k, x]) => {
+            if (sensitiveKey.test(k)) {
+              categories.add("credential");
+              return [k, "[已脱敏]"];
+            }
+            return [k, visit(x, depth + 1)];
+          }),
+      );
+    return null;
+  };
+  const value = visit(input);
+  return {
+    value,
+    redaction: { applied: categories.size > 0, categories: [...categories] },
+  };
+}

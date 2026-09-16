@@ -34,8 +34,17 @@ importers:
       '@blocky/project-model':
         specifier: workspace:*
         version: link:../project-model
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../resource-registry
 
   packages/language-schema: {}
+
+  packages/observability:
+    dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
 
   packages/project-model:
     dependencies:
@@ -45,6 +54,30 @@ importers:
       zod:
         specifier: 4.4.3
         version: 4.4.3
+
+  packages/resource-registry:
+    dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+
+  packages/runtime-core:
+    dependencies:
+      '@blocky/compiler':
+        specifier: workspace:*
+        version: link:../compiler
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      '@blocky/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../resource-registry
 
   packages/test-fixtures:
     dependencies:
