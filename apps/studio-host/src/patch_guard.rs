@@ -25,10 +25,23 @@ fn keys(v: &Value, allowed: &[&str]) -> Result<(), String> {
 pub fn project_files(project: &Value) -> Result<ProjectFiles, String> {
     keys(
         project,
-        &["manifest", "workspaces", "resources", "schemas", "surfaces"],
+        &[
+            "manifest",
+            "workspaces",
+            "resources",
+            "schemas",
+            "surfaces",
+            "settings",
+        ],
     )?;
     let mut files = ProjectFiles::new();
     files.insert("project.json".into(), project["manifest"].to_string());
+    if let Some(settings) = project.get("settings") {
+        if project["manifest"]["settingsRef"] != "settings.json" {
+            return Err(INVALID.into());
+        }
+        files.insert("settings.json".into(), settings.to_string());
+    }
     for m in array(&project["manifest"]["modules"])? {
         files.insert(
             text(&m["workspaceRef"])?.into(),

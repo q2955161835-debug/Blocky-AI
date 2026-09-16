@@ -6,6 +6,9 @@ const menus = [
   ["edit", "编辑"],
   ["view", "视图"],
   ["run", "运行"],
+  ["build", "构建"],
+  ["terminal", "终端"],
+  ["help", "帮助"],
 ] as const;
 export type MenuCategory = (typeof menus)[number][0];
 
@@ -15,12 +18,16 @@ export function MenuBar({
   enabled,
   execute,
   disabled,
+  keys,
+  reason,
 }: {
   active: MenuCategory | null;
   open(category: MenuCategory | null): void;
   enabled(id: string): boolean;
   execute(id: string): void;
   disabled: boolean;
+  keys?(id: string): string[];
+  reason?(id: string): string | undefined;
 }) {
   const bar = useRef<HTMLElement>(null);
   const [tabStop, setTabStop] = useState<MenuCategory>("file");
@@ -146,13 +153,19 @@ export function MenuBar({
                       role="menuitem"
                       tabIndex={-1}
                       disabled={!enabled(command.commandId)}
+                      title={reason?.(command.commandId)}
                       onClick={() => {
                         focusTrigger(category);
                         execute(command.commandId);
                       }}
                     >
                       <span>{command.label}</span>
-                      <kbd>{command.defaultShortcuts[0]}</kbd>
+                      <kbd>
+                        {
+                          (keys?.(command.commandId) ??
+                            command.defaultShortcuts)[0]
+                        }
+                      </kbd>
                     </button>
                   </div>
                 ))}

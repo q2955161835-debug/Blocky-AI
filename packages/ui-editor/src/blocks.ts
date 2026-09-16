@@ -2,6 +2,25 @@ import * as Blockly from "blockly/core";
 import * as Zh from "blockly/msg/zh-hans";
 import { catalog, categories } from "@blocky/block-catalog";
 let registered = false;
+class JsonField extends Blockly.FieldTextInput {
+  constructor() {
+    super("null", (value) => {
+      if (value === null) return null;
+      try {
+        JSON.parse(value);
+        return value;
+      } catch {
+        return null;
+      }
+    });
+  }
+  override saveState(): unknown {
+    return JSON.parse(this.getValue() ?? "null");
+  }
+  override loadState(state: unknown) {
+    this.setValue(JSON.stringify(state));
+  }
+}
 const labels: Record<string, string> = {
   ROLE: "角色",
   NAME: "名称",
@@ -30,6 +49,10 @@ export function registerBlocks() {
         this.appendDummyInput().appendField(def.label);
         const input = this.appendDummyInput();
         for (const field of def.fields) {
+          if (def.jsonFields?.includes(field)) {
+            input.appendField("值").appendField(new JsonField(), field);
+            continue;
+          }
           if (field === "INPUT" || field === "OUTPUT") {
             const hidden = new Blockly.FieldLabelSerializable("");
             input.appendField(hidden, field);
@@ -57,11 +80,16 @@ export function registerBlocks() {
               field,
             );
         }
-        for (const input of def.inputs)
-          this.appendStatementInput(input).setCheck("step");
+        for (const input of def.inputs) {
+          const check = def.inputChecks?.[input] ?? "step";
+          if (["json", "message"].includes(check))
+            this.appendValueInput(input).setCheck(check);
+          else this.appendStatementInput(input).setCheck(check);
+        }
+        if (def.output) this.setOutput(true, def.output);
         if (def.statement) {
-          this.setPreviousStatement(true, "step");
-          this.setNextStatement(true, "step");
+          this.setPreviousStatement(true, def.statementCheck ?? "step");
+          this.setNextStatement(true, def.statementCheck ?? "step");
         }
         this.setColour(def.color);
         this.setTooltip(def.label);

@@ -4,15 +4,15 @@ import { CliError, envelope } from "./protocol";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 export async function exportDiagnostics(args: Args) {
   if (args.words.slice(0, 2).join(".") !== "diagnostics.export") return;
-  allow(args, ["output", "json", "channel"], 3);
-  const input = await readJsonArtifact(args.words[2]);
+  allow(args, ["output", "json", "channel", "from", "to"], 3);
+  const input = await readJsonArtifact(args.words[2], 25601024);
   try {
     const raw = Array.isArray(input)
       ? input
       : input && typeof input === "object" && "records" in input
         ? input.records
         : undefined;
-    if (!Array.isArray(raw) || raw.length > 1000) throw Error();
+    if (!Array.isArray(raw) || raw.length > 100000) throw Error();
     const counts =
       input && !Array.isArray(input) && typeof input === "object"
         ? (input as { dropped?: unknown; droppedImportant?: unknown })
@@ -30,6 +30,24 @@ export async function exportDiagnostics(args: Args) {
     )
       throw Error();
     let records = raw.map((record) => diagnosticRecord(record as LogRecord));
+    const from = args.options.get("from"),
+      to = args.options.get("to");
+    for (const value of [from, to])
+      if (
+        value !== undefined &&
+        (typeof value !== "string" ||
+          !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value) ||
+          !Number.isFinite(Date.parse(value)) ||
+          new Date(value).toISOString() !== value)
+      )
+        throw Error();
+    if (typeof from === "string" && typeof to === "string" && from > to)
+      throw Error();
+    records = records.filter(
+      (r) =>
+        (typeof from !== "string" || r.timestamp >= from) &&
+        (typeof to !== "string" || r.timestamp <= to),
+    );
     const channel = args.options.get("channel");
     if (channel !== undefined) {
       if (

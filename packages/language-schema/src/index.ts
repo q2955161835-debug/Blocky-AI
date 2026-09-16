@@ -119,13 +119,14 @@ export type ResourceReference = {
   secretRefs: string[];
 };
 export type Manifest = {
-  schemaVersion: "blocky.project/v1alpha1";
+  schemaVersion: "blocky.project/v1";
   projectId: string;
   displayName: string;
   modules: ModuleDescriptor[];
   resources: ResourceReference[];
   appSurfaces: { surfaceId: string; manifestRef: string }[];
   format: { createdWith: string; minimumReaderVersion: string };
+  settingsRef?: "settings.json";
 };
 export type WorkspaceBlock = {
   type: string;
@@ -158,6 +159,11 @@ export type Project = {
   resources: Record<string, Resource>;
   schemas: Record<string, Json>;
   surfaces: Record<string, Json>;
+  settings?: {
+    schemaVersion: "blocky.settings/v1";
+    scope: "project";
+    values: Record<string, Json>;
+  };
 };
 export type IrNode = {
   nodeId: string;
@@ -167,7 +173,7 @@ export type IrNode = {
   next?: IrNode;
 };
 export type ModuleIR = {
-  schemaVersion: "blocky.module-ir/v1alpha1";
+  schemaVersion: "blocky.module-ir/v1";
   projectId: string;
   moduleId: string;
   roots: IrNode[];
@@ -183,7 +189,7 @@ export type ProjectLink = {
   eventPolicy?: { maxInFlight: number; cancellation: "propagate" | "isolate" };
 };
 export type ProjectIR = {
-  schemaVersion: "blocky.project-ir/v1alpha1";
+  schemaVersion: "blocky.project-ir/v1";
   projectId: string;
   modules: { moduleId: string; digest: string }[];
   links: ProjectLink[];

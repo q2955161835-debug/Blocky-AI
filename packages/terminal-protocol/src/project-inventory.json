@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "blocky.task/v1alpha1",
+  "taskId": "blocky.project-inventory",
+  "displayName": "统计项目组成",
+  "source": "blocky",
+  "parameters": [
+    {
+      "parameterId": "limit",
+      "valueType": "number",
+      "required": true,
+      "validationRules": [
+        {
+          "ruleId": "limit-integer",
+          "kind": "integer",
+          "argument": true,
+          "code": "BLK-TERM-101",
+          "message": "统计上限须为整数"
+        },
+        {
+          "ruleId": "limit-min",
+          "kind": "minimum",
+          "argument": 1,
+          "code": "BLK-TERM-101",
+          "message": "至少统计一个文件"
+        },
+        {
+          "ruleId": "limit-max",
+          "kind": "maximum",
+          "argument": 1000,
+          "code": "BLK-TERM-101",
+          "message": "最多统计1000个文件"
+        }
+      ]
+    }
+  ],
+  "command": {
+    "executableRef": "blocky.project-inventory",
+    "arguments": ["${limit}"]
+  },
+  "workingDirectoryRef": "project",
+  "allowedEnvironmentKeys": [],
+  "secretRefs": [],
+  "timeoutMs": 30000,
+  "outputBudgetBytes": 65536,
+  "concurrency": { "maxInstances": 1, "overflow": "reject" },
+  "cancellation": { "gracePeriodMs": 200, "terminateProcessGroup": true },
+  "successExitCodes": [0],
+  "platforms": ["windows"],
+  "agentPolicy": "allow-scoped"
+}

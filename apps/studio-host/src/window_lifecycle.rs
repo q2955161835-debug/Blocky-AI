@@ -83,6 +83,15 @@ pub fn window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
         return;
     }
     let state = window.state::<Lifecycle>();
+    if matches!(
+        event,
+        tauri::WindowEvent::Moved(_) | tauri::WindowEvent::Resized(_)
+    ) {
+        crate::window_state::save(window, false);
+    }
+    if matches!(event, tauri::WindowEvent::CloseRequested { .. }) {
+        crate::window_state::save(window, true);
+    }
     match event {
         tauri::WindowEvent::CloseRequested { api, .. }
             if !state.authorized.load(Ordering::SeqCst) =>
@@ -138,11 +147,13 @@ pub fn finish_exit(
     window: tauri::WebviewWindow,
     tasks: tauri::State<'_, blocky_studio::task_host::TaskHost>,
     logs: tauri::State<'_, blocky_studio::log_store::LogStore>,
+    terminals: tauri::State<'_, blocky_studio::user_terminal::UserTerminals>,
 ) -> Result<(), String> {
     if window.label() != "main" || !window.state::<Lifecycle>().closing.load(Ordering::SeqCst) {
         return Err("BLK-WINDOW-001".into());
     }
     tasks.shutdown()?;
+    terminals.settle()?;
     logs.flush()?;
     window
         .state::<Lifecycle>()

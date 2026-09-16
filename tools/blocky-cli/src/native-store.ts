@@ -20,6 +20,7 @@ type Reply = {
   files?: Record<string, string>;
   version?: string;
   project?: Project;
+  value?: unknown;
 };
 function request(input: Record<string, unknown>): Promise<Reply> {
   if (!existsSync(helper))
@@ -94,6 +95,30 @@ export async function readProject(path: string): Promise<Project> {
   } catch {
     throw new CliError(3, "BLK-REF-001", "项目事实不符合当前格式。");
   }
+}
+export async function nativeUserOperation(
+  operation: string,
+  fields: Record<string, unknown>,
+): Promise<unknown> {
+  const reply = await request({ operation, ...fields });
+  if (!reply.ok)
+    throw new CliError(
+      3,
+      reply.code ?? "BLK-SET-001",
+      "本机配置操作失败，未返回秘密内容。",
+    );
+  return reply.value;
+}
+export async function readMigration(
+  path: string,
+): Promise<Record<string, string>> {
+  const reply = await request({
+    operation: "read-migration",
+    path: resolve(path),
+  });
+  if (!reply.ok || !reply.files)
+    throw new CliError(3, "BLK-MIG-001", "迁移源文件未通过原生边界检查。");
+  return reply.files;
 }
 export async function createProject(path: string, project: Project) {
   const reply = await request({

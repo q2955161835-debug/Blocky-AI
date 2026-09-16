@@ -2,7 +2,13 @@ import { Welcome } from "./Welcome";
 import { Library } from "./Library";
 import { StudioDialog, type Popup } from "./StudioDialog";
 import { useEffect, useRef, useState } from "react";
-import { commands, shortcut } from "@blocky/command-system";
+import {
+  commands,
+  shortcut,
+  createCommandDispatcher,
+} from "@blocky/command-system";
+import { activateTab, closeTab, renameModule } from "@blocky/project-model";
+import { projectCommands } from "../composition/projectCommands";
 import { Canvas, type CanvasHandle } from "@blocky/ui-editor";
 import { useStudio } from "../composition/useStudio";
 import { Inspector } from "./Inspector";
@@ -15,6 +21,7 @@ import {
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
 import { useTask } from "../composition/useTask";
+import { useTerminals } from "../composition/useTerminals";
 import { SurfacePreview } from "./SurfacePreview";
 import { useLogs } from "../composition/useLogs";
 import { useLifecycle } from "../composition/useLifecycle";
@@ -39,6 +46,7 @@ export function App() {
   }, []);
   const construction = useConstruction(s);
   const task = useTask(s);
+  const terminals = useTerminals(s);
   const logs = useLogs(s),
     lifecycle = useLifecycle(s, logs, task);
   const [popup, setPopup] = useState<Popup>(null),
@@ -54,8 +62,13 @@ export function App() {
     setPopup({ kind });
   };
   const actions: Record<string, () => void> = {
+    ...projectCommands(s, s.confirm),
+    "view.command-center": () => show("commands"),
+    "help.shortcuts": () => show("shortcuts"),
+    "help.about": () => show("about"),
     "file.new": s.fresh,
     "file.open": () => void s.open(),
+    "file.migrate": () => void s.migrate(),
     "file.save": () => void s.save(),
     "edit.undo": () => s.controller.undo(),
     "edit.redo": () => s.controller.redo(),
@@ -79,11 +92,13 @@ export function App() {
     "build.convert": async () => {
       if (await construction.convert()) show("patch-review");
     },
-    "terminal.create": task.start,
+    "terminal.create": () => void terminals.create(),
+    "terminal.run-task": task.start,
+    "terminal.stop-task": task.cancel,
     "build.surface": async () => {
       if (await construction.createSurface()) show("patch-review");
     },
-    "terminal.stop": task.cancel,
+    "terminal.stop": () => void terminals.close(),
     "window.exit": lifecycle.request,
     "run.pause": s.togglePause,
     "view.toggle-bottom-panel": () =>
@@ -96,6 +111,7 @@ export function App() {
     "run.start": () => void s.run(),
     "run.stop": s.stop,
     "settings.open": () => show("settings"),
+    "settings.resources": () => show("resources"),
   };
   const enabled = (id: string) =>
     !s.exiting &&
@@ -107,9 +123,27 @@ export function App() {
         popup.kind,
       )) &&
     !!actions[id] &&
+    (![
+      "file.new-canvas",
+      "file.save-as",
+      "edit.rename-canvas",
+      "edit.delete-canvas",
+    ].includes(id) ||
+      (s.started && !s.busy && !s.running)) &&
+    (id !== "edit.delete-canvas" ||
+      (s.snapshot.project.manifest.modules.length > 1 &&
+        !!s.snapshot.project.workspaces[s.session.active])) &&
+    (!id.startsWith("view.") || id === "view.command-center" || s.started) &&
+    (id !== "view.restore-tab" || s.session.closedTabs.length > 0) &&
     (id !== "terminal.create" ||
+      (s.started &&
+        s.settings.ready &&
+        !terminals.pending &&
+        terminals.sessions.length < 8)) &&
+    (id !== "terminal.stop" || !!terminals.selected) &&
+    (id !== "terminal.run-task" ||
       (s.started && !s.busy && !task.active && !task.pending)) &&
-    (id !== "terminal.stop" || task.active) &&
+    (id !== "terminal.stop-task" || task.active) &&
     (id !== "build.surface" ||
       (s.started &&
         !s.busy &&
@@ -138,14 +172,30 @@ export function App() {
     (id !== "run.stop" || s.running) &&
     (id !== "run.pause" || s.running) &&
     (id !== "view.back" || s.canGoBack);
+  const dispatcher = createCommandDispatcher(actions, (id) =>
+    enabled(id)
+      ? undefined
+      : s.busy
+        ? "正在处理项目"
+        : !s.started
+          ? "请先打开项目"
+          : "当前状态或选择不适用",
+  );
   const execute = (id: string) => {
     setPopup(null);
-    if (enabled(id)) actions[id]();
+    dispatcher.execute(id);
   };
   const latest = useRef({ execute, popup, running: s.running });
   latest.current = { execute, popup, running: s.running };
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (
+        e.isComposing ||
+        e.defaultPrevented ||
+        (e.target instanceof HTMLElement &&
+          e.target.closest("[data-user-terminal]"))
+      )
+        return;
       if (
         latest.current.popup &&
         ["blueprint-save", "blueprint-insert", "patch-review"].includes(
@@ -161,18 +211,21 @@ export function App() {
         api.current?.clearSelection();
         return;
       }
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "p") {
-        e.preventDefault();
-        show("commands");
-        return;
-      }
       const input =
         e.target instanceof HTMLElement &&
-        e.target.matches("input,textarea,select");
+        !!e.target.closest(
+          "input,textarea,select,[contenteditable=true],[data-user-terminal]",
+        );
       const command = commands.find((c) =>
-        c.defaultShortcuts.includes(shortcut(e)),
+        currentStudio.current.shortcuts.keys(c.commandId).includes(shortcut(e)),
       );
-      if (command && (!input || !command.commandId.startsWith("edit."))) {
+      if (
+        command &&
+        (!input ||
+          ["file.save", "settings.open", "view.command-center"].includes(
+            command.commandId,
+          ))
+      ) {
         e.preventDefault();
         latest.current.execute(command.commandId);
       }
@@ -201,6 +254,8 @@ export function App() {
             setPopup(category ? { kind: "menu", category } : null)
           }
           enabled={enabled}
+          keys={s.shortcuts.keys}
+          reason={(id) => dispatcher.state(id).reason}
           execute={execute}
           disabled={
             s.exiting ||
@@ -214,7 +269,7 @@ export function App() {
           }
         />
         <button className="command-search" onClick={() => show("commands")}>
-          ⌕ 搜索命令 <kbd>Ctrl ⇧ P</kbd>
+          ⌕ 搜索命令 <kbd>Ctrl K</kbd>
         </button>
         <span className="spacer" />
         <button onClick={() => show("settings")} aria-label="打开设置">
@@ -278,7 +333,12 @@ export function App() {
               ▶ 运行
             </button>
           </div>
-          <div className="workbench">
+          <div
+            className="workbench"
+            style={{
+              gridTemplateColumns: `${s.session.leftWidth}px minmax(0, 1fr) ${s.session.rightWidth}px`,
+            }}
+          >
             <Library
               studio={s}
               blueprints={construction.blueprints}
@@ -289,7 +349,14 @@ export function App() {
               search={() => show("blocks")}
               add={(type) => api.current?.add(type)}
             />
-            <section className="workspace">
+            <section
+              className={`workspace ${s.session.dock === "right" && s.session.panel && !s.session.maximized ? "panel-right" : ""}`}
+              style={
+                {
+                  "--panel-width": `${s.session.width}px`,
+                } as React.CSSProperties
+              }
+            >
               <div className="workspace-tabs">
                 {s.session.tabs.map((id) => {
                   const m =
@@ -310,7 +377,7 @@ export function App() {
                       >
                         <button
                           onClick={() =>
-                            s.setSession((v) => ({ ...v, active: id }))
+                            s.setSession((v) => activateTab(v, id))
                           }
                         >
                           {id.startsWith("surface:") ? "◉" : "▧"}{" "}
@@ -318,20 +385,7 @@ export function App() {
                         </button>
                         <button
                           aria-label={`关闭 ${m.displayName}`}
-                          onClick={() =>
-                            s.setSession((v) => {
-                              const tabs = v.tabs.filter((t) => t !== id);
-                              const viewports = { ...v.viewports };
-                              delete viewports[id];
-                              return {
-                                ...v,
-                                tabs,
-                                viewports,
-                                active:
-                                  v.active === id ? (tabs[0] ?? "") : v.active,
-                              };
-                            })
-                          }
+                          onClick={() => s.setSession((v) => closeTab(v, id))}
                         >
                           ×
                         </button>
@@ -359,11 +413,12 @@ export function App() {
                         )?.displayName ?? ""
                       }
                       onChange={(e) =>
-                        s.controller.edit((p) => {
-                          p.manifest.modules.find(
-                            (m) => m.moduleId === s.session.active,
-                          )!.displayName = e.target.value;
-                        })
+                        e.target.value.trim() &&
+                        s.controller.edit(
+                          (p) =>
+                            renameModule(p, s.session.active, e.target.value),
+                          `rename-${s.session.active}`,
+                        )
                       }
                     />
                     <span className="spacer" />
@@ -446,7 +501,12 @@ export function App() {
                       hidden={s.session.active !== id}
                     />
                   ))}
-              <BottomPanel studio={s} task={task} logs={logs} />
+              <BottomPanel
+                studio={s}
+                task={task}
+                logs={logs}
+                terminals={terminals}
+              />
             </section>
             <aside className="right-sidebar">
               <RunPanel studio={s} />

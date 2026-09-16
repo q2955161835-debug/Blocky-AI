@@ -179,8 +179,10 @@ it("opening another project retains its own saved session without overwriting it
   await act(() => hook.result.current.open());
   expect(hook.result.current.session.active).toBe("citation-service");
   expect(hook.result.current.session.panel).toBe(false);
-  expect(
-    JSON.parse(localStorage.getItem("blocky.session.second-project")!)
-      .activeTabId,
-  ).toBe("tab-citation-service");
+  await waitFor(() =>
+    expect(
+      JSON.parse(localStorage.getItem("blocky.session.second-project")!)
+        .activeTabId,
+    ).toBe("tab-citation-service"),
+  );
 });

@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useConfirmation } from "./useConfirmation";
+import { useSettings } from "./useSettings";
+import { useShortcuts } from "./useShortcuts";
+import { useRecovery } from "./useRecovery";
+import { useResources } from "./useResources";
+import { useSession } from "./useSession";
 import {
   ProjectController,
   restoreSession,
-  serializeSession,
   configureBlock,
-  type Session,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
-import { compileProject } from "@blocky/compiler";
+import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, type RunResult } from "@blocky/runtime-core";
 import {
   RedactedBus,
@@ -20,8 +23,8 @@ import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
   saveProject,
-  readPreferences,
-  writePreferences,
+  prepareMigration,
+  saveMigration,
 } from "./host";
 export function useStudio() {
   const { confirmation, answerConfirmation, confirm } = useConfirmation();
@@ -39,11 +42,18 @@ export function useStudio() {
   const [compiled, setCompiled] =
       useState<Awaited<ReturnType<typeof compileProject>>>(),
     [compiling, setCompiling] = useState(true);
-  const [session, setSession] = useState<Session>(() =>
-    restoreSession(snapshot.project, null),
+  const sessionStore = useSession(snapshot.project, setMessage);
+  const { session, setSession } = sessionStore;
+  const settings = useSettings(snapshot.project, controller, setMessage);
+  const shortcuts = useShortcuts(setMessage);
+  const resources = useResources(setMessage);
+  const recovery = useRecovery(
+    snapshot.project,
+    snapshot.dirty,
+    started,
+    setMessage,
   );
-  const [sessionProjectId, setSessionProjectId] = useState("");
-  const [preferences, setPreferences] = useState(readPreferences);
+  const { preferences, setPreferences } = settings;
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
   const [selectedRoots, setSelectedRoots] = useState<string[]>([]);
@@ -63,14 +73,15 @@ export function useStudio() {
   const handle = useRef<string | undefined>(undefined),
     abort = useRef<AbortController | null>(null),
     runBusy = useRef(false),
-    ioBusy = useRef(false),
-    sessionLoaded = useRef("");
+    ioBusy = useRef(false);
   const [runtime] = useState(() => new Runtime({ delayMs: 160 })),
     [bus] = useState(() => new RedactedBus());
+  const [compiler] = useState(() => new IncrementalCompiler());
   useEffect(() => {
     let active = true;
     setCompiling(true);
-    compileProject(snapshot.project)
+    compiler
+      .compile(snapshot.project, resources.map)
       .then((value) => {
         if (active) {
           setCompiled(value);
@@ -94,51 +105,7 @@ export function useStudio() {
     return () => {
       active = false;
     };
-  }, [snapshot.project, bus]);
-  useEffect(() => {
-    const id = snapshot.project.manifest.projectId;
-    if (sessionLoaded.current !== id) {
-      let raw: unknown;
-      try {
-        raw = JSON.parse(
-          localStorage.getItem(`blocky.session.${id}`) ?? "null",
-        );
-      } catch {}
-      setSession(restoreSession(snapshot.project, raw));
-      setSessionProjectId(id);
-      sessionLoaded.current = id;
-      setHistory([]);
-      setFocus(undefined);
-    } else {
-      setSession((current) => {
-        const restored = restoreSession(snapshot.project, current);
-        return {
-          ...restored,
-          diagnostics: restored.diagnostics.length
-            ? restored.diagnostics
-            : current.diagnostics,
-        };
-      });
-    }
-  }, [snapshot.project]);
-  useEffect(() => {
-    if (sessionProjectId === snapshot.project.manifest.projectId)
-      try {
-        localStorage.setItem(
-          `blocky.session.${sessionProjectId}`,
-          JSON.stringify(serializeSession(snapshot.project, session)),
-        );
-      } catch {
-        setMessage("本机会话空间不足，项目内容不受影响。");
-      }
-  }, [session, sessionProjectId, snapshot.project]);
-  useEffect(() => {
-    try {
-      writePreferences(preferences);
-    } catch {
-      setMessage("本机设置未能保存，本次会话仍可继续使用。");
-    }
-  }, [preferences]);
+  }, [snapshot.project, bus, compiler, resources.map]);
   useEffect(() => () => abort.current?.abort(), []);
   const navigate = (source: SourceRef, remember = true) => {
     if (
@@ -228,6 +195,7 @@ export function useStudio() {
         {
           moduleId: entry.moduleId,
           signal: abort.current.signal,
+          userRegistry: resources.map,
           onEvent(event) {
             setEvents((current) => [...current, event].slice(-500));
             const line = projectLog(event);
@@ -252,13 +220,13 @@ export function useStudio() {
       abort.current = null;
     }
   };
-  const save = async () => {
+  const save = async (asNew = false) => {
     if (ioBusy.current) return;
     ioBusy.current = true;
     setBusy(true);
     const p = controller.getSnapshot().project;
     try {
-      const result = await saveProject(p, handle.current);
+      const result = await saveProject(p, asNew ? undefined : handle.current);
       if (result) {
         handle.current = result.handle;
         controller.markSaved(p);
@@ -296,7 +264,6 @@ export function useStudio() {
           ))
         )
           return;
-        sessionLoaded.current = "";
         controller.replace(opened.project);
         handle.current = opened.handle;
         setStarted(true);
@@ -336,6 +303,44 @@ export function useStudio() {
       setBusy(false);
     }
   };
+  const migrate = async () => {
+    if (closing.current || runBusy.current || ioBusy.current) return;
+    ioBusy.current = true;
+    setBusy(true);
+    try {
+      const migration = await prepareMigration();
+      if (!migration) return;
+      if (!migration.project) {
+        setMessage(
+          migration.diagnostics
+            .map(
+              (d) =>
+                `${d.code}：${d.message}${d.source?.blockId ? `（${d.source.blockId}）` : ""}`,
+            )
+            .join("；"),
+        );
+        return;
+      }
+      if (
+        !(await confirm(
+          `将旧作品迁移为新文件，保留 ${migration.project.manifest.modules.length} 个画布和原始文件。当前打开的作品不会改变。`,
+        ))
+      )
+        return;
+      const saved = await saveMigration(migration.project);
+      if (saved)
+        setMessage(
+          `已迁移为 ${saved.displayName}，可通过打开项目查看。原文件未修改。`,
+        );
+    } catch {
+      setMessage(
+        "迁移未写入：请选择尚不存在的新文件名，并检查源文件版本与内容。原项目保留。",
+      );
+    } finally {
+      ioBusy.current = false;
+      setBusy(false);
+    }
+  };
   const updateField = (id: string, field: string, value: string) => {
     try {
       controller.edit((p) => {
@@ -351,6 +356,11 @@ export function useStudio() {
     answerConfirmation(false);
     abort.current?.abort();
     runtime.resume();
+    await settings.flush();
+    await shortcuts.flush();
+    await recovery.flush();
+    await resources.flush();
+    await sessionStore.flush();
     const until = Date.now() + 5000;
     while (runBusy.current || ioBusy.current) {
       if (Date.now() > until) throw Error("BLK-WINDOW-001");
@@ -369,6 +379,8 @@ export function useStudio() {
   };
   return {
     controller,
+    migrate,
+    confirm,
     snapshot,
     started,
     setStarted,
@@ -384,6 +396,19 @@ export function useStudio() {
     session,
     setSession,
     preferences,
+    settings,
+    shortcuts,
+    resources,
+    resetLayout: sessionStore.reset,
+    recovery,
+    restoreRecovery: () => {
+      if (!recovery.candidate || running || busy) return;
+      handle.current = undefined;
+      controller.recover(recovery.candidate.project);
+      recovery.accept();
+      setStarted(true);
+      setMessage("已恢复未保存副本。保存时请选择新文件；尚未启动运行或终端。");
+    },
     setPreferences,
     selected,
     setSelected,

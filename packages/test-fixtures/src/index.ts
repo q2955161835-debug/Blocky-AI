@@ -38,7 +38,7 @@ export function createStarter(): Project {
   };
   return {
     manifest: {
-      schemaVersion: "blocky.project/v1alpha1",
+      schemaVersion: "blocky.project/v1",
       projectId: "research-workbench",
       displayName: "资料问答伙伴",
       modules: [

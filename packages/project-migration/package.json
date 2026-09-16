@@ -1,0 +1,13 @@
+{
+  "name": "@blocky/project-migration",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "@blocky/project-format": "workspace:*",
+    "@blocky/project-model": "workspace:*",
+    "@blocky/compiler": "workspace:*"
+  }
+}

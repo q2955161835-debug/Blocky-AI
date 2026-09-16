@@ -41,5 +41,7 @@ export function configureBlock(
   )
     throw Error("BLK-CONFIG-001");
   block.fields ??= {};
-  block.fields[field] = value;
+  block.fields[field] = definition.jsonFields?.includes(field)
+    ? JSON.parse(value)
+    : value;
 }

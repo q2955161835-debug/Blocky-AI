@@ -3,6 +3,8 @@ import type { StudioLogs } from "../composition/useLogs";
 import type { Studio } from "../composition/useStudio";
 import type { StudioTask } from "../composition/useTask";
 import { TaskPanel } from "./TaskPanel";
+import { UserTerminalPanel } from "./UserTerminalPanel";
+import type { StudioTerminals } from "../composition/useTerminals";
 const views = [
   ["problems", "问题"],
   ["logs", "运行日志"],
@@ -13,15 +15,23 @@ export function BottomPanel({
   studio: s,
   task,
   logs,
+  terminals,
 }: {
   studio: Studio;
   task?: StudioTask;
   logs?: StudioLogs;
+  terminals?: StudioTerminals;
 }) {
   return (
     <section
-      className="bottom-panel"
-      style={{ height: s.session.panel ? s.session.height : 35 }}
+      className={`bottom-panel ${s.session.maximized && s.session.panel ? "panel-maximized" : ""}`}
+      style={{
+        height: s.session.panel
+          ? s.session.maximized
+            ? "calc(100% - 40px)"
+            : s.session.height
+          : 35,
+      }}
       aria-label="底部面板"
     >
       <div className="panel-tabs">
@@ -41,12 +51,41 @@ export function BottomPanel({
         ))}
         <span className="spacer" />
         <button
+          aria-label="切换面板停靠"
+          onClick={() =>
+            s.setSession((v) => ({
+              ...v,
+              dock: v.dock === "bottom" ? "right" : "bottom",
+            }))
+          }
+        >
+          {s.session.dock === "bottom" ? "停靠右侧" : "停靠底部"}
+        </button>
+        <button
+          aria-label={s.session.maximized ? "还原面板" : "最大化面板"}
+          onClick={() =>
+            s.setSession((v) => ({
+              ...v,
+              panel: true,
+              maximized: !v.maximized,
+            }))
+          }
+        >
+          {s.session.maximized ? "还原" : "最大化"}
+        </button>
+        <button
           aria-label={s.session.panel ? "折叠面板" : "展开面板"}
           onClick={() => s.setSession((v) => ({ ...v, panel: !v.panel }))}
         >
           {s.session.panel ? "⌄" : "⌃"}
         </button>
       </div>
+      {terminals && (
+        <UserTerminalPanel
+          terminals={terminals}
+          visible={s.session.panel && s.session.view === "terminal"}
+        />
+      )}
       {s.session.panel && (
         <div className="panel-body">
           {s.session.view === "output" && logs && (
@@ -65,6 +104,24 @@ export function BottomPanel({
                 </select>
               </label>
               <button onClick={logs.clearView}>清除视图</button>
+              <label>
+                起始时间
+                <input
+                  aria-label="诊断导出起始时间"
+                  type="datetime-local"
+                  value={logs.from}
+                  onChange={(e) => logs.setFrom(e.target.value)}
+                />
+              </label>
+              <label>
+                截止时间
+                <input
+                  aria-label="诊断导出截止时间"
+                  type="datetime-local"
+                  value={logs.to}
+                  onChange={(e) => logs.setTo(e.target.value)}
+                />
+              </label>
               <button onClick={() => void logs.clearStorage()}>清除存储</button>
               <button onClick={() => void logs.exportLogs()}>
                 导出诊断摘要
@@ -73,6 +130,18 @@ export function BottomPanel({
                 已截断 {s.bus.dropped + logs.queueDropped} 条 · 警告/错误{" "}
                 {s.bus.droppedImportant + logs.queueDroppedImportant} 条
               </span>
+              {logs.stats && (
+                <small>
+                  存储 {logs.stats.storedBytes} / {logs.stats.effectiveMaxBytes}{" "}
+                  字节 · {logs.stats.records} 条
+                  {logs.stats.health.quarantinePresent
+                    ? " · 已隔离损坏日志"
+                    : ""}
+                  {logs.stats.health.corruptStore
+                    ? " · 存储损坏，请清除后重试"
+                    : ""}
+                </small>
+              )}
             </div>
           )}
           {s.session.view === "problems" &&
@@ -126,7 +195,10 @@ export function BottomPanel({
               ))}
           {s.session.view === "terminal" &&
             (task ? (
-              <TaskPanel task={task} />
+              <details>
+                <summary>受控任务</summary>
+                <TaskPanel task={task} />
+              </details>
             ) : (
               <div className="panel-empty">尚无任务运行</div>
             ))}
@@ -138,10 +210,15 @@ export function BottomPanel({
           type="range"
           min={120}
           max={480}
-          value={s.session.height}
-          aria-label="底部面板高度"
+          value={
+            s.session.dock === "right" ? s.session.width : s.session.height
+          }
+          aria-label={s.session.dock === "right" ? "面板宽度" : "底部面板高度"}
           onChange={(e) =>
-            s.setSession((v) => ({ ...v, height: Number(e.target.value) }))
+            s.setSession((v) => ({
+              ...v,
+              [v.dock === "right" ? "width" : "height"]: Number(e.target.value),
+            }))
           }
         />
       )}

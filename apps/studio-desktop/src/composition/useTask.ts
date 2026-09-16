@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { encodeProject } from "@blocky/project-format";
 import { parseTaskRequest, type TaskSnapshot } from "@blocky/terminal-protocol";
 import type { Studio } from "./useStudio";
+import { resolveSetting } from "@blocky/settings-core";
 export function useTask(studio: Studio) {
   const [state, setState] = useState<TaskSnapshot>(),
     [pending, setPending] = useState(false),
@@ -11,6 +12,8 @@ export function useTask(studio: Studio) {
     [interval, setIntervalMs] = useState(100),
     [timeout, setTimeoutMs] = useState(30000),
     [budget, setBudget] = useState(65536);
+  const [taskId, setTaskId] = useState("blocky.project-check"),
+    [limit, setLimit] = useState(1000);
   const gate = useRef(false);
   const stopping = useRef(false),
     lastId = useRef<string | undefined>(undefined),
@@ -72,10 +75,17 @@ export function useTask(studio: Studio) {
     setPending(true);
     try {
       const request = parseTaskRequest({
-        taskId: "blocky.project-check",
-        parameters: { passes, "interval-ms": interval },
+        taskId,
+        parameters:
+          taskId === "blocky.project-inventory"
+            ? { limit }
+            : { passes, "interval-ms": interval },
         timeoutMs: timeout,
-        outputBudgetBytes: budget,
+        outputBudgetBytes: Math.min(
+          budget,
+          resolveSetting("terminal.outputBudgetBytes", studio.settings.layers)
+            .value,
+        ),
       });
       const launched = invoke<string>("start_task", {
         request,
@@ -127,6 +137,10 @@ export function useTask(studio: Studio) {
   };
   return {
     state,
+    taskId,
+    setTaskId,
+    limit,
+    setLimit,
     pending,
     active: !!requestId,
     passes,

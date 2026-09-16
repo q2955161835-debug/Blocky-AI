@@ -8,7 +8,11 @@ import {
 } from "@blocky/language-schema";
 import { resolveResource } from "@blocky/resource-registry";
 import { walkNodes } from "./nodes";
-export function projectInteraction(project: Project, modules: ModuleIR[]) {
+export function projectInteraction(
+  project: Project,
+  modules: ModuleIR[],
+  userRegistry = new Map<string, import("@blocky/language-schema").Resource>(),
+) {
   const interaction: InteractionManifest = {
     schemaVersion: "blocky.interaction/v1alpha1",
     projectId: project.manifest.projectId,
@@ -19,7 +23,11 @@ export function projectInteraction(project: Project, modules: ModuleIR[]) {
   for (const m of modules)
     for (const { node, owner } of walkNodes(m.roots)) {
       const source = m.sourceMap[node.nodeId];
-      if (node.blockType === "core.interaction.chat") {
+      if (
+        ["core.interaction.chat", "core.interaction.chat_entry"].includes(
+          node.blockType,
+        )
+      ) {
         if (!owner)
           diagnostics.push(
             diagnostic("BLK-TYPE-006", "聊天入口必须属于智能体", source),
@@ -29,8 +37,15 @@ export function projectInteraction(project: Project, modules: ModuleIR[]) {
             interactionId: node.nodeId,
             moduleId: m.moduleId,
             ownerAgentId: owner,
-            displayName: String(node.fields.NAME),
-            acceptedParts: ["text"],
+            displayName:
+              typeof node.fields.NAME === "string" && node.fields.NAME.trim()
+                ? node.fields.NAME
+                : `输入 ${interaction.entries.filter((e) => e.ownerAgentId === owner).length + 1}`,
+            acceptedParts:
+              node.blockType === "core.interaction.chat" ||
+              hasTextCapability(node)
+                ? ["text"]
+                : [],
             exposedSkills: [],
             exposedActions: [],
             executionRequirements: [],
@@ -48,6 +63,7 @@ export function projectInteraction(project: Project, modules: ModuleIR[]) {
             project,
             String(node.fields.RESOURCE),
             kind,
+            userRegistry,
           );
           if (kind === "knowledge")
             tools.push({
@@ -75,4 +91,14 @@ export function projectInteraction(project: Project, modules: ModuleIR[]) {
       }
     }
   return { interaction, tools, diagnostics };
+}
+function hasTextCapability(
+  node: import("@blocky/language-schema").IrNode,
+): boolean {
+  let current = node.inputs.CAPABILITIES;
+  while (current && !Array.isArray(current)) {
+    if (current.blockType === "core.interaction.accept_text") return true;
+    current = current.next ?? null;
+  }
+  return false;
 }

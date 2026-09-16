@@ -6,7 +6,8 @@ export function* walkNodes(
     node: IrNode,
     owner?: string,
   ): Generator<{ node: IrNode; owner?: string }> {
-    if (node.blockType === "core.agent") owner = node.nodeId;
+    if (["core.agent", "core.agent.define"].includes(node.blockType))
+      owner = node.nodeId;
     yield { node, owner };
     for (const value of Object.values(node.inputs))
       for (const n of value ? (Array.isArray(value) ? value : [value]) : [])

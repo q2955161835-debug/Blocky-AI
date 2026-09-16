@@ -50,6 +50,7 @@ export class Runtime {
       moduleId?: string;
       signal?: AbortSignal;
       onEvent?: (event: RuntimeEvent) => void;
+      userRegistry?: Map<string, import("@blocky/language-schema").Resource>;
     } = {},
   ): Promise<RunResult> {
     if (this.running) throw Error("BLK-RUN-003: 已有运行");
@@ -84,7 +85,7 @@ export class Runtime {
     };
     try {
       emit("run.started", undefined, undefined, { summary: "开始运行" });
-      const compiled = await compileProject(project);
+      const compiled = await compileProject(project, options.userRegistry);
       signal.throwIfAborted();
       if (compiled.diagnostics.some((d) => d.severity === "error"))
         throw Error(compiled.diagnostics[0].code);
@@ -119,7 +120,9 @@ export class Runtime {
         await pauseBoundary();
         // Each chat block starts its own stack. A different entry is a boundary.
         if (
-          node.blockType === "core.interaction.chat" &&
+          ["core.interaction.chat", "core.interaction.chat_entry"].includes(
+            node.blockType,
+          ) &&
           node.nodeId !== entry.interactionId
         )
           return;
@@ -130,6 +133,40 @@ export class Runtime {
           signal.throwIfAborted();
           await pauseBoundary();
           switch (node.blockType) {
+            case "core.message.reply": {
+              const evaluate = async (
+                value: IrNode | IrNode[] | null | undefined,
+              ): Promise<Json> => {
+                if (!value || Array.isArray(value)) throw Error("BLK-TYPE-009");
+                signal.throwIfAborted();
+                await pauseBoundary();
+                if (++budget > 2000) throw Error("BLK-RUN-004");
+                emit("block.started", moduleId, value.nodeId, {
+                  summary: "正在运行",
+                });
+                await wait(this.options.delayMs ?? 0, signal);
+                let result: Json;
+                if (value.blockType === "core.data.literal")
+                  result = value.fields.VALUE ?? null;
+                else if (value.blockType === "core.message.create") {
+                  const content = await evaluate(value.inputs.CONTENT);
+                  result =
+                    typeof content === "string"
+                      ? content
+                      : JSON.stringify(content);
+                } else throw Error("BLK-TYPE-009");
+                signal.throwIfAborted();
+                emit("block.completed", moduleId, value.nodeId, {
+                  summary: "已完成",
+                });
+                return result;
+              };
+              const text = await evaluate(node.inputs.MESSAGE);
+              if (typeof text !== "string") throw Error("BLK-TYPE-009");
+              answer += text;
+              emit("model.chunk", moduleId, node.nodeId, { text });
+              break;
+            }
             case "core.agent":
               role = String(node.fields.ROLE);
               break;
@@ -151,6 +188,7 @@ export class Runtime {
                 project,
                 String(node.fields.RESOURCE),
                 "knowledge",
+                options.userRegistry,
               );
               const contract = compiled.tools.find(
                 (t) =>
@@ -226,6 +264,7 @@ export class Runtime {
                 project,
                 String(node.fields.RESOURCE),
                 "model",
+                options.userRegistry,
               );
               if (
                 !resource.capabilityRequirements.every((p) =>
@@ -287,7 +326,7 @@ export class Runtime {
               break;
           }
           if (node === root) await execute(selectedEntry, moduleId);
-          else
+          else if (node.blockType !== "core.message.reply")
             for (const value of Object.values(node.inputs))
               for (const child of value
                 ? Array.isArray(value)

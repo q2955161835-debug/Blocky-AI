@@ -1,4 +1,4 @@
-use blocky_studio::log_store::{Diagnostics, LogStore, Record};
+use blocky_studio::log_store::{Diagnostics, ExportFilter, LogStore, Record, Stats};
 fn main_only(window: &tauri::WebviewWindow) -> Result<(), String> {
     if window.label() != "main" {
         return Err("BLK-LOG-004".into());
@@ -42,9 +42,15 @@ pub async fn export_diagnostics(
     window: tauri::WebviewWindow,
     store: tauri::State<'_, LogStore>,
     channel: Option<String>,
+    from_timestamp: Option<String>,
+    to_timestamp: Option<String>,
 ) -> Result<bool, String> {
     main_only(&window)?;
-    let value = store.read(channel.as_deref())?;
+    let value = store.read_filtered(ExportFilter {
+        channel,
+        from_timestamp,
+        to_timestamp,
+    })?;
     let Some(file) = rfd::AsyncFileDialog::new()
         .set_title("导出诊断摘要")
         .set_file_name("blocky-diagnostics.json")
@@ -65,4 +71,23 @@ pub async fn export_diagnostics(
         .map_err(|_| "BLK-LOG-004")?;
     temporary.persist(file.path()).map_err(|_| "BLK-LOG-004")?;
     Ok(true)
+}
+#[tauri::command]
+pub fn configure_diagnostics(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, LogStore>,
+    days: u16,
+    max_bytes: u64,
+) -> Result<Stats, String> {
+    main_only(&window)?;
+    store.configure(days, max_bytes)?;
+    store.stats()
+}
+#[tauri::command]
+pub fn diagnostic_stats(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, LogStore>,
+) -> Result<Stats, String> {
+    main_only(&window)?;
+    store.stats()
 }

@@ -2,9 +2,50 @@ import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { diagnosticRecord, type DiagnosticRecord } from "@blocky/observability";
 import type { Studio } from "./useStudio";
+import { resolveSetting } from "@blocky/settings-core";
+type LogStats = {
+  effectiveMaxBytes: number;
+  storedBytes: number;
+  records: number;
+  maxRecords: number;
+  health: {
+    quarantinePresent: boolean;
+    corruptStore: boolean;
+    quarantinedRecords: number;
+  };
+};
 export function useLogs(studio: Studio) {
   const [revision, bump] = useState(0),
     [channel, setChannel] = useState("");
+  const [from, setFrom] = useState(""),
+    [to, setTo] = useState(""),
+    [stats, setStats] = useState<LogStats>();
+  const policy = useRef(Promise.resolve()),
+    policyReady = useRef(false);
+  const days = resolveSetting(
+    "logs.retentionDays",
+    studio.settings.layers,
+  ).value;
+  const maxBytes = resolveSetting(
+    "logs.maxStoredBytes",
+    studio.settings.layers,
+  ).value;
+  useEffect(() => {
+    if (!studio.settings.ready) return;
+    policy.current = policy.current
+      .catch(() => {})
+      .then(async () => {
+        const value = await invoke<LogStats>("configure_diagnostics", {
+          days,
+          maxBytes,
+        });
+        setStats(value);
+        policyReady.current = true;
+      });
+    void policy.current.catch(() =>
+      studio.setMessage("诊断保留策略未能生效，请检查存储。"),
+    );
+  }, [studio.settings.ready, days, maxBytes]);
   const queue = useRef<DiagnosticRecord[]>([]),
     writing = useRef<Promise<void> | null>(null),
     error = useRef(false);
@@ -14,6 +55,8 @@ export function useLogs(studio: Studio) {
   const [queueDropped, setQueueDropped] = useState(0),
     [queueDroppedImportant, setQueueDroppedImportant] = useState(0);
   const flush = async () => {
+    await policy.current;
+    if (!policyReady.current) return;
     if (clearing.current) return;
     if (writing.current) await writing.current;
     if (clearing.current) return;
@@ -67,9 +110,15 @@ export function useLogs(studio: Studio) {
         ),
       500,
     );
+    const maintenance = setInterval(() => {
+      void invoke<LogStats>("diagnostic_stats")
+        .then(setStats)
+        .catch(() => {});
+    }, 10000);
     return () => {
       unsubscribe();
       clearInterval(timer);
+      clearInterval(maintenance);
     };
   }, [studio.bus]);
   const clearStorage = async () => {
@@ -91,7 +140,13 @@ export function useLogs(studio: Studio) {
   const exportLogs = async () => {
     try {
       await flush();
-      if (await invoke("export_diagnostics", { channel: channel || null }))
+      if (
+        await invoke("export_diagnostics", {
+          channel: channel || null,
+          fromTimestamp: from ? new Date(from).toISOString() : null,
+          toTimestamp: to ? new Date(to).toISOString() : null,
+        })
+      )
         studio.setMessage("已导出诊断摘要");
     } catch {
       studio.setMessage("诊断导出失败。");
@@ -99,6 +154,11 @@ export function useLogs(studio: Studio) {
   };
   return {
     revision,
+    from,
+    setFrom,
+    to,
+    setTo,
+    stats,
     queueDropped,
     queueDroppedImportant,
     channel,

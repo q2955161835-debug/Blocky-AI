@@ -11,6 +11,10 @@
     "build": "node build.mjs"
   },
   "dependencies": {
+    "@blocky/command-system": "workspace:*",
+    "@blocky/resource-registry": "workspace:*",
+    "@blocky/settings-core": "workspace:*",
+    "@blocky/project-migration": "workspace:*",
     "@blocky/app-surface": "workspace:*",
     "@blocky/terminal-protocol": "workspace:*",
     "@blocky/builder-protocol": "workspace:*",

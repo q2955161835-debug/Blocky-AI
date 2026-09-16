@@ -12,6 +12,12 @@ use std::{
 #[cfg(windows)]
 struct Job(isize);
 #[cfg(windows)]
+impl Job {
+    fn settle(&self) -> bool {
+        crate::process_job::settle_job(self.0 as _, Duration::from_secs(2))
+    }
+}
+#[cfg(windows)]
 impl Drop for Job {
     fn drop(&mut self) {
         unsafe {
@@ -49,12 +55,17 @@ pub(super) fn launch(
     files: ProjectFiles,
     snapshot: Arc<Mutex<TaskSnapshot>>,
     cancel: Arc<AtomicBool>,
-) -> Result<(), String> {
+) -> Result<std::thread::JoinHandle<()>, String> {
     let exe = std::env::current_exe().map_err(|_| "BLK-TERM-001")?;
     let mut command = Command::new(&exe);
+    command.env_clear();
+    #[cfg(not(test))]
+    command.arg("--blocky-task-worker");
+    #[cfg(test)]
     command
-        .arg("--blocky-task-worker")
-        .env_clear()
+        .args(["--exact", "task_host::tests::worker_entry", "--nocapture"])
+        .env("BLOCKY_TASK_TEST_WORKER", "1");
+    command
         .current_dir(exe.parent().ok_or("BLK-TERM-001")?)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -65,6 +76,9 @@ pub(super) fn launch(
         command.creation_flags(0x08000200);
     }
     let mut child = command.spawn().map_err(|_| "BLK-TERM-001")?;
+    // The trusted worker blocks on its first input line before dispatch. Attach
+    // the Job before releasing that line, so no registered operation can run
+    // outside its process tree. No user executable or startup profile runs here.
     #[cfg(windows)]
     let job = match attach(&child) {
         Ok(job) => job,
@@ -119,9 +133,7 @@ pub(super) fn launch(
             }
         }
     });
-    std::thread::spawn(move || {
-        #[cfg(windows)]
-        let _job = job;
+    let worker = std::thread::spawn(move || {
         if let Ok(mut s) = snapshot.lock() {
             s.status = "running".into();
         }
@@ -146,7 +158,7 @@ pub(super) fn launch(
                 stop_at = Some(
                     Instant::now()
                         + Duration::from_millis(
-                            super::definition()["cancellation"]["gracePeriodMs"]
+                            super::definition_for(&request.task_id).expect("validated registered task")["cancellation"]["gracePeriodMs"]
                                 .as_u64()
                                 .unwrap_or(200),
                         ),
@@ -167,18 +179,72 @@ pub(super) fn launch(
             }
             std::thread::sleep(Duration::from_millis(10));
         };
+        // Kill/wait the Job before joining stdout: descendants may still own its
+        // write handle even after the registered worker has exited.
+        #[cfg(windows)]
+        let settled = job.settle();
+        #[cfg(not(windows))]
+        let settled = true;
+        drop(stdin);
         let _ = reader.join();
         if let Ok(mut s) = snapshot.lock() {
             s.exit_code = status.as_ref().ok().and_then(|v| v.code());
-            s.status = reason
-                .unwrap_or(if status.is_ok_and(|v| v.success()) {
+            s.status = if !settled {
+                "failed"
+            } else {
+                reason.unwrap_or(if status.is_ok_and(|v| v.success()) {
                     "exited"
                 } else {
                     "failed"
                 })
-                .into();
-            s.active_processes = 0;
+            }
+            .into();
+            s.active_processes = if settled { 0 } else { 1 };
         }
     });
-    Ok(())
+    Ok(worker)
+}
+#[cfg(all(test, windows))]
+mod tests {
+    use super::*;
+    use std::{io::BufRead, os::windows::process::CommandExt};
+    #[test]
+    fn job_settles_a_real_descendant_before_output_reader_finishes() {
+        let cwd =
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/stage2-tasks");
+        std::fs::create_dir_all(&cwd).unwrap();
+        let shell = std::path::PathBuf::from(std::env::var_os("SystemRoot").unwrap())
+            .join("System32/WindowsPowerShell/v1.0/powershell.exe");
+        let mut child = Command::new(shell)
+            .args(["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", "-"])
+            .current_dir(cwd)
+            .creation_flags(0x08000000)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap();
+        let job = attach(&child).unwrap();
+        let mut input = child.stdin.take().unwrap();
+        input.write_all(b"$p=Start-Process -FilePath $env:ComSpec -ArgumentList '/d /c ping -t 127.0.0.1' -WindowStyle Hidden -PassThru; Write-Output $p.Id; Start-Sleep -Seconds 60\n").unwrap();
+        input.flush().unwrap();
+        let mut output = std::io::BufReader::new(child.stdout.take().unwrap());
+        let mut line = String::new();
+        output.read_line(&mut line).unwrap();
+        let pid: u32 = line.trim().parse().unwrap();
+        use windows_sys::Win32::{Foundation::*, System::Threading::*};
+        let process =
+            unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | 0x00100000, 0, pid) };
+        assert!(!process.is_null());
+        assert_eq!(unsafe { WaitForSingleObject(process, 0) }, WAIT_TIMEOUT);
+        assert!(job.settle());
+        assert_eq!(unsafe { WaitForSingleObject(process, 0) }, WAIT_OBJECT_0);
+        unsafe {
+            CloseHandle(process);
+        }
+        drop(input);
+        let mut remaining = String::new();
+        output.read_to_string(&mut remaining).unwrap();
+        child.wait().unwrap();
+    }
 }

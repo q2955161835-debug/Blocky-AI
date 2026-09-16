@@ -1,4 +1,5 @@
 import definitions from "./definitions.json";
+import textPrimitives from "./text-primitives.json";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -9,6 +10,11 @@ export type BlockDefinition = {
   fieldOptions?: Record<string, string[]>;
   output?: string;
   statement?: boolean;
+  statementCheck?: string;
+  inputChecks?: Record<string, string | undefined>;
+  requiredInputs?: string[];
+  optionalFields?: string[];
+  jsonFields?: string[];
 };
 export const categories = [
   "触发与交互",
@@ -33,6 +39,6 @@ export const beginnerCategories = [
   "会行动",
   "会回答",
 ];
-export const catalog: BlockDefinition[] = definitions;
+export const catalog: BlockDefinition[] = [...definitions, ...textPrimitives];
 export const catalogVersion = "0.1.0";
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);

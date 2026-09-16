@@ -11,6 +11,8 @@ import {
   digest,
   validRef,
 } from "../../packages/language-schema/src/index";
+import { migrateProject } from "../../packages/project-migration/src/index";
+import { encodeProject } from "../../packages/project-format/src/index";
 
 describe("formal project compilation", () => {
   it("derives two modules, sources and typed links from actual Workspace blocks", async () => {
@@ -93,7 +95,7 @@ describe("formal project compilation", () => {
     expect(() => parseProject({ ...p, workspaceSession: {} })).toThrow();
     expect(await projectDigest(p)).toMatch(/^[a-f0-9]{64}$/);
   });
-  it("reads the original project contract fixture through the same manifest parser", () => {
+  it("explicitly migrates the original alpha manifest fixture through the shared migration boundary", async () => {
     const f = JSON.parse(
       readFileSync(
         "doc/技术设计/正式契约/fixtures/valid/minimal-multi-module-project.json",
@@ -101,8 +103,24 @@ describe("formal project compilation", () => {
       ),
     );
     const p = createStarter();
-    p.manifest = f.payload.project;
-    expect(parseProject(p).manifest.modules.map((m) => m.moduleId)).toEqual([
+    // Phase-zero fixture is a manifest-only contract; the current executable
+    // workspace also needs its composer resource declared (never silently infer it).
+    const composer = p.manifest.resources.find(
+      (r) => r.resourceId === "local-composer",
+    )!;
+    p.manifest = {
+      ...f.payload.project,
+      schemaVersion: "blocky.project/v1",
+      resources: [...f.payload.project.resources, composer],
+    };
+    const files = encodeProject(p);
+    files["project.json"] = JSON.stringify({
+      ...p.manifest,
+      schemaVersion: "blocky.project/v1alpha1",
+    });
+    const migrated = await migrateProject(files);
+    expect(migrated.diagnostics).toEqual([]);
+    expect(migrated.project!.manifest.modules.map((m) => m.moduleId)).toEqual([
       "research-agent",
       "citation-service",
     ]);

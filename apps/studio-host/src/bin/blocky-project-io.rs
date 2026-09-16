@@ -16,6 +16,10 @@ struct Request {
     patch: Option<Value>,
     approved: Option<Vec<String>>,
     source: Option<String>,
+    state_kind: Option<String>,
+    state_id: Option<String>,
+    state_value: Option<Value>,
+    variable: Option<String>,
 }
 fn execute(bytes: &[u8]) -> Value {
     let request = strict_json::parse(bytes)
@@ -25,6 +29,73 @@ fn execute(bytes: &[u8]) -> Value {
     };
     if r.schema_version != SCHEMA {
         return json!({"ok":false,"code":"BLK-MIG-001"});
+    }
+    if r.operation.starts_with("user-") || r.operation.starts_with("secret-") {
+        let result = (|| -> Result<Value, String> {
+            if r.files.is_some()
+                || r.original_json.is_some()
+                || r.patch.is_some()
+                || r.approved.is_some()
+                || r.source.is_some()
+            {
+                return Err("BLK-CLI-002".into());
+            }
+            let root = std::env::var_os("LOCALAPPDATA")
+                .map(std::path::PathBuf::from)
+                .ok_or("BLK-SET-001")?
+                .join("ai.blocky.studio");
+            let id = r.state_id.as_deref().ok_or("BLK-CLI-002")?;
+            if r.operation.starts_with("user-") {
+                if r.path.is_some() || r.variable.is_some() {
+                    return Err("BLK-CLI-002".into());
+                }
+                let kind = r.state_kind.as_deref().ok_or("BLK-CLI-002")?;
+                if !["settings", "shortcuts", "resources"].contains(&kind) {
+                    return Err("BLK-PERM-001".into());
+                }
+                let store = blocky_studio::user_store::UserStore::new(root.join("user"));
+                return match r.operation.as_str() {
+                    "user-read" if r.state_value.is_none() => {
+                        Ok(json!({"ok":true,"value":store.read(kind,id)?}))
+                    }
+                    "user-write" => {
+                        store.write(kind, id, r.state_value.clone().ok_or("BLK-CLI-002")?)?;
+                        Ok(json!({"ok":true}))
+                    }
+                    _ => Err("BLK-CLI-002".into()),
+                };
+            }
+            if r.state_kind.is_some() || r.state_value.is_some() {
+                return Err("BLK-CLI-002".into());
+            }
+            let store = blocky_studio::secret_store::SecretStore::new(root.join("secrets"));
+            match r.operation.as_str() {
+                "secret-import" => {
+                    store.import_env(
+                        id,
+                        Path::new(r.path.as_deref().ok_or("BLK-CLI-002")?),
+                        r.variable.as_deref().ok_or("BLK-CLI-002")?,
+                    )?;
+                    Ok(json!({"ok":true,"value":true}))
+                }
+                "secret-status" if r.path.is_none() && r.variable.is_none() => {
+                    Ok(json!({"ok":true,"value":store.contains(id)?}))
+                }
+                "secret-remove" if r.path.is_none() && r.variable.is_none() => {
+                    store.remove(id)?;
+                    Ok(json!({"ok":true}))
+                }
+                _ => Err("BLK-CLI-002".into()),
+            }
+        })();
+        return result.unwrap_or_else(|code| json!({"ok":false,"code":code}));
+    }
+    if r.state_kind.is_some()
+        || r.state_id.is_some()
+        || r.state_value.is_some()
+        || r.variable.is_some()
+    {
+        return json!({"ok":false,"code":"BLK-CLI-002"});
     }
     if r.operation == "validate-patch" || r.operation == "apply-patch" {
         let result = (|| -> Result<Value, String> {
@@ -87,6 +158,12 @@ fn execute(bytes: &[u8]) -> Value {
             Ok(files) => json!({"ok":true,"files":files}),
             Err(_) => json!({"ok":false,"code":"BLK-LOAD-001"}),
         },
+        ("read-migration", Some(path), None) => {
+            match project_store::read_migration_archive(Path::new(&path)) {
+                Ok(files) => json!({"ok":true,"files":files}),
+                Err(_) => json!({"ok":false,"code":"BLK-MIG-001"}),
+            }
+        }
         ("create", Some(path), Some(files)) => {
             match project_store::create_archive(Path::new(&path), &files) {
                 Ok(()) => json!({"ok":true}),

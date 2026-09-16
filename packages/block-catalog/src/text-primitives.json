@@ -1,0 +1,69 @@
+[
+  {
+    "type": "core.agent.define",
+    "label": "智能体容器",
+    "category": 1,
+    "color": "#7660c9",
+    "fields": ["NAME"],
+    "optionalFields": ["NAME"],
+    "inputs": ["MEMBERS"],
+    "inputChecks": { "MEMBERS": "agent-member" }
+  },
+  {
+    "type": "core.interaction.chat_entry",
+    "label": "文本聊天入口",
+    "category": 0,
+    "color": "#cc8a18",
+    "fields": ["NAME"],
+    "optionalFields": ["NAME"],
+    "inputs": ["CAPABILITIES", "HANDLER"],
+    "requiredInputs": ["HANDLER"],
+    "inputChecks": { "CAPABILITIES": "entry-capability", "HANDLER": "command" },
+    "statement": true,
+    "statementCheck": "agent-member"
+  },
+  {
+    "type": "core.interaction.accept_text",
+    "label": "接受文本",
+    "category": 0,
+    "color": "#cc8a18",
+    "fields": [],
+    "inputs": [],
+    "statement": true,
+    "statementCheck": "entry-capability"
+  },
+  {
+    "type": "core.data.literal",
+    "label": "JSON 值",
+    "category": 10,
+    "color": "#85964a",
+    "fields": ["VALUE"],
+    "optionalFields": ["VALUE"],
+    "jsonFields": ["VALUE"],
+    "inputs": [],
+    "output": "json"
+  },
+  {
+    "type": "core.message.create",
+    "label": "创建消息",
+    "category": 11,
+    "color": "#45997e",
+    "fields": [],
+    "inputs": ["CONTENT"],
+    "requiredInputs": ["CONTENT"],
+    "inputChecks": { "CONTENT": "json" },
+    "output": "message"
+  },
+  {
+    "type": "core.message.reply",
+    "label": "回复消息",
+    "category": 11,
+    "color": "#45997e",
+    "fields": [],
+    "inputs": ["MESSAGE"],
+    "requiredInputs": ["MESSAGE"],
+    "inputChecks": { "MESSAGE": "message" },
+    "statement": true,
+    "statementCheck": "command"
+  }
+]

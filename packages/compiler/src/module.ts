@@ -32,7 +32,10 @@ export function compileWorkspace(
       diagnostics.push(diagnostic("BLK-TYPE-004", "未注册积木", source));
     else
       for (const field of def.fields)
-        if (typeof fields[field] !== "string" || !fields[field])
+        if (
+          !def.optionalFields?.includes(field) &&
+          (typeof fields[field] !== "string" || !fields[field])
+        )
           diagnostics.push(
             diagnostic("BLK-TYPE-005", `请填写 ${field}`, source),
           );
@@ -53,8 +56,31 @@ export function compileWorkspace(
       if (def && !def.inputs.includes(name))
         diagnostics.push(diagnostic("BLK-TYPE-007", "未知积木插槽", source));
       const child = value.block ?? value.shadow;
+      const expected = def?.inputChecks?.[name];
+      const childDef = child && getBlock(child.type);
+      if (
+        child &&
+        expected &&
+        (childDef?.output ?? childDef?.statementCheck) !== expected
+      )
+        diagnostics.push(
+          diagnostic("BLK-TYPE-009", `插槽 ${name} 需要 ${expected}`, source),
+        );
       inputs[name] = child ? compile(child) : null;
     }
+    for (const name of def?.requiredInputs ?? [])
+      if (!inputs[name])
+        diagnostics.push(diagnostic("BLK-TYPE-009", `请连接 ${name}`, source));
+    if (
+      b.next &&
+      (def?.output ||
+        (def?.statementCheck &&
+          getBlock(b.next.block.type)?.statementCheck !== def.statementCheck) ||
+        (!def?.statement && def?.inputChecks))
+    )
+      diagnostics.push(
+        diagnostic("BLK-TYPE-009", "后续连接类型不兼容", source),
+      );
     const next = b.next ? compile(b.next.block) : null;
     return {
       nodeId: b.id,
@@ -69,7 +95,7 @@ export function compileWorkspace(
     .filter((n): n is IrNode => n !== null);
   return {
     ir: {
-      schemaVersion: "blocky.module-ir/v1alpha1",
+      schemaVersion: "blocky.module-ir/v1",
       projectId,
       moduleId: module.moduleId,
       roots,

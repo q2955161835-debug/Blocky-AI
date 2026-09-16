@@ -2,13 +2,16 @@ import { open, readFile, link, unlink } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
 import { CliError } from "./protocol";
-export async function readJsonArtifact(path: string): Promise<unknown> {
+export async function readJsonArtifact(
+  path: string,
+  maxBytes = 2 * 1024 * 1024,
+): Promise<unknown> {
   try {
     const file = await open(path, "r");
     try {
-      if ((await file.stat()).size > 2 * 1024 * 1024) throw Error();
+      if ((await file.stat()).size > maxBytes) throw Error();
       const bytes = await file.readFile();
-      if (bytes.length > 2 * 1024 * 1024) throw Error();
+      if (bytes.length > maxBytes) throw Error();
       return JSON.parse(
         new TextDecoder("utf-8", { fatal: true })
           .decode(bytes)

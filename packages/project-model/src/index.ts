@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseSettings } from "@blocky/settings-core";
 import {
   canonicalJson,
   digest,
@@ -30,7 +31,8 @@ const moduleExport = z
   .passthrough();
 export const manifestSchema = z
   .object({
-    schemaVersion: z.literal("blocky.project/v1alpha1"),
+    schemaVersion: z.literal("blocky.project/v1"),
+    settingsRef: z.literal("settings.json").optional(),
     projectId: id,
     displayName: z.string().min(1),
     modules: z
@@ -139,6 +141,7 @@ const projectSchema = z
     resources: z.record(id, resourceSchema),
     schemas: z.record(ref, z.json()),
     surfaces: z.record(ref, z.json()),
+    settings: z.unknown().optional(),
   })
   .strict();
 function unique(values: string[]): void {
@@ -157,6 +160,14 @@ export function parseProject(input: unknown): Project {
   };
   walk(input, 0);
   const p = projectSchema.parse(input) as Project;
+  if (p.settings !== undefined) {
+    const settings = parseSettings(p.settings);
+    if (
+      settings.scope !== "project" ||
+      p.manifest.settingsRef !== "settings.json"
+    )
+      throw Error("BLK-SET-001");
+  } else if (p.manifest.settingsRef) throw Error("BLK-SET-001");
   unique(p.manifest.modules.map((m) => m.moduleId));
   unique(p.manifest.modules.map((m) => m.workspaceRef));
   unique(p.manifest.resources.map((r) => r.resourceId));
@@ -187,6 +198,8 @@ export function parseProject(input: unknown): Project {
   return p;
 }
 export { ProjectController } from "./controller";
+export { createModule, renameModule, deleteModule } from "./modules";
+export { activateTab, closeTab, restoreTab, moveTab, cycleTab } from "./tabs";
 export { configureBlock, findBlock } from "./configure";
 export {
   restoreSession,

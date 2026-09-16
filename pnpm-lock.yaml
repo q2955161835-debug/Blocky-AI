@@ -110,12 +110,21 @@ importers:
       '@blocky/project-format':
         specifier: workspace:*
         version: link:../../packages/project-format
+      '@blocky/project-migration':
+        specifier: workspace:*
+        version: link:../../packages/project-migration
       '@blocky/project-model':
         specifier: workspace:*
         version: link:../../packages/project-model
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../../packages/resource-registry
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core
+      '@blocky/settings-core':
+        specifier: workspace:*
+        version: link:../../packages/settings-core
       '@blocky/terminal-protocol':
         specifier: workspace:*
         version: link:../../packages/terminal-protocol
@@ -128,6 +137,12 @@ importers:
       '@tauri-apps/api':
         specifier: 2.11.1
         version: 2.11.1
+      '@xterm/addon-fit':
+        specifier: 0.11.0
+        version: 0.11.0
+      '@xterm/xterm':
+        specifier: 6.0.0
+        version: 6.0.0
       blockly:
         specifier: 13.2.1
         version: 13.2.1(jsdom@29.1.1)
@@ -254,6 +269,21 @@ importers:
         specifier: workspace:*
         version: link:../project-model
 
+  packages/project-migration:
+    dependencies:
+      '@blocky/compiler':
+        specifier: workspace:*
+        version: link:../compiler
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      '@blocky/project-format':
+        specifier: workspace:*
+        version: link:../project-format
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
+
   packages/project-model:
     dependencies:
       '@blocky/block-catalog':
@@ -262,6 +292,9 @@ importers:
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema
+      '@blocky/settings-core':
+        specifier: workspace:*
+        version: link:../settings-core
       zod:
         specifier: 4.4.3
         version: 4.4.3
@@ -289,6 +322,8 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry
+
+  packages/settings-core: {}
 
   packages/terminal-protocol:
     dependencies:
@@ -334,6 +369,9 @@ importers:
       '@blocky/builder-protocol':
         specifier: workspace:*
         version: link:../../packages/builder-protocol
+      '@blocky/command-system':
+        specifier: workspace:*
+        version: link:../../packages/command-system
       '@blocky/compiler':
         specifier: workspace:*
         version: link:../../packages/compiler
@@ -349,12 +387,21 @@ importers:
       '@blocky/project-format':
         specifier: workspace:*
         version: link:../../packages/project-format
+      '@blocky/project-migration':
+        specifier: workspace:*
+        version: link:../../packages/project-migration
       '@blocky/project-model':
         specifier: workspace:*
         version: link:../../packages/project-model
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../../packages/resource-registry
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core
+      '@blocky/settings-core':
+        specifier: workspace:*
+        version: link:../../packages/settings-core
       '@blocky/terminal-protocol':
         specifier: workspace:*
         version: link:../../packages/terminal-protocol
@@ -1362,6 +1409,12 @@ packages:
   '@wdio/xvfb@9.30.1':
     resolution: {integrity: sha512-ZvGUg+udJWsVmE8yC26pMMCYmvblBEItRxZ6MW/Ucf710dJUs14sY23LM9m33v/uqCYim5EsSNSxV0SaKTbveQ==}
     engines: {node: '>=18.20.0'}
+
+  '@xterm/addon-fit@0.11.0':
+    resolution: {integrity: sha512-jYcgT6xtVYhnhgxh3QgYDnnNMYTcf8ElbxxFzX0IZo+vabQqSPAjC3c1wJrKB5E19VwQei89QCiZZP86DCPF7g==}
+
+  '@xterm/xterm@6.0.0':
+    resolution: {integrity: sha512-TQwDdQGtwwDt+2cgKDLn0IRaSxYu1tSUjgKarSDkUM0ZNiSRXFpjxEsvc/Zgc5kq5omJ+V0a8/kIM2WD3sMOYg==}
 
   '@zip.js/zip.js@2.15.0':
     resolution: {integrity: sha512-hYAuHAaWjt0axbofaDL5XUlmrQPsBDcK3f45ApZuh6N+8UGVk26GoGdtGDvcvzahsHytTQ6DtBVXwG9IcCMjjQ==}
@@ -4098,6 +4151,10 @@ snapshots:
   '@wdio/xvfb@9.30.1':
     dependencies:
       '@wdio/logger': 9.29.1
+
+  '@xterm/addon-fit@0.11.0': {}
+
+  '@xterm/xterm@6.0.0': {}
 
   '@zip.js/zip.js@2.15.0': {}
 

@@ -2,6 +2,17 @@ import { invoke, isTauri } from "@tauri-apps/api/core";
 import { encodeProject, decodeProject } from "@blocky/project-format";
 import type { Project } from "@blocky/language-schema";
 import { canonicalJson } from "@blocky/language-schema";
+import { migrateProject } from "@blocky/project-migration";
+export async function prepareMigration() {
+  if (!isTauri()) throw Error("请在桌面窗口迁移项目");
+  const files = await invoke<Record<string, string> | null>("open_migration");
+  return files ? migrateProject(files) : null;
+}
+export async function saveMigration(project: Project) {
+  return invoke<{ displayName: string } | null>("save_migration", {
+    files: encodeProject(project),
+  });
+}
 export async function validatePatch(
   project: Project,
   patch: unknown,

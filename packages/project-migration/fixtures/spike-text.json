@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "blocky.spike-project/v1",
+  "projectId": "text-project",
+  "workspace": {
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "core.agent.define",
+          "id": "agent-one",
+          "fields": {
+            "NAME": "原有智能体"
+          },
+          "x": 40,
+          "y": 60,
+          "inputs": {
+            "MEMBERS": {
+              "block": {
+                "type": "core.interaction.chat_entry",
+                "id": "entry-one",
+                "fields": {
+                  "NAME": "文本入口"
+                },
+                "inputs": {
+                  "CAPABILITIES": {
+                    "block": {
+                      "type": "core.interaction.accept_text",
+                      "id": "accept-text"
+                    }
+                  },
+                  "HANDLER": {
+                    "block": {
+                      "type": "core.message.reply",
+                      "id": "reply-one",
+                      "inputs": {
+                        "MESSAGE": {
+                          "block": {
+                            "type": "core.message.create",
+                            "id": "message-one",
+                            "inputs": {
+                              "CONTENT": {
+                                "block": {
+                                  "type": "core.data.literal",
+                                  "id": "literal-one",
+                                  "fields": {
+                                    "VALUE": {
+                                      "value": [1, "原作品文本"]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "program": {
+    "schemaVersion": "blocky.ir/v0-spike",
+    "roots": [
+      {
+        "id": "agent-one",
+        "type": "core.agent.define",
+        "fields": {
+          "NAME": "原有智能体"
+        },
+        "inputs": {
+          "MEMBERS": {
+            "id": "entry-one",
+            "type": "core.interaction.chat_entry",
+            "fields": {
+              "NAME": "文本入口"
+            },
+            "inputs": {
+              "CAPABILITIES": {
+                "id": "accept-text",
+                "type": "core.interaction.accept_text",
+                "fields": {},
+                "inputs": {},
+                "next": null
+              },
+              "HANDLER": {
+                "id": "reply-one",
+                "type": "core.message.reply",
+                "fields": {},
+                "inputs": {
+                  "MESSAGE": {
+                    "id": "message-one",
+                    "type": "core.message.create",
+                    "fields": {},
+                    "inputs": {
+                      "CONTENT": {
+                        "id": "literal-one",
+                        "type": "core.data.literal",
+                        "fields": {
+                          "VALUE": {
+                            "value": [1, "原作品文本"]
+                          }
+                        },
+                        "inputs": {},
+                        "next": null
+                      }
+                    },
+                    "next": null
+                  }
+                },
+                "next": null
+              }
+            },
+            "next": null
+          }
+        },
+        "next": null
+      }
+    ]
+  },
+  "interactionManifest": {
+    "schemaVersion": "blocky.interaction/v0-spike",
+    "entries": [
+      {
+        "id": "entry-one",
+        "ownerAgentId": "agent-one",
+        "displayName": "文本入口",
+        "acceptedParts": ["text"],
+        "exposedSkills": [],
+        "exposedPluginActions": [],
+        "executionRequirements": []
+      }
+    ]
+  }
+}

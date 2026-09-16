@@ -32,6 +32,31 @@ pub fn worker_main() -> i32 {
     if input.request.validate().is_err() {
         return 3;
     }
+    if input.request.task_id == "blocky.project-inventory" {
+        let limit = input.request.parameters["limit"] as usize;
+        let selected: Vec<_> = input.files.iter().take(limit).collect();
+        let valid = project_store::validate_files(&input.files).is_ok();
+        let manifest = input
+            .files
+            .get("project.json")
+            .and_then(|raw| strict_json::parse(raw.as_bytes()).ok());
+        let module_count = manifest
+            .as_ref()
+            .and_then(|m| m["modules"].as_array())
+            .map_or(0, Vec::len);
+        let resource_count = manifest
+            .as_ref()
+            .and_then(|m| m["resources"].as_array())
+            .map_or(0, Vec::len);
+        let summary = serde_json::json!({"schemaVersion":"blocky.task-inventory/v1alpha1","fileCount":input.files.len(),"moduleCount":module_count,"resourceCount":resource_count,"inspectedFiles":selected.len(),"limited":selected.len()<input.files.len(),"inspectedBytes":selected.iter().map(|(_,s)|s.len()).sum::<usize>(),"workspaceCount":selected.iter().filter(|(name,_)|name.starts_with("workspaces/")).count(),"valid":valid,"code":if valid{"BLK-INVENTORY-000"}else{"BLK-INVENTORY-001"}});
+        return if writeln!(std::io::stdout(), "{summary}").is_err() {
+            4
+        } else if valid {
+            0
+        } else {
+            3
+        };
+    }
     let cancelled = Arc::new(AtomicBool::new(false));
     let flag = cancelled.clone();
     std::thread::spawn(move || {

@@ -3,8 +3,12 @@
 mod acceptance;
 mod commands;
 mod log_commands;
+mod secret_commands;
 mod task_commands;
+mod terminal_commands;
+mod user_commands;
 mod window_lifecycle;
+mod window_state;
 use blocky_studio::project_store;
 use tauri::Manager;
 fn main() {
@@ -24,8 +28,16 @@ fn main() {
     builder
         .manage(commands::Handles::default())
         .manage(blocky_studio::task_host::TaskHost::default())
+        .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
+            app.manage(blocky_studio::user_store::UserStore::new(
+                app.path().app_local_data_dir()?.join("user"),
+            ));
+            window_state::restore(app);
+            app.manage(blocky_studio::secret_store::SecretStore::new(
+                app.path().app_local_data_dir()?.join("secrets"),
+            ));
             app.manage(blocky_studio::log_store::LogStore::open(
                 app.path()
                     .app_local_data_dir()?
@@ -38,6 +50,14 @@ fn main() {
             #[cfg(feature = "wdio")]
             acceptance::acceptance_round_trip,
             commands::open_project,
+            user_commands::read_user_state,
+            user_commands::write_user_state,
+            user_commands::clear_user_state,
+            secret_commands::import_secret,
+            secret_commands::secret_status,
+            secret_commands::remove_secret,
+            commands::open_migration,
+            commands::save_migration,
             commands::save_project,
             commands::validate_patch,
             commands::authorize_surface,
@@ -46,12 +66,19 @@ fn main() {
             task_commands::cancel_task,
             task_commands::attach_user_terminal,
             task_commands::settle_tasks,
+            terminal_commands::create_terminal,
+            terminal_commands::read_terminal,
+            terminal_commands::write_terminal,
+            terminal_commands::resize_terminal,
+            terminal_commands::close_terminal,
             window_lifecycle::authorize_run,
             window_lifecycle::set_window_preferences,
             window_lifecycle::hide_window,
             window_lifecycle::begin_exit,
             window_lifecycle::finish_exit,
             log_commands::append_diagnostics,
+            log_commands::configure_diagnostics,
+            log_commands::diagnostic_stats,
             log_commands::read_diagnostics,
             log_commands::clear_diagnostics,
             log_commands::export_diagnostics

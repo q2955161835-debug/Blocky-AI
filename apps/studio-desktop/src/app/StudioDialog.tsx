@@ -2,12 +2,22 @@ import type { Dispatch, SetStateAction } from "react";
 import { catalog } from "@blocky/block-catalog";
 import { commands } from "@blocky/command-system";
 import type { Studio } from "../composition/useStudio";
-import { defaults } from "../composition/host";
+import { SettingsPanel } from "./SettingsPanel";
+import { ShortcutsPanel } from "./ShortcutsPanel";
+import { ResourcePanel } from "./ResourcePanel";
 import type { ConstructionKind } from "./ConstructionDialog";
 import type { MenuCategory } from "./MenuBar";
 export type Popup =
   | {
-      kind: "commands" | "blocks" | "settings" | "context" | ConstructionKind;
+      kind:
+        | "commands"
+        | "blocks"
+        | "settings"
+        | "shortcuts"
+        | "resources"
+        | "context"
+        | "about"
+        | ConstructionKind;
       x?: number;
       y?: number;
     }
@@ -73,54 +83,18 @@ export function StudioDialog({
             ×
           </button>
         </header>
-        {popup.kind === "settings" ? (
+        {popup.kind === "resources" ? (
+          <ResourcePanel studio={s} />
+        ) : popup.kind === "shortcuts" ? (
+          <ShortcutsPanel studio={s} />
+        ) : popup.kind === "about" ? (
           <div className="settings">
-            <p className="muted">应用设置 · 当前值保存在本机</p>
-            <label>
-              <input
-                type="checkbox"
-                checked={s.preferences.reduceMotion}
-                onChange={(e) =>
-                  s.setPreferences((v) => ({
-                    ...v,
-                    reduceMotion: e.target.checked,
-                  }))
-                }
-              />
-              减少动态效果
-            </label>
-            <label>
-              积木库视图
-              <select
-                value={s.preferences.view}
-                onChange={(e) =>
-                  s.setPreferences((v) => ({
-                    ...v,
-                    view: e.target.value as "beginner" | "professional",
-                  }))
-                }
-              >
-                <option value="professional">专业</option>
-                <option value="beginner">入门</option>
-              </select>
-            </label>
-            <button onClick={() => s.setPreferences({ ...defaults })}>
-              恢复应用默认值
-            </button>
-            <label>
-              <input
-                type="checkbox"
-                checked={s.preferences.minimizeToTray}
-                onChange={(e) =>
-                  s.setPreferences((v) => ({
-                    ...v,
-                    minimizeToTray: e.target.checked,
-                  }))
-                }
-              />
-              最小化到通知区域
-            </label>
+            <h2>Blocky Studio</h2>
+            <p>用积木搭建、运行和分享你的创作。</p>
+            <p>版本 0.2.0</p>
           </div>
+        ) : popup.kind === "settings" ? (
+          <SettingsPanel studio={s} />
         ) : (
           <>
             <input
@@ -163,7 +137,7 @@ export function StudioDialog({
                         onClick={() => execute(c.commandId)}
                       >
                         {c.label}
-                        <kbd>{c.defaultShortcuts[0]}</kbd>
+                        <kbd>{s.shortcuts.keys(c.commandId)[0]}</kbd>
                       </button>
                     ))}
             </div>

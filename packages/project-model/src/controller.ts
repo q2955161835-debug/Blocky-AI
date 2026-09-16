@@ -79,4 +79,12 @@ export class ProjectController {
     this.saved = canonicalJson(p);
     this.publish(p);
   }
+  recover(project: Project) {
+    const p = parseProject(project);
+    this.past = [];
+    this.future = [];
+    this.group = undefined;
+    this.saved = "";
+    this.publish(p);
+  }
 }

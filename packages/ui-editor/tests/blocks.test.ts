@@ -1,23 +1,67 @@
 import { expect, it } from "vitest";
 import { Blockly, registerBlocks } from "../src/blocks";
 import { createStarter } from "../../test-fixtures/src/index";
-import { captureBlueprint, instantiateBlueprint, defaultBindings } from "../../block-catalog/src";
+import {
+  captureBlueprint,
+  instantiateBlueprint,
+  defaultBindings,
+} from "../../block-catalog/src";
 import type { Workspace } from "../../language-schema/src";
+import { createTextProject } from "../../test-fixtures/src/text-project";
+it("round-trips typed text/message value ports and JSON values in actual Blockly", () => {
+  registerBlocks();
+  const workspace = new Blockly.Workspace();
+  try {
+    Blockly.serialization.workspaces.load(
+      createTextProject({ a: [1, true] }).workspaces.main,
+      workspace,
+    );
+    const saved = Blockly.serialization.workspaces.save(workspace);
+    expect(workspace.getTopBlocks(false)).toHaveLength(1);
+    expect(workspace.getAllBlocks(false)).toHaveLength(6);
+    const literal = workspace.getBlockById("literal-one")!;
+    expect(literal.outputConnection?.getCheck()).toEqual(["json"]);
+    expect(JSON.stringify(saved)).toContain('"VALUE":{"a":[1,true]}');
+  } finally {
+    workspace.dispose();
+  }
+});
 it("preserves folded real Blockly stacks through blueprint insertion and expansion", async () => {
   registerBlocks();
-  const project = createStarter(), workspace = new Blockly.Workspace();
+  const project = createStarter(),
+    workspace = new Blockly.Workspace();
   try {
-    Blockly.serialization.workspaces.load(project.workspaces["research-agent"], workspace);
+    Blockly.serialization.workspaces.load(
+      project.workspaces["research-agent"],
+      workspace,
+    );
     workspace.getBlockById("research-root")!.setCollapsed(true);
-    project.workspaces["research-agent"] = Blockly.serialization.workspaces.save(workspace) as Workspace;
-    const blueprint = await captureBlueprint(project, "research-agent", ["research-root"], "折叠问答");
-    const roots = await instantiateBlueprint(blueprint, project, "research-agent", defaultBindings(blueprint));
-    Blockly.serialization.workspaces.load({ blocks: { languageVersion: 0, blocks: roots } }, workspace);
+    project.workspaces["research-agent"] =
+      Blockly.serialization.workspaces.save(workspace) as Workspace;
+    const blueprint = await captureBlueprint(
+      project,
+      "research-agent",
+      ["research-root"],
+      "折叠问答",
+    );
+    const roots = await instantiateBlueprint(
+      blueprint,
+      project,
+      "research-agent",
+      defaultBindings(blueprint),
+    );
+    Blockly.serialization.workspaces.load(
+      { blocks: { languageVersion: 0, blocks: roots } },
+      workspace,
+    );
     expect(workspace.getAllBlocks(false)).toHaveLength(5);
     const inserted = workspace.getBlockById(roots[0].id)!;
-    inserted.setCollapsed(false); inserted.setFieldValue("教师", "ROLE");
+    inserted.setCollapsed(false);
+    inserted.setFieldValue("教师", "ROLE");
     expect(inserted.getFieldValue("ROLE")).toBe("教师");
-  } finally { workspace.dispose(); }
+  } finally {
+    workspace.dispose();
+  }
 });
 it("loads and serializes real Blockly blocks with editable role and stable IDs", () => {
   registerBlocks();

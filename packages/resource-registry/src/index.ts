@@ -1,4 +1,19 @@
 import type { Project, Resource } from "@blocky/language-schema";
+import { validateResource } from "./validate";
+export { validateResource } from "./validate";
+export * from "./user-registry";
+export { resourceDefinitions } from "./definitions";
+export type {
+  ResourceKind,
+  ResourceDefinition,
+  ResourceFieldSchema,
+} from "./definitions";
+export {
+  upsertProjectResource,
+  removeProjectResource,
+  analyzeResourceReferences,
+} from "./project-resources";
+export type { ResourceReferenceLocation } from "./project-resources";
 export function resolveResource(
   project: Project,
   id: string,
@@ -26,5 +41,5 @@ export function resolveResource(
     )
   )
     throw Error("BLK-RESOURCE-002");
-  return structuredClone(resource);
+  return validateResource(resource);
 }

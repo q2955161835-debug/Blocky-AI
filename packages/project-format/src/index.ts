@@ -7,6 +7,8 @@ import {
   type Workspace,
   type Resource,
 } from "@blocky/language-schema";
+export { createRecovery, readRecovery } from "./recovery";
+export type { Recovery } from "./recovery";
 import { parseProject } from "@blocky/project-model";
 export function encodeProject(input: Project): Record<string, string> {
   const p = parseProject(input);
@@ -17,6 +19,7 @@ export function encodeProject(input: Project): Record<string, string> {
     if (Object.hasOwn(files, key)) throw Error("BLK-REF-001");
     files[key] = canonicalJson(value);
   };
+  if (p.settings) put("settings.json", p.settings);
   p.manifest.modules.forEach((m) =>
     put(m.workspaceRef, p.workspaces[m.moduleId]),
   );
@@ -48,7 +51,7 @@ export function decodeProject(files: Record<string, string>): Project {
   };
   const manifest = get("project.json") as Manifest;
   if (
-    manifest.schemaVersion !== "blocky.project/v1alpha1" ||
+    manifest.schemaVersion !== "blocky.project/v1" ||
     !Array.isArray(manifest.modules) ||
     !Array.isArray(manifest.resources)
   )
@@ -56,6 +59,8 @@ export function decodeProject(files: Record<string, string>): Project {
   const workspaces: Record<string, Workspace> = {};
   const resources: Record<string, Resource> = {};
   const used = new Set(["project.json"]);
+  const settings = manifest.settingsRef ? get(manifest.settingsRef) : undefined;
+  if (manifest.settingsRef) used.add(manifest.settingsRef);
   for (const m of manifest.modules) {
     workspaces[m.moduleId] = get(m.workspaceRef);
     used.add(m.workspaceRef);
@@ -82,5 +87,12 @@ export function decodeProject(files: Record<string, string>): Project {
         surfaces[key] = key.endsWith(".json") ? get(key) : files[key];
       else throw Error("BLK-REF-001: 未声明项目文件");
     }
-  return parseProject({ manifest, workspaces, resources, schemas, surfaces });
+  return parseProject({
+    manifest,
+    workspaces,
+    resources,
+    schemas,
+    surfaces,
+    ...(settings !== undefined ? { settings } : {}),
+  });
 }

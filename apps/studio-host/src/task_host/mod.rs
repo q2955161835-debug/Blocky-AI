@@ -1,5 +1,9 @@
+mod authority;
 mod process;
 mod worker;
+pub use authority::AgentProcessRequest;
+#[cfg(test)]
+mod tests;
 use crate::project_store::ProjectFiles;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -27,15 +31,30 @@ pub fn definition() -> Value {
     ))
     .expect("registered task definition")
 }
+pub fn definitions() -> Vec<Value> {
+    vec![
+        definition(),
+        serde_json::from_str(include_str!(
+            "../../../../packages/terminal-protocol/src/project-inventory.json"
+        ))
+        .expect("registered inventory definition"),
+    ]
+}
+pub fn definition_for(id: &str) -> Result<Value, String> {
+    definitions()
+        .into_iter()
+        .find(|d| d["taskId"] == id)
+        .ok_or_else(|| "BLK-TERM-101".into())
+}
 impl TaskRequest {
     pub fn validate(&self) -> Result<(), String> {
-        let d = definition();
+        let d = definition_for(&self.task_id)?;
         if self.task_id != d["taskId"]
             || self.timeout_ms == 0
             || self.timeout_ms > d["timeoutMs"].as_u64().unwrap_or(0)
             || self.output_budget_bytes < 256
             || self.output_budget_bytes > d["outputBudgetBytes"].as_u64().unwrap_or(0) as usize
-            || self.parameters.len() != 2
+            || self.parameters.len() != d["parameters"].as_array().ok_or("BLK-TERM-101")?.len()
         {
             return Err("BLK-TERM-101".into());
         }
@@ -84,11 +103,22 @@ pub struct TaskSnapshot {
 pub(super) struct Task {
     pub snapshot: Arc<Mutex<TaskSnapshot>>,
     pub cancel: Arc<AtomicBool>,
+    worker: Option<std::thread::JoinHandle<()>>,
+}
+impl Drop for Task {
+    fn drop(&mut self) {
+        self.cancel.store(true, Ordering::SeqCst);
+        if let Some(worker) = self.worker.take() {
+            let _ = worker.join();
+        }
+    }
 }
 #[derive(Default)]
 pub struct TaskHost {
     tasks: Mutex<BTreeMap<String, Task>>,
     closing: AtomicBool,
+    grants: Mutex<BTreeMap<String, authority::Grant>>,
+    agent_runs: Mutex<BTreeMap<String, String>>,
 }
 impl TaskHost {
     pub fn start(&self, request: TaskRequest, files: ProjectFiles) -> Result<String, String> {
@@ -104,14 +134,25 @@ impl TaskHost {
         if self.closing.load(Ordering::SeqCst) {
             return Err("BLK-WINDOW-001".into());
         }
-        if tasks
+        let active: Vec<_> = tasks
             .values()
-            .any(|t| t.snapshot.lock().is_ok_and(|s| s.active_processes > 0))
+            .filter_map(|t| t.snapshot.lock().ok().map(|s| s.clone()))
+            .filter(|s| s.active_processes > 0)
+            .collect();
+        let limit = definition_for(&request.task_id)?["concurrency"]["maxInstances"]
+            .as_u64()
+            .ok_or("BLK-TERM-101")? as usize;
+        if active.len() >= 2
+            || active
+                .iter()
+                .filter(|s| s.task_id == request.task_id)
+                .count()
+                >= limit
         {
             return Err("BLK-TERM-103".into());
         }
         let id = format!("task-{}", uuid::Uuid::new_v4());
-        let task = Task {
+        let mut task = Task {
             snapshot: Arc::new(Mutex::new(TaskSnapshot {
                 schema_version: "blocky.task-result/v1alpha1",
                 request_id: id.clone(),
@@ -125,10 +166,26 @@ impl TaskHost {
                 active_processes: 1,
             })),
             cancel: Arc::new(AtomicBool::new(false)),
+            worker: None,
         };
-        process::launch(request, files, task.snapshot.clone(), task.cancel.clone())?;
+        task.worker = Some(process::launch(
+            request,
+            files,
+            task.snapshot.clone(),
+            task.cancel.clone(),
+        )?);
         if tasks.len() >= 16 {
-            tasks.clear();
+            let retired = tasks
+                .iter()
+                .find(|(_, t)| t.snapshot.lock().is_ok_and(|s| s.active_processes == 0))
+                .map(|(id, _)| id.clone());
+            if let Some(retired) = retired {
+                tasks.remove(&retired);
+                self.agent_runs
+                    .lock()
+                    .map_err(|_| "BLK-TERM-001")?
+                    .remove(&retired);
+            }
         }
         tasks.insert(id.clone(), task);
         Ok(id)
@@ -178,6 +235,16 @@ impl TaskHost {
                 return Err("BLK-WINDOW-001".into());
             }
             std::thread::sleep(Duration::from_millis(10));
+        }
+        for task in self
+            .tasks
+            .lock()
+            .map_err(|_| "BLK-WINDOW-001")?
+            .values_mut()
+        {
+            if let Some(worker) = task.worker.take() {
+                worker.join().map_err(|_| "BLK-WINDOW-001")?;
+            }
         }
         Ok(())
     }

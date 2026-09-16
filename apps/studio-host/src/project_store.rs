@@ -71,7 +71,7 @@ fn array<'a>(v: &'a Value, key: &str) -> Result<&'a Vec<Value>, String> {
         .and_then(Value::as_array)
         .ok_or_else(|| REJECT.into())
 }
-fn check_secrets(value: &Value, depth: usize) -> Result<(), String> {
+pub(crate) fn check_secrets(value: &Value, depth: usize) -> Result<(), String> {
     if depth > 100 {
         return Err(REJECT.into());
     }
@@ -150,7 +150,7 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
         parsed.insert(path.clone(), value);
     }
     let manifest = parsed.get("project.json").ok_or(REJECT)?;
-    if text(manifest, "schemaVersion")? != "blocky.project/v1alpha1"
+    if text(manifest, "schemaVersion")? != "blocky.project/v1"
         || !stable(text(manifest, "projectId")?)
         || text(manifest, "displayName")?.is_empty()
     {
@@ -164,6 +164,16 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
         return Err("BLK-MIG-001".into());
     }
     let mut used = BTreeSet::from(["project.json".to_owned()]);
+    if let Some(path) = manifest.get("settingsRef") {
+        if path != "settings.json" {
+            return Err(REJECT.into());
+        }
+        let settings = add_ref(&parsed, &mut used, "settings.json")?;
+        crate::user_store::validate_settings(settings)?;
+        if settings["scope"] != "project" {
+            return Err(REJECT.into());
+        }
+    }
     let mut modules = BTreeSet::new();
     let mut schema_refs = BTreeSet::new();
     let descriptors = array(manifest, "modules")?;
@@ -325,6 +335,13 @@ fn write_archive(
     Ok(())
 }
 pub fn read_archive(path: &Path) -> Result<ProjectFiles, String> {
+    let files = read_migration_archive(path)?;
+    validate_files(&files)?;
+    Ok(files)
+}
+/// Explicit migration input only. Bounded zip/UTF-8/JSON/path validation without
+/// accepting a legacy document as a current project or executing its contents.
+pub fn read_migration_archive(path: &Path) -> Result<ProjectFiles, String> {
     let file = std::fs::File::open(path).map_err(|_| "BLK-LOAD-001")?;
     if file.metadata().map_err(|_| REJECT)?.len() > LIMIT as u64 {
         return Err(REJECT.into());
@@ -361,14 +378,22 @@ pub fn read_archive(path: &Path) -> Result<ProjectFiles, String> {
         let data = String::from_utf8(bytes).map_err(|_| REJECT)?;
         files.insert(name, data);
     }
-    validate_files(&files)?;
+    let mut names = BTreeSet::new();
+    for (name, data) in &files {
+        if !names.insert(name.to_lowercase()) {
+            return Err(REJECT.into());
+        }
+        if name.ends_with(".json") {
+            check_secrets(&crate::strict_json::parse(data.as_bytes())?, 0)?;
+        }
+    }
     Ok(files)
 }
 #[cfg(test)]
 mod tests {
     use super::*;
     fn files() -> ProjectFiles {
-        BTreeMap::from([("project.json".into(),r#"{"schemaVersion":"blocky.project/v1alpha1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.1.0","minimumReaderVersion":"0.1.0"}}"#.into()),("workspaces/main.json".into(),r#"{"blocks":{"languageVersion":0,"blocks":[]}}"#.into())])
+        BTreeMap::from([("project.json".into(),r#"{"schemaVersion":"blocky.project/v1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.1.0","minimumReaderVersion":"0.1.0"}}"#.into()),("workspaces/main.json".into(),r#"{"blocks":{"languageVersion":0,"blocks":[]}}"#.into())])
     }
     #[test]
     fn native_archive_round_trip() {
@@ -378,6 +403,25 @@ mod tests {
         assert_eq!(read_archive(&path).unwrap(), files());
         save_archive(&path, &files()).unwrap();
         assert_eq!(read_archive(&path).unwrap(), files());
+    }
+    #[test]
+    fn legacy_archives_are_only_available_at_explicit_migration_boundary() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("legacy.blocky");
+        let mut legacy = files();
+        *legacy.get_mut("project.json").unwrap() =
+            legacy["project.json"].replace("blocky.project/v1", "blocky.project/v1alpha1");
+        let mut zip = zip::ZipWriter::new(std::fs::File::create(&path).unwrap());
+        for (name, contents) in &legacy {
+            zip.start_file(name, zip::write::SimpleFileOptions::default())
+                .unwrap();
+            zip.write_all(contents.as_bytes()).unwrap();
+        }
+        zip.finish().unwrap();
+        let before = std::fs::read(&path).unwrap();
+        assert!(read_archive(&path).is_err());
+        assert_eq!(read_migration_archive(&path).unwrap(), legacy);
+        assert_eq!(std::fs::read(&path).unwrap(), before);
     }
     #[test]
     fn creation_never_overwrites_an_existing_target() {
@@ -431,7 +475,7 @@ mod tests {
         assert!(validate_files(&missing).is_err());
         let mut newer = files();
         let v = newer.get_mut("project.json").unwrap();
-        *v = v.replace("v1alpha1", "v2");
+        *v = v.replace("blocky.project/v1", "blocky.project/v2");
         assert!(validate_files(&newer).is_err());
     }
     #[test]

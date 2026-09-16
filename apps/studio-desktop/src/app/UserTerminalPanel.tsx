@@ -1,0 +1,173 @@
+import { useEffect, useRef, useState } from "react";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import { invoke } from "@tauri-apps/api/core";
+import "@xterm/xterm/css/xterm.css";
+import type {
+  StudioTerminals,
+  TerminalSnapshot,
+} from "../composition/useTerminals";
+
+function TerminalView({
+  session,
+  visible,
+}: {
+  session: TerminalSnapshot;
+  visible: boolean;
+}) {
+  const container = useRef<HTMLDivElement>(null);
+  const fitRef = useRef<() => void>(() => {});
+  const [status, setStatus] = useState(session.status);
+  useEffect(() => {
+    if (!container.current) return;
+    const terminal = new Terminal({
+      cursorBlink: true,
+      scrollback: 2000,
+      fontSize: 13,
+      allowProposedApi: false,
+    });
+    const fit = new FitAddon();
+    terminal.loadAddon(fit);
+    terminal.open(container.current);
+    let disposed = false,
+      consumed = 0,
+      timer: ReturnType<typeof setTimeout> | undefined;
+    let sizeTimer: ReturnType<typeof setTimeout> | undefined;
+    const encoder = new TextEncoder(),
+      decoder = new TextDecoder();
+    const resize = () => {
+      if (!container.current?.clientHeight || !container.current?.clientWidth)
+        return;
+      fit.fit();
+      clearTimeout(sizeTimer);
+      sizeTimer = setTimeout(
+        () =>
+          void invoke("resize_terminal", {
+            sessionId: session.sessionId,
+            rows: Math.max(2, Math.min(500, terminal.rows)),
+            cols: Math.max(2, Math.min(1000, terminal.cols)),
+          }).catch(() => {}),
+        100,
+      );
+    };
+    fitRef.current = resize;
+    const observer = new ResizeObserver(resize);
+    observer.observe(container.current);
+    const input = terminal.onData((data) => {
+      void invoke("write_terminal", {
+        sessionId: session.sessionId,
+        input: data,
+      }).catch(() => setStatus("输入未发送，请重试"));
+    });
+    const poll = async () => {
+      try {
+        const value = await invoke<TerminalSnapshot>("read_terminal", {
+          sessionId: session.sessionId,
+        });
+        if (disposed) return;
+        const end = value.droppedBytes + value.outputBytes;
+        if (consumed < value.droppedBytes) {
+          terminal.reset();
+          terminal.writeln("[输出过多，已丢弃较早内容]");
+          consumed = value.droppedBytes;
+        }
+        if (end > consumed) {
+          const bytes = encoder
+            .encode(value.output)
+            .subarray(consumed - value.droppedBytes);
+          await new Promise<void>((resolve) =>
+            terminal.write(decoder.decode(bytes), resolve),
+          );
+          consumed = end;
+        }
+        if (disposed) return;
+        setStatus(
+          value.status === "running"
+            ? "运行中"
+            : `${value.status}${value.exitCode === undefined || value.exitCode === null ? "" : ` · ${value.exitCode}`}`,
+        );
+        if (value.status === "running" || value.status === "starting")
+          timer = setTimeout(poll, 100);
+      } catch {
+        if (!disposed) {
+          setStatus("终端连接中断");
+          timer = setTimeout(poll, 1000);
+        }
+      }
+    };
+    resize();
+    void poll();
+    return () => {
+      disposed = true;
+      clearTimeout(timer);
+      clearTimeout(sizeTimer);
+      observer.disconnect();
+      input.dispose();
+      terminal.dispose();
+    };
+  }, [session.sessionId]);
+  useEffect(() => {
+    if (visible) fitRef.current();
+  }, [visible]);
+  return (
+    <section
+      hidden={!visible}
+      className="user-terminal-view"
+      data-user-terminal="true"
+      aria-label={`${session.profile} 终端`}
+    >
+      <small role="status">{status}</small>
+      <div ref={container} className="terminal-emulator" />
+    </section>
+  );
+}
+export function UserTerminalPanel({
+  terminals,
+  visible,
+}: {
+  terminals: StudioTerminals;
+  visible: boolean;
+}) {
+  return (
+    <section hidden={!visible} className="user-terminals" aria-label="用户终端">
+      <div className="terminal-toolbar">
+        <button
+          disabled={terminals.pending || terminals.sessions.length >= 8}
+          onClick={() => void terminals.create()}
+        >
+          新建 PowerShell
+        </button>
+        <button
+          disabled={terminals.pending || terminals.sessions.length >= 8}
+          onClick={() => void terminals.create("cmd")}
+        >
+          新建 CMD
+        </button>
+        {terminals.sessions.map((session, index) => (
+          <span key={session.sessionId}>
+            <button
+              aria-pressed={terminals.selected === session.sessionId}
+              onClick={() => terminals.setSelected(session.sessionId)}
+            >
+              {session.profile} {index + 1}
+            </button>
+            <button
+              aria-label={`关闭终端 ${index + 1}`}
+              onClick={() => void terminals.close(session.sessionId)}
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+      {!terminals.sessions.length && <p>选择工作目录后启动终端。</p>}
+      {terminals.sessions.map((session) => (
+        <TerminalView
+          key={session.sessionId}
+          session={session}
+          visible={visible && terminals.selected === session.sessionId}
+        />
+      ))}
+    </section>
+  );
+}

@@ -113,7 +113,7 @@ export async function linkProject(
     );
   }
   const ir: ProjectIR = {
-    schemaVersion: "blocky.project-ir/v1alpha1",
+    schemaVersion: "blocky.project-ir/v1",
     projectId: project.manifest.projectId,
     modules: await Promise.all(
       modules.map(async (m) => ({

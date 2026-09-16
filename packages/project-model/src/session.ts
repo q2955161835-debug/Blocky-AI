@@ -15,6 +15,13 @@ export type Session = {
   panel: boolean;
   view: "problems" | "logs" | "terminal" | "output";
   height: number;
+  maximized: boolean;
+  dock: "bottom" | "right";
+  width: number;
+  leftWidth: number;
+  rightWidth: number;
+  recentTabs: string[];
+  closedTabs: string[];
   viewports: Record<string, CanvasViewport>;
 };
 const object = (v: unknown): Record<string, unknown> =>
@@ -77,6 +84,13 @@ export function restoreSession(project: Project, input: unknown): Session {
         object,
       );
       raw = {
+        maximized: panel.maximized,
+        dock: panel.dock,
+        width: panel.widthPx,
+        leftWidth: object(raw.sidebars).leftWidth,
+        rightWidth: object(raw.sidebars).rightWidth,
+        recentTabs: raw.recentTabs,
+        closedTabs: raw.closedTabs,
         tabs: tabs.map(key),
         active: tabs.filter((t) => t.tabId === raw.activeTabId).map(key)[0],
         panel: panel.visible,
@@ -113,6 +127,13 @@ export function restoreSession(project: Project, input: unknown): Session {
     if (!tabs.length && ids.length) tabs = [ids[0]];
   }
   return {
+    maximized: raw.maximized === true,
+    dock: raw.dock === "right" ? "right" : "bottom",
+    width: bounded(raw.width, 360, 240, 700),
+    leftWidth: bounded(raw.leftWidth, 240, 180, 400),
+    rightWidth: bounded(raw.rightWidth, 340, 240, 520),
+    recentTabs: list(raw.recentTabs, ids, 100),
+    closedTabs: list(raw.closedTabs, ids, 20),
     diagnostics,
     tabs,
     active:
@@ -160,7 +181,9 @@ export function serializeSession(project: Project, session: Session) {
       visible: s.panel,
       activeView: s.view === "logs" ? "run-log" : s.view,
       heightPx: s.height,
-      maximized: false,
+      maximized: s.maximized,
+      dock: s.dock,
+      widthPx: s.width,
       filters: {},
     },
     canvasViews: Object.entries(s.viewports).map(([id, v]) => ({
@@ -168,6 +191,25 @@ export function serializeSession(project: Project, session: Session) {
       viewport: v,
     })),
     browserViews: [],
+    recentTabs: s.recentTabs,
+    closedTabs: s.closedTabs,
+    sidebars: { leftWidth: s.leftWidth, rightWidth: s.rightWidth },
     terminalLayout: { direction: "single", sessionIds: [] },
   };
+}
+function bounded(value: unknown, fallback: number, min: number, max: number) {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.max(min, Math.min(max, value))
+    : fallback;
+}
+function list(value: unknown, valid: string[], limit: number): string[] {
+  return Array.isArray(value)
+    ? [
+        ...new Set(
+          value.filter(
+            (v): v is string => typeof v === "string" && valid.includes(v),
+          ),
+        ),
+      ].slice(0, limit)
+    : [];
 }

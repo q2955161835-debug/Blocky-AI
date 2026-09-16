@@ -14,9 +14,19 @@ import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
 import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
+import { migrationCommand } from "./migration";
+import { foundationsCommand, foundationsHelp } from "./foundations";
+import {
+  userConfigCommand,
+  userConfigHelp,
+  userRegistryMap,
+} from "./user-config";
 export const help = {
   version: "0.1.0",
   commands: [
+    ...foundationsHelp,
+    ...userConfigHelp,
+    "project migrate <old.blocky> --output <new.blocky> --json",
     ...constructionHelp,
     ...taskHelp,
     "diagnostics export <logs.json> --output <diagnostics.json> [--channel <name>] --json",
@@ -65,7 +75,7 @@ export async function dispatch(
       result: envelope("version", {
         cli: "0.1.0",
         core: "0.1.0",
-        projectSchema: "blocky.project/v1alpha1",
+        projectSchema: "blocky.project/v1",
         skills: null,
       }),
     };
@@ -148,6 +158,12 @@ export async function dispatch(
     return { code: 0, result };
   }
   const moduleList = args.words.slice(0, 3).join(".") === "project.module.list";
+  const userConfig = await userConfigCommand(args);
+  if (userConfig) return userConfig;
+  const foundation = await foundationsCommand(args);
+  if (foundation) return foundation;
+  const migrated = await migrationCommand(args);
+  if (migrated) return migrated;
   const exported = await exportDiagnostics(args);
   if (exported) return exported;
   const constructed = await construction(args, signal);
@@ -182,7 +198,12 @@ export async function dispatch(
       "运行必须显式使用 --simulate --jsonl。",
     );
   const project = await readProject(args.words[moduleList ? 3 : 2]);
-  const compiled = await compileProject(project);
+  const userRegistry = project.manifest.resources.some(
+    (r) => r.scope === "user",
+  )
+    ? await userRegistryMap()
+    : undefined;
+  const compiled = await compileProject(project, userRegistry);
   const modelApiCalled = false;
   if (moduleList)
     return {
@@ -286,6 +307,7 @@ export async function dispatch(
     const runtime = new Runtime({ delayMs: 1 });
     const result = await runtime.run(project, entry.interactionId, question, {
       moduleId: entry.moduleId,
+      userRegistry,
       signal: abort.signal,
       onEvent: write,
     });

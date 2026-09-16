@@ -99,6 +99,47 @@ pub async fn open_project(
     }))
 }
 #[tauri::command]
+pub async fn open_migration(window: tauri::WebviewWindow) -> Result<Option<ProjectFiles>, String> {
+    main_only(&window)?;
+    crate::window_lifecycle::visible(&window)?;
+    let Some(file) = rfd::AsyncFileDialog::new()
+        .set_title("选择要迁移的旧项目")
+        .add_filter("Blocky 项目", &["blocky"])
+        .pick_file()
+        .await
+    else {
+        return Ok(None);
+    };
+    project_store::read_migration_archive(file.path()).map(Some)
+}
+#[tauri::command]
+pub async fn save_migration(
+    window: tauri::WebviewWindow,
+    files: ProjectFiles,
+) -> Result<Option<Saved>, String> {
+    main_only(&window)?;
+    project_store::validate_files(&files)?;
+    let Some(file) = rfd::AsyncFileDialog::new()
+        .set_title("迁移为新项目（不覆盖原件）")
+        .set_file_name("迁移后的项目.blocky")
+        .add_filter("Blocky 项目", &["blocky"])
+        .save_file()
+        .await
+    else {
+        return Ok(None);
+    };
+    project_store::create_archive(file.path(), &files)?;
+    Ok(Some(Saved {
+        handle: String::new(),
+        display_name: file
+            .path()
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .into_owned(),
+    }))
+}
+#[tauri::command]
 pub async fn save_project(
     window: tauri::WebviewWindow,
     state: tauri::State<'_, Handles>,

@@ -4,6 +4,7 @@ import { encodeProject } from "@blocky/project-format";
 import {
   parseTaskRequest,
   taskDefinition,
+  taskDefinitions,
   type TaskRequest,
   type TaskSnapshot,
 } from "@blocky/terminal-protocol";
@@ -12,7 +13,7 @@ import { type Args, allow, integer } from "./arguments";
 import { CliError, envelope } from "./protocol";
 export const taskHelp = [
   "task list --json",
-  "task run <file.blocky> [--passes 5] [--interval 100] [--timeout 30000] [--output-budget 65536] --json",
+  "task run <file.blocky> [--task blocky.project-check|blocky.project-inventory] [--passes 5] [--interval 100] [--limit 1000] [--timeout 30000] [--output-budget 65536] --json",
 ];
 export function runNativeTask(
   project: Project,
@@ -96,10 +97,21 @@ export async function taskCommand(args: Args, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
   if (command === "task.list") {
     allow(args, ["json"], 2);
-    return { code: 0, result: envelope(command, [taskDefinition]) };
+    return { code: 0, result: envelope(command, taskDefinitions) };
   }
   if (command !== "task.run") return;
-  allow(args, ["json", "passes", "interval", "timeout", "output-budget"], 3);
+  allow(
+    args,
+    ["json", "task", "limit", "passes", "interval", "timeout", "output-budget"],
+    3,
+  );
+  const taskId = args.options.get("task") ?? taskDefinition.taskId;
+  if (
+    (taskId === "blocky.project-inventory" &&
+      (args.options.has("passes") || args.options.has("interval"))) ||
+    (taskId === "blocky.project-check" && args.options.has("limit"))
+  )
+    throw new CliError(2, "BLK-TERM-101", "参数不属于所选任务。");
   const interval = args.options.get("interval") ?? "100";
   if (
     typeof interval !== "string" ||
@@ -111,11 +123,14 @@ export async function taskCommand(args: Args, signal: AbortSignal) {
   if (outputBudgetBytes < 256)
     throw new CliError(2, "BLK-TERM-101", "输出预算不得低于 256 字节。");
   const request = parseTaskRequest({
-    taskId: taskDefinition.taskId,
-    parameters: {
-      passes: integer(args, "passes", 5, 360),
-      "interval-ms": Number(interval),
-    },
+    taskId,
+    parameters:
+      taskId === "blocky.project-inventory"
+        ? { limit: integer(args, "limit", 1000, 1000) }
+        : {
+            passes: integer(args, "passes", 5, 360),
+            "interval-ms": Number(interval),
+          },
     timeoutMs: integer(args, "timeout", 30000, 30000),
     outputBudgetBytes,
   });

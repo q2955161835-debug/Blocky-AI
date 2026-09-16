@@ -15,11 +15,20 @@ it("persists overflow counts after a failed write without exceeding the queue bo
   const sent: any[] = [];
   (window as any).__TAURI_INTERNALS__ = {
     invoke: async (name: string, args: any) => {
+      if (name === "configure_diagnostics")
+        return {
+          effectiveMaxBytes: 10485760,
+          storedBytes: 0,
+          records: 0,
+          maxRecords: 100000,
+          health: {},
+        };
       if (fail) throw Error("disk unavailable");
       sent.push({ name, args });
     },
   };
   const studio = {
+    settings: { ready: true, layers: {} },
     bus: {
       subscribe: (fn: typeof receive) => {
         receive = fn;

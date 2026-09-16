@@ -1,6 +1,43 @@
 import { expect, it } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
 import { restoreSession, serializeSession } from "../src/session";
+import {
+  activateTab,
+  closeTab,
+  restoreTab,
+  cycleTab,
+  moveTab,
+} from "../src/tabs";
+it("restores closed tabs, MRU and panel layout as session-only data", () => {
+  const p = createStarter(),
+    before = JSON.stringify(p);
+  let s = restoreSession(p, null);
+  s = activateTab(s, "citation-service");
+  s = closeTab(s);
+  expect(s.closedTabs).toEqual(["citation-service"]);
+  s = restoreTab(
+    s,
+    p.manifest.modules.map((m) => m.moduleId),
+  );
+  s = moveTab(s, -1);
+  expect(s.tabs[0]).toBe("citation-service");
+  expect(cycleTab(s, 1).active).toBe("research-agent");
+  s.maximized = true;
+  s.dock = "right";
+  s.width = 420;
+  s.leftWidth = 245;
+  s.rightWidth = 320;
+  const saved = serializeSession(p, s);
+  expect(restoreSession(p, saved)).toMatchObject({
+    maximized: true,
+    dock: "right",
+    width: 420,
+    leftWidth: 245,
+    rightWidth: 320,
+    recentTabs: s.recentTabs,
+  });
+  expect(JSON.stringify(p)).toBe(before);
+});
 it("reports rejected session versions and removed targets without persisting diagnostics", () => {
   const p = createStarter();
   expect(

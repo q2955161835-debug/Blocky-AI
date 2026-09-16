@@ -1,4 +1,5 @@
 import type { StudioTask } from "../composition/useTask";
+import { taskDefinitions } from "@blocky/terminal-protocol";
 export function TaskPanel({ task: t }: { task: StudioTask }) {
   const status: Record<string, string> = {
     starting: "正在启动",
@@ -11,8 +12,35 @@ export function TaskPanel({ task: t }: { task: StudioTask }) {
   return (
     <div className="task-panel">
       <div className="task-controls">
-        <strong>检查项目文件</strong>
         <label>
+          任务
+          <select
+            aria-label="具名任务"
+            value={t.taskId}
+            disabled={t.pending || t.active}
+            onChange={(e) => t.setTaskId(e.target.value)}
+          >
+            {taskDefinitions.map((d) => (
+              <option key={d.taskId} value={d.taskId}>
+                {d.displayName}
+              </option>
+            ))}
+          </select>
+        </label>
+        {t.taskId === "blocky.project-inventory" && (
+          <label>
+            清单上限
+            <input
+              aria-label="任务清单上限"
+              type="number"
+              min={1}
+              max={1000}
+              value={t.limit}
+              onChange={(e) => t.setLimit(Number(e.target.value))}
+            />
+          </label>
+        )}
+        <label hidden={t.taskId !== "blocky.project-check"}>
           次数
           <input
             aria-label="任务检查次数"
@@ -24,7 +52,7 @@ export function TaskPanel({ task: t }: { task: StudioTask }) {
             onChange={(e) => t.setPasses(Number(e.target.value))}
           />
         </label>
-        <label>
+        <label hidden={t.taskId !== "blocky.project-check"}>
           间隔（毫秒）
           <input
             aria-label="任务间隔"
