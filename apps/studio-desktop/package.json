@@ -8,6 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@blocky/builder-protocol": "workspace:*",
+    "@blocky/conversion-core": "workspace:*",
     "@blocky/language-schema": "workspace:*",
     "@blocky/project-model": "workspace:*",
     "@blocky/compiler": "workspace:*",

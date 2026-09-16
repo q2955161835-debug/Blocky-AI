@@ -11,6 +11,11 @@ await build({
   banner: { js: "#!/usr/bin/env node" },
 });
 await mkdir("dist/bin", { recursive: true });
+await mkdir("dist/licenses", { recursive: true });
+await copyFile(
+  "../../packages/conversion-core/fixtures/LICENSE.haystack",
+  "dist/licenses/LICENSE.haystack",
+);
 await copyFile(
   "../../apps/studio-host/target/release/blocky-project-io.exe",
   "dist/bin/blocky-project-io.exe",

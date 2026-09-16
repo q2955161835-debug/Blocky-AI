@@ -51,6 +51,8 @@
 
 阶段 1 新增注册（2026-09-16 用户授权同步 CLI）：`blocky.cli/v1` 和 `blocky.project-io/v1alpha1`，定义与消费者见 [CLI 与项目存储协议](08-CLI与项目存储协议.md)。不改变上述阶段 0 冻结 Schema。
 
+D 增补注册：`blocky.blueprint/v1alpha1`、`blocky.source-snapshot/v1alpha1`、`blocky.conversion/v1alpha1`，以及冻结 SemanticPatch 的当前支持子集，见 [蓝图与候选补丁](09-蓝图与候选补丁.md)。
+
 ```text
 Project Manifest + per-module Blockly Workspace JSON
                        ↓ compile

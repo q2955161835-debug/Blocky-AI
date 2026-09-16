@@ -4,5 +4,5 @@
   "private": true,
   "type": "module",
   "exports": "./src/index.ts",
-  "dependencies": {}
+  "dependencies": { "@blocky/language-schema": "workspace:*", "zod": "4.4.3" }
 }

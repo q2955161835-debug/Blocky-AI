@@ -245,6 +245,94 @@ it("configures a declared field through the shared editor and keeps the source a
   invalid[invalid.indexOf(target)] = join(directory, "invalid-field.blocky");
   expect(run(invalid).code).toBe(3);
 });
+it("saves and inserts personal blueprints with explicit bindings and no source overwrite", async () => {
+  const before = hash(await readFile(file));
+  const blueprint = join(directory, "personal-blueprint.json");
+  const capture = [
+    "blueprint",
+    "create",
+    file,
+    "--module",
+    "research-agent",
+    "--blocks",
+    "research-root",
+    "--name",
+    "我的问答",
+    "--output",
+    blueprint,
+    "--json",
+  ];
+  expect(run(capture).code).toBe(0);
+  const shown = run(["blueprint", "show", blueprint, "--json"]);
+  expect(shown.code).toBe(0);
+  expect(shown.lines[0].data.blueprint.modules).toHaveLength(1);
+  const target = join(directory, "blueprint-inserted.blocky");
+  const insert = [
+    "blueprint",
+    "insert",
+    file,
+    "--blueprint",
+    blueprint,
+    "--module",
+    "research-agent",
+    "--output",
+    target,
+    "--json",
+  ];
+  expect(run(insert).code).toBe(3);
+  expect(run([...insert, "--reuse-bindings"]).code).toBe(0);
+  expect(
+    (await readProject(target)).workspaces["research-agent"].blocks.blocks,
+  ).toHaveLength(2);
+  expect(run(capture).code).toBe(5);
+  expect(run([...insert, "--reuse-bindings"]).code).toBe(5);
+  expect(hash(await readFile(file))).toBe(before);
+});
+it("reviews a locked source candidate, applies it only on its base and preserves the original", async () => {
+  const before = hash(await readFile(file));
+  const candidate = join(directory, "source-candidate.json");
+  const scan = run([
+    "conversion",
+    "scan",
+    file,
+    "--fixture",
+    "haystack-bm25",
+    "--module",
+    "research-agent",
+    "--resource",
+    "product-handbook",
+    "--output",
+    candidate,
+    "--json",
+  ]);
+  expect(scan.code).toBe(0);
+  expect(scan.lines[0].data.source.commit).toBe(
+    "d72ed6cb37abebaefda8da39e3e7a5d8fffb2065",
+  );
+  expect(scan.lines[0].data.retained.length).toBeGreaterThan(0);
+  expect(
+    run(["patch", "preview", file, "--patch", candidate, "--json"]).code,
+  ).toBe(0);
+  expect(hash(await readFile(file))).toBe(before);
+  const target = join(directory, "candidate-applied.blocky");
+  expect(
+    run([
+      "patch",
+      "apply",
+      file,
+      "--patch",
+      candidate,
+      "--output",
+      target,
+      "--json",
+    ]).code,
+  ).toBe(0);
+  expect(run(["project", "validate", target, "--json"]).code).toBe(0);
+  expect(
+    run(["patch", "preview", target, "--patch", candidate, "--json"]).code,
+  ).toBe(5);
+  expect(hash(await readFile(file))).toBe(before);
+});
 it("routes duplicate module-local entry IDs by --module and rejects ambiguous requests", async () => {
   const p = createStarter();
   p.manifest.modules.push({

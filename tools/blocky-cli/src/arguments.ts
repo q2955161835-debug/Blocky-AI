@@ -6,6 +6,7 @@ const booleans = new Set([
   "live",
   "help",
   "version",
+  "reuse-bindings",
 ]);
 export type Args = { words: string[]; options: Map<string, string | true> };
 export function parse(argv: string[]): Args {

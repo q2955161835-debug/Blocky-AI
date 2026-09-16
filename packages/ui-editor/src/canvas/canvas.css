@@ -68,3 +68,18 @@
 .blocklyDropDownDiv {
   z-index: 90 !important;
 }
+.selection-marquee {
+  position: absolute;
+  pointer-events: none;
+  background: #67b4ff22;
+  border: 1px solid #67b4ff;
+  z-index: 10;
+}
+[data-blocky-selected] > .blocklyPath {
+  stroke: #c0d8ff;
+  stroke-width: 3px;
+  stroke-dasharray: 5 3;
+}
+.blocklyDraggable[data-runtime-state] > .blocklyPath {
+  stroke-dasharray: none;
+}

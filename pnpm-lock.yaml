@@ -83,12 +83,18 @@ importers:
       '@blocky/block-catalog':
         specifier: workspace:*
         version: link:../../packages/block-catalog
+      '@blocky/builder-protocol':
+        specifier: workspace:*
+        version: link:../../packages/builder-protocol
       '@blocky/command-system':
         specifier: workspace:*
         version: link:../../packages/command-system
       '@blocky/compiler':
         specifier: workspace:*
         version: link:../../packages/compiler
+      '@blocky/conversion-core':
+        specifier: workspace:*
+        version: link:../../packages/conversion-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../../packages/language-schema
@@ -142,7 +148,35 @@ importers:
         specifier: 2.11.4
         version: 2.11.4
 
-  packages/block-catalog: {}
+  packages/block-catalog:
+    dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
+  packages/builder-protocol:
+    dependencies:
+      '@blocky/block-catalog':
+        specifier: workspace:*
+        version: link:../block-catalog
+      '@blocky/compiler':
+        specifier: workspace:*
+        version: link:../compiler
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../resource-registry
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
   packages/command-system: {}
 
@@ -160,6 +194,21 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry
+
+  packages/conversion-core:
+    dependencies:
+      '@blocky/builder-protocol':
+        specifier: workspace:*
+        version: link:../builder-protocol
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
   packages/language-schema: {}
 
@@ -243,9 +292,15 @@ importers:
       '@blocky/block-catalog':
         specifier: workspace:*
         version: link:../../packages/block-catalog
+      '@blocky/builder-protocol':
+        specifier: workspace:*
+        version: link:../../packages/builder-protocol
       '@blocky/compiler':
         specifier: workspace:*
         version: link:../../packages/compiler
+      '@blocky/conversion-core':
+        specifier: workspace:*
+        version: link:../../packages/conversion-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../../packages/language-schema

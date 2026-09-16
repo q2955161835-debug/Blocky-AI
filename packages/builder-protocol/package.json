@@ -1,0 +1,15 @@
+{
+  "name": "@blocky/builder-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@blocky/language-schema": "workspace:*",
+    "@blocky/project-model": "workspace:*",
+    "@blocky/block-catalog": "workspace:*",
+    "@blocky/compiler": "workspace:*",
+    "@blocky/resource-registry": "workspace:*",
+    "zod": "4.4.3"
+  }
+}

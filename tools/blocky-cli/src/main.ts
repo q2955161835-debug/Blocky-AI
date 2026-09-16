@@ -5,8 +5,7 @@ import { output } from "./output";
 const abort = new AbortController();
 process.on("SIGINT", () => abort.abort());
 process.on("SIGTERM", () => abort.abort());
-const write = (value: unknown) =>
-  process.stdout.write(output(value));
+const write = (value: unknown) => process.stdout.write(output(value));
 try {
   const args = parse(process.argv.slice(2));
   const result = await dispatch(args, write, abort.signal);

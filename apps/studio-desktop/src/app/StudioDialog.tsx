@@ -3,8 +3,9 @@ import { catalog } from "@blocky/block-catalog";
 import { commands } from "@blocky/command-system";
 import type { Studio } from "../composition/useStudio";
 import { defaults } from "../composition/host";
+import type { ConstructionKind } from "./ConstructionDialog";
 export type Popup = {
-  kind: "commands" | "blocks" | "settings" | "context";
+  kind: "commands" | "blocks" | "settings" | "context" | ConstructionKind;
   x?: number;
   y?: number;
 } | null;

@@ -9,9 +9,15 @@ import { Inspector } from "./Inspector";
 import { RunPanel } from "./RunPanel";
 import { BottomPanel } from "./BottomPanel";
 import { ConfirmationDialog } from "./ConfirmationDialog";
+import {
+  ConstructionDialog,
+  type ConstructionKind,
+} from "./ConstructionDialog";
+import { useConstruction } from "../composition/useConstruction";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
+  const construction = useConstruction(s);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
   const show = (kind: NonNullable<Popup>["kind"]) => {
@@ -24,6 +30,26 @@ export function App() {
     "file.save": () => void s.save(),
     "edit.undo": () => s.controller.undo(),
     "edit.redo": () => s.controller.redo(),
+    "edit.blueprint": async () => {
+      if (await construction.capture()) show("blueprint-save");
+    },
+    "edit.copy": () => void construction.copy(),
+    "edit.duplicate": () => void construction.duplicate(),
+    "edit.cut": () => void construction.copy(true),
+    "edit.paste": () => {
+      if (construction.clipboard) {
+        construction.prepareInsert(construction.clipboard);
+        show("blueprint-insert");
+      }
+    },
+    "edit.delete": construction.remove,
+    "edit.select-all": () => api.current?.selectAll(),
+    "edit.clear-selection": () => api.current?.clearSelection(),
+    "edit.collapse": () => api.current?.collapse(true),
+    "edit.expand": () => api.current?.collapse(false),
+    "build.convert": async () => {
+      if (await construction.convert()) show("patch-review");
+    },
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
     "view.show-problems": () =>
@@ -37,7 +63,26 @@ export function App() {
   };
   const enabled = (id: string) =>
     !s.confirmation &&
+    !construction.busy &&
+    (!popup ||
+      !["blueprint-save", "blueprint-insert", "patch-review"].includes(
+        popup.kind,
+      )) &&
     !!actions[id] &&
+    (![
+      "edit.blueprint",
+      "edit.copy",
+      "edit.cut",
+      "edit.delete",
+      "edit.duplicate",
+      "edit.collapse",
+      "edit.expand",
+    ].includes(id) ||
+      (s.selectedRoots.length > 0 && !s.running && !s.busy)) &&
+    (id !== "edit.paste" ||
+      (!!construction.clipboard && !!s.session.active && !s.running)) &&
+    (id !== "build.convert" ||
+      (!!s.session.active && s.started && !s.busy && !s.running)) &&
     !(s.busy && id.startsWith("file.")) &&
     !(s.running && (id === "file.new" || id === "file.open")) &&
     (id !== "edit.undo" || s.snapshot.canUndo) &&
@@ -49,12 +94,23 @@ export function App() {
     setPopup(null);
     if (enabled(id)) actions[id]();
   };
-  const latest = useRef({ execute, popup });
-  latest.current = { execute, popup };
+  const latest = useRef({ execute, popup, running: s.running });
+  latest.current = { execute, popup, running: s.running };
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (
+        latest.current.popup &&
+        ["blueprint-save", "blueprint-insert", "patch-review"].includes(
+          latest.current.popup.kind,
+        )
+      )
+        return;
       if (e.key === "Escape" && latest.current.popup) {
         setPopup(null);
+        return;
+      }
+      if (e.key === "Escape" && !latest.current.running) {
+        api.current?.clearSelection();
         return;
       }
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "p") {
@@ -132,6 +188,19 @@ export function App() {
               </span>
             </div>
             <span className="spacer" />
+            {commands
+              .filter((c) =>
+                ["edit.blueprint", "build.convert"].includes(c.commandId),
+              )
+              .map((c) => (
+                <button
+                  key={c.commandId}
+                  disabled={!enabled(c.commandId)}
+                  onClick={() => execute(c.commandId)}
+                >
+                  {c.label}
+                </button>
+              ))}
             <button disabled={s.busy} onClick={() => void s.save()}>
               保存
             </button>
@@ -160,6 +229,11 @@ export function App() {
           <div className="workbench">
             <Library
               studio={s}
+              blueprints={construction.blueprints}
+              insert={(blueprint) => {
+                construction.prepareInsert(blueprint);
+                show("blueprint-insert");
+              }}
               search={() => show("blocks")}
               add={(type) => api.current?.add(type)}
             />
@@ -233,6 +307,9 @@ export function App() {
                       }
                     />
                     <span className="spacer" />
+                    {!!s.selectedRoots.length && (
+                      <span>{s.selectedRoots.length} 组选中</span>
+                    )}
                     <button
                       aria-label="缩小画布"
                       onClick={() => api.current?.zoom(-1)}
@@ -256,6 +333,7 @@ export function App() {
                       }, group)
                     }
                     onSelect={s.setSelected}
+                    onSelection={s.setSelectedRoots}
                     onSearch={() => show("blocks")}
                     onContext={(x, y) => setPopup({ kind: "context", x, y })}
                     handle={(value) => {
@@ -321,19 +399,37 @@ export function App() {
           answer={s.answerConfirmation}
         />
       )}
-      {popup && !s.confirmation && (
-        <StudioDialog
-          studio={s}
-          popup={popup}
-          setPopup={setPopup}
-          query={query}
-          setQuery={setQuery}
-          actions={actions}
-          enabled={enabled}
-          execute={execute}
-          add={(type) => api.current?.add(type)}
-        />
-      )}
+      {popup &&
+        ["blueprint-save", "blueprint-insert", "patch-review"].includes(
+          popup.kind,
+        ) &&
+        !s.confirmation && (
+          <ConstructionDialog
+            key={popup.kind}
+            studio={s}
+            construction={construction}
+            kind={popup.kind as ConstructionKind}
+            close={() => setPopup(null)}
+            showReview={() => show("patch-review")}
+          />
+        )}
+      {popup &&
+        !["blueprint-save", "blueprint-insert", "patch-review"].includes(
+          popup.kind,
+        ) &&
+        !s.confirmation && (
+          <StudioDialog
+            studio={s}
+            popup={popup}
+            setPopup={setPopup}
+            query={query}
+            setQuery={setQuery}
+            actions={actions}
+            enabled={enabled}
+            execute={execute}
+            add={(type) => api.current?.add(type)}
+          />
+        )}
     </main>
   );
 }

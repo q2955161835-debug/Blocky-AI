@@ -13,13 +13,13 @@ export const helper = import.meta.url.endsWith("/main.mjs")
     )
   : resolve(root, "apps/studio-host/target/release/blocky-project-io.exe");
 type Reply = {
-  schemaVersion: 'blocky.project-io/v1alpha1';
+  schemaVersion: "blocky.project-io/v1alpha1";
   ok: boolean;
   code?: string;
   files?: Record<string, string>;
   version?: string;
 };
-function request(input: Record<string,unknown>): Promise<Reply> {
+function request(input: Record<string, unknown>): Promise<Reply> {
   if (!existsSync(helper))
     throw new CliError(
       6,
@@ -49,7 +49,11 @@ function request(input: Record<string,unknown>): Promise<Reply> {
       }
       try {
         const reply = JSON.parse(stdout) as Reply;
-        if (typeof reply.ok !== "boolean" || reply.schemaVersion !== 'blocky.project-io/v1alpha1') throw Error();
+        if (
+          typeof reply.ok !== "boolean" ||
+          reply.schemaVersion !== "blocky.project-io/v1alpha1"
+        )
+          throw Error();
         done(reply);
       } catch {
         reject(new CliError(6, "BLK-HOST-001", "原生存储响应无效。"));
@@ -69,7 +73,9 @@ function request(input: Record<string,unknown>): Promise<Reply> {
     child.stderr.resume();
     child.stdin.on("error", () => {});
     child.on("close", () => finish());
-    child.stdin.end(JSON.stringify({schemaVersion:'blocky.project-io/v1alpha1',...input}));
+    child.stdin.end(
+      JSON.stringify({ schemaVersion: "blocky.project-io/v1alpha1", ...input }),
+    );
   });
 }
 export async function doctor() {

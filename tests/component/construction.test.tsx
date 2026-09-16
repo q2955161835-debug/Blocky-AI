@@ -1,0 +1,107 @@
+// @vitest-environment jsdom
+import { afterEach, beforeAll, expect, it, vi } from "vitest";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
+import { useConstruction } from "../../apps/studio-desktop/src/composition/useConstruction";
+import { ConstructionDialog } from "../../apps/studio-desktop/src/app/ConstructionDialog";
+import { projectDigest } from "../../packages/project-model/src";
+vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
+  openProject: vi.fn(),
+  saveProject: vi.fn(),
+  readPreferences: () => ({
+    reduceMotion: false,
+    view: "professional",
+    minimizeToTray: true,
+  }),
+  writePreferences: vi.fn(),
+}));
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
+// jsdom has no modal top layer; this shim only exposes dialog content for component assertions.
+// Focus trapping and native modal behavior remain ordinary-package/F acceptance items.
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+});
+function useEditor() {
+  const studio = useStudio();
+  return { studio, construction: useConstruction(studio) };
+}
+it("saves a real personal blueprint, previews editable blocks, rejects without changes and undoes acceptance", async () => {
+  const hook = renderHook(useEditor);
+  await waitFor(() => expect(hook.result.current.studio.compiling).toBe(false));
+  const before = await projectDigest(
+    hook.result.current.studio.snapshot.project,
+  );
+  act(() => hook.result.current.studio.setSelectedRoots(["research-root"]));
+  await act(() => hook.result.current.construction.capture());
+  act(() => hook.result.current.construction.setName("课堂问答"));
+  await act(() => hook.result.current.construction.save());
+  expect(
+    JSON.parse(localStorage.getItem("blocky.blueprints.v1")!)[0].displayName,
+  ).toBe("课堂问答");
+  act(() =>
+    hook.result.current.construction.prepareInsert(
+      hook.result.current.construction.blueprints[0],
+    ),
+  );
+  await act(() => hook.result.current.construction.previewInsert());
+  const view = render(
+    <ConstructionDialog
+      studio={hook.result.current.studio}
+      construction={hook.result.current.construction}
+      kind="patch-review"
+      close={() => undefined}
+      showReview={() => undefined}
+    />,
+  );
+  expect(screen.getByLabelText("幽灵积木预览").textContent).toContain("智能体");
+  fireEvent.click(screen.getByRole("button", { name: "拒绝" }));
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    before,
+  );
+  expect(hook.result.current.construction.review).toBeUndefined();
+  view.unmount();
+  await act(() => hook.result.current.construction.previewInsert());
+  await act(() => hook.result.current.construction.accept([]));
+  expect(
+    hook.result.current.studio.snapshot.project.workspaces["research-agent"]
+      .blocks.blocks,
+  ).toHaveLength(2);
+  act(() => hook.result.current.studio.controller.undo());
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    before,
+  );
+});
+it("refuses a stale conversion preview and preserves edits made after review", async () => {
+  const hook = renderHook(useEditor);
+  await waitFor(() => expect(hook.result.current.studio.compiling).toBe(false));
+  await act(() => hook.result.current.construction.convert());
+  expect(hook.result.current.construction.candidate?.source.license).toBe(
+    "Apache-2.0",
+  );
+  act(() =>
+    hook.result.current.studio.controller.edit((p) => {
+      p.manifest.displayName = "审阅后修改";
+    }),
+  );
+  const current = await projectDigest(
+    hook.result.current.studio.snapshot.project,
+  );
+  await act(() => hook.result.current.construction.accept([]));
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    current,
+  );
+  expect(hook.result.current.studio.message).toContain("项目已改变");
+});

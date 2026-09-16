@@ -764,3 +764,56 @@ kbd {
   justify-content: flex-end;
   gap: 12px;
 }
+.construction-dialog {
+  width: min(900px, 92vw);
+  max-height: 85vh;
+  overflow: auto;
+}
+.construction-dialog::backdrop {
+  background: #090c12aa;
+}
+.patch-review {
+  padding: 20px;
+}
+.patch-review pre {
+  overflow: auto;
+  max-height: 300px;
+  font-size: 11px;
+  white-space: pre-wrap;
+}
+.patch-diff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.ghost-preview {
+  border: 1px dashed #6e84a0;
+  border-radius: 8px;
+  padding: 12px;
+}
+.ghost-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.ghost-block {
+  border: 2px dashed;
+  border-radius: 8px;
+  padding: 9px 12px;
+  max-width: 100%;
+  background: #202833;
+}
+.ghost-block small {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 5px;
+}
+.ghost-input {
+  margin: 10px 0 0 14px;
+}
+.permission-choice {
+  display: block;
+  margin: 8px 0;
+}

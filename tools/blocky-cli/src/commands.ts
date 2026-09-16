@@ -11,9 +11,11 @@ import { type Args, allow, required, integer } from "./arguments";
 import { envelope, CliError } from "./protocol";
 import { createProject, readProject, doctor } from "./native-store";
 import { configure } from "./configure";
+import { construction, constructionHelp } from "./construction";
 export const help = {
   version: "0.1.0",
   commands: [
+    ...constructionHelp,
     "doctor --json",
     "catalog list [--limit 20] [--cursor 0] --json",
     "catalog show <block-id> --json",
@@ -142,6 +144,8 @@ export async function dispatch(
     return { code: 0, result };
   }
   const moduleList = args.words.slice(0, 3).join(".") === "project.module.list";
+  const constructed = await construction(args, signal);
+  if (constructed) return constructed;
   if (command === "project.configure") return configure(args);
   const known = [
     "project.inspect",

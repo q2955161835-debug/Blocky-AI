@@ -3,16 +3,21 @@ import { canonicalJson, type Workspace } from "@blocky/language-schema";
 import type { RuntimeEvent } from "@blocky/observability";
 import { canvasVisuals } from "./runtime-visuals";
 import { Blockly, registerBlocks, theme } from "../blocks";
+import { installSelection } from "../selection/gestures";
 export type CanvasHandle = {
   add(type: string): void;
   focus(id: string): void;
   zoom(delta: number): void;
+  selectAll(): void;
+  clearSelection(): void;
+  collapse(value: boolean): void;
 };
 type Props = {
   workspace: Workspace;
   moduleId: string;
   onChange(value: Workspace, group?: string): void;
   onSelect(id: string | null): void;
+  onSelection?(ids: string[]): void;
   onSearch(): void;
   onContext(x: number, y: number): void;
   handle: (api: CanvasHandle | null) => void;
@@ -27,6 +32,7 @@ export function Canvas(props: Props) {
     latest = useRef(props),
     editor = useRef<Blockly.WorkspaceSvg | null>(null),
     serialized = useRef("");
+  const selection = useRef<ReturnType<typeof installSelection> | null>(null);
   latest.current = props;
   const [announcement, setAnnouncement] = useState("");
   useEffect(() => {
@@ -37,7 +43,7 @@ export function Canvas(props: Props) {
       renderer: "zelos",
       trashcan: false,
       comments: false,
-      collapse: false,
+      collapse: true,
       disable: false,
       sounds: false,
       move: { scrollbars: true, drag: false, wheel: false },
@@ -62,6 +68,9 @@ export function Canvas(props: Props) {
         return;
       }
       if (event.type === Blockly.Events.SELECTED) {
+        selection.current?.selected(
+          (event as Blockly.Events.Selected).newElementId ?? null,
+        );
         latest.current.onSelect(
           (event as Blockly.Events.Selected).newElementId ?? null,
         );
@@ -98,6 +107,15 @@ export function Canvas(props: Props) {
       zoom(delta) {
         ws.zoomCenter(delta);
       },
+      selectAll() {
+        selection.current?.selectAll();
+      },
+      clearSelection() {
+        selection.current?.clear();
+      },
+      collapse(value) {
+        selection.current?.collapse(value);
+      },
     });
     let space = false,
       pan: { x: number; y: number; sx: number; sy: number; id: number } | null =
@@ -107,11 +125,6 @@ export function Canvas(props: Props) {
         space = true;
         e.preventDefault();
       }
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        ["c", "v", "x"].includes(e.key.toLowerCase())
-      )
-        e.stopPropagation();
       if (e.key === "Tab" && !isInput(e.target)) {
         e.preventDefault();
         latest.current.onSearch();
@@ -179,10 +192,24 @@ export function Canvas(props: Props) {
     el.addEventListener("wheel", wheel, { capture: true, passive: false });
     el.addEventListener("dblclick", dbl);
     el.addEventListener("contextmenu", context, true);
+    selection.current = installSelection(
+      el,
+      ws,
+      (ids) => latest.current.onSelection?.(ids),
+      () => {
+        const value = Blockly.serialization.workspaces.save(ws) as Workspace;
+        if (!value.blocks) value.blocks = { languageVersion: 0, blocks: [] };
+        if (!value.blocks.blocks) value.blocks.blocks = [];
+        serialized.current = canonicalJson(value);
+        latest.current.onChange(value, `move-${crypto.randomUUID()}`);
+      },
+    );
     const observer = new ResizeObserver(() => Blockly.svgResize(ws));
     observer.observe(el);
     return () => {
       observer.disconnect();
+      selection.current?.dispose();
+      selection.current = null;
       ws.removeChangeListener(listener);
       latest.current.handle(null);
       editor.current = null;
@@ -212,6 +239,7 @@ export function Canvas(props: Props) {
     } finally {
       Blockly.Events.enable();
     }
+    selection.current?.refresh();
   }, [props.workspace, props.moduleId]);
   useEffect(() => {
     const ws = editor.current;
@@ -263,7 +291,9 @@ export function Canvas(props: Props) {
         tabIndex={0}
         aria-label="积木画布"
       />
-      <div className="canvas-hint">中键拖动平移 · 滚轮缩放 · Tab 搜索积木</div>
+      <div className="canvas-hint">
+        Shift 多选 · 空白框选 · 中键平移 · 滚轮缩放 · Tab 搜索
+      </div>
       <div className="runtime-status" role="status">
         {announcement}
       </div>

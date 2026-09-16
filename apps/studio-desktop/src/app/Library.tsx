@@ -1,5 +1,6 @@
 import { catalog, categories, beginnerCategories } from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
+import type { Blueprint } from "@blocky/block-catalog";
 const projection: Record<number, number> = {
   0: 0,
   1: 1,
@@ -18,10 +19,14 @@ export function Library({
   studio: s,
   search,
   add,
+  blueprints,
+  insert,
 }: {
   studio: Studio;
   search(): void;
   add(type: string): void;
+  blueprints: Blueprint[];
+  insert(blueprint: Blueprint): void;
 }) {
   const paletteNames =
     s.preferences.view === "beginner" ? beginnerCategories : categories;
@@ -82,6 +87,15 @@ export function Library({
         })}
       </div>
       <div className="module-list">
+        <div className="section-label">个人蓝图</div>
+        {blueprints.map((blueprint) => (
+          <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
+            {blueprint.displayName} ＋
+          </button>
+        ))}
+        {!blueprints.length && (
+          <small className="muted">选择积木后可保存为蓝图</small>
+        )}
         <div className="section-label">项目画布</div>
         {s.snapshot.project.manifest.modules.map((m) => (
           <button

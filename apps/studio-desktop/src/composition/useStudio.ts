@@ -42,6 +42,10 @@ export function useStudio() {
   const [preferences, setPreferences] = useState(readPreferences);
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
+  const [selectedRoots, setSelectedRoots] = useState<string[]>([]);
+  useEffect(() => {
+    setSelectedRoots([]);
+  }, [session.active, snapshot.project.manifest.projectId]);
   const [history, setHistory] = useState<SourceRef[]>([]);
   const [preferredEntryId, setInteractionId] = useState("");
   const activeEntry =
@@ -323,6 +327,8 @@ export function useStudio() {
     setPreferences,
     selected,
     setSelected,
+    selectedRoots,
+    setSelectedRoots,
     focus,
     navigate,
     back,
