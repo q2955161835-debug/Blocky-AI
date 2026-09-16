@@ -13,6 +13,28 @@ import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { Inspector } from "../../apps/studio-desktop/src/app/Inspector";
 import { BottomPanel } from "../../apps/studio-desktop/src/app/BottomPanel";
 import { createStarter } from "../../packages/test-fixtures/src";
+it("revalidates session targets when reopening the same project ID", async () => {
+  const hook = renderHook(() => useStudio());
+  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
+  act(() =>
+    hook.result.current.setSession((s) => ({
+      ...s,
+      tabs: ["citation-service"],
+      active: "citation-service",
+    })),
+  );
+  const p = createStarter();
+  p.manifest.modules = p.manifest.modules.slice(0, 1);
+  delete p.workspaces["citation-service"];
+  io.open.mockResolvedValue({ project: p, handle: "same" });
+  await act(() => hook.result.current.open());
+  expect(hook.result.current.session.tabs).toEqual(["research-agent"]);
+  expect(
+    hook.result.current.session.diagnostics.some(
+      (d) => d.code === "BLK-SESSION-002",
+    ),
+  ).toBe(true);
+});
 const io = vi.hoisted(() => ({ open: vi.fn(), save: vi.fn() }));
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: io.open,

@@ -1,5 +1,7 @@
 # 交互、工具、运行事件与可观察性契约 v1alpha1
 
+阶段 1 消费说明（2026-09-16）：Workspace 块 ID 在模块内唯一，运行入口必须以 `moduleId` 与 `interactionId` 的二元组定位。Runtime 可在入口 ID 全项目唯一时兼容省略模块；有歧义或指定模块不存在时返回 `BLK-RUN-001`，不得执行首个同名入口。CLI 通过 `run preflight` 返回两个字段，`run start --entry <id> --module <id>` 显式选择；桌面选择框使用同一二元组。此补充不修改 v1alpha1 字段或已有稳定 ID，也不要求旧项目重写。正反例由 `packages/runtime-core/tests/entry-scope.test.ts`、CLI 与组件同场景覆盖。
+
 ## 1. 交互清单与工具
 
 右侧交互区只读取编译生成的 `InteractionManifest`，不得扫描画布推测输入类型、技能或操作。工具由只读注册表绑定具体实现；运行时按权限策略决定是否请求批准。

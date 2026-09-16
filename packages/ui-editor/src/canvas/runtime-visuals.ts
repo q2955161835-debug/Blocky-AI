@@ -13,9 +13,8 @@ export function canvasVisuals(events: RuntimeEvent[], moduleId: string) {
     if (event.moduleId !== moduleId) continue;
     const visual = projectVisual(event);
     if (!visual) continue;
-    const previous = result.get(visual.blockId);
     if (visual.state === "idle") {
-      if (previous?.state === "active") result.delete(visual.blockId);
+      result.delete(visual.blockId);
     } else result.set(visual.blockId, { ...visual, sequence: event.sequence });
   }
   return result;

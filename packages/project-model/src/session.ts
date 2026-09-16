@@ -1,10 +1,15 @@
-import type { Project } from "@blocky/language-schema";
+import {
+  diagnostic,
+  type Diagnostic,
+  type Project,
+} from "@blocky/language-schema";
 export type CanvasViewport = {
   offsetX: number;
   offsetY: number;
   scale: number;
 };
 export type Session = {
+  diagnostics: Diagnostic[];
   tabs: string[];
   active: string;
   panel: boolean;
@@ -32,16 +37,29 @@ function viewport(v: unknown): CanvasViewport | undefined {
 }
 export function restoreSession(project: Project, input: unknown): Session {
   const ids = project.manifest.modules.map((m) => m.moduleId);
+  const diagnostics: Diagnostic[] = [];
+  const report = (code: string, message: string) =>
+    diagnostics.push({
+      ...diagnostic(code, message, { projectId: project.manifest.projectId }),
+      severity: "info",
+    });
+  let removedTargets = false;
   let raw = object(input);
   if (raw.schemaVersion !== undefined) {
     if (
       raw.schemaVersion !== "blocky.workspace-session/v1alpha1" ||
       raw.projectId !== project.manifest.projectId
-    )
+    ) {
+      report(
+        "BLK-SESSION-001",
+        "未读取不兼容或其他项目的会话，已恢复默认布局。请重新打开需要的画布。",
+      );
       raw = {};
-    else {
-      const tabs = (Array.isArray(raw.openTabs) ? raw.openTabs : [])
-        .map(object)
+    } else {
+      const allTabs = (Array.isArray(raw.openTabs) ? raw.openTabs : []).map(
+        object,
+      );
+      const tabs = allTabs
         .filter(
           (t) =>
             t.kind === "canvas" &&
@@ -49,6 +67,7 @@ export function restoreSession(project: Project, input: unknown): Session {
             ids.includes(t.targetId),
         )
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      removedTargets = tabs.length !== allTabs.length;
       const panel = object(raw.bottomPanel);
       const views = (Array.isArray(raw.canvasViews) ? raw.canvasViews : []).map(
         object,
@@ -68,7 +87,7 @@ export function restoreSession(project: Project, input: unknown): Session {
       };
     }
   }
-  const tabs = Array.isArray(raw.tabs)
+  let tabs = Array.isArray(raw.tabs)
     ? [
         ...new Set(
           raw.tabs.filter(
@@ -77,7 +96,18 @@ export function restoreSession(project: Project, input: unknown): Session {
         ),
       ]
     : ids;
+  removedTargets ||=
+    Array.isArray(raw.tabs) &&
+    raw.tabs.some((id) => typeof id !== "string" || !ids.includes(id));
+  if (removedTargets) {
+    report(
+      "BLK-SESSION-002",
+      "已跳过不存在或不支持的会话标签。可从项目画布列表重新打开画布。",
+    );
+    if (!tabs.length && ids.length) tabs = [ids[0]];
+  }
   return {
+    diagnostics,
     tabs,
     active:
       typeof raw.active === "string" && tabs.includes(raw.active)

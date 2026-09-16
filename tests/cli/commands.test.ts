@@ -245,6 +245,41 @@ it("configures a declared field through the shared editor and keeps the source a
   invalid[invalid.indexOf(target)] = join(directory, "invalid-field.blocky");
   expect(run(invalid).code).toBe(3);
 });
+it("routes duplicate module-local entry IDs by --module and rejects ambiguous requests", async () => {
+  const p = createStarter();
+  p.manifest.modules.push({
+    ...p.manifest.modules[0],
+    moduleId: "teacher-agent",
+    workspaceRef: "modules/teacher-agent/workspace.json",
+  });
+  p.workspaces["teacher-agent"] = structuredClone(
+    p.workspaces["research-agent"],
+  );
+  p.workspaces["teacher-agent"].blocks.blocks[0].fields!.ROLE = "科学教师";
+  const target = join(directory, "scoped-entries.blocky");
+  await createProject(target, p);
+  const args = [
+    "run",
+    "start",
+    target,
+    "--entry",
+    "on-question",
+    "--simulate",
+    "--input",
+    "水循环",
+    "--jsonl",
+  ];
+  expect(run(args).code).toBe(3);
+  const result = run([...args, "--module", "teacher-agent"]);
+  expect(result.code).toBe(0);
+  expect(result.lines.at(-1).data.answer).toContain("学习要点");
+  expect(result.lines.some((e) => e.moduleId === "research-agent")).toBe(false);
+  expect(
+    result.lines.some(
+      (e) => e.moduleId === "teacher-agent" && e.type === "block.started",
+    ),
+  ).toBe(true);
+});
 it("routes --entry to exactly one adjacent interaction stack", async () => {
   const p = createStarter();
   const root = p.workspaces["research-agent"].blocks.blocks[0];

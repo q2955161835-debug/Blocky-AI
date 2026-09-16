@@ -27,6 +27,36 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
 });
+it("selects the second module even when its entry block ID is unchanged", async () => {
+  const project = createStarter();
+  project.manifest.modules.push({
+    ...project.manifest.modules[0],
+    moduleId: "teacher-agent",
+    workspaceRef: "modules/teacher-agent/workspace.json",
+  });
+  project.workspaces["teacher-agent"] = structuredClone(
+    project.workspaces["research-agent"],
+  );
+  const hook = renderHook(() => useStudio());
+  act(() => hook.result.current.controller.replace(project));
+  await waitFor(() =>
+    expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
+  );
+  render(<RunPanel studio={hook.result.current} />);
+  fireEvent.change(screen.getByLabelText("运行入口"), {
+    target: { value: JSON.stringify(["teacher-agent", "on-question"]) },
+  });
+  await act(() => hook.result.current.run());
+  expect(hook.result.current.result?.status).toBe("completed");
+  expect(
+    hook.result.current.events.some(
+      (e) => e.moduleId === "teacher-agent" && e.blockId === "research-root",
+    ),
+  ).toBe(true);
+  expect(
+    hook.result.current.events.some((e) => e.moduleId === "research-agent"),
+  ).toBe(false);
+});
 it("runs the selected InteractionManifest entry instead of always executing the first agent", async () => {
   const project = createStarter();
   const second = structuredClone(
@@ -51,7 +81,7 @@ it("runs the selected InteractionManifest entry instead of always executing the 
   );
   render(<RunPanel studio={hook.result.current} />);
   fireEvent.change(screen.getByLabelText("运行入口"), {
-    target: { value: "on-question-second" },
+    target: { value: JSON.stringify(["research-agent", "on-question-second"]) },
   });
   await act(() => hook.result.current.run());
   expect(hook.result.current.result?.answer).toContain("学习要点");

@@ -201,6 +201,13 @@ export type InteractionManifest = {
     executionRequirements: string[];
   }[];
 };
+/** UI/session identity only; wire protocols retain both stable IDs. */
+export function interactionKey(entry: {
+  moduleId: string;
+  interactionId: string;
+}) {
+  return JSON.stringify([entry.moduleId, entry.interactionId]);
+}
 export type ToolContract = {
   schemaVersion: "blocky.tool/v1alpha1";
   toolId: string;

@@ -25,3 +25,6 @@ path 只存在于本机 CLI→存储的单次 IPC，不返回 UI、日志或项�
 响应共有字段 schemaVersion/ok；成功 version 返回 version，read 返回 files，create 无额外数据；失败只返回稳定 code。程序 exit 0/3 供 CLI 转换为用户退出码。协议不存盘，包含项目事实的 stdin/stdout 不作为日志记录。
 
 迁移：新增接口没有旧磁盘状态；未知版本直接拒绝，不静默降级。正反机器夹具和消费者测试位于 `tests/cli/commands.test.ts`、原生二进制模块测试、`apps/studio-host/src/project_store.rs`。
+# 运行入口选择补充
+
+`run start` 支持 `--module <moduleId>`，与 `--entry <interactionId>` 共同定位。未指定入口时选择指定画布（或项目）的第一个入口；显式入口在多个画布重名时必须带 `--module`，否则退出 3 / `BLK-RUN-001`，无积木执行事件。发现入口使用 `run preflight`。GUI 与 Runtime 同样使用两个稳定 ID，不按显示名或数组首项解析重名入口。

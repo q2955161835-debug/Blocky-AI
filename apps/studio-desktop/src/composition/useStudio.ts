@@ -15,7 +15,7 @@ import {
   projectLog,
   type RuntimeEvent,
 } from "@blocky/observability";
-import type { SourceRef } from "@blocky/language-schema";
+import { interactionKey, type SourceRef } from "@blocky/language-schema";
 import {
   openProject,
   saveProject,
@@ -46,7 +46,7 @@ export function useStudio() {
   const [preferredEntryId, setInteractionId] = useState("");
   const activeEntry =
     compiled?.interaction.entries.find(
-      (e) => e.interactionId === preferredEntryId,
+      (e) => interactionKey(e) === preferredEntryId,
     ) ?? compiled?.interaction.entries[0];
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
     [result, setResult] = useState<RunResult>(),
@@ -101,6 +101,16 @@ export function useStudio() {
       sessionLoaded.current = id;
       setHistory([]);
       setFocus(undefined);
+    } else {
+      setSession((current) => {
+        const restored = restoreSession(snapshot.project, current);
+        return {
+          ...restored,
+          diagnostics: restored.diagnostics.length
+            ? restored.diagnostics
+            : current.diagnostics,
+        };
+      });
     }
   }, [snapshot.project]);
   useEffect(() => {
@@ -181,6 +191,7 @@ export function useStudio() {
         entry.interactionId,
         question,
         {
+          moduleId: entry.moduleId,
           signal: abort.current.signal,
           onEvent(event) {
             setEvents((current) => [...current, event].slice(-500));
@@ -247,6 +258,7 @@ export function useStudio() {
           ))
         )
           return;
+        sessionLoaded.current = "";
         controller.replace(opened.project);
         handle.current = opened.handle;
         setStarted(true);
@@ -327,7 +339,15 @@ export function useStudio() {
     open,
     fresh,
     updateField,
-    interactionId: activeEntry?.interactionId ?? "",
+    interactionId: activeEntry ? interactionKey(activeEntry) : "",
+    canRun:
+      !busy &&
+      !running &&
+      !compiling &&
+      !confirmation &&
+      !!activeEntry &&
+      !compiled?.diagnostics.some((d) => d.severity === "error"),
+    diagnostics: [...(compiled?.diagnostics ?? []), ...session.diagnostics],
     setInteractionId,
     confirmation,
     answerConfirmation,

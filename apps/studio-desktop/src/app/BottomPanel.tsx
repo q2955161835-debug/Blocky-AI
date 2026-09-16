@@ -23,8 +23,8 @@ export function BottomPanel({ studio: s }: { studio: Studio }) {
             }
           >
             {label}
-            {id === "problems" && !!s.compiled?.diagnostics.length && (
-              <b>{s.compiled.diagnostics.length}</b>
+            {id === "problems" && !!s.diagnostics.length && (
+              <b>{s.diagnostics.length}</b>
             )}
           </button>
         ))}
@@ -39,14 +39,14 @@ export function BottomPanel({ studio: s }: { studio: Studio }) {
       {s.session.panel && (
         <div className="panel-body">
           {s.session.view === "problems" &&
-            (s.compiled?.diagnostics.length ? (
-              s.compiled.diagnostics.map((d) => (
+            (s.diagnostics.length ? (
+              s.diagnostics.map((d) => (
                 <button
-                  className="log-row error"
+                  className={`log-row ${d.severity}`}
                   key={d.diagnosticId}
                   onClick={() => d.source && s.navigate(d.source)}
                 >
-                  <span>●</span>
+                  <span>{d.severity === "info" ? "ℹ" : "●"}</span>
                   <code>{d.code}</code>
                   <span>{d.message}</span>
                   <small>{d.source?.blockId}</small>

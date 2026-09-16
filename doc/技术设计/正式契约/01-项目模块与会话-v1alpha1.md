@@ -109,6 +109,7 @@ type WorkspaceSessionState = {
 - `canvas.targetId` 必须引用既有 `moduleId`；`browser.targetId` 必须引用既有 `surfaceId`。
 - 关闭标签只更新会话，不删除模块、Workspace 或 AppSurface。
 - 恢复时找不到目标的标签应被跳过并产生信息级诊断，不能按显示名猜测。
+- 阶段 1 会话恢复使用 `BLK-SESSION-001` 提示未消费不兼容/其他项目会话，使用 `BLK-SESSION-002` 提示跳过失效或尚不支持的标签；均为信息级诊断，展示在问题面板，不序列化进会话或项目。失效标签导致无可用画布时打开第一个现有画布，用户主动关闭全部标签仍保持空布局。同 ID 项目重开也必须重新校验目标集合。正反例见 `packages/project-model/tests/session.test.ts` 与组件重开测试。
 - 浏览器标签只能打开已存在的 AppSurface，不能因打开标签而凭空创建页面。
 - `order` 从零开始且在同一会话中唯一；无有效活动标签时省略 `activeTabId`。
 - `canvasViews` 与 `browserViews` 以 `tabId` 关联已打开标签；关闭标签时同时清除其视口状态。缩放必须为正数，浏览器视口尺寸必须为正整数。

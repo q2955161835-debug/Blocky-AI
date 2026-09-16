@@ -42,8 +42,7 @@ export function App() {
     !(s.running && (id === "file.new" || id === "file.open")) &&
     (id !== "edit.undo" || s.snapshot.canUndo) &&
     (id !== "edit.redo" || s.snapshot.canRedo) &&
-    (id !== "run.start" ||
-      (!s.running && !s.compiling && !s.compiled?.diagnostics.length)) &&
+    (id !== "run.start" || (s.started && s.canRun)) &&
     (id !== "run.stop" || s.running) &&
     (id !== "view.back" || s.canGoBack);
   const execute = (id: string) => {

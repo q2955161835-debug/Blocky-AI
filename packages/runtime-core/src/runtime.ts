@@ -40,6 +40,7 @@ export class Runtime {
     interactionId: string,
     question: string,
     options: {
+      moduleId?: string;
       signal?: AbortSignal;
       onEvent?: (event: RuntimeEvent) => void;
     } = {},
@@ -80,9 +81,13 @@ export class Runtime {
       signal.throwIfAborted();
       if (compiled.diagnostics.some((d) => d.severity === "error"))
         throw Error(compiled.diagnostics[0].code);
-      const entry = compiled.interaction.entries.find(
-        (e) => e.interactionId === interactionId,
+      const entries = compiled.interaction.entries.filter(
+        (e) =>
+          e.interactionId === interactionId &&
+          (options.moduleId === undefined || e.moduleId === options.moduleId),
       );
+      if (entries.length !== 1) throw Error("BLK-RUN-001");
+      const entry = entries[0];
       if (!entry) throw Error("BLK-RUN-001");
       const adapters = this.options.adapters ?? localAdapters();
       const capabilities = this.options.capabilities ?? ["knowledge.read"];

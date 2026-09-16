@@ -1,6 +1,20 @@
 import { expect, it } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
 import { restoreSession, serializeSession } from "../src/session";
+it("reports rejected session versions and removed targets without persisting diagnostics", () => {
+  const p = createStarter();
+  expect(
+    restoreSession(p, { schemaVersion: "unknown" }).diagnostics[0],
+  ).toMatchObject({ severity: "info", code: "BLK-SESSION-001" });
+  const recovered = restoreSession(p, { tabs: ["missing"], active: "missing" });
+  expect(recovered.tabs).toEqual(["research-agent"]);
+  expect(recovered.diagnostics[0]).toMatchObject({
+    severity: "info",
+    code: "BLK-SESSION-002",
+  });
+  expect(serializeSession(p, recovered)).not.toHaveProperty("diagnostics");
+  expect(restoreSession(p, { tabs: [], active: "" }).tabs).toEqual([]);
+});
 it("removes stale tabs without changing project or allowing invalid layout", () => {
   const p = createStarter();
   const before = JSON.stringify(p);

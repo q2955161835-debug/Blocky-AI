@@ -27,7 +27,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> --simulate --input <question> [--entry <id>] [--timeout 30000] --jsonl",
+    "run start <file.blocky> --simulate --input <question> [--entry <id>] [--module <id>] [--timeout 30000] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -156,7 +156,7 @@ export async function dispatch(
   allow(
     args,
     command === "run.start"
-      ? ["simulate", "jsonl", "input", "entry", "timeout"]
+      ? ["simulate", "jsonl", "input", "entry", "module", "timeout"]
       : ["json"],
     moduleList ? 4 : 3,
   );
@@ -248,13 +248,23 @@ export async function dispatch(
   const question = required(args, "input");
   if (new TextEncoder().encode(question).length > 16000)
     throw new CliError(2, "BLK-CLI-002", "问题输入超过 16000 字节。");
-  const entry =
-    args.options.get("entry") ?? compiled.interaction.entries[0]?.interactionId;
-  if (
-    typeof entry !== "string" ||
-    !compiled.interaction.entries.some((e) => e.interactionId === entry)
-  )
-    throw new CliError(3, "BLK-RUN-001", "交互入口不存在。");
+  const moduleId = args.options.get("module");
+  const candidates = compiled.interaction.entries.filter(
+    (e) => moduleId === undefined || e.moduleId === moduleId,
+  );
+  const requested = args.options.get("entry");
+  const matches =
+    requested === undefined
+      ? candidates.slice(0, 1)
+      : candidates.filter((e) => e.interactionId === requested);
+  if (matches.length !== 1)
+    throw new CliError(
+      3,
+      "BLK-RUN-001",
+      "交互入口不存在或不唯一。",
+      "使用 run preflight 查找入口，并用 --module 指定画布。",
+    );
+  const entry = matches[0];
   const abort = new AbortController(),
     cancel = () => abort.abort();
   signal.addEventListener("abort", cancel, { once: true });
@@ -262,7 +272,8 @@ export async function dispatch(
   const timeout = setTimeout(cancel, integer(args, "timeout", 30000, 300000));
   try {
     const runtime = new Runtime({ delayMs: 1 });
-    const result = await runtime.run(project, entry, question, {
+    const result = await runtime.run(project, entry.interactionId, question, {
+      moduleId: entry.moduleId,
       signal: abort.signal,
       onEvent: write,
     });

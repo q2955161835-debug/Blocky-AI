@@ -1,4 +1,5 @@
 import type { Studio } from "../composition/useStudio";
+import { interactionKey } from "@blocky/language-schema";
 export function RunPanel({ studio: s }: { studio: Studio }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
@@ -23,12 +24,20 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
               <select
                 aria-label="运行入口"
                 value={s.interactionId}
-                disabled={s.running}
+                disabled={s.running || s.busy}
                 onChange={(e) => s.setInteractionId(e.target.value)}
               >
                 {entries.map((entry) => (
-                  <option key={entry.interactionId} value={entry.interactionId}>
-                    {entry.displayName}
+                  <option
+                    key={interactionKey(entry)}
+                    value={interactionKey(entry)}
+                  >
+                    {entry.displayName} ·{" "}
+                    {
+                      s.snapshot.project.manifest.modules.find(
+                        (m) => m.moduleId === entry.moduleId,
+                      )?.displayName
+                    }
                   </option>
                 ))}
               </select>
@@ -36,7 +45,7 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
           )}
           <label className="prompt-label">
             {
-              entries.find((entry) => entry.interactionId === s.interactionId)
+              entries.find((entry) => interactionKey(entry) === s.interactionId)
                 ?.displayName
             }
             <textarea
@@ -50,9 +59,7 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
             <span className="muted">文字输入</span>
             <button
               className="primary"
-              disabled={
-                s.running || s.compiling || !!s.compiled?.diagnostics.length
-              }
+              disabled={!s.canRun}
               onClick={() => void s.run()}
             >
               ▶ 运行
