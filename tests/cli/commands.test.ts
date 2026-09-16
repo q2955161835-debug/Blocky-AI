@@ -10,7 +10,119 @@ import {
 } from "../../tools/blocky-cli/src/native-store";
 import { createStarter } from "../../packages/test-fixtures/src";
 import { digest } from "../../packages/language-schema/src";
+import { canonicalJson } from "../../packages/language-schema/src";
+import { makePatch } from "../../packages/builder-protocol/src";
+import { encodeProject } from "../../packages/project-format/src";
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
+const native = resolve("tools/blocky-cli/dist/bin/blocky-project-io.exe");
+function nativeRequest(value: object) {
+  const child = spawnSync(native, [], {
+    input: JSON.stringify({
+      schemaVersion: "blocky.project-io/v1alpha1",
+      ...value,
+    }),
+    encoding: "utf8",
+    windowsHide: true,
+    timeout: 20000,
+  });
+  return { code: child.status, value: JSON.parse(child.stdout) };
+}
+it("has an independent native patch gate for stale bases, capability grants and safe output", async () => {
+  const project = createStarter();
+  project.resources["product-handbook"].capabilityRequirements = [
+    "private.read",
+  ];
+  project.workspaces[
+    "citation-service"
+  ].blocks.blocks[0].inputs!.BODY.block!.disabled = true;
+  const patch = await makePatch(project, [
+    {
+      op: "block.add",
+      moduleId: "research-agent",
+      blockId: "guard-query",
+      payload: {
+        type: "core.knowledge.retrieve",
+        id: "guard-query",
+        fields: { RESOURCE: "product-handbook" },
+      },
+    },
+  ]);
+  const base = {
+    operation: "validate-patch",
+    originalJson: canonicalJson(project),
+    patch,
+  };
+  expect(nativeRequest({ ...base, approved: [] }).value.code).toBe(
+    "BLK-PATCH-003",
+  );
+  expect(nativeRequest({ ...base, approved: patch.permissionDelta }).code).toBe(
+    0,
+  );
+  expect(
+    nativeRequest({
+      ...base,
+      patch: { ...patch, baseDigest: "0".repeat(64) },
+      approved: patch.permissionDelta,
+    }).value.code,
+  ).toBe("BLK-PATCH-001");
+  const input = join(directory, "native-base.blocky"),
+    target = join(directory, "native-patch.blocky");
+  expect(
+    nativeRequest({
+      operation: "create",
+      path: input,
+      files: encodeProject(project),
+    }).code,
+  ).toBe(0);
+  expect(
+    nativeRequest({
+      ...base,
+      operation: "apply-patch",
+      source: input,
+      path: target,
+      approved: [],
+    }).value.code,
+  ).toBe("BLK-PATCH-003");
+  await expect(readFile(target)).rejects.toThrow();
+  expect(
+    nativeRequest({
+      ...base,
+      operation: "apply-patch",
+      source: input,
+      path: target,
+      approved: patch.permissionDelta,
+    }).code,
+  ).toBe(0);
+  const bytes = await readFile(target);
+  expect(
+    nativeRequest({
+      ...base,
+      operation: "apply-patch",
+      source: input,
+      path: target,
+      approved: patch.permissionDelta,
+    }).value.code,
+  ).toBe("BLK-CONFLICT-001");
+  expect(await readFile(target)).toEqual(bytes);
+  const attack = join(directory, "untrusted-patch.json");
+  await writeFile(
+    attack,
+    JSON.stringify({
+      ...patch,
+      diagnostics: [{ apiKey: "TEST_MARKER_NOT_A_KEY" }],
+    }),
+  );
+  const rejected = run([
+    "patch",
+    "preview",
+    input,
+    "--patch",
+    attack,
+    "--json",
+  ]);
+  expect(rejected.code).toBe(3);
+  expect(JSON.stringify(rejected.lines)).not.toContain("TEST_MARKER_NOT_A_KEY");
+});
 let directory: string, file: string;
 function run(args: string[]) {
   const p = spawnSync(process.execPath, [cli, ...args], {

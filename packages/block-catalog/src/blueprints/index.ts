@@ -31,6 +31,7 @@ const block: z.ZodType<WorkspaceBlock> = z.lazy(() =>
     })
     .strict(),
 );
+export const workspaceBlockShape = block;
 const schema = z
   .object({
     schemaVersion: z.literal("blocky.blueprint/v1alpha1"),

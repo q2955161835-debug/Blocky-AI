@@ -26,6 +26,16 @@ fn main_only(window: &tauri::WebviewWindow) -> Result<(), String> {
     }
 }
 #[tauri::command]
+pub fn validate_patch(
+    window: tauri::WebviewWindow,
+    original_json: String,
+    patch: serde_json::Value,
+    approved: Vec<String>,
+) -> Result<serde_json::Value, String> {
+    main_only(&window)?;
+    blocky_studio::patch_guard::validate(&original_json, &patch, &approved)
+}
+#[tauri::command]
 pub async fn open_project(
     window: tauri::WebviewWindow,
     state: tauri::State<'_, Handles>,

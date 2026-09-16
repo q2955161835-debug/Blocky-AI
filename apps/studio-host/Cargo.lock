@@ -224,9 +224,11 @@ dependencies = [
 name = "blocky-studio"
 version = "0.1.0"
 dependencies = [
+ "regex",
  "rfd",
  "serde",
  "serde_json",
+ "sha2",
  "tauri",
  "tauri-build",
  "tauri-plugin-wdio",

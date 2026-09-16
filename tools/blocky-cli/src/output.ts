@@ -16,7 +16,21 @@ export function output(value: unknown): string {
     if (Array.isArray(v)) return v.map(visit);
     if (v && typeof v === "object")
       return Object.fromEntries(
-        Object.entries(v).map(([k, item]) => [String(visit(k)), visit(item)]),
+        Object.entries(v).map(([k, item]) => {
+          const isReference = [
+            "secretRef",
+            "secretRefs",
+            "secretBindings",
+          ].includes(k);
+          if (
+            !isReference &&
+            /authorization|cookie|password|api[_-]?key|token|secret/i.test(k)
+          ) {
+            changed = true;
+            return [String(visit(k)), "[已脱敏]"];
+          }
+          return [String(visit(k)), visit(item)];
+        }),
       );
     return v;
   };

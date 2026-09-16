@@ -11,6 +11,7 @@ import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
 import { conversionCandidate } from "@blocky/conversion-core";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
+import { validatePatch } from "./host";
 type Review = Awaited<ReturnType<typeof previewPatch>>;
 type Candidate = Awaited<ReturnType<typeof conversionCandidate>>;
 export function useConstruction(studio: Studio) {
@@ -150,6 +151,7 @@ export function useConstruction(studio: Studio) {
         studio.controller,
         review.patch,
         approved,
+        validatePatch,
       );
       const first = applied.patch.operations[0];
       studio.navigate({
@@ -223,7 +225,7 @@ export function useConstruction(studio: Studio) {
           payload: root,
         })),
       );
-      await applyPatch(studio.controller, patch, []);
+      await applyPatch(studio.controller, patch, [], validatePatch);
       studio.navigate({
         projectId: project.manifest.projectId,
         moduleId,

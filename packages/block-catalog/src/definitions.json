@@ -1,0 +1,84 @@
+[
+  {
+    "type": "core.agent",
+    "label": "智能体",
+    "category": 1,
+    "color": "#7660c9",
+    "fields": [
+      "ROLE"
+    ],
+    "inputs": [
+      "BODY"
+    ]
+  },
+  {
+    "type": "core.interaction.chat",
+    "label": "收到问题",
+    "category": 0,
+    "color": "#cc8a18",
+    "fields": [
+      "NAME"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.module.call",
+    "label": "调用模块",
+    "category": 8,
+    "color": "#b55c91",
+    "fields": [
+      "MODULE",
+      "EXPORT",
+      "INPUT",
+      "OUTPUT"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.model.compose",
+    "label": "组织回答",
+    "category": 3,
+    "color": "#5178ce",
+    "fields": [
+      "RESOURCE"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.answer",
+    "label": "回答",
+    "category": 11,
+    "color": "#45997e",
+    "fields": [
+      "STYLE"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.tool.entry",
+    "label": "工具入口",
+    "category": 6,
+    "color": "#418eac",
+    "fields": [
+      "EXPORT"
+    ],
+    "inputs": [
+      "BODY"
+    ]
+  },
+  {
+    "type": "core.knowledge.retrieve",
+    "label": "查找资料",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE"
+    ],
+    "inputs": [],
+    "statement": true
+  }
+]

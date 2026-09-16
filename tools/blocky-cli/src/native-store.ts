@@ -4,6 +4,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { encodeProject, decodeProject } from "@blocky/project-format";
 import type { Project } from "@blocky/language-schema";
+import { canonicalJson } from "@blocky/language-schema";
 import { CliError } from "./protocol";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = import.meta.url.endsWith("/main.mjs")
@@ -18,6 +19,7 @@ type Reply = {
   code?: string;
   files?: Record<string, string>;
   version?: string;
+  project?: Project;
 };
 function request(input: Record<string, unknown>): Promise<Reply> {
   if (!existsSync(helper))
@@ -113,4 +115,45 @@ export async function createProject(path: string, project: Project) {
       "项目未写入，请检查目标目录和输入格式。",
     );
   }
+}
+export async function validatePatch(
+  project: Project,
+  patch: unknown,
+  approved: string[],
+) {
+  const reply = await request({
+    operation: "validate-patch",
+    originalJson: canonicalJson(project),
+    patch,
+    approved,
+  });
+  if (!reply.ok || !reply.project)
+    throw new CliError(
+      reply.code === "BLK-PATCH-001" ? 5 : 3,
+      reply.code ?? "BLK-PATCH-002",
+      "原生补丁校验失败。",
+    );
+  return reply.project;
+}
+export async function applyProjectPatch(
+  source: string,
+  path: string,
+  project: Project,
+  patch: unknown,
+  approved: string[],
+) {
+  const reply = await request({
+    operation: "apply-patch",
+    source: resolve(source),
+    path: resolve(path),
+    originalJson: canonicalJson(project),
+    patch,
+    approved,
+  });
+  if (!reply.ok)
+    throw new CliError(
+      ["BLK-CONFLICT-001", "BLK-PATCH-001"].includes(reply.code ?? "") ? 5 : 3,
+      reply.code ?? "BLK-PATCH-002",
+      "原生补丁未写入，原项目保留。",
+    );
 }

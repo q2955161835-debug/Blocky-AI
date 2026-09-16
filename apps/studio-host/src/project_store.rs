@@ -44,7 +44,7 @@ fn reference(s: &str) -> bool {
                 )
         })
 }
-fn stable(s: &str) -> bool {
+pub(crate) fn stable(s: &str) -> bool {
     let mut chars = s.chars();
     if !matches!(chars.next(), Some('a'..='z')) {
         return false;
@@ -253,6 +253,13 @@ pub fn save_archive(path: &Path, files: &ProjectFiles) -> Result<(), String> {
 }
 pub fn create_archive(path: &Path, files: &ProjectFiles) -> Result<(), String> {
     write_archive(path, files, false, || Ok(()))
+}
+pub fn create_archive_checked(
+    path: &Path,
+    files: &ProjectFiles,
+    check: impl FnOnce() -> Result<(), String>,
+) -> Result<(), String> {
+    write_archive(path, files, false, check)
 }
 fn save_with_check(
     path: &Path,

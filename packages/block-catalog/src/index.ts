@@ -5,6 +5,7 @@ export {
   instantiateBlueprint,
   defaultBindings,
   walkBlocks,
+  workspaceBlockShape,
   type Blueprint,
   type BlueprintBindings,
 } from "./blueprints";

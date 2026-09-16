@@ -11,7 +11,8 @@ fn main() {
         .manage(commands::Handles::default())
         .invoke_handler(tauri::generate_handler![
             commands::open_project,
-            commands::save_project
+            commands::save_project,
+            commands::validate_patch
         ])
         .run(tauri::generate_context!())
         .expect("Blocky Studio could not start");

@@ -2,6 +2,30 @@ import { expect, it } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
 import { ProjectController, projectDigest } from "../../project-model/src";
 import { makePatch, previewPatch, applyPatch } from "../src";
+it("rejects untrusted diagnostic metadata and undeclared block state before preview", async () => {
+  const project = createStarter();
+  const patch = await makePatch(project, [
+    {
+      op: "block.add",
+      moduleId: "research-agent",
+      blockId: "safe-query",
+      payload: {
+        type: "core.knowledge.retrieve",
+        id: "safe-query",
+        fields: { RESOURCE: "product-handbook" },
+      },
+    },
+  ]);
+  await expect(
+    previewPatch(project, {
+      ...patch,
+      diagnostics: [{ apiKey: "test-value-only" }],
+    }),
+  ).rejects.toThrow("BLK-PATCH-002");
+  const altered = structuredClone(patch) as any;
+  altered.operations[0].payload.extraState = { token: "test-value-only" };
+  await expect(previewPatch(project, altered)).rejects.toThrow("BLK-PATCH-002");
+});
 it("rechecks the live transaction after asynchronous preview validation", async () => {
   const controller = new ProjectController(createStarter());
   const patch = await makePatch(controller.getSnapshot().project, [

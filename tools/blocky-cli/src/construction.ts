@@ -8,7 +8,7 @@ import {
 import { ProjectController, projectDigest } from "@blocky/project-model";
 import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
 import { conversionCandidate } from "@blocky/conversion-core";
-import { readProject, createProject } from "./native-store";
+import { readProject, applyProjectPatch, validatePatch } from "./native-store";
 import { type Args, allow, required } from "./arguments";
 import { envelope, CliError } from "./protocol";
 import { artifactInfo, readJsonArtifact, writeJsonArtifact } from "./artifacts";
@@ -183,10 +183,10 @@ export async function construction(args: Args, signal: AbortSignal) {
       typeof args.options.get("approve-permissions") === "string"
         ? String(args.options.get("approve-permissions")).split(",")
         : [];
-    await applyPatch(controller, patch, approvals);
+    await applyPatch(controller, patch, approvals, validatePatch);
     signal.throwIfAborted();
     const output = required(args, "output");
-    await createProject(output, controller.getSnapshot().project);
+    await applyProjectPatch(args.words[2], output, project, patch, approvals);
     const result = envelope(command, {
       digest: await projectDigest(controller.getSnapshot().project),
       changes: preview.changes,

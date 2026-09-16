@@ -1,6 +1,19 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { encodeProject, decodeProject } from "@blocky/project-format";
 import type { Project } from "@blocky/language-schema";
+import { canonicalJson } from "@blocky/language-schema";
+export async function validatePatch(
+  project: Project,
+  patch: unknown,
+  approved: string[],
+) {
+  if (!isTauri()) throw Error("原生补丁校验不可用");
+  return invoke<Project>("validate_patch", {
+    originalJson: canonicalJson(project),
+    patch,
+    approved,
+  });
+}
 type Opened = {
   handle: string;
   files: Record<string, string>;

@@ -22,6 +22,12 @@ vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
     minimizeToTray: true,
   }),
   writePreferences: vi.fn(),
+  validatePatch: async (project: any, patch: unknown) =>
+    (
+      await (
+        await import("../../packages/builder-protocol/src")
+      ).previewPatch(project, patch)
+    ).next,
 }));
 afterEach(() => {
   cleanup();
