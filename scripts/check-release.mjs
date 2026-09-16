@@ -53,10 +53,20 @@ for (const path of files) {
 const testBinary = await readFile(
   "try/native-e2e-target/release/blocky-studio.exe",
 );
-const testAssets=await readdir("try/native-test-web/assets");
-let testHookFound=false;
-for(const name of testAssets)if(name.endsWith(".js")&&(await readFile(join("try/native-test-web/assets",name),"utf8")).includes("__BLOCKY_ACCEPTANCE__"))testHookFound=true;
-const positiveControl = testHookFound && includes(testBinary, "acceptance_round_trip") && includes(testBinary,"wdio");
+const testAssets = await readdir("try/native-test-web/assets");
+let testHookFound = false;
+for (const name of testAssets)
+  if (
+    name.endsWith(".js") &&
+    (await readFile(join("try/native-test-web/assets", name), "utf8")).includes(
+      "__BLOCKY_ACCEPTANCE__",
+    )
+  )
+    testHookFound = true;
+const positiveControl =
+  testHookFound &&
+  includes(testBinary, "acceptance_round_trip") &&
+  includes(testBinary, "wdio");
 const report = {
   schemaVersion: "blocky.release-scan/v1",
   checkedAt: new Date().toISOString(),

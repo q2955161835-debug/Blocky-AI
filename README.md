@@ -33,6 +33,8 @@ pnpm build
 
 可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出 `try/release-native-target/release/blocky-studio.exe` 及 `tools/blocky-cli/dist/`，随后运行 `pnpm check:release`。常规开发构建可能含本机构建路径，不能直接代替此候选；扫描范围与限制写在 `try/stage1-release/artifacts.json`，报告不进入产品目录。
 
+通过候选扫描后，`pnpm package:release` 生成 `dist/Blocky-Studio-0.1.0/`，包含桌面程序、CLI、使用说明、第三方许可证和 selectors 对应源码；目标已存在时拒绝覆盖。许可证从锁定依赖及 `vendor/licenses/registry.json` 校验收集，缺失即停止构建。此命令不安装、启动或发布应用，也不代表普通窗口验收通过。
+
 CLI 增补计划见 [同步开发补充](doc/执行计划/2026-09-16-CLI同步开发补充.md)。团队项目；最终验收通过后仍须询问是否合并 main，push 单独授权。
 
 ## 已确认方向

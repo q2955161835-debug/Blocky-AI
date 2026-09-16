@@ -303,7 +303,7 @@ pnpm --dir .\try\windows-core-spike tauri build --no-bundle
 
 锁定 Wry Windows 修复源码位于项目 `vendor/wry/`，由 Host Cargo patch 使用，来源与维护说明见 `vendor/WRY-PATCH.md`。工具缓存默认位于 `C:\Users\29551\.cargo\registry`；运行时数据为 `C:\Users\29551\AppData\Local\ai.blocky.studio`，测试包为 `C:\Users\29551\AppData\Local\ai.blocky.studio.test`。诊断仅保存白名单元数据；Full 测试原生档位于后者 `acceptance\full.blocky`，普通包不包含此测试命令。普通代码不得导入 `src/testing/`，测试注册同时受 Vite native-test 和 Rust wdio 编译门控，交付前扫描普通产物。
 
-交付构建用 `pnpm build:release` / `pnpm check:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。构建与扫描脚本在 `scripts/`，候选在 `try/release-native-target/` 与 CLI `dist/`，扫描报告在 `try/stage1-release/`。
+交付构建用 `pnpm build:release` / `pnpm check:release` / `pnpm package:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。构建与扫描脚本在 `scripts/`，构建缓存候选在 `try/release-native-target/` 与 CLI `dist/`，发行目录为 `dist/Blocky-Studio-0.1.0/`，扫描报告在 `try/stage1-release/`。许可证读取锁定依赖和 `vendor/licenses/registry.json`，缺失或校验和不符即停止；发行目录已存在时不覆盖，内部验收材料不进入产品。
 
 ## 14. 团队协作归属
 

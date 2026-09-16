@@ -24,7 +24,8 @@
     "dev": "pnpm --dir apps/studio-host tauri dev",
     "build": "pnpm --dir apps/studio-host tauri build --no-bundle",
     "build:release": "pwsh -NoProfile -File scripts/build-release.ps1",
-    "check:release": "node scripts/check-release.mjs"
+    "check:release": "node scripts/check-release.mjs",
+    "package:release": "node scripts/package-release.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "7.0.0",

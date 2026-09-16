@@ -1,2 +1,3 @@
 # Preserve the published dependency bytes for provenance verification.
 vendor/wry/** -text
+vendor/licenses/** -text
