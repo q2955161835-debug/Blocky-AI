@@ -219,6 +219,13 @@ describe("formal native Core gates", function () {
             return monitor.observations;
           })
           .catch(() => null);
+        const lateInputFailure =
+          report.passed && (trustedInput === null || trustedInput.length > 0);
+        if (lateInputFailure) {
+          report.passed = false;
+          report.failure =
+            "Full input monitor unavailable or trusted input observed before completion";
+        }
         Object.assign(report, {
           elapsedMs: Date.now() - started,
           warmHeap,
@@ -234,6 +241,7 @@ describe("formal native Core gates", function () {
           JSON.stringify(report, null, 2),
         );
         await session.detach();
+        if (lateInputFailure) throw Error(report.failure);
       }
     });
 });
