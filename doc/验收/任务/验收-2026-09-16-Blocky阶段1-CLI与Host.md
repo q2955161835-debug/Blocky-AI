@@ -2,7 +2,7 @@
 
 ## 当前限定结论：通过
 
-截至 `bdc90e96dff78f270d7e1e29d7b26068747f3848`，CLI-01、CLI-02 及修复引入的 URI 误脱敏均已复验关闭，**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
+CLI-01、CLI-02 及修复引入的 URI 误脱敏已于 `bdc90e96dff78f270d7e1e29d7b26068747f3848` 复验关闭；新增 project.configure 已于 `786226763327639c1920ddd865c4014cf3fb4d93` 独立增量验收通过。**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
 
 真实大模型 API 调用：**否；未真实调用外部大模型 API**。
 ## 初验汇总表格
@@ -124,7 +124,7 @@ Host 在内存读包，没有解压至任意文件路径。strict_json 对重复
 
 ### 当前限定结论：通过
 
-截至 `bdc90e96dff78f270d7e1e29d7b26068747f3848`，CLI-01、CLI-02 及修复引入的 URI 误脱敏均已复验关闭，**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
+CLI-01、CLI-02 及修复引入的 URI 误脱敏已于 `bdc90e96dff78f270d7e1e29d7b26068747f3848` 复验关闭；新增 project.configure 已于 `786226763327639c1920ddd865c4014cf3fb4d93` 独立增量验收通过。**最终结论：通过**。限定为本报告 CLI/共享 Host 项目读写边界；未执行 GUI、最终桌面包或阶段 1 总验收。下文保留初验及复验一的历史失败证据。
 
 真实大模型 API 调用：**否；未真实调用外部大模型 API**。
 ## 初验汇总表格
@@ -176,3 +176,36 @@ Host 在内存读包，没有解压至任意文件路径。strict_json 对重复
 | `tools/blocky-cli/dist/bin/blocky-project-io.exe` | 919552 | `dc891bc58934c9c7cfbcfd2c59cf18ef5e5c0a2af9506e7b06727cbcb2ea976f` |
 
 这不是普通最终桌面包的验收结论。真实大模型 API 调用：**否；未真实调用外部大模型 API**。本轮仅修改此报告，未新增工件或工作区外读写，未调用 GUI、根 check 或其他模块回归，没有提交、合并或推送。
+
+
+## 增量验收：project.configure
+
+本地时间段：2026-09-16 17:55 ~ 2026-09-16 17:56。精确提交：`786226763327639c1920ddd865c4014cf3fb4d93`。范围仅新增 CLI project.configure 和共享 configureBlock；没有重跑 ZIP、Host 或既有 CLI 全盘验收。
+
+### 汇总表格
+
+| 使用场景 | 结果与最少证据 |
+|---|---|
+| 修改生效 | 通过；ROLE 改为科学教师后保存新包，模拟运行返回“学习要点”，modelApiCalled=false |
+| CLI/桌面共享领域 | 通过；CLI configure 与桌面 updateField 均调用 @blocky/project-model 的 configureBlock；未用 GUI 验证桌面交互 |
+| 不覆盖与源文件保护 | 通过；新目标再次创建退出 5、哈希不变；以源文件作输出也退出 5；全部试验后源 SHA-256 保持 |
+| 目录字段边界 | 通过；不存在模块/块、未声明 API_KEY 字段退出 3；无新文件 |
+| 无效值拒绝 | 通过；非法 STYLE、16001 字符角色退出 3；直接共享函数非字符串输入抛 BLK-CONFIG-001 |
+| 带诊断编辑保存 | 通过；EXPORT 改为缺失导出后保存退出 0，返回 error 诊断及 warning；随后显式模拟运行退出 3，未产生 run.started |
+| 秘密输出与 live | 通过；虚构 token 文本不出现在 compile stdout，存在脱敏 warning；configure 附加 --live 退出 4 且无落盘 |
+| 增量最终结论 | **通过**，仅此命令及共享领域函数 |
+
+### 详细报告与验证命令
+
+`pnpm exec vitest run packages/project-model/tests/configure.test.ts`，退出码 0，1/1 通过，涵盖共同字段编辑、目录外字段拒绝及一步撤销。
+
+另通过 stdin 运行 `node --import tsx --input-type=module` 独立断言，使用真实 CLI 子进程和源包完成上表场景；驱动退出码 0，输出 11 组断言全部通过。脚本直接调用 Node 的已构建 CLI 入口，读取真实子进程 status，不以 pnpm 包装码替代分类。本次没有重新执行实现方的 10 项完整 CLI 测试，也没有把其结果写成本 Agent 新执行。
+
+正常合法修改、预期编译诊断和非法配置分开判定：缺失导出是可保存修复的项目编辑状态；非法 STYLE、未知字段及非字符串属于配置边界拒绝。没有为了通过而把诊断保存视为运行成功。
+
+| 当前 CLI 工件 | 字节数 | SHA-256 |
+|---|---:|---|
+| `tools/blocky-cli/dist/main.mjs` | 608955 | `9f03f1e32002366296732eb1c61d23bb0b66d08d62ace7673b1528135797b8a7` |
+| `tools/blocky-cli/dist/bin/blocky-project-io.exe` | 919552 | `dc891bc58934c9c7cfbcfd2c59cf18ef5e5c0a2af9506e7b06727cbcb2ea976f` |
+
+真实大模型 API 调用：**否；未真实调用外部大模型 API**。临时新包位于 `D:\1Folder\Blocky-AI\try\accept-configure-*` 的本轮随机子目录，断言完成后核对绝对路径仍处于该前缀并清除；原先保留的 original.blocky 未改动。未写工作区外内容，仅本报告留下修改；未调用 GUI、未改实现或进展、未提交合并推送。此结论不是普通桌面最终包或阶段 1 总验收结论。

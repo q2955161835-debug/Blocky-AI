@@ -86,9 +86,21 @@ export class Runtime {
       if (!entry) throw Error("BLK-RUN-001");
       const adapters = this.options.adapters ?? localAdapters();
       const capabilities = this.options.capabilities ?? ["knowledge.read"];
+      const module = compiled.modules.find(
+        (m) => m.moduleId === entry.moduleId,
+      )!;
+      const root = module.roots.find((n) => n.nodeId === entry.ownerAgentId);
+      const selectedEntry = root && findEntry(root, entry.interactionId);
+      if (!root || !selectedEntry) throw Error("BLK-RUN-001");
       let budget = 0;
       const execute = async (node: IrNode, moduleId: string): Promise<void> => {
         signal.throwIfAborted();
+        // Each chat block starts its own stack. A different entry is a boundary.
+        if (
+          node.blockType === "core.interaction.chat" &&
+          node.nodeId !== entry.interactionId
+        )
+          return;
         if (++budget > 2000) throw Error("BLK-RUN-004");
         emit("block.started", moduleId, node.nodeId, { summary: "正在运行" });
         try {
@@ -251,13 +263,15 @@ export class Runtime {
               answer = renderAnswer(citations, style, role);
               break;
           }
-          for (const value of Object.values(node.inputs))
-            for (const child of value
-              ? Array.isArray(value)
-                ? value
-                : [value]
-              : [])
-              await execute(child, moduleId);
+          if (node === root) await execute(selectedEntry, moduleId);
+          else
+            for (const value of Object.values(node.inputs))
+              for (const child of value
+                ? Array.isArray(value)
+                  ? value
+                  : [value]
+                : [])
+                await execute(child, moduleId);
           emit("block.completed", moduleId, node.nodeId, { summary: "已完成" });
         } catch (error) {
           if (!signal.aborted)
@@ -269,11 +283,6 @@ export class Runtime {
         }
         if (node.next) await execute(node.next, moduleId);
       };
-      const module = compiled.modules.find(
-        (m) => m.moduleId === entry.moduleId,
-      )!;
-      const root = module.roots.find((n) => n.nodeId === entry.ownerAgentId);
-      if (!root) throw Error("BLK-RUN-001");
       await execute(root, module.moduleId);
       signal.throwIfAborted();
       emit("run.completed", undefined, undefined, { summary: "运行完成" });
@@ -296,6 +305,16 @@ export class Runtime {
     }
     return { status, answer, citations, events };
   }
+}
+function findEntry(node: IrNode, id: string): IrNode | undefined {
+  if (node.nodeId === id) return node;
+  for (const value of Object.values(node.inputs)) {
+    for (const child of value ? (Array.isArray(value) ? value : [value]) : []) {
+      const found = findEntry(child, id);
+      if (found) return found;
+    }
+  }
+  return node.next ? findEntry(node.next, id) : undefined;
 }
 function safeCode(error: unknown) {
   return error instanceof Error && /^BLK-[A-Z-]+-\d{3}$/.test(error.message)

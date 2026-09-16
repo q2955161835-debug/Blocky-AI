@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { canonicalJson, type Workspace } from "@blocky/language-schema";
-import { projectVisual, type RuntimeEvent } from "@blocky/observability";
+import type { RuntimeEvent } from "@blocky/observability";
+import { canvasVisuals } from "./runtime-visuals";
 import { Blockly, registerBlocks, theme } from "../blocks";
 export type CanvasHandle = {
   add(type: string): void;
@@ -15,7 +16,7 @@ type Props = {
   onSearch(): void;
   onContext(x: number, y: number): void;
   handle: (api: CanvasHandle | null) => void;
-  event?: RuntimeEvent;
+  events: RuntimeEvent[];
   focusId?: string;
   reduceMotion: boolean;
   viewport?: { offsetX: number; offsetY: number; scale: number };
@@ -230,21 +231,28 @@ export function Canvas(props: Props) {
   useEffect(() => {
     const ws = editor.current;
     if (!ws) return;
-    for (const b of ws.getAllBlocks(false))
+    for (const b of ws.getAllBlocks(false)) {
       b.getSvgRoot()?.removeAttribute("data-runtime-state");
-    const event = props.event;
-    if (!event || event.moduleId !== props.moduleId) {
-      setAnnouncement("");
-      return;
+      b.getSvgRoot()?.removeAttribute("data-event-sequence");
     }
-    const visual = projectVisual(event);
-    if (visual && event.blockId) {
-      ws.getBlockById(event.blockId)
+    const visuals = canvasVisuals(props.events, props.moduleId);
+    const announcements: string[] = [];
+    for (const [id, visual] of visuals) {
+      const block = ws.getBlockById(id);
+      block?.getSvgRoot()?.setAttribute("data-runtime-state", visual.state);
+      block
         ?.getSvgRoot()
-        ?.setAttribute("data-runtime-state", visual.state);
-      setAnnouncement(visual.label);
+        ?.setAttribute("data-event-sequence", String(visual.sequence));
+      const icon =
+        visual.state === "error"
+          ? "✖"
+          : visual.state === "warning"
+            ? "⚠"
+            : "▶";
+      announcements.push(`${icon} ${visual.label} #${visual.sequence}`);
     }
-  }, [props.event, props.moduleId]);
+    setAnnouncement(announcements.join(" · "));
+  }, [props.events, props.moduleId, props.workspace]);
   return (
     <div
       className={`canvas-shell ${props.reduceMotion ? "reduce-motion" : ""}`}

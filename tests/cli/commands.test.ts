@@ -245,3 +245,41 @@ it("configures a declared field through the shared editor and keeps the source a
   invalid[invalid.indexOf(target)] = join(directory, "invalid-field.blocky");
   expect(run(invalid).code).toBe(3);
 });
+it("routes --entry to exactly one adjacent interaction stack", async () => {
+  const p = createStarter();
+  const root = p.workspaces["research-agent"].blocks.blocks[0];
+  let last = root.inputs!.BODY.block!;
+  while (last.next) last = last.next.block;
+  last.next = {
+    block: {
+      type: "core.interaction.chat",
+      id: "second-question",
+      fields: { NAME: "Second" },
+      next: {
+        block: {
+          type: "core.output.answer",
+          id: "second-answer",
+          fields: { STYLE: "段落" },
+        },
+      },
+    },
+  };
+  const target = join(directory, "two-entries.blocky");
+  await createProject(target, p);
+  const result = run([
+    "run",
+    "start",
+    target,
+    "--entry",
+    "second-question",
+    "--simulate",
+    "--input",
+    "水循环",
+    "--jsonl",
+  ]);
+  expect(result.code).toBe(0);
+  const blocks = result.lines
+    .filter((e) => e.type === "block.started")
+    .map((e) => e.blockId);
+  expect(blocks).toEqual(["research-root", "second-question", "second-answer"]);
+});

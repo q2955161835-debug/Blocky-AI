@@ -43,6 +43,11 @@ export function useStudio() {
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
   const [history, setHistory] = useState<SourceRef[]>([]);
+  const [preferredEntryId, setInteractionId] = useState("");
+  const activeEntry =
+    compiled?.interaction.entries.find(
+      (e) => e.interactionId === preferredEntryId,
+    ) ?? compiled?.interaction.entries[0];
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
     [result, setResult] = useState<RunResult>(),
     [running, setRunning] = useState(false),
@@ -154,12 +159,13 @@ export function useStudio() {
   const run = async () => {
     if (
       runBusy.current ||
+      ioBusy.current ||
       compiling ||
       !compiled ||
       compiled.diagnostics.some((d) => d.severity === "error")
     )
       return;
-    const entry = compiled.interaction.entries[0];
+    const entry = activeEntry;
     if (!entry) {
       setMessage("请先添加收到问题积木。");
       return;
@@ -321,6 +327,8 @@ export function useStudio() {
     open,
     fresh,
     updateField,
+    interactionId: activeEntry?.interactionId ?? "",
+    setInteractionId,
     confirmation,
     answerConfirmation,
   };

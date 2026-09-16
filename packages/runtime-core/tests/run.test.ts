@@ -167,3 +167,38 @@ describe("observability consumes contracts, not display text", () => {
     expect(bus.records.at(-1)?.level).toBe("error");
   });
 });
+it("selects one chat entry within an agent and does not execute adjacent entry stacks", async () => {
+  const p = createStarter();
+  const agent = p.workspaces["research-agent"].blocks.blocks[0];
+  const first = agent.inputs!.BODY.block!;
+  let last = first;
+  while (last.next) last = last.next.block;
+  last.next = {
+    block: {
+      type: "core.interaction.chat",
+      id: "second-question",
+      fields: { NAME: "第二个入口" },
+      next: {
+        block: {
+          type: "core.output.answer",
+          id: "second-answer",
+          fields: { STYLE: "段落" },
+        },
+      },
+    },
+  };
+  const runtime = new Runtime();
+  const result = await runtime.run(p, "second-question", "水循环");
+  expect(result.status).toBe("completed");
+  const ids = result.events
+    .filter((e) => e.type === "block.started")
+    .map((e) => e.blockId);
+  expect(ids).toContain("second-question");
+  expect(ids).toContain("second-answer");
+  expect(ids).not.toContain("on-question");
+  expect(ids).not.toContain("lookup-documents");
+  const primary = await runtime.run(p, "on-question", "水循环");
+  expect(primary.events.some((e) => e.blockId === "second-question")).toBe(
+    false,
+  );
+});

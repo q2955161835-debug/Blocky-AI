@@ -262,7 +262,7 @@ export function App() {
                     handle={(value) => {
                       api.current = value;
                     }}
-                    event={s.events.at(-1)}
+                    events={s.events}
                     focusId={
                       s.focus?.moduleId === s.session.active
                         ? s.focus.blockId

@@ -17,8 +17,28 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
         <div className="empty-state">添加交互入口后，即可在这里运行。</div>
       ) : (
         <>
+          {entries.length > 1 && (
+            <label className="prompt-label">
+              运行入口
+              <select
+                aria-label="运行入口"
+                value={s.interactionId}
+                disabled={s.running}
+                onChange={(e) => s.setInteractionId(e.target.value)}
+              >
+                {entries.map((entry) => (
+                  <option key={entry.interactionId} value={entry.interactionId}>
+                    {entry.displayName}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className="prompt-label">
-            {entries[0].displayName}
+            {
+              entries.find((entry) => entry.interactionId === s.interactionId)
+                ?.displayName
+            }
             <textarea
               aria-label="向 Agent 提问"
               value={s.question}
