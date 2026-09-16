@@ -8,11 +8,13 @@ import {
 import { ProjectController, projectDigest } from "@blocky/project-model";
 import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
 import { conversionCandidate } from "@blocky/conversion-core";
+import { draftSurface } from "@blocky/app-surface";
 import { readProject, applyProjectPatch, validatePatch } from "./native-store";
 import { type Args, allow, required } from "./arguments";
 import { envelope, CliError } from "./protocol";
 import { artifactInfo, readJsonArtifact, writeJsonArtifact } from "./artifacts";
 const operations = [
+  "surface.create",
   "blueprint.create",
   "blueprint.show",
   "blueprint.insert",
@@ -21,6 +23,7 @@ const operations = [
   "conversion.scan",
 ];
 export const constructionHelp = [
+  "surface create <file.blocky> --module <id> --output <patch.json> --json",
   "blueprint create <file.blocky> --module <id> --blocks <id,id> --name <name> --output <blueprint.json> --json",
   "blueprint show <blueprint.json> --json",
   "blueprint insert <file.blocky> --blueprint <blueprint.json> --module <id> [--reuse-bindings | --bindings <bindings.json>] [--x 80] [--y 80] --output <new.blocky> --json",
@@ -65,6 +68,7 @@ export async function construction(args: Args, signal: AbortSignal) {
       };
     }
     const allowed: Record<string, string[]> = {
+      "surface.create": ["module", "output", "json"],
       "blueprint.create": ["module", "blocks", "name", "output", "json"],
       "blueprint.insert": [
         "module",
@@ -82,6 +86,22 @@ export async function construction(args: Args, signal: AbortSignal) {
     };
     allow(args, allowed[command], 3);
     const project = await readProject(args.words[2]);
+    if (command === "surface.create") {
+      const draft = await draftSurface(
+        project,
+        required(args, "module"),
+        "explicit-user-command",
+      );
+      const patch = await makePatch(project, [
+        { op: "app-surface.add", ...draft },
+      ]);
+      signal.throwIfAborted();
+      const result = envelope(command, { patch, modelApiCalled: false });
+      result.artifacts = [
+        await writeJsonArtifact(required(args, "output"), patch),
+      ];
+      return { code: 0, result };
+    }
     if (command === "blueprint.create") {
       const blueprint = await captureBlueprint(
         project,
@@ -200,7 +220,7 @@ export async function construction(args: Args, signal: AbortSignal) {
     if (signal.aborted) throw new CliError(7, "BLK-RUN-005", "操作已取消。");
     if (
       error instanceof Error &&
-      /^BLK-(?:BLUEPRINT|PATCH|CONVERT)-\d{3}$/.test(error.message)
+      /^BLK-(?:BLUEPRINT|PATCH|CONVERT|SURFACE)-\d{3}$/.test(error.message)
     )
       throw new CliError(
         error.message === "BLK-PATCH-001" ? 5 : 3,

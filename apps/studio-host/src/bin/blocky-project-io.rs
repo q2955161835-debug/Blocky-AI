@@ -47,9 +47,14 @@ fn execute(bytes: &[u8]) -> Value {
                         return Err("BLK-PATCH-001".into());
                     }
                     for (key, value) in &expected {
-                        if strict_json::parse(actual.get(key).ok_or("BLK-PATCH-001")?.as_bytes())?
-                            != strict_json::parse(value.as_bytes())?
-                        {
+                        let found = actual.get(key).ok_or("BLK-PATCH-001")?;
+                        let equal = if key.ends_with(".json") {
+                            strict_json::parse(found.as_bytes())?
+                                == strict_json::parse(value.as_bytes())?
+                        } else {
+                            found == value
+                        };
+                        if !equal {
                             return Err("BLK-PATCH-001".into());
                         }
                     }

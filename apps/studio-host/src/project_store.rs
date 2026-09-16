@@ -132,10 +132,20 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
     let mut parsed = BTreeMap::new();
     let mut names = BTreeSet::new();
     for (path, content) in files {
-        if !reference(path) || !names.insert(path.to_lowercase()) || !path.ends_with(".json") {
+        if !reference(path) || !names.insert(path.to_lowercase()) {
             return Err(REJECT.into());
         }
-        let value = crate::strict_json::parse(content.as_bytes())?;
+        let value = if path.ends_with(".json") {
+            crate::strict_json::parse(content.as_bytes())?
+        } else if path.starts_with("surfaces/")
+            && [".html", ".css", ".js", ".yaml"]
+                .iter()
+                .any(|extension| path.ends_with(extension))
+        {
+            Value::String(content.clone())
+        } else {
+            return Err(REJECT.into());
+        };
         check_secrets(&value, 0)?;
         parsed.insert(path.clone(), value);
     }
@@ -227,10 +237,20 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
             return Err(REJECT.into());
         }
         let path = text(surface, "manifestRef")?;
-        if !path.starts_with("surfaces/") {
+        if path != format!("surfaces/{id}/manifest.json") {
             return Err(REJECT.into());
         }
-        add_ref(&parsed, &mut used, path)?;
+        let surface_manifest = add_ref(&parsed, &mut used, path)?;
+        if surface_manifest["surfaceId"] != id {
+            return Err(REJECT.into());
+        }
+        let prefix = path.rsplit_once('/').ok_or(REJECT)?.0.to_owned() + "/";
+        let surface_files = parsed
+            .iter()
+            .filter(|(key, _)| key.starts_with(&prefix))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect();
+        crate::surface_guard::validate(surface_manifest, &surface_files, manifest)?;
         surface_prefixes.push(path.rsplit_once('/').ok_or(REJECT)?.0.to_owned() + "/");
     }
     for path in files.keys() {

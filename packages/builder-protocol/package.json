@@ -5,6 +5,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@blocky/app-surface": "workspace:*",
     "@blocky/language-schema": "workspace:*",
     "@blocky/project-model": "workspace:*",
     "@blocky/block-catalog": "workspace:*",

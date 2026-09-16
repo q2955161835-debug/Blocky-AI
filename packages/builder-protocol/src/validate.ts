@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { stableId, validRef } from "@blocky/language-schema";
 import { workspaceBlockShape } from "@blocky/block-catalog";
+import { draftSchema } from "@blocky/app-surface";
 const id = z.string().regex(stableId).max(200);
 const source = { moduleId: id, blockId: id };
 const operation = z.discriminatedUnion("op", [
+  draftSchema.extend({ op: z.literal("app-surface.add") }).strict(),
   z
     .object({
       op: z.literal("block.add"),

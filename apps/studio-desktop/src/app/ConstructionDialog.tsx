@@ -200,16 +200,37 @@ export function ConstructionDialog({
                     )?.displayName
                   }
                 </h4>
-                <div className="patch-diff">
-                  <div>
-                    <p>原来</p>
-                    <GhostBlocks block={change.before} />
+                {"surface" in change && change.surface ? (
+                  <div aria-label="应用界面文件变更">
+                    <p>
+                      新增 {change.surface.manifest.displayName} ·
+                      入口权限需单独确认
+                    </p>
+                    {Object.entries(change.surface.files).map(
+                      ([path, value]) => (
+                        <details key={path}>
+                          <summary>新增 {path}</summary>
+                          <pre>
+                            {typeof value === "string"
+                              ? value
+                              : JSON.stringify(value, null, 2)}
+                          </pre>
+                        </details>
+                      ),
+                    )}
                   </div>
-                  <div>
-                    <p>应用后</p>
-                    <GhostBlocks block={change.after} />
+                ) : (
+                  <div className="patch-diff">
+                    <div>
+                      <p>原来</p>
+                      <GhostBlocks block={change.before} />
+                    </div>
+                    <div>
+                      <p>应用后</p>
+                      <GhostBlocks block={change.after} />
+                    </div>
                   </div>
-                </div>
+                )}
                 <details>
                   <summary>查看结构差异</summary>
                   <pre>{JSON.stringify(change, null, 2)}</pre>

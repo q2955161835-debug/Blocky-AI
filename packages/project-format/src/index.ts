@@ -24,7 +24,14 @@ export function encodeProject(input: Project): Record<string, string> {
     .filter((r) => r.scope === "project")
     .forEach((r) => put(r.definitionRef, p.resources[r.resourceId]));
   Object.entries(p.schemas).forEach(([k, v]) => put(k, v));
-  Object.entries(p.surfaces).forEach(([k, v]) => put(k, v));
+  Object.entries(p.surfaces).forEach(([k, v]) => {
+    if (k.endsWith(".json")) put(k, v);
+    else {
+      if (Object.hasOwn(files, k) || typeof v !== "string")
+        throw Error("BLK-REF-001");
+      files[k] = v;
+    }
+  });
   return files;
 }
 export function decodeProject(files: Record<string, string>): Project {
@@ -72,7 +79,7 @@ export function decodeProject(files: Record<string, string>): Project {
           ),
         )
       )
-        surfaces[key] = get(key);
+        surfaces[key] = key.endsWith(".json") ? get(key) : files[key];
       else throw Error("BLK-REF-001: 未声明项目文件");
     }
   return parseProject({ manifest, workspaces, resources, schemas, surfaces });

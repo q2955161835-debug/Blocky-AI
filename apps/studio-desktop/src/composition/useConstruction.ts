@@ -9,6 +9,7 @@ import {
 } from "@blocky/block-catalog";
 import { makePatch, previewPatch, applyPatch } from "@blocky/builder-protocol";
 import { conversionCandidate } from "@blocky/conversion-core";
+import { draftSurface } from "@blocky/app-surface";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
 import { validatePatch } from "./host";
@@ -144,6 +145,22 @@ export function useConstruction(studio: Studio) {
       setReview(await previewPatch(project, value.patch));
       setCandidate(value);
     });
+  const createSurface = () =>
+    perform(async () => {
+      const project = studio.controller.getSnapshot().project;
+      const draft = await draftSurface(
+        project,
+        studio.session.active,
+        "explicit-user-command",
+      );
+      setReview(
+        await previewPatch(
+          project,
+          await makePatch(project, [{ op: "app-surface.add", ...draft }]),
+        ),
+      );
+      setCandidate(undefined);
+    });
   const accept = (approved: string[]) =>
     perform(async () => {
       if (!review) throw Error();
@@ -154,11 +171,14 @@ export function useConstruction(studio: Studio) {
         validatePatch,
       );
       const first = applied.patch.operations[0];
-      studio.navigate({
-        projectId: applied.patch.projectId,
-        moduleId: first.moduleId,
-        blockId: first.blockId,
-      });
+      if (first.op === "app-surface.add")
+        studio.openSurface(first.manifest.surfaceId);
+      else
+        studio.navigate({
+          projectId: applied.patch.projectId,
+          moduleId: first.moduleId,
+          blockId: first.blockId,
+        });
       setReview(undefined);
       setCandidate(undefined);
       studio.setMessage("已应用，可整体撤销");
@@ -250,6 +270,7 @@ export function useConstruction(studio: Studio) {
     prepareInsert,
     previewInsert,
     convert,
+    createSurface,
     accept,
     reject,
     remove,

@@ -1,7 +1,38 @@
 {
- "$schema":"https://schema.tauri.app/config/2",
- "productName":"Blocky Studio","version":"0.1.0","identifier":"ai.blocky.studio",
- "build":{"beforeBuildCommand":"pnpm --dir ../studio-desktop build","beforeDevCommand":"pnpm --dir ../studio-desktop dev","devUrl":"http://localhost:1421","frontendDist":"../studio-desktop/dist"},
- "app":{"withGlobalTauri":false,"windows":[{"label":"main","title":"Blocky Studio","width":1440,"height":900,"minWidth":1180,"minHeight":720,"decorations":true}],"security":{"capabilities":["main"],"csp":"default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost; frame-src 'self'"}},
- "bundle":{"active":false,"icon":["icons/icon.png"]}
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Blocky Studio",
+  "version": "0.1.0",
+  "identifier": "ai.blocky.studio",
+  "build": {
+    "beforeBuildCommand": "pnpm --dir ../studio-desktop build",
+    "beforeDevCommand": "pnpm --dir ../studio-desktop dev",
+    "devUrl": "http://localhost:1421",
+    "frontendDist": "../studio-desktop/dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Blocky Studio",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1180,
+        "minHeight": 720,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "capabilities": [
+        "main"
+      ],
+      "csp": "default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-9c1o1HmKWCOwroufp7kKi+BzfrHV9oqeilyMj0Hdv6c='; connect-src ipc: http://ipc.localhost; frame-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "icons/icon.png"
+    ]
+  }
 }

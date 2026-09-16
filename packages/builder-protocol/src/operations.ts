@@ -2,6 +2,7 @@ import type { Project, WorkspaceBlock } from "@blocky/language-schema";
 import { parseProject, configureBlock } from "@blocky/project-model";
 import { getBlock, walkBlocks } from "@blocky/block-catalog";
 import type { PatchOperation } from "./validate";
+import { validateSurface } from "@blocky/app-surface";
 
 export function projectWithOperations(
   project: Project,
@@ -9,6 +10,19 @@ export function projectWithOperations(
 ): Project {
   const next = structuredClone(project);
   for (const operation of operations) {
+    if (operation.op === "app-surface.add") {
+      if (next.manifest.appSurfaces.length) throw Error("BLK-SURFACE-002");
+      const draft = validateSurface(next, {
+        manifest: operation.manifest,
+        files: operation.files,
+      });
+      next.manifest.appSurfaces.push({
+        surfaceId: draft.manifest.surfaceId,
+        manifestRef: `surfaces/${draft.manifest.surfaceId}/manifest.json`,
+      });
+      Object.assign(next.surfaces, draft.files);
+      continue;
+    }
     const roots = next.workspaces[operation.moduleId]?.blocks.blocks;
     if (!roots) throw Error("BLK-PATCH-002");
     const index = roots.findIndex((b) => b.id === operation.blockId);

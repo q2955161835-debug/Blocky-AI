@@ -45,7 +45,14 @@ pub fn project_files(project: &Value) -> Result<ProjectFiles, String> {
     }
     for field in ["schemas", "surfaces"] {
         for (path, value) in project[field].as_object().ok_or(INVALID)? {
-            files.insert(path.clone(), value.to_string());
+            files.insert(
+                path.clone(),
+                if field == "surfaces" && !path.ends_with(".json") {
+                    value.as_str().ok_or(INVALID)?.into()
+                } else {
+                    value.to_string()
+                },
+            );
         }
     }
     project_store::validate_files(&files)?;
@@ -219,6 +226,12 @@ fn permissions(project: &Value) -> Result<BTreeSet<String>, String> {
         Ok(())
     }
     let mut result = BTreeSet::new();
+    for surface in array(&project["manifest"]["appSurfaces"])? {
+        let manifest = &project["surfaces"][text(&surface["manifestRef"])?];
+        for cap in array(&manifest["permissions"])? {
+            result.insert(text(cap)?.into());
+        }
+    }
     for workspace in project["workspaces"].as_object().ok_or(INVALID)?.values() {
         for block in array(&workspace["blocks"]["blocks"])? {
             visit(block, project, &mut result)?;
@@ -308,6 +321,10 @@ pub fn validate(original_json: &str, patch: &Value, approved: &[String]) -> Resu
     }
     let mut next = original.clone();
     for op in operations {
+        if op["op"] == "app-surface.add" {
+            crate::surface_guard::append(&mut next, op, approved)?;
+            continue;
+        }
         keys(op, &["op", "moduleId", "blockId", "payload"])?;
         let module = text(&op["moduleId"])?;
         let id = text(&op["blockId"])?;

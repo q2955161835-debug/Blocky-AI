@@ -26,6 +26,35 @@ fn main_only(window: &tauri::WebviewWindow) -> Result<(), String> {
     }
 }
 #[tauri::command]
+pub fn authorize_surface(
+    window: tauri::WebviewWindow,
+    files: ProjectFiles,
+    surface_id: String,
+) -> Result<(), String> {
+    main_only(&window)?;
+    if !window.is_visible().map_err(|_| "BLK-WINDOW-001")?
+        || window.is_minimized().map_err(|_| "BLK-WINDOW-001")?
+    {
+        return Err("BLK-WINDOW-001".into());
+    }
+    project_store::validate_files(&files)?;
+    let manifest = blocky_studio::strict_json::parse(
+        files
+            .get("project.json")
+            .ok_or("BLK-SURFACE-002")?
+            .as_bytes(),
+    )?;
+    if !manifest["appSurfaces"]
+        .as_array()
+        .ok_or("BLK-SURFACE-002")?
+        .iter()
+        .any(|s| s["surfaceId"] == surface_id)
+    {
+        return Err("BLK-SURFACE-002".into());
+    }
+    Ok(())
+}
+#[tauri::command]
 pub fn validate_patch(
     window: tauri::WebviewWindow,
     original_json: String,

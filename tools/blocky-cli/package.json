@@ -11,6 +11,7 @@
     "build": "node build.mjs"
   },
   "dependencies": {
+    "@blocky/app-surface": "workspace:*",
     "@blocky/terminal-protocol": "workspace:*",
     "@blocky/builder-protocol": "workspace:*",
     "@blocky/conversion-core": "workspace:*",

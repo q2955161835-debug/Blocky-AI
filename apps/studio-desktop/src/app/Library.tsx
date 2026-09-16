@@ -97,6 +97,14 @@ export function Library({
           <small className="muted">选择积木后可保存为蓝图</small>
         )}
         <div className="section-label">项目画布</div>
+        {s.snapshot.project.manifest.appSurfaces.map((surface) => (
+          <button
+            key={surface.surfaceId}
+            onClick={() => s.openSurface(surface.surfaceId)}
+          >
+            ◉ 问答页面
+          </button>
+        ))}
         {s.snapshot.project.manifest.modules.map((m) => (
           <button
             key={m.moduleId}

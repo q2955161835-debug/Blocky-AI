@@ -36,7 +36,11 @@ function viewport(v: unknown): CanvasViewport | undefined {
   };
 }
 export function restoreSession(project: Project, input: unknown): Session {
-  const ids = project.manifest.modules.map((m) => m.moduleId);
+  const canvasIds = project.manifest.modules.map((m) => m.moduleId);
+  const surfaceIds = project.manifest.appSurfaces.map((s) => s.surfaceId);
+  const ids = [...canvasIds, ...surfaceIds.map((id) => `surface:${id}`)];
+  const key = (t: Record<string, unknown>) =>
+    t.kind === "browser" ? `surface:${t.targetId}` : String(t.targetId);
   const diagnostics: Diagnostic[] = [];
   const report = (code: string, message: string) =>
     diagnostics.push({
@@ -62,9 +66,9 @@ export function restoreSession(project: Project, input: unknown): Session {
       const tabs = allTabs
         .filter(
           (t) =>
-            t.kind === "canvas" &&
             typeof t.targetId === "string" &&
-            ids.includes(t.targetId),
+            ((t.kind === "canvas" && canvasIds.includes(t.targetId)) ||
+              (t.kind === "browser" && surfaceIds.includes(t.targetId))),
         )
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
       removedTargets = tabs.length !== allTabs.length;
@@ -73,16 +77,18 @@ export function restoreSession(project: Project, input: unknown): Session {
         object,
       );
       raw = {
-        tabs: tabs.map((t) => t.targetId),
-        active: tabs.find((t) => t.tabId === raw.activeTabId)?.targetId,
+        tabs: tabs.map(key),
+        active: tabs.filter((t) => t.tabId === raw.activeTabId).map(key)[0],
         panel: panel.visible,
         view: panel.activeView === "run-log" ? "logs" : panel.activeView,
         height: panel.heightPx,
         viewports: Object.fromEntries(
-          tabs.map((t) => [
-            t.targetId,
-            views.find((v) => v.tabId === t.tabId)?.viewport,
-          ]),
+          tabs
+            .filter((t) => t.kind === "canvas")
+            .map((t) => [
+              t.targetId,
+              views.find((v) => v.tabId === t.tabId)?.viewport,
+            ]),
         ),
       };
     }
@@ -95,7 +101,7 @@ export function restoreSession(project: Project, input: unknown): Session {
           ),
         ),
       ]
-    : ids;
+    : canvasIds;
   removedTargets ||=
     Array.isArray(raw.tabs) &&
     raw.tabs.some((id) => typeof id !== "string" || !ids.includes(id));
@@ -127,10 +133,12 @@ export function restoreSession(project: Project, input: unknown): Session {
       ),
     ),
     viewports: Object.fromEntries(
-      tabs.flatMap((id) => {
-        const v = viewport(object(raw.viewports)[id]);
-        return v ? [[id, v]] : [];
-      }),
+      tabs
+        .filter((id) => canvasIds.includes(id))
+        .flatMap((id) => {
+          const v = viewport(object(raw.viewports)[id]);
+          return v ? [[id, v]] : [];
+        }),
     ),
   };
 }
@@ -140,12 +148,14 @@ export function serializeSession(project: Project, session: Session) {
     schemaVersion: "blocky.workspace-session/v1alpha1" as const,
     projectId: project.manifest.projectId,
     openTabs: s.tabs.map((id, order) => ({
-      tabId: `tab-${id}`,
-      kind: "canvas" as const,
-      targetId: id,
+      tabId: `tab-${id.replace(":", "-")}`,
+      kind: id.startsWith("surface:")
+        ? ("browser" as const)
+        : ("canvas" as const),
+      targetId: id.startsWith("surface:") ? id.slice(8) : id,
       order,
     })),
-    ...(s.active ? { activeTabId: `tab-${s.active}` } : {}),
+    ...(s.active ? { activeTabId: `tab-${s.active.replace(":", "-")}` } : {}),
     bottomPanel: {
       visible: s.panel,
       activeView: s.view === "logs" ? "run-log" : s.view,

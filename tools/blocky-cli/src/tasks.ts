@@ -107,6 +107,9 @@ export async function taskCommand(args: Args, signal: AbortSignal) {
     Number(interval) > 1000
   )
     throw new CliError(2, "BLK-TERM-101", "间隔超出范围。");
+  const outputBudgetBytes = integer(args, "output-budget", 65536, 65536);
+  if (outputBudgetBytes < 256)
+    throw new CliError(2, "BLK-TERM-101", "输出预算不得低于 256 字节。");
   const request = parseTaskRequest({
     taskId: taskDefinition.taskId,
     parameters: {
@@ -114,7 +117,7 @@ export async function taskCommand(args: Args, signal: AbortSignal) {
       "interval-ms": Number(interval),
     },
     timeoutMs: integer(args, "timeout", 30000, 30000),
-    outputBudgetBytes: integer(args, "output-budget", 65536, 65536),
+    outputBudgetBytes,
   });
   const project = await readProject(args.words[2]);
   const state = await runNativeTask(project, request, signal);

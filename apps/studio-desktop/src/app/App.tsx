@@ -15,6 +15,7 @@ import {
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
 import { useTask } from "../composition/useTask";
+import { SurfacePreview } from "./SurfacePreview";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -53,6 +54,9 @@ export function App() {
       if (await construction.convert()) show("patch-review");
     },
     "terminal.create": task.start,
+    "build.surface": async () => {
+      if (await construction.createSurface()) show("patch-review");
+    },
     "terminal.stop": task.cancel,
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
@@ -73,6 +77,15 @@ export function App() {
         popup.kind,
       )) &&
     !!actions[id] &&
+    (id !== "terminal.create" ||
+      (s.started && !s.busy && !task.active && !task.pending)) &&
+    (id !== "terminal.stop" || task.active) &&
+    (id !== "build.surface" ||
+      (s.started &&
+        !s.busy &&
+        !s.running &&
+        !!s.snapshot.project.workspaces[s.session.active] &&
+        !s.snapshot.project.manifest.appSurfaces.length)) &&
     (![
       "edit.blueprint",
       "edit.copy",
@@ -194,7 +207,9 @@ export function App() {
             <span className="spacer" />
             {commands
               .filter((c) =>
-                ["edit.blueprint", "build.convert"].includes(c.commandId),
+                ["edit.blueprint", "build.convert", "build.surface"].includes(
+                  c.commandId,
+                ),
               )
               .map((c) => (
                 <button
@@ -244,9 +259,16 @@ export function App() {
             <section className="workspace">
               <div className="workspace-tabs">
                 {s.session.tabs.map((id) => {
-                  const m = s.snapshot.project.manifest.modules.find(
-                    (m) => m.moduleId === id,
-                  );
+                  const m =
+                    s.snapshot.project.manifest.modules.find(
+                      (m) => m.moduleId === id,
+                    ) ??
+                    (id.startsWith("surface:") &&
+                    s.snapshot.project.manifest.appSurfaces.some(
+                      (v) => v.surfaceId === id.slice(8),
+                    )
+                      ? { displayName: "问答页面" }
+                      : undefined);
                   return (
                     m && (
                       <div
@@ -258,7 +280,8 @@ export function App() {
                             s.setSession((v) => ({ ...v, active: id }))
                           }
                         >
-                          ▧ {m.displayName}
+                          {id.startsWith("surface:") ? "◉" : "▧"}{" "}
+                          {m.displayName}
                         </button>
                         <button
                           aria-label={`关闭 ${m.displayName}`}
@@ -372,10 +395,23 @@ export function App() {
                   />
                 </>
               ) : (
-                <div className="empty-canvas">
+                <div
+                  className="empty-canvas"
+                  hidden={s.session.active.startsWith("surface:")}
+                >
                   从左侧项目画布列表重新打开画布。
                 </div>
               )}
+              {s.session.tabs
+                .filter((id) => id.startsWith("surface:"))
+                .map((id) => (
+                  <SurfacePreview
+                    key={`${s.snapshot.project.manifest.projectId}-${id}`}
+                    studio={s}
+                    surfaceId={id.slice(8)}
+                    hidden={s.session.active !== id}
+                  />
+                ))}
               <BottomPanel studio={s} task={task} />
             </section>
             <aside className="right-sidebar">

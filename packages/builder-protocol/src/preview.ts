@@ -5,12 +5,17 @@ import { resolveResource } from "@blocky/resource-registry";
 import { catalogVersion } from "@blocky/block-catalog";
 import { parsePatch, type PatchOperation } from "./validate";
 import { projectWithOperations } from "./operations";
+import { surfaceFromProject } from "@blocky/app-surface";
 const same = (a: string[], b: string[]) =>
   canonicalJson([...new Set(a)].sort()) ===
   canonicalJson([...new Set(b)].sort());
 async function permissions(project: Project) {
   const compiled = await compileProject(project),
     values = new Set(compiled.tools.flatMap((t) => t.permissions));
+  for (const surface of project.manifest.appSurfaces)
+    surfaceFromProject(project, surface.surfaceId).manifest.permissions.forEach(
+      (p) => values.add(p),
+    );
   for (const module of compiled.modules)
     for (const { node } of walkNodes(module.roots)) {
       if (node.blockType === "core.model.compose") {
@@ -49,22 +54,34 @@ export async function previewPatch(project: Project, input: unknown) {
     next,
     permissionDelta,
     diagnostics: after.compiled.diagnostics,
-    changes: patch.operations.map((o) => ({
-      operation: o.op,
-      moduleId: o.moduleId,
-      blockId: o.blockId,
-      before:
-        findBlock(
-          project.workspaces[o.moduleId]?.blocks.blocks ?? [],
-          o.blockId,
-        ) ?? null,
-      after:
-        findBlock(
-          next.workspaces[o.moduleId]?.blocks.blocks ?? [],
-          o.blockId,
-        ) ?? null,
-      payload: "payload" in o ? o.payload : null,
-    })),
+    changes: patch.operations.map((o) =>
+      o.op === "app-surface.add"
+        ? {
+            operation: o.op,
+            moduleId: o.manifest.associatedModuleIds[0],
+            blockId: o.manifest.surfaceId,
+            before: null,
+            after: null,
+            payload: null,
+            surface: { manifest: o.manifest, files: o.files },
+          }
+        : {
+            operation: o.op,
+            moduleId: o.moduleId,
+            blockId: o.blockId,
+            before:
+              findBlock(
+                project.workspaces[o.moduleId]?.blocks.blocks ?? [],
+                o.blockId,
+              ) ?? null,
+            after:
+              findBlock(
+                next.workspaces[o.moduleId]?.blocks.blocks ?? [],
+                o.blockId,
+              ) ?? null,
+            payload: "payload" in o ? o.payload : null,
+          },
+    ),
   };
 }
 export async function makePatch(

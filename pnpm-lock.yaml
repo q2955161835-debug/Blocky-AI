@@ -80,6 +80,9 @@ importers:
 
   apps/studio-desktop:
     dependencies:
+      '@blocky/app-surface':
+        specifier: workspace:*
+        version: link:../../packages/app-surface
       '@blocky/block-catalog':
         specifier: workspace:*
         version: link:../../packages/block-catalog
@@ -151,6 +154,21 @@ importers:
         specifier: 2.11.4
         version: 2.11.4
 
+  packages/app-surface:
+    dependencies:
+      '@blocky/compiler':
+        specifier: workspace:*
+        version: link:../compiler
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
   packages/block-catalog:
     dependencies:
       '@blocky/language-schema':
@@ -162,6 +180,9 @@ importers:
 
   packages/builder-protocol:
     dependencies:
+      '@blocky/app-surface':
+        specifier: workspace:*
+        version: link:../app-surface
       '@blocky/block-catalog':
         specifier: workspace:*
         version: link:../block-catalog
@@ -301,6 +322,9 @@ importers:
 
   tools/blocky-cli:
     dependencies:
+      '@blocky/app-surface':
+        specifier: workspace:*
+        version: link:../../packages/app-surface
       '@blocky/block-catalog':
         specifier: workspace:*
         version: link:../../packages/block-catalog

@@ -20,6 +20,7 @@ fn main() {
             commands::open_project,
             commands::save_project,
             commands::validate_patch,
+            commands::authorize_surface,
             task_commands::start_task,
             task_commands::task_status,
             task_commands::cancel_task,

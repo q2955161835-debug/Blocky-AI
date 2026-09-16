@@ -170,7 +170,20 @@ export function useStudio() {
     setHistory((h) => h.slice(0, -1));
     navigate(previous, false);
   };
-  const run = async () => {
+  const openSurface = (id: string) =>
+    setSession((s) => ({
+      ...s,
+      tabs: s.tabs.includes(`surface:${id}`)
+        ? s.tabs
+        : [...s.tabs, `surface:${id}`],
+      active: `surface:${id}`,
+    }));
+  const run = async (request?: {
+    question: string;
+    moduleId: string;
+    interactionId: string;
+    signal: AbortSignal;
+  }) => {
     if (
       runBusy.current ||
       ioBusy.current ||
@@ -179,7 +192,13 @@ export function useStudio() {
       compiled.diagnostics.some((d) => d.severity === "error")
     )
       return;
-    const entry = activeEntry;
+    const entry = request
+      ? compiled.interaction.entries.find(
+          (e) =>
+            e.moduleId === request.moduleId &&
+            e.interactionId === request.interactionId,
+        )
+      : activeEntry;
     if (!entry) {
       setMessage("请先添加收到问题积木。");
       return;
@@ -189,11 +208,15 @@ export function useStudio() {
     setEvents([]);
     setResult(undefined);
     abort.current = new AbortController();
+    const controller = abort.current;
+    const cancel = () => controller.abort();
+    request?.signal.addEventListener("abort", cancel, { once: true });
+    if (request?.signal.aborted) cancel();
     try {
       const value = await runtime.run(
         snapshot.project,
         entry.interactionId,
-        question,
+        request?.question ?? question,
         {
           moduleId: entry.moduleId,
           signal: abort.current.signal,
@@ -210,9 +233,11 @@ export function useStudio() {
         },
       );
       setResult(value);
+      return value;
     } catch {
       setMessage("无法启动运行，请检查问题面板。");
     } finally {
+      request?.signal.removeEventListener("abort", cancel);
       runBusy.current = false;
       setRunning(false);
       abort.current = null;
@@ -331,6 +356,7 @@ export function useStudio() {
     setSelectedRoots,
     focus,
     navigate,
+    openSurface,
     back,
     canGoBack: history.length > 0,
     events,
