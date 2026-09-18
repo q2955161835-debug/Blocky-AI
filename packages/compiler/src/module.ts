@@ -1,6 +1,7 @@
 import {
   diagnostic,
   stableId,
+  parseExpressionProgram,
   validRef,
   type Workspace,
   type WorkspaceBlock,
@@ -28,6 +29,19 @@ export function compileWorkspace(
     sourceMap[b.id] = source;
     const def = getBlock(b.type),
       fields = b.fields ?? {};
+    if (b.type === "core.data.transform") {
+      try {
+        parseExpressionProgram(fields.PROGRAM);
+      } catch {
+        diagnostics.push(
+          diagnostic(
+            "BLK-EXPR-001",
+            "自定义计算的表达式无效或超出预算",
+            source,
+          ),
+        );
+      }
+    }
     if (!def)
       diagnostics.push(diagnostic("BLK-TYPE-004", "未注册积木", source));
     else

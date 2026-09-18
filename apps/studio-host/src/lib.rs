@@ -1,3 +1,4 @@
+pub mod conversion;
 pub mod knowledge;
 pub mod log_store;
 pub mod patch_guard;

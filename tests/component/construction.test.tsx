@@ -13,6 +13,12 @@ import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useConstruction } from "../../apps/studio-desktop/src/composition/useConstruction";
 import { ConstructionDialog } from "../../apps/studio-desktop/src/app/ConstructionDialog";
 import { projectDigest } from "../../packages/project-model/src";
+vi.mock("../../apps/studio-desktop/src/composition/knowledge", async () => {
+  const fixture = await (
+    await import("../helpers/conversion")
+  ).conversionFixture();
+  return { knowledgeNative: fixture.call };
+});
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: vi.fn(),
   saveProject: vi.fn(),
@@ -93,9 +99,16 @@ it("saves a real personal blueprint, previews editable blocks, rejects without c
 it("refuses a stale conversion preview and preserves edits made after review", async () => {
   const hook = renderHook(useEditor);
   await waitFor(() => expect(hook.result.current.studio.compiling).toBe(false));
-  await act(() => hook.result.current.construction.convert());
+  await act(() => hook.result.current.construction.conversion.scan());
+  await act(() =>
+    hook.result.current.construction.conversion.candidate({
+      file: "math.ts",
+      symbol: "flow",
+      lineStart: 2,
+    }),
+  );
   expect(hook.result.current.construction.candidate?.source.license).toBe(
-    "Apache-2.0",
+    "MIT",
   );
   act(() =>
     hook.result.current.studio.controller.edit((p) => {

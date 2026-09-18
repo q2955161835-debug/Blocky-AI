@@ -27,6 +27,7 @@ fn git(root: &Path, args: &[&str], input: Option<Vec<u8>>, max: usize) -> Result
             "--no-replace-objects",
             "--no-lazy-fetch",
             "--no-pager",
+            "--literal-pathspecs",
         ])
         .args([
             "-c",
@@ -123,23 +124,38 @@ struct Entry {
     size: Option<usize>,
 }
 fn tree(root: &Path, commit: &str) -> Result<Vec<Entry>, String> {
+    tree_selected(root, commit, true, None, false)
+}
+fn tree_selected(
+    root: &Path,
+    commit: &str,
+    recursive: bool,
+    scope: Option<&str>,
+    evidence_only: bool,
+) -> Result<Vec<Entry>, String> {
     if !oid(commit) {
         return Err(INVALID.into());
     }
-    let listing = git(
-        root,
-        &["ls-tree", "-r", "-z", "-l", commit],
-        None,
-        8 * 1024 * 1024,
-    )?;
+    let mut args = vec!["ls-tree", "-z", "-l"];
+    if recursive {
+        args.push("-r");
+    }
+    args.push(commit);
+    if let Some(scope) = scope {
+        args.extend(["--", scope]);
+    }
+    let listing = git(root, &args, None, 8 * 1024 * 1024)?;
     let mut entries = Vec::new();
     for entry in listing.split(|b| *b == 0).filter(|b| !b.is_empty()) {
         super::cancel::check()?;
+        let entry = std::str::from_utf8(entry).map_err(|_| INVALID)?;
+        let (head, path) = entry.split_once('\t').ok_or(INVALID)?;
+        if evidence_only && !conversion_root_evidence(path) {
+            continue;
+        }
         if entries.len() >= 20000 {
             return Err(LIMIT.into());
         }
-        let entry = std::str::from_utf8(entry).map_err(|_| INVALID)?;
-        let (head, path) = entry.split_once('\t').ok_or(INVALID)?;
         let fields = head.split_whitespace().collect::<Vec<_>>();
         if fields.len() != 4 || !oid(fields[2]) {
             return Err(INVALID.into());
@@ -217,6 +233,10 @@ fn blobs(
 }
 
 pub fn describe(root: &Path, reference: Option<&str>) -> Result<Value, String> {
+    let commit = resolve_commit(root, reference)?;
+    describe_commit(root, &commit)
+}
+fn resolve_commit(root: &Path, reference: Option<&str>) -> Result<String, String> {
     ingest::no_links(root)?;
     let reference = reference.unwrap_or("HEAD");
     if reference.is_empty()
@@ -237,7 +257,13 @@ pub fn describe(root: &Path, reference: Option<&str>) -> Result<Value, String> {
     .map_err(|_| INVALID)?
     .trim()
     .to_owned();
-    let entries = tree(root, &commit)?;
+    if !oid(&commit) {
+        return Err(INVALID.into());
+    }
+    Ok(commit)
+}
+fn describe_commit(root: &Path, commit: &str) -> Result<Value, String> {
+    let entries = tree(root, commit)?;
     let mut candidates = Vec::new();
     let mut unchecked = 0usize;
     let mut total = 0usize;
@@ -379,4 +405,191 @@ pub fn scan(source: &Source) -> Result<Snapshot, String> {
         Ok(())
     })?;
     ingest::finish(documents, excluded)
+}
+
+fn conversion_root_evidence(path: &str) -> bool {
+    if path.contains('/') {
+        return false;
+    }
+    let name = path.to_ascii_lowercase();
+    ["license", "licence", "copying", "notice", "copyright"]
+        .iter()
+        .any(|prefix| {
+            name == *prefix
+                || name.starts_with(&format!("{prefix}."))
+                || name.starts_with(&format!("{prefix}-"))
+        })
+        || [
+            "package.json",
+            "package-lock.json",
+            "npm-shrinkwrap.json",
+            "pnpm-lock.yaml",
+            "yarn.lock",
+            "bun.lock",
+            "pyproject.toml",
+            "requirements.txt",
+            "setup.py",
+            "setup.cfg",
+            "pipfile",
+            "pipfile.lock",
+            "poetry.lock",
+            "uv.lock",
+            "cargo.toml",
+            "cargo.lock",
+            "go.mod",
+            "go.sum",
+            "gemfile",
+            "gemfile.lock",
+            "composer.json",
+            "composer.lock",
+            "packages.lock.json",
+        ]
+        .contains(&name.as_str())
+}
+/// A conversion snapshot uses the same no-execution Git object reader as the
+/// knowledge source. It never asks Git to inspect or normalize the worktree.
+pub(crate) fn scan_conversion(
+    root: &Path,
+    reference: Option<&str>,
+    subdir: Option<&str>,
+) -> Result<Value, String> {
+    let scope = subdir.unwrap_or("");
+    let scope = if scope == "." { "" } else { scope };
+    if scope.len() > 1024
+        || scope.contains(['\\', ':'])
+        || scope.chars().any(char::is_control)
+        || (!scope.is_empty()
+            && scope
+                .split('/')
+                .any(|s| s.is_empty() || s == "." || s == ".."))
+    {
+        return Err(INVALID.into());
+    }
+    let commit = resolve_commit(root, reference)?;
+    if !git(root, &["rev-parse", "--show-prefix"], None, 2048)?
+        .iter()
+        .all(|b| b.is_ascii_whitespace())
+    {
+        return Err(INVALID.into());
+    }
+    let mut entries = if scope.is_empty() {
+        tree(root, &commit)?
+    } else {
+        let mut selected = tree_selected(root, &commit, true, Some(scope), false)?;
+        // Git's literal directory pathspec may also identify a file. A selected
+        // scope is always a directory prefix, never an arbitrary file pattern.
+        if selected.is_empty()
+            || selected
+                .iter()
+                .any(|entry| !entry.path.starts_with(&format!("{scope}/")))
+        {
+            return Err(INVALID.into());
+        }
+        selected.extend(tree_selected(root, &commit, false, None, true)?);
+        selected
+    };
+    entries.sort_by(|a, b| a.path.cmp(&b.path));
+    entries.dedup_by(|a, b| a.path == b.path);
+    if entries.len() > 20000 {
+        return Err(LIMIT.into());
+    }
+    let source = Source {
+        source_id: "conversion".into(),
+        kind: "repository".into(),
+        title: String::new(),
+        location: String::new(),
+        revision: String::new(),
+        allowed_principals: vec![],
+        metadata: json!({}),
+    };
+    let mut candidates = Vec::new();
+    let mut excluded = Vec::new();
+    let mut total = 0;
+    let mut unchecked = 0usize;
+    for entry in &entries {
+        super::cancel::check()?;
+        let reason = if entry.mode == "120000" {
+            Some("link-denied")
+        } else if !matches!(entry.mode.as_str(), "100644" | "100755") || entry.kind != "blob" {
+            Some("submodule-denied")
+        } else if entry.path.len() > 1024 {
+            Some("path-too-long")
+        } else if entry.size.is_none_or(|n| n > MAX_DOCUMENT) {
+            Some("document-too-large")
+        } else {
+            ingest::excluded_path(&entry.path, false).filter(|reason| {
+                !(*reason == "unsupported-format" && conversion_root_evidence(&entry.path))
+            })
+        };
+        if let Some(reason) = reason {
+            excluded.push(json!({"path":entry.path,"reason":reason}));
+            unchecked += 1;
+            continue;
+        }
+        total += entry.size.ok_or(INVALID)?;
+        if total > MAX_CORPUS {
+            return Err(LIMIT.into());
+        }
+        candidates.push(entry);
+    }
+    let canonical = root.canonicalize().map_err(|_| IO)?;
+    let mut files = Vec::new();
+    let mut checked = 0usize;
+    let mut changed = 0usize;
+    blobs(root, &candidates, |entry, body| {
+        match ingest::make_document(&source, &entry.path, body) {
+            Ok(doc) => {
+                if doc
+                    .text
+                    .chars()
+                    .any(|c| c.is_control() && !['\n', '\r', '\t'].contains(&c))
+                {
+                    excluded.push(json!({"path":entry.path,"reason":"binary-content"}));
+                    unchecked += 1;
+                    return Ok(());
+                }
+                let value = json!({"path":entry.path,"sha256":doc.revision,"bytes":body.len(),"content":doc.text});
+                // Leave room for the page envelope; exotic text escaping must
+                // never create an IPC response larger than the stated bound.
+                if serde_json::to_vec(&value).map_err(|_| INVALID)?.len() > 4 * 1024 * 1024 - 8192 {
+                    excluded.push(json!({"path":entry.path,"reason":"encoded-document-too-large"}));
+                    unchecked += 1;
+                    return Ok(());
+                }
+                match raw_worktree_digest(&canonical, &entry.path) {
+                    Ok(current) => {
+                        checked += 1;
+                        if current.as_deref() != Some(digest(body).as_str()) {
+                            changed += 1;
+                        }
+                    }
+                    Err(error) if error == "BLK-KNOW-CANCELLED" => return Err(error),
+                    Err(_) => {
+                        unchecked += 1;
+                    }
+                }
+                files.push(value);
+            }
+            Err(reason) => {
+                excluded.push(json!({"path":entry.path,"reason":reason}));
+                unchecked += 1;
+            }
+        }
+        Ok(())
+    })?;
+    excluded.sort_by(|a, b| a["path"].as_str().cmp(&b["path"].as_str()));
+    let dirty = if changed > 0 {
+        "true"
+    } else if unchecked > 0 {
+        "unknown"
+    } else {
+        "false"
+    };
+    let mut snapshot = json!({"schemaVersion":"blocky.source-snapshot/v1","commit":commit,"subdir":scope,"repository":"local-repository","readPolicy":"locked-commit","dirty":dirty,"dirtyPolicy":"locked-commit-tracked-raw-bytes-v1","dirtyScope":"selected tracked text files and root evidence only; index, untracked files, EOL/filter normalization and mode-only changes excluded","dirtyChecked":checked,"dirtyChanged":changed,"dirtyUnchecked":unchecked,"files":files,"excluded":excluded});
+    snapshot["snapshotId"] = format!(
+        "snap-{}",
+        digest(&serde_json::to_vec(&snapshot).map_err(|_| INVALID)?)
+    )
+    .into();
+    Ok(snapshot)
 }

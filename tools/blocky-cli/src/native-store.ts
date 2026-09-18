@@ -41,10 +41,13 @@ function request(input: Record<string, unknown>): Promise<Reply> {
     let stdout = "",
       size = 0,
       finished = false;
-    const timer = setTimeout(() => {
-      child.kill();
-      finish(new CliError(6, "BLK-HOST-002", "原生存储请求超时。"));
-    }, 30000);
+    const timer = setTimeout(
+      () => {
+        child.kill();
+        finish(new CliError(6, "BLK-HOST-002", "原生存储请求超时。"));
+      },
+      String(input.operation).startsWith("conversion-") ? 120000 : 30000,
+    );
     function finish(error?: Error) {
       if (finished) return;
       finished = true;
@@ -122,7 +125,9 @@ export async function nativeUserOperation(
       reply.code ?? "BLK-SET-001",
       operation.startsWith("knowledge-")
         ? "资料操作失败，请检查来源与权限。"
-        : "本机配置操作失败，未返回秘密内容。",
+        : operation.startsWith("conversion-")
+          ? "仓库转换操作失败，请检查版本、目录、工件与预算。"
+          : "本机配置操作失败，未返回秘密内容。",
     );
   return reply.value;
 }

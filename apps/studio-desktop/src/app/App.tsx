@@ -63,6 +63,7 @@ export function App() {
   );
   useEffect(() => {
     if (lifecycle.requested) {
+      construction.conversion.cancel();
       setPopup(null);
       construction.reject();
     }
@@ -99,9 +100,7 @@ export function App() {
     "edit.clear-selection": () => api.current?.clearSelection(),
     "edit.collapse": () => api.current?.collapse(true),
     "edit.expand": () => api.current?.collapse(false),
-    "build.convert": async () => {
-      if (await construction.convert()) show("patch-review");
-    },
+    "build.convert": () => show("conversion"),
     "terminal.create": () => void terminals.create(),
     "terminal.run-task": task.start,
     "terminal.stop-task": task.cancel,
@@ -129,9 +128,12 @@ export function App() {
     !s.confirmation &&
     !construction.busy &&
     (!popup ||
-      !["blueprint-save", "blueprint-insert", "patch-review"].includes(
-        popup.kind,
-      )) &&
+      ![
+        "blueprint-save",
+        "blueprint-insert",
+        "patch-review",
+        "conversion",
+      ].includes(popup.kind)) &&
     !!actions[id] &&
     (![
       "file.new-canvas",
@@ -208,9 +210,12 @@ export function App() {
         return;
       if (
         latest.current.popup &&
-        ["blueprint-save", "blueprint-insert", "patch-review"].includes(
-          latest.current.popup.kind,
-        )
+        [
+          "blueprint-save",
+          "blueprint-insert",
+          "patch-review",
+          "conversion",
+        ].includes(latest.current.popup.kind)
       )
         return;
       if (e.key === "Escape" && latest.current.popup) {
@@ -273,9 +278,12 @@ export function App() {
             !!s.confirmation ||
             construction.busy ||
             (!!popup &&
-              ["blueprint-save", "blueprint-insert", "patch-review"].includes(
-                popup.kind,
-              ))
+              [
+                "blueprint-save",
+                "blueprint-insert",
+                "patch-review",
+                "conversion",
+              ].includes(popup.kind))
           }
         />
         <button
@@ -556,9 +564,12 @@ export function App() {
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}
       {popup &&
-        ["blueprint-save", "blueprint-insert", "patch-review"].includes(
-          popup.kind,
-        ) &&
+        [
+          "blueprint-save",
+          "blueprint-insert",
+          "patch-review",
+          "conversion",
+        ].includes(popup.kind) &&
         !s.confirmation && (
           <ConstructionDialog
             key={popup.kind}
@@ -571,9 +582,12 @@ export function App() {
         )}
       {popup &&
         popup.kind !== "menu" &&
-        !["blueprint-save", "blueprint-insert", "patch-review"].includes(
-          popup.kind,
-        ) &&
+        ![
+          "blueprint-save",
+          "blueprint-insert",
+          "patch-review",
+          "conversion",
+        ].includes(popup.kind) &&
         !s.confirmation && (
           <StudioDialog
             studio={s}

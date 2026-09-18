@@ -319,7 +319,7 @@ pub(super) fn read_json<T: serde::de::DeserializeOwned>(
 pub(super) fn atomic_json(path: &Path, value: &impl serde::Serialize) -> Result<(), String> {
     atomic_bytes(path, &serde_json::to_vec(value).map_err(|_| INVALID)?)
 }
-pub(super) fn atomic_bytes(path: &Path, bytes: &[u8]) -> Result<(), String> {
+pub(crate) fn atomic_bytes(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let parent = path.parent().ok_or(IO)?;
     ingest::no_links(parent)?;
     if path.exists() {

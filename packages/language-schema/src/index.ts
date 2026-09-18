@@ -1,3 +1,9 @@
+export {
+  parseExpressionProgram,
+  evaluateExpression,
+  type NumericExpression,
+  type ExpressionProgram,
+} from "./expression";
 export type Json =
   | null
   | boolean

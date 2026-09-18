@@ -5,9 +5,12 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
+    "@blocky/builder-protocol": "workspace:*",
     "@blocky/language-schema": "workspace:*",
     "@blocky/project-model": "workspace:*",
-    "@blocky/builder-protocol": "workspace:*",
+    "@lezer/common": "1.5.2",
+    "@lezer/javascript": "1.5.4",
+    "@lezer/python": "1.1.19",
     "zod": "4.4.3"
   }
 }

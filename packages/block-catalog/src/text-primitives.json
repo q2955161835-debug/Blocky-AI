@@ -1,5 +1,17 @@
 [
   {
+    "type": "core.data.transform",
+    "label": "自定义计算",
+    "category": 10,
+    "color": "#85964a",
+    "fields": ["NAME", "PROGRAM", "SOURCE"],
+    "optionalFields": ["NAME", "PROGRAM", "SOURCE"],
+    "jsonFields": ["PROGRAM", "SOURCE"],
+    "inputs": ["ARGUMENTS"],
+    "inputChecks": { "ARGUMENTS": "json" },
+    "output": "json"
+  },
+  {
     "type": "core.agent.define",
     "label": "智能体容器",
     "category": 1,

@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import type { Studio } from "../composition/useStudio";
 import type { Construction } from "../composition/useConstruction";
 import { GhostBlocks } from "./GhostBlocks";
+import { ConversionPanel } from "./ConversionPanel";
 export type ConstructionKind =
   | "blueprint-save"
   | "blueprint-insert"
-  | "patch-review";
+  | "patch-review"
+  | "conversion";
 export function ConstructionDialog({
   studio: s,
   construction: c,
@@ -29,7 +31,9 @@ export function ConstructionDialog({
       ? "保存为蓝图"
       : kind === "blueprint-insert"
         ? "插入蓝图"
-        : "审阅变更";
+        : kind === "conversion"
+          ? "项目积木化"
+          : "审阅变更";
   return (
     <dialog
       ref={dialog}
@@ -56,6 +60,9 @@ export function ConstructionDialog({
           ×
         </button>
       </header>
+      {kind === "conversion" && (
+        <ConversionPanel conversion={c.conversion} showReview={showReview} />
+      )}
       {kind === "blueprint-save" && (
         <div className="settings">
           <label>
@@ -175,6 +182,19 @@ export function ConstructionDialog({
                 {c.candidate.source.version} · {c.candidate.source.license}
               </p>
               <code>{c.candidate.source.commit}</code>
+              <details>
+                <summary>搭建说明与输入输出</summary>
+                <pre>
+                  {JSON.stringify(
+                    {
+                      buildSpec: c.candidate.buildSpec,
+                      interface: c.candidate.interface,
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </details>
               {c.candidate.evidence.map((e) => (
                 <details key={e.file}>
                   <summary>

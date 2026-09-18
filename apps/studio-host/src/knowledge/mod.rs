@@ -12,7 +12,10 @@ mod repository;
 #[cfg(test)]
 mod tests;
 pub use protocol::dispatch;
-mod cancel;
+pub(crate) mod cancel;
+pub(crate) use ingest::no_links;
+pub(crate) use repository::scan_conversion;
+pub(crate) use store::atomic_bytes;
 mod embedding;
 mod embedding_binary;
 mod embedding_model;

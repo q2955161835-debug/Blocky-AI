@@ -48,7 +48,9 @@ function unwrapPatch(input: unknown) {
     input &&
     typeof input === "object" &&
     "schemaVersion" in input &&
-    input.schemaVersion === "blocky.conversion/v1alpha1" &&
+    ["blocky.conversion/v1alpha1", "blocky.conversion/v1"].includes(
+      String(input.schemaVersion),
+    ) &&
     "patch" in input
   )
     return input.patch;

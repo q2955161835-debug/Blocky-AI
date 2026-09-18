@@ -1,4 +1,17 @@
 import fixture from "../fixtures/haystack-bm25.json";
+export {
+  analyzeFile,
+  type FileAnalysis,
+  type SymbolAnalysis,
+  type ConversionDecision,
+} from "./analyze";
+export {
+  ConversionScanner,
+  type ConversionReport,
+  type ConversionCall,
+} from "./scan";
+export { realConversionCandidate } from "./candidate";
+export { artifactSchema, type SourceArtifact } from "./snapshot";
 import { z } from "zod";
 import { validRef, type Project, type Resource } from "@blocky/language-schema";
 import { projectDigest } from "@blocky/project-model";

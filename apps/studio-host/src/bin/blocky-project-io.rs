@@ -28,6 +28,14 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
+    if value["operation"].as_str().is_some_and(|operation| operation.starts_with("conversion-")) {
+        if value["schemaVersion"] != SCHEMA { return json!({"ok":false,"code":"BLK-MIG-001"}); }
+        let result=std::env::var_os("LOCALAPPDATA").map(std::path::PathBuf::from).ok_or_else(||"BLK-SET-001".to_owned()).and_then(|root| {
+            let store=blocky_studio::conversion::ConversionStore::new(root.join("ai.blocky.studio/conversion"));
+            blocky_studio::conversion::dispatch(&store,&value)
+        });
+        return match result { Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code}) };
+    }
     if value["operation"]
         .as_str()
         .is_some_and(|s| s.starts_with("knowledge-"))

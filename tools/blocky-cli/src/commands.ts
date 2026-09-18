@@ -17,6 +17,7 @@ import {
 } from "./native-store";
 import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
+import { conversion, conversionHelp } from "./conversion";
 import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
 import { migrationCommand } from "./migration";
@@ -35,6 +36,7 @@ export const help = {
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
     ...constructionHelp,
+    ...conversionHelp,
     ...taskHelp,
     "diagnostics export <logs.json> --output <diagnostics.json> [--channel <name>] --json",
     "doctor --json",
@@ -175,6 +177,8 @@ export async function dispatch(
   if (migrated) return migrated;
   const exported = await exportDiagnostics(args);
   if (exported) return exported;
+  const converted = await conversion(args, signal);
+  if (converted) return converted;
   const constructed = await construction(args, signal);
   const task = await taskCommand(args, signal);
   if (task) return task;

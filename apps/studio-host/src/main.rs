@@ -2,6 +2,7 @@
 #[cfg(feature = "wdio")]
 mod acceptance;
 mod commands;
+mod conversion_commands;
 mod knowledge_commands;
 mod log_commands;
 mod secret_commands;
@@ -32,6 +33,7 @@ fn main() {
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
+            app.manage(blocky_studio::conversion::ConversionStore::new(app.path().app_local_data_dir()?.join("conversion")));
             app.manage(blocky_studio::knowledge::KnowledgeStore::new(
                 app.path().app_local_data_dir()?.join("knowledge"),
             ));
@@ -54,6 +56,11 @@ fn main() {
             #[cfg(feature = "wdio")]
             acceptance::acceptance_round_trip,
             commands::open_project,
+            conversion_commands::conversion_scan,
+            conversion_commands::conversion_read,
+            conversion_commands::conversion_cache_load,
+            conversion_commands::conversion_cache_save,
+            conversion_commands::conversion_cancel,
             knowledge_commands::knowledge_source_add,
             knowledge_commands::knowledge_sources,
             knowledge_commands::knowledge_read_source,

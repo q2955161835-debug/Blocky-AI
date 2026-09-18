@@ -12,13 +12,14 @@ import {
   previewPatch as previewPatchDomain,
   applyPatch as applyPatchDomain,
 } from "@blocky/builder-protocol";
-import { conversionCandidate as conversionCandidateDomain } from "@blocky/conversion-core";
+import type { realConversionCandidate } from "@blocky/conversion-core";
+import { useConversion } from "./useConversion";
 import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
 import { validatePatch as validatePatchHost } from "./host";
 type Review = Awaited<ReturnType<typeof previewPatchDomain>>;
-type Candidate = Awaited<ReturnType<typeof conversionCandidateDomain>>;
+type Candidate = Awaited<ReturnType<typeof realConversionCandidate>>;
 export function useConstruction(studio: Studio) {
   const validatePatch: typeof validatePatchHost = async (...args) => {
     await studio.resources.flush();
@@ -48,21 +49,6 @@ export function useConstruction(studio: Studio) {
       Parameters<typeof draftSurfaceDomain>[2],
     ]
   ) => draftSurfaceDomain(...args, studio.resources.map);
-  const conversionCandidate = (
-    ...args: [
-      Parameters<typeof conversionCandidateDomain>[0],
-      string,
-      string,
-      AbortSignal?,
-    ]
-  ) =>
-    conversionCandidateDomain(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      studio.resources.map,
-    );
 
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [captured, setCaptured] = useState<Blueprint>();
@@ -74,6 +60,12 @@ export function useConstruction(studio: Studio) {
   });
   const [review, setReview] = useState<Review>();
   const [candidate, setCandidate] = useState<Candidate>();
+  const conversion = useConversion(studio, async (value) => {
+    setReview(
+      await previewPatch(studio.controller.getSnapshot().project, value.patch),
+    );
+    setCandidate(value);
+  });
   const [busy, setBusy] = useState(false),
     gate = useRef(false);
   const [clipboard, setClipboard] = useState<Blueprint>();
@@ -177,21 +169,6 @@ export function useConstruction(studio: Studio) {
       );
       setReview(await previewPatch(project, patch));
       setCandidate(undefined);
-    });
-  const convert = () =>
-    perform(async () => {
-      const project = studio.controller.getSnapshot().project;
-      const resource = project.manifest.resources.find(
-        (r) => r.kind === "knowledge",
-      );
-      if (!resource) throw Error();
-      const value = await conversionCandidate(
-        project,
-        studio.session.active,
-        resource.resourceId,
-      );
-      setReview(await previewPatch(project, value.patch));
-      setCandidate(value);
     });
   const createSurface = () =>
     perform(async () => {
@@ -311,13 +288,13 @@ export function useConstruction(studio: Studio) {
     setBindings,
     review,
     candidate,
-    busy,
+    busy: busy || conversion.busy,
     clipboard,
     capture,
     save,
     prepareInsert,
     previewInsert,
-    convert,
+    conversion,
     createSurface,
     accept,
     reject,

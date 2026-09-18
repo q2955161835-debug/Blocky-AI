@@ -6,7 +6,12 @@ import {
   type EventType,
 } from "@blocky/observability";
 import { parseProject } from "@blocky/project-model";
-import type { IrNode, Project, Json } from "@blocky/language-schema";
+import {
+  evaluateExpression,
+  type IrNode,
+  type Project,
+  type Json,
+} from "@blocky/language-schema";
 import {
   localAdapters,
   renderAnswer,
@@ -148,7 +153,12 @@ export class Runtime {
                 let result: Json;
                 if (value.blockType === "core.data.literal")
                   result = value.fields.VALUE ?? null;
-                else if (value.blockType === "core.message.create") {
+                else if (value.blockType === "core.data.transform") {
+                  const input = value.inputs.ARGUMENTS
+                    ? await evaluate(value.inputs.ARGUMENTS)
+                    : JSON.parse(question);
+                  result = evaluateExpression(value.fields.PROGRAM, input);
+                } else if (value.blockType === "core.message.create") {
                   const content = await evaluate(value.inputs.CONTENT);
                   result =
                     typeof content === "string"
