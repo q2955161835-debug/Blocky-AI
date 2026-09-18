@@ -71,6 +71,17 @@ const state = z
     pending: z
       .object({
         index,
+        checkpoints: z
+          .record(
+            id,
+            z
+              .object({
+                revision: z.string().max(8192),
+                nextCursor: z.number().int().nonnegative().nullable(),
+              })
+              .strict(),
+          )
+          .default({}),
         completedSources: z.array(id).max(10000),
         failures: z
           .array(

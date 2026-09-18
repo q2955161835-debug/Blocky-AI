@@ -70,6 +70,7 @@ export type SyncCounts = {
 };
 export type PendingSync = {
   index: KnowledgeIndex;
+  checkpoints: Record<string, { revision: string; nextCursor: number | null }>;
   completedSources: string[];
   failures: { sourceId: string; code: string }[];
   counts: SyncCounts;

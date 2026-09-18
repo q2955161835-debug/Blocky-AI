@@ -9,6 +9,65 @@ import {
 import { afterEach, expect, it } from "vitest";
 import { KnowledgePanel } from "../../apps/studio-desktop/src/app/KnowledgePanel";
 afterEach(cleanup);
+it("names failed sources and retries only incomplete snapshots", async () => {
+  let value: unknown = null,
+    revision = 0,
+    broken = true;
+  const reads: string[] = [];
+  const call = async (op: string, fields: Record<string, unknown>) => {
+    if (op === "knowledge-sources")
+      return {
+        generation: 1,
+        sources: ["a", "b"].map((id) => ({
+          sourceId: id,
+          kind: "file",
+          title: id === "a" ? "已完成资料" : "待修复资料",
+          revision: "v1",
+          readable: true,
+          allowedPrincipals: ["local-user"],
+          metadata: {},
+        })),
+      };
+    if (op === "knowledge-load-index")
+      return { value, revision, generation: 1 };
+    if (op === "knowledge-save-index") {
+      value = structuredClone(fields.value);
+      return { revision: ++revision, generation: 1 };
+    }
+    if (op === "knowledge-read-source") {
+      reads.push(String(fields.sourceId));
+      if (fields.sourceId === "b" && broken) throw Error("private-path-canary");
+      return {
+        sourceId: fields.sourceId,
+        revision: "v1",
+        documents: [],
+        excluded: [],
+        nextCursor: null,
+        generation: 1,
+      };
+    }
+    throw Error(op);
+  };
+  render(
+    <KnowledgePanel
+      projectId="p"
+      collectionId="c"
+      call={call}
+      onBind={() => {}}
+    />,
+  );
+  await screen.findByText("待修复资料");
+  fireEvent.click(screen.getByRole("button", { name: "同步资料" }));
+  await screen.findByText(/待修复资料：读取未完成/);
+  expect(document.body.textContent).not.toContain("private-path-canary");
+  broken = false;
+  reads.length = 0;
+  fireEvent.click(screen.getByRole("button", { name: "继续同步未完成来源" }));
+  await waitFor(() =>
+    expect(screen.queryByText(/待修复资料：读取未完成/)).toBeNull(),
+  );
+  expect(reads).toEqual(["b"]);
+});
 it("imports a real source response and shows published document counts", async () => {
   let added = false,
     revision = 0,

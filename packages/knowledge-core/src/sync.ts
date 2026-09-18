@@ -85,6 +85,7 @@ export async function synchronize(
   }
   const pending: NonNullable<KnowledgeState["pending"]> = {
     index,
+    checkpoints: {},
     completedSources: [],
     failures: [],
     counts,
@@ -98,13 +99,55 @@ export async function synchronize(
   for (const source of listed.sources) {
     signal.throwIfAborted();
     if (!source.readable) continue;
-    const stagedDocuments: DocumentRecord[] = [],
-      stagedChunks: Chunk[] = [];
+    const checkpoint = state.pending?.checkpoints[source.sourceId];
+    const resume =
+      checkpoint &&
+      checkpoint.revision === source.revision &&
+      state.pending?.index.chunking.size === chunking.size &&
+      state.pending.index.chunking.overlap === chunking.overlap;
+    const stagedDocuments: DocumentRecord[] = resume
+        ? state.pending!.index.documents.filter(
+            (d) => d.sourceId === source.sourceId,
+          )
+        : [],
+      stagedChunks: Chunk[] = resume
+        ? state.pending!.index.chunks.filter(
+            (c) => c.sourceId === source.sourceId,
+          )
+        : [];
     const sourceCounts = { added: 0, updated: 0, skipped: 0 };
+    const otherDocuments = index.documents.length,
+      otherChunks = index.chunks.length;
+    const countDocument = (document: DocumentRecord) => {
+      const before = previous.get(key(document.sourceId, document.documentId));
+      if (!before) sourceCounts.added++;
+      else if (
+        before.contentDigest === document.contentDigest &&
+        old?.chunking.size === chunking.size &&
+        old.chunking.overlap === chunking.overlap
+      )
+        sourceCounts.skipped++;
+      else sourceCounts.updated++;
+    };
+    for (const document of stagedDocuments) {
+      seen.add(key(document.sourceId, document.documentId));
+      countDocument(document);
+    }
+    const stage = () => {
+      index.documents = [
+        ...index.documents.filter((d) => d.sourceId !== source.sourceId),
+        ...stagedDocuments,
+      ];
+      index.chunks = [
+        ...index.chunks.filter((c) => c.sourceId !== source.sourceId),
+        ...stagedChunks,
+      ];
+    };
     try {
-      let cursor: number | undefined, snapshotRevision: string | undefined;
-      const cursors = new Set<number>();
-      do {
+      let cursor = resume ? checkpoint.nextCursor : undefined,
+        snapshotRevision = resume ? checkpoint.revision : undefined;
+      if (resume) pending.checkpoints[source.sourceId] = checkpoint;
+      while (cursor !== null) {
         signal.throwIfAborted();
         const page = await port.readSource(
           source.sourceId,
@@ -112,6 +155,7 @@ export async function synchronize(
           snapshotRevision,
         );
         if (
+          page.sourceId !== source.sourceId ||
           page.generation !== listed.generation ||
           (snapshotRevision !== undefined && page.revision !== snapshotRevision)
         )
@@ -133,56 +177,41 @@ export async function synchronize(
                   parseDocument(document),
                   chunking,
                 );
-          const before = previous.get(docKey);
-          if (!before) sourceCounts.added++;
-          else if (
-            before.contentDigest === contentDigest &&
-            old?.chunking.size === chunking.size &&
-            old.chunking.overlap === chunking.overlap
-          )
-            sourceCounts.skipped++;
-          else sourceCounts.updated++;
-          stagedDocuments.push({
+          const record = {
             sourceId: source.sourceId,
             documentId: document.documentId,
             revision: document.revision,
             contentDigest,
             chunkIds: chunks.map((c) => c.chunkId),
-          });
+          };
+          countDocument(record);
+          stagedDocuments.push(record);
           stagedChunks.push(...chunks);
           if (
-            index.documents.length + stagedDocuments.length > 100000 ||
-            index.chunks.length + stagedChunks.length > 250000
+            otherDocuments + stagedDocuments.length > 100000 ||
+            otherChunks + stagedChunks.length > 250000
           )
             throw Error("BLK-KNOWLEDGE-BUDGET");
         }
-        cursor = page.nextCursor ?? undefined;
-        if (cursor !== undefined) {
-          if (cursors.has(cursor)) throw Error("BLK-KNOWLEDGE-SOURCE");
-          cursors.add(cursor);
-        }
-        if (cursor !== undefined)
-          await save({
-            ...state,
-            pending: {
-              ...pending,
-              index: {
-                ...index,
-                sources: {
-                  ...index.sources,
-                  [source.sourceId]: snapshotRevision,
-                },
-                documents: [...index.documents, ...stagedDocuments],
-                chunks: [...index.chunks, ...stagedChunks],
-              },
-            },
-          });
+        if (
+          page.nextCursor !== null &&
+          (!Number.isSafeInteger(page.nextCursor) ||
+            page.nextCursor <= (cursor ?? 0))
+        )
+          throw Error("BLK-KNOWLEDGE-SOURCE");
+        cursor = page.nextCursor;
+        pending.checkpoints[source.sourceId] = {
+          revision: snapshotRevision,
+          nextCursor: cursor,
+        };
+        index.sources[source.sourceId] = snapshotRevision;
+        stage();
+        await save({ ...state, pending });
         // Yield so a desktop Stop button can abort between bounded pages.
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
-      } while (cursor !== undefined);
+      }
       index.sources[source.sourceId] = snapshotRevision!;
-      index.documents.push(...stagedDocuments);
-      index.chunks.push(...stagedChunks);
+      stage();
       counts.added += sourceCounts.added;
       counts.updated += sourceCounts.updated;
       counts.skipped += sourceCounts.skipped;
@@ -203,11 +232,11 @@ export async function synchronize(
     await save({ ...state, pending });
     options.onProgress?.({ ...counts });
   }
-  counts.deleted = [...previous.keys()].filter((k) => !seen.has(k)).length;
   if (pending.failures.length) {
     await save({ ...state, pending });
     return { status: "failed", counts };
   }
+  counts.deleted = [...previous.keys()].filter((k) => !seen.has(k)).length;
   await save({
     schemaVersion: "blocky.knowledge-store/v1",
     index,

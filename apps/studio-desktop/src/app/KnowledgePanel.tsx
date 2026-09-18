@@ -25,6 +25,10 @@ export function KnowledgePanel({
     [status, setStatus] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
+    [failures, setFailures] = useState<{ sourceId: string; code: string }[]>(
+      [],
+    ),
+    [resumable, setResumable] = useState(false),
     [url, setUrl] = useState("");
   const pending = useRef<AbortController | null>(null),
     epoch = useRef(0);
@@ -35,6 +39,8 @@ export function KnowledgePanel({
     if (current !== epoch.current) return;
     const state = readKnowledgeState(stored.value);
     setSources(listed.sources);
+    setFailures(state.pending?.failures ?? []);
+    setResumable(state.pending !== null);
     setStatus(
       `${state.index?.documents.length ?? 0} 份文档 · ${state.index?.chunks.length ?? 0} 个片段${state.pending?.failures.length ? ` · ${state.pending.failures.length} 个来源失败，尚未发布更新` : ""}`,
     );
@@ -66,12 +72,14 @@ export function KnowledgePanel({
       await work(controller.signal);
       if (current === epoch.current) await refresh();
     } catch {
-      if (current === epoch.current)
+      if (current === epoch.current) {
+        await refresh().catch(() => {});
         setError(
           controller.signal.aborted
             ? "同步已取消，可重新同步继续。"
             : "资料操作未完成，请检查来源、权限和同步状态。",
         );
+      }
     } finally {
       pending.current = null;
       if (current === epoch.current) setBusy(false);
@@ -152,6 +160,22 @@ export function KnowledgePanel({
         ))}
       </ul>
       <p role="status">{status}</p>
+      {failures.length > 0 && (
+        <ul aria-label="同步失败来源">
+          {failures.map((f) => (
+            <li key={f.sourceId}>
+              {sources.find((s) => s.sourceId === f.sourceId)?.title ??
+                f.sourceId}
+              ：读取未完成（{f.code}），请检查该来源是否可访问。
+            </li>
+          ))}
+        </ul>
+      )}
+      {resumable && (
+        <p>
+          继续同步将重试未完成的来源；已完成且快照未变的来源会复用。更新成功后统一发布。
+        </p>
+      )}
       {error && <p role="alert">{error}</p>}
       <button
         disabled={busy}
@@ -169,7 +193,7 @@ export function KnowledgePanel({
           })
         }
       >
-        同步资料
+        {resumable ? "继续同步未完成来源" : "同步资料"}
       </button>
       {busy && (
         <button

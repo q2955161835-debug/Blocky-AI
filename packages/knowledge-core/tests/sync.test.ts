@@ -169,4 +169,37 @@ it("keeps a resumable checkpoint between pages without publishing partial source
   const state = readKnowledgeState(port.value);
   expect(state.index).toBeNull();
   expect(state.pending?.index.chunks[0].text).toBe("First page.");
+  port.save = save;
+  const calls: (number | undefined)[] = [];
+  const sources = port.sources.bind(port);
+  port.sources = async () => {
+    const result = await sources();
+    result.sources[0].revision = "snapshot";
+    return result;
+  };
+  port.readSource = async (_id: string, cursor?: number, revision?: string) => {
+    calls.push(cursor);
+    expect(revision).toBe("snapshot");
+    return {
+      sourceId: "source-a",
+      documents: [doc("two", "Second page.")],
+      revision: "snapshot",
+      excluded: [],
+      nextCursor: null,
+      generation: 1,
+    };
+  };
+  expect((await synchronize(port)).status).toBe("completed");
+  expect(calls).toEqual([1]);
+  expect(readKnowledgeState(port.value).index?.documents).toHaveLength(2);
+});
+
+it("does not report published deletions when an existing source fails", async () => {
+  const port = new Store();
+  await synchronize(port);
+  port.broken.add("source-a");
+  const result = await synchronize(port);
+  expect(result.status).toBe("failed");
+  expect(result.counts.deleted).toBe(0);
+  expect(readKnowledgeState(port.value).index?.documents).toHaveLength(2);
 });
