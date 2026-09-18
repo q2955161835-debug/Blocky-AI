@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "blocky.model-assets/v1",
+  "model": {
+    "id": "multilingual-e5-small-int8-v1",
+    "directory": "multilingual-e5-small",
+    "repository": "Xenova/multilingual-e5-small",
+    "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "license": "MIT (upstream model card; converted model declares base_model)",
+    "modelCard": "https://huggingface.co/Xenova/multilingual-e5-small/blob/761b726dd34fb83930e26aab4e9ac3899aa1fa78/README.md",
+    "modelCardSha256": "561a19594636657fe033f8b4427a7743b5f6f3a12f16cecc5f286feca0453245",
+    "upstream": {
+      "repository": "intfloat/multilingual-e5-small",
+      "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "modelCard": "https://huggingface.co/intfloat/multilingual-e5-small/blob/614241f622f53c4eeff9890bdc4f31cfecc418b3/README.md",
+      "modelCardSha256": "0038de97aee16258cecbad7ffda4b4febd6953e747a00e0ddbc8e6ed241e9c1c",
+      "licenseDeclaration": "license: mit"
+    },
+    "files": [
+      {
+        "name": "model_quantized.onnx",
+        "bytes": 118308185,
+        "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "url": "https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/onnx/model_quantized.onnx"
+      },
+      {
+        "name": "tokenizer.json",
+        "bytes": 17082730,
+        "sha256": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39",
+        "url": "https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/tokenizer.json"
+      },
+      {
+        "name": "config.json",
+        "bytes": 658,
+        "sha256": "cb99455288675345e1a4f411438d5d0adbba5fbd3a67ea4fb03c015433b996c1",
+        "url": "https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/config.json"
+      },
+      {
+        "name": "special_tokens_map.json",
+        "bytes": 167,
+        "sha256": "d05497f1da52c5e09554c0cd874037a083e1dc1b9cfd48034d1c717f1afc07a7",
+        "url": "https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/special_tokens_map.json"
+      },
+      {
+        "name": "tokenizer_config.json",
+        "bytes": 443,
+        "sha256": "a1d6bc8734a6f635dc158508bef000f8e2e5a759c7d92f984b2c86e5ff53425b",
+        "url": "https://huggingface.co/Xenova/multilingual-e5-small/resolve/761b726dd34fb83930e26aab4e9ac3899aa1fa78/tokenizer_config.json"
+      }
+    ]
+  },
+  "directml": {
+    "version": "1.15.4",
+    "name": "DirectML.dll",
+    "bytes": 18527776,
+    "sha256": "9c9e6d822561c6c41b90e6994b3e8857cf1d66dbfb1e0c4c799c7c89b4e92da1",
+    "archive": {
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.ai.directml/1.15.4/microsoft.ai.directml.1.15.4.nupkg",
+      "bytes": 202292617,
+      "sha256": "4e7cb7ddce8cf837a7a75dc029209b520ca0101470fcdf275c1f49736a3615b9",
+      "entry": "bin/x64-win/DirectML.dll"
+    },
+    "ortCacheKey": "f7c654b3729cb9e5ad2a36a0c38e5b48e63bf4eed22968931aed33a0ad0b527d"
+  },
+  "onnxRuntime": {
+    "version": "1.28.0",
+    "revision": "da9b5e364c465de65c49d91e696cd6485270757f",
+    "linkage": "static",
+    "distribution": "https://cdn.pyke.io/0/pyke:ort-rs/ms@1.28.0/x86_64-pc-windows-msvc+directml.tar.lzma2",
+    "distributionSha256": "f7c654b3729cb9e5ad2a36a0c38e5b48e63bf4eed22968931aed33a0ad0b527d"
+  },
+  "vcRuntime": {
+    "redistribution": "not bundled; installed system prerequisite",
+    "minimumVersion": "14.44",
+    "download": "https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist",
+    "terms": "https://learn.microsoft.com/en-us/visualstudio/releases/2022/redistribution",
+    "files": [
+      "msvcp140.dll",
+      "msvcp140_1.dll",
+      "vcruntime140.dll",
+      "vcruntime140_1.dll"
+    ]
+  },
+  "licenses": [
+    {
+      "name": "E5 / Microsoft UniLM",
+      "license": "MIT",
+      "file": "licenses/LICENSE.e5",
+      "source": "https://raw.githubusercontent.com/microsoft/unilm/50224e387211f15ac6a3b2685730b9a0c850f145/LICENSE",
+      "sha256": "904dc4d8749877f1dba1cda48200d2462dccbeb7c134d5e4ef6fa75e0198c8fe"
+    },
+    {
+      "name": "Microsoft DirectML 1.15.4",
+      "license": "Microsoft Software License Terms",
+      "file": "licenses/LICENSE.DirectML.txt",
+      "source": "https://api.nuget.org/v3-flatcontainer/microsoft.ai.directml/1.15.4/microsoft.ai.directml.1.15.4.nupkg#LICENSE.txt",
+      "sha256": "a05138e3a085ff60a44881eedfa58dccb03ecc1d7b1f6ae888418e8c2fec4b8d"
+    },
+    {
+      "name": "Microsoft DirectML 1.15.4 third-party notices",
+      "license": "see text",
+      "file": "licenses/NOTICE.DirectML.txt",
+      "source": "https://api.nuget.org/v3-flatcontainer/microsoft.ai.directml/1.15.4/microsoft.ai.directml.1.15.4.nupkg#ThirdPartyNotices.txt",
+      "sha256": "2c95795c13ff48a58b6ed916f37901c23d964b5d9d601af422f17ad2172e7950"
+    },
+    {
+      "name": "ONNX Runtime 1.28.0",
+      "license": "MIT",
+      "file": "licenses/LICENSE.ONNX-Runtime.txt",
+      "source": "https://raw.githubusercontent.com/microsoft/onnxruntime/da9b5e364c465de65c49d91e696cd6485270757f/LICENSE",
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    {
+      "name": "ONNX Runtime 1.28.0 third-party notices",
+      "license": "see text",
+      "file": "licenses/NOTICE.ONNX-Runtime.txt",
+      "source": "https://raw.githubusercontent.com/microsoft/onnxruntime/da9b5e364c465de65c49d91e696cd6485270757f/ThirdPartyNotices.txt",
+      "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2"
+    },
+    {
+      "name": "Visual C++ Runtime prerequisite (not bundled)",
+      "license": "Microsoft Software License Terms",
+      "file": "licenses/LICENSE.VC-Runtime.txt",
+      "source": "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx",
+      "sha256": "7e96c27c67ef3e7cabc55e1dee05727e67d261f3944155a816a07dbf9b78fb1d"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ const registry = await json("vendor/licenses/registry.json").catch((error) => {
   if (error.code === "ENOENT") return [];
   throw error;
 });
+const modelRegistry = await json("vendor/models/registry.json");
 const entries = [
   ...js.flatMap((p) =>
     p.paths.map((path, i) => ({
@@ -77,6 +78,12 @@ for (const p of entries.sort(
   sections.push(
     `\n${"=".repeat(72)}\n${id}\nDeclared license: ${p.license ?? "see text"}\n${"=".repeat(72)}\n${texts.join("\n\n")}`,
   );
+}
+for (const entry of modelRegistry.licenses) {
+  const bytes = await readFile(resolve("vendor/models", entry.file));
+  if (createHash("sha256").update(bytes).digest("hex") !== entry.sha256) throw Error("Model/runtime license checksum mismatch");
+  seen.add(entry.name);
+  sections.push(`\n${"=".repeat(72)}\n${entry.name}\nDeclared license: ${entry.license}\nSource: ${entry.source}\n${"=".repeat(72)}\n${bytes.toString("utf8")}`);
 }
 await mkdir("try/stage2-release", { recursive: true });
 await writeFile(

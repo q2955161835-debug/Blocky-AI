@@ -6,10 +6,12 @@ import {
   readdir,
 } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { resolve, relative, join, sep } from "node:path";
+import { resolve, relative, join, sep, dirname } from "node:path";
+import { registry } from "./prepare-knowledge-model.mjs";
+const version = JSON.parse(await readFile("package.json", "utf8")).version;
 const root = process.cwd(),
   base = resolve("dist"),
-  out = resolve(process.argv[2] ?? "dist/Blocky-Studio-0.2.0");
+  out = resolve(process.argv[2] ?? `dist/Blocky-Studio-${version}`);
 if (!out.startsWith(base + sep))
   throw Error("Release directory must be inside project dist");
 const scan = JSON.parse(
@@ -31,12 +33,14 @@ await mkdir(join(out, "cli/bin"), { recursive: true });
 await mkdir(join(out, "licenses/sources"), { recursive: true });
 const copies = [
   ["try/release-native-target/release/blocky-studio.exe", "Blocky Studio.exe"],
+  ["try/release-native-target/release/DirectML.dll", "DirectML.dll"],
   ["tools/blocky-cli/dist/main.mjs", "cli/main.mjs"],
   ["tools/blocky-cli/dist/blocky.cmd", "cli/blocky.cmd"],
   [
     "tools/blocky-cli/dist/bin/blocky-project-io.exe",
     "cli/bin/blocky-project-io.exe",
   ],
+  ["tools/blocky-cli/dist/bin/DirectML.dll", "cli/bin/DirectML.dll"],
   [
     "try/stage2-release/THIRD_PARTY_NOTICES.txt",
     "licenses/THIRD_PARTY_NOTICES.txt",
@@ -50,11 +54,20 @@ const copies = [
     "licenses/sources/selectors-0.36.1.crate",
   ],
 ];
-for (const [source, target] of copies)
+for (const asset of registry.model.files) copies.push([
+  `try/stage3/models/${registry.model.directory}/${asset.name}`,
+  `models/${registry.model.directory}/${asset.name}`,
+]);
+for (const license of registry.licenses) copies.push([
+  `vendor/models/${license.file}`, `licenses/${license.file.split("/").at(-1)}`,
+]);
+for (const [source, target] of copies) {
+  await mkdir(dirname(join(out, target)), { recursive: true });
   await copyFile(source, join(out, target));
+}
 await writeFile(
   join(out, "使用说明.txt"),
-  `Blocky Studio 0.2.0\n\n运行环境：Windows x64，Microsoft Edge WebView2 Runtime。\n双击 Blocky Studio.exe，选择资料问答伙伴开始创作。\n项目使用 .blocky 文件保存，可在程序中重新打开。\n\nCLI 需要 Node.js 22（最低 22.12）。命令入口为 cli\\blocky.cmd；运行 --help 查看命令。\nCLI 输出 JSON/JSONL，创建新文件时拒绝覆盖已有目标。\n\n本版本支持多画布、资料问答、个人蓝图、锁定仓库候选审阅、应用问答页面、真实多会话终端、类型化项目任务、设置与资源管理、恢复副本和诊断摘要导出。\n问答使用内置本地适配器，未真实调用外部大模型 API。在线 Provider、真实资料摄取/索引、任意仓库扫描、RPA和发布服务不在本版本能力范围内。\n\n第三方许可证见 licenses。selectors 的对应原始源码随附于 licenses\\sources。\n`,
+  `Blocky Studio ${version}\n\n运行环境：Windows x64，Microsoft Edge WebView2 Runtime，以及 Microsoft Visual C++ 2015–2022 x64 Runtime（14.44 或更新版本）。\nVC 运行库未随包分发；官方安装入口：${registry.vcRuntime.download}\n双击 Blocky Studio.exe 开始创作。项目使用 .blocky 文件保存，可在程序中重新打开。\n\nCLI 需要 Node.js 22（最低 22.12）。命令入口为 cli\\blocky.cmd；运行 --help 查看命令。\nCLI 输出 JSON/JSONL，创建新文件时拒绝覆盖已有目标。\n\n本地知识检索使用随包的 multilingual-e5-small 模型；请保留 models 目录。桌面与 CLI 共用这份模型。问答以资料原文摘录和引用核验为基础，未真实调用外部大模型 API。\n\n第三方许可证见 licenses。selectors 的对应原始源码随附于 licenses\\sources。\n`,
 );
 const files = [];
 async function walk(folder) {

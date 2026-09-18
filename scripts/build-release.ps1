@@ -11,6 +11,10 @@ try {
  $env:CARGO_ENCODED_RUSTFLAGS=$flags -join [char]31
  Push-Location $taskRoot
  try {
+  & node scripts/prepare-knowledge-model.mjs
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  & node scripts/prepare-native-runtime.mjs
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   Push-Location (Join-Path $taskRoot 'apps/studio-host')
   try { & node node_modules/@tauri-apps/cli/tauri.js build --no-bundle -- --locked }
   finally { Pop-Location }
@@ -19,6 +23,7 @@ try {
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & pnpm --dir tools/blocky-cli exec node build.mjs (Join-Path $env:CARGO_TARGET_DIR 'release/blocky-project-io.exe')
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  Copy-Item -LiteralPath (Join-Path $taskRoot 'try/stage3/runtime/DirectML.dll') -Destination (Join-Path $env:CARGO_TARGET_DIR 'release/DirectML.dll')
   & pnpm licenses list --prod --json | Out-File -Encoding utf8NoBOM (Join-Path $taskRoot 'try/production-js-licenses.json')
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & cargo metadata --manifest-path apps/studio-host/Cargo.toml --format-version 1 --locked --filter-platform x86_64-pc-windows-msvc | Out-File -Encoding utf8NoBOM (Join-Path $taskRoot 'try/production-rust-metadata.json')

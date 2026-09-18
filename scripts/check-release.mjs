@@ -2,13 +2,28 @@ import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { join, relative, resolve } from "node:path";
+import { registry, verifyAsset } from "./prepare-knowledge-model.mjs";
+import { checkSystemRuntime } from "./prepare-native-runtime.mjs";
 const root = process.cwd();
 const files = [
   "try/release-native-target/release/blocky-studio.exe",
   "tools/blocky-cli/dist/bin/blocky-project-io.exe",
   "tools/blocky-cli/dist/main.mjs",
   "tools/blocky-cli/dist/blocky.cmd",
+  "try/release-native-target/release/DirectML.dll",
+  "tools/blocky-cli/dist/bin/DirectML.dll",
 ];
+const vendorFiles = [
+  ...registry.model.files.map(asset => ({ path: `try/stage3/models/${registry.model.directory}/${asset.name}`, asset })),
+  ...registry.licenses.map(license => ({ path: `vendor/models/${license.file}`, asset: license })),
+];
+for (const { path, asset } of vendorFiles) {
+  const bytes = await readFile(path);
+  if ((asset.bytes !== undefined && bytes.length !== asset.bytes) || createHash("sha256").update(bytes).digest("hex") !== asset.sha256) throw Error("Vendor artifact lock mismatch");
+  files.push(path);
+}
+for (const path of files.filter(path => path.endsWith("DirectML.dll"))) await verifyAsset(path, registry.directml);
+const vcRuntime = await checkSystemRuntime();
 for (const name of await readdir("apps/studio-desktop/dist/assets"))
   files.push(`apps/studio-desktop/dist/assets/${name}`);
 files.push("apps/studio-desktop/dist/index.html");
@@ -32,7 +47,9 @@ for (const path of files) {
   const failures = [];
   if (privatePrefixes.some((p) => includes(bytes, p)))
     failures.push("local-build-path");
-  if (testMarkers.some((p) => includes(bytes, p)))
+  // An upstream tokenizer vocabulary legitimately includes webdriver. Vendor
+  // blobs are pinned above; application artifacts retain all marker checks.
+  if (!vendorFiles.some(v => v.path === path) && testMarkers.some((p) => includes(bytes, p)))
     failures.push("test-channel");
   if (path.endsWith(".map")) failures.push("source-map");
   if (/\bsk-[A-Za-z0-9_-]{24,}/.test(text))
@@ -74,6 +91,8 @@ const report = {
     encoding: "utf8",
   }).trim(),
   positiveControl,
+  modelId: registry.model.id,
+  vcRuntime,
   scope:
     "ordinary binaries, CLI bundle and production browser assets; pattern checks are not a general secret detector",
   artifacts,

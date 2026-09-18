@@ -80,7 +80,10 @@ fn public_fallback(host: &str, port: u16) -> Result<Vec<SocketAddr>, String> {
         .build()
         .map_err(|_| "BLK-KNOW-NETWORK")?;
     let mut endpoint = reqwest::Url::parse("https://1.1.1.1/dns-query").map_err(|_| INVALID)?;
-    endpoint.query_pairs_mut().append_pair("name", host).append_pair("type", "A");
+    endpoint
+        .query_pairs_mut()
+        .append_pair("name", host)
+        .append_pair("type", "A");
     let response = client
         .get(endpoint)
         .header("Accept", "application/dns-json")
