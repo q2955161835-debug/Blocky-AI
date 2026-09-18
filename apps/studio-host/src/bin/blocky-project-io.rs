@@ -280,6 +280,7 @@ fn knowledge_session() -> i32 {
                         .as_str()
                         .is_some_and(|op| op.starts_with("knowledge-")) =>
                 {
+                    drop(bytes);
                     execute_value(value)
                 }
                 _ => json!({"ok":false,"code":"BLK-CLI-002"}),

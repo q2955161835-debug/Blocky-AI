@@ -133,7 +133,7 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
             c,
             request["expectedRevision"].as_u64().ok_or(INVALID)?,
             request["expectedGeneration"].as_u64().ok_or(INVALID)?,
-            request.get("value").cloned().ok_or(INVALID)?,
+            request.get("value").ok_or(INVALID)?,
         ),
         "knowledge-cancel" => {
             store.cancel(p, c)?;

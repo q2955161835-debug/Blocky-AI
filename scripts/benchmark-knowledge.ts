@@ -127,6 +127,11 @@ const report: Record<string, unknown> = {
     indexRatio: 10,
   },
 };
+async function checkpoint(phase: string) {
+  report.phase = phase;
+  report.nodePeakBytes = Math.max(nodePeak, process.resourceUsage().maxRSS * 1024);
+  await writeFile(reportPath, JSON.stringify(report, null, 2));
+}
 try {
   await call("knowledge-source-add", {
     ...fields,
@@ -134,6 +139,7 @@ try {
     path: corpus,
   });
   report.firstSync = await timed(() => synchronize(port));
+  await checkpoint("synchronized");
   console.log(
     JSON.stringify({
       phase: "synchronized",
@@ -144,6 +150,7 @@ try {
   report.modelLoad = await timed(() => call("knowledge-model-install", fields));
   report.modelResidentMemory = hostMemory();
   report.embedding = await timed(() => search.embed());
+  await checkpoint("embedded");
   console.log(
     JSON.stringify({
       phase: "embedded",
@@ -185,13 +192,17 @@ try {
       ),
     ]),
   );
+  report.measurements = measurements;
+  await checkpoint("queried");
   report.repeatedEmbedding = await timed(() => search.embed());
+  await checkpoint("repeated-embedding");
   for (let n = 0; n < count / 10; n++)
     await writeFile(
       resolve(corpus, `record-${String(n).padStart(5, "0")}.txt`),
       document(n, true),
     );
   report.incrementalSync = await timed(() => synchronize(port));
+  await checkpoint("incremental-synchronized");
   report.incrementalEmbedding = await timed(() => search.embed());
   report.hostMemory = hostMemory();
   report.nodePeakBytes = Math.max(
@@ -207,6 +218,7 @@ try {
     (report.hostMemory as { peakWorkingSet: number }).peakWorkingSet <=
       2 * 1024 ** 3 &&
     Number(report.indexRatio) <= 10;
+  report.phase = "completed";
   console.log(
     JSON.stringify({
       report: reportPath,
@@ -218,6 +230,7 @@ try {
     }),
   );
 } catch (error) {
+  report.phase = "failed";
   report.error = error instanceof Error ? error.message : "benchmark failed";
   process.exitCode = 1;
   console.error(report.error);

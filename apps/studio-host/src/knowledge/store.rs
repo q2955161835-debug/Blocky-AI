@@ -252,17 +252,18 @@ impl KnowledgeStore {
         collection: &str,
         expected_revision: u64,
         expected_generation: u64,
-        value: Value,
+        value: impl std::borrow::Borrow<Value>,
     ) -> Result<Value, String> {
+        let value = value.borrow();
         self.locked(project, collection, |path, state| {
             if state.revision != expected_revision || state.generation != expected_generation {
                 return Err(STALE.into());
             }
             // A denied source cannot be resurrected through a caller-supplied cache body.
-            super::index_guard::validate(&value, state)?;
+            super::index_guard::validate(value, state)?;
             let id = uuid::Uuid::new_v4().to_string();
             let target = path.join(format!("index-{id}.json"));
-            let bytes = serde_json::to_vec(&value).map_err(|_| INVALID)?;
+            let bytes = serde_json::to_vec(value).map_err(|_| INVALID)?;
             if bytes.len() > 1024 * 1024 * 1024 {
                 return Err(LIMIT.into());
             }
