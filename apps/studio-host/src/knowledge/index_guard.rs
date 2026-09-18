@@ -1,5 +1,68 @@
 use super::*;
 use serde_json::Value;
+/// Compact an already validated legacy checkpoint for transport. Compare every
+/// field, not just content hashes: citations and source identity remain distinct.
+pub fn compact_checkpoint(value: &mut Value) {
+    let Some(store) = value.as_object_mut() else {
+        return;
+    };
+    let Some(mut pending) = store.remove("pending") else {
+        return;
+    };
+    if let (Some(published), Some(staged)) = (
+        store.get("index").and_then(|v| v["chunks"].as_array()),
+        pending
+            .get_mut("index")
+            .and_then(|v| v["chunks"].as_array_mut()),
+    ) {
+        let by_id: std::collections::HashMap<&str, &Value> = published
+            .iter()
+            .filter_map(|chunk| Some((chunk["chunkId"].as_str()?, chunk)))
+            .collect();
+        let mut references = Vec::new();
+        staged.retain(|chunk| {
+            let Some(id) = chunk["chunkId"].as_str() else {
+                return true;
+            };
+            if by_id.get(id).is_some_and(|prior| *prior == chunk) {
+                references.push(Value::String(id.to_owned()));
+                false
+            } else {
+                true
+            }
+        });
+        if !references.is_empty() {
+            let object = pending.as_object_mut().expect("validated pending object");
+            let refs = object
+                .entry("chunkRefs")
+                .or_insert_with(|| Value::Array(Vec::new()));
+            refs.as_array_mut()
+                .expect("validated references")
+                .extend(references);
+        }
+    }
+    store.insert("pending".into(), pending);
+}
+#[cfg(test)]
+mod compact_tests {
+    use super::*;
+    use serde_json::json;
+    #[test]
+    fn legacy_checkpoint_shares_only_identical_chunks_and_preserves_existing_refs() {
+        let original = json!({"index":{"chunks":[{"chunkId":"a","sourceId":"s1","text":"same"},{"chunkId":"b","sourceId":"s1","text":"same"}]},"pending":{"index":{"chunks":[{"chunkId":"a","sourceId":"s1","text":"same"},{"chunkId":"b","sourceId":"s2","text":"same"}]},"chunkRefs":[]}});
+        let mut compact = original.clone();
+        compact_checkpoint(&mut compact);
+        assert_eq!(compact["pending"]["chunkRefs"], json!(["a"]));
+        assert_eq!(
+            compact["pending"]["index"]["chunks"],
+            json!([{"chunkId":"b","sourceId":"s2","text":"same"}])
+        );
+        let once = compact.clone();
+        compact_checkpoint(&mut compact);
+        assert_eq!(compact, once);
+        assert_eq!(compact["index"], original["index"]);
+    }
+}
 /// Cached ACL fields are never authoritative. Every indexed source reference must
 /// still name a readable grant in this collection and carry the current epoch.
 pub fn validate(value: &Value, state: &Collection) -> Result<(), String> {

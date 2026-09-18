@@ -230,7 +230,7 @@ impl KnowledgeStore {
     }
     pub fn load_index(&self, project: &str, collection: &str) -> Result<Value, String> {
         self.locked(project, collection, |path, state| {
-            let value = match &state.index {
+            let mut value = match &state.index {
                 Some(id) => {
                     if !valid_id(id) {
                         return Err(INVALID.into());
@@ -240,7 +240,10 @@ impl KnowledgeStore {
                 None => Value::Null,
             };
             super::index_guard::validate(&value, state)?;
-            Ok(json!({"revision":state.revision,"generation":state.generation,"value":value}))
+            super::index_guard::compact_checkpoint(&mut value);
+            let mut response = json!({"revision":state.revision,"generation":state.generation});
+            response["value"] = value;
+            Ok(response)
         })
     }
     pub fn save_index(

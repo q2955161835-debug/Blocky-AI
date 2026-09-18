@@ -45,7 +45,11 @@ fn execute_value(value: Value) -> Value {
                 blocky_studio::conversion::dispatch(&store, &value)
             });
         return match result {
-            Ok(value) => json!({"ok":true,"value":value}),
+            Ok(value) => {
+                let mut response = json!({"ok":true});
+                response["value"] = value;
+                response
+            }
             Err(code) => json!({"ok":false,"code":code}),
         };
     }
@@ -66,7 +70,11 @@ fn execute_value(value: Value) -> Value {
                 blocky_studio::knowledge::dispatch(&store, &value)
             });
         return match result {
-            Ok(value) => json!({"ok":true,"value":value}),
+            Ok(value) => {
+                let mut response = json!({"ok":true});
+                response["value"] = value;
+                response
+            }
             Err(code) => json!({"ok":false,"code":code}),
         };
     }

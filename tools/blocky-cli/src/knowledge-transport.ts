@@ -1,5 +1,6 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { CliError } from "./protocol";
+import { jsonFrame } from "./json-frame";
 const MAX_FRAME = 384 * 1024 * 1024;
 /** A private stdio session keeps the verified model warm for a CLI batch. No socket. */
 export class KnowledgeTransport {
@@ -10,7 +11,7 @@ export class KnowledgeTransport {
     reject: (e: Error) => void;
     timer: ReturnType<typeof setTimeout>;
   };
-  private output = "";
+  private output: string[] = [];
   private bytes = 0;
   constructor(private executable: string) {}
   cancel() {
@@ -19,13 +20,6 @@ export class KnowledgeTransport {
   request(input: Record<string, unknown>): Promise<unknown> {
     const operation = async () => {
       if (!this.child) this.start();
-      const payload =
-        JSON.stringify({
-          schemaVersion: "blocky.project-io/v1alpha1",
-          ...input,
-        }) + "\n";
-      if (Buffer.byteLength(payload) > MAX_FRAME)
-        throw new CliError(3, "BLK-KNOW-LIMIT", "知识请求超出存储上限。");
       return new Promise((resolve, reject) => {
         const timeout =
           input.operation === "knowledge-embed-index"
@@ -36,7 +30,32 @@ export class KnowledgeTransport {
           timeout,
         );
         this.waiting = { resolve, reject, timer };
-        this.child!.stdin.write(payload);
+        const child = this.child!;
+        const send = async () => {
+          let bytes = 0;
+          for (const part of jsonFrame({
+            schemaVersion: "blocky.project-io/v1alpha1",
+            ...input,
+          })) {
+            if (this.child !== child) return;
+            bytes += Buffer.byteLength(part);
+            if (bytes > MAX_FRAME)
+              throw new CliError(3, "BLK-KNOW-LIMIT", "知识请求超出存储上限。");
+            await new Promise<void>((done, failed) =>
+              child.stdin.write(part, (error) =>
+                error ? failed(error) : done(),
+              ),
+            );
+          }
+        };
+        void send().catch((error) => {
+          if (this.child === child)
+            this.fail(
+              error instanceof CliError
+                ? error
+                : new CliError(6, "BLK-HOST-001", "知识请求无法写入。"),
+            );
+        });
       });
     };
     const result = this.queue.then(operation);
@@ -52,7 +71,7 @@ export class KnowledgeTransport {
       windowsHide: true,
     });
     this.child = child;
-    this.output = "";
+    this.output = [];
     this.bytes = 0;
     child.stdout.setEncoding("utf8");
     child.stderr.resume();
@@ -63,9 +82,17 @@ export class KnowledgeTransport {
         this.fail(new CliError(6, "BLK-KNOW-LIMIT", "知识响应超出存储上限。"));
         return;
       }
-      this.output += data;
-      const end = this.output.indexOf("\n");
-      if (end < 0) return;
+      // Search only this decoded chunk. Flattening the entire growing frame on
+      // every pipe event makes large index reads quadratic in time and memory.
+      const end = data.indexOf("\n");
+      if (end < 0) {
+        this.output.push(data);
+        return;
+      }
+      if (end !== data.length - 1) {
+        this.fail(new CliError(6, "BLK-HOST-001", "意外的知识响应。"));
+        return;
+      }
       const pending = this.waiting;
       if (!pending) {
         this.fail(new CliError(6, "BLK-HOST-001", "意外的知识响应。"));
@@ -73,9 +100,10 @@ export class KnowledgeTransport {
       }
       this.waiting = undefined;
       clearTimeout(pending.timer);
-      const line = this.output.slice(0, end);
-      this.output = this.output.slice(end + 1);
-      this.bytes = Buffer.byteLength(this.output);
+      this.output.push(data.slice(0, end));
+      const line = this.output.join("");
+      this.output = [];
+      this.bytes = 0;
       try {
         pending.resolve(JSON.parse(line));
       } catch {
@@ -104,7 +132,7 @@ export class KnowledgeTransport {
     }
     this.child?.kill();
     this.child = undefined;
-    this.output = "";
+    this.output = [];
     this.bytes = 0;
   }
   async close(): Promise<void> {

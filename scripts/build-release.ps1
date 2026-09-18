@@ -3,12 +3,21 @@ $taskRoot=Split-Path -Parent $PSScriptRoot
 $previousTarget=$env:CARGO_TARGET_DIR
 $previousFlags=$env:CARGO_ENCODED_RUSTFLAGS
 $previousRustFlags=$env:RUSTFLAGS
+$previousCFlags=$env:CFLAGS
+$previousCxxFlags=$env:CXXFLAGS
+$previousShellFlags=$env:CC_SHELL_ESCAPED_FLAGS
 try {
  $env:CARGO_TARGET_DIR=Join-Path $taskRoot 'try/release-native-target'
  $env:RUSTFLAGS=$null
  $prefixes=@($taskRoot,$taskRoot.Replace('\','/'),$env:USERPROFILE,$env:USERPROFILE.Replace('\','/'))|Select-Object -Unique
  $flags=@();foreach($prefix in $prefixes){$flags+="--remap-path-prefix=$prefix=/build"}
  $env:CARGO_ENCODED_RUSTFLAGS=$flags -join [char]31
+ # Rust remapping does not reach native C/C++ dependencies (for example aws-lc).
+ # MSVC requires deterministic mode for /pathmap to rewrite __FILE__ as well.
+ $nativeMaps=($prefixes | ForEach-Object { '"/pathmap:'+$_+'=/build"' }) -join ' '
+ $env:CFLAGS=(@($previousCFlags,'/experimental:deterministic',$nativeMaps) | Where-Object { $_ }) -join ' '
+ $env:CXXFLAGS=(@($previousCxxFlags,'/experimental:deterministic',$nativeMaps) | Where-Object { $_ }) -join ' '
+ $env:CC_SHELL_ESCAPED_FLAGS='1'
  Push-Location $taskRoot
  try {
   & node scripts/prepare-knowledge-model.mjs
@@ -31,4 +40,4 @@ try {
   & node scripts/third-party-notices.mjs
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
  } finally { Pop-Location }
-} finally {$env:CARGO_TARGET_DIR=$previousTarget;$env:CARGO_ENCODED_RUSTFLAGS=$previousFlags;$env:RUSTFLAGS=$previousRustFlags}
+} finally {$env:CARGO_TARGET_DIR=$previousTarget;$env:CARGO_ENCODED_RUSTFLAGS=$previousFlags;$env:RUSTFLAGS=$previousRustFlags;$env:CFLAGS=$previousCFlags;$env:CXXFLAGS=$previousCxxFlags;$env:CC_SHELL_ESCAPED_FLAGS=$previousShellFlags}
