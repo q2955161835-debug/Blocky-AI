@@ -13,7 +13,11 @@ import type { Studio } from "../composition/useStudio";
 import { SecretBindings } from "./SecretBindings";
 import { KnowledgePanel } from "./KnowledgePanel";
 import { knowledgeNative } from "../composition/knowledge";
-import { knowledgeResource } from "@blocky/knowledge-core";
+import {
+  knowledgeResource,
+  resourceRetrieval,
+  type RetrievalOptions,
+} from "@blocky/knowledge-core";
 function initial(schema: ResourceFieldSchema): unknown {
   if (schema.enum) return schema.enum[0];
   if (schema.type === "object")
@@ -165,6 +169,44 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   const [scope, setScope] = useState<"project" | "user">("project");
   const project = s.snapshot.project;
   const definition = resourceDefinitions.find((d) => d.kind === draft?.kind);
+  let knowledgeOptions: RetrievalOptions | undefined;
+  let knowledgeChunking:
+    | { strategy: string; size: number; overlap: number }
+    | undefined;
+  let knowledgeError = "";
+  const localKnowledge =
+    draft?.kind === "knowledge" &&
+    typeof draft.definition.implementationRef === "object";
+  const collectionId =
+    localKnowledge && typeof draft?.definition.collection === "string"
+      ? draft.definition.collection
+      : draft?.resourceId;
+  if (draft?.kind === "knowledge") {
+    try {
+      knowledgeOptions = resourceRetrieval(draft.definition);
+      const value = draft.definition.chunking;
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        if (
+          value.strategy !== "paragraph" ||
+          typeof value.size !== "number" ||
+          typeof value.overlap !== "number" ||
+          value.size < 1 ||
+          value.size > 16000 ||
+          value.overlap < 0 ||
+          value.overlap >= value.size
+        )
+          throw Error();
+        knowledgeChunking = {
+          strategy: value.strategy,
+          size: value.size,
+          overlap: value.overlap,
+        };
+      }
+    } catch {
+      knowledgeError =
+        "当前资料配置不受支持。请在高级配置中使用段落分段及内置检索设置。";
+    }
+  }
   const edit = (resource: Resource) => {
     setDraft(structuredClone(resource));
     setError("");
@@ -328,29 +370,37 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             fields={definition.secretFields}
             change={(secretBindings) => setDraft({ ...draft, secretBindings })}
           />
-          {draft.kind === "knowledge" && draft.scope === "project" && (
-            <KnowledgePanel
-              key={`${project.manifest.projectId}/${draft.resourceId}`}
-              projectId={project.manifest.projectId}
-              collectionId={draft.resourceId}
-              call={knowledgeNative}
-              onSourcesChanged={s.invalidateKnowledgeEvidence}
-              onBind={(configuration) => {
-                const resource = knowledgeResource(
-                  draft.resourceId,
-                  draft.displayName,
-                  configuration,
-                );
-                const next = upsertProjectResource(
-                  s.controller.getSnapshot().project,
-                  resource,
-                );
-                s.controller.edit((p) => Object.assign(p, next));
-                setDraft(resource);
-                s.setMessage("知识积木已绑定本机资料，请同步后运行。");
-              }}
-            />
-          )}
+          {knowledgeError && <p role="alert">{knowledgeError}</p>}
+          {draft.kind === "knowledge" &&
+            draft.scope === "project" &&
+            !knowledgeError && (
+              <KnowledgePanel
+                key={`${project.manifest.projectId}/${draft.resourceId}/${JSON.stringify(draft.definition)}`}
+                projectId={project.manifest.projectId}
+                collectionId={collectionId!}
+                call={knowledgeNative}
+                initialOptions={knowledgeOptions}
+                chunking={knowledgeChunking}
+                onSourcesChanged={s.invalidateKnowledgeEvidence}
+                onBind={(configuration) => {
+                  const resource = knowledgeResource(
+                    draft.resourceId,
+                    draft.displayName,
+                    configuration,
+                  );
+                  resource.definition.collection = collectionId!;
+                  if (knowledgeChunking)
+                    resource.definition.chunking = knowledgeChunking;
+                  const next = upsertProjectResource(
+                    s.controller.getSnapshot().project,
+                    resource,
+                  );
+                  s.controller.edit((p) => Object.assign(p, next));
+                  setDraft(resource);
+                  s.setMessage("知识积木已绑定本机资料，请同步后运行。");
+                }}
+              />
+            )}
           {error && <p role="alert">{error}</p>}
           <button onClick={save}>保存资源</button>
           <button onClick={() => setDraft(undefined)}>取消</button>

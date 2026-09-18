@@ -14,12 +14,16 @@ export function KnowledgePanel({
   call,
   onBind,
   onSourcesChanged,
+  initialOptions,
+  chunking,
 }: {
   projectId: string;
   collectionId: string;
   call: KnowledgeCall;
   onBind: (options: RetrievalOptions) => void;
   onSourcesChanged?: () => void;
+  initialOptions?: RetrievalOptions;
+  chunking?: { strategy: string; size: number; overlap: number };
 }) {
   const port = useMemo(
     () => knowledgePort(call, projectId, collectionId),
@@ -88,9 +92,11 @@ export function KnowledgePanel({
         setError(
           controller.signal.aborted
             ? "同步已取消，可重新同步继续。"
-            : failure instanceof Error && failure.message === "BLK-EMBED-MISSING"
+            : failure instanceof Error &&
+                failure.message === "BLK-EMBED-MISSING"
               ? "未找到本地语义模型，请使用包含知识模型的安装包。"
-              : failure instanceof Error && failure.message === "BLK-EMBED-NOT-READY"
+              : failure instanceof Error &&
+                  failure.message === "BLK-EMBED-NOT-READY"
                 ? "请先同步资料，再建立向量索引。"
                 : "资料操作未完成，请检查来源、权限和同步状态。",
         );
@@ -196,8 +202,13 @@ export function KnowledgePanel({
         disabled={busy}
         onClick={() =>
           void run(async (signal) => {
+            if (chunking && chunking.strategy !== "paragraph")
+              throw Error("BLK-KNOWLEDGE-CHUNKING");
             const result = await synchronize(port, {
               signal,
+              ...(chunking
+                ? { size: chunking.size, overlap: chunking.overlap }
+                : {}),
               onProgress: (c) =>
                 setStatus(
                   `正在同步 · ${c.added + c.updated + c.skipped} 份文档`,
@@ -229,6 +240,7 @@ export function KnowledgePanel({
         run={run}
         onBind={onBind}
         canBind={sources.some((s) => s.readable)}
+        initialOptions={initialOptions}
       />
     </section>
   );

@@ -1,4 +1,8 @@
-import { KnowledgeSearch, type KnowledgeCall } from "@blocky/knowledge-core";
+import {
+  KnowledgeSearch,
+  resourceRetrieval,
+  type KnowledgeCall,
+} from "@blocky/knowledge-core";
 import { localAdapters } from "./adapters";
 /** Composition only: the supplied callback owns Host transport, never credentials. */
 export function hostAdapters(call: KnowledgeCall) {
@@ -17,26 +21,9 @@ export function hostAdapters(call: KnowledgeCall) {
       const raw = context.resource.definition.retrieval;
       if (!raw || typeof raw !== "object" || Array.isArray(raw))
         throw Error("BLK-RESOURCE-001");
-      const { rerankResourceId, filters, ...configuration } = raw;
-      if (rerankResourceId) throw Error("BLK-KNOWLEDGE-RERANK");
-      const filterMap = Array.isArray(filters)
-        ? Object.fromEntries(
-            filters.map((f) => {
-              if (
-                !f ||
-                typeof f !== "object" ||
-                Array.isArray(f) ||
-                typeof f.key !== "string" ||
-                typeof f.value !== "string"
-              )
-                throw Error("BLK-KNOWLEDGE-CONFIG");
-              return [f.key, f.value];
-            }),
-          )
-        : {};
       const result = await search.query(
         question,
-        { ...configuration, filters: filterMap },
+        resourceRetrieval(context.resource.definition),
         signal,
       );
       return {

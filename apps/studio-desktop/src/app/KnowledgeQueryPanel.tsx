@@ -17,6 +17,7 @@ export function KnowledgeQueryPanel({
   run,
   onBind,
   canBind,
+  initialOptions,
 }: {
   call: KnowledgeCall;
   projectId: string;
@@ -26,13 +27,14 @@ export function KnowledgeQueryPanel({
   run: (work: (signal: AbortSignal) => Promise<void>) => Promise<void>;
   onBind: (options: RetrievalOptions) => void;
   canBind: boolean;
+  initialOptions?: RetrievalOptions;
 }) {
   const search = useMemo(
     () => new KnowledgeSearch(call, projectId, collectionId),
     [call, projectId, collectionId],
   );
   const [query, setQuery] = useState(""),
-    [options, setOptions] = useState(retrievalOptions()),
+    [options, setOptions] = useState(initialOptions ?? retrievalOptions()),
     [result, setResult] = useState<SearchResult>(),
     [model, setModel] = useState("尚未检查本地模型"),
     [filterKey, setFilterKey] = useState(""),
@@ -43,7 +45,10 @@ export function KnowledgeQueryPanel({
   const settings = () =>
     retrievalOptions({
       ...options,
-      filters: filterKey ? { [filterKey]: filterValue } : {},
+      filters: {
+        ...options.filters,
+        ...(filterKey ? { [filterKey]: filterValue } : {}),
+      },
     });
   const change = <K extends keyof RetrievalOptions>(
     key: K,
@@ -159,6 +164,21 @@ export function KnowledgeQueryPanel({
             onChange={(e) => setFilterKey(e.target.value)}
           />
         </label>
+        {Object.keys(options.filters).length > 0 && (
+          <p>
+            已保存的筛选：{JSON.stringify(options.filters)}{" "}
+            <button
+              disabled={busy}
+              onClick={() => {
+                change("filters", {});
+                setFilterKey("");
+                setFilterValue("");
+              }}
+            >
+              清除筛选
+            </button>
+          </p>
+        )}
         <label>
           筛选值
           <input

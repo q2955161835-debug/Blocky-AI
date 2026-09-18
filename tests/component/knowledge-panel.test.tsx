@@ -8,7 +8,40 @@ import {
 } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import { KnowledgePanel } from "../../apps/studio-desktop/src/app/KnowledgePanel";
+import { KnowledgeQueryPanel } from "../../apps/studio-desktop/src/app/KnowledgeQueryPanel";
+import { retrievalOptions } from "../../packages/knowledge-core/src/retrieval";
 afterEach(cleanup);
+it("reopens stored retrieval settings and retains all metadata filters on bind", async () => {
+  let bound: unknown;
+  const options = retrievalOptions({
+    strategy: "hybrid",
+    topK: 3,
+    filters: { language: "en", sourceId: "s" },
+  });
+  render(
+    <KnowledgeQueryPanel
+      call={async () => null}
+      projectId="p"
+      collectionId="c"
+      version="1"
+      busy={false}
+      canBind={true}
+      initialOptions={options}
+      run={async (work) => work(new AbortController().signal)}
+      onBind={(value) => {
+        bound = value;
+      }}
+    />,
+  );
+  expect((screen.getByLabelText("检索方式") as HTMLSelectElement).value).toBe(
+    "hybrid",
+  );
+  expect((screen.getByLabelText("检索条数") as HTMLInputElement).value).toBe(
+    "3",
+  );
+  fireEvent.click(screen.getByRole("button", { name: "用于当前知识积木" }));
+  expect(bound).toMatchObject(options);
+});
 it("names failed sources and retries only incomplete snapshots", async () => {
   let value: unknown = null,
     revision = 0,
