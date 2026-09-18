@@ -103,6 +103,9 @@ export async function nativeUserOperation(
   operation: string,
   fields: Record<string, unknown>,
 ): Promise<unknown> {
+  // A timed-out inference must not hold up the final ACL check or the fallback.
+  // The session is privately owned by this CLI; the next request starts afresh.
+  if (operation === "knowledge-cancel") knowledgeTransport.cancel();
   const reply = (
     operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
       ? await knowledgeTransport.request({ operation, ...fields })

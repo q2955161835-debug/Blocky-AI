@@ -13,6 +13,9 @@ export class KnowledgeTransport {
   private output = "";
   private bytes = 0;
   constructor(private executable: string) {}
+  cancel() {
+    this.fail(new CliError(7, "BLK-KNOW-CANCELLED", "知识任务已取消。"));
+  }
   request(input: Record<string, unknown>): Promise<unknown> {
     const operation = async () => {
       if (!this.child) this.start();
