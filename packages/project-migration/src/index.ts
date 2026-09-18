@@ -50,7 +50,9 @@ export async function migrateProject(
       )
     )
       throw Error("BLK-MIG-001");
-    if (!["0.1.0", "0.2.0"].includes(source.format?.minimumReaderVersion))
+    if (
+      !["0.1.0", "0.2.0", "0.3.0"].includes(source.format?.minimumReaderVersion)
+    )
       throw Error("BLK-MIG-001");
     // The v1 envelope preserves all alpha facts; validation/compilation must succeed before offering a candidate.
     const project = decodeProject({
@@ -58,7 +60,11 @@ export async function migrateProject(
       "project.json": canonicalJson({
         ...source,
         schemaVersion: "blocky.project/v1",
-        format: { ...source.format, minimumReaderVersion: "0.2.0" },
+        format: {
+          ...source.format,
+          minimumReaderVersion:
+            source.format.minimumReaderVersion === "0.3.0" ? "0.3.0" : "0.2.0",
+        },
       }),
     });
     const compiled = await compileProject(project);

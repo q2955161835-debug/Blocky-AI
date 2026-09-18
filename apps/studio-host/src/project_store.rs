@@ -156,7 +156,7 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
     {
         return Err("BLK-MIG-001".into());
     }
-    if !["0.1.0", "0.2.0"].contains(&text(
+    if !["0.1.0", "0.2.0", "0.3.0"].contains(&text(
         manifest.get("format").ok_or(REJECT)?,
         "minimumReaderVersion",
     )?) {

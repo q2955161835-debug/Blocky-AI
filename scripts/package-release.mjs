@@ -15,10 +15,10 @@ const root = process.cwd(),
 if (!out.startsWith(base + sep))
   throw Error("Release directory must be inside project dist");
 const scan = JSON.parse(
-  await readFile("try/stage2-release/artifacts.json", "utf8"),
+  await readFile("try/stage3-release/artifacts.json", "utf8"),
 );
 const coverage = JSON.parse(
-  await readFile("try/stage2-release/license-coverage.json", "utf8"),
+  await readFile("try/stage3-release/license-coverage.json", "utf8"),
 );
 if (!scan.passed || coverage.missing.length)
   throw Error("Release checks are incomplete");
@@ -42,7 +42,7 @@ const copies = [
   ],
   ["tools/blocky-cli/dist/bin/DirectML.dll", "cli/bin/DirectML.dll"],
   [
-    "try/stage2-release/THIRD_PARTY_NOTICES.txt",
+    "try/stage3-release/THIRD_PARTY_NOTICES.txt",
     "licenses/THIRD_PARTY_NOTICES.txt",
   ],
   [
@@ -54,13 +54,16 @@ const copies = [
     "licenses/sources/selectors-0.36.1.crate",
   ],
 ];
-for (const asset of registry.model.files) copies.push([
-  `try/stage3/models/${registry.model.directory}/${asset.name}`,
-  `models/${registry.model.directory}/${asset.name}`,
-]);
-for (const license of registry.licenses) copies.push([
-  `vendor/models/${license.file}`, `licenses/${license.file.split("/").at(-1)}`,
-]);
+for (const asset of registry.model.files)
+  copies.push([
+    `try/stage3/models/${registry.model.directory}/${asset.name}`,
+    `models/${registry.model.directory}/${asset.name}`,
+  ]);
+for (const license of registry.licenses)
+  copies.push([
+    `vendor/models/${license.file}`,
+    `licenses/${license.file.split("/").at(-1)}`,
+  ]);
 for (const [source, target] of copies) {
   await mkdir(dirname(join(out, target)), { recursive: true });
   await copyFile(source, join(out, target));
@@ -97,7 +100,7 @@ async function walk(folder) {
 }
 await walk(out);
 await writeFile(
-  "try/stage2-release/package.json",
+  "try/stage3-release/package.json",
   JSON.stringify(
     {
       directory: relative(root, out).replaceAll("\\", "/"),

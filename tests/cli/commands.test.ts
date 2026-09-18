@@ -129,6 +129,7 @@ function run(args: string[]) {
     encoding: "utf8",
     timeout: 20000,
     windowsHide: true,
+    env: { ...process.env, LOCALAPPDATA: directory },
   });
   return {
     code: p.status,
@@ -157,7 +158,7 @@ it("reports only implemented commands and a real native store version", () => {
   expect(h.lines[0].data.commands).not.toContain("compat export");
   const doctor = run(["doctor", "--json"]);
   expect(doctor.code).toBe(0);
-  expect(doctor.lines[0].data.nativeStore).toBe("0.2.0");
+  expect(doctor.lines[0].data.nativeStore).toBe("0.3.0");
   expect(doctor.lines[0].data.modelApiCalled).toBe(false);
 });
 it("creates a real archive and refuses to clobber the same target", async () => {
@@ -205,7 +206,37 @@ it("compiles with the exact desktop compiler and does not rewrite project bytes"
     run(["surface", "list", file, "--json"]).lines[0].data.surfaces,
   ).toEqual([]);
 });
-it("requires explicit simulation and streams actual runtime events plus sourced answer", () => {
+it("requires explicit simulation and streams actual runtime events plus ingested source evidence", async () => {
+  const source = join(directory, "leaves.txt");
+  await writeFile(
+    source,
+    "树叶变黄是因为叶绿素减少。\n\n水循环包括蒸发、凝结和降水。",
+    "utf8",
+  );
+  expect(
+    run([
+      "knowledge",
+      "add",
+      file,
+      "--collection",
+      "product-handbook",
+      "--kind",
+      "file",
+      "--path",
+      source,
+      "--json",
+    ]).code,
+  ).toBe(0);
+  expect(
+    run([
+      "knowledge",
+      "sync",
+      file,
+      "--collection",
+      "product-handbook",
+      "--json",
+    ]).code,
+  ).toBe(0);
   expect(run(["run", "start", file, "--input", "树叶", "--jsonl"]).code).toBe(
     2,
   );
@@ -231,7 +262,8 @@ it("requires explicit simulation and streams actual runtime events plus sourced 
     ),
   ).toBe(true);
   const answer = result.lines.at(-1).data;
-  expect(answer.citations[0].id).toBe("leaves");
+  expect(answer.citations[0].locator.path).toBe("leaves.txt");
+  expect(answer.citations[0].revision).toMatch(/^[a-f0-9]{64}$/);
   expect(answer.answer).toContain("叶绿素");
   expect(answer.modelApiCalled).toBe(false);
 });
@@ -348,7 +380,7 @@ it("configures a declared field through the shared editor and keeps the source a
     "--jsonl",
   ]);
   expect(executed.code).toBe(0);
-  expect(executed.lines.at(-1).data.answer).toContain("学习要点");
+  expect(executed.lines.at(-1).data.answer).toContain("相关资料摘录");
   const saved = hash(await readFile(target));
   expect(run(args).code).toBe(5);
   expect(hash(await readFile(target))).toBe(saved);
@@ -377,7 +409,11 @@ it("saves and inserts personal blueprints with explicit bindings and no source o
   expect(run(capture).code).toBe(0);
   const shown = run(["blueprint", "show", blueprint, "--json"]);
   expect(shown.code).toBe(0);
-  expect(shown.lines[0].data.blueprint.modules).toHaveLength(1);
+  expect(
+    shown.lines[0].data.blueprint.resources.filter(
+      (r: { kind: string }) => r.kind === "knowledge",
+    ),
+  ).toHaveLength(1);
   const target = join(directory, "blueprint-inserted.blocky");
   const insert = [
     "blueprint",

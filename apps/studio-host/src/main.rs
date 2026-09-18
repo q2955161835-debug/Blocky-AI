@@ -33,7 +33,9 @@ fn main() {
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
-            app.manage(blocky_studio::conversion::ConversionStore::new(app.path().app_local_data_dir()?.join("conversion")));
+            app.manage(blocky_studio::conversion::ConversionStore::new(
+                app.path().app_local_data_dir()?.join("conversion"),
+            ));
             app.manage(blocky_studio::knowledge::KnowledgeStore::new(
                 app.path().app_local_data_dir()?.join("knowledge"),
             ));

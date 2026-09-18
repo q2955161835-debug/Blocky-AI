@@ -199,33 +199,75 @@ fn block_shape(
 fn blueprint_state(block: &Value, extra: &Value) -> Result<(), String> {
     keys(extra, &["blueprintInstance"])?;
     let state = &extra["blueprintInstance"];
-    keys(state, &["schemaVersion", "instanceId", "blueprintId", "version", "digest", "sourceRootId", "idMap", "bindings", "base"])?;
+    keys(
+        state,
+        &[
+            "schemaVersion",
+            "instanceId",
+            "blueprintId",
+            "version",
+            "digest",
+            "sourceRootId",
+            "idMap",
+            "bindings",
+            "base",
+        ],
+    )?;
     if state["schemaVersion"] != "blocky.blueprint-instance/v1"
-        || state["version"].as_u64().is_none_or(|v| v == 0 || v > 100000)
-        || state["base"]["id"] != block["id"] {
+        || state["version"]
+            .as_u64()
+            .is_none_or(|v| v == 0 || v > 100000)
+        || state["base"]["id"] != block["id"]
+    {
         return Err(INVALID.into());
     }
     for field in ["instanceId", "blueprintId", "sourceRootId"] {
-        if !project_store::stable(text(&state[field])?) { return Err(INVALID.into()); }
+        if !project_store::stable(text(&state[field])?) {
+            return Err(INVALID.into());
+        }
     }
     let hash = text(&state["digest"])?;
-    if hash.len() != 64 || !hash.bytes().all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c)) { return Err(INVALID.into()); }
+    if hash.len() != 64
+        || !hash
+            .bytes()
+            .all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c))
+    {
+        return Err(INVALID.into());
+    }
     let mapping = state["idMap"].as_object().ok_or(INVALID)?;
-    if mapping.get(text(&state["sourceRootId"])?) != Some(&block["id"]) { return Err(INVALID.into()); }
+    if mapping.get(text(&state["sourceRootId"])?) != Some(&block["id"]) {
+        return Err(INVALID.into());
+    }
     keys(&state["bindings"], &["resources", "modules"])?;
-    for map in [mapping, state["bindings"]["resources"].as_object().ok_or(INVALID)?, state["bindings"]["modules"].as_object().ok_or(INVALID)?] {
+    for map in [
+        mapping,
+        state["bindings"]["resources"].as_object().ok_or(INVALID)?,
+        state["bindings"]["modules"].as_object().ok_or(INVALID)?,
+    ] {
         for (key, value) in map {
-            if !project_store::stable(key) || !project_store::stable(text(value)?) { return Err(INVALID.into()); }
+            if !project_store::stable(key) || !project_store::stable(text(value)?) {
+                return Err(INVALID.into());
+            }
         }
     }
     fn no_nested_state(value: &Value, depth: usize) -> Result<(), String> {
-        if depth > 80 { return Err(INVALID.into()); }
+        if depth > 80 {
+            return Err(INVALID.into());
+        }
         match value {
-            Value::Object(map) => for (key, child) in map {
-                if key == "extraState" { return Err(INVALID.into()); }
-                no_nested_state(child, depth + 1)?;
-            },
-            Value::Array(values) => for child in values { no_nested_state(child, depth + 1)?; },
+            Value::Object(map) => {
+                for (key, child) in map {
+                    if key == "extraState" {
+                        return Err(INVALID.into());
+                    }
+                    no_nested_state(child, depth + 1)?;
+                }
+            }
+            Value::Array(values) => {
+                for child in values {
+                    no_nested_state(child, depth + 1)?;
+                }
+            }
             _ => (),
         }
         Ok(())
@@ -408,7 +450,7 @@ pub fn validate_with_registry(
     {
         return Err(INVALID.into());
     }
-    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != "0.2.0" {
+    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != "0.3.0" {
         return Err(INVALID.into());
     }
     if patch["projectId"] != original["manifest"]["projectId"]

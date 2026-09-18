@@ -81,13 +81,16 @@ for (const p of entries.sort(
 }
 for (const entry of modelRegistry.licenses) {
   const bytes = await readFile(resolve("vendor/models", entry.file));
-  if (createHash("sha256").update(bytes).digest("hex") !== entry.sha256) throw Error("Model/runtime license checksum mismatch");
+  if (createHash("sha256").update(bytes).digest("hex") !== entry.sha256)
+    throw Error("Model/runtime license checksum mismatch");
   seen.add(entry.name);
-  sections.push(`\n${"=".repeat(72)}\n${entry.name}\nDeclared license: ${entry.license}\nSource: ${entry.source}\n${"=".repeat(72)}\n${bytes.toString("utf8")}`);
+  sections.push(
+    `\n${"=".repeat(72)}\n${entry.name}\nDeclared license: ${entry.license}\nSource: ${entry.source}\n${"=".repeat(72)}\n${bytes.toString("utf8")}`,
+  );
 }
-await mkdir("try/stage2-release", { recursive: true });
+await mkdir("try/stage3-release", { recursive: true });
 await writeFile(
-  "try/stage2-release/license-coverage.json",
+  "try/stage3-release/license-coverage.json",
   JSON.stringify(
     { packages: seen.size, included: sections.length, missing },
     null,
@@ -99,7 +102,7 @@ if (missing.length) {
   process.exitCode = 1;
 } else {
   await writeFile(
-    "try/stage2-release/THIRD_PARTY_NOTICES.txt",
+    "try/stage3-release/THIRD_PARTY_NOTICES.txt",
     `Blocky Studio - Third-party notices\nThis file preserves notices for the locked JavaScript and Rust dependencies.\n${sections.join("\n")}\n\nHaystack source fixture\n${await readFile("packages/conversion-core/fixtures/LICENSE.haystack", "utf8")}`,
   );
   console.log(JSON.stringify({ packages: seen.size, missing: 0 }));

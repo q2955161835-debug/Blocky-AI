@@ -13,7 +13,7 @@ export const helper = import.meta.url.endsWith("/main.mjs")
       dirname(fileURLToPath(import.meta.url)),
       "bin/blocky-project-io.exe",
     )
-  : resolve(root, "apps/studio-host/target/release/blocky-project-io.exe");
+  : resolve(root, "tools/blocky-cli/dist/bin/blocky-project-io.exe");
 const knowledgeTransport = new KnowledgeTransport(helper);
 export const closeNativeKnowledge = () => knowledgeTransport.close();
 type Reply = {

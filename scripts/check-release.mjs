@@ -14,15 +14,26 @@ const files = [
   "tools/blocky-cli/dist/bin/DirectML.dll",
 ];
 const vendorFiles = [
-  ...registry.model.files.map(asset => ({ path: `try/stage3/models/${registry.model.directory}/${asset.name}`, asset })),
-  ...registry.licenses.map(license => ({ path: `vendor/models/${license.file}`, asset: license })),
+  ...registry.model.files.map((asset) => ({
+    path: `try/stage3/models/${registry.model.directory}/${asset.name}`,
+    asset,
+  })),
+  ...registry.licenses.map((license) => ({
+    path: `vendor/models/${license.file}`,
+    asset: license,
+  })),
 ];
 for (const { path, asset } of vendorFiles) {
   const bytes = await readFile(path);
-  if ((asset.bytes !== undefined && bytes.length !== asset.bytes) || createHash("sha256").update(bytes).digest("hex") !== asset.sha256) throw Error("Vendor artifact lock mismatch");
+  if (
+    (asset.bytes !== undefined && bytes.length !== asset.bytes) ||
+    createHash("sha256").update(bytes).digest("hex") !== asset.sha256
+  )
+    throw Error("Vendor artifact lock mismatch");
   files.push(path);
 }
-for (const path of files.filter(path => path.endsWith("DirectML.dll"))) await verifyAsset(path, registry.directml);
+for (const path of files.filter((path) => path.endsWith("DirectML.dll")))
+  await verifyAsset(path, registry.directml);
 const vcRuntime = await checkSystemRuntime();
 for (const name of await readdir("apps/studio-desktop/dist/assets"))
   files.push(`apps/studio-desktop/dist/assets/${name}`);
@@ -49,7 +60,10 @@ for (const path of files) {
     failures.push("local-build-path");
   // An upstream tokenizer vocabulary legitimately includes webdriver. Vendor
   // blobs are pinned above; application artifacts retain all marker checks.
-  if (!vendorFiles.some(v => v.path === path) && testMarkers.some((p) => includes(bytes, p)))
+  if (
+    !vendorFiles.some((v) => v.path === path) &&
+    testMarkers.some((p) => includes(bytes, p))
+  )
     failures.push("test-channel");
   if (path.endsWith(".map")) failures.push("source-map");
   if (/\bsk-[A-Za-z0-9_-]{24,}/.test(text))
@@ -98,9 +112,9 @@ const report = {
   artifacts,
   passed: positiveControl && artifacts.every((a) => !a.failures.length),
 };
-await mkdir("try/stage2-release", { recursive: true });
+await mkdir("try/stage3-release", { recursive: true });
 await writeFile(
-  "try/stage2-release/artifacts.json",
+  "try/stage3-release/artifacts.json",
   JSON.stringify(report, null, 2),
 );
 console.log(

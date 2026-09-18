@@ -32,9 +32,15 @@ describe("Blocky native editor", () => {
   after(async () => {
     await cdp?.close().catch(() => {});
   });
-  it("creates editable canvases, runs a sourced answer and navigates across modules", async () => {
+  it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
     await $("button*=资料问答伙伴").click();
     await $(".blocklyDraggable").waitForDisplayed();
+    // Existing editor/preview regression uses its declared deterministic fixture.
+    // Stage 3 real-source and starter delivery have separate native/CLI evidence.
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
+    );
     await expect($("[aria-label='画布名称']")).toHaveValue("研究助手");
     await $(".project-toolbar button.primary").click();
     await $(".answer").waitForDisplayed();

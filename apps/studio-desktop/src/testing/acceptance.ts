@@ -1,4 +1,5 @@
 import { createStarter } from "@blocky/test-fixtures";
+import { restoreSession } from "@blocky/project-model";
 import {
   canonicalJson,
   digest,
@@ -146,6 +147,15 @@ export function install(get: () => Studio) {
       .slice(0, 30);
   };
   const api = {
+    async loadLegacyRegressionProject() {
+      const project = createStarter();
+      get().controller.replace(project);
+      get().setSession(restoreSession(project, null));
+      get().setQuestion("为什么树叶在秋天会变黄？");
+      get().setStarted(true);
+      await paint();
+      await wait(() => !get().compiling && get().canRun);
+    },
     async performance() {
       const loadMetric = metric(),
         saveCompile = metric(),

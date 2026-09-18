@@ -40,5 +40,5 @@ export const beginnerCategories = [
   "会回答",
 ];
 export const catalog: BlockDefinition[] = [...definitions, ...textPrimitives];
-export const catalogVersion = "0.2.0";
+export const catalogVersion = "0.3.0";
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);
