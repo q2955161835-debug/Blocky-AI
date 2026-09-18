@@ -1,0 +1,565 @@
+{
+  "resumedWithExistingEmbeddingCache": true,
+  "generator": "unique-ascii-records/v1",
+  "documents": 10000,
+  "corpusBytes": 104857600,
+  "corpusSha256": "c160a370045e8c5c5839d16bfaf9642b64ec00a7502e72319dad2922e7fd30ba",
+  "helperSha256": "bfd6f0815fedf85e626f666dba65d3782dfd1ccaca9ec34312188746a9a938a4",
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "logicalProcessors": 24,
+    "memoryBytes": 68112736256
+  },
+  "externalModelApi": false,
+  "thresholds": {
+    "warmP95Ms": 3000,
+    "memoryBytes": 2147483648,
+    "indexRatio": 10
+  },
+  "firstSync": {
+    "elapsedMs": 29587.392000000003,
+    "value": {
+      "status": "completed",
+      "counts": {
+        "added": 0,
+        "updated": 1000,
+        "deleted": 0,
+        "skipped": 9000,
+        "chunks": 150000
+      }
+    }
+  },
+  "phase": "completed",
+  "nodePeakBytes": 1697435648,
+  "modelLoad": {
+    "elapsedMs": 1104.1791999999987,
+    "value": {
+      "available": true,
+      "backend": "onnx-cpu",
+      "dimension": 384,
+      "externalApi": false,
+      "intraThreads": 4,
+      "loaded": true,
+      "maxTokens": 512,
+      "microbatchSize": 1,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "signature": "5c37bc3b7bfc04eb5f23dd1ccf6c43f18847c1d0f1722a160e0447aa9c656a43",
+      "verified": true,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "modelResidentMemory": {
+    "workingSet": 714391552,
+    "privateBytes": 713719808,
+    "peakWorkingSet": 938459136
+  },
+  "embedding": {
+    "elapsedMs": 139626.9951,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 150000,
+      "dimension": 384,
+      "elapsedMs": 139411,
+      "embedded": 497,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 406,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 149503,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "cold": {
+    "keyword": 17177.747499999998,
+    "vector": 1021.3092999999935,
+    "hybrid": 1160.4498000000021
+  },
+  "warm": {
+    "count": 100,
+    "p50Ms": 837.7364999999991,
+    "p95Ms": 1236.2246999999916
+  },
+  "byStrategy": {
+    "keyword": {
+      "count": 34,
+      "p50Ms": 422.5706000000064,
+      "p95Ms": 465.37879999997676
+    },
+    "vector": {
+      "count": 33,
+      "p50Ms": 837.7364999999991,
+      "p95Ms": 897.4882000000216
+    },
+    "hybrid": {
+      "count": 33,
+      "p50Ms": 1177.762699999992,
+      "p95Ms": 1321.3029999999562
+    }
+  },
+  "measurements": [
+    {
+      "strategy": "keyword",
+      "elapsedMs": 457.13729999997304
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 848.7913000000117
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1162.907199999987
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 448.117499999993
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 840.9602000000014
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1178.462200000009
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 406.78879999998026
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 848.6750999999931
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1157.1671999999962
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 427.65909999998985
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 835.492900000012
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1208.0372999999963
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 444.2387999999919
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 865.2060000000056
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1162.8372999999847
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 405.90499999999884
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 837.7364999999991
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1142.3521000000183
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 424.72200000000885
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 850.4222000000009
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1191.1434000000008
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 427.75719999999274
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 835.8655999999901
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1247.8453000000154
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 428.48339999999735
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 989.5014000000083
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1236.2246999999916
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 465.37879999997676
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 897.4882000000216
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1262.3783999999869
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 414.2074999999895
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 839.2945999999938
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1186.5892999999924
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 421.269100000005
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 844.1076999999932
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1171.6187999999966
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 432.4795999999915
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 825.9972999999882
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1177.762699999992
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 403.69089999998687
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 826.7584000000206
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1168.6076999999932
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 413.8319999999949
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 829.0656000000017
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1159.0095999999903
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 405.4860000000044
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 849.112300000008
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1162.9429999999993
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 417.71040000001085
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 821.9619999999995
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1187.6689999999944
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 422.5706000000064
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 835.9952999999805
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1542.8840999999957
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 581.5859999999811
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 832.909799999994
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1154.0472000000009
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 399.7952000000223
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 832.6466000000073
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1179.267899999977
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 426.6467999999877
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 834.6849999999977
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1170.2486999999965
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 409.62140000000363
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 832.5670999999857
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1173.661300000007
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 408.1394000000146
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 838.2825000000012
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1179.3574999999837
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 429.73910000000615
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 849.9689000000071
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1174.3292000000074
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 426.00740000000224
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 868.6751999999979
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1179.8906000000134
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 462.8143000000273
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 834.060999999987
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1131.7402999999758
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 400.50740000000224
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 826.2616999999736
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1211.931500000006
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 411.2431000000215
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 833.9360999999917
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1176.775800000003
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 440.88649999996414
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 844.1603999999934
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1165.4515000000247
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 381.97770000004675
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 826.2082999999984
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1170.217799999984
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 418.9570000000531
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 826.5844999999972
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1212.0263000000268
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 408.3335000000079
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 842.4829000000027
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1321.3029999999562
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 438.05409999995027
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 852.8166999999667
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 1191.5891999999876
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 414.1042000000016
+    }
+  ],
+  "repeatedEmbedding": {
+    "elapsedMs": 133070.6031,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 150000,
+      "dimension": 384,
+      "elapsedMs": 132856,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 406,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 150000,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "incrementalSync": {
+    "elapsedMs": 204304.54419999995,
+    "value": {
+      "status": "completed",
+      "counts": {
+        "added": 0,
+        "updated": 0,
+        "deleted": 0,
+        "skipped": 10000,
+        "chunks": 150000
+      }
+    }
+  },
+  "incrementalEmbedding": {
+    "elapsedMs": 152275.18810000003,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 150000,
+      "dimension": 384,
+      "elapsedMs": 152059,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 487,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 150000,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "hostMemory": {
+    "workingSet": 1211695104,
+    "privateBytes": 1239273472,
+    "peakWorkingSet": 1624571904
+  },
+  "indexBytes": 611138331,
+  "indexRatio": 5.828269300460815,
+  "passedMeasuredBudgets": true
+}

@@ -1,0 +1,121 @@
+{
+  "generator": "unique-ascii-records/v1",
+  "documents": 10000,
+  "corpusBytes": 104857600,
+  "corpusSha256": "c160a370045e8c5c5839d16bfaf9642b64ec00a7502e72319dad2922e7fd30ba",
+  "helperSha256": "b860d7421dd7aea1d59f3277cce20e586d4e87bdbdddf453e66b106606ff2c6a",
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "logicalProcessors": 24,
+    "memoryBytes": 68112736256
+  },
+  "externalModelApi": false,
+  "thresholds": {
+    "warmP95Ms": 3000,
+    "memoryBytes": 2147483648,
+    "indexRatio": 10
+  },
+  "firstSync": {
+    "elapsedMs": 186937.5563,
+    "value": {
+      "status": "completed",
+      "counts": {
+        "added": 10000,
+        "updated": 0,
+        "deleted": 0,
+        "skipped": 0,
+        "chunks": 150000
+      }
+    }
+  },
+  "modelLoad": {
+    "elapsedMs": 1136.6630000000005,
+    "value": {
+      "available": true,
+      "backend": "onnx-cpu",
+      "dimension": 384,
+      "externalApi": false,
+      "intraThreads": 4,
+      "loaded": true,
+      "maxTokens": 512,
+      "microbatchSize": 1,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "signature": "5c37bc3b7bfc04eb5f23dd1ccf6c43f18847c1d0f1722a160e0447aa9c656a43",
+      "verified": true,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "modelResidentMemory": {
+    "workingSet": 750559232,
+    "privateBytes": 755957760,
+    "peakWorkingSet": 1614024704
+  },
+  "embedding": {
+    "elapsedMs": 3921257.7237,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 150000,
+      "dimension": 384,
+      "elapsedMs": 3920997,
+      "embedded": 150000,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 82,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 0,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "cold": {
+    "keyword": 142455.95370000042,
+    "vector": 1185.1887999996543,
+    "hybrid": 1288.1633999999613
+  },
+  "warm": {
+    "count": 100,
+    "p50Ms": 894.9112999998033,
+    "p95Ms": 1394.1080000000075
+  },
+  "byStrategy": {
+    "keyword": {
+      "count": 34,
+      "p50Ms": 561.298900000751,
+      "p95Ms": 610.7797999996692
+    },
+    "vector": {
+      "count": 33,
+      "p50Ms": 894.9112999998033,
+      "p95Ms": 930.4683000007644
+    },
+    "hybrid": {
+      "count": 33,
+      "p50Ms": 1369.757500000298,
+      "p95Ms": 1403.661100000143
+    }
+  },
+  "repeatedEmbedding": {
+    "elapsedMs": 1025652.8643000005,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 150000,
+      "dimension": 384,
+      "elapsedMs": 1025431,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 82,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 150000,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "error": "知识请求超出存储上限。"
+}

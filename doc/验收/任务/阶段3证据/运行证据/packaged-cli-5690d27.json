@@ -1,0 +1,182 @@
+{
+  "sourceCommit": "5690d27",
+  "cliSha256": "e88ed4b0a2bc33c31a010cd274a05b623ae8838e65ff20cdd8ddd81f0f2fb0c7",
+  "modelPathOverride": false,
+  "externalModelApi": false,
+  "passed": true,
+  "steps": [
+    {
+      "command": "project create",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-9d567550-99e3-4fd9-ab8b-78037c0e721f",
+          "digest": "0b7fb50dace685f7e3361250cc9da181293151894daa810c713c06fdb675b465",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "lesson.blocky",
+            "bytes": 3232,
+            "sha256": "bdf1e3e7c959a41b1cad82b32d76480c591f267536d43b4aeceb6e2ba1788676"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "command": "knowledge add",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.add",
+        "data": {
+          "allowedPrincipals": [
+            "local-user"
+          ],
+          "kind": "file",
+          "metadata": {},
+          "readable": true,
+          "revision": "",
+          "sourceId": "src-1bc848bf-79a2-4cf5-9d91-736575b5c0b4",
+          "title": "lesson.txt"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "command": "knowledge sync",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.sync",
+        "data": {
+          "status": "completed",
+          "counts": {
+            "added": 1,
+            "updated": 0,
+            "deleted": 0,
+            "skipped": 0,
+            "chunks": 1
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "command": "knowledge model-install",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.model-install",
+        "data": {
+          "available": true,
+          "backend": "onnx-cpu",
+          "dimension": 384,
+          "externalApi": false,
+          "intraThreads": 4,
+          "loaded": true,
+          "maxTokens": "[已脱敏]",
+          "microbatchSize": 1,
+          "modelId": "multilingual-e5-small-int8-v1",
+          "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+          "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+          "signature": "5c37bc3b7bfc04eb5f23dd1ccf6c43f18847c1d0f1722a160e0447aa9c656a43",
+          "verified": true,
+          "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "command": "knowledge embed",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.embed",
+        "data": {
+          "backend": "onnx-cpu",
+          "chunkCount": 1,
+          "dimension": 384,
+          "elapsedMs": 1351,
+          "embedded": 1,
+          "externalApi": false,
+          "generation": 1,
+          "indexRevision": 4,
+          "modelId": "multilingual-e5-small-int8-v1",
+          "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+          "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+          "published": true,
+          "reused": 0,
+          "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "command": "knowledge query",
+      "exitCode": 0,
+      "result": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.query",
+        "data": {
+          "status": "found",
+          "strategy": "vector",
+          "citations": [
+            {
+              "id": "chunk-738a128a3683879ae50ef909edbe997e61b5728bdb371caeac80aa8889f052f8",
+              "title": "lesson.txt (lesson.txt:1–2)",
+              "text": "水循环包含蒸发、凝结和降水。\nWater evaporates and returns as rain.",
+              "sourceId": "src-1bc848bf-79a2-4cf5-9d91-736575b5c0b4",
+              "documentId": "doc-41c7887aee500df474c248c471630659bde85b2114706ece87b614de9d49728d",
+              "revision": "b5bf668d68e551b3001ed51092864fe5f249160fd351f00c4290048c2be815a5",
+              "digest": "b0e4d1d52431640855dce4e7bde442790da4202e8a3acb66577c300574aa4bb8",
+              "locator": {
+                "path": "lesson.txt",
+                "lineStart": 1,
+                "lineEnd": 2
+              },
+              "score": 0.5464221596717834,
+              "truncated": false,
+              "collectionId": "product-handbook"
+            }
+          ],
+          "contextBytes": 187,
+          "candidateCount": 1,
+          "indexRevision": 4,
+          "generation": 1,
+          "elapsedMs": 1337.1395,
+          "cacheHit": false,
+          "embedding": {
+            "modelId": "multilingual-e5-small-int8-v1",
+            "dimension": 384,
+            "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+            "externalApi": false
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    }
+  ]
+}

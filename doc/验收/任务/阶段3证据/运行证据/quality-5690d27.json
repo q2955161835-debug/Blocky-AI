@@ -1,0 +1,1744 @@
+{
+  "fixtureSha256": "76270e2a5a96dafb397987957065d4b38c2eed62c54433b2dc6594ea92ddc9f0",
+  "fixtureCases": 40,
+  "embedding": {
+    "backend": "onnx-cpu",
+    "chunkCount": 20,
+    "dimension": 384,
+    "elapsedMs": 1735,
+    "embedded": 20,
+    "externalApi": false,
+    "generation": 3,
+    "indexRevision": 6,
+    "modelId": "multilingual-e5-small-int8-v1",
+    "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "published": true,
+    "reused": 0,
+    "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+  },
+  "repeatedEmbedding": {
+    "backend": "onnx-cpu",
+    "chunkCount": 20,
+    "dimension": 384,
+    "elapsedMs": 64,
+    "embedded": 0,
+    "externalApi": false,
+    "generation": 3,
+    "indexRevision": 6,
+    "modelId": "multilingual-e5-small-int8-v1",
+    "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+    "published": true,
+    "reused": 20,
+    "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+  },
+  "externalModelApi": false,
+  "strategies": {
+    "keyword": {
+      "recallAt5": 1,
+      "mrr": 1,
+      "citationCount": 66,
+      "citationValidity": 1,
+      "leakage": 0,
+      "coldMs": 40.51580000000013,
+      "warmP50Ms": 16.440600000000813,
+      "warmP95Ms": 19.88289999999961,
+      "cases": [
+        {
+          "id": "q01",
+          "kind": "answer",
+          "retrieved": [
+            "zh-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 40.51580000000013
+        },
+        {
+          "id": "q02",
+          "kind": "answer",
+          "retrieved": [
+            "zh-02",
+            "zh-05",
+            "zh-09"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 18.829600000000028
+        },
+        {
+          "id": "q03",
+          "kind": "answer",
+          "retrieved": [
+            "zh-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.897100000000137
+        },
+        {
+          "id": "q04",
+          "kind": "answer",
+          "retrieved": [
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.64760000000024
+        },
+        {
+          "id": "q05",
+          "kind": "answer",
+          "retrieved": [
+            "zh-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.979699999999866
+        },
+        {
+          "id": "q06",
+          "kind": "answer",
+          "retrieved": [
+            "zh-06"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.992999999999483
+        },
+        {
+          "id": "q07",
+          "kind": "answer",
+          "retrieved": [
+            "zh-07"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 14.15389999999934
+        },
+        {
+          "id": "q08",
+          "kind": "answer",
+          "retrieved": [
+            "zh-08"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 14.460000000000036
+        },
+        {
+          "id": "q09",
+          "kind": "answer",
+          "retrieved": [
+            "zh-09",
+            "zh-10",
+            "zh-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 18.32549999999992
+        },
+        {
+          "id": "q10",
+          "kind": "answer",
+          "retrieved": [
+            "zh-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.419200000000274
+        },
+        {
+          "id": "q11",
+          "kind": "answer",
+          "retrieved": [
+            "en-01",
+            "en-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 14.727600000000166
+        },
+        {
+          "id": "q12",
+          "kind": "answer",
+          "retrieved": [
+            "en-02",
+            "en-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 14.952899999999318
+        },
+        {
+          "id": "q13",
+          "kind": "answer",
+          "retrieved": [
+            "en-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.09270000000015
+        },
+        {
+          "id": "q14",
+          "kind": "answer",
+          "retrieved": [
+            "en-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 13.978099999999358
+        },
+        {
+          "id": "q15",
+          "kind": "answer",
+          "retrieved": [
+            "en-05",
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.71860000000015
+        },
+        {
+          "id": "q16",
+          "kind": "answer",
+          "retrieved": [
+            "en-06",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.440600000000813
+        },
+        {
+          "id": "q17",
+          "kind": "answer",
+          "retrieved": [
+            "en-07",
+            "en-10",
+            "en-06"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 17.602600000000166
+        },
+        {
+          "id": "q18",
+          "kind": "answer",
+          "retrieved": [
+            "en-08",
+            "en-06"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.143299999999726
+        },
+        {
+          "id": "q19",
+          "kind": "answer",
+          "retrieved": [
+            "en-09"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 17.345900000000256
+        },
+        {
+          "id": "q20",
+          "kind": "answer",
+          "retrieved": [
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.094900000000052
+        },
+        {
+          "id": "q21",
+          "kind": "no-answer",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 18.056800000000294
+        },
+        {
+          "id": "q22",
+          "kind": "no-answer",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 14.401400000000649
+        },
+        {
+          "id": "q23",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.320000000000618
+        },
+        {
+          "id": "q24",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-02"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.14100000000053
+        },
+        {
+          "id": "q25",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-06"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.69080000000031
+        },
+        {
+          "id": "q26",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-02",
+            "en-04",
+            "en-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 23.314000000000306
+        },
+        {
+          "id": "q27",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-02",
+            "en-04",
+            "en-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 18.682200000000194
+        },
+        {
+          "id": "q28",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-01",
+            "en-06",
+            "en-08",
+            "en-03",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.73570000000018
+        },
+        {
+          "id": "q29",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-03",
+            "en-08"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.341400000000249
+        },
+        {
+          "id": "q30",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 14.5587000000005
+        },
+        {
+          "id": "q31",
+          "kind": "denied",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 16.90650000000005
+        },
+        {
+          "id": "q32",
+          "kind": "denied",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 19.246299999999792
+        },
+        {
+          "id": "q33",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.36740000000009
+        },
+        {
+          "id": "q34",
+          "kind": "denied",
+          "retrieved": [
+            "zh-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 17.131199999999808
+        },
+        {
+          "id": "q35",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-04",
+            "zh-02"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 19.204600000000028
+        },
+        {
+          "id": "q36",
+          "kind": "denied",
+          "retrieved": [
+            "en-02",
+            "en-04"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.299299999999675
+        },
+        {
+          "id": "q37",
+          "kind": "denied",
+          "retrieved": [
+            "en-10",
+            "en-06",
+            "en-07",
+            "en-03",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 16.669799999999668
+        },
+        {
+          "id": "q38",
+          "kind": "denied",
+          "retrieved": [
+            "en-03",
+            "en-01",
+            "en-10",
+            "en-05",
+            "en-09"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 15.343200000000252
+        },
+        {
+          "id": "q39",
+          "kind": "denied",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 19.88289999999961
+        },
+        {
+          "id": "q40",
+          "kind": "denied",
+          "retrieved": [],
+          "recallAt5": null,
+          "status": "no-evidence",
+          "clarification": true,
+          "elapsedMs": 15.419799999999668
+        }
+      ]
+    },
+    "vector": {
+      "recallAt5": 1,
+      "mrr": 1,
+      "citationCount": 200,
+      "citationValidity": 1,
+      "leakage": 0,
+      "coldMs": 49.400800000000345,
+      "warmP50Ms": 45.258599999999205,
+      "warmP95Ms": 56.132400000000416,
+      "cases": [
+        {
+          "id": "q01",
+          "kind": "answer",
+          "retrieved": [
+            "zh-01",
+            "zh-10",
+            "zh-09",
+            "zh-03",
+            "zh-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 49.400800000000345
+        },
+        {
+          "id": "q02",
+          "kind": "answer",
+          "retrieved": [
+            "zh-02",
+            "zh-09",
+            "zh-05",
+            "zh-06",
+            "zh-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 45.38560000000052
+        },
+        {
+          "id": "q03",
+          "kind": "answer",
+          "retrieved": [
+            "zh-03",
+            "zh-07",
+            "zh-10",
+            "zh-08",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.2563999999993
+        },
+        {
+          "id": "q04",
+          "kind": "answer",
+          "retrieved": [
+            "zh-04",
+            "zh-01",
+            "zh-03",
+            "zh-02",
+            "zh-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 43.584100000000035
+        },
+        {
+          "id": "q05",
+          "kind": "answer",
+          "retrieved": [
+            "zh-05",
+            "zh-10",
+            "zh-02",
+            "zh-01",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.538399999999456
+        },
+        {
+          "id": "q06",
+          "kind": "answer",
+          "retrieved": [
+            "zh-06",
+            "zh-09",
+            "zh-02",
+            "zh-03",
+            "zh-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.61800000000039
+        },
+        {
+          "id": "q07",
+          "kind": "answer",
+          "retrieved": [
+            "zh-07",
+            "zh-03",
+            "zh-04",
+            "zh-10",
+            "zh-08"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.671299999999974
+        },
+        {
+          "id": "q08",
+          "kind": "answer",
+          "retrieved": [
+            "zh-08",
+            "zh-04",
+            "zh-10",
+            "zh-05",
+            "zh-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.6911999999993
+        },
+        {
+          "id": "q09",
+          "kind": "answer",
+          "retrieved": [
+            "zh-09",
+            "zh-02",
+            "zh-10",
+            "zh-06",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 47.22860000000037
+        },
+        {
+          "id": "q10",
+          "kind": "answer",
+          "retrieved": [
+            "zh-10",
+            "zh-09",
+            "zh-03",
+            "zh-05",
+            "zh-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 50.094200000000455
+        },
+        {
+          "id": "q11",
+          "kind": "answer",
+          "retrieved": [
+            "en-01",
+            "en-04",
+            "en-10",
+            "en-06",
+            "en-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 42.246900000000096
+        },
+        {
+          "id": "q12",
+          "kind": "answer",
+          "retrieved": [
+            "en-02",
+            "en-05",
+            "en-08",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 43.60600000000068
+        },
+        {
+          "id": "q13",
+          "kind": "answer",
+          "retrieved": [
+            "en-03",
+            "zh-07",
+            "en-07",
+            "en-05",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 43.42910000000029
+        },
+        {
+          "id": "q14",
+          "kind": "answer",
+          "retrieved": [
+            "en-04",
+            "en-07",
+            "en-01",
+            "en-03",
+            "en-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 45.19170000000031
+        },
+        {
+          "id": "q15",
+          "kind": "answer",
+          "retrieved": [
+            "en-05",
+            "en-10",
+            "en-09",
+            "en-07",
+            "en-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 45.868899999999485
+        },
+        {
+          "id": "q16",
+          "kind": "answer",
+          "retrieved": [
+            "en-06",
+            "en-01",
+            "en-02",
+            "en-10",
+            "en-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 49.17069999999967
+        },
+        {
+          "id": "q17",
+          "kind": "answer",
+          "retrieved": [
+            "en-07",
+            "en-06",
+            "en-10",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 45.22609999999986
+        },
+        {
+          "id": "q18",
+          "kind": "answer",
+          "retrieved": [
+            "en-08",
+            "en-06",
+            "en-07",
+            "en-02",
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 41.44999999999982
+        },
+        {
+          "id": "q19",
+          "kind": "answer",
+          "retrieved": [
+            "en-09",
+            "en-07",
+            "en-01",
+            "en-04",
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.3755000000001
+        },
+        {
+          "id": "q20",
+          "kind": "answer",
+          "retrieved": [
+            "en-10",
+            "en-02",
+            "en-05",
+            "en-01",
+            "en-07"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.250199999999495
+        },
+        {
+          "id": "q21",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-06",
+            "zh-02",
+            "zh-09",
+            "zh-03",
+            "zh-04"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 41.910899999999856
+        },
+        {
+          "id": "q22",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-02",
+            "zh-01",
+            "zh-10",
+            "zh-04",
+            "zh-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 42.405799999999545
+        },
+        {
+          "id": "q23",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-01",
+            "zh-02",
+            "zh-05",
+            "zh-03",
+            "zh-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 49.38299999999981
+        },
+        {
+          "id": "q24",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-02",
+            "zh-10",
+            "zh-06",
+            "zh-01",
+            "zh-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 42.66569999999956
+        },
+        {
+          "id": "q25",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-06",
+            "zh-10",
+            "zh-08",
+            "zh-02",
+            "zh-09"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.92170000000078
+        },
+        {
+          "id": "q26",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-07",
+            "en-04",
+            "en-02",
+            "en-03",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 60.43089999999938
+        },
+        {
+          "id": "q27",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-07",
+            "en-02",
+            "en-04",
+            "en-10",
+            "en-08"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.35369999999966
+        },
+        {
+          "id": "q28",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-01",
+            "en-06",
+            "en-03",
+            "en-09",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 42.934799999999086
+        },
+        {
+          "id": "q29",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-03",
+            "en-08",
+            "en-07",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 42.82800000000134
+        },
+        {
+          "id": "q30",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-07",
+            "en-03",
+            "en-04",
+            "en-02",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.71930000000066
+        },
+        {
+          "id": "q31",
+          "kind": "denied",
+          "retrieved": [
+            "zh-07",
+            "zh-04",
+            "zh-02",
+            "zh-01",
+            "zh-06"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.23790000000008
+        },
+        {
+          "id": "q32",
+          "kind": "denied",
+          "retrieved": [
+            "zh-10",
+            "zh-03",
+            "zh-07",
+            "zh-09",
+            "zh-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 50.03230000000076
+        },
+        {
+          "id": "q33",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-10",
+            "zh-04",
+            "zh-03",
+            "zh-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.368099999999686
+        },
+        {
+          "id": "q34",
+          "kind": "denied",
+          "retrieved": [
+            "zh-05",
+            "zh-02",
+            "zh-06",
+            "zh-09",
+            "zh-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 43.67740000000049
+        },
+        {
+          "id": "q35",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-04",
+            "zh-02",
+            "zh-09",
+            "zh-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 45.258599999999205
+        },
+        {
+          "id": "q36",
+          "kind": "denied",
+          "retrieved": [
+            "en-02",
+            "en-04",
+            "en-01",
+            "en-07",
+            "en-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.94160000000011
+        },
+        {
+          "id": "q37",
+          "kind": "denied",
+          "retrieved": [
+            "en-06",
+            "en-10",
+            "en-07",
+            "en-05",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 39.84510000000046
+        },
+        {
+          "id": "q38",
+          "kind": "denied",
+          "retrieved": [
+            "en-10",
+            "en-03",
+            "en-09",
+            "en-01",
+            "en-06"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 50.46820000000116
+        },
+        {
+          "id": "q39",
+          "kind": "denied",
+          "retrieved": [
+            "en-07",
+            "en-04",
+            "en-02",
+            "en-06",
+            "en-08"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 47.087900000000445
+        },
+        {
+          "id": "q40",
+          "kind": "denied",
+          "retrieved": [
+            "en-02",
+            "en-07",
+            "en-05",
+            "en-04",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 56.132400000000416
+        }
+      ]
+    },
+    "hybrid": {
+      "recallAt5": 1,
+      "mrr": 1,
+      "citationCount": 200,
+      "citationValidity": 1,
+      "leakage": 0,
+      "coldMs": 50.81339999999909,
+      "warmP50Ms": 36.96990000000005,
+      "warmP95Ms": 46.7494999999999,
+      "cases": [
+        {
+          "id": "q01",
+          "kind": "answer",
+          "retrieved": [
+            "zh-01",
+            "zh-10",
+            "zh-09",
+            "zh-03",
+            "zh-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 50.81339999999909
+        },
+        {
+          "id": "q02",
+          "kind": "answer",
+          "retrieved": [
+            "zh-02",
+            "zh-09",
+            "zh-05",
+            "zh-06",
+            "zh-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 46.7494999999999
+        },
+        {
+          "id": "q03",
+          "kind": "answer",
+          "retrieved": [
+            "zh-03",
+            "zh-07",
+            "zh-10",
+            "zh-08",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 44.65980000000127
+        },
+        {
+          "id": "q04",
+          "kind": "answer",
+          "retrieved": [
+            "zh-04",
+            "zh-01",
+            "zh-03",
+            "zh-02",
+            "zh-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.45310000000063
+        },
+        {
+          "id": "q05",
+          "kind": "answer",
+          "retrieved": [
+            "zh-05",
+            "zh-10",
+            "zh-02",
+            "zh-01",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.31560000000172
+        },
+        {
+          "id": "q06",
+          "kind": "answer",
+          "retrieved": [
+            "zh-06",
+            "zh-09",
+            "zh-02",
+            "zh-03",
+            "zh-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.96990000000005
+        },
+        {
+          "id": "q07",
+          "kind": "answer",
+          "retrieved": [
+            "zh-07",
+            "zh-03",
+            "zh-04",
+            "zh-10",
+            "zh-08"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 47.86000000000058
+        },
+        {
+          "id": "q08",
+          "kind": "answer",
+          "retrieved": [
+            "zh-08",
+            "zh-04",
+            "zh-10",
+            "zh-05",
+            "zh-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 37.78069999999934
+        },
+        {
+          "id": "q09",
+          "kind": "answer",
+          "retrieved": [
+            "zh-09",
+            "zh-10",
+            "zh-02",
+            "zh-06",
+            "zh-04"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.28060000000005
+        },
+        {
+          "id": "q10",
+          "kind": "answer",
+          "retrieved": [
+            "zh-10",
+            "zh-09",
+            "zh-03",
+            "zh-05",
+            "zh-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.95159999999851
+        },
+        {
+          "id": "q11",
+          "kind": "answer",
+          "retrieved": [
+            "en-01",
+            "en-04",
+            "en-10",
+            "en-06",
+            "en-03"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 37.812700000000405
+        },
+        {
+          "id": "q12",
+          "kind": "answer",
+          "retrieved": [
+            "en-02",
+            "en-05",
+            "en-08",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 40.55919999999969
+        },
+        {
+          "id": "q13",
+          "kind": "answer",
+          "retrieved": [
+            "en-03",
+            "zh-07",
+            "en-07",
+            "en-05",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.633200000000215
+        },
+        {
+          "id": "q14",
+          "kind": "answer",
+          "retrieved": [
+            "en-04",
+            "en-07",
+            "en-01",
+            "en-03",
+            "en-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.55279999999948
+        },
+        {
+          "id": "q15",
+          "kind": "answer",
+          "retrieved": [
+            "en-05",
+            "en-10",
+            "en-09",
+            "en-07",
+            "en-02"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.020300000000134
+        },
+        {
+          "id": "q16",
+          "kind": "answer",
+          "retrieved": [
+            "en-06",
+            "en-01",
+            "en-02",
+            "en-10",
+            "en-05"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 39.73610000000008
+        },
+        {
+          "id": "q17",
+          "kind": "answer",
+          "retrieved": [
+            "en-07",
+            "en-06",
+            "en-10",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.26879999999983
+        },
+        {
+          "id": "q18",
+          "kind": "answer",
+          "retrieved": [
+            "en-08",
+            "en-06",
+            "en-07",
+            "en-02",
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 39.05149999999958
+        },
+        {
+          "id": "q19",
+          "kind": "answer",
+          "retrieved": [
+            "en-09",
+            "en-07",
+            "en-01",
+            "en-04",
+            "en-10"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.503200000001016
+        },
+        {
+          "id": "q20",
+          "kind": "answer",
+          "retrieved": [
+            "en-10",
+            "en-02",
+            "en-05",
+            "en-01",
+            "en-07"
+          ],
+          "recallAt5": 1,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.73729999999887
+        },
+        {
+          "id": "q21",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-06",
+            "zh-02",
+            "zh-09",
+            "zh-03",
+            "zh-04"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.35630000000128
+        },
+        {
+          "id": "q22",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-02",
+            "zh-01",
+            "zh-10",
+            "zh-04",
+            "zh-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 39.00280000000021
+        },
+        {
+          "id": "q23",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-01",
+            "zh-02",
+            "zh-05",
+            "zh-03",
+            "zh-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.2450000000008
+        },
+        {
+          "id": "q24",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-02",
+            "zh-10",
+            "zh-06",
+            "zh-01",
+            "zh-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 37.03200000000106
+        },
+        {
+          "id": "q25",
+          "kind": "no-answer",
+          "retrieved": [
+            "zh-06",
+            "zh-10",
+            "zh-08",
+            "zh-02",
+            "zh-09"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.19750000000022
+        },
+        {
+          "id": "q26",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-02",
+            "en-07",
+            "en-04",
+            "en-03",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.25849999999991
+        },
+        {
+          "id": "q27",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-02",
+            "en-07",
+            "en-04",
+            "en-10",
+            "en-08"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.23990000000049
+        },
+        {
+          "id": "q28",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-01",
+            "en-06",
+            "en-03",
+            "en-10",
+            "en-09"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.4984000000004
+        },
+        {
+          "id": "q29",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-03",
+            "en-08",
+            "en-07",
+            "en-04",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.28859999999986
+        },
+        {
+          "id": "q30",
+          "kind": "no-answer",
+          "retrieved": [
+            "en-07",
+            "en-03",
+            "en-04",
+            "en-02",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 34.6919999999991
+        },
+        {
+          "id": "q31",
+          "kind": "denied",
+          "retrieved": [
+            "zh-07",
+            "zh-04",
+            "zh-02",
+            "zh-01",
+            "zh-06"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.151700000000346
+        },
+        {
+          "id": "q32",
+          "kind": "denied",
+          "retrieved": [
+            "zh-10",
+            "zh-03",
+            "zh-07",
+            "zh-09",
+            "zh-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.41200000000026
+        },
+        {
+          "id": "q33",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-10",
+            "zh-04",
+            "zh-03",
+            "zh-07"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.21169999999984
+        },
+        {
+          "id": "q34",
+          "kind": "denied",
+          "retrieved": [
+            "zh-05",
+            "zh-02",
+            "zh-06",
+            "zh-09",
+            "zh-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 34.72149999999965
+        },
+        {
+          "id": "q35",
+          "kind": "denied",
+          "retrieved": [
+            "zh-01",
+            "zh-04",
+            "zh-02",
+            "zh-09",
+            "zh-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 38.57690000000002
+        },
+        {
+          "id": "q36",
+          "kind": "denied",
+          "retrieved": [
+            "en-02",
+            "en-04",
+            "en-01",
+            "en-07",
+            "en-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 39.08050000000003
+        },
+        {
+          "id": "q37",
+          "kind": "denied",
+          "retrieved": [
+            "en-10",
+            "en-06",
+            "en-07",
+            "en-03",
+            "en-01"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.67689999999857
+        },
+        {
+          "id": "q38",
+          "kind": "denied",
+          "retrieved": [
+            "en-03",
+            "en-10",
+            "en-01",
+            "en-09",
+            "en-05"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.6893
+        },
+        {
+          "id": "q39",
+          "kind": "denied",
+          "retrieved": [
+            "en-07",
+            "en-04",
+            "en-02",
+            "en-06",
+            "en-08"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 35.71320000000014
+        },
+        {
+          "id": "q40",
+          "kind": "denied",
+          "retrieved": [
+            "en-02",
+            "en-07",
+            "en-05",
+            "en-04",
+            "en-10"
+          ],
+          "recallAt5": null,
+          "status": "found",
+          "clarification": true,
+          "elapsedMs": 36.75120000000061
+        }
+      ]
+    }
+  },
+  "passed": true,
+  "runtime": {
+    "status": "completed",
+    "citationCount": 5,
+    "verifiedLocations": true,
+    "excerptOnly": true,
+    "passed": true
+  },
+  "outputMode": "quoted-excerpts-with-clarification; no generated answer or entailment assertion"
+}

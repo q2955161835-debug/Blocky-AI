@@ -1,0 +1,564 @@
+{
+  "resumedWithExistingEmbeddingCache": true,
+  "generator": "unique-ascii-records/v1",
+  "documents": 100,
+  "corpusBytes": 1048576,
+  "corpusSha256": "1cfd8be0c3a904735b0a5aab9282e23f0cf8c08aebdd428b5699997708719905",
+  "helperSha256": "a14dce61eeaf95ee3805ee481ac01600cdbb545799f57a3d1473683dd8fc5bdd",
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) Ultra 9 275HX",
+    "logicalProcessors": 24,
+    "memoryBytes": 68112736256
+  },
+  "externalModelApi": false,
+  "thresholds": {
+    "warmP95Ms": 500,
+    "memoryBytes": 2147483648,
+    "indexRatio": 10
+  },
+  "firstSync": {
+    "elapsedMs": 609.3283000000001,
+    "value": {
+      "status": "completed",
+      "counts": {
+        "added": 0,
+        "updated": 10,
+        "deleted": 0,
+        "skipped": 90,
+        "chunks": 1500
+      }
+    }
+  },
+  "modelLoad": {
+    "elapsedMs": 1264.0965,
+    "value": {
+      "available": true,
+      "backend": "onnx-cpu",
+      "dimension": 384,
+      "externalApi": false,
+      "intraThreads": 4,
+      "loaded": true,
+      "maxTokens": 512,
+      "microbatchSize": 1,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "signature": "5c37bc3b7bfc04eb5f23dd1ccf6c43f18847c1d0f1722a160e0447aa9c656a43",
+      "verified": true,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "modelResidentMemory": {
+    "workingSet": 683368448,
+    "privateBytes": 686657536,
+    "peakWorkingSet": 800972800
+  },
+  "embedding": {
+    "elapsedMs": 1567.6059,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 1500,
+      "dimension": 384,
+      "elapsedMs": 1545,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 10,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 1500,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "cold": {
+    "keyword": 221.33220000000074,
+    "vector": 64.11180000000058,
+    "hybrid": 61.878099999999904
+  },
+  "warm": {
+    "count": 100,
+    "p50Ms": 56.39720000000125,
+    "p95Ms": 69.66820000000007
+  },
+  "byStrategy": {
+    "keyword": {
+      "count": 34,
+      "p50Ms": 20.18370000000141,
+      "p95Ms": 25.4395999999997
+    },
+    "vector": {
+      "count": 33,
+      "p50Ms": 60.87989999999991,
+      "p95Ms": 69.60240000000067
+    },
+    "hybrid": {
+      "count": 33,
+      "p50Ms": 59.533800000000156,
+      "p95Ms": 73.57929999999942
+    }
+  },
+  "repeatedEmbedding": {
+    "elapsedMs": 1696.5281999999988,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 1500,
+      "dimension": 384,
+      "elapsedMs": 1668,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 10,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 1500,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "incrementalSync": {
+    "elapsedMs": 741.4098000000013,
+    "value": {
+      "status": "completed",
+      "counts": {
+        "added": 0,
+        "updated": 10,
+        "deleted": 0,
+        "skipped": 90,
+        "chunks": 1500
+      }
+    }
+  },
+  "incrementalEmbedding": {
+    "elapsedMs": 1735.4694999999992,
+    "value": {
+      "backend": "onnx-cpu",
+      "chunkCount": 1500,
+      "dimension": 384,
+      "elapsedMs": 1704,
+      "embedded": 0,
+      "externalApi": false,
+      "generation": 1,
+      "indexRevision": 13,
+      "modelId": "multilingual-e5-small-int8-v1",
+      "modelRevision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "modelSha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "published": true,
+      "reused": 1500,
+      "windowPolicy": "token-offset-500-weighted-mean-l2-v1"
+    }
+  },
+  "hostMemory": {
+    "peakWorkingSet": 800972800,
+    "workingSet": 701341696,
+    "privateBytes": 697626624
+  },
+  "nodePeakBytes": 111652864,
+  "indexBytes": 6110127,
+  "indexRatio": 5.827071189880371,
+  "measurements": [
+    {
+      "strategy": "keyword",
+      "elapsedMs": 22.644100000000435
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 61.45049999999992
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 68.0595000000003
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 18.326200000000426
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 63.884399999999914
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 55.88220000000001
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.048499999999876
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 61.6889000000001
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 67.50799999999981
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 25.46980000000076
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 69.60240000000067
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 72.5621000000001
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.859199999999873
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 66.97540000000026
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 69.66820000000007
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.849600000000464
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 67.02230000000054
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 60.35289999999986
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 22.7483000000002
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 57.79280000000017
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 57.52000000000044
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 21.262500000000728
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 60.87989999999991
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 63.61080000000038
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.21140000000014
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 72.01330000000053
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 61.35239999999976
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 23.579099999999926
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 68.41480000000047
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 73.57929999999942
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 22.606399999999667
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 62.576500000000124
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 62.19449999999961
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.473899999999958
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 61.959499999999935
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 58.94539999999961
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 21.02640000000065
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 56.25
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 56.40589999999975
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.44300000000021
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 55.889900000000125
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 61.68189999999959
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.451200000000426
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 56.99289999999928
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 60.37989999999991
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.136599999999817
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 59.8096000000005
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 59.67230000000018
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.243900000000394
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 52.14460000000054
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 59.533800000000156
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.57299999999941
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 64.90079999999944
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 54.03559999999925
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.378899999999703
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 60.96649999999954
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 59.349599999999555
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 22.754700000000412
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 53.52979999999934
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 57.83809999999994
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 18.70799999999963
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 53.77469999999994
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 53.61830000000009
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 13.4337000000005
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 42.52379999999994
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 53.11329999999998
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.41660000000047
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 61.4332000000004
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 57.597500000000764
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.58549999999923
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 55.77190000000155
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 55.46130000000085
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 18.79949999999917
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 52.50710000000072
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 56.502700000000914
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 21.536000000000058
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 56.39720000000125
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 52.60240000000158
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.84599999999955
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 60.25120000000061
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 55.98199999999997
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 18.858799999999974
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 58.941499999998996
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 56.73739999999998
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 19.384000000000015
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 52.620199999999386
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 62.10100000000057
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 20.18370000000141
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 61.50880000000143
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 58.22010000000046
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 18.346799999999348
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 64.23049999999967
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 69.38900000000103
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 25.4395999999997
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 60.36250000000109
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 66.72699999999895
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 25.01919999999882
+    },
+    {
+      "strategy": "vector",
+      "elapsedMs": 64.86379999999917
+    },
+    {
+      "strategy": "hybrid",
+      "elapsedMs": 73.91210000000137
+    },
+    {
+      "strategy": "keyword",
+      "elapsedMs": 22.938900000001013
+    }
+  ],
+  "passedMeasuredBudgets": true
+}

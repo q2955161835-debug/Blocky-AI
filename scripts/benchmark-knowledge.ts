@@ -16,9 +16,15 @@ if (![100, 1000, 10000].includes(count))
 const corpusBytes = (count / 100) * 1024 * 1024;
 const limitMs = count === 100 ? 500 : count === 1000 ? 1500 : 3000;
 const resumed = process.argv[3] !== undefined;
-const directory = resumed ? resolve(process.argv[3]) : resolve("try/stage3", `performance-${count}-${Date.now()}`);
-if (!directory.startsWith(resolve("try/stage3", `performance-${count}-`))) throw Error("Resume must name this benchmark's project-local directory");
-const reportPath = resolve(directory, resumed ? `report-resumed-${Date.now()}.json` : "report.json");
+const directory = resumed
+  ? resolve(process.argv[3])
+  : resolve("try/stage3", `performance-${count}-${Date.now()}`);
+if (!directory.startsWith(resolve("try/stage3", `performance-${count}-`)))
+  throw Error("Resume must name this benchmark's project-local directory");
+const reportPath = resolve(
+  directory,
+  resumed ? `report-resumed-${Date.now()}.json` : "report.json",
+);
 const corpus = resolve(directory, "corpus");
 await mkdir(corpus, { recursive: true });
 const topics = [
@@ -129,7 +135,10 @@ const report: Record<string, unknown> = {
 };
 async function checkpoint(phase: string) {
   report.phase = phase;
-  report.nodePeakBytes = Math.max(nodePeak, process.resourceUsage().maxRSS * 1024);
+  report.nodePeakBytes = Math.max(
+    nodePeak,
+    process.resourceUsage().maxRSS * 1024,
+  );
   await writeFile(reportPath, JSON.stringify(report, null, 2));
 }
 try {
@@ -203,6 +212,19 @@ try {
     );
   report.incrementalSync = await timed(() => synchronize(port));
   await checkpoint("incremental-synchronized");
+  const incremental = (
+    report.incrementalSync as {
+      value: { status: string; counts: { updated: number; skipped: number } };
+    }
+  ).value;
+  report.incrementalChangeVerified =
+    incremental.status === "completed" &&
+    incremental.counts.updated === count / 10 &&
+    incremental.counts.skipped === count * 0.9;
+  if (!report.incrementalChangeVerified)
+    throw Error(
+      "The run did not observe the required 10% A-to-B change; preserve this recovery report and rerun from a completed baseline",
+    );
   report.incrementalEmbedding = await timed(() => search.embed());
   report.hostMemory = hostMemory();
   report.nodePeakBytes = Math.max(
@@ -236,10 +258,10 @@ try {
   console.error(report.error);
 } finally {
   clearInterval(sample);
-  report.nodePeakBytes = Math.max(nodePeak, process.resourceUsage().maxRSS * 1024);
-  await writeFile(
-    reportPath,
-    JSON.stringify(report, null, 2),
+  report.nodePeakBytes = Math.max(
+    nodePeak,
+    process.resourceUsage().maxRSS * 1024,
   );
+  await writeFile(reportPath, JSON.stringify(report, null, 2));
   await transport.close();
 }
