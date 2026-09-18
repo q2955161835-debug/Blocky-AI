@@ -60,6 +60,26 @@ it("ranks Chinese and English source text deterministically and filters before s
     index.search("volcano", new Set(data.map((c) => c.chunkId)), 10),
   ).toEqual([]);
 });
+it("preserves BM25 frequencies across async batches and excludes denied records from IDF", async () => {
+  const [base] = await chunks();
+  const records = Array.from({ length: 260 }, (_, n) => ({
+    ...base,
+    chunkId: `chunk-${n}`,
+    title: "",
+    text: n === 129 ? "cache cache" : "cache",
+  }));
+  const index = await KeywordIndex.create(
+    records,
+    new AbortController().signal,
+  );
+  const hits = index.search("cache", new Set(["chunk-0", "chunk-129"]), 5);
+  expect(hits.map((h) => h.chunkId)).toEqual(["chunk-129", "chunk-0"]);
+  const raw = (Math.log(1.2) * 4.4) / 3.5;
+  expect(hits[0].score).toBeCloseTo(raw / (1 + raw), 12);
+  const denied = new AbortController();
+  denied.abort();
+  await expect(KeywordIndex.create(records, denied.signal)).rejects.toThrow();
+});
 it("keeps citations inside exact chunks and enforces context bytes and deduplication", async () => {
   const data = await chunks();
   const hits = data.map((chunk, i) => ({

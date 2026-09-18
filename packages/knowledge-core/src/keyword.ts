@@ -25,10 +25,13 @@ export function terms(text: string): string[] {
 }
 /** BM25 postings are built once per published version; ACL selection precedes scoring. */
 export class KeywordIndex {
-  private postings = new Map<string, Map<string, number>>();
+  private postings = new Map<string, Uint32Array>();
+  private building = new Map<string, number[]>();
+  private chunkIds: string[] = [];
   private lengths = new Map<string, number>();
   constructor(chunks: Chunk[]) {
     this.add(chunks);
+    this.compact();
   }
   static async create(chunks: Chunk[], signal: AbortSignal) {
     const index = new KeywordIndex([]);
@@ -37,20 +40,33 @@ export class KeywordIndex {
       index.add(chunks.slice(offset, offset + 128));
       await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
+    index.compact();
     return index;
   }
   private add(chunks: Chunk[]) {
     for (const chunk of chunks) {
       const tokens = terms(`${chunk.title}\n${chunk.text}`);
       this.lengths.set(chunk.chunkId, tokens.length);
+      const ordinal = this.chunkIds.length;
+      this.chunkIds.push(chunk.chunkId);
+      const frequencies = new Map<string, number>();
       for (const token of tokens) {
-        let posting = this.postings.get(token);
-        if (!posting) {
-          posting = new Map();
-          this.postings.set(token, posting);
-        }
-        posting.set(chunk.chunkId, (posting.get(chunk.chunkId) ?? 0) + 1);
+        frequencies.set(token, (frequencies.get(token) ?? 0) + 1);
       }
+      for (const [token, count] of frequencies) {
+        let posting = this.building.get(token);
+        if (!posting) {
+          posting = [];
+          this.building.set(token, posting);
+        }
+        posting.push(ordinal, count);
+      }
+    }
+  }
+  private compact() {
+    for (const [term, pairs] of this.building) {
+      this.postings.set(term, Uint32Array.from(pairs));
+      this.building.delete(term);
     }
   }
   search(
@@ -67,12 +83,15 @@ export class KeywordIndex {
       const posting = this.postings.get(term);
       if (!posting) continue;
       let frequency = 0;
-      for (const id of posting.keys()) if (eligible.has(id)) frequency++;
+      for (let i = 0; i < posting.length; i += 2)
+        if (eligible.has(this.chunkIds[posting[i]]!)) frequency++;
       if (!frequency) continue;
       const idf = Math.log(
         1 + (eligible.size - frequency + 0.5) / (frequency + 0.5),
       );
-      for (const [id, tf] of posting) {
+      for (let i = 0; i < posting.length; i += 2) {
+        const id = this.chunkIds[posting[i]]!,
+          tf = posting[i + 1]!;
         if (!eligible.has(id)) continue;
         const score =
           (idf * tf * 2.2) /

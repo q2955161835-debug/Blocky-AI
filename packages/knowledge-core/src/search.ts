@@ -85,20 +85,24 @@ export class KnowledgeSearch {
       this.cached.generation === head.generation;
     if (!cacheHit) {
       this.cached = undefined;
-      const stored = await this.port.load(),
-        state = readKnowledgeState(stored.value);
-      if (
-        stored.generation !== head.generation ||
-        stored.revision !== head.revision
-      )
+      // Keep only validated state across asynchronous keyword construction; the
+      // unvalidated transport object can otherwise retain another whole index.
+      const { revision, generation, state } = await this.port
+        .load()
+        .then((stored) => ({
+          revision: stored.revision,
+          generation: stored.generation,
+          state: readKnowledgeState(stored.value),
+        }));
+      if (generation !== head.generation || revision !== head.revision)
         throw Error("BLK-KNOWLEDGE-CONFLICT");
       if (!state.index) throw Error("BLK-KNOWLEDGE-NO-INDEX");
       if (state.index.generation !== head.generation)
         throw Error("BLK-KNOWLEDGE-CONFLICT");
       const keyword = await KeywordIndex.create(state.index.chunks, signal);
       this.cached = {
-        revision: stored.revision,
-        generation: stored.generation,
+        revision,
+        generation,
         index: state.index,
         keyword,
         pending: !!state.pending,
