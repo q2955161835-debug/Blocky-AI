@@ -142,8 +142,18 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
         retrieval: object(
           {
             strategy: enumeration("keyword", "vector", "hybrid"),
-            topK: number(1, 1000),
+            topK: number(1, 20),
             rerankResourceId: id,
+            maxCandidates: number(1, 200),
+            minScore: number(0, 1, false),
+            contextBudget: number(64, 64000),
+            rerank: { type: "boolean" },
+            timeoutMs: number(50, 120000),
+            fallback: enumeration("error", "keyword"),
+            modelId: id,
+            filters: array(
+              object({ key: text, value: text }, ["key", "value"]),
+            ),
           },
           ["strategy", "topK"],
         ),

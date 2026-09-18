@@ -1,6 +1,6 @@
 import { catalog, catalogVersion, getBlock } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
-import { Runtime } from "@blocky/runtime-core";
+import { Runtime, hostAdapters } from "@blocky/runtime-core";
 import { projectDigest } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
 import { digest } from "@blocky/language-schema";
@@ -9,7 +9,12 @@ import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
 import { type Args, allow, required, integer } from "./arguments";
 import { envelope, CliError } from "./protocol";
-import { createProject, readProject, doctor } from "./native-store";
+import {
+  createProject,
+  readProject,
+  doctor,
+  nativeUserOperation,
+} from "./native-store";
 import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
 import { taskCommand, taskHelp } from "./tasks";
@@ -308,7 +313,10 @@ export async function dispatch(
   if (signal.aborted) abort.abort();
   const timeout = setTimeout(cancel, integer(args, "timeout", 30000, 300000));
   try {
-    const runtime = new Runtime({ delayMs: 1 });
+    const runtime = new Runtime({
+      delayMs: 1,
+      adapters: hostAdapters(nativeUserOperation),
+    });
     const result = await runtime.run(project, entry.interactionId, question, {
       moduleId: entry.moduleId,
       userRegistry,

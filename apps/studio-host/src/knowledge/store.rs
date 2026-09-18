@@ -14,7 +14,7 @@ impl KnowledgeStore {
     pub fn new(root: PathBuf) -> Self {
         Self { root }
     }
-    fn scope(&self, project: &str, collection: &str) -> Result<PathBuf, String> {
+    pub(super) fn scope(&self, project: &str, collection: &str) -> Result<PathBuf, String> {
         if !valid_id(project) || !valid_id(collection) {
             return Err(INVALID.into());
         }
@@ -29,7 +29,7 @@ impl KnowledgeStore {
         ingest::no_links(&path)?;
         path.canonicalize().map_err(|_| IO.into())
     }
-    fn locked<T>(
+    pub(super) fn locked<T>(
         &self,
         project: &str,
         collection: &str,
@@ -60,7 +60,7 @@ impl KnowledgeStore {
         atomic_bytes(&path.join("cancel"), uuid::Uuid::new_v4().as_bytes())
     }
     pub fn sources(&self, project: &str, collection: &str) -> Result<Value, String> {
-        self.locked(project,collection,|_,state| Ok(json!({"generation":state.generation,"sources":state.sources.iter().map(Source::summary).collect::<Vec<_>>()})))
+        self.locked(project,collection,|_,state| Ok(json!({"revision":state.revision,"generation":state.generation,"sources":state.sources.iter().map(Source::summary).collect::<Vec<_>>()})))
     }
     pub fn add(
         &self,
@@ -185,6 +185,49 @@ impl KnowledgeStore {
             Ok(json!({"sourceId":id,"generation":state.generation,"documents":documents,"revision":snapshot.revision,"excluded":if start==0 {snapshot.excluded} else {vec![]},"nextCursor":next_cursor}))
         })
     }
+    pub fn read_document(
+        &self,
+        project: &str,
+        collection: &str,
+        source_id: &str,
+        document_id: &str,
+        revision: &str,
+    ) -> Result<Value, String> {
+        self.locked(project, collection, |path, state| {
+            if !valid_id(source_id)
+                || !state
+                    .sources
+                    .iter()
+                    .any(|s| s.source_id == source_id && s.readable())
+            {
+                return Err(DENIED.into());
+            }
+            let snapshot: Snapshot = read_json(
+                &path.join(format!("snapshot-{source_id}.json")),
+                16 * 1024 * 1024,
+            )?;
+            let mut document = snapshot
+                .documents
+                .into_iter()
+                .find(|d| d.document_id == document_id)
+                .ok_or(STALE)?;
+            if document.revision != revision
+                || revision.len() != 64
+                || !revision.bytes().all(|b| b.is_ascii_hexdigit())
+            {
+                return Err(STALE.into());
+            }
+            let bytes = read_bounded(
+                &path.join("objects").join(format!("{revision}.txt")),
+                MAX_DOCUMENT,
+            )?;
+            if digest(&bytes) != revision {
+                return Err("BLK-KNOW-CORRUPT".into());
+            }
+            document.text = String::from_utf8(bytes).map_err(|_| INVALID)?;
+            serde_json::to_value(document).map_err(|_| INVALID.into())
+        })
+    }
     pub fn load_index(&self, project: &str, collection: &str) -> Result<Value, String> {
         self.locked(project, collection, |path, state| {
             let value = match &state.index {
@@ -267,13 +310,16 @@ fn read_bounded(path: &Path, max: usize) -> Result<Vec<u8>, String> {
     }
     Ok(bytes)
 }
-fn read_json<T: serde::de::DeserializeOwned>(path: &Path, max: usize) -> Result<T, String> {
+pub(super) fn read_json<T: serde::de::DeserializeOwned>(
+    path: &Path,
+    max: usize,
+) -> Result<T, String> {
     serde_json::from_slice(&read_bounded(path, max)?).map_err(|_| "BLK-KNOW-CORRUPT".into())
 }
-fn atomic_json(path: &Path, value: &impl serde::Serialize) -> Result<(), String> {
+pub(super) fn atomic_json(path: &Path, value: &impl serde::Serialize) -> Result<(), String> {
     atomic_bytes(path, &serde_json::to_vec(value).map_err(|_| INVALID)?)
 }
-fn atomic_bytes(path: &Path, bytes: &[u8]) -> Result<(), String> {
+pub(super) fn atomic_bytes(path: &Path, bytes: &[u8]) -> Result<(), String> {
     let parent = path.parent().ok_or(IO)?;
     ingest::no_links(parent)?;
     if path.exists() {

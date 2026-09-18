@@ -5,17 +5,21 @@ import {
   synchronize,
   type KnowledgeCall,
   type SourceSummary,
+  type RetrievalOptions,
 } from "@blocky/knowledge-core";
+import { KnowledgeQueryPanel } from "./KnowledgeQueryPanel";
 export function KnowledgePanel({
   projectId,
   collectionId,
   call,
   onBind,
+  onSourcesChanged,
 }: {
   projectId: string;
   collectionId: string;
   call: KnowledgeCall;
-  onBind: () => void;
+  onBind: (options: RetrievalOptions) => void;
+  onSourcesChanged?: () => void;
 }) {
   const port = useMemo(
     () => knowledgePort(call, projectId, collectionId),
@@ -29,15 +33,22 @@ export function KnowledgePanel({
       [],
     ),
     [resumable, setResumable] = useState(false),
+    [version, setVersion] = useState(""),
     [url, setUrl] = useState("");
   const pending = useRef<AbortController | null>(null),
-    epoch = useRef(0);
+    epoch = useRef(0),
+    lastVersion = useRef("");
   const refresh = async () => {
     const current = epoch.current;
     const listed = await port.sources(),
       stored = await port.load();
     if (current !== epoch.current) return;
     const state = readKnowledgeState(stored.value);
+    const stamp = `${stored.generation}/${stored.revision}`;
+    if (lastVersion.current && lastVersion.current !== stamp)
+      onSourcesChanged?.();
+    lastVersion.current = stamp;
+    setVersion(stamp);
     setSources(listed.sources);
     setFailures(state.pending?.failures ?? []);
     setResumable(state.pending !== null);
@@ -71,13 +82,17 @@ export function KnowledgePanel({
     try {
       await work(controller.signal);
       if (current === epoch.current) await refresh();
-    } catch {
+    } catch (failure) {
       if (current === epoch.current) {
         await refresh().catch(() => {});
         setError(
           controller.signal.aborted
             ? "同步已取消，可重新同步继续。"
-            : "资料操作未完成，请检查来源、权限和同步状态。",
+            : failure instanceof Error && failure.message === "BLK-EMBED-MISSING"
+              ? "未找到本地语义模型，请使用包含知识模型的安装包。"
+              : failure instanceof Error && failure.message === "BLK-EMBED-NOT-READY"
+                ? "请先同步资料，再建立向量索引。"
+                : "资料操作未完成，请检查来源、权限和同步状态。",
         );
       }
     } finally {
@@ -205,12 +220,16 @@ export function KnowledgePanel({
           停止同步
         </button>
       )}
-      <button
-        disabled={busy || !sources.some((s) => s.readable)}
-        onClick={onBind}
-      >
-        用于当前知识积木
-      </button>
+      <KnowledgeQueryPanel
+        call={call}
+        projectId={projectId}
+        collectionId={collectionId}
+        busy={busy}
+        version={version}
+        run={run}
+        onBind={onBind}
+        canBind={sources.some((s) => s.readable)}
+      />
     </section>
   );
 }

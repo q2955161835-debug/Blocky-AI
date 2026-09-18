@@ -91,8 +91,9 @@ export function parseDocument(input: DocumentInput): ParsedDocument {
   }
   return { ...rest, lines };
 }
-/** A conservative budget: one Unicode code point per token, never a model tokenizer claim. */
-export const estimateTokens = (text: string) => Array.from(text).length;
+/** UTF-8 byte budget for excerpts; actual Embedding windows use the model tokenizer. */
+export const estimateTokens = (text: string) =>
+  new TextEncoder().encode(text).length;
 export async function chunkDocument(
   sourceId: string,
   input: ParsedDocument,

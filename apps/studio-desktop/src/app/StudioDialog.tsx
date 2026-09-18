@@ -58,9 +58,11 @@ export function StudioDialog({
         aria-label={
           popup.kind === "settings"
             ? "设置"
-            : popup.kind === "blocks"
-              ? "搜索积木"
-              : "命令中心"
+            : popup.kind === "resources"
+              ? "资源管理"
+              : popup.kind === "blocks"
+                ? "搜索积木"
+                : "命令中心"
         }
         style={
           popup.kind === "context"
@@ -75,9 +77,11 @@ export function StudioDialog({
           <strong>
             {popup.kind === "settings"
               ? "设置"
-              : popup.kind === "blocks"
-                ? "搜索积木"
-                : "命令中心"}
+              : popup.kind === "resources"
+                ? "资源管理"
+                : popup.kind === "blocks"
+                  ? "搜索积木"
+                  : "命令中心"}
           </strong>
           <button onClick={() => setPopup(null)} aria-label="关闭弹层">
             ×

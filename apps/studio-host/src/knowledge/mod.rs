@@ -14,3 +14,8 @@ mod tests;
 pub use protocol::dispatch;
 mod cancel;
 mod git_job;
+#[cfg(test)]
+mod embedding_tests;
+mod embedding_model;
+mod embedding_binary;
+mod embedding;

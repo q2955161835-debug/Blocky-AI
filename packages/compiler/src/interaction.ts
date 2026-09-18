@@ -6,7 +6,7 @@ import {
   type ToolContract,
   type Diagnostic,
 } from "@blocky/language-schema";
-import { resolveResource } from "@blocky/resource-registry";
+import { resolveResource, implementationKey } from "@blocky/resource-registry";
 import { walkNodes } from "./nodes";
 export function projectInteraction(
   project: Project,
@@ -81,7 +81,9 @@ export function projectInteraction(
                 ]),
               ],
               approval: "never",
-              implementationRef: String(resource.definition.implementationRef),
+              implementationRef: implementationKey(
+                resource.definition.implementationRef,
+              ),
             });
         } catch {
           diagnostics.push(

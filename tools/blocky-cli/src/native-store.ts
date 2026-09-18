@@ -6,6 +6,7 @@ import { encodeProject, decodeProject } from "@blocky/project-format";
 import type { Project } from "@blocky/language-schema";
 import { canonicalJson } from "@blocky/language-schema";
 import { CliError } from "./protocol";
+import { KnowledgeTransport } from "./knowledge-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = import.meta.url.endsWith("/main.mjs")
   ? resolve(
@@ -13,6 +14,8 @@ export const helper = import.meta.url.endsWith("/main.mjs")
       "bin/blocky-project-io.exe",
     )
   : resolve(root, "apps/studio-host/target/release/blocky-project-io.exe");
+const knowledgeTransport = new KnowledgeTransport(helper);
+export const closeNativeKnowledge = () => knowledgeTransport.close();
 type Reply = {
   schemaVersion: "blocky.project-io/v1alpha1";
   ok: boolean;
@@ -100,7 +103,16 @@ export async function nativeUserOperation(
   operation: string,
   fields: Record<string, unknown>,
 ): Promise<unknown> {
-  const reply = await request({ operation, ...fields });
+  const reply = (
+    operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
+      ? await knowledgeTransport.request({ operation, ...fields })
+      : await request({ operation, ...fields })
+  ) as Reply;
+  if (
+    reply.schemaVersion !== "blocky.project-io/v1alpha1" ||
+    typeof reply.ok !== "boolean"
+  )
+    throw new CliError(6, "BLK-HOST-001", "原生响应格式无效。");
   if (!reply.ok)
     throw new CliError(
       3,

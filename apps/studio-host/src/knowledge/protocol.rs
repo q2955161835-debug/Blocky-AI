@@ -5,6 +5,17 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
     let operation = request["operation"].as_str().ok_or(INVALID)?;
     let extra: &[&str] = match operation {
         "knowledge-source-add" => &["kind", "path", "url", "ref"],
+        "knowledge-read-document" => &["sourceId", "documentId", "revision"],
+        "knowledge-model-status" | "knowledge-model-install" => &["modelId"],
+        "knowledge-embed-index" => &["modelId", "expectedRevision", "expectedGeneration"],
+        "knowledge-vector-query" => &[
+            "modelId",
+            "query",
+            "eligibleChunkIds",
+            "topK",
+            "expectedRevision",
+            "expectedGeneration",
+        ],
         "knowledge-sources" | "knowledge-load-index" | "knowledge-cancel" => &[],
         "knowledge-read-source" => &["sourceId", "cursor", "snapshotRevision"],
         "knowledge-source-remove" => &["sourceId"],
@@ -64,6 +75,57 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
                 serde_json::from_value::<Vec<String>>(request["allowedPrincipals"].clone())
                     .map_err(|_| INVALID)?;
             store.acl(p, c, string("sourceId")?, principals)
+        }
+        "knowledge-read-document" => store.read_document(
+            p,
+            c,
+            string("sourceId")?,
+            string("documentId")?,
+            string("revision")?,
+        ),
+        "knowledge-model-status" | "knowledge-model-install" => {
+            store.scope(p, c)?;
+            let id = request
+                .get("modelId")
+                .map(|_| string("modelId"))
+                .transpose()?
+                .unwrap_or(embedding_model::MODEL_ID);
+            if operation == "knowledge-model-status" {
+                embedding_model::status(id)
+            } else {
+                embedding_model::install(id)
+            }
+        }
+        "knowledge-embed-index" | "knowledge-vector-query" => {
+            let id = request
+                .get("modelId")
+                .map(|_| string("modelId"))
+                .transpose()?
+                .unwrap_or(embedding_model::MODEL_ID);
+            let revision = request["expectedRevision"].as_u64().ok_or(INVALID)?;
+            let generation = request["expectedGeneration"].as_u64().ok_or(INVALID)?;
+            if operation == "knowledge-embed-index" {
+                embedding::build_index(store, p, c, id, revision, generation)
+            } else {
+                let eligible =
+                    serde_json::from_value::<Vec<String>>(request["eligibleChunkIds"].clone())
+                        .map_err(|_| INVALID)?;
+                let top = request["topK"]
+                    .as_u64()
+                    .and_then(|n| usize::try_from(n).ok())
+                    .ok_or(INVALID)?;
+                embedding::query(
+                    store,
+                    p,
+                    c,
+                    id,
+                    revision,
+                    generation,
+                    string("query")?,
+                    &eligible,
+                    top,
+                )
+            }
         }
         "knowledge-load-index" => store.load_index(p, c),
         "knowledge-save-index" => store.save_index(

@@ -19,6 +19,22 @@ fn setup() -> (tempfile::TempDir, KnowledgeStore, std::path::PathBuf) {
     )
 }
 #[test]
+fn citation_read_rejects_stale_version_and_revoked_grant() {
+    let (_dir, store, files) = setup();
+    let s=store.add("p","c","directory",files.to_str().unwrap(),None).unwrap();
+    let id=s["sourceId"].as_str().unwrap();
+    let page=store.read_source("p","c",id,None,None).unwrap();
+    let doc=&page["documents"][0];
+    let did=doc["documentId"].as_str().unwrap();
+    let revision=doc["revision"].as_str().unwrap();
+    assert_eq!(store.read_document("p","c",id,did,revision).unwrap(),*doc);
+    fs::write(files.join("lesson.md"),"Updated lesson").unwrap();
+    store.read_source("p","c",id,None,None).unwrap();
+    assert_eq!(store.read_document("p","c",id,did,revision).unwrap_err(),STALE);
+    store.acl("p","c",id,vec![]).unwrap();
+    assert_eq!(store.read_document("p","c",id,did,revision).unwrap_err(),DENIED);
+}
+#[test]
 fn real_source_paging_restart_and_cross_project_denial() {
     let (_dir, store, files) = setup();
     fs::write(files.join(".env"), "API_KEY=private").unwrap();

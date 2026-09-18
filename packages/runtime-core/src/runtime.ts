@@ -1,4 +1,4 @@
-import { resolveResource } from "@blocky/resource-registry";
+import { resolveResource, implementationKey } from "@blocky/resource-registry";
 import { compileProject } from "@blocky/compiler";
 import {
   EventFactory,
@@ -215,11 +215,15 @@ export class Runtime {
                 correlationId,
               );
               try {
-                citations = await adapter(
+                const retrieved = await adapter(
                   question,
                   String(resource.definition.collection),
                   signal,
+                  { projectId: project.manifest.projectId, resource },
                 );
+                citations = Array.isArray(retrieved)
+                  ? retrieved
+                  : retrieved.citations;
                 signal.throwIfAborted();
                 if (
                   !Array.isArray(citations) ||
@@ -236,7 +240,12 @@ export class Runtime {
                   "tool.completed",
                   moduleId,
                   node.nodeId,
-                  { resultCount: citations.length },
+                  {
+                    resultCount: citations.length,
+                    ...(!Array.isArray(retrieved)
+                      ? { summary: retrieved.summary }
+                      : {}),
+                  },
                   correlationId,
                 );
               } catch (error) {
@@ -273,7 +282,7 @@ export class Runtime {
               )
                 throw Error("BLK-TOOL-001");
               const adapter = adapters.model.get(
-                String(resource.definition.implementationRef),
+                implementationKey(resource.definition.implementationRef),
               );
               if (!adapter) throw Error("BLK-TOOL-002");
               const correlationId = `${runId}-${node.nodeId}`;
@@ -290,14 +299,16 @@ export class Runtime {
                   signal,
                 );
                 signal.throwIfAborted();
-                citations = proposed.filter((c) =>
-                  citations.some(
-                    (source) =>
-                      source.id === c.id &&
-                      source.text === c.text &&
-                      source.title === c.title,
-                  ),
-                );
+                citations = proposed
+                  .map((c) =>
+                    citations.find(
+                      (source) =>
+                        source.id === c.id &&
+                        source.text === c.text &&
+                        source.title === c.title,
+                    ),
+                  )
+                  .filter((c): c is Citation => !!c);
                 emit(
                   "model.completed",
                   moduleId,

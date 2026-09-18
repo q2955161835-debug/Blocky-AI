@@ -989,3 +989,22 @@ dialog.popup p {
   border: 1px solid var(--border);
   margin: 8px 0;
 }
+.popup:has(.resource-panel) {
+  width: min(780px, calc(100vw - 32px));
+  max-height: calc(100dvh - 140px);
+  overflow-y: auto;
+}
+.popup:has(.resource-panel) > header {
+  position: sticky;
+  top: -12px;
+  z-index: 1;
+  background: #292f3a;
+  padding-top: 8px;
+}
+.resource-panel label { flex-wrap: wrap; }
+.knowledge-panel { border-top: 1px solid var(--border); padding-top: 8px; }
+.knowledge-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.knowledge-panel li { margin: 10px 0; overflow-wrap: anywhere; }
+.knowledge-panel input:not([type="checkbox"]) { min-width: 0; flex: 1; }
+.knowledge-query { margin-top: 16px; border-top: 1px solid var(--border); }
+.citation-source { max-height: 300px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }

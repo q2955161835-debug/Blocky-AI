@@ -12,7 +12,8 @@ import {
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
-import { Runtime, type RunResult } from "@blocky/runtime-core";
+import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
+import { knowledgeNative } from "./knowledge";
 import {
   RedactedBus,
   projectLog,
@@ -74,7 +75,10 @@ export function useStudio() {
     abort = useRef<AbortController | null>(null),
     runBusy = useRef(false),
     ioBusy = useRef(false);
-  const [runtime] = useState(() => new Runtime({ delayMs: 160 })),
+  const [runtime] = useState(
+      () =>
+        new Runtime({ delayMs: 160, adapters: hostAdapters(knowledgeNative) }),
+    ),
     [bus] = useState(() => new RedactedBus());
   const [compiler] = useState(() => new IncrementalCompiler());
   useEffect(() => {
@@ -421,6 +425,10 @@ export function useStudio() {
     canGoBack: history.length > 0,
     events,
     result,
+    invalidateKnowledgeEvidence: () => {
+      abort.current?.abort();
+      setResult(undefined);
+    },
     running,
     question,
     setQuestion,

@@ -27,6 +27,29 @@ it("edited role and style reach execution; ungrounded model citation rejected", 
   expect(r.answer).not.toContain("ungrounded");
   expect(r.status).toBe("completed");
 });
+it("a composer cannot replace a verified citation location", async () => {
+  const adapters = localAdapters();
+  adapters.knowledge.set("adapter://deterministic/knowledge-v1", async () => [
+    {
+      id: "real",
+      title: "guide",
+      text: "evidence",
+      locator: { path: "guide.txt", lineStart: 1, lineEnd: 1 },
+    },
+  ]);
+  adapters.model.set("adapter://deterministic/composer-v1", async (input) =>
+    input.citations.map((c) => ({
+      ...c,
+      locator: { path: "forged.txt", lineStart: 999, lineEnd: 999 },
+    })),
+  );
+  const result = await new Runtime({ adapters }).run(
+    createStarter(),
+    "on-question",
+    "evidence",
+  );
+  expect(result.citations[0].locator?.path).toBe("guide.txt");
+});
 it("wrong scope and unlisted secret reference fail closed", () => {
   const p = createStarter();
   p.resources["product-handbook"].scope = "user";

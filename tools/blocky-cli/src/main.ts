@@ -2,6 +2,7 @@ import { parse } from "./arguments";
 import { dispatch } from "./commands";
 import { failure } from "./protocol";
 import { output } from "./output";
+import { closeNativeKnowledge } from "./native-store";
 const abort = new AbortController();
 process.on("SIGINT", () => abort.abort());
 process.on("SIGTERM", () => abort.abort());
@@ -18,4 +19,6 @@ try {
     `${result.result.error!.code}: ${result.result.error!.message}\n`,
   );
   process.exitCode = result.exitCode;
+} finally {
+  await closeNativeKnowledge();
 }

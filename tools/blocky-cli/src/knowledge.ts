@@ -1,9 +1,13 @@
 import { resolve } from "node:path";
+import { open } from "node:fs/promises";
 import {
   knowledgePort,
   knowledgeResource,
   synchronize,
   readKnowledgeState,
+  KnowledgeSearch,
+  retrievalOptions,
+  LOCAL_EMBEDDING_MODEL,
 } from "@blocky/knowledge-core";
 import { upsertProjectResource } from "@blocky/resource-registry";
 import {
@@ -21,6 +25,9 @@ export const knowledgeHelp = [
   "knowledge remove <file.blocky> --collection <id> --source <id> --json",
   "knowledge access <file.blocky> --collection <id> --source <id> --access <local|deny> --json",
   "knowledge bind <file.blocky> --collection <resource-id> --output <new.blocky> --json",
+  "knowledge model-status|model-install|embed <file.blocky> --collection <id> --json",
+  "knowledge query <file.blocky> --collection <id> --query <question> [--options <JSON>] --json",
+  "knowledge query <file.blocky> --collection <id> --queries <questions.json> [--options <JSON>] --json",
 ];
 export async function knowledgeCommand(args: Args, signal: AbortSignal) {
   if (args.words[0] !== "knowledge") return;
@@ -34,6 +41,10 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
     remove: ["source"],
     access: ["source", "access"],
     bind: ["output"],
+    "model-status": [],
+    "model-install": [],
+    embed: [],
+    query: ["query", "queries", "options"],
   };
   if (!Object.hasOwn(flags, action))
     throw new CliError(2, "BLK-CLI-002", "未知资料操作。");
@@ -64,6 +75,75 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
           : { path: resolve(required(args, "path")) }),
         ...(args.options.has("ref") ? { ref: required(args, "ref") } : {}),
       });
+    } else if (action === "model-status" || action === "model-install")
+      data = await nativeUserOperation(`knowledge-${action}`, {
+        ...fields,
+        modelId: LOCAL_EMBEDDING_MODEL,
+      });
+    else if (action === "embed")
+      data = await new KnowledgeSearch(
+        nativeUserOperation,
+        projectId,
+        collectionId,
+      ).embed();
+    else if (action === "query") {
+      const search = new KnowledgeSearch(
+        nativeUserOperation,
+        projectId,
+        collectionId,
+      );
+      const options = retrievalOptions(
+        args.options.has("options")
+          ? JSON.parse(required(args, "options"))
+          : {},
+      );
+      if (args.options.has("query") === args.options.has("queries"))
+        throw new CliError(
+          2,
+          "BLK-CLI-002",
+          "提供 --query 或 --queries 中的一项。",
+        );
+      if (args.options.has("query"))
+        data = await search.query(required(args, "query"), options, signal);
+      else {
+        const file = await open(resolve(required(args, "queries")), "r");
+        const bytes = await (async () => {
+          try {
+            const buffer = Buffer.alloc(1024 * 1024 + 1);
+            let size = 0;
+            while (size < buffer.length) {
+              const read = await file.read(
+                buffer,
+                size,
+                buffer.length - size,
+                size,
+              );
+              if (!read.bytesRead) break;
+              size += read.bytesRead;
+            }
+            return buffer.subarray(0, size);
+          } finally {
+            await file.close();
+          }
+        })();
+        if (bytes.length > 1024 * 1024)
+          throw new CliError(2, "BLK-CLI-002", "查询集超过 1 MiB。");
+        const queries: unknown = JSON.parse(bytes.toString("utf8"));
+        if (
+          !Array.isArray(queries) ||
+          queries.length > 1000 ||
+          queries.some((q) => typeof q !== "string" || q.length > 8000)
+        )
+          throw new CliError(
+            2,
+            "BLK-CLI-002",
+            "查询集须为不超过 1000 项的文本数组。",
+          );
+        const results = [];
+        for (const query of queries)
+          results.push(await search.query(query, options, signal));
+        data = { results, externalModelApi: false };
+      }
     } else if (action === "sources") data = await port.sources();
     else if (action === "sync") {
       const rawOverlap = args.options.get("overlap");
@@ -133,7 +213,8 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
     if (signal.aborted)
       throw new CliError(7, "BLK-RUN-005", "资料操作已取消。");
     const code =
-      error instanceof Error && /^BLK-KNOWLEDGE-[A-Z]+$/.test(error.message)
+      error instanceof Error &&
+      /^BLK-(?:KNOWLEDGE|EMBED)-[A-Z-]+$/.test(error.message)
         ? error.message
         : "BLK-KNOWLEDGE-SOURCE";
     throw new CliError(

@@ -325,6 +325,9 @@ importers:
       '@blocky/compiler':
         specifier: workspace:*
         version: link:../compiler
+      '@blocky/knowledge-core':
+        specifier: workspace:*
+        version: link:../knowledge-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema

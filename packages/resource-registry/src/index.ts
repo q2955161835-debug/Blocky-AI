@@ -1,6 +1,7 @@
 import type { Project, Resource } from "@blocky/language-schema";
 import { validateResource } from "./validate";
 export { validateResource } from "./validate";
+export { implementationKey } from "./implementation";
 export * from "./user-registry";
 export { resourceDefinitions } from "./definitions";
 export type {

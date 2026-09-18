@@ -138,3 +138,84 @@ pub fn knowledge_cancel(
     store.cancel(&project_id, &collection_id)?;
     Ok(json!({"cancelled":true}))
 }
+
+#[tauri::command]
+pub async fn knowledge_read_document(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    source_id: String,
+    document_id: String,
+    revision: String,
+) -> Result<Value, String> {
+    guard(&window)?;
+    run(store.inner().clone(),json!({"operation":"knowledge-read-document","projectId":project_id,"collectionId":collection_id,"sourceId":source_id,"documentId":document_id,"revision":revision})).await
+}
+#[tauri::command]
+pub async fn knowledge_model_status(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: Option<String>,
+) -> Result<Value, String> {
+    guard(&window)?;
+    let mut request = json!({"operation":"knowledge-model-status","projectId":project_id,"collectionId":collection_id});
+    if let Some(model) = model_id {
+        request["modelId"] = model.into();
+    }
+    run(store.inner().clone(), request).await
+}
+#[tauri::command]
+pub async fn knowledge_model_install(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: Option<String>,
+) -> Result<Value, String> {
+    guard(&window)?;
+    let mut request = json!({"operation":"knowledge-model-install","projectId":project_id,"collectionId":collection_id});
+    if let Some(model) = model_id {
+        request["modelId"] = model.into();
+    }
+    run(store.inner().clone(), request).await
+}
+#[tauri::command]
+pub async fn knowledge_embed_index(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: Option<String>,
+    expected_revision: u64,
+    expected_generation: u64,
+) -> Result<Value, String> {
+    guard(&window)?;
+    let mut request = json!({"operation":"knowledge-embed-index","projectId":project_id,"collectionId":collection_id,"expectedRevision":expected_revision,"expectedGeneration":expected_generation});
+    if let Some(model) = model_id {
+        request["modelId"] = model.into();
+    }
+    run(store.inner().clone(), request).await
+}
+#[tauri::command]
+pub async fn knowledge_vector_query(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: Option<String>,
+    expected_revision: u64,
+    expected_generation: u64,
+    query: String,
+    eligible_chunk_ids: Vec<String>,
+    top_k: usize,
+) -> Result<Value, String> {
+    guard(&window)?;
+    let mut request = json!({"operation":"knowledge-vector-query","projectId":project_id,"collectionId":collection_id,"expectedRevision":expected_revision,"expectedGeneration":expected_generation,"query":query,"eligibleChunkIds":eligible_chunk_ids,"topK":top_k});
+    if let Some(model) = model_id {
+        request["modelId"] = model.into();
+    }
+    run(store.inner().clone(), request).await
+}

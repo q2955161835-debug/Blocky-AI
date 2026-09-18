@@ -1,5 +1,8 @@
 import type { Studio } from "../composition/useStudio";
 import { interactionKey } from "@blocky/language-schema";
+import { KnowledgeCitations } from "./KnowledgeCitations";
+import { knowledgeNative } from "../composition/knowledge";
+import type { EvidenceCitation } from "@blocky/knowledge-core";
 export function RunPanel({ studio: s }: { studio: Studio }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
@@ -79,13 +82,24 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
               {s.result.citations.length > 0 && (
                 <details>
                   <summary>{s.result.citations.length} 条资料来源</summary>
-                  {s.result.citations.map((c) => (
-                    <p key={c.id}>
-                      {c.title}
-                      <br />
-                      {c.text}
-                    </p>
-                  ))}
+                  <KnowledgeCitations
+                    projectId={s.snapshot.project.manifest.projectId}
+                    call={knowledgeNative}
+                    citations={
+                      s.result.citations.filter(
+                        (c) => !!c.collectionId,
+                      ) as EvidenceCitation[]
+                    }
+                  />
+                  {s.result.citations
+                    .filter((c) => !c.collectionId)
+                    .map((c) => (
+                      <p key={c.id}>
+                        {c.title}
+                        <br />
+                        {c.text}
+                      </p>
+                    ))}
                 </details>
               )}
             </article>

@@ -309,16 +309,19 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           {typeof draft.definition.implementationRef === "string" ? (
             <p>此资源使用本地确定性适配器。</p>
           ) : (
-            <Fields
-              schema={definition.definitionSchema}
-              value={draft.definition}
-              change={(value) =>
-                setDraft({
-                  ...draft,
-                  definition: value as Resource["definition"],
-                })
-              }
-            />
+            <details>
+              <summary>资源高级配置</summary>
+              <Fields
+                schema={definition.definitionSchema}
+                value={draft.definition}
+                change={(value) =>
+                  setDraft({
+                    ...draft,
+                    definition: value as Resource["definition"],
+                  })
+                }
+              />
+            </details>
           )}
           <SecretBindings
             resource={draft}
@@ -331,10 +334,12 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               projectId={project.manifest.projectId}
               collectionId={draft.resourceId}
               call={knowledgeNative}
-              onBind={() => {
+              onSourcesChanged={s.invalidateKnowledgeEvidence}
+              onBind={(configuration) => {
                 const resource = knowledgeResource(
                   draft.resourceId,
                   draft.displayName,
+                  configuration,
                 );
                 const next = upsertProjectResource(
                   s.controller.getSnapshot().project,

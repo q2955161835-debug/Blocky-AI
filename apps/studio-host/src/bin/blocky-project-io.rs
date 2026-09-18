@@ -1,7 +1,7 @@
 use blocky_studio::{project_store, strict_json};
 use serde::Deserialize;
 use serde_json::{Value, json};
-use std::io::{Read, Write};
+use std::io::{BufRead, Read, Write};
 use std::path::Path;
 const SCHEMA: &str = "blocky.project-io/v1alpha1";
 #[derive(Deserialize)]
@@ -22,31 +22,34 @@ struct Request {
     variable: Option<String>,
 }
 fn execute(bytes: &[u8]) -> Value {
-    if let Ok(value) = strict_json::parse(bytes) {
-        if value["operation"]
-            .as_str()
-            .is_some_and(|s| s.starts_with("knowledge-"))
-        {
-            if value["schemaVersion"] != SCHEMA {
-                return json!({"ok":false,"code":"BLK-MIG-001"});
-            }
-            let result = std::env::var_os("LOCALAPPDATA")
-                .map(std::path::PathBuf::from)
-                .ok_or_else(|| "BLK-SET-001".to_owned())
-                .and_then(|root| {
-                    let store = blocky_studio::knowledge::KnowledgeStore::new(
-                        root.join("ai.blocky.studio/knowledge"),
-                    );
-                    blocky_studio::knowledge::dispatch(&store, &value)
-                });
-            return match result {
-                Ok(value) => json!({"ok":true,"value":value}),
-                Err(code) => json!({"ok":false,"code":code}),
-            };
+    let Ok(value) = strict_json::parse(bytes) else {
+        return json!({"ok":false,"code":"BLK-CLI-002"});
+    };
+    execute_value(value)
+}
+fn execute_value(value: Value) -> Value {
+    if value["operation"]
+        .as_str()
+        .is_some_and(|s| s.starts_with("knowledge-"))
+    {
+        if value["schemaVersion"] != SCHEMA {
+            return json!({"ok":false,"code":"BLK-MIG-001"});
         }
+        let result = std::env::var_os("LOCALAPPDATA")
+            .map(std::path::PathBuf::from)
+            .ok_or_else(|| "BLK-SET-001".to_owned())
+            .and_then(|root| {
+                let store = blocky_studio::knowledge::KnowledgeStore::new(
+                    root.join("ai.blocky.studio/knowledge"),
+                );
+                blocky_studio::knowledge::dispatch(&store, &value)
+            });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
     }
-    let request = strict_json::parse(bytes)
-        .and_then(|v| serde_json::from_value::<Request>(v).map_err(|_| "BLK-CLI-002".into()));
+    let request = serde_json::from_value::<Request>(value);
     let Ok(r) = request else {
         return json!({"ok":false,"code":"BLK-CLI-002"});
     };
@@ -207,6 +210,7 @@ fn main() {
     match std::env::args().nth(1).as_deref() {
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
+        Some("--blocky-knowledge-session") => std::process::exit(knowledge_session()),
         _ => {}
     }
     let mut bytes = Vec::new();
@@ -223,6 +227,42 @@ fn main() {
     let _ = writeln!(std::io::stdout(), "{}", response);
     if !ok {
         std::process::exit(3);
+    }
+}
+fn knowledge_session() -> i32 {
+    const MAX: u64 = 384 * 1024 * 1024;
+    let mut input = std::io::stdin().lock();
+    let mut output = std::io::stdout().lock();
+    loop {
+        let mut bytes = Vec::new();
+        let read = Read::by_ref(&mut input)
+            .take(MAX + 1)
+            .read_until(b'\n', &mut bytes);
+        if matches!(read, Ok(0)) {
+            return 0;
+        }
+        let oversized = read.is_err() || bytes.len() as u64 > MAX;
+        let mut response = if oversized {
+            json!({"ok":false,"code":"BLK-KNOW-LIMIT"})
+        } else {
+            match strict_json::parse(&bytes) {
+                Ok(value)
+                    if value["operation"]
+                        .as_str()
+                        .is_some_and(|op| op.starts_with("knowledge-")) =>
+                {
+                    execute_value(value)
+                }
+                _ => json!({"ok":false,"code":"BLK-CLI-002"}),
+            }
+        };
+        response["schemaVersion"] = SCHEMA.into();
+        if writeln!(output, "{}", response).is_err() || output.flush().is_err() {
+            return 3;
+        }
+        if oversized {
+            return 3;
+        }
     }
 }
 #[cfg(test)]
