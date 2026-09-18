@@ -15,7 +15,10 @@ if (![100, 1000, 10000].includes(count))
   throw Error("Use 100, 1000 or 10000 documents");
 const corpusBytes = (count / 100) * 1024 * 1024;
 const limitMs = count === 100 ? 500 : count === 1000 ? 1500 : 3000;
-const directory = resolve("try/stage3", `performance-${count}-${Date.now()}`);
+const resumed = process.argv[3] !== undefined;
+const directory = resumed ? resolve(process.argv[3]) : resolve("try/stage3", `performance-${count}-${Date.now()}`);
+if (!directory.startsWith(resolve("try/stage3", `performance-${count}-`))) throw Error("Resume must name this benchmark's project-local directory");
+const reportPath = resolve(directory, resumed ? `report-resumed-${Date.now()}.json` : "report.json");
 const corpus = resolve(directory, "corpus");
 await mkdir(corpus, { recursive: true });
 const topics = [
@@ -104,6 +107,7 @@ async function disk(path: string): Promise<number> {
   return size;
 }
 const report: Record<string, unknown> = {
+  resumedWithExistingEmbeddingCache: resumed,
   generator: "unique-ascii-records/v1",
   documents: count,
   corpusBytes,
@@ -205,7 +209,7 @@ try {
     Number(report.indexRatio) <= 10;
   console.log(
     JSON.stringify({
-      report: resolve(directory, "report.json"),
+      report: reportPath,
       warm: report.warm,
       nodePeakBytes: report.nodePeakBytes,
       hostMemory: report.hostMemory,
@@ -219,8 +223,9 @@ try {
   console.error(report.error);
 } finally {
   clearInterval(sample);
+  report.nodePeakBytes = Math.max(nodePeak, process.resourceUsage().maxRSS * 1024);
   await writeFile(
-    resolve(directory, "report.json"),
+    reportPath,
     JSON.stringify(report, null, 2),
   );
   await transport.close();

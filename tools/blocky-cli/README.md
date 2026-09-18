@@ -19,7 +19,21 @@ $LASTEXITCODE
 
 `dist/` 包含入口脚本和 `bin/blocky-project-io.exe`，可整体移动到另一个目录运行；不依赖源码路径、不启动 WebView。源文件和工具协议不进入用户项目。
 
-当前不提供 live、官方 Skills 安装、六个原生兼容模板或任意仓库扫描。转换消费随包附带的锁定源码，不下载或执行上游代码。`surface create`/`surface list` 已提供候选页面清单路径，但 CLI 不打开浏览器或发布站点。
+当前不提供 live、官方 Skills 安装或六个原生兼容模板。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生，兼容草案不能运行。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
+
+## 阶段 3 蓝图与真实来源
+
+`template list` 列出 `research-companion`、`code-guide`、`knowledge-tutor`、`task-helper` 四个起点。三个知识起点的集合初始为空，先用 `knowledge add` 与 `knowledge sync` 导入资料；向量/混合模式需 `knowledge embed`。`run --simulate` 仍运行真实本地检索，只是不调用外部生成式模型。
+
+```powershell
+.\blocky.cmd template list --json
+.\blocky.cmd blueprint official task-helper --output .\try\task-blueprint.json --json
+.\blocky.cmd blueprint migrate .\try\old-blueprint.json --output .\try\migrated-blueprint.json --json
+.\blocky.cmd blueprint update .\try\task.blocky --blueprint .\try\new-version.json --module research-agent --root research-root --output .\try\update.json --json
+.\blocky.cmd patch preview .\try\task.blocky --patch .\try\update.json --json
+```
+
+更新有冲突时返回 `ready:false` 且不写补丁；明确 `--resolution keep-user` 或 `upstream` 后才生成候选。`blueprint restore` 生成还原补丁；`patch apply` 输出新项目，不覆盖原件。版本、绑定和默认副本随项目保存，蓝图本身不包含知识正文或模型密钥。
 
 ## 阶段 2 项目、模块、设置与资源
 

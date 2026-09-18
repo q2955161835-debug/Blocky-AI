@@ -71,6 +71,7 @@ const state = z
     pending: z
       .object({
         index,
+        chunkRefs: z.array(id).max(250000).optional(),
         checkpoints: z
           .record(
             id,
@@ -108,6 +109,17 @@ export function readKnowledgeState(input: unknown): KnowledgeState {
     };
   const result = state.safeParse(input);
   if (!result.success) throw Error("BLK-KNOWLEDGE-STORE");
+  if (result.data.pending?.chunkRefs) {
+    const published = new Map(result.data.index?.chunks.map(c => [c.chunkId, c]) ?? []);
+    const pending = result.data.pending;
+    for (const id of pending.chunkRefs!) {
+      const chunk = published.get(id);
+      if (!chunk || !(chunk.sourceId in pending.index.sources)) throw Error("BLK-KNOWLEDGE-STORE");
+      pending.index.chunks.push(chunk);
+    }
+    if (pending.index.chunks.length > 250000) throw Error("BLK-KNOWLEDGE-STORE");
+    delete pending.chunkRefs;
+  }
   for (const value of [result.data.index, result.data.pending?.index]) {
     if (!value) continue;
     if (value.chunking.overlap >= value.chunking.size)
@@ -120,4 +132,16 @@ export function readKnowledgeState(input: unknown): KnowledgeState {
       throw Error("BLK-KNOWLEDGE-STORE");
   }
   return result.data;
+}
+/** Published chunks remain authoritative; checkpoints reference unchanged objects
+ * instead of serializing their text twice. This does not change the published index. */
+export function writeKnowledgeState(value: KnowledgeState): unknown {
+  if (!value.index || !value.pending) return value;
+  const published = new Map(value.index.chunks.map(c => [c.chunkId, c]));
+  const chunkRefs: string[] = [], chunks = [];
+  for (const chunk of value.pending.index.chunks) {
+    if (published.get(chunk.chunkId) === chunk) chunkRefs.push(chunk.chunkId);
+    else chunks.push(chunk);
+  }
+  return {...value, pending: {...value.pending, index: {...value.pending.index, chunks}, chunkRefs}};
 }

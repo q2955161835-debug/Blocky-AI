@@ -4,6 +4,7 @@ import type {
   SourceSummary,
   StoredIndex,
 } from "./types";
+import {writeKnowledgeState} from "./store-schema";
 export type KnowledgeCall = (
   operation: string,
   fields: Record<string, unknown>,
@@ -33,7 +34,7 @@ export function knowledgePort(
       invoke("knowledge-save-index", {
         expectedRevision,
         expectedGeneration,
-        value,
+        value: writeKnowledgeState(value),
       }) as Promise<{ revision: number; generation: number }>,
   };
 }

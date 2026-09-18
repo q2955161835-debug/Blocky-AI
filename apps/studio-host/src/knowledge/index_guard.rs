@@ -35,5 +35,19 @@ pub fn validate(value: &Value, state: &Collection) -> Result<(), String> {
             }
         }
     }
+    if let Some(refs) = value["pending"].get("chunkRefs") {
+        let refs = refs.as_array().ok_or(INVALID)?;
+        if refs.len() > 250000 { return Err(LIMIT.into()); }
+        let published: std::collections::HashMap<&str, &Value> = value["index"]["chunks"].as_array().ok_or(INVALID)?.iter()
+            .map(|chunk| Ok((chunk["chunkId"].as_str().ok_or(INVALID)?, chunk)))
+            .collect::<Result<_, &str>>()?;
+        let sources = value["pending"]["index"]["sources"].as_object().ok_or(INVALID)?;
+        let mut seen = std::collections::HashSet::new();
+        for reference in refs {
+            let id = reference.as_str().ok_or(INVALID)?;
+            let chunk = published.get(id).ok_or(INVALID)?;
+            if !seen.insert(id) || !sources.contains_key(chunk["sourceId"].as_str().ok_or(INVALID)?) { return Err(INVALID.into()); }
+        }
+    }
     Ok(())
 }

@@ -71,11 +71,14 @@ impl Cache {
         }
         let mut entries = HashMap::new();
         let mut record = vec![0u8; RECORD];
-        for offset in (0..length).step_by(RECORD) {
-            cancel::check()?;
-            file.read_exact(&mut record).map_err(|_| IO)?;
-            let (key, _) = decode(&record)?;
-            entries.insert(key, offset);
+        {
+            let mut reader = BufReader::with_capacity(256 * 1024, &mut file);
+            for (row, offset) in (0..length).step_by(RECORD).enumerate() {
+                if row % 64 == 0 { cancel::check()?; }
+                reader.read_exact(&mut record).map_err(|_| IO)?;
+                let (key, _) = decode(&record)?;
+                entries.insert(key, offset);
+            }
         }
         file.seek(SeekFrom::End(0)).map_err(|_| IO)?;
         Ok(Self {

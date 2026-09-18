@@ -137,16 +137,20 @@ pub fn build_index(
     };
     progress(0, 0, 0)?;
     for chunk in chunks {
-        cancel::check()?;
-        // A concurrent source revocation stops further model work as well as
-        // preventing stale publication. No collection lock spans inference.
-        epoch(store, p, c, revision, generation)?;
+        // Cached rows contain no inference or side effect; check a bounded batch.
+        if rows.len() % 16 == 0 {
+            cancel::check()?;
+            epoch(store, p, c, revision, generation)?;
+        }
         let text = chunk["text"].as_str().ok_or(INVALID)?;
         let key = digest(format!("{signature}\0passage\0{text}").as_bytes());
         let offset = if let Some(offset) = cache.entries.get(&key) {
             reused += 1;
             *offset
         } else {
+            // Recheck before every actual inference, including mid-batch revocation.
+            cancel::check()?;
+            epoch(store, p, c, revision, generation)?;
             let vector = embedding_model::infer(text, false)?;
             cancel::check()?;
             let offset = cache.append(&key, &vector)?;
