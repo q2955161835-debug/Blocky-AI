@@ -17,17 +17,36 @@ const doc = (id: string, text: string): DocumentInput => ({
   metadata: {},
 });
 it("checkpoints unchanged chunks by reference and refuses missing or duplicated references", async () => {
-  const store = new Store(); await synchronize(store);
+  const store = new Store();
+  await synchronize(store);
   const state = readKnowledgeState(store.value);
-  state.pending = {index: {...state.index!, chunks: [...state.index!.chunks]}, checkpoints: {}, completedSources: [], failures: [], counts: {added:0,updated:0,deleted:0,skipped:2,chunks:2}};
+  state.pending = {
+    index: { ...state.index!, chunks: [...state.index!.chunks] },
+    checkpoints: {},
+    completedSources: [],
+    failures: [],
+    counts: { added: 0, updated: 0, deleted: 0, skipped: 2, chunks: 2 },
+  };
   const packed = writeKnowledgeState(state) as any;
   expect(packed.pending.index.chunks).toEqual([]);
   expect(packed.pending.chunkRefs).toHaveLength(2);
+  expect(
+    (writeKnowledgeState(structuredClone(state)) as any).pending.chunkRefs,
+  ).toHaveLength(2);
   expect(readKnowledgeState(JSON.parse(JSON.stringify(packed)))).toEqual(state);
   expect(packed.index.chunks).toHaveLength(2);
-  const missing = structuredClone(packed); missing.pending.chunkRefs[0] = "missing-chunk";
+  const wrongDocument = structuredClone(packed);
+  wrongDocument.pending.index.documents[0].chunkIds = [
+    ...wrongDocument.pending.index.documents[1].chunkIds,
+  ];
+  expect(() => readKnowledgeState(wrongDocument)).toThrow(
+    "BLK-KNOWLEDGE-STORE",
+  );
+  const missing = structuredClone(packed);
+  missing.pending.chunkRefs[0] = "missing-chunk";
   expect(() => readKnowledgeState(missing)).toThrow("BLK-KNOWLEDGE-STORE");
-  const duplicate = structuredClone(packed); duplicate.pending.chunkRefs.push(duplicate.pending.chunkRefs[0]);
+  const duplicate = structuredClone(packed);
+  duplicate.pending.chunkRefs.push(duplicate.pending.chunkRefs[0]);
   expect(() => readKnowledgeState(duplicate)).toThrow("BLK-KNOWLEDGE-STORE");
 });
 class Store implements KnowledgePort {

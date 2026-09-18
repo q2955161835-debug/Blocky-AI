@@ -33,7 +33,10 @@ describe("Blocky native editor", () => {
     await cdp?.close().catch(() => {});
   });
   it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
-    await $("button*=资料问答伙伴").click();
+    await page
+      .locator(".welcome")
+      .getByRole("button", { name: /资料问答伙伴/ })
+      .click();
     await $(".blocklyDraggable").waitForDisplayed();
     // Existing editor/preview regression uses its declared deterministic fixture.
     // Stage 3 real-source and starter delivery have separate native/CLI evidence.
@@ -60,7 +63,9 @@ describe("Blocky native editor", () => {
     await browser.saveScreenshot("try/stage2-e2e/native-editor.png");
   });
   it("focuses the canvas after a blank click so Tab opens block search", async () => {
-    const starter = page.getByRole("button", { name: /资料问答伙伴/ });
+    const starter = page
+      .locator(".welcome")
+      .getByRole("button", { name: /资料问答伙伴/ });
     if (await starter.isVisible()) await starter.click();
     const canvas = page.locator(".blockly-host");
     const background = page.locator(".blocklyMainBackground");

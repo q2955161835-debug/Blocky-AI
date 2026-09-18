@@ -53,6 +53,11 @@ it("preserves user changes, surfaces conflicting updates, restores one instance 
   project.workspaces["research-agent"].blocks.blocks.push(...inserted);
   const root = inserted[0];
   expect(blueprintInstance(root)?.version).toBe(1);
+  const invalidDefault = structuredClone(root);
+  (
+    invalidDefault.extraState as any
+  ).blueprintInstance.base.fields.unrecognized = "not part of this block";
+  expect(blueprintInstance(invalidDefault)).toBeUndefined();
   const { digest: _, ...next } = structuredClone(v1);
   next.version = 2;
   next.roots[0].fields!.ROLE = "新版研究角色";

@@ -11,6 +11,7 @@ import {
   parseBlueprint,
   walkBlocks,
   workspaceBlockShape,
+  validateBlueprintBase,
   type BlueprintBindings,
 } from "./index";
 const id = z.string().regex(stableId).max(200);
@@ -48,6 +49,7 @@ export function blueprintInstance(root: WorkspaceBlock) {
     };
     visit(raw, 0);
     const parsed = instanceSchema.parse(raw);
+    validateBlueprintBase([parsed.base]);
     if (
       parsed.base.id !== root.id ||
       parsed.idMap[parsed.sourceRootId] !== root.id ||

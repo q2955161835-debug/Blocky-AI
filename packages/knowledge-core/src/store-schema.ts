@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { canonicalJson } from "@blocky/language-schema";
 import type { KnowledgeState } from "./types";
 const id = z
   .string()
@@ -110,14 +111,18 @@ export function readKnowledgeState(input: unknown): KnowledgeState {
   const result = state.safeParse(input);
   if (!result.success) throw Error("BLK-KNOWLEDGE-STORE");
   if (result.data.pending?.chunkRefs) {
-    const published = new Map(result.data.index?.chunks.map(c => [c.chunkId, c]) ?? []);
+    const published = new Map(
+      result.data.index?.chunks.map((c) => [c.chunkId, c]) ?? [],
+    );
     const pending = result.data.pending;
     for (const id of pending.chunkRefs!) {
       const chunk = published.get(id);
-      if (!chunk || !(chunk.sourceId in pending.index.sources)) throw Error("BLK-KNOWLEDGE-STORE");
+      if (!chunk || !(chunk.sourceId in pending.index.sources))
+        throw Error("BLK-KNOWLEDGE-STORE");
       pending.index.chunks.push(chunk);
     }
-    if (pending.index.chunks.length > 250000) throw Error("BLK-KNOWLEDGE-STORE");
+    if (pending.index.chunks.length > 250000)
+      throw Error("BLK-KNOWLEDGE-STORE");
     delete pending.chunkRefs;
   }
   for (const value of [result.data.index, result.data.pending?.index]) {
@@ -125,9 +130,23 @@ export function readKnowledgeState(input: unknown): KnowledgeState {
     if (value.chunking.overlap >= value.chunking.size)
       throw Error("BLK-KNOWLEDGE-STORE");
     const ids = new Set(value.chunks.map((c) => c.chunkId));
+    const chunksById = new Map(value.chunks.map((c) => [c.chunkId, c]));
     if (
       ids.size !== value.chunks.length ||
-      value.documents.some((d) => d.chunkIds.some((c) => !ids.has(c)))
+      value.chunks.some((c) => !(c.sourceId in value.sources)) ||
+      value.documents.some(
+        (d) =>
+          !(d.sourceId in value.sources) ||
+          d.chunkIds.some((id) => {
+            const chunk = chunksById.get(id);
+            return (
+              !chunk ||
+              chunk.sourceId !== d.sourceId ||
+              chunk.documentId !== d.documentId ||
+              chunk.revision !== d.revision
+            );
+          }),
+      )
     )
       throw Error("BLK-KNOWLEDGE-STORE");
   }
@@ -137,11 +156,32 @@ export function readKnowledgeState(input: unknown): KnowledgeState {
  * instead of serializing their text twice. This does not change the published index. */
 export function writeKnowledgeState(value: KnowledgeState): unknown {
   if (!value.index || !value.pending) return value;
-  const published = new Map(value.index.chunks.map(c => [c.chunkId, c]));
-  const chunkRefs: string[] = [], chunks = [];
+  const published = new Map(value.index.chunks.map((c) => [c.chunkId, c]));
+  const chunkRefs: string[] = [],
+    chunks = [];
   for (const chunk of value.pending.index.chunks) {
-    if (published.get(chunk.chunkId) === chunk) chunkRefs.push(chunk.chunkId);
+    const prior = published.get(chunk.chunkId);
+    const same =
+      prior &&
+      (prior === chunk ||
+        (prior.sourceId === chunk.sourceId &&
+          prior.documentId === chunk.documentId &&
+          prior.title === chunk.title &&
+          prior.text === chunk.text &&
+          prior.digest === chunk.digest &&
+          prior.revision === chunk.revision &&
+          prior.tokens === chunk.tokens &&
+          canonicalJson(prior.locator) === canonicalJson(chunk.locator) &&
+          canonicalJson(prior.metadata) === canonicalJson(chunk.metadata)));
+    if (same) chunkRefs.push(chunk.chunkId);
     else chunks.push(chunk);
   }
-  return {...value, pending: {...value.pending, index: {...value.pending.index, chunks}, chunkRefs}};
+  return {
+    ...value,
+    pending: {
+      ...value.pending,
+      index: { ...value.pending.index, chunks },
+      chunkRefs,
+    },
+  };
 }

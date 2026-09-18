@@ -74,7 +74,9 @@ impl Cache {
         {
             let mut reader = BufReader::with_capacity(256 * 1024, &mut file);
             for (row, offset) in (0..length).step_by(RECORD).enumerate() {
-                if row % 64 == 0 { cancel::check()?; }
+                if row % 64 == 0 {
+                    cancel::check()?;
+                }
                 reader.read_exact(&mut record).map_err(|_| IO)?;
                 let (key, _) = decode(&record)?;
                 entries.insert(key, offset);

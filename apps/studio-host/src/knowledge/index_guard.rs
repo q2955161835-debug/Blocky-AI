@@ -37,16 +37,64 @@ pub fn validate(value: &Value, state: &Collection) -> Result<(), String> {
     }
     if let Some(refs) = value["pending"].get("chunkRefs") {
         let refs = refs.as_array().ok_or(INVALID)?;
-        if refs.len() > 250000 { return Err(LIMIT.into()); }
-        let published: std::collections::HashMap<&str, &Value> = value["index"]["chunks"].as_array().ok_or(INVALID)?.iter()
+        if refs.len() > 250000 {
+            return Err(LIMIT.into());
+        }
+        let published: std::collections::HashMap<&str, &Value> = value["index"]["chunks"]
+            .as_array()
+            .ok_or(INVALID)?
+            .iter()
             .map(|chunk| Ok((chunk["chunkId"].as_str().ok_or(INVALID)?, chunk)))
             .collect::<Result<_, &str>>()?;
-        let sources = value["pending"]["index"]["sources"].as_object().ok_or(INVALID)?;
+        let sources = value["pending"]["index"]["sources"]
+            .as_object()
+            .ok_or(INVALID)?;
         let mut seen = std::collections::HashSet::new();
         for reference in refs {
             let id = reference.as_str().ok_or(INVALID)?;
             let chunk = published.get(id).ok_or(INVALID)?;
-            if !seen.insert(id) || !sources.contains_key(chunk["sourceId"].as_str().ok_or(INVALID)?) { return Err(INVALID.into()); }
+            if !seen.insert(id) || !sources.contains_key(chunk["sourceId"].as_str().ok_or(INVALID)?)
+            {
+                return Err(INVALID.into());
+            }
+        }
+    }
+    for (pending, index) in [(false, &value["index"]), (true, &value["pending"]["index"])] {
+        if index.is_null() {
+            continue;
+        }
+        let mut chunks: std::collections::HashMap<&str, &Value> = index["chunks"]
+            .as_array()
+            .ok_or(INVALID)?
+            .iter()
+            .map(|chunk| Ok((chunk["chunkId"].as_str().ok_or(INVALID)?, chunk)))
+            .collect::<Result<_, &str>>()?;
+        if pending {
+            if let Some(refs) = value["pending"]["chunkRefs"].as_array() {
+                let referenced: std::collections::HashSet<&str> =
+                    refs.iter().filter_map(Value::as_str).collect();
+                for chunk in value["index"]["chunks"].as_array().ok_or(INVALID)? {
+                    if let Some(id) = chunk["chunkId"]
+                        .as_str()
+                        .filter(|id| referenced.contains(id))
+                    {
+                        if chunks.insert(id, chunk).is_some() {
+                            return Err(INVALID.into());
+                        }
+                    }
+                }
+            }
+        }
+        for document in index["documents"].as_array().ok_or(INVALID)? {
+            for id in document["chunkIds"].as_array().ok_or(INVALID)? {
+                let chunk = chunks.get(id.as_str().ok_or(INVALID)?).ok_or(INVALID)?;
+                if chunk["sourceId"] != document["sourceId"]
+                    || chunk["documentId"] != document["documentId"]
+                    || chunk["revision"] != document["revision"]
+                {
+                    return Err(INVALID.into());
+                }
+            }
         }
     }
     Ok(())

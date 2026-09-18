@@ -193,6 +193,10 @@ function validateRoots(roots: WorkspaceBlock[]) {
     }
   }
 }
+export function validateBlueprintBase(roots: WorkspaceBlock[]) {
+  guard(roots);
+  validateRoots(roots);
+}
 export async function parseBlueprint(input: unknown): Promise<Blueprint> {
   try {
     guard(input);
