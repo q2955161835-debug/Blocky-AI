@@ -13,7 +13,7 @@ Blocky 是面向普通用户和学校教育的安装式积木 AI（人工智能�
 - 尖峰是可删除验证，不是正式 Blocky 应用、正式包边界或可发布产品；禁止恢复或改名后继续扩写为正式应用。
 - 品牌、积木分类、首批六个兼容模板、阶段 1 Demo 优先、多画布/应用界面/RPA/通知区域、底部面板/终端/日志方向和阶段 0–7 顺序已经确认。
 - 阶段 0 契约已通过独立文档验收并归档；正式入口是 `doc/技术设计/正式契约/README.md`，已完成计划与验收分别位于 `doc/归档/2026-08-23/` 和 `doc/验收/归档/2026-08-23/`。2026-09-16 用户已确认阶段 1 全部验收项和最终验收角色，阶段 1 已按实施计划 A–F 完成并归档。
-- 正式多模块最小纵切、确定性知识/Provider、个人蓝图/候选补丁、应用界面/生命周期与共享 CLI 已建立；阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 基于 `f016afc` 实现检查点完成开发并通过独立最终验收，目标版本为 `0.2.0`；2026-09-18 已按用户授权将验收交付合并 `main` 并删除任务分支。16/16、Full 360/30 和安全补证均通过；真实大模型 API 调用仍为“否”。完整积木目录、真实 RAG/Provider、RPA、官方 Skills、MCP、完整构建助手、兼容适配器、账号、发布和多平台仍未实现。
+- 正式多模块最小纵切、确定性知识/Provider、个人蓝图/候选补丁、应用界面/生命周期与共享 CLI 已建立；阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 基于 `f016afc` 实现检查点完成开发并通过独立最终验收，目标版本为 `0.2.0`；2026-09-18 已按用户授权将验收交付合并 `main` 并删除任务分支。16/16、Full 360/30 和安全补证均通过；真实大模型 API 调用仍为“否”。阶段 2 不包含真实 RAG；它已在阶段 3 开发并按本页最新状态验收。完整积木目录、真实生成式 Provider、RPA、官方 Skills、MCP、完整构建助手、兼容适配器、账号、发布和多平台仍未实现。
 
 ## 2. 文档优先级与入口
 
@@ -312,6 +312,8 @@ pnpm check:full
 锁定 Wry Windows 修复源码位于项目 `vendor/wry/`，由 Host Cargo patch 使用，来源与维护说明见 `vendor/WRY-PATCH.md`。工具缓存默认位于 `C:\Users\29551\.cargo\registry`；运行时数据为 `C:\Users\29551\AppData\Local\ai.blocky.studio`，测试包为 `C:\Users\29551\AppData\Local\ai.blocky.studio.test`。诊断仅保存白名单元数据；Full 测试原生档位于后者 `acceptance\full.blocky`，普通包不包含此测试命令。普通代码不得导入 `src/testing/`，测试注册同时受 Vite native-test 和 Rust wdio 编译门控，交付前扫描普通产物。
 
 交付构建用 `pnpm build:release` / `pnpm check:release` / `pnpm package:release`，Rust 构建路径重映射为通用路径，避免携带本机用户名与工作区路径；默认开发构建不代替交付候选。阶段 2 目标版本为 `0.2.0`，当前发行目录 `dist/Blocky-Studio-0.2.0/` 已读回 8 个文件、19,112,686 字节；构建与扫描脚本在 `scripts/`，构建缓存候选在 `try/release-native-target/` 与 CLI `dist/`，构建时阶段 2 扫描报告写入 `try/stage2-release/`；本轮固定证据见 `doc/验收/任务/阶段2证据/`，构建缓存及原始日志已按该目录 `storage-moves-final.json` 整理至 `try/待清理/阶段2-2026-09-17/`。许可证读取锁定依赖和 `vendor/licenses/registry.json`，当前覆盖读回 315/315；release 扫描 9 个物料并读回 `positiveControl=true`、`passed=true`。最终独立验收 16/16、Full 360/30 和安全补证均通过；普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。发行目录已存在时不覆盖，内部验收材料不进入产品。
+
+阶段 3 收尾产物：当前候选保留于 `dist/Blocky-Studio-0.3.0-candidate3/`，CLI 开发入口保留于 `tools/blocky-cli/dist/`。本轮过程缓存和旧候选已可逆整理至 `try/待清理/阶段3-2026-09-18/`；历史证据中的原路径用 `doc/验收/任务/阶段3证据/运行证据/storage-moves-final.json` 查找。模型及运行库准备缓存仍保留在 `try/stage3/models/` 和 `try/stage3/runtime/`，是当前活跃依赖。
 
 ## 14. 团队协作归属
 

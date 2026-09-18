@@ -1,0 +1,1289 @@
+{
+  "schemaVersion": "blocky.storage-move/v1",
+  "status": "completed",
+  "startedAt": "2026-09-18 23:20:06",
+  "finishedAt": "2026-09-18 23:22:49",
+  "workspace": "D:\\1Folder\\Blocky-AI",
+  "cleanup": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18",
+  "sourceCount": 67,
+  "allowedRelativePaths": [
+    "apps/studio-desktop/dist",
+    "apps/studio-host/target",
+    "dist/Blocky-Studio-0.3.0",
+    "dist/Blocky-Studio-0.3.0-candidate2",
+    "try/native-e2e-target",
+    "try/native-test-web",
+    "try/release-native-target",
+    "try/stage2-core",
+    "try/stage2-e2e",
+    "try/stage3-release",
+    "try/stage3/accept-3c-cli",
+    "try/stage3/asset-tests",
+    "try/stage3/check-current-docs.mjs",
+    "try/stage3/cli",
+    "try/stage3/cli-candidate3-final",
+    "try/stage3/conversion-1789732464316",
+    "try/stage3/conversion-1789732487879",
+    "try/stage3/conversion-cli",
+    "try/stage3/conversion-cli.blocky",
+    "try/stage3/current-docs.json",
+    "try/stage3/e2e-3d7731f.log",
+    "try/stage3/final-acceptance",
+    "try/stage3/full-3d7731f.log",
+    "try/stage3/full-before-final",
+    "try/stage3/gui-final",
+    "try/stage3/haystack-snapshot-ref.json",
+    "try/stage3/host-3d7731f.log",
+    "try/stage3/host-live-url",
+    "try/stage3/inspect-parsers.mjs",
+    "try/stage3/live-url-data",
+    "try/stage3/packaged-cli-smoke.mjs",
+    "try/stage3/packaged-smoke-1789739697334",
+    "try/stage3/packaged-smoke-1789740641572",
+    "try/stage3/pathmap-probe",
+    "try/stage3/performance-100-1789730206193",
+    "try/stage3/performance-1000-1789730297820",
+    "try/stage3/performance-10000-1789730962059",
+    "try/stage3/quality-1789729902718",
+    "try/stage3/quality-1789730071855",
+    "try/stage3/quality-1789737248526",
+    "try/stage3/quality-1789738852259",
+    "try/stage3/quality-1789739029889",
+    "try/stage3/runtime-smoke",
+    "try/stage3/security-3b-1789730502871",
+    "try/stage3/security-3b-model-path",
+    "try/stage3/security-3b-races-1789730567669",
+    "try/stage3/security-3b-races-1789730582859",
+    "try/stage3/security-3b-races.mjs",
+    "try/stage3/security-3b-recheck-1789730785275",
+    "try/stage3/security-3b-recheck.mjs",
+    "try/stage3/security-3b.mjs",
+    "try/stage3/security-boundaries",
+    "try/stage3/security-boundaries.mjs",
+    "try/stage3/security-cancel",
+    "try/stage3/security-cancel.mjs",
+    "try/stage3/security-filter-1789727576548",
+    "try/stage3/security-filter-1789728078256",
+    "try/stage3/security-filter-1789728094977",
+    "try/stage3/security-filter-1789728146911",
+    "try/stage3/security-probe",
+    "try/stage3/security-probe.mjs",
+    "try/stage3/security-repository-recheck-1789728132127",
+    "try/stage3/security-repository-recheck.mjs",
+    "try/stage3/stale-citation-case",
+    "try/stage3/stale-citation-probe.ts",
+    "try/stage3/storage-before-final.json",
+    "try/stage3/upstream"
+  ],
+  "preflight": {
+    "cleanupInitiallyAbsent": true,
+    "relatedProcesses": [],
+    "allSourcesWerePresent": true,
+    "allDestinationsWereAbsent": true
+  },
+  "moved": [
+    {
+      "relative": "apps/studio-desktop/dist",
+      "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-desktop\\dist",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\apps\\studio-desktop\\dist",
+      "beforeStats": {
+        "exists": true,
+        "files": 5,
+        "bytes": 1923669
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 5,
+        "bytes": 1923669
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "apps/studio-host/target",
+      "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\apps\\studio-host\\target",
+      "beforeStats": {
+        "exists": true,
+        "files": 22980,
+        "bytes": 14644892484
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 22980,
+        "bytes": 14644892484
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "dist/Blocky-Studio-0.3.0",
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.3.0",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\dist\\Blocky-Studio-0.3.0",
+      "beforeStats": {
+        "exists": true,
+        "files": 21,
+        "bytes": 251537099
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 21,
+        "bytes": 251537099
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "dist/Blocky-Studio-0.3.0-candidate2",
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.3.0-candidate2",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\dist\\Blocky-Studio-0.3.0-candidate2",
+      "beforeStats": {
+        "exists": true,
+        "files": 21,
+        "bytes": 251537774
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 21,
+        "bytes": 251537774
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/native-e2e-target",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\native-e2e-target",
+      "beforeStats": {
+        "exists": true,
+        "files": 5456,
+        "bytes": 2553473436
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 5456,
+        "bytes": 2553473436
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/native-test-web",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-test-web",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\native-test-web",
+      "beforeStats": {
+        "exists": true,
+        "files": 14,
+        "bytes": 1947936
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 14,
+        "bytes": 1947936
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/release-native-target",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\release-native-target",
+      "beforeStats": {
+        "exists": true,
+        "files": 5320,
+        "bytes": 2478425359
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 5320,
+        "bytes": 2478425359
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage2-core",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage2-core",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage2-core",
+      "beforeStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 54572
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 54572
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage2-e2e",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage2-e2e",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage2-e2e",
+      "beforeStats": {
+        "exists": true,
+        "files": 10,
+        "bytes": 606292
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 10,
+        "bytes": 606292
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3-release",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3-release",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3-release",
+      "beforeStats": {
+        "exists": true,
+        "files": 6,
+        "bytes": 4090032
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 6,
+        "bytes": 4090032
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/accept-3c-cli",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\accept-3c-cli",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\accept-3c-cli",
+      "beforeStats": {
+        "exists": true,
+        "files": 16,
+        "bytes": 121884
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 16,
+        "bytes": 121884
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/asset-tests",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\asset-tests",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\asset-tests",
+      "beforeStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/check-current-docs.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\check-current-docs.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\check-current-docs.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1034
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1034
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/cli",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\cli",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\cli",
+      "beforeStats": {
+        "exists": true,
+        "files": 60,
+        "bytes": 143709
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 60,
+        "bytes": 143709
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/cli-candidate3-final",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\cli-candidate3-final",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\cli-candidate3-final",
+      "beforeStats": {
+        "exists": true,
+        "files": 30,
+        "bytes": 118786
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 30,
+        "bytes": 118786
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/conversion-1789732464316",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\conversion-1789732464316",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\conversion-1789732464316",
+      "beforeStats": {
+        "exists": true,
+        "files": 8,
+        "bytes": 103413
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 8,
+        "bytes": 103413
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/conversion-1789732487879",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\conversion-1789732487879",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\conversion-1789732487879",
+      "beforeStats": {
+        "exists": true,
+        "files": 42,
+        "bytes": 135891
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 42,
+        "bytes": 135891
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/conversion-cli",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\conversion-cli",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\conversion-cli",
+      "beforeStats": {
+        "exists": true,
+        "files": 7,
+        "bytes": 73985
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 7,
+        "bytes": 73985
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/conversion-cli.blocky",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\conversion-cli.blocky",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\conversion-cli.blocky",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2956
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2956
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/current-docs.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\current-docs.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\current-docs.json",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 67
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 67
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/e2e-3d7731f.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\e2e-3d7731f.log",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\e2e-3d7731f.log",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1989
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1989
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/final-acceptance",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\final-acceptance",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\final-acceptance",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1546
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1546
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/full-3d7731f.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\full-3d7731f.log",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\full-3d7731f.log",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2659
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2659
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/full-before-final",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\full-before-final",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\full-before-final",
+      "beforeStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 15678
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 15678
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/gui-final",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\gui-final",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\gui-final",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3879
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3879
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/haystack-snapshot-ref.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\haystack-snapshot-ref.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\haystack-snapshot-ref.json",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 485
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 485
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/host-3d7731f.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\host-3d7731f.log",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\host-3d7731f.log",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 6216
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 6216
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/host-live-url",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\host-live-url",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\host-live-url",
+      "beforeStats": {
+        "exists": true,
+        "files": 2,
+        "bytes": 301
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 2,
+        "bytes": 301
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/inspect-parsers.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\inspect-parsers.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\inspect-parsers.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 868
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 868
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/live-url-data",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\live-url-data",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\live-url-data",
+      "beforeStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 1334
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 4,
+        "bytes": 1334
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/packaged-cli-smoke.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\packaged-cli-smoke.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\packaged-cli-smoke.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2078
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2078
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/packaged-smoke-1789739697334",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\packaged-smoke-1789739697334",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\packaged-smoke-1789739697334",
+      "beforeStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 13662
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 13662
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/packaged-smoke-1789740641572",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\packaged-smoke-1789740641572",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\packaged-smoke-1789740641572",
+      "beforeStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 13704
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 13704
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/pathmap-probe",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\pathmap-probe",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\pathmap-probe",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 36
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 36
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/performance-100-1789730206193",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\performance-100-1789730206193",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\performance-100-1789730206193",
+      "beforeStats": {
+        "exists": true,
+        "files": 220,
+        "bytes": 7183307
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 220,
+        "bytes": 7183307
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/performance-1000-1789730297820",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\performance-1000-1789730297820",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\performance-1000-1789730297820",
+      "beforeStats": {
+        "exists": true,
+        "files": 2110,
+        "bytes": 71619891
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 2110,
+        "bytes": 71619891
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/performance-10000-1789730962059",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\performance-10000-1789730962059",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\performance-10000-1789730962059",
+      "beforeStats": {
+        "exists": true,
+        "files": 21016,
+        "bytes": 716027005
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 21016,
+        "bytes": 716027005
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/quality-1789729902718",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\quality-1789729902718",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\quality-1789729902718",
+      "beforeStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110297
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110297
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/quality-1789730071855",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\quality-1789730071855",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\quality-1789730071855",
+      "beforeStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110493
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110493
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/quality-1789737248526",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\quality-1789737248526",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\quality-1789737248526",
+      "beforeStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110462
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110462
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/quality-1789738852259",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\quality-1789738852259",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\quality-1789738852259",
+      "beforeStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110480
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110480
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/quality-1789739029889",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\quality-1789739029889",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\quality-1789739029889",
+      "beforeStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110455
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 59,
+        "bytes": 110455
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/runtime-smoke",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\runtime-smoke",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\runtime-smoke",
+      "beforeStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-1789730502871",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-1789730502871",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-1789730502871",
+      "beforeStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 12020
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 12,
+        "bytes": 12020
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-model-path",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-model-path",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-model-path",
+      "beforeStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 0,
+        "bytes": 0
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-races-1789730567669",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-races-1789730567669",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-races-1789730567669",
+      "beforeStats": {
+        "exists": true,
+        "files": 10,
+        "bytes": 221057
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 10,
+        "bytes": 221057
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-races-1789730582859",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-races-1789730582859",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-races-1789730582859",
+      "beforeStats": {
+        "exists": true,
+        "files": 9,
+        "bytes": 158940
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 9,
+        "bytes": 158940
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-races.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-races.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-races.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 4492
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 4492
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-recheck-1789730785275",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-recheck-1789730785275",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-recheck-1789730785275",
+      "beforeStats": {
+        "exists": true,
+        "files": 11,
+        "bytes": 9158
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 11,
+        "bytes": 9158
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b-recheck.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b-recheck.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b-recheck.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3823
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3823
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-3b.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-3b.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-3b.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 5940
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 5940
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-boundaries",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-boundaries",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-boundaries",
+      "beforeStats": {
+        "exists": true,
+        "files": 6,
+        "bytes": 2820
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 6,
+        "bytes": 2820
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-boundaries.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-boundaries.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-boundaries.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3381
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 3381
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-cancel",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-cancel",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-cancel",
+      "beforeStats": {
+        "exists": true,
+        "files": 5004,
+        "bytes": 129641
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 5004,
+        "bytes": 129641
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-cancel.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-cancel.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-cancel.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1629
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1629
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-filter-1789727576548",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-filter-1789727576548",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-filter-1789727576548",
+      "beforeStats": {
+        "exists": true,
+        "files": 32,
+        "bytes": 28028
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 32,
+        "bytes": 28028
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-filter-1789728078256",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-filter-1789728078256",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-filter-1789728078256",
+      "beforeStats": {
+        "exists": true,
+        "files": 32,
+        "bytes": 28028
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 32,
+        "bytes": 28028
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-filter-1789728094977",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-filter-1789728094977",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-filter-1789728094977",
+      "beforeStats": {
+        "exists": true,
+        "files": 31,
+        "bytes": 28526
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 31,
+        "bytes": 28526
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-filter-1789728146911",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-filter-1789728146911",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-filter-1789728146911",
+      "beforeStats": {
+        "exists": true,
+        "files": 31,
+        "bytes": 28526
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 31,
+        "bytes": 28526
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-probe",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-probe",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-probe",
+      "beforeStats": {
+        "exists": true,
+        "files": 34,
+        "bytes": 28396
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 34,
+        "bytes": 28396
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-probe.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-probe.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-probe.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1512
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 1512
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-repository-recheck-1789728132127",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-repository-recheck-1789728132127",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-repository-recheck-1789728132127",
+      "beforeStats": {
+        "exists": true,
+        "files": 66,
+        "bytes": 59370
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 66,
+        "bytes": 59370
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/security-repository-recheck.mjs",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\security-repository-recheck.mjs",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\security-repository-recheck.mjs",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2802
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2802
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/stale-citation-case",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\stale-citation-case",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\stale-citation-case",
+      "beforeStats": {
+        "exists": true,
+        "files": 7,
+        "bytes": 2159
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 7,
+        "bytes": 2159
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/stale-citation-probe.ts",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\stale-citation-probe.ts",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\stale-citation-probe.ts",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2323
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 2323
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/storage-before-final.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\storage-before-final.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\storage-before-final.json",
+      "beforeStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 562
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 562
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    },
+    {
+      "relative": "try/stage3/upstream",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\stage3\\upstream",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段3-2026-09-18\\try\\stage3\\upstream",
+      "beforeStats": {
+        "exists": true,
+        "files": 24,
+        "bytes": 7292380
+      },
+      "afterStats": {
+        "exists": true,
+        "files": 24,
+        "bytes": 7292380
+      },
+      "statsConsistent": true,
+      "sourcePresentAfter": false
+    }
+  ],
+  "failed": [],
+  "postconditionIssues": [],
+  "summary": {
+    "fileCount": 63005,
+    "bytes": 20992692716
+  },
+  "retained": [
+    {
+      "relative": "dist/Blocky-Studio-0.3.0-candidate3",
+      "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.3.0-candidate3",
+      "stats": {
+        "exists": true,
+        "files": 21,
+        "bytes": 251537262
+      }
+    },
+    {
+      "relative": "tools/blocky-cli/dist",
+      "path": "D:\\1Folder\\Blocky-AI\\tools\\blocky-cli\\dist",
+      "stats": {
+        "exists": true,
+        "files": 5,
+        "bytes": 51627387
+      }
+    },
+    {
+      "relative": ".git",
+      "path": "D:\\1Folder\\Blocky-AI\\.git",
+      "stats": {
+        "exists": true,
+        "files": 4624,
+        "bytes": 279459062
+      }
+    },
+    {
+      "relative": "try/stage3/models",
+      "path": "D:\\1Folder\\Blocky-AI\\try\\stage3\\models",
+      "stats": {
+        "exists": true,
+        "files": 5,
+        "bytes": 135392183
+      }
+    },
+    {
+      "relative": "try/stage3/runtime",
+      "path": "D:\\1Folder\\Blocky-AI\\try\\stage3\\runtime",
+      "stats": {
+        "exists": true,
+        "files": 1,
+        "bytes": 18527776
+      }
+    }
+  ],
+  "protectedPaths": [
+    "dist/Blocky-Studio-0.3.0-candidate3",
+    "tools/blocky-cli/dist",
+    ".git",
+    "source code",
+    "C盘数据",
+    "2026-09-16恢复候选"
+  ],
+  "warnings": [
+    "移动完成后第一次证据对象序列化触发 PowerShell Argument types do not match；未回滚移动。beforeStats/afterStats 为最终目标读回值，Move-Item 同卷移动保持统计的独立 pre-move 清单未能序列化。"
+  ]
+}
