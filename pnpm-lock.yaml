@@ -101,6 +101,9 @@ importers:
       '@blocky/conversion-core':
         specifier: workspace:*
         version: link:../../packages/conversion-core
+      '@blocky/knowledge-core':
+        specifier: workspace:*
+        version: link:../../packages/knowledge-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../../packages/language-schema
@@ -252,6 +255,18 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
+  packages/knowledge-core:
+    dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
+      parse5:
+        specifier: 8.0.1
+        version: 8.0.1
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
   packages/language-schema: {}
 
   packages/observability:
@@ -378,6 +393,9 @@ importers:
       '@blocky/conversion-core':
         specifier: workspace:*
         version: link:../../packages/conversion-core
+      '@blocky/knowledge-core':
+        specifier: workspace:*
+        version: link:../../packages/knowledge-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../../packages/language-schema

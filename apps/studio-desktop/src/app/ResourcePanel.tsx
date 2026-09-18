@@ -11,6 +11,9 @@ import {
 import type { Resource } from "@blocky/language-schema";
 import type { Studio } from "../composition/useStudio";
 import { SecretBindings } from "./SecretBindings";
+import { KnowledgePanel } from "./KnowledgePanel";
+import { knowledgeNative } from "../composition/knowledge";
+import { knowledgeResource } from "@blocky/knowledge-core";
 function initial(schema: ResourceFieldSchema): unknown {
   if (schema.enum) return schema.enum[0];
   if (schema.type === "object")
@@ -322,6 +325,27 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             fields={definition.secretFields}
             change={(secretBindings) => setDraft({ ...draft, secretBindings })}
           />
+          {draft.kind === "knowledge" && draft.scope === "project" && (
+            <KnowledgePanel
+              key={`${project.manifest.projectId}/${draft.resourceId}`}
+              projectId={project.manifest.projectId}
+              collectionId={draft.resourceId}
+              call={knowledgeNative}
+              onBind={() => {
+                const resource = knowledgeResource(
+                  draft.resourceId,
+                  draft.displayName,
+                );
+                const next = upsertProjectResource(
+                  s.controller.getSnapshot().project,
+                  resource,
+                );
+                s.controller.edit((p) => Object.assign(p, next));
+                setDraft(resource);
+                s.setMessage("知识积木已绑定本机资料，请同步后运行。");
+              }}
+            />
+          )}
           {error && <p role="alert">{error}</p>}
           <button onClick={save}>保存资源</button>
           <button onClick={() => setDraft(undefined)}>取消</button>

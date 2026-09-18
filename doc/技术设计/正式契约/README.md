@@ -109,6 +109,8 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 
 [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md)记录源码检查点 `f016afc` 的实现边界；它是正式契约补充，阶段 2 最终结论绑定[阶段 2 任务验收](../../验收/任务/验收-2026-09-17-Blocky阶段2.md)。
 
+阶段 3 当前开发入口为[知识与积木化契约](12-阶段3知识与积木化.md)，新增 `blocky.knowledge-index/v1` 和 `blocky.knowledge-store/v1` 受控资源协议；最终结论仍以该阶段任务验收为准。
+
 当前已进入正式实现的部分包括：`blocky.project/v1`、`blocky.module-ir/v1` 与 `blocky.project-ir/v1`；显式 `blocky.migration/v1` 迁移候选；按模块缓存的增量编译；六个文本语言原子；统一命令/快捷键、分层设置、类型化资源；Windows ConPTY 用户终端；登记任务与 Agent capability 票据；结构化日志与有界存储；`blocky.recovery/v1` 恢复副本；以及只在 Host 内消费的秘密存储。实际 Provider、RAG、动态页面生成、RPA、完整构建助手、六套兼容适配器和官方 Skills 仍按后续阶段处理。
 
 除上述明确提升版本的项目、IR、迁移、恢复和设置文档外，`blocky.interaction/v1alpha1`、`blocky.tool/v1alpha1`、`blocky.resource/v1alpha1`、`blocky.command/v1alpha1`、`blocky.setting/v1alpha1`、`blocky.app-surface/v1alpha1`、`blocky.frontend-bridge/v1alpha1`、`blocky.rpa/v1alpha1`、`blocky.window/v1alpha1`、`blocky.log/v1alpha1`、`blocky.terminal/v1alpha1`、`blocky.task/v1alpha1` 与 `blocky.audit/v1alpha1` 保持原版本；本阶段不做无语义依据的批量改名。

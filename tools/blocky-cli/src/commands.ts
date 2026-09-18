@@ -16,6 +16,7 @@ import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
 import { migrationCommand } from "./migration";
 import { foundationsCommand, foundationsHelp } from "./foundations";
+import { knowledgeCommand, knowledgeHelp } from "./knowledge";
 import {
   userConfigCommand,
   userConfigHelp,
@@ -24,6 +25,7 @@ import {
 export const help = {
   version: "0.2.0",
   commands: [
+    ...knowledgeHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
@@ -61,6 +63,8 @@ export async function dispatch(
   signal: AbortSignal,
 ) {
   const command = args.words.slice(0, 2).join(".");
+  const knowledge = await knowledgeCommand(args, signal);
+  if (knowledge) return knowledge;
   if (
     args.options.has("help") ||
     (args.words.length === 0 && !args.options.size)

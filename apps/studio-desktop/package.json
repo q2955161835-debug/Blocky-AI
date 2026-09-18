@@ -8,6 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@blocky/knowledge-core": "workspace:*",
     "@blocky/resource-registry": "workspace:*",
     "@blocky/app-surface": "workspace:*",
     "@blocky/block-catalog": "workspace:*",

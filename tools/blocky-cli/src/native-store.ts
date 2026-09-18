@@ -105,7 +105,9 @@ export async function nativeUserOperation(
     throw new CliError(
       3,
       reply.code ?? "BLK-SET-001",
-      "本机配置操作失败，未返回秘密内容。",
+      operation.startsWith("knowledge-")
+        ? "资料操作失败，请检查来源与权限。"
+        : "本机配置操作失败，未返回秘密内容。",
     );
   return reply.value;
 }
