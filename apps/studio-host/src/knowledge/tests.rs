@@ -330,3 +330,156 @@ fn changed_resource_blob_is_rejected_instead_of_reused() {
         "BLK-KNOW-CORRUPT"
     );
 }
+
+#[test]
+fn repository_dirty_probe_never_executes_clean_filters() {
+    let (_dir, _, files) = setup();
+    let git = |args: &[&str]| {
+        let result = std::process::Command::new("git")
+            .arg("-C")
+            .arg(&files)
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "fixture git failed");
+        result.stdout
+    };
+    fs::write(files.join("lesson.md"), "trusted committed lesson\n").unwrap();
+    git(&["init", "--quiet"]);
+    git(&["add", "lesson.md"]);
+    git(&[
+        "-c",
+        "user.name=Knowledge Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "--quiet",
+        "-m",
+        "baseline",
+    ]);
+    fs::write(files.join(".gitattributes"), "lesson.md filter=probe\n").unwrap();
+    git(&[
+        "config",
+        "filter.probe.clean",
+        "echo executed > filter-executed; cat",
+    ]);
+    fs::write(files.join("lesson.md"), "changed committed lesson\n").unwrap();
+    let metadata = repository::describe(&files, None).unwrap();
+    assert!(
+        !files.join("filter-executed").exists(),
+        "read-only dirty probe executed a repository clean filter"
+    );
+    assert_eq!(metadata["dirty"], "true");
+}
+#[test]
+fn missing_promisor_blob_is_rejected_without_implicit_fetch() {
+    let (dir, _, files) = setup();
+    let git = |args: &[&str]| {
+        let result = std::process::Command::new("git")
+            .arg("-C")
+            .arg(&files)
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "fixture git failed");
+        String::from_utf8(result.stdout).unwrap().trim().to_owned()
+    };
+    git(&["init", "--quiet"]);
+    git(&["add", "lesson.md"]);
+    git(&[
+        "-c",
+        "user.name=Knowledge Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "--quiet",
+        "-m",
+        "baseline",
+    ]);
+    let remote = dir.path().join("remote");
+    git(&[
+        "clone",
+        "--quiet",
+        "--no-local",
+        files.to_str().unwrap(),
+        remote.to_str().unwrap(),
+    ]);
+    git(&["remote", "add", "origin", remote.to_str().unwrap()]);
+    git(&["config", "remote.origin.promisor", "true"]);
+    git(&["config", "remote.origin.partialclonefilter", "blob:none"]);
+    let oid = git(&["rev-parse", "HEAD:lesson.md"]);
+    let blob = files.join(".git/objects").join(&oid[..2]).join(&oid[2..]);
+    fs::remove_file(&blob).unwrap();
+    assert!(
+        repository::describe(&files, None).is_err(),
+        "missing blob must fail rather than launch a promisor fetch"
+    );
+    assert!(!blob.exists());
+}
+
+#[test]
+fn repository_raw_dirty_policy_reports_comparison_scope_and_unchecked_files() {
+    let (_dir, _, files) = setup();
+    let git = |args: &[&str]| {
+        let result = std::process::Command::new("git")
+            .arg("-C")
+            .arg(&files)
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "fixture git failed");
+    };
+    fs::write(files.join("lesson.md"), "one\ntwo\n").unwrap();
+    git(&["init", "--quiet"]);
+    git(&["-c", "core.autocrlf=false", "add", "lesson.md"]);
+    git(&[
+        "-c",
+        "user.name=Knowledge Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "--quiet",
+        "-m",
+        "baseline",
+    ]);
+    let clean = repository::describe(&files, None).unwrap();
+    assert_eq!(clean["dirty"], "false");
+    assert_eq!(clean["dirtyChecked"], "1");
+    assert_eq!(clean["dirtyPolicy"], "locked-commit-tracked-raw-bytes-v1");
+    fs::write(
+        files.join("untracked.md"),
+        "untracked is outside declared scope",
+    )
+    .unwrap();
+    assert_eq!(
+        repository::describe(&files, None).unwrap()["dirty"],
+        "false"
+    );
+    fs::write(files.join("lesson.md"), "one\r\ntwo\r\n").unwrap();
+    assert_eq!(
+        repository::describe(&files, None).unwrap()["dirtyChanged"],
+        "1"
+    );
+    fs::remove_file(files.join("lesson.md")).unwrap();
+    assert_eq!(
+        repository::describe(&files, None).unwrap()["dirtyChanged"],
+        "1"
+    );
+    fs::write(files.join("lesson.md"), "one\ntwo\n").unwrap();
+    fs::write(files.join("large.bin"), vec![0u8; MAX_DOCUMENT + 1]).unwrap();
+    git(&["-c", "core.autocrlf=false", "add", "large.bin"]);
+    git(&[
+        "-c",
+        "user.name=Knowledge Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "--quiet",
+        "-m",
+        "large file",
+    ]);
+    let partial = repository::describe(&files, None).unwrap();
+    assert_eq!(partial["dirty"], "unknown");
+    assert_eq!(partial["dirtyChecked"], "1");
+    assert_eq!(partial["dirtyUnchecked"], "1");
+}
