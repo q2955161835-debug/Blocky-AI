@@ -109,6 +109,28 @@ fn real_model_semantics_windows_binary_cache_and_revocation() {
     )
     .unwrap();
     assert_eq!(result["hits"][0]["chunkId"], "plants");
+    // A row cannot alias another vector offset while retaining its own key.
+    let published_path = store.scope("p", "c").unwrap().join("embedding.json");
+    let original = std::fs::read(&published_path).unwrap();
+    let mut altered: serde_json::Value = serde_json::from_slice(&original).unwrap();
+    altered["rows"][1]["offset"] = altered["rows"][0]["offset"].clone();
+    store::atomic_json(&published_path, &altered).unwrap();
+    assert_eq!(
+        embedding::query(
+            &store,
+            "p",
+            "c",
+            embedding_model::MODEL_ID,
+            revision,
+            generation,
+            "plants",
+            &["plants".into(), "git".into()],
+            2
+        )
+        .unwrap_err(),
+        "BLK-EMBED-CORRUPT"
+    );
+    store::atomic_bytes(&published_path, &original).unwrap();
     let subset = embedding::query(
         &store,
         "p",

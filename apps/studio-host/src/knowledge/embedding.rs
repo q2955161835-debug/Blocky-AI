@@ -301,18 +301,22 @@ pub fn query(
     if !selected.is_empty() {
         let vector = embedding_model::infer(text, true)?;
         let mut reader = embedding_binary::VectorReader::open(&pack(&path))?;
-        let mut previous: Option<(u64, Vec<f32>)> = None;
+        let mut previous: Option<(u64, String, Vec<f32>)> = None;
         for (n, row) in selected.iter().enumerate() {
             if n % 128 == 0 {
                 cancel::check()?;
             }
             if previous
                 .as_ref()
-                .is_none_or(|(offset, _)| *offset != row.offset)
+                .is_none_or(|(offset, key, _)| *offset != row.offset || key != &row.key)
             {
-                previous = Some((row.offset, reader.read(row.offset, &row.key)?));
+                previous = Some((
+                    row.offset,
+                    row.key.clone(),
+                    reader.read(row.offset, &row.key)?,
+                ));
             }
-            let embedding = &previous.as_ref().ok_or(INVALID)?.1;
+            let embedding = &previous.as_ref().ok_or(INVALID)?.2;
             let score = embedding
                 .iter()
                 .zip(&vector)
