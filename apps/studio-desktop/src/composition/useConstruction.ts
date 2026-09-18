@@ -4,6 +4,9 @@ import {
   parseBlueprint,
   instantiateBlueprint,
   defaultBindings,
+  migrateBlueprint,
+  officialBlueprint,
+  officialStarters,
   type Blueprint,
   type BlueprintBindings,
 } from "@blocky/block-catalog";
@@ -14,6 +17,7 @@ import {
 } from "@blocky/builder-protocol";
 import type { realConversionCandidate } from "@blocky/conversion-core";
 import { useConversion } from "./useConversion";
+import { useBlueprintUpdate } from "./useBlueprintUpdate";
 import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
@@ -51,6 +55,10 @@ export function useConstruction(studio: Studio) {
   ) => draftSurfaceDomain(...args, studio.resources.map);
 
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
+  const [libraryUnavailable, setLibraryUnavailable] = useState(true);
+  const [official, setOfficial] = useState<Blueprint[]>([]);
+  const [legacy, setLegacy] = useState<unknown[]>([]);
+  const [importedLegacy, setImportedLegacy] = useState<unknown>();
   const [captured, setCaptured] = useState<Blueprint>();
   const [inserting, setInserting] = useState<Blueprint>();
   const [name, setName] = useState("我的蓝图");
@@ -66,6 +74,14 @@ export function useConstruction(studio: Studio) {
     );
     setCandidate(value);
   });
+  const blueprintUpdate = useBlueprintUpdate(
+    studio,
+    [...official, ...blueprints],
+    (value) => {
+      setCandidate(undefined);
+      setReview(value);
+    },
+  );
   const [busy, setBusy] = useState(false),
     gate = useRef(false);
   const [clipboard, setClipboard] = useState<Blueprint>();
@@ -77,11 +93,28 @@ export function useConstruction(studio: Studio) {
           localStorage.getItem("blocky.blueprints.v1") ?? "[]",
         );
         if (!Array.isArray(stored) || stored.length > 100) throw Error();
-        const values = await Promise.all(stored.map(parseBlueprint));
+        const old = stored.filter(
+          (b) => b?.schemaVersion === "blocky.blueprint/v1alpha1",
+        );
+        const values = await Promise.all(
+          stored
+            .filter((b) => b?.schemaVersion !== "blocky.blueprint/v1alpha1")
+            .map(parseBlueprint),
+        );
+        if (active) setLegacy(old);
         if (active) setBlueprints(values);
+        if (active) setLibraryUnavailable(false);
       } catch {
         if (active)
           studio.setMessage("本机蓝图库无法读取，请检查导入内容或可用空间。");
+      }
+      try {
+        const builtins = await Promise.all(
+          officialStarters.map((s) => officialBlueprint(s.id)),
+        );
+        if (active) setOfficial(builtins);
+      } catch {
+        if (active) studio.setMessage("官方蓝图暂时无法读取。");
       }
     })();
     return () => {
@@ -100,11 +133,13 @@ export function useConstruction(studio: Studio) {
       studio.setMessage(
         code === "BLK-PATCH-001"
           ? "项目已改变，请重新生成预览。"
-          : code === "BLK-PATCH-003"
-            ? "请单独确认新增权限。"
-            : code === "BLK-BLUEPRINT-002"
-              ? "资源或画布插槽未绑定，原项目保持不变。"
-              : "无法完成操作。请检查选区、配置、依赖和本机可用空间。",
+          : code === "BLK-BLUEPRINT-006"
+            ? "请先迁移本机旧蓝图库，再保存新蓝图。"
+            : code === "BLK-PATCH-003"
+              ? "请单独确认新增权限。"
+              : code === "BLK-BLUEPRINT-002"
+                ? "资源或画布插槽未绑定，原项目保持不变。"
+                : "无法完成操作。请检查选区、配置、依赖和本机可用空间。",
       );
       return false;
     } finally {
@@ -125,7 +160,8 @@ export function useConstruction(studio: Studio) {
     });
   const save = () =>
     perform(async () => {
-      if (!captured) throw Error();
+      if (!captured || libraryUnavailable) throw Error();
+      if (legacy.length) throw Error("BLK-BLUEPRINT-006");
       const { digest: oldDigest, ...content } = captured;
       const renamed = { ...content, displayName: name };
       const value = await parseBlueprint({
@@ -195,7 +231,9 @@ export function useConstruction(studio: Studio) {
         approved,
         validatePatch,
       );
-      const first = applied.patch.operations[0];
+      const first =
+        applied.patch.operations.find((op) => op.op === "block.add") ??
+        applied.patch.operations[0];
       if (first.op === "app-surface.add")
         studio.openSurface(first.manifest.surfaceId);
       else
@@ -212,6 +250,65 @@ export function useConstruction(studio: Studio) {
     setReview(undefined);
     setCandidate(undefined);
   };
+  const storeBlueprint = (value: Blueprint) => {
+    if (legacy.length || libraryUnavailable) throw Error("BLK-BLUEPRINT-001");
+    const next = [
+      ...blueprints.filter(
+        (b) =>
+          !(b.blueprintId === value.blueprintId && b.version === value.version),
+      ),
+      value,
+    ];
+    const text = JSON.stringify(next);
+    if (
+      next.length > 100 ||
+      new TextEncoder().encode(text).length > 2 * 1024 * 1024
+    )
+      throw Error("BLK-BLUEPRINT-001");
+    localStorage.setItem("blocky.blueprints.v1", text);
+    setBlueprints(next);
+  };
+  const importBlueprint = (file: File) =>
+    perform(async () => {
+      if (file.size > 2 * 1024 * 1024) throw Error("BLK-BLUEPRINT-001");
+      const input = JSON.parse(await file.text());
+      if (input?.schemaVersion === "blocky.blueprint/v1alpha1") {
+        setImportedLegacy(input);
+        studio.setMessage(
+          "已读取旧版蓝图，可显式迁移为新副本；原文件保持不变。",
+        );
+        return;
+      }
+      storeBlueprint(await parseBlueprint(input));
+      studio.setMessage("蓝图已导入本机，可插入或用于版本更新。");
+    });
+  const migrateLibrary = () =>
+    perform(async () => {
+      if (libraryUnavailable || !legacy.length) throw Error();
+      const values = await Promise.all(legacy.map(migrateBlueprint));
+      const next = [...blueprints, ...values];
+      const text = JSON.stringify(next);
+      if (
+        next.length > 100 ||
+        new TextEncoder().encode(text).length > 2 * 1024 * 1024
+      )
+        throw Error("BLK-BLUEPRINT-001");
+      // Preserve the original serialized legacy library as a recoverable local copy.
+      const original = localStorage.getItem("blocky.blueprints.v1");
+      if (original)
+        localStorage.setItem("blocky.blueprints.legacy-backup", original);
+      localStorage.setItem("blocky.blueprints.v1", text);
+      setBlueprints(next);
+      setLegacy([]);
+      studio.setMessage("蓝图库已迁移为 v1，原版保存在本机恢复副本中。");
+    });
+  const migrateImported = () =>
+    perform(async () => {
+      if (!importedLegacy) return;
+      storeBlueprint(await migrateBlueprint(importedLegacy));
+      setImportedLegacy(undefined);
+      studio.setMessage("旧蓝图已迁移为 v1 副本，原文件未修改。");
+    });
   const remove = () => {
     studio.controller.edit((p) => {
       const workspace = p.workspaces[studio.session.active];
@@ -280,6 +377,13 @@ export function useConstruction(studio: Studio) {
     });
   return {
     blueprints,
+    official,
+    legacy,
+    importedLegacy,
+    importBlueprint,
+    migrateLibrary,
+    migrateImported,
+    blueprintUpdate,
     captured,
     inserting,
     name,
@@ -288,7 +392,7 @@ export function useConstruction(studio: Studio) {
     setBindings,
     review,
     candidate,
-    busy: busy || conversion.busy,
+    busy: busy || conversion.busy || blueprintUpdate.busy,
     clipboard,
     capture,
     save,

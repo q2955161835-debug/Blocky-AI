@@ -28,11 +28,12 @@ const block: z.ZodType<WorkspaceBlock> = z.lazy(() =>
       y: coordinate.optional(),
       disabled: z.boolean().optional(),
       collapsed: z.boolean().optional(),
+      extraState: z.json().optional(),
     })
     .strict(),
 );
 export const workspaceBlockShape = block;
-const schema = z
+const legacySchema = z
   .object({
     schemaVersion: z.literal("blocky.blueprint/v1alpha1"),
     blueprintId: id,
@@ -70,10 +71,41 @@ const schema = z
     digest: z.string().regex(/^[a-f0-9]{64}$/),
   })
   .strict();
+const schema = legacySchema
+  .extend({
+    schemaVersion: z.literal("blocky.blueprint/v1"),
+    version: z.number().int().min(1).max(100000),
+    source: z.union([
+      legacySchema.shape.source,
+      z.object({ kind: z.literal("official"), starterId: id }).strict(),
+    ]),
+    parameters: z
+      .array(
+        z
+          .object({
+            slotId: id,
+            kind: z.literal("role"),
+            blockId: id,
+            field: z.literal("ROLE"),
+            defaultValue: z.string().min(1).max(16000),
+          })
+          .strict(),
+      )
+      .max(100),
+    migration: z
+      .object({
+        from: z.literal("blocky.blueprint/v1alpha1"),
+        sourceDigest: z.string().regex(/^[a-f0-9]{64}$/),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
 export type Blueprint = z.infer<typeof schema>;
 export type BlueprintBindings = {
   resources: Record<string, string>;
   modules: Record<string, string>;
+  parameters?: Record<string, string>;
 };
 export function* walkBlocks(
   roots: WorkspaceBlock[],
@@ -168,8 +200,26 @@ export async function parseBlueprint(input: unknown): Promise<Blueprint> {
     validateRoots(parsed.roots);
     const { digest: expected, ...content } = parsed;
     if ((await digest(content)) !== expected) throw Error("BLK-BLUEPRINT-003");
-    const slots = [...parsed.resources, ...parsed.modules].map((s) => s.slotId);
+    const slots = [
+      ...parsed.resources,
+      ...parsed.modules,
+      ...parsed.parameters,
+    ].map((s) => s.slotId);
     if (new Set(slots).size !== slots.length) throw Error("BLK-BLUEPRINT-001");
+    const nodes = [...walkBlocks(parsed.roots)];
+    const targets = new Set<string>();
+    for (const slot of parsed.parameters) {
+      const target = nodes.find((b) => b.id === slot.blockId);
+      const key = `${slot.blockId}:${slot.field}`;
+      if (
+        !target ||
+        target.type !== "core.agent" ||
+        targets.has(key) ||
+        target.fields?.[slot.field] !== slot.defaultValue
+      )
+        throw Error("BLK-BLUEPRINT-002");
+      targets.add(key);
+    }
     for (const b of walkBlocks(parsed.roots)) {
       if (
         b.fields?.RESOURCE &&
@@ -200,6 +250,42 @@ export async function parseBlueprint(input: unknown): Promise<Blueprint> {
     throw Error("BLK-BLUEPRINT-001");
   }
 }
+export async function migrateBlueprint(input: unknown): Promise<Blueprint> {
+  try {
+    guard(input);
+    const old = legacySchema.parse(input),
+      { digest: expected, ...oldContent } = old;
+    if ((await digest(oldContent)) !== expected)
+      throw Error("BLK-BLUEPRINT-003");
+    const content = {
+      ...oldContent,
+      schemaVersion: "blocky.blueprint/v1" as const,
+      parameters: roleSlots(old.roots),
+      migration: {
+        from: "blocky.blueprint/v1alpha1" as const,
+        sourceDigest: expected,
+      },
+    };
+    return parseBlueprint({ ...content, digest: await digest(content) });
+  } catch (error) {
+    if (error instanceof Error && /^BLK-BLUEPRINT-/.test(error.message))
+      throw error;
+    throw Error("BLK-BLUEPRINT-001");
+  }
+}
+function roleSlots(roots: WorkspaceBlock[]): Blueprint["parameters"] {
+  return [...walkBlocks(roots)]
+    .filter(
+      (b) => b.type === "core.agent" && typeof b.fields?.ROLE === "string",
+    )
+    .map((b, index) => ({
+      slotId: `role-slot-${index + 1}`,
+      kind: "role",
+      blockId: b.id,
+      field: "ROLE",
+      defaultValue: String(b.fields!.ROLE),
+    }));
+}
 export async function captureBlueprint(
   project: Project,
   moduleId: string,
@@ -218,6 +304,7 @@ export async function captureBlueprint(
     workspace.blocks.blocks.filter((b) => selected.includes(b.id)),
   );
   if (roots.length !== selected.length) throw Error("BLK-BLUEPRINT-001");
+  for (const b of walkBlocks(roots)) delete b.extraState;
   guard(roots);
   validateRoots(roots);
   const minX = Math.min(...roots.map((b) => b.x ?? 0)),
@@ -279,7 +366,7 @@ export async function captureBlueprint(
     }
   }
   const content = {
-    schemaVersion: "blocky.blueprint/v1alpha1" as const,
+    schemaVersion: "blocky.blueprint/v1" as const,
     blueprintId,
     displayName,
     version: 1 as const,
@@ -292,6 +379,7 @@ export async function captureBlueprint(
     roots,
     resources,
     modules,
+    parameters: roleSlots(roots),
   };
   return parseBlueprint({ ...content, digest: await digest(content) });
 }
@@ -303,6 +391,9 @@ export function defaultBindings(blueprint: Blueprint): BlueprintBindings {
     modules: Object.fromEntries(
       blueprint.modules.map((m) => [m.slotId, m.defaultModuleId]),
     ),
+    parameters: Object.fromEntries(
+      blueprint.parameters.map((p) => [p.slotId, p.defaultValue]),
+    ),
   };
 }
 export async function instantiateBlueprint(
@@ -311,7 +402,7 @@ export async function instantiateBlueprint(
   moduleId: string,
   bindings: BlueprintBindings,
   offset = { x: 80, y: 80 },
-  newId = () => `block-${crypto.randomUUID()}`,
+  newId: (sourceId: string) => string = () => `block-${crypto.randomUUID()}`,
 ): Promise<WorkspaceBlock[]> {
   const blueprint = await parseBlueprint(input);
   if (
@@ -346,11 +437,23 @@ export async function instantiateBlueprint(
     ),
   );
   const roots = structuredClone(blueprint.roots);
+  const idMap: Record<string, string> = {};
+  const roles = new Map(blueprint.parameters.map((p) => [p.blockId, p]));
   for (const b of walkBlocks(roots)) {
-    const id = newId();
+    const original = b.id,
+      id = newId(original);
     if (!stableId.test(id) || used.has(id)) throw Error("BLK-BLUEPRINT-004");
     used.add(id);
+    idMap[original] = id;
     b.id = id;
+    delete b.extraState;
+    const role = roles.get(original);
+    if (role) {
+      const value = bindings.parameters?.[role.slotId] ?? role.defaultValue;
+      if (typeof value !== "string" || !value.trim() || value.length > 16000)
+        throw Error("BLK-BLUEPRINT-002");
+      b.fields![role.field] = value;
+    }
     if (b.fields?.RESOURCE)
       b.fields.RESOURCE = bindings.resources[String(b.fields.RESOURCE)];
     if (b.type === "core.module.call")
@@ -359,6 +462,34 @@ export async function instantiateBlueprint(
   for (const root of roots) {
     root.x = (root.x ?? 0) + offset.x;
     root.y = (root.y ?? 0) + offset.y;
+  }
+  const instanceId = `instance-${crypto.randomUUID()}`;
+  for (let i = 0; i < roots.length; i++) {
+    const root = roots[i],
+      base = structuredClone(root);
+    for (const b of walkBlocks([base])) {
+      const role = blueprint.parameters.find((p) => idMap[p.blockId] === b.id);
+      if (role) b.fields![role.field] = role.defaultValue;
+    }
+    const ids = new Set([...walkBlocks([root])].map((b) => b.id));
+    root.extraState = {
+      blueprintInstance: {
+        schemaVersion: "blocky.blueprint-instance/v1",
+        instanceId,
+        blueprintId: blueprint.blueprintId,
+        version: blueprint.version,
+        digest: blueprint.digest,
+        sourceRootId: blueprint.roots[i].id,
+        idMap: Object.fromEntries(
+          Object.entries(idMap).filter(([, id]) => ids.has(id)),
+        ),
+        bindings: {
+          resources: { ...bindings.resources },
+          modules: { ...bindings.modules },
+        },
+        base,
+      },
+    } as unknown as import("@blocky/language-schema").Json;
   }
   return roots;
 }

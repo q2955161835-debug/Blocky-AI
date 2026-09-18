@@ -69,7 +69,7 @@ it("executes menu commands through the same project actions", async () => {
   );
   fireEvent.click(within(menu).getByRole("menuitem", { name: /新建项目/ }));
   expect(screen.queryByRole("menu")).toBeNull();
-  expect(screen.getByLabelText("画布名称")).toBeTruthy();
+  expect(await screen.findByLabelText("画布名称")).toBeTruthy();
 });
 it("disables both runtime controls while saving and restores them after cancellation", async () => {
   let finish!: (value: null) => void;

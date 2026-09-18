@@ -1,4 +1,5 @@
 import type { Studio } from "../composition/useStudio";
+import { officialStarters } from "@blocky/block-catalog";
 export function Welcome({ studio: s }: { studio: Studio }) {
   return (
     <section className="welcome">
@@ -41,21 +42,27 @@ export function Welcome({ studio: s }: { studio: Studio }) {
           <button onClick={() => void s.open()}>打开本机项目</button>
         </div>
       </div>
-      <button className="starter-card" onClick={s.fresh}>
-        <div className="mini-blocks">
-          <span>收到问题</span>
-          <span>查找资料</span>
-          <span>组织回答</span>
-        </div>
-        <small>从蓝图开始</small>
-        <h2>
-          资料问答伙伴 <span>↗</span>
-        </h2>
-        <p>选择角色与资料，让每个回答都有出处。</p>
-        <footer>
-          2 个画布 <span>知识 · 工具 · 回答</span>
-        </footer>
-      </button>
+      <div className="starter-grid">
+        {officialStarters.map((starter, index) => (
+          <button
+            key={starter.id}
+            className="starter-card"
+            disabled={s.busy}
+            onClick={() => void s.startBlueprint(starter.id)}
+          >
+            <small>蓝图 {String(index + 1).padStart(2, "0")}</small>
+            <h2>
+              {starter.displayName} <span>↗</span>
+            </h2>
+            <p>{starter.description}</p>
+            <footer>
+              {starter.id === "task-helper"
+                ? "计算 · 工具 · 结果"
+                : "角色 · 资料 · 引用"}
+            </footer>
+          </button>
+        ))}
+      </div>
     </section>
   );
 }

@@ -45,6 +45,15 @@ export function registerBlocks() {
   );
   for (const def of catalog) {
     Blockly.Blocks[def.type] = {
+      saveExtraState(this: Blockly.Block & { blockyExtraState?: unknown }) {
+        return this.blockyExtraState ?? null;
+      },
+      loadExtraState(
+        this: Blockly.Block & { blockyExtraState?: unknown },
+        state: unknown,
+      ) {
+        this.blockyExtraState = structuredClone(state);
+      },
       init(this: Blockly.Block) {
         this.appendDummyInput().appendField(def.label);
         const input = this.appendDummyInput();
@@ -60,12 +69,11 @@ export function registerBlocks() {
             continue;
           }
           input.appendField(labels[field] ?? field);
-          if (field === "STYLE")
+          if (def.fieldOptions?.[field])
             input.appendField(
-              new Blockly.FieldDropdown([
-                ["条目", "条目"],
-                ["段落", "段落"],
-              ]),
+              new Blockly.FieldDropdown(
+                def.fieldOptions[field].map((value) => [value, value]),
+              ),
               field,
             );
           else
@@ -82,7 +90,7 @@ export function registerBlocks() {
         }
         for (const input of def.inputs) {
           const check = def.inputChecks?.[input] ?? "step";
-          if (["json", "message"].includes(check))
+          if (typeof check === "string" && ["json", "message"].includes(check))
             this.appendValueInput(input).setCheck(check);
           else this.appendStatementInput(input).setCheck(check);
         }

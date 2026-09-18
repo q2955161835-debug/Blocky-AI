@@ -11,6 +11,10 @@ import {
   configureBlock,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
+import {
+  createBlueprintProject,
+  officialStarters,
+} from "@blocky/block-catalog";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
@@ -283,7 +287,7 @@ export function useStudio() {
       setBusy(false);
     }
   };
-  const fresh = async () => {
+  const startBlueprint = async (starterId: string) => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     ioBusy.current = true;
     setBusy(true);
@@ -293,8 +297,7 @@ export function useStudio() {
         !(await confirm("新建项目将放弃当前未保存的修改。"))
       )
         return;
-      const p = createStarter();
-      p.manifest.projectId = `project-${crypto.randomUUID()}`;
+      const p = await createBlueprintProject(starterId);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -302,11 +305,17 @@ export function useStudio() {
       setResult(undefined);
       setSelected(null);
       setSession(restoreSession(p, null));
+      setQuestion(
+        officialStarters.find((s) => s.id === starterId)?.sampleInput ?? "",
+      );
+    } catch {
+      setMessage("蓝图无法创建，请检查公开插槽和本机配置。");
     } finally {
       ioBusy.current = false;
       setBusy(false);
     }
   };
+  const fresh = () => startBlueprint("research-companion");
   const migrate = async () => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     ioBusy.current = true;
@@ -438,6 +447,7 @@ export function useStudio() {
     save,
     open,
     fresh,
+    startBlueprint,
     updateField,
     interactionId: activeEntry ? interactionKey(activeEntry) : "",
     canRun:

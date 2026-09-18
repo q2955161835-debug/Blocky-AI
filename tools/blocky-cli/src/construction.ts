@@ -4,6 +4,9 @@ import {
   parseBlueprint,
   instantiateBlueprint,
   defaultBindings,
+  migrateBlueprint,
+  previewBlueprintUpdate,
+  officialBlueprint,
   type BlueprintBindings,
 } from "@blocky/block-catalog";
 import { ProjectController, projectDigest } from "@blocky/project-model";
@@ -22,7 +25,11 @@ const operations = [
   "surface.create",
   "blueprint.create",
   "blueprint.show",
+  "blueprint.official",
   "blueprint.insert",
+  "blueprint.migrate",
+  "blueprint.update",
+  "blueprint.restore",
   "patch.preview",
   "patch.apply",
   "conversion.scan",
@@ -31,6 +38,10 @@ export const constructionHelp = [
   "surface create <file.blocky> --module <id> --output <patch.json> --json",
   "blueprint create <file.blocky> --module <id> --blocks <id,id> --name <name> --output <blueprint.json> --json",
   "blueprint show <blueprint.json> --json",
+  "blueprint official <starter-id> --output <blueprint.json> --json",
+  "blueprint migrate <old-blueprint.json> --output <v1-blueprint.json> --json",
+  "blueprint update <file.blocky> --blueprint <new-version.json> --module <id> --root <id> [--resolution keep-user|upstream] --output <patch.json> --json",
+  "blueprint restore <file.blocky> --blueprint <blueprint.json> --module <id> --root <id> --output <patch.json> --json",
   "blueprint insert <file.blocky> --blueprint <blueprint.json> --module <id> [--reuse-bindings | --bindings <bindings.json>] [--x 80] [--y 80] --output <new.blocky> --json",
   "conversion scan <file.blocky> --fixture haystack-bm25 --module <id> --resource <id> --output <candidate.json> --json",
   "patch preview <file.blocky> --patch <candidate-or-patch.json> --json",
@@ -61,6 +72,33 @@ export async function construction(args: Args, signal: AbortSignal) {
   if (!operations.includes(command)) return;
   try {
     signal.throwIfAborted();
+    if (command === "blueprint.official") {
+      allow(args, ["output", "json"], 3);
+      const blueprint = await officialBlueprint(args.words[2]);
+      const result = envelope(command, {
+        blueprintId: blueprint.blueprintId,
+        version: blueprint.version,
+      });
+      result.artifacts = [
+        await writeJsonArtifact(required(args, "output"), blueprint),
+      ];
+      return { code: 0, result };
+    }
+    if (command === "blueprint.migrate") {
+      allow(args, ["output", "json"], 3);
+      const blueprint = await migrateBlueprint(
+        await readJsonArtifact(args.words[2]),
+      );
+      const result = envelope(command, {
+        blueprintId: blueprint.blueprintId,
+        schemaVersion: blueprint.schemaVersion,
+        originalPreserved: true,
+      });
+      result.artifacts = [
+        await writeJsonArtifact(required(args, "output"), blueprint),
+      ];
+      return { code: 0, result };
+    }
     if (command === "blueprint.show") {
       allow(args, ["json"], 3);
       const blueprint = await parseBlueprint(
@@ -87,6 +125,15 @@ export async function construction(args: Args, signal: AbortSignal) {
         "output",
         "json",
       ],
+      "blueprint.update": [
+        "blueprint",
+        "module",
+        "root",
+        "resolution",
+        "output",
+        "json",
+      ],
+      "blueprint.restore": ["blueprint", "module", "root", "output", "json"],
       "conversion.scan": ["fixture", "module", "resource", "output", "json"],
       "patch.preview": ["patch", "json"],
       "patch.apply": ["patch", "approve-permissions", "output", "json"],
@@ -169,6 +216,50 @@ export async function construction(args: Args, signal: AbortSignal) {
       });
       result.artifacts = [
         await writeJsonArtifact(required(args, "output"), blueprint),
+      ];
+      return { code: 0, result };
+    }
+    if (command === "blueprint.update" || command === "blueprint.restore") {
+      const rawResolution = args.options.get("resolution");
+      if (
+        rawResolution !== undefined &&
+        !["keep-user", "upstream"].includes(String(rawResolution))
+      )
+        throw new CliError(2, "BLK-CLI-002", "冲突处理选项无效。");
+      const moduleId = required(args, "module");
+      const update = await previewBlueprintUpdate(
+        project,
+        moduleId,
+        required(args, "root"),
+        await readJsonArtifact(required(args, "blueprint")),
+        command === "blueprint.restore" ? "restore" : "update",
+        rawResolution as "keep-user" | "upstream" | undefined,
+      );
+      const result = envelope(command, {
+        ...update,
+        ready: !update.conflicts.length || !!rawResolution,
+        projectModified: false,
+      });
+      if (update.conflicts.length && !rawResolution) return { code: 0, result };
+      const patch = await makePatch(project, [
+        ...update.changes
+          .filter((c) => c.before)
+          .map((c) => ({
+            op: "block.remove" as const,
+            moduleId,
+            blockId: c.before!.id,
+          })),
+        ...update.changes
+          .filter((c) => c.after)
+          .map((c) => ({
+            op: "block.add" as const,
+            moduleId,
+            blockId: c.after!.id,
+            payload: c.after!,
+          })),
+      ]);
+      result.artifacts = [
+        await writeJsonArtifact(required(args, "output"), patch),
       ];
       return { code: 0, result };
     }

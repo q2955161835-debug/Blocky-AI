@@ -13,6 +13,7 @@ import { Canvas, type CanvasHandle } from "@blocky/ui-editor";
 import { useStudio } from "../composition/useStudio";
 import { Inspector } from "./Inspector";
 import { RunPanel } from "./RunPanel";
+import { StarterGuide } from "./StarterGuide";
 import { BottomPanel } from "./BottomPanel";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import {
@@ -133,6 +134,7 @@ export function App() {
         "blueprint-insert",
         "patch-review",
         "conversion",
+        "blueprint-update",
       ].includes(popup.kind)) &&
     !!actions[id] &&
     (![
@@ -215,6 +217,7 @@ export function App() {
           "blueprint-insert",
           "patch-review",
           "conversion",
+          "blueprint-update",
         ].includes(latest.current.popup.kind)
       )
         return;
@@ -283,6 +286,7 @@ export function App() {
                 "blueprint-insert",
                 "patch-review",
                 "conversion",
+                "blueprint-update",
               ].includes(popup.kind))
           }
         />
@@ -366,6 +370,11 @@ export function App() {
             <Library
               studio={s}
               blueprints={construction.blueprints}
+              construction={construction}
+              update={(mode) => {
+                if (construction.blueprintUpdate.prepare(mode))
+                  show("blueprint-update");
+              }}
               insert={(blueprint) => {
                 construction.prepareInsert(blueprint);
                 show("blueprint-insert");
@@ -533,6 +542,10 @@ export function App() {
               />
             </section>
             <aside className="right-sidebar">
+              <StarterGuide
+                studio={s}
+                resources={() => void execute("settings.resources")}
+              />
               <RunPanel studio={s} />
               <Inspector
                 studio={s}
@@ -569,6 +582,7 @@ export function App() {
           "blueprint-insert",
           "patch-review",
           "conversion",
+          "blueprint-update",
         ].includes(popup.kind) &&
         !s.confirmation && (
           <ConstructionDialog
@@ -587,6 +601,7 @@ export function App() {
           "blueprint-insert",
           "patch-review",
           "conversion",
+          "blueprint-update",
         ].includes(popup.kind) &&
         !s.confirmation && (
           <StudioDialog

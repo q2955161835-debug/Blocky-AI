@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { stableId, validRef } from "@blocky/language-schema";
-import { workspaceBlockShape } from "@blocky/block-catalog";
+import {
+  workspaceBlockShape,
+  blueprintInstance,
+  walkBlocks,
+} from "@blocky/block-catalog";
 import { draftSchema } from "@blocky/app-surface";
 const id = z.string().regex(stableId).max(200);
 const source = { moduleId: id, blockId: id };
@@ -83,7 +87,19 @@ export function parsePatch(input: unknown): SemanticPatch {
         Object.values(v).forEach((x) => walk(x, depth + 1));
     };
     walk(input, 0);
-    return patch.parse(structuredClone(input));
+    const parsed = patch.parse(structuredClone(input));
+    for (const operation of parsed.operations) {
+      if (operation.op !== "block.add") continue;
+      for (const block of walkBlocks([operation.payload])) {
+        if (block.extraState === undefined) continue;
+        if (
+          !blueprintInstance(block) ||
+          Object.keys(block.extraState as object).length !== 1
+        )
+          throw Error("state");
+      }
+    }
+    return parsed;
   } catch {
     throw Error("BLK-PATCH-002");
   }

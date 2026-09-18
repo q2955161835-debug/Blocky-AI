@@ -1,6 +1,7 @@
 import { catalog, categories, beginnerCategories } from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
 import type { Blueprint } from "@blocky/block-catalog";
+import type { Construction } from "../composition/useConstruction";
 const projection: Record<number, number> = {
   0: 0,
   1: 1,
@@ -21,12 +22,16 @@ export function Library({
   add,
   blueprints,
   insert,
+  construction: c,
+  update,
 }: {
   studio: Studio;
   search(): void;
   add(type: string): void;
   blueprints: Blueprint[];
   insert(blueprint: Blueprint): void;
+  construction: Construction;
+  update(mode: "update" | "restore"): void;
 }) {
   const paletteNames =
     s.preferences.view === "beginner" ? beginnerCategories : categories;
@@ -87,6 +92,12 @@ export function Library({
         })}
       </div>
       <div className="module-list">
+        <div className="section-label">官方蓝图</div>
+        {c.official.map((blueprint) => (
+          <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
+            {blueprint.displayName} ＋
+          </button>
+        ))}
         <div className="section-label">个人蓝图</div>
         {blueprints.map((blueprint) => (
           <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
@@ -96,6 +107,36 @@ export function Library({
         {!blueprints.length && (
           <small className="muted">选择积木后可保存为蓝图</small>
         )}
+        <label className="blueprint-import">
+          导入蓝图
+          <input
+            aria-label="导入蓝图文件"
+            type="file"
+            accept=".json"
+            disabled={c.busy}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void c.importBlueprint(file);
+              event.target.value = "";
+            }}
+          />
+        </label>
+        {!!c.legacy.length && (
+          <button disabled={c.busy} onClick={() => void c.migrateLibrary()}>
+            迁移旧蓝图库（{c.legacy.length}）
+          </button>
+        )}
+        {!!c.importedLegacy && (
+          <button disabled={c.busy} onClick={() => void c.migrateImported()}>
+            将所选旧蓝图迁移为 v1 副本
+          </button>
+        )}
+        <button disabled={c.busy} onClick={() => update("update")}>
+          更新所选蓝图
+        </button>
+        <button disabled={c.busy} onClick={() => update("restore")}>
+          还原所选蓝图默认内容
+        </button>
         <div className="section-label">项目画布</div>
         {s.snapshot.project.manifest.appSurfaces.map((surface) => (
           <button

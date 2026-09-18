@@ -11,7 +11,7 @@ export type BlockDefinition = {
   output?: string;
   statement?: boolean;
   statementCheck?: string;
-  inputChecks?: Record<string, string | undefined>;
+  inputChecks?: Record<string, string | string[] | undefined>;
   requiredInputs?: string[];
   optionalFields?: string[];
   jsonFields?: string[];

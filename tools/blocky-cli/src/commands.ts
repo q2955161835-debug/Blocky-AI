@@ -1,8 +1,11 @@
 import { catalog, catalogVersion, getBlock } from "@blocky/block-catalog";
+import {
+  officialStarters,
+  createBlueprintProject,
+} from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
 import { Runtime, hostAdapters } from "@blocky/runtime-core";
 import { projectDigest } from "@blocky/project-model";
-import { createStarter } from "@blocky/test-fixtures";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -55,14 +58,6 @@ export const help = {
     "run start <file.blocky> --simulate --input <question> [--entry <id>] [--module <id>] [--timeout 30000] --jsonl",
   ],
   modelApiCalled: false,
-};
-const template = {
-  templateId: "research-companion",
-  displayName: "资料问答伙伴",
-  kind: "blueprint",
-  moduleCount: 2,
-  requires: ["deterministic.knowledge", "deterministic.composer"],
-  compatibilityClaim: "none",
 };
 export async function dispatch(
   args: Args,
@@ -137,21 +132,38 @@ export async function dispatch(
   }
   if (command === "template.list") {
     allow(args, ["json"], 2);
-    return { code: 0, result: envelope(command, { templates: [template] }) };
+    return {
+      code: 0,
+      result: envelope(command, {
+        templates: officialStarters.map((s) => ({
+          ...s,
+          templateId: s.id,
+          kind: "blueprint",
+          compatibilityClaim: "none",
+        })),
+      }),
+    };
   }
   if (command === "template.show") {
     allow(args, ["json"], 3);
-    if (args.words[2] !== template.templateId)
-      throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
-    return { code: 0, result: envelope(command, template) };
+    const selected = officialStarters.find((s) => s.id === args.words[2]);
+    if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
+    return {
+      code: 0,
+      result: envelope(command, {
+        ...selected,
+        templateId: selected.id,
+        kind: "blueprint",
+        compatibilityClaim: "none",
+      }),
+    };
   }
   if (command === "project.create") {
     allow(args, ["json", "template", "output"], 2);
-    if (required(args, "template") !== template.templateId)
+    if (!officialStarters.some((s) => s.id === required(args, "template")))
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     const output = required(args, "output"),
-      project = createStarter();
-    project.manifest.projectId = `project-${crypto.randomUUID()}`;
+      project = await createBlueprintProject(required(args, "template"));
     await createProject(output, project);
     const bytes = await readFile(output);
     const result = envelope(command, {

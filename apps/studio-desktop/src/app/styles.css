@@ -540,7 +540,9 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 100px;
+  gap: 40px;
+  padding: 28px;
+  overflow: auto;
   background: radial-gradient(ellipse at 70% 40%, #303b563d, transparent 65%);
 }
 .welcome-heading {
@@ -572,13 +574,53 @@ kbd {
   border: 1px solid #3b485d;
 }
 .starter-card {
-  width: 330px;
+  width: 100%;
   border: 1px solid #43526b;
   border-radius: 14px;
   text-align: left;
   padding: 23px;
   background: #29313f;
   box-shadow: 0 20px 70px #0003;
+}
+.starter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(210px, 270px));
+  gap: 14px;
+}
+.starter-guide {
+  padding: 14px;
+  border-bottom: 1px solid #43526b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.starter-guide summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.starter-guide ol {
+  padding-left: 20px;
+}
+.starter-guide button {
+  margin: 3px;
+  white-space: normal;
+}
+.blueprint-import {
+  display: block;
+  margin: 10px 0;
+  font-size: 12px;
+}
+.blueprint-import input {
+  width: 100%;
+}
+@media (max-width: 950px) {
+  .welcome {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  .starter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .mini-blocks {
   height: 158px;
@@ -1001,10 +1043,33 @@ dialog.popup p {
   background: #292f3a;
   padding-top: 8px;
 }
-.resource-panel label { flex-wrap: wrap; }
-.knowledge-panel { border-top: 1px solid var(--border); padding-top: 8px; }
-.knowledge-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.knowledge-panel li { margin: 10px 0; overflow-wrap: anywhere; }
-.knowledge-panel input:not([type="checkbox"]) { min-width: 0; flex: 1; }
-.knowledge-query { margin-top: 16px; border-top: 1px solid var(--border); }
-.citation-source { max-height: 300px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.resource-panel label {
+  flex-wrap: wrap;
+}
+.knowledge-panel {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.knowledge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.knowledge-panel li {
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+.knowledge-panel input:not([type="checkbox"]) {
+  min-width: 0;
+  flex: 1;
+}
+.knowledge-query {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.citation-source {
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

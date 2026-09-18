@@ -50,6 +50,74 @@ function useEditor() {
   const studio = useStudio();
   return { studio, construction: useConstruction(studio) };
 }
+it("starts each official project and previews a restore without losing user edits before acceptance", async () => {
+  const hook = renderHook(useEditor);
+  await waitFor(() =>
+    expect(hook.result.current.construction.official).toHaveLength(4),
+  );
+  for (const id of [
+    "research-companion",
+    "code-guide",
+    "knowledge-tutor",
+    "task-helper",
+  ]) {
+    await act(() => hook.result.current.studio.startBlueprint(id));
+    await waitFor(() =>
+      expect(hook.result.current.studio.compiling).toBe(false),
+    );
+    expect(
+      hook.result.current.studio.diagnostics.filter(
+        (d) => d.severity === "error",
+      ),
+    ).toEqual([]);
+  }
+  act(() => {
+    hook.result.current.studio.setSelectedRoots(["research-root"]);
+    hook.result.current.studio.updateField(
+      "research-root",
+      "ROLE",
+      "我的工时助手",
+    );
+  });
+  const before = await projectDigest(
+    hook.result.current.studio.snapshot.project,
+  );
+  act(() =>
+    expect(
+      hook.result.current.construction.blueprintUpdate.prepare("restore"),
+    ).toBe(true),
+  );
+  await act(() => hook.result.current.construction.blueprintUpdate.preview());
+  expect(hook.result.current.construction.review).toBeDefined();
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    before,
+  );
+  act(() => hook.result.current.construction.reject());
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    before,
+  );
+  await act(() => hook.result.current.construction.blueprintUpdate.preview());
+  await act(() => hook.result.current.construction.accept([]));
+  expect(
+    hook.result.current.studio.snapshot.project.workspaces["research-agent"]
+      .blocks.blocks[0].fields!.ROLE,
+  ).not.toBe("我的工时助手");
+  act(() => hook.result.current.studio.controller.undo());
+  expect(await projectDigest(hook.result.current.studio.snapshot.project)).toBe(
+    before,
+  );
+});
+it("keeps an unreadable personal library intact while official starters remain usable", async () => {
+  localStorage.setItem("blocky.blueprints.v1", "broken library");
+  const hook = renderHook(useEditor);
+  await waitFor(() =>
+    expect(hook.result.current.construction.official).toHaveLength(4),
+  );
+  act(() => hook.result.current.studio.setSelectedRoots(["research-root"]));
+  await act(() => hook.result.current.construction.capture());
+  await act(() => hook.result.current.construction.save());
+  expect(localStorage.getItem("blocky.blueprints.v1")).toBe("broken library");
+});
 it("saves a real personal blueprint, previews editable blocks, rejects without changes and undoes acceptance", async () => {
   const hook = renderHook(useEditor);
   await waitFor(() => expect(hook.result.current.studio.compiling).toBe(false));

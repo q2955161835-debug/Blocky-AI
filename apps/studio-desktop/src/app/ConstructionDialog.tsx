@@ -7,7 +7,8 @@ export type ConstructionKind =
   | "blueprint-save"
   | "blueprint-insert"
   | "patch-review"
-  | "conversion";
+  | "conversion"
+  | "blueprint-update";
 export function ConstructionDialog({
   studio: s,
   construction: c,
@@ -21,19 +22,24 @@ export function ConstructionDialog({
   close(): void;
   showReview(): void;
 }) {
+  const update = c.blueprintUpdate;
   const [approved, setApproved] = useState<string[]>([]);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
   const title =
-    kind === "blueprint-save"
-      ? "保存为蓝图"
-      : kind === "blueprint-insert"
-        ? "插入蓝图"
-        : kind === "conversion"
-          ? "项目积木化"
-          : "审阅变更";
+    kind === "blueprint-update"
+      ? update.mode === "restore"
+        ? "还原蓝图"
+        : "更新蓝图"
+      : kind === "blueprint-save"
+        ? "保存为蓝图"
+        : kind === "blueprint-insert"
+          ? "插入蓝图"
+          : kind === "conversion"
+            ? "项目积木化"
+            : "审阅变更";
   return (
     <dialog
       ref={dialog}
@@ -62,6 +68,67 @@ export function ConstructionDialog({
       </header>
       {kind === "conversion" && (
         <ConversionPanel conversion={c.conversion} showReview={showReview} />
+      )}
+      {kind === "blueprint-update" && (
+        <div className="settings">
+          <p>
+            当前版本 {update.state?.version}
+            。更新仅作用于所选蓝图实例，接受后可整体撤销。
+          </p>
+          {update.mode === "restore" && (
+            <p>还原默认内容和角色，保留画布位置及资源/工具绑定。</p>
+          )}
+          <label>
+            来源蓝图
+            <select
+              aria-label="更新来源蓝图"
+              value={update.template?.digest ?? ""}
+              onChange={(e) =>
+                update.setTemplate(
+                  update.available.find((b) => b.digest === e.target.value),
+                )
+              }
+            >
+              <option value="">请先在积木库导入匹配的蓝图</option>
+              {update.available.map((b) => (
+                <option key={b.digest} value={b.digest}>
+                  {b.displayName} · v{b.version}
+                </option>
+              ))}
+            </select>
+          </label>
+          {update.details?.conflicts.length ? (
+            <>
+              <p>{update.details.conflicts.length} 处冲突</p>
+              <pre>{JSON.stringify(update.details.conflicts, null, 2)}</pre>
+              <label>
+                冲突处理
+                <select
+                  aria-label="蓝图冲突处理"
+                  value={update.resolution}
+                  onChange={(e) =>
+                    update.setResolution(
+                      e.target.value as "" | "keep-user" | "upstream",
+                    )
+                  }
+                >
+                  <option value="">选择处理方式</option>
+                  <option value="keep-user">保留我的修改</option>
+                  <option value="upstream">采用新版本内容</option>
+                </select>
+              </label>
+            </>
+          ) : null}
+          <p role="status">{update.status}</p>
+          <button
+            disabled={c.busy || !update.template}
+            onClick={async () => {
+              if (await update.preview()) showReview();
+            }}
+          >
+            生成版本差异预览
+          </button>
+        </div>
       )}
       {kind === "blueprint-save" && (
         <div className="settings">
@@ -101,6 +168,27 @@ export function ConstructionDialog({
         <div className="settings">
           <strong>{c.inserting?.displayName}</strong>
           <p>确认公开插槽的目标后生成预览。</p>
+          {c.inserting?.parameters.map((slot) => (
+            <label key={slot.slotId}>
+              角色
+              <input
+                aria-label={slot.slotId}
+                value={
+                  c.bindings.parameters?.[slot.slotId] ?? slot.defaultValue
+                }
+                maxLength={16000}
+                onChange={(e) =>
+                  c.setBindings((b) => ({
+                    ...b,
+                    parameters: {
+                      ...b.parameters,
+                      [slot.slotId]: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </label>
+          ))}
           {c.inserting?.resources.map((slot) => (
             <label key={slot.slotId}>
               资源 · {slot.kind}
@@ -131,7 +219,7 @@ export function ConstructionDialog({
           ))}
           {c.inserting?.modules.map((slot) => (
             <label key={slot.slotId}>
-              画布 · {slot.exportId}
+              工具 / 画布 · {slot.exportId}
               <select
                 aria-label={slot.slotId}
                 value={c.bindings.modules[slot.slotId] ?? ""}

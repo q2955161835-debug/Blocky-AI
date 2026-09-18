@@ -75,7 +75,11 @@ export function compileWorkspace(
       if (
         child &&
         expected &&
-        (childDef?.output ?? childDef?.statementCheck) !== expected
+        !(Array.isArray(expected) ? expected : [expected]).includes(
+          childDef?.output ??
+            childDef?.statementCheck ??
+            (childDef?.statement ? "step" : ""),
+        )
       )
         diagnostics.push(
           diagnostic("BLK-TYPE-009", `插槽 ${name} 需要 ${expected}`, source),
