@@ -2,6 +2,7 @@
 #[cfg(feature = "wdio")]
 mod acceptance;
 mod commands;
+mod knowledge_commands;
 mod log_commands;
 mod secret_commands;
 mod task_commands;
@@ -31,6 +32,9 @@ fn main() {
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
+            app.manage(blocky_studio::knowledge::KnowledgeStore::new(
+                app.path().app_local_data_dir()?.join("knowledge"),
+            ));
             app.manage(blocky_studio::user_store::UserStore::new(
                 app.path().app_local_data_dir()?.join("user"),
             ));
@@ -50,6 +54,14 @@ fn main() {
             #[cfg(feature = "wdio")]
             acceptance::acceptance_round_trip,
             commands::open_project,
+            knowledge_commands::knowledge_source_add,
+            knowledge_commands::knowledge_sources,
+            knowledge_commands::knowledge_read_source,
+            knowledge_commands::knowledge_source_remove,
+            knowledge_commands::knowledge_source_acl,
+            knowledge_commands::knowledge_load_index,
+            knowledge_commands::knowledge_save_index,
+            knowledge_commands::knowledge_cancel,
             user_commands::read_user_state,
             user_commands::write_user_state,
             user_commands::clear_user_state,

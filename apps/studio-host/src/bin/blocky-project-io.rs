@@ -22,6 +22,29 @@ struct Request {
     variable: Option<String>,
 }
 fn execute(bytes: &[u8]) -> Value {
+    if let Ok(value) = strict_json::parse(bytes) {
+        if value["operation"]
+            .as_str()
+            .is_some_and(|s| s.starts_with("knowledge-"))
+        {
+            if value["schemaVersion"] != SCHEMA {
+                return json!({"ok":false,"code":"BLK-MIG-001"});
+            }
+            let result = std::env::var_os("LOCALAPPDATA")
+                .map(std::path::PathBuf::from)
+                .ok_or_else(|| "BLK-SET-001".to_owned())
+                .and_then(|root| {
+                    let store = blocky_studio::knowledge::KnowledgeStore::new(
+                        root.join("ai.blocky.studio/knowledge"),
+                    );
+                    blocky_studio::knowledge::dispatch(&store, &value)
+                });
+            return match result {
+                Ok(value) => json!({"ok":true,"value":value}),
+                Err(code) => json!({"ok":false,"code":code}),
+            };
+        }
+    }
     let request = strict_json::parse(bytes)
         .and_then(|v| serde_json::from_value::<Request>(v).map_err(|_| "BLK-CLI-002".into()));
     let Ok(r) = request else {
