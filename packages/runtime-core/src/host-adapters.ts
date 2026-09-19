@@ -4,8 +4,10 @@ import {
   type KnowledgeCall,
 } from "@blocky/knowledge-core";
 import { localAdapters } from "./adapters";
+import type { AgentServices } from './agent-context';
+import type { EvidenceCitation } from '@blocky/knowledge-core';
 /** Composition only: the supplied callback owns Host transport, never credentials. */
-export function hostAdapters(call: KnowledgeCall) {
+export function hostAdapters(call: KnowledgeCall, agent?: AgentServices) {
   const adapters = localAdapters(),
     searches = new Map<string, KnowledgeSearch>();
   adapters.knowledge.set(
@@ -32,5 +34,12 @@ export function hostAdapters(call: KnowledgeCall) {
       };
     },
   );
+  if (agent) adapters.agent={...agent,async validateCitations(projectId,citations,signal) {
+    for (const citation of citations) {
+      signal.throwIfAborted();
+      if (citation.collectionId) await new KnowledgeSearch(call,projectId,citation.collectionId).openCitation(citation as EvidenceCitation);
+    }
+    signal.throwIfAborted();
+  }};
   return adapters;
 }

@@ -80,9 +80,10 @@ fn definition(kind: &str) -> Result<Value, String> {
         "../../../packages/block-catalog/src/text-primitives.json"
     ))
     .map_err(|_| INVALID)?;
+    let agent_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/agent-primitives.json")).map_err(|_| INVALID)?;
     array(&catalog)?
         .iter()
-        .chain(array(&text_catalog)?.iter())
+        .chain(array(&text_catalog)?.iter()).chain(array(&agent_catalog)?.iter())
         .find(|v| v["type"] == kind)
         .cloned()
         .ok_or_else(|| INVALID.into())
@@ -306,10 +307,12 @@ fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, St
     ) -> Result<(), String> {
         if b["disabled"] != true {
             let kind = text(&b["type"])?;
-            if kind == "core.knowledge.retrieve" || kind == "core.model.compose" {
+            if ["core.knowledge.retrieve", "core.model.compose", "core.tool.invoke"].contains(&kind) {
                 let resource_id = text(&b["fields"]["RESOURCE"])?;
                 let expected = if kind == "core.knowledge.retrieve" {
                     "knowledge"
+                } else if kind == "core.tool.invoke" {
+                    "tool"
                 } else {
                     "model"
                 };
@@ -342,6 +345,9 @@ fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, St
                 }
                 if kind == "core.knowledge.retrieve" {
                     out.insert("knowledge.read".into());
+                }
+                if kind == "core.tool.invoke" {
+                    for cap in array(&resource["definition"]["permissions"])? {out.insert(text(cap)?.into());}
                 }
                 for cap in array(&resource["capabilityRequirements"])? {
                     out.insert(text(cap)?.into());
@@ -450,7 +456,7 @@ pub fn validate_with_registry(
     {
         return Err(INVALID.into());
     }
-    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != "0.3.0" {
+    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != env!("CARGO_PKG_VERSION") {
         return Err(INVALID.into());
     }
     if patch["projectId"] != original["manifest"]["projectId"]
@@ -521,6 +527,15 @@ pub fn validate_with_registry(
         for b in array(&workspace["blocks"]["blocks"])? {
             block_shape(b, &mut ids, false, 0)?;
         }
+    }
+    fn stage4(v: &Value) -> bool {
+        match v {
+            Value::Object(m) => m.get("type").and_then(Value::as_str).is_some_and(|t| ["core.prompt.context","core.run.budget","core.data.set","core.logic.condition","core.memory.read","core.memory.write","core.memory.delete","core.tool.invoke","core.guardrail.evidence","core.output.structured","core.output.file"].contains(&t)) || m.values().any(stage4),
+            Value::Array(a) => a.iter().any(stage4), _ => false,
+        }
+    }
+    if stage4(&next["workspaces"]) && ["0.1.0","0.2.0","0.3.0"].contains(&next["manifest"]["format"]["minimumReaderVersion"].as_str().unwrap_or("")) {
+        next["manifest"]["format"]["minimumReaderVersion"] = Value::String("0.4.0".into());
     }
     project_files(&next)?;
     crate::patch_links::validate(&next)?;

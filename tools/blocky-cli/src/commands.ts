@@ -1,10 +1,10 @@
-import { catalog, catalogVersion, getBlock } from "@blocky/block-catalog";
+import { catalog, catalogVersion, getBlock, createAgentExample } from "@blocky/block-catalog";
 import {
   officialStarters,
   createBlueprintProject,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
-import { Runtime, hostAdapters } from "@blocky/runtime-core";
+import { runAgent } from './run-agent';
 import { projectDigest } from "@blocky/project-model";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
@@ -32,7 +32,7 @@ import {
   userRegistryMap,
 } from "./user-config";
 export const help = {
-  version: "0.3.0",
+  version: "0.4.0",
   commands: [
     ...knowledgeHelp,
     ...foundationsHelp,
@@ -55,7 +55,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> --simulate --input <question> [--entry <id>] [--module <id>] [--timeout 30000] --jsonl",
+    "run start <file.blocky> (--simulate | --live) --input <question> [--entry <id>] [--module <id>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -79,26 +79,26 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope("version", {
-        cli: "0.3.0",
-        core: "0.3.0",
+        cli: "0.4.0",
+        core: "0.4.0",
         projectSchema: "blocky.project/v1",
         skills: null,
       }),
     };
   }
-  if (args.options.has("live"))
+  if (args.options.has("live") && command !== 'run.start')
     throw new CliError(
       4,
       "BLK-PERM-001",
-      "当前 CLI 不支持 live 运行。",
-      "使用 --simulate 运行确定性本地适配器。",
+      "仅 run start 支持 live 运行。",
+      "使用 run start --live，并按预检摘要批准请求。",
     );
   if (command === "doctor") {
     allow(args, ["json"], 1);
     return {
       code: 0,
       result: envelope(command, {
-        cli: "0.3.0",
+        cli: "0.4.0",
         nativeStore: await doctor(),
         runtime: "deterministic",
         modelApiCalled: false,
@@ -135,17 +135,18 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        templates: officialStarters.map((s) => ({
+        templates: [...officialStarters.map((s) => ({
           ...s,
           templateId: s.id,
           kind: "blueprint",
           compatibilityClaim: "none",
-        })),
+        })), {id:'agent-loop',templateId:'agent-loop',displayName:'文本分析 Agent',kind:'project',compatibilityClaim:'none'}],
       }),
     };
   }
   if (command === "template.show") {
     allow(args, ["json"], 3);
+    if(args.words[2]==='agent-loop')return {code:0,result:envelope(command,{templateId:'agent-loop',kind:'project',displayName:'文本分析 Agent',sampleInput:'Hello Blocky',compatibilityClaim:'none'})};
     const selected = officialStarters.find((s) => s.id === args.words[2]);
     if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     return {
@@ -160,10 +161,10 @@ export async function dispatch(
   }
   if (command === "project.create") {
     allow(args, ["json", "template", "output"], 2);
-    if (!officialStarters.some((s) => s.id === required(args, "template")))
+    if (required(args,'template')!=='agent-loop' && !officialStarters.some((s) => s.id === required(args, "template")))
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     const output = required(args, "output"),
-      project = await createBlueprintProject(required(args, "template"));
+      project = required(args,'template')==='agent-loop'?createAgentExample():await createBlueprintProject(required(args, "template"));
     await createProject(output, project);
     const bytes = await readFile(output);
     const result = envelope(command, {
@@ -209,18 +210,18 @@ export async function dispatch(
   allow(
     args,
     command === "run.start"
-      ? ["simulate", "jsonl", "input", "entry", "module", "timeout"]
+      ? ["simulate", "live", "jsonl", "input", "entry", "module", "timeout", "run-id", "approval-file", "interactive", "output"]
       : ["json"],
     moduleList ? 4 : 3,
   );
   if (
     command === "run.start" &&
-    (!args.options.has("simulate") || !args.options.has("jsonl"))
+    (args.options.has('simulate') === args.options.has('live') || !args.options.has("jsonl"))
   )
     throw new CliError(
       2,
       "BLK-CLI-002",
-      "运行必须显式使用 --simulate --jsonl。",
+      "运行必须选择 --simulate 或 --live，并使用 --jsonl。",
     );
   const project = await readProject(args.words[moduleList ? 3 : 2]);
   const userRegistry = project.manifest.resources.some(
@@ -303,61 +304,5 @@ export async function dispatch(
       "项目存在编译错误，未执行运行。",
       "使用 project validate 查看结构化诊断。",
     );
-  const question = required(args, "input");
-  if (new TextEncoder().encode(question).length > 16000)
-    throw new CliError(2, "BLK-CLI-002", "问题输入超过 16000 字节。");
-  const moduleId = args.options.get("module");
-  const candidates = compiled.interaction.entries.filter(
-    (e) => moduleId === undefined || e.moduleId === moduleId,
-  );
-  const requested = args.options.get("entry");
-  const matches =
-    requested === undefined
-      ? candidates.slice(0, 1)
-      : candidates.filter((e) => e.interactionId === requested);
-  if (matches.length !== 1)
-    throw new CliError(
-      3,
-      "BLK-RUN-001",
-      "交互入口不存在或不唯一。",
-      "使用 run preflight 查找入口，并用 --module 指定画布。",
-    );
-  const entry = matches[0];
-  const abort = new AbortController(),
-    cancel = () => abort.abort();
-  signal.addEventListener("abort", cancel, { once: true });
-  if (signal.aborted) abort.abort();
-  const timeout = setTimeout(cancel, integer(args, "timeout", 30000, 300000));
-  try {
-    const runtime = new Runtime({
-      delayMs: 1,
-      adapters: hostAdapters(nativeUserOperation),
-    });
-    const result = await runtime.run(project, entry.interactionId, question, {
-      moduleId: entry.moduleId,
-      userRegistry,
-      signal: abort.signal,
-      onEvent: write,
-    });
-    const response = envelope(command, {
-      status: result.status,
-      answer: result.answer,
-      citations: result.citations,
-      eventCount: result.events.length,
-      modelApiCalled,
-    });
-    response.ok = result.status === "completed";
-    return {
-      code:
-        result.status === "completed"
-          ? 0
-          : result.status === "cancelled"
-            ? 7
-            : 3,
-      result: response,
-    };
-  } finally {
-    clearTimeout(timeout);
-    signal.removeEventListener("abort", cancel);
-  }
+  return runAgent(args, project, compiled.interaction.entries, userRegistry, write, signal);
 }

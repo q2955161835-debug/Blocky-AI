@@ -1,3 +1,4 @@
+import { createAgentExample } from "@blocky/block-catalog";
 import { createStarter } from "@blocky/test-fixtures";
 import { restoreSession } from "@blocky/project-model";
 import {
@@ -147,6 +148,23 @@ export function install(get: () => Studio) {
       .slice(0, 30);
   };
   const api = {
+    async loadAgentSemanticsProject() {
+      const project = createAgentExample('stage4-native-semantics');
+      // Pure language fixture. Actual Host approval/tool UI is separately tested in the ordinary candidate.
+      const body = project.workspaces['research-agent'].blocks.blocks[0].inputs!.BODY.block!;
+      body.next = {block:{type:'core.logic.condition',id:'native-condition',fields:{SOURCE:'input',OP:'equals',VALUE:'yes'},inputs:{
+        THEN:{block:{type:'core.data.set',id:'native-yes',fields:{VALUE:'{"ok":true}'}}},
+        ELSE:{block:{type:'core.data.set',id:'native-no',fields:{VALUE:'{"ok":false}'}}},
+      },next:{block:{type:'core.output.structured',id:'native-output',fields:{SCHEMA:'schemas/native-result.json'}}}}};
+      project.schemas['schemas/native-result.json']={type:'object',properties:{ok:{type:'boolean'}},required:['ok'],additionalProperties:false};
+      get().controller.replace(project);
+      get().setSession(restoreSession(project,null));
+      get().setQuestion('yes');get().setStarted(true);
+      await paint();await wait(()=>!get().compiling && get().canRun);
+      const files=encodeProject(project);
+      const restored=await invoke<Record<string,string>>('acceptance_round_trip',{files});
+      return {same:canonicalJson(encodeProject(decodeProject(restored)))===canonicalJson(files),minimumReaderVersion:project.manifest.format.minimumReaderVersion};
+    },
     async loadLegacyRegressionProject() {
       const project = createStarter();
       get().controller.replace(project);

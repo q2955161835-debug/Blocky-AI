@@ -3,3 +3,6 @@ export { localAdapters } from "./adapters";
 export { hostAdapters } from "./host-adapters";
 export type { Citation, Adapters } from "./adapters";
 export type { RunResult } from "./runtime";
+export type { AgentServices, Generation, Message, OutputFile } from './agent-context';
+export { nativeAgentServices } from './native-agent';
+export type { NativeAgentCall, PendingApproval } from './native-agent';

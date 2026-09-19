@@ -321,6 +321,10 @@ kbd {
 .run-panel {
   padding: 16px 15px;
 }
+.run-panel select { max-width: 100%; width: 100%; }
+.run-limits { margin-top: 14px; font-size: 11px; color: #afbacc; }
+.run-limits p { line-height: 1.6; }
+.answer pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .prompt-label {
   display: block;
   font-size: 11px;

@@ -403,7 +403,7 @@ dependencies = [
 
 [[package]]
 name = "blocky-studio"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "fastembed",
  "regex",
@@ -419,6 +419,7 @@ dependencies = [
  "tauri-plugin-wdio-webdriver",
  "tempfile",
  "tokenizers",
+ "tokio",
  "uuid",
  "windows-sys 0.61.2",
  "zip",

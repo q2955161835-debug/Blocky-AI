@@ -1,3 +1,5 @@
+pub mod agent_data;
+mod approval_ledger;
 pub mod conversion;
 pub mod knowledge;
 pub mod log_store;
@@ -6,6 +8,7 @@ mod patch_links;
 #[cfg(windows)]
 pub(crate) mod process_job;
 pub mod project_store;
+pub mod provider;
 pub mod secret_store;
 pub mod strict_json;
 pub mod surface_guard;

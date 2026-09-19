@@ -40,6 +40,7 @@ export function Welcome({ studio: s }: { studio: Studio }) {
             ＋ 新建项目
           </button>
           <button onClick={() => void s.open()}>打开本机项目</button>
+          <button disabled={s.busy} onClick={()=>void s.startBlueprint('agent-loop')}>文本分析 Agent</button>
         </div>
       </div>
       <div className="starter-grid">

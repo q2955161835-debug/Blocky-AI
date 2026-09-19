@@ -1,10 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 #[cfg(feature = "wdio")]
 mod acceptance;
+mod agent_data_commands;
 mod commands;
 mod conversion_commands;
 mod knowledge_commands;
 mod log_commands;
+mod provider_commands;
 mod secret_commands;
 mod task_commands;
 mod terminal_commands;
@@ -29,10 +31,14 @@ fn main() {
         .plugin(tauri_plugin_wdio_webdriver::init());
     builder
         .manage(commands::Handles::default())
+        .manage(blocky_studio::provider::ProviderHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
+            app.manage(blocky_studio::agent_data::AgentData::new(
+                app.path().app_local_data_dir()?.join("user/agent-memory"),
+            ));
             app.manage(blocky_studio::conversion::ConversionStore::new(
                 app.path().app_local_data_dir()?.join("conversion"),
             ));
@@ -55,6 +61,16 @@ fn main() {
         })
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
+            agent_data_commands::agent_memory_authorize,
+            agent_data_commands::agent_memory,
+            agent_data_commands::agent_memory_cancel,
+            agent_data_commands::agent_tool_preflight,
+            agent_data_commands::agent_tool_call,
+            agent_data_commands::agent_tool_cancel,
+            agent_data_commands::agent_output_save,
+            provider_commands::provider_preflight,
+            provider_commands::provider_call,
+            provider_commands::provider_cancel,
             #[cfg(feature = "wdio")]
             acceptance::acceptance_round_trip,
             commands::open_project,

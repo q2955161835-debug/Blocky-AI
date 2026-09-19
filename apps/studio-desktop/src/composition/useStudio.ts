@@ -13,11 +13,13 @@ import {
 import { createStarter } from "@blocky/test-fixtures";
 import {
   createBlueprintProject,
+  createAgentExample,
   officialStarters,
 } from "@blocky/block-catalog";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
+import { studioAgentServices } from './agent';
 import {
   RedactedBus,
   projectLog,
@@ -81,7 +83,7 @@ export function useStudio() {
     ioBusy = useRef(false);
   const [runtime] = useState(
       () =>
-        new Runtime({ delayMs: 160, adapters: hostAdapters(knowledgeNative) }),
+        new Runtime({ delayMs: 160, adapters: hostAdapters(knowledgeNative,studioAgentServices()) }),
     ),
     [bus] = useState(() => new RedactedBus());
   const [compiler] = useState(() => new IncrementalCompiler());
@@ -194,6 +196,7 @@ export function useStudio() {
     request?.signal.addEventListener("abort", cancel, { once: true });
     if (request?.signal.aborted) cancel();
     try {
+      await resources.flush();
       if (isTauri()) await invoke("authorize_run");
       if (closing.current || controller.signal.aborted) throw Error();
       const value = await runtime.run(
@@ -297,7 +300,7 @@ export function useStudio() {
         !(await confirm("新建项目将放弃当前未保存的修改。"))
       )
         return;
-      const p = await createBlueprintProject(starterId);
+      const p = starterId==='agent-loop' ? createAgentExample() : await createBlueprintProject(starterId);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -306,7 +309,7 @@ export function useStudio() {
       setSelected(null);
       setSession(restoreSession(p, null));
       setQuestion(
-        officialStarters.find((s) => s.id === starterId)?.sampleInput ?? "",
+        starterId==='agent-loop'?'Hello Blocky\n一起学习':officialStarters.find((s) => s.id === starterId)?.sampleInput ?? "",
       );
     } catch {
       setMessage("蓝图无法创建，请检查公开插槽和本机配置。");

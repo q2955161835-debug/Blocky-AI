@@ -30,6 +30,8 @@ const labels: Record<string, string> = {
   OUTPUT: "输出类型",
   RESOURCE: "资源",
   STYLE: "方式",
+  TEXT: '内容', STEPS: '最多步数', CALLS: '最多调用', OUTPUT_TOKENS: '输出 Token 预算', TIMEOUT_MS: '总时限毫秒',
+  SOURCE: '取值', OP: '判断', VALUE: '值', SCOPE: '范围', KEY: '键', POLICY: '策略', SCHEMA: '输出结构', FORMAT: '格式',
 };
 export function registerBlocks() {
   if (registered) return;

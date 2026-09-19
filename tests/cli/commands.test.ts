@@ -158,7 +158,7 @@ it("reports only implemented commands and a real native store version", () => {
   expect(h.lines[0].data.commands).not.toContain("compat export");
   const doctor = run(["doctor", "--json"]);
   expect(doctor.code).toBe(0);
-  expect(doctor.lines[0].data.nativeStore).toBe("0.3.0");
+  expect(doctor.lines[0].data.nativeStore).toBe("0.4.0");
   expect(doctor.lines[0].data.modelApiCalled).toBe(false);
 });
 it("creates a real archive and refuses to clobber the same target", async () => {
@@ -240,7 +240,7 @@ it("requires explicit simulation and streams actual runtime events plus ingested
   expect(run(["run", "start", file, "--input", "树叶", "--jsonl"]).code).toBe(
     2,
   );
-  expect(run(["run", "start", file, "--live", "--jsonl"]).code).toBe(4);
+  expect(run(["run", "start", file, "--live", "--jsonl"]).code).toBe(2);
   const result = run([
     "run",
     "start",

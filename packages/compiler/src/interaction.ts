@@ -52,12 +52,18 @@ export function projectInteraction(
           });
       }
       if (
-        ["core.knowledge.retrieve", "core.model.compose"].includes(
-          node.blockType,
-        )
+        [
+          "core.knowledge.retrieve",
+          "core.model.compose",
+          "core.tool.invoke",
+        ].includes(node.blockType)
       ) {
         const kind =
-          node.blockType === "core.knowledge.retrieve" ? "knowledge" : "model";
+          node.blockType === "core.knowledge.retrieve"
+            ? "knowledge"
+            : node.blockType === "core.tool.invoke"
+              ? "tool"
+              : "model";
         try {
           const resource = resolveResource(
             project,
@@ -65,6 +71,43 @@ export function projectInteraction(
             kind,
             userRegistry,
           );
+          if (kind === "tool") {
+            const definition = resource.definition;
+            const ref = (name: string) => {
+              const v = definition[name];
+              if (
+                !v ||
+                typeof v !== "object" ||
+                Array.isArray(v) ||
+                v.kind !== "schema" ||
+                typeof v.id !== "string"
+              )
+                throw Error();
+              const path = `schemas/${v.id}.json`;
+              if (!project.schemas[path]) throw Error();
+              return path;
+            };
+            if (definition.version !== "1") throw Error();
+            tools.push({
+              schemaVersion: "blocky.tool/v1alpha1",
+              toolId: `tool-${m.moduleId}-${node.nodeId}`,
+              moduleId: m.moduleId,
+              displayName: resource.displayName,
+              description: "登记的类型化工具",
+              inputSchemaRef: ref("inputSchemaRef"),
+              outputSchemaRef: ref("outputSchemaRef"),
+              permissions: [
+                ...new Set([
+                  ...resource.capabilityRequirements,
+                  ...(definition.permissions as string[]),
+                ]),
+              ],
+              approval: "always",
+              implementationRef: implementationKey(
+                definition.implementationRef,
+              ),
+            });
+          }
           if (kind === "knowledge")
             tools.push({
               schemaVersion: "blocky.tool/v1alpha1",

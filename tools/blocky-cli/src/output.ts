@@ -22,8 +22,10 @@ export function output(value: unknown): string {
             "secretRefs",
             "secretBindings",
           ].includes(k);
+          const isUsageCounter = ['inputTokens','outputTokens','totalTokens','maxOutputTokens'].includes(k) &&
+            typeof item==='number' && Number.isSafeInteger(item) && item>=0 && item<=10000000;
           if (
-            !isReference &&
+            !isReference && !isUsageCounter &&
             /authorization|cookie|password|api[_-]?key|token|secret/i.test(k)
           ) {
             changed = true;

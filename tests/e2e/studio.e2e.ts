@@ -69,11 +69,15 @@ describe("Blocky native editor", () => {
     if (await starter.isVisible()) await starter.click();
     const canvas = page.locator(".blockly-host");
     const background = page.locator(".blocklyMainBackground");
-    const bounds = await background.boundingBox();
-    if (!bounds) throw Error("Canvas background is not visible");
-    await background.click({
-      position: { x: bounds.width - 35, y: bounds.height - 50 },
+    const blank = await background.evaluate((el) => {
+      const r=el.getBoundingClientRect();
+      for(let y=r.top+20;y<Math.min(r.bottom,innerHeight)-20;y+=25)
+        for(let x=r.left+20;x<Math.min(r.right,innerWidth)-20;x+=25)
+          if(document.elementFromPoint(x,y)===el)return {x,y};
+      return null;
     });
+    if(!blank)throw Error('No observed blank canvas point');
+    await page.mouse.click(blank.x,blank.y);
     expect(
       await canvas.evaluate((el) => el.contains(document.activeElement)),
     ).toBe(true);
@@ -111,7 +115,12 @@ describe("Blocky native editor", () => {
     for (const checkbox of await $$(".permission-choice input"))
       await checkbox.click();
     await $("//dialog//button[contains(.,'接受变更')]").click();
-    await $("iframe[title='资料问答']").waitForDisplayed();
+    try { await $("iframe[title='资料问答']").waitForDisplayed(); }
+    catch(error) {
+      console.log('SURFACE_ACCEPT_FAILURE',await page.locator('dialog').allTextContents(),await page.locator('.statusbar').innerText());
+      await page.screenshot({path:'try/stage4/native/surface-accept-failure.png'});
+      throw error;
+    }
     const frame = page.frameLocator("iframe[title='资料问答']");
     await page.screenshot({ path: "try/stage2-e2e/surface-loading.png" });
     const isolation = await frame.locator("body").evaluate(() => {
@@ -213,7 +222,12 @@ describe("Blocky native editor", () => {
     await $(
       "//aside[contains(@class,'library')]//button[contains(.,'问答页面')]",
     ).click();
-    await $("iframe[title='资料问答']").waitForDisplayed();
+    try { await $("iframe[title='资料问答']").waitForDisplayed(); }
+    catch(error) {
+      console.log('SURFACE_ACCEPT_FAILURE',await page.locator('dialog').allTextContents(),await page.locator('.statusbar').innerText());
+      await page.screenshot({path:'try/stage4/native/surface-accept-failure.png'});
+      throw error;
+    }
   });
   it("keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls", async () => {
     await $(
@@ -242,4 +256,18 @@ describe("Blocky native editor", () => {
     await expect($$(".panel-body .log-row")).toBeElementsArrayOfSize(0);
     await browser.saveScreenshot("try/stage2-e2e/native-output.png");
   });
+  it('runs stage 4 conditional JSON output and saves new semantics through native storage', async()=>{
+    const stored=await page.evaluate(()=>(window as any).__BLOCKY_ACCEPTANCE__.loadAgentSemanticsProject());
+    expect(stored).toEqual({same:true,minimumReaderVersion:'0.4.0'});
+    await page.locator('.run-panel').getByRole('button',{name:'▶ 运行',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('.answer pre')?.textContent?.includes('true'));
+    expect(await page.locator('.answer pre').innerText()).toContain('"ok": true');
+    await page.getByLabel('向 Agent 提问').fill('no');
+    await page.locator('.run-panel').getByRole('button',{name:'▶ 运行',exact:true}).click();
+    await page.waitForFunction(()=>document.querySelector('.answer pre')?.textContent?.includes('false'));
+    expect(await page.locator('.answer pre').innerText()).toContain('"ok": false');
+    await mkdir('try/stage4/native',{recursive:true});
+    await page.screenshot({path:'try/stage4/native/structured-branches.png'});
+  });
+
 });

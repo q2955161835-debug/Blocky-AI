@@ -9,6 +9,7 @@ export type CompositionInput = {
   citations: Citation[];
 };
 export type Adapters = {
+  agent?: import('./agent-context').AgentServices;
   knowledge: Map<
     string,
     (

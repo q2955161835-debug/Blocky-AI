@@ -195,6 +195,30 @@ export function parseProject(input: unknown): Project {
   for (const s of p.manifest.appSurfaces)
     if (!Object.hasOwn(p.surfaces, s.manifestRef))
       throw Error("BLK-SURFACE-002: 缺失页面");
+  // New executable semantics must not be advertised as readable by older runtimes.
+  const stage4Types = new Set([
+    "core.prompt.context",
+    "core.run.budget",
+    "core.data.set",
+    "core.logic.condition",
+    "core.memory.read",
+    "core.memory.write",
+    "core.memory.delete",
+    "core.tool.invoke",
+    "core.guardrail.evidence",
+    "core.output.structured",
+    "core.output.file",
+  ]);
+  const needsStage4 = (value: unknown): boolean =>
+    !!value &&
+    typeof value === "object" &&
+    (("type" in value && stage4Types.has(String(value.type))) ||
+      Object.values(value).some(needsStage4));
+  if (
+    needsStage4(p.workspaces) &&
+    ["0.1.0", "0.2.0", "0.3.0"].includes(p.manifest.format.minimumReaderVersion)
+  )
+    p.manifest.format.minimumReaderVersion = "0.4.0";
   return p;
 }
 export { ProjectController } from "./controller";

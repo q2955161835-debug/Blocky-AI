@@ -1,5 +1,6 @@
 import definitions from "./definitions.json";
 import textPrimitives from "./text-primitives.json";
+import agentPrimitives from "./agent-primitives.json";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -7,7 +8,7 @@ export type BlockDefinition = {
   color: string;
   fields: string[];
   inputs: string[];
-  fieldOptions?: Record<string, string[]>;
+  fieldOptions?: Record<string, string[] | undefined>;
   output?: string;
   statement?: boolean;
   statementCheck?: string;
@@ -39,6 +40,6 @@ export const beginnerCategories = [
   "会行动",
   "会回答",
 ];
-export const catalog: BlockDefinition[] = [...definitions, ...textPrimitives];
-export const catalogVersion = "0.3.0";
+export const catalog: BlockDefinition[] = [...definitions, ...textPrimitives, ...agentPrimitives];
+export const catalogVersion = "0.4.0";
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);

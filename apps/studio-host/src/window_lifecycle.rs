@@ -153,6 +153,12 @@ pub fn finish_exit(
         return Err("BLK-WINDOW-001".into());
     }
     tasks.shutdown()?;
+    window
+        .state::<blocky_studio::agent_data::AgentData>()
+        .shutdown()?;
+    window
+        .state::<blocky_studio::provider::ProviderHost>()
+        .shutdown()?;
     terminals.settle()?;
     logs.flush()?;
     window

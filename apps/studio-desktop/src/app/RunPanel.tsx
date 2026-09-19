@@ -3,6 +3,9 @@ import { interactionKey } from "@blocky/language-schema";
 import { KnowledgeCitations } from "./KnowledgeCitations";
 import { knowledgeNative } from "../composition/knowledge";
 import type { EvidenceCitation } from "@blocky/knowledge-core";
+import { RunOutputs } from './RunOutputs';
+import { RunModelChoice } from './RunModelChoice';
+import { RunBudgetSummary } from './RunBudgetSummary';
 export function RunPanel({ studio: s }: { studio: Studio }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
@@ -21,6 +24,8 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
         <div className="empty-state">添加交互入口后，即可在这里运行。</div>
       ) : (
         <>
+          <RunModelChoice studio={s}/>
+          <RunBudgetSummary project={s.snapshot.project}/>
           {entries.length > 1 && (
             <label className="prompt-label">
               运行入口
@@ -79,6 +84,7 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
                     : "回答"}
               </span>
               <p>{s.result.answer || "请在运行日志中查看详情。"}</p>
+              <RunOutputs key={s.result.events[0]?.runId} result={s.result}/>
               {s.result.citations.length > 0 && (
                 <details>
                   <summary>{s.result.citations.length} 条资料来源</summary>

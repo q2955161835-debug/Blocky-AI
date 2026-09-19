@@ -1,4 +1,5 @@
 export * from "./catalog";
+export { createAgentExample } from './agent-example';
 export {
   officialStarters,
   createOfficialStarter,

@@ -116,3 +116,7 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 除上述明确提升版本的项目、IR、迁移、恢复和设置文档外，`blocky.interaction/v1alpha1`、`blocky.tool/v1alpha1`、`blocky.resource/v1alpha1`、`blocky.command/v1alpha1`、`blocky.setting/v1alpha1`、`blocky.app-surface/v1alpha1`、`blocky.frontend-bridge/v1alpha1`、`blocky.rpa/v1alpha1`、`blocky.window/v1alpha1`、`blocky.log/v1alpha1`、`blocky.terminal/v1alpha1`、`blocky.task/v1alpha1` 与 `blocky.audit/v1alpha1` 保持原版本；本阶段不做无语义依据的批量改名。
 
 阶段 2 的组成门禁均已通过：`pnpm check`、组件/Host/CLI 与原生构建/测试及 `scripts/check-native-core.ps1 core`；根 `pnpm check:core` 别名未重复跑。发行目录读回 8 个文件、19,112,686 字节，release 扫描读回 9 个物料（`positiveControl=true`、`passed=true`），许可证覆盖 315/315。Full 360/30 4/4 通过，独立最终验收 16/16 通过，安全补证通过；结论见[阶段 2 任务验收](../../验收/任务/验收-2026-09-17-Blocky阶段2.md)。普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，文档提交后的 HEAD 不替代该来源；真实大模型 API 调用为“否”。
+
+## 7. 阶段 4 Agent 语义闭环
+
+[阶段 4 契约](13-阶段4Agent语义闭环.md)定义生成式 Provider、预算、工具、记忆、护栏与输出的实现边界。正式结论以阶段 4 任务验收为准。

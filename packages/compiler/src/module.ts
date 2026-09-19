@@ -29,6 +29,16 @@ export function compileWorkspace(
     sourceMap[b.id] = source;
     const def = getBlock(b.type),
       fields = b.fields ?? {};
+    if (def && Object.keys(fields).some(field=>!def.fields.includes(field))) diagnostics.push(diagnostic('BLK-TYPE-007','积木包含未知字段',source));
+    for (const [field, options] of Object.entries(def?.fieldOptions ?? {}))
+      if (options && !options.includes(String(fields[field]))) diagnostics.push(diagnostic('BLK-TYPE-009',`${field} 的选项无效`,source));
+    if (b.type === 'core.data.set') {
+      try { if (typeof fields.VALUE !== 'string' || new TextEncoder().encode(fields.VALUE).length>32768) throw Error(); JSON.parse(fields.VALUE); }
+      catch { diagnostics.push(diagnostic('BLK-TYPE-009','结果必须是有效且有界的 JSON',source)); }
+    }
+    if (b.type === 'core.run.budget') for (const [field,max] of [['STEPS',2000],['CALLS',16],['OUTPUT_TOKENS',4096],['TIMEOUT_MS',120000]] as const) {
+      const value=fields[field]; if (typeof value!=='string' || !/^\d+$/.test(value) || Number(value)<1 || Number(value)>max) diagnostics.push(diagnostic('BLK-RUN-006','运行预算必须在支持范围内',source));
+    }
     if (b.type === "core.data.transform") {
       try {
         parseExpressionProgram(fields.PROGRAM);

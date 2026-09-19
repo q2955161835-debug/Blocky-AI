@@ -4,6 +4,7 @@ const booleans = new Set([
   "jsonl",
   "simulate",
   "live",
+  "interactive",
   "help",
   "version",
   "reuse-bindings",
