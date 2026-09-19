@@ -277,7 +277,7 @@ export class Runtime {
                   contract.implementationRef,
                 );
                 if (!adapter) throw Error("BLK-TOOL-002");
-                const correlationId = `${runId}-${node.nodeId}`;
+                const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
                 emit(
                   "tool.started",
                   moduleId,
@@ -358,7 +358,7 @@ export class Runtime {
                   )
                 )
                   throw Error("BLK-TOOL-001");
-                const correlationId = `${runId}-${node.nodeId}`;
+                const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
                 emit(
                   "model.started",
                   moduleId,

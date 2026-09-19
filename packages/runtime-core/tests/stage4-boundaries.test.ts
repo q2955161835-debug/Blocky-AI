@@ -222,3 +222,92 @@ it("remote generation reports actual API usage and keeps synthetic no-evidence r
   expect(r.modelApiCalled).toBe(true);
   expect(r.generations?.[0].usage?.totalTokens).toBe(5);
 });
+it("uses distinct provider request IDs when one model module is called twice", async () => {
+  const project = createStarter();
+  const model: Resource = {
+    schemaVersion: "blocky.resource/v1alpha1",
+    resourceId: "local-composer",
+    kind: "model",
+    scope: "user",
+    displayName: "虚构远程模型",
+    definition: {
+      provider: "deepseek",
+      protocol: "openai-chat",
+      modelId: "synthetic-model",
+      timeoutMs: 1000,
+      capabilities: ["text"],
+      parameters: { maxOutputTokens: 32 },
+      implementationRef: { kind: "adapter", id: "deepseek-v1" },
+    },
+    capabilityRequirements: [],
+    secretBindings: [{ fieldId: "apiKey", secretRef: "synthetic-ref" }],
+  };
+  delete project.resources[model.resourceId];
+  project.manifest.resources = project.manifest.resources
+    .filter((resource) => resource.resourceId !== model.resourceId)
+    .concat({
+      resourceId: model.resourceId,
+      kind: model.kind,
+      scope: model.scope,
+      definitionRef: "capture-model",
+      secretRefs: ["synthetic-ref"],
+    });
+
+  const serviceRoot = project.workspaces["citation-service"].blocks.blocks[0];
+  serviceRoot.inputs = {
+    BODY: {
+      block: {
+        type: "core.model.compose",
+        id: "shared-compose",
+        fields: { RESOURCE: "local-composer" },
+      },
+    },
+  };
+  const root = project.workspaces["research-agent"].blocks.blocks[0];
+  const chat = root.inputs!.BODY.block!;
+  const firstCall = chat.next!.block;
+  const answer = firstCall.next!.block.next!.block;
+  const secondCall = structuredClone(firstCall);
+  secondCall.id = "call-citation-again";
+  firstCall.next = { block: secondCall };
+  secondCall.next = { block: answer };
+
+  const requestIds: string[] = [];
+  const adapters = localAdapters();
+  adapters.agent = {
+    generate: async (request) => {
+      requestIds.push(request.requestId);
+      return {
+        text: "synthetic answer",
+        provider: "synthetic",
+        transport: "remote",
+        model: "synthetic-model",
+        requestId: request.requestId,
+        usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+      };
+    },
+  };
+  const result = await new Runtime({
+    adapters,
+    newId: () => "repeat-run",
+  }).run(project, "on-question", "public input", {
+    userRegistry: new Map([["capture-model", model]]),
+  });
+
+  expect(result.status).toBe("completed");
+  expect(requestIds).toHaveLength(2);
+  expect(new Set(requestIds).size).toBe(2);
+  expect(result.generations?.map((generation) => generation.requestId)).toEqual(
+    requestIds,
+  );
+  expect(
+    result.events
+      .filter((event) => event.type === "model.started")
+      .map((event) => event.correlationId),
+  ).toEqual(requestIds);
+  expect(
+    result.events
+      .filter((event) => event.type === "model.completed")
+      .map((event) => event.correlationId),
+  ).toEqual(requestIds);
+});
