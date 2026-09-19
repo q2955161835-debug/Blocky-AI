@@ -249,6 +249,11 @@ describe("formal native Core gates", function () {
         report.passed = true;
       } catch (error) {
         report.failure = error instanceof Error ? error.message : String(error);
+        report.nativeWindow = await page.evaluate(async () => {
+          const invoke=(window as unknown as {__TAURI_INTERNALS__:{invoke:(command:string,args:unknown)=>Promise<unknown>}}).__TAURI_INTERNALS__.invoke;
+          const read=async(command:string)=>{try{return await invoke(command,{label:'main'});}catch{return 'unavailable';}};
+          return {visible:await read('plugin:window|is_visible'),minimized:await read('plugin:window|is_minimized')};
+        }).catch(()=>null);
         throw error;
       } finally {
         const trustedInput = await page
