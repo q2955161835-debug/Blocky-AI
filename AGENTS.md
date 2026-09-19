@@ -316,6 +316,8 @@ pnpm check:full
 
 阶段 3 收尾产物：当前候选保留于 `dist/Blocky-Studio-0.3.0-candidate3/`，CLI 开发入口保留于 `tools/blocky-cli/dist/`。本轮过程缓存和旧候选已可逆整理至 `try/待清理/阶段3-2026-09-18/`；历史证据中的原路径用 `doc/验收/任务/阶段3证据/运行证据/storage-moves-final.json` 查找。模型及运行库准备缓存仍保留在 `try/stage3/models/` 和 `try/stage3/runtime/`，是当前活跃依赖。
 
+阶段 4 收尾产物保留于 `dist/Blocky-Studio-0.4.0-candidate3/`，正式来源 `f24aea0`，21 文件、252319093 字节；当前 CLI 开发入口仍在 `tools/blocky-cli/dist/`。本轮过程缓存、两个中间候选及原始夹具已可逆移入 `try/待清理/阶段4-2026-09-19/`，共 15384578237 字节；历史路径通过 `doc/验收/任务/阶段4证据/运行证据/storage-moves-final.json` 定位。固定证据与正式结果见阶段 4 任务验收，后续文档提交不改变候选来源。
+
 ## 14. 团队协作归属
 
 2026-09-16 用户确认为团队项目。验收通过后先询问是否合并 main，获准合并后删除任务分支；推送仍须另行授权。

@@ -47,5 +47,40 @@
     "files": 21,
     "bytes": 252319047.0,
     "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\stage4",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--stage4",
+    "files": 156,
+    "bytes": 176979641.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\stage2-core",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--stage2-core",
+    "files": 4,
+    "bytes": 54535.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\stage3-release",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--stage3-release",
+    "files": 4,
+    "bytes": 4083959.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\production-js-licenses.json",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--production-js-licenses.json",
+    "files": 1,
+    "bytes": 22624.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\production-rust-metadata.json",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--production-rust-metadata.json",
+    "files": 1,
+    "bytes": 1897229.0,
+    "verified": true
   }
 ]
