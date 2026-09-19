@@ -1,0 +1,18 @@
+[
+  {
+    "source": "try/stage3/security-20260919",
+    "destination": "try\\待清理\\阶段3补验-2026-09-19\\try\\stage3\\security-20260919",
+    "beforeFiles": 4,
+    "afterFiles": 4,
+    "beforeBytes": 10554.0,
+    "afterBytes": 10554.0
+  },
+  {
+    "source": "try/stage3/gui-final",
+    "destination": "try\\待清理\\阶段3补验-2026-09-19\\try\\stage3\\gui-final",
+    "beforeFiles": 1,
+    "afterFiles": 1,
+    "beforeBytes": 246.0,
+    "afterBytes": 246.0
+  }
+]

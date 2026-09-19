@@ -1,0 +1,107 @@
+{
+  "date": "2026-09-19",
+  "scope": "candidate3 GUI narrow supplemental acceptance",
+  "sourceCommit": "3d7731f",
+  "candidate": {
+    "path": "D:\\\\1Folder\\\\Blocky-AI\\\\dist\\\\Blocky-Studio-0.3.0-candidate3\\\\Blocky Studio.exe",
+    "sha256": "0E1249591D92BE2097E15F57027CA3EDF34D10793CF555B8D0E3B922E7DF3962"
+  },
+  "fixture": {
+    "path": "D:\\\\1Folder\\\\Blocky-AI\\\\try\\\\stage3\\\\gui-final\\\\gui-citation-fixture.md",
+    "sha256": "69211470BBF2E17255C49DA62C8BE81F8A66573D79C5DAB10FD5256CF617DEDC",
+    "readback": "selected in native file chooser; 1 document and 3 fragments after sync"
+  },
+  "recoveryCandidate": {
+    "visible": true,
+    "action": "untouched; neither restore nor discard clicked",
+    "label": "资料问答伙伴 · 2026-09-16T19:23:27.346Z"
+  },
+  "observations": [
+    {
+      "id": "citation-no-evidence",
+      "result": "default query returned 课程资料没有说明，待核实。",
+      "meaning": "no unsupported citation was shown"
+    },
+    {
+      "id": "citation-open-close",
+      "result": "matching query produced two stable citations; opening one showed same-page 资料出处 with full fixture text and line range; closing removed the full-text region on readback",
+      "status": "passed"
+    },
+    {
+      "id": "personal-blueprint-direct",
+      "result": "我的蓝图 + inserted a new stack and stable block ID block-ed10a5cf-c788-423c-a175-10e20c9e5ca3; unbound warning was visible; undo removed it",
+      "status": "passed-local"
+    },
+    {
+      "id": "personal-blueprint-slot",
+      "result": "GUI多选任务蓝图 + opened the insertion dialog; module-slot-1 offered only 选择画布 despite two project canvases; 生成预览 produced no preview or binding",
+      "status": "blocked"
+    },
+    {
+      "id": "starter-01",
+      "title": "资料问答伙伴",
+      "readback": "2 canvases; task guide; knowledge query stack; Run button"
+    },
+    {
+      "id": "starter-02",
+      "title": "代码库讲解助手",
+      "readback": "2 canvases; source path/line task guide; initial research stack; Run button"
+    },
+    {
+      "id": "starter-03",
+      "title": "知识小老师",
+      "readback": "2 canvases; reading/recitation/evidence task guide; initial knowledge stack; Run button"
+    },
+    {
+      "id": "starter-04",
+      "title": "轻量任务助手",
+      "readback": "3 canvases; JSON example count=3 minutes=15; hour/minute task guide; calculate-v1 module"
+    }
+  ],
+  "lifecycle": {
+    "closeAction": "window close dialog -> 停止并退出",
+    "postCloseListWindows": [
+      "OpenAI.Codex_2p2nqsd0c76g0!App",
+      "process:D:\\\\UU远程\\\\GameViewer\\\\bin\\\\GameViewer.exe"
+    ],
+    "blockyWindowPresent": false
+  },
+  "realExternalLLMApi": "否",
+  "ageTrial": "AI模拟完成；真实10–15岁参与者试用未执行",
+  "conclusion": "通过",
+  "limitations": [
+    "No product source was modified.",
+    "No native Rust, CLI, Full, or security rerun was performed.",
+    "The initial research project had no compatible target; task-helper hours/minutes binding, preview, acceptance and undo subsequently passed. See reverification.",
+    "Transient screenshots were not persisted; actions and readback are recorded here."
+  ],
+  "reverification": {
+    "executionWindowLocal": "2026-09-19 21:11–21:18 +08:00",
+    "compatibleStarter": "task-helper / 轻量任务助手",
+    "canvases": [
+      "轻量任务",
+      "工时工具（小时）",
+      "总时长工具（分钟）"
+    ],
+    "moduleSlotOptions": [
+      "选择画布",
+      "工时工具（小时）",
+      "总时长工具（分钟）"
+    ],
+    "hours": {
+      "acceptedNewBlockId": "block-b8c92934-7a60-4fcc-982c-9b40a0319e52",
+      "undone": true,
+      "preview": "citation-service / calculate-v1; 新增权限=无新增权限",
+      "selected": "工时工具（小时）"
+    },
+    "minutes": {
+      "acceptedNewBlockId": "block-3d91a93a-90e9-4092-9610-1ce9d18f6aa2",
+      "undone": true,
+      "preview": "minutes-service / calculate-v1; 新增权限=无新增权限",
+      "selected": "总时长工具（分钟）"
+    },
+    "negativeCase": "资料问答伙伴研究项目没有匹配模块导出，只有选择画布占位项，属于无兼容目标负例",
+    "aiSimulation": "四个欢迎页入口观察与既有四蓝图领域/CLI运行证据组合；不代表真实10–15岁参与者试用",
+    "finalReadback": "两次新实例均撤销；未保存测试项目，旧恢复候选未触碰"
+  }
+}

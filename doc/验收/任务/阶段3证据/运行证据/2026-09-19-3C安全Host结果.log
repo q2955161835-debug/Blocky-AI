@@ -1,0 +1,12 @@
+
+running 7 tests
+test conversion::tests::analysis_cache_binds_existing_snapshot_and_reuses_project_hash_map ... ok
+test conversion::tests::byte_bounded_pages_and_nested_repository_selection_rejection ... ok
+test conversion::tests::cache_size_bound_preserves_previous_checkpoint ... ok
+CONVERSION_CANCEL settledMs=34
+test conversion::tests::cancel_settles_scan_without_replacing_existing_snapshot ... ok
+test conversion::tests::complete_unpublished_artifact_recovers_after_interrupted_publication ... ok
+test conversion::tests::excludes_secrets_binary_generated_and_oversize_with_reasons ... ok
+test conversion::tests::pages_restart_cross_project_and_artifact_tampering ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 8.17s
