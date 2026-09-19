@@ -1,0 +1,22 @@
+
+Execution of 1 workers started at 2026-09-19T14:32:46.350Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0","hardwareConcurrency":24,"width":915,"height":572,"dpr":1.5749999284744263},"load":{"samplesMs":[48.799999999813735,41,39.89999999944121,37.59999999962747,38.60000000055879],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":39.89999999944121},"saveCompile":{"samplesMs":[2.7999999998137355,3.3999999994412065,4.1000000005587935,3.1000000005587935,2.7000000001862645],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":3.1000000005587935},"runtime":{"samplesMs":[31.700000000186265,29.800000000745058,31.09999999962747,33.39999999944121,28.799999999813735],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":31.09999999962747}}
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: 689a461e-8725-4ba9-b937-53d6b07bb538
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\core.e2e.ts
+[msedge 153.0.0.0 windows #0-0] formal native Core gates
+[msedge 153.0.0.0 windows #0-0]    ✓ measures 100 blocks and 100 executed nodes with five post-warmup samples
+[msedge 153.0.0.0 windows #0-0]    ✓ preflights actual editor undo, runtime and a Rust archive round trip
+[msedge 153.0.0.0 windows #0-0]    ✓ rejects new runs while hidden and restores authorization through the existing instance
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 3 passing (4.5s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:08

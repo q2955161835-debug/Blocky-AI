@@ -1,0 +1,1 @@
+{"passed":5,"root":"D:\\1Folder\\Blocky-AI\\try\\stage4\\security\\atomic-4de9a4d9-073e-412c-bb09-7bac334b08cb","assertions":["complete UTF-8 readback","existing target unchanged","pre-abort no output","mid-write abort no partial output","publish error no temporary residue"]}

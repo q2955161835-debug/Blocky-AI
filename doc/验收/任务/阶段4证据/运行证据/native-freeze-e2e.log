@@ -1,0 +1,32 @@
+
+> blocky-studio@0.4.0 test:e2e D:\1Folder\Blocky-AI
+> wdio run tests/e2e/wdio.conf.ts
+
+
+Execution of 1 workers started at 2026-09-19T14:32:21.954Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 216
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 133
+[0-0] WEBVIEW_ERROR Connecting to 'http://ipc.localhost/clear_diagnostics' violates the following Content Security Policy directive: "connect-src 'none'". The action has been blocked.
+[0-0] WEBVIEW_ERROR Fetch API cannot load http://ipc.localhost/clear_diagnostics. Refused to connect because it violates the document's Content Security Policy.
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: 74c8a617-592c-4e59-b8fe-20cc84f456a2
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\studio.e2e.ts
+[msedge 153.0.0.0 windows #0-0] Blocky native editor
+[msedge 153.0.0.0 windows #0-0]    ✓ opens a starter and preserves legacy multi-module runtime and navigation behavior
+[msedge 153.0.0.0 windows #0-0]    ✓ focuses the canvas after a blank click so Tab opens block search
+[msedge 153.0.0.0 windows #0-0]    ✓ opens shared commands, restores closed tabs and keeps two workspaces
+[msedge 153.0.0.0 windows #0-0]    ✓ reviews explicit surface permissions, runs the actual isolated page and reopens its tab
+[msedge 153.0.0.0 windows #0-0]    ✓ keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls
+[msedge 153.0.0.0 windows #0-0]    ✓ runs stage 4 conditional JSON output and saves new semantics through native storage
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 6 passing (8.3s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:12

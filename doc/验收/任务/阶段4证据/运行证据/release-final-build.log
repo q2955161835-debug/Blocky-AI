@@ -1,0 +1,35 @@
+
+> blocky-studio@0.4.0 build:release D:\1Folder\Blocky-AI
+> pwsh -NoProfile -File scripts/build-release.ps1
+
+{"modelId":"multilingual-e5-small-int8-v1","files":[{"name":"model_quantized.onnx","status":"verified"},{"name":"tokenizer.json","status":"verified"},{"name":"config.json","status":"verified"},{"name":"special_tokens_map.json","status":"verified"},{"name":"tokenizer_config.json","status":"verified"}]}
+{"directml":"1.15.4","vcRuntime":{"status":"available","version":"14.51.36247","redistribution":"system prerequisite; not bundled","files":["msvcp140.dll","msvcp140_1.dll","vcruntime140.dll","vcruntime140_1.dll"]}}
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `pnpm --dir ../studio-desktop build`
+
+> @blocky/studio-desktop@0.4.0 build D:\1Folder\Blocky-AI\apps\studio-desktop
+> vite build
+
+vite v8.2.1 building client environment for production...
+transforming...
+✓ 273 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.35 kB │ gzip:   0.27 kB
+dist/assets/TerminalView-B1njb2Cr.css      3.96 kB │ gzip:   1.02 kB
+dist/assets/index-B6JZ6zU_.css            16.53 kB │ gzip:   4.54 kB
+dist/assets/TerminalView-C6EsDuuf.js     334.20 kB │ gzip:  84.30 kB
+dist/assets/index-VOvskanS.js          1,594.41 kB │ gzip: 484.09 kB
+
+✓ built in 410ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling blocky-studio v0.4.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 30.55s
+       Built application at: D:\1Folder\Blocky-AI\try\release-native-target\release\blocky-studio.exe
+   Compiling blocky-studio v0.4.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 4.22s
+{"packages":438,"missing":0}

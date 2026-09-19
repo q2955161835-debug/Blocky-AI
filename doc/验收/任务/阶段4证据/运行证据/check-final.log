@@ -1,0 +1,33 @@
+
+> blocky-studio@0.4.0 check D:\1Folder\Blocky-AI
+> pnpm typecheck && pnpm test:unit && pnpm test:contracts
+
+
+> blocky-studio@0.4.0 typecheck D:\1Folder\Blocky-AI
+> tsc --noEmit
+
+
+> blocky-studio@0.4.0 test:unit D:\1Folder\Blocky-AI
+> vitest run packages
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  41 passed (41)
+      Tests  185 passed (185)
+   Start at  23:12:33
+   Duration  6.53s (transform 4.50s, setup 0ms, import 24.82s, tests 1.66s, environment 4ms)
+
+
+> blocky-studio@0.4.0 test:contracts D:\1Folder\Blocky-AI
+> vitest run tests/contracts
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  23:12:40
+   Duration  864ms (transform 528ms, setup 0ms, import 917ms, tests 45ms, environment 0ms)

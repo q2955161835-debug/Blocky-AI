@@ -1,0 +1,22 @@
+
+Execution of 1 workers started at 2026-09-19T15:14:53.433Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0","hardwareConcurrency":24,"width":915,"height":572,"dpr":1.5749999284744263},"load":{"samplesMs":[52,37.5,45.699999999953434,36.39999999990687,47.5],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":45.699999999953434},"saveCompile":{"samplesMs":[2.300000000046566,3,1.9000000001396984,2.800000000046566,1.8999999999068677],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":2.300000000046566},"runtime":{"samplesMs":[24.699999999953434,23.199999999953434,25.300000000046566,25.699999999953434,23.100000000093132],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":24.699999999953434}}
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: f5934cbc-e550-4db4-abe4-b526d32a0f10
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\core.e2e.ts
+[msedge 153.0.0.0 windows #0-0] formal native Core gates
+[msedge 153.0.0.0 windows #0-0]    ✓ measures 100 blocks and 100 executed nodes with five post-warmup samples
+[msedge 153.0.0.0 windows #0-0]    ✓ preflights actual editor undo, runtime and a Rust archive round trip
+[msedge 153.0.0.0 windows #0-0]    ✓ rejects new runs while hidden and restores authorization through the existing instance
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 3 passing (5.3s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:09

@@ -1,0 +1,12 @@
+
+> blocky-studio@0.4.0 test:component D:\1Folder\Blocky-AI
+> vitest run tests/component
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  9 passed (9)
+      Tests  24 passed (24)
+   Start at  23:13:25
+   Duration  11.82s (transform 3.39s, setup 0ms, import 15.20s, tests 5.32s, environment 63.70s)

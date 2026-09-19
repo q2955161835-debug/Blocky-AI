@@ -1,0 +1,40 @@
+
+> blocky-studio@0.4.0 test:e2e:build D:\1Folder\Blocky-AI
+> pwsh -NoProfile -File scripts/build-native-tests.ps1
+
+{"directml":"1.15.4","vcRuntime":{"status":"available","version":"14.51.36247","redistribution":"system prerequisite; not bundled","files":["msvcp140.dll","msvcp140_1.dll","vcruntime140.dll","vcruntime140_1.dll"]}}
+
+> @blocky/studio-host@0.4.0 tauri D:\1Folder\Blocky-AI\apps\studio-host
+> tauri "build" "--no-bundle" "--features" "wdio" "--config" "tauri.wdio.conf.json"
+
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `pnpm --dir ../studio-desktop exec vite build --mode native-test --outDir ../../try/native-test-web --emptyOutDir`
+vite v8.2.1 building client environment for native-test...
+transforming...
+✓ 275 modules transformed.
+rendering chunks...
+computing gzip size...
+../../try/native-test-web/index.html                             0.74 kB │ gzip:   0.35 kB
+../../try/native-test-web/assets/TerminalView-B1njb2Cr.css       3.96 kB │ gzip:   1.02 kB
+../../try/native-test-web/assets/index-B6JZ6zU_.css             16.53 kB │ gzip:   4.54 kB
+../../try/native-test-web/assets/core-C0VTMVdH.js                0.05 kB │ gzip:   0.07 kB
+../../try/native-test-web/assets/event-CHfESvKx.js               0.06 kB │ gzip:   0.07 kB
+../../try/native-test-web/assets/core-Bb8Z72y_.js                0.25 kB │ gzip:   0.18 kB
+../../try/native-test-web/assets/event-DmJOk0qC.js               1.04 kB │ gzip:   0.54 kB
+../../try/native-test-web/assets/preload-helper-Czpn1I53.js      1.19 kB │ gzip:   0.67 kB
+../../try/native-test-web/assets/acceptance-tPSF2Ygu.js          7.28 kB │ gzip:   2.91 kB
+../../try/native-test-web/assets/jsx-runtime-B-hcVAMW.js         8.55 kB │ gzip:   3.26 kB
+../../try/native-test-web/assets/dist-js-Bj_8Hk7L.js            16.38 kB │ gzip:   4.56 kB
+../../try/native-test-web/assets/TerminalView-Wlwud_Xh.js      334.23 kB │ gzip:  84.31 kB
+../../try/native-test-web/assets/index-DyWXYcGH.js             544.27 kB │ gzip: 186.46 kB
+../../try/native-test-web/assets/src-Dw-2mPYN.js             1,040.10 kB │ gzip: 295.51 kB
+
+✓ built in 347ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling blocky-studio v0.4.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 32.46s
+       Built application at: D:\1Folder\Blocky-AI\try\native-e2e-target\release\blocky-studio.exe

@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
+     Running unittests src\lib.rs (apps\studio-host\target\debug\deps\blocky_studio-c86b2c12cc677b34.exe)
+
+running 2 tests
+test knowledge::embedding_tests::real_embedding_cancel_resumes_binary_checkpoint_and_rejects_corruption ... ok
+test knowledge::embedding_tests::real_model_semantics_windows_binary_cache_and_revocation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 75 filtered out; finished in 5.50s

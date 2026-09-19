@@ -1,0 +1,91 @@
+   Compiling blocky-studio v0.4.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.83s
+     Running unittests src\lib.rs (apps\studio-host\target\debug\deps\blocky_studio-c86b2c12cc677b34.exe)
+
+running 77 tests
+test knowledge::embedding_tests::real_embedding_cancel_resumes_binary_checkpoint_and_rejects_corruption ... ignored, requires locked E5 model assets; exercises real inference cancellation and persisted resume
+test knowledge::embedding_tests::real_model_semantics_windows_binary_cache_and_revocation ... ignored, requires the locked E5 assets through BLOCKY_MODEL_DIR; run explicitly for real inference
+test knowledge::index_guard::compact_tests::legacy_checkpoint_shares_only_identical_chunks_and_preserves_existing_refs ... ok
+test knowledge::dns::tests::authenticated_dns_answers_must_match_question_and_only_resolve_public_cname_chain ... ok
+test knowledge::embedding_tests::vector_record_roundtrip_and_corruption_detection ... ok
+test knowledge::embedding_tests::locked_model_rejects_unknown_and_missing_assets ... ok
+test agent_data::tests::forged_cross_project_expired_revoked_and_stopped_grants_do_not_write ... ok
+test agent_data::tests::tool_digest_replay_cancel_and_scope_are_enforced ... ok
+test knowledge::network::tests::redirects_to_private_targets_and_oversize_responses_are_rejected ... ok
+test knowledge::network::tests::conditional_http_reuses_only_verified_previous_document ... ok
+test approval_ledger::tests::corrupt_ledger_fails_closed ... ok
+test knowledge::tests::network_targets_reject_private_reserved_and_credentials ... ok
+test knowledge::embedding_tests::interrupted_binary_tail_is_recovered_without_accepting_corrupt_complete_records ... ok
+test agent_data::tests::cli_tool_approval_is_single_use_across_host_instances ... ok
+test approval_ledger::tests::consumption_expiry_and_identity_binding_survive_reopen ... ok
+test agent_data::tests::memory_roundtrip_delete_and_reload ... ok
+test agent_data::tests::cli_approval_is_exact_and_never_default ... ok
+test knowledge::tests::cancellation_epoch_is_cross_instance_and_unknown_protocol_fields_fail ... ok
+test log_store::tests::broken_document_blocks_until_explicit_clear_and_preserves_evidence ... ok
+test log_store::tests::corrupt_quarantine_is_never_overwritten_and_time_ranges_are_checked ... ok
+test log_store::tests::corrupt_record_is_quarantined_without_losing_good_records ... ok
+test log_store::tests::explicit_clear_audit_survives_reopen_retention_and_legacy_documents ... ok
+test knowledge::tests::changed_resource_blob_is_rejected_instead_of_reused ... ok
+test knowledge::tests::real_source_paging_restart_and_cross_project_denial ... ok
+test log_store::tests::time_and_channel_selection_and_calendar_validation ... ok
+test log_store::tests::retention_bytes_and_disabled_storage ... ok
+test project_store::tests::creation_never_overwrites_an_existing_target ... ok
+test project_store::tests::generic_credential_fields_are_rejected_but_references_remain_valid ... ok
+test project_store::tests::legacy_archives_are_only_available_at_explicit_migration_boundary ... ok
+test project_store::tests::failed_commit_preserves_existing_bytes ... ok
+test project_store::tests::stage4_reader_preserves_old_versions_and_rejects_future_formats ... ok
+test project_store::tests::traversal_missing_workspaces_and_unknown_version_rejected ... ok
+test project_store::tests::undeclared_files_and_secrets_rejected ... ok
+test provider::tests::binding_is_host_owned_and_cannot_override_endpoint_or_secret ... ok
+test provider::tests::cancellation_size_and_failure_body_are_bounded ... ok
+test project_store::tests::native_archive_round_trip ... ok
+test provider::tests::helper_rejects_unapproved_or_unknown_fields_without_network ... ok
+test knowledge::tests::source_add_rebinds_epoch_without_discarding_unchanged_index ... ok
+test knowledge::tests::atomic_index_cas_acl_invalidation_and_restart ... ok
+test provider::tests::request_limits_and_exact_digest ... ok
+test provider::tests::responses_require_actual_usage_finished_text_and_identity ... ok
+test provider::tests::provider_cli_consumes_ticket_before_transport_and_rejects_reopen ... ok
+test provider::tests::real_http_transport_with_local_only_mock_checks_auth_and_errors ... ok
+test strict_json::tests::nested_duplicate_keys_are_rejected ... ok
+test knowledge::tests::changed_and_deleted_files_change_snapshot_and_old_cursor_is_rejected ... ok
+test secret_store::tests::native_secret_import_is_encrypted_and_never_returned_by_status ... ok
+test provider::tests::cancelling_headers_and_body_drops_connection_within_two_seconds ... ok
+test task_host::tests::worker_entry ... ok
+test user_store::tests::native_scoped_settings_are_atomic_and_invalid_input_preserves_saved_values ... ok
+test knowledge::tests::citation_read_rejects_stale_version_and_revoked_grant ... ok
+test task_host::tests::host_tickets_are_scoped_single_use_and_not_caller_claims ... ok
+test provider::tests::transport_timeout_and_late_cancel_settle_without_orphans ... ok
+test log_store::tests::larger_policy_really_exceeds_old_cap_and_preserves_loss_contract ... ok
+test user_terminal::tests::utf8_split_and_tail_boundaries ... ok
+test task_host::tests::registry_concurrency_cancel_inventory_and_budget ... ok
+test knowledge::tests::directory_junction_cannot_escape_authorized_root ... ok
+test conversion::tests::rejects_invalid_ids_scopes_and_unknown_fields ... ok
+test task_host::process::tests::job_settles_a_real_descendant_before_output_reader_finishes ... ok
+test knowledge::tests::repository_dirty_probe_never_executes_clean_filters ... ok
+test agent_data::tests::quotas_paths_and_session_scope_fail_without_partial_commit ... ok
+test user_terminal::tests::bounds_and_overflow ... ok
+test user_terminal::tests::real_conpty_isolation_resize_and_settlement ... ok
+test user_terminal::tests::saturated_input_close_and_natural_exit ... ok
+test knowledge::tests::missing_promisor_blob_is_rejected_without_implicit_fetch ... ok
+test conversion::tests::cache_size_bound_preserves_previous_checkpoint ... ok
+test knowledge::tests::repository_reads_commit_not_dirty_worktree_without_running_hooks ... ok
+test conversion::tests::excludes_secrets_binary_generated_and_oversize_with_reasons ... ok
+test knowledge::tests::pages_are_bounded_and_persisted_objects_are_integrity_checked ... ok
+test conversion::tests::complete_unpublished_artifact_recovers_after_interrupted_publication ... ok
+test conversion::tests::cancel_settles_scan_without_replacing_existing_snapshot ... ok
+test user_terminal::tests::descendants_timeout_drop_and_capacity ... ok
+test conversion::tests::analysis_cache_binds_existing_snapshot_and_reuses_project_hash_map ... ok
+test conversion::tests::pages_restart_cross_project_and_artifact_tampering ... ok
+test knowledge::tests::repository_raw_dirty_policy_reports_comparison_scope_and_unchecked_files ... ok
+test conversion::tests::locked_scope_includes_root_evidence_and_never_runs_filters ... ok
+test conversion::tests::byte_bounded_pages_and_nested_repository_selection_rejection ... ok
+test conversion::tests::small_scope_works_when_unselected_tree_exceeds_twenty_thousand_files ... ok
+
+test result: ok. 75 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 12.26s
+
+     Running unittests src\bin\blocky-project-io.rs (apps\studio-host\target\debug\deps\blocky_project_io-33a5db8813bcba60.exe)
+
+running 1 test
+test tests::rejects_unknown_protocol_and_undeclared_arguments ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

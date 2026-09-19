@@ -1,0 +1,131 @@
+{
+  "operation": "UTF-8, remove trailing whitespace and extra final blank lines only",
+  "rawDirectory": "try/stage4/raw-fixed-logs",
+  "files": [
+    {
+      "file": "check-final.log",
+      "rawSha256": "0482921569df0a5c6af58370e4fa14bb2063792ea740d32211cbf57a509d0379",
+      "normalizedSha256": "76d5d48d41480245206efba07233f0c74927fb7b69a05bbd5470c91efecde054"
+    },
+    {
+      "file": "check-freeze.log",
+      "rawSha256": "f685a3cb76016bdcf8f5c00edfed27c9740bce8649e3c02a7c7933a24f451c18",
+      "normalizedSha256": "945fb7cfa63b4bb8e755b7d4dfb2a25e9dd95b1d30015a5ef4a01e4d5b243cd4"
+    },
+    {
+      "file": "cli-final-prebuild.log",
+      "rawSha256": "acc32fbba7341062a53fb98983cbc9ed7c2e9290fa7aaf72b6d6c0bf6ff8743c",
+      "normalizedSha256": "c07992fd8ed8200f9b52432b1d9c4d726698af7aa11169dc3a9ad56028e34ec6"
+    },
+    {
+      "file": "cli-final.log",
+      "rawSha256": "28098420a12a1dfa63638b265f677d2c4480cd3fcda79433289c8afae7c4f7e6",
+      "normalizedSha256": "0f60d7021317263ea43f7c0cac7e9f9331c6f1d85de099ccd757b3f97096abee"
+    },
+    {
+      "file": "component-final.log",
+      "rawSha256": "8becced99837aea05c7def6b2369c0239b1bfe157193e3eff0595f04bd689fca",
+      "normalizedSha256": "13fa454aafa033fd501de10bbe2e1bfa79caa2201b1b023dfebad72e34eaa22a"
+    },
+    {
+      "file": "component-freeze.log",
+      "rawSha256": "bd855a735c0dfdefc3e79b2adc6314e8ff81055a4d07846c8e1e135dd15a8ae4",
+      "normalizedSha256": "fc6ed8cf9d94d114dd26bdd1eacd82f28faf0d3311f436795ba042790084d942"
+    },
+    {
+      "file": "core-final.log",
+      "rawSha256": "68236387f5c0fa6b58b6711d6420725ee57c8f1d86ac876d0ec0b9be17035c35",
+      "normalizedSha256": "068133483a2476a9873d11889297985f55afd148659f5d0116beb8eca551cccf"
+    },
+    {
+      "file": "core-freeze.log",
+      "rawSha256": "846781de0f9030318ef8cba17273f25d34a629134c79fd525b3a16ab8de13074",
+      "normalizedSha256": "7802cd6750437b2a010de16edf4f37b0f53f7782f061f1830be0fa88d396a505"
+    },
+    {
+      "file": "full-final.log",
+      "rawSha256": "458286401c3e548671cc028287821816a2c867280c8a955b351476245e802476",
+      "normalizedSha256": "954a461029f3255c6e2c65c8141571276641d54d98004a0d48fae4a6a52cd510"
+    },
+    {
+      "file": "full-first-failure.log",
+      "rawSha256": "6205d19bb02f7bc9a81bc60a0e4c037d0d1e54cb7669d14822020a6646c1fd65",
+      "normalizedSha256": "75ee22b4d69a4b9c9779529101b722d76fcecd02c9919da22caa3061830f01c6"
+    },
+    {
+      "file": "full-second-aborted.log",
+      "rawSha256": "beef8726f611d5c7023a65a5c66a8d27f627df3440f6fa1cc3c9bf6c6a178486",
+      "normalizedSha256": "4867f6813bad9c2fbc713418eb3f0aa5b6dfc71ca23f882be0e5638a0888e14e"
+    },
+    {
+      "file": "host-final-prebuild.log",
+      "rawSha256": "3d929a6bf2b63059fbf8c0835042e2d7a974f2a960d645389a78920d8c96bb7d",
+      "normalizedSha256": "d58f8b8306cb701298fee06058eec82ba58e4f97d018015db7b404e8cd74e3a6"
+    },
+    {
+      "file": "native-final-build.log",
+      "rawSha256": "977820f764d53a61c892e1c849076baadde0c747b09fc7e520699e123dde5324",
+      "normalizedSha256": "f92fd719d5e07c8c07fa0e7ee85612ae7dbcb996faa3e28030605102377c7188"
+    },
+    {
+      "file": "native-final-e2e.log",
+      "rawSha256": "4de817dfc2941cee23d3185a2a2aab8b52ea1500aae362ef9f102564a6de674d",
+      "normalizedSha256": "59f6e69b547ea0b855faeca15ae7291c18ae8d71a1a858bf77d1f38a1708eeb7"
+    },
+    {
+      "file": "native-freeze-build.log",
+      "rawSha256": "a04d4d6ea252eeaaa51c18f47656f9f4772f9bdeb405f3aa163026eb38775f82",
+      "normalizedSha256": "72dabfda69f8b1d3e5134e0069fa8ecc473508d54ddd2bbb3bbe420d2c964b60"
+    },
+    {
+      "file": "native-freeze-e2e.log",
+      "rawSha256": "710006af286c1ca8333531f9d37f5634e361daf7f42973076af9eb8470c06056",
+      "normalizedSha256": "ae13f0fd552ea06c1cf9b2b9895ed0d79ede61c9f38921ec0f4dc2ca0cdcde6f"
+    },
+    {
+      "file": "real-e5.log",
+      "rawSha256": "da2f993e27fc3491c62181d1a13e1446c4a4385a5c3082bc76f557272df0361e",
+      "normalizedSha256": "4920a0d2120742dd2ae6959d25432b62073386b3d5b4310410790e248468271e"
+    },
+    {
+      "file": "release-build.log",
+      "rawSha256": "a5d39a9c5302742b21bd82255de25a6ddd79c61c1209f3ea2286e38e4f0cc100",
+      "normalizedSha256": "4fb6ac32fc1fca572ad50622147f52bbef56106c8eacd8f740b9a57a8966064c"
+    },
+    {
+      "file": "release-final-build.log",
+      "rawSha256": "62c7f22950aa1cd4918931836f87026fee2a1520242dd3a0d070d14de55f4b90",
+      "normalizedSha256": "1ad8098d22dcac0602d21d48dd2fb586f36c2e87623350b326ccc1b52c4b7e3e"
+    },
+    {
+      "file": "release-final-package.log",
+      "rawSha256": "a91446d2c887a247162dc28dcadf54d50f07df3c9673af9ff20977a4a511edeb",
+      "normalizedSha256": "a13d1d53b5c9010eaf89d5707346860a31c6fa0fdd88e1d0879575b5a88785e9"
+    },
+    {
+      "file": "release-final-scan.log",
+      "rawSha256": "219a22ed0a688537bf139f29db9b7b3e44642f4ea7ba0c42b02310f638a3a9e5",
+      "normalizedSha256": "9734a687158bf2b6301ae4ba50ab926c60d09f39c9e24ade7538ccf5c4342b5e"
+    },
+    {
+      "file": "release-package.log",
+      "rawSha256": "e269812e392d5c49ba8aeab0c1b268dbaeb6b3b1f9807ed4b4092ecfe2f7aa5b",
+      "normalizedSha256": "fee8ae87fba44911dae4ee59eb3f898615e13c2d5c7459e5469f040b4ebcc26d"
+    },
+    {
+      "file": "release-scan.log",
+      "rawSha256": "219a22ed0a688537bf139f29db9b7b3e44642f4ea7ba0c42b02310f638a3a9e5",
+      "normalizedSha256": "9734a687158bf2b6301ae4ba50ab926c60d09f39c9e24ade7538ccf5c4342b5e"
+    },
+    {
+      "file": "security-atomic-output-frozen.log",
+      "rawSha256": "dab5208ff1ea3f1cebbf84ca54eeff2f1e619debc2ae26db0d7b12f641c79cf3",
+      "normalizedSha256": "4d6e2360e27bb1e07ceb9c66f796ba551d266c15d812379692c18e81bb1c039f"
+    },
+    {
+      "file": "security-frozen-check.log",
+      "rawSha256": "0aff5bbc6b7eedfa7ba2e4975f61337cc091de8de3bef7963e3007561cebc6e4",
+      "normalizedSha256": "1a118e30613a322d8cd22fb1092a549d64c140df397d96bacc3d91910d71f457"
+    }
+  ]
+}

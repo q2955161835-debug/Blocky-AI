@@ -1,0 +1,15 @@
+
+Execution of 1 workers started at 2026-09-19T14:59:32.309Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0","hardwareConcurrency":24,"width":915,"height":572,"dpr":1.5749999284744263},"load":{"samplesMs":[35.90000000002328,31,29.399999999906868,29.099999999976717,29.699999999953434],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":29.699999999953434},"saveCompile":{"samplesMs":[2,2.8999999999068677,2.1000000000931323,2.300000000046566,1.8000000000465661],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":2.1000000000931323},"runtime":{"samplesMs":[25.300000000046566,22.600000000093132,22.29999999993015,23.199999999953434,20.599999999976717],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":22.600000000093132}}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":60,"roundTrips":5,"elapsedMs":300525}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":120,"roundTrips":10,"elapsedMs":601067}
+[0-0] Error in "formal native Core gates.completes all 360 five-second cycles and 30 native archive round trips"
+cdpSession.detach: Target page, context or browser has been closed
+    at Context.<anonymous> (D:\1Folder\Blocky-AI\tests\e2e\core.e2e.ts:289:23)
+    at async Context.executeAsync (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1108:20)
+    at async Context.testFrameworkFnWrapper (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1189:14)
+[0-0] FAILED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+Spec Files:	 0 passed, 1 failed, 1 total (100% completed) in 00:11:40

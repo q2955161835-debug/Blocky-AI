@@ -1,0 +1,5 @@
+
+> blocky-studio@0.4.0 package:release D:\1Folder\Blocky-AI
+> node scripts/package-release.mjs
+
+{"directory":"dist\\Blocky-Studio-0.4.0","files":21,"bytes":252318911}

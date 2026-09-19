@@ -1,0 +1,42 @@
+
+Execution of 1 workers started at 2026-09-19T14:33:07.685Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0","hardwareConcurrency":24,"width":915,"height":572,"dpr":1.5749999284744263},"load":{"samplesMs":[51,45.09999999962747,41.80000000074506,38.10000000055879,41.799999999813735],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":41.80000000074506},"saveCompile":{"samplesMs":[2.8999999994412065,3.400000000372529,3,3.199999999254942,1.900000000372529],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":3},"runtime":{"samplesMs":[33.799999999813735,30.59999999962747,30.399999999441206,32.10000000055879,28.09999999962747],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":30.59999999962747}}
+[0-0] Error in "formal native Core gates.completes all 360 five-second cycles and 30 native archive round trips"
+page.evaluate: Error: studio runtime did not finish: {"cycle":8,"status":"not-started","hostAllowsNewRun":false,"visibility":"visible","focused":true,"compiling":false,"compiled":true,"canRun":true,"running":false,"busy":false,"exiting":false,"editedRevision":32,"renderedRevision":32,"controllerRevision":32,"paths":["/workspaces/research-agent/blocks/blocks/0/fields/ROLE"]}
+    at Object.cycle (http://tauri.localhost/assets/acceptance-tPSF2Ygu.js:1:5750)
+    at async <anonymous>:337:30
+    at Context.<anonymous> (D:\1Folder\Blocky-AI\tests\e2e\core.e2e.ts:205:37)
+    at async Context.executeAsync (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1108:20)
+    at async Context.testFrameworkFnWrapper (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1189:14)
+[0-0] FAILED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 153.0.0.0 windows #0-0] Running: msedge (v153.0.0.0) on windows
+[msedge 153.0.0.0 windows #0-0] Session ID: 47f2475d-c59f-4b18-95ca-e9d7627a160b
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] » tests\e2e\core.e2e.ts
+[msedge 153.0.0.0 windows #0-0] formal native Core gates
+[msedge 153.0.0.0 windows #0-0]    ✓ measures 100 blocks and 100 executed nodes with five post-warmup samples
+[msedge 153.0.0.0 windows #0-0]    ✓ preflights actual editor undo, runtime and a Rust archive round trip
+[msedge 153.0.0.0 windows #0-0]    ✓ rejects new runs while hidden and restores authorization through the existing instance
+[msedge 153.0.0.0 windows #0-0]    ✖ completes all 360 five-second cycles and 30 native archive round trips
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 3 passing (39.7s)
+[msedge 153.0.0.0 windows #0-0] 1 failing
+[msedge 153.0.0.0 windows #0-0]
+[msedge 153.0.0.0 windows #0-0] 1) formal native Core gates completes all 360 five-second cycles and 30 native archive round trips
+[msedge 153.0.0.0 windows #0-0] page.evaluate: Error: studio runtime did not finish: {"cycle":8,"status":"not-started","hostAllowsNewRun":false,"visibility":"visible","focused":true,"compiling":false,"compiled":true,"canRun":true,"running":false,"busy":false,"exiting":false,"editedRevision":32,"renderedRevision":32,"controllerRevision":32,"paths":["/workspaces/research-agent/blocks/blocks/0/fields/ROLE"]}
+    at Object.cycle (http://tauri.localhost/assets/acceptance-tPSF2Ygu.js:1:5750)
+    at async <anonymous>:337:30
+[msedge 153.0.0.0 windows #0-0] page.evaluate: Error: studio runtime did not finish: {"cycle":8,"status":"not-started","hostAllowsNewRun":false,"visibility":"visible","focused":true,"compiling":false,"compiled":true,"canRun":true,"running":false,"busy":false,"exiting":false,"editedRevision":32,"renderedRevision":32,"controllerRevision":32,"paths":["/workspaces/research-agent/blocks/blocks/0/fields/ROLE"]}
+[msedge 153.0.0.0 windows #0-0]     at Object.cycle (http://tauri.localhost/assets/acceptance-tPSF2Ygu.js:1:5750)
+[msedge 153.0.0.0 windows #0-0]     at async <anonymous>:337:30
+[msedge 153.0.0.0 windows #0-0]     at Context.<anonymous> (D:\1Folder\Blocky-AI\tests\e2e\core.e2e.ts:205:37)
+[msedge 153.0.0.0 windows #0-0]     at async Context.executeAsync (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1108:20)
+[msedge 153.0.0.0 windows #0-0]     at async Context.testFrameworkFnWrapper (D:\1Folder\Blocky-AI\node_modules\.pnpm\@wdio+utils@9.30.1\node_modules\@wdio\utils\build\index.js:1189:14)
+
+
+Spec Files:	 0 passed, 1 failed, 1 total (100% completed) in 00:00:44
