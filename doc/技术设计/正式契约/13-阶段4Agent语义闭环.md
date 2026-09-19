@@ -30,6 +30,8 @@ AgentServices.generate 返回 text、provider、transport、实际 model、响�
 
 blocky.provider-request/v1 绑定项目、资源、请求身份、模型、消息、预算、超时和可选温度。Host 独立校验用户资源绑定。401、429、5xx、畸形、过大及截断响应映射稳定错误，原始错误体不进入事件。原生确认显示模型、项目、输入大小和请求摘要，批准后才发出请求。
 
+同一次运行中重复进入同一模型或知识积木时，调用身份包含运行内单调调用序号；不能只用 runId 与 blockId 组成请求编号。每次调用的 started/completed/failed 事件共用其 correlationId，不同调用分别批准，供应商响应 ID 独立保存。
+
 ## 工具、批准与记忆
 
 首批工具 text.analyze/v1 在本机统计 Unicode 字符数、行数和空白分词数。它没有文件、网络、进程或用户 PTY 权限。资源必须采用 text-analyze-v1、version 1，permissions 和 capabilityRequirements 各只有 text.analyze；输入输出引用项目 schemas。工具 started/completed/failed 使用同一 correlationId，并继承 block/run 终态。

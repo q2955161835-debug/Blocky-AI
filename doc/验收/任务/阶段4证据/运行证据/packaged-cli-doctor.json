@@ -1,0 +1,1 @@
+{"schemaVersion":"blocky.cli/v1","ok":true,"command":"doctor","data":{"cli":"0.4.0","nativeStore":"0.4.0","runtime":"deterministic","modelApiCalled":false},"warnings":[],"artifacts":[],"nextCursor":null}

@@ -1,0 +1,51 @@
+[
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--native-e2e-target",
+    "files": 5453,
+    "bytes": 2557086123.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--release-native-target",
+    "files": 5325,
+    "bytes": 2489055673.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\apps--studio-host--target",
+    "files": 16323,
+    "bytes": 9646836312.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\native-test-web",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\try--native-test-web",
+    "files": 14,
+    "bytes": 1974711.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-desktop\\dist",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\apps--studio-desktop--dist",
+    "files": 5,
+    "bytes": 1949472.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.4.0",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\dist--Blocky-Studio-0.4.0",
+    "files": 21,
+    "bytes": 252318911.0,
+    "verified": true
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.4.0-candidate2",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段4-2026-09-19\\dist--Blocky-Studio-0.4.0-candidate2",
+    "files": 21,
+    "bytes": 252319047.0,
+    "verified": true
+  }
+]

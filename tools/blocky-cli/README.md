@@ -15,11 +15,27 @@
 $LASTEXITCODE
 ```
 
-创建目标的父目录必须已存在。文件已存在时退出码为 5，不提供强制覆盖开关。缺少存储程序返回 6；参数错误 2；校验失败 3；拒绝 live 运行 4；取消或超时 7；内部错误 10。`--timeout` 单位为毫秒，默认 30000；Ctrl+C 请求取消。机器脚本应直接调用 `blocky.cmd` 或 `node tools/blocky-cli/dist/main.mjs`，不要以 pnpm 包装进程的退出码代替 CLI 原始退出码。
+创建目标的父目录必须已存在。文件已存在时退出码为 5，不提供强制覆盖开关。缺少存储程序返回 6；参数错误 2；校验失败 3；拒绝 live 运行 4；取消或超时 7；内部错误 10。`--timeout` 单位为毫秒，Agent 运行默认 120000，具名任务默认 30000；Ctrl+C 请求取消。机器脚本应直接调用 `blocky.cmd` 或 `node tools/blocky-cli/dist/main.mjs`，不要以 pnpm 包装进程的退出码代替 CLI 原始退出码。
 
 `dist/` 包含入口脚本和 `bin/blocky-project-io.exe`，可整体移动到另一个目录运行；不依赖源码路径、不启动 WebView。源文件和工具协议不进入用户项目。
 
-当前不提供 live、官方 Skills 安装或六个原生兼容模板。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生，兼容草案不能运行。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
+阶段 4 已提供受控 `run start --live`；官方 Skills 安装和六个原生兼容模板尚未提供。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生，兼容草案不能运行。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
+
+## 阶段 4 Agent 运行
+
+`agent-loop` 是可编辑的文本分析项目示例，与四个官方知识蓝图分别列出。默认使用无网络模型，但本机工具仍需要批准。
+
+```powershell
+.\blocky.cmd project create --template agent-loop --output .\try\agent.blocky --json
+.\blocky.cmd run preflight .\try\agent.blocky --json
+.\blocky.cmd run start .\try\agent.blocky --simulate --input "Hello Blocky" --interactive --jsonl
+```
+
+在线生成先通过 `resource set` 配置用户模型、`secret import` 导入密钥引用，再将用户资源链接到项目并配置模型积木。`--live` 允许正式 Host 调用；是否真正联网由项目选中的模型决定，本地整理器不会因此变为远程模型。密钥不写入项目，也不作为命令行参数。
+
+每次模型、工具和项目记忆操作都按完整请求摘要批准；`--interactive` 逐次询问，脚本可用 `--approval-file` 传入本次预检返回的 SHA-256 数组。固定 `--run-id` 只固定身份，不能复用已消费的批准。缺少批准退出 4，运行失败退出 3，取消退出 7。运行默认 `--timeout 120000` 毫秒，项目预算可进一步收紧；显式 `--output` 仅保存成功运行产生的单一文件工件，目标存在时拒绝覆盖。
+
+JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模型用量；不能依据 `--live` 参数推断已调用外部 API。已验证的阶段 4 真实调用事实见[真实 Provider 验收](../../doc/验收/任务/阶段4证据/验收-2026-09-19-真实Provider与CLI.md)。
 
 ## 阶段 3 蓝图与真实来源
 
@@ -115,4 +131,4 @@ $LASTEXITCODE
 .\blocky.cmd diagnostics export .\try\logs.json --channel runtime --output .\try\diagnostics.json --json
 ```
 
-页面命令先生成可审阅候选，授权应用后才写入新项目；CLI 不打开浏览器或发布站点。具名任务执行真实受限 Rust 子进程，取消和超时等待结算，没有任意 Shell 或用户 PTY。诊断导出只保留时间、序号、级别、通道及合法丢弃计数，排除问题、答案、消息正文与属性；输出仍拒绝覆盖。所有本阶段模型结果来自确定性本地适配器，未真实调用外部大模型 API。
+页面命令先生成可审阅候选，授权应用后才写入新项目；CLI 不打开浏览器或发布站点。具名任务执行真实受限 Rust 子进程，取消和超时等待结算，没有任意 Shell 或用户 PTY。诊断导出只保留时间、序号、级别、通道及合法丢弃计数，排除问题、答案、消息正文与属性；输出仍拒绝覆盖。以上阶段 2 历史模型结果来自确定性本地适配器，未真实调用外部大模型 API；阶段 4 的真实模型路径见前述运行说明。

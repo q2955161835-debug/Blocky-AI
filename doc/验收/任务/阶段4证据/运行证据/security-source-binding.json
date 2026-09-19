@@ -1,0 +1,43 @@
+{
+  "source": "880ae5c73cd52557a2b4176d488a09b17c466440",
+  "checkedAt": "2026-09-19T23:00:29.8035452+08:00",
+  "packageHashMismatches": 0,
+  "hashes": [
+    {
+      "path": "apps/studio-host/src/patch_guard.rs",
+      "sha256": "24B22FC046BC2CB1EBB7217F757F9883814D8FC04F67B0118632F6D4CA8B80FB"
+    },
+    {
+      "path": "apps/studio-host/src/agent_data.rs",
+      "sha256": "ED0CC4D64929798E20B327F82570A22256D216AF58BEF8B0473C607F2432D8A0"
+    },
+    {
+      "path": "apps/studio-host/src/approval_ledger.rs",
+      "sha256": "38C355D5D0B923F85261F9F3E94FF0DEFD1CEE2616E92A72F4BE1F6196B016A8"
+    },
+    {
+      "path": "apps/studio-host/src/provider/mod.rs",
+      "sha256": "914D115E7DDC72AA157FE7336BCC1ABF018E8B7B8A2A0F012DCDE0EE109553B4"
+    },
+    {
+      "path": "apps/studio-host/src/provider/transport.rs",
+      "sha256": "FF5C935C759DBF91367B4FCE2E679C7EA6F60F0A88B3E3665FA559C446E48D4C"
+    },
+    {
+      "path": "tools/blocky-cli/src/atomic-output.ts",
+      "sha256": "37B1B96505E99EBB83AC2ECDC1B75609CA3503CF627D1D279214DC0A4C0DA563"
+    },
+    {
+      "path": "tools/blocky-cli/src/run-agent.ts",
+      "sha256": "5E837B75175B3E1B4C956D8627D8CD14070A22C472615EAD2BEB4CBB7C0C259C"
+    },
+    {
+      "path": "packages/block-catalog/src/agent-primitives.json",
+      "sha256": "DA62BDB22E9D9FB56C1CF6066CB02EA610EF755636EEADD5F44E0E22A6C6239D"
+    },
+    {
+      "path": "try/stage4/security/frozen-check.ts",
+      "sha256": "C96AF23923A1529166B25653F3726E91C27732DAB0CF7DCE51C683B7D54CC7AF"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "runId": "d4090634-d90f-48e1-9760-99aa46b0eff5",
+  "passed": true,
+  "schemaVersion": "blocky.soak/v1",
+  "startedAt": "2026-09-19T15:15:25.599Z",
+  "cycles": 360,
+  "roundTrips": 30,
+  "binary": {
+    "bytes": 44593664,
+    "sha256": "1e5d5aff55dceeb45a1eb360635ee811b26af20ddf1b3a10b2a77c0e87c62244"
+  },
+  "preparation": {
+    "baseline": "b2de62fa28f68bfff0cb49fdb80c7b1caa4e610fe1c98c6e4583cb8e0482cc33",
+    "blocks": 100,
+    "nodes": 100
+  },
+  "elapsedMs": 1803369,
+  "warmHeap": 19129492,
+  "finalHeap": 28306532,
+  "heapDelta": 9177040,
+  "trustedInput": [],
+  "errors": [],
+  "outbound": [],
+  "endedAt": "2026-09-19T15:45:28.968Z"
+}
