@@ -155,7 +155,9 @@ impl BuilderHost {
             .map_err(|_| "BLK-BUILDER-STATE")?
             .active
             .remove(&start.request.request_id);
-        if cancel.load(Ordering::SeqCst) {
+        if cancel.load(Ordering::SeqCst)
+            && result.as_ref().err().is_none_or(|code| code != "BLK-BUILDER-TIMEOUT")
+        {
             return Err("BLK-BUILDER-CANCELLED".into());
         }
         let result = result?;
