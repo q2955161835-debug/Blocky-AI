@@ -9,6 +9,7 @@ import {
   createProject,
 } from "../../tools/blocky-cli/src/native-store";
 import { createStarter } from "../../packages/test-fixtures/src";
+import packageInfo from "../../package.json";
 import { digest } from "../../packages/language-schema/src";
 import { canonicalJson } from "../../packages/language-schema/src";
 import { makePatch } from "../../packages/builder-protocol/src";
@@ -158,7 +159,7 @@ it("reports only implemented commands and a real native store version", () => {
   expect(h.lines[0].data.commands).not.toContain("compat export");
   const doctor = run(["doctor", "--json"]);
   expect(doctor.code).toBe(0);
-  expect(doctor.lines[0].data.nativeStore).toBe("0.4.0");
+  expect(doctor.lines[0].data.nativeStore).toBe(packageInfo.version);
   expect(doctor.lines[0].data.modelApiCalled).toBe(false);
 });
 it("creates a real archive and refuses to clobber the same target", async () => {

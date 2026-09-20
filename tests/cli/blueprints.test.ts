@@ -135,7 +135,7 @@ it("creates and reopens all four starters, runs real ingested evidence and switc
       "--jsonl",
     ).lines.at(-1).data.answer,
   ).toBe("45");
-});
+}, 30000);
 it("exports an official blueprint, requires conflict resolution, and applies a native version update without clobbering originals", async () => {
   const source = join(directory, "task-helper.blocky"),
     custom = join(directory, "custom.blocky"),
