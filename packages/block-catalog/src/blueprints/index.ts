@@ -39,7 +39,13 @@ const legacySchema = z
     blueprintId: id,
     displayName: z.string().min(1).max(100),
     version: z.literal(1),
-    catalogVersion: z.enum([catalogVersion, "0.2.0", "0.1.0"]),
+    catalogVersion: z.enum([
+      catalogVersion,
+      "0.4.0",
+      "0.3.0",
+      "0.2.0",
+      "0.1.0",
+    ]),
     source: z
       .object({ kind: z.literal("personal"), projectId: id, moduleId: id })
       .strict(),

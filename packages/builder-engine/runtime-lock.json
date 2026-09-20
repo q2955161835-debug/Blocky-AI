@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "blocky.builder-runtime/v1",
+  "nodeVersion": "22.23.1",
+  "piVersion": "0.86.0",
+  "files": [
+    {
+      "name": "builder.mjs",
+      "bytes": 572178,
+      "sha256": "67a1164b2f6aba54b9c1816d4a10d2c14e843ba2d9da775fd393191d7ea3f8b1"
+    },
+    {
+      "name": "node.exe",
+      "bytes": 86989128,
+      "sha256": "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed"
+    }
+  ]
+}

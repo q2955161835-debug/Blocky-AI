@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stableId } from "@blocky/language-schema";
+import { stableId, containsCredential } from "@blocky/language-schema";
 
 const id = z.string().regex(stableId).max(200);
 export const builderTools = ["inspect", "draft", "patch", "verify"] as const;
@@ -44,16 +44,32 @@ export type BuildSpec = z.infer<typeof draftInputSchema> & {
   targetModuleIds: string[];
   selectedBlockIds: string[];
   createSurface: boolean;
+  requiredResources: { resourceId: string; kind: string }[];
+  requestedCapabilities: string[];
+  source: { catalogVersion: string; moduleId: string; blockIds: string[] };
 };
+export const builderEventSchema = z
+  .object({
+    schemaVersion: z.literal("blocky.builder-event/v1"),
+    requestId: id,
+    sequence: z.number().int().positive(),
+    kind: z.enum([
+      "tool.started",
+      "tool.completed",
+      "model.started",
+      "model.completed",
+    ]),
+    tool: z.enum(builderTools).optional(),
+    turn: z.number().int().min(1).max(4).optional(),
+  })
+  .strict();
+export type BuilderEvent = z.infer<typeof builderEventSchema>;
 /** Reject credentials in user/engine text before it can enter a candidate or log. */
 export function builderInputBudget(input: unknown) {
   let nodes = 0;
   const visit = (value: unknown, depth: number) => {
     if (++nodes > 30000 || depth > 80) throw Error("BLK-BUILDER-001");
-    if (
-      typeof value === "string" &&
-      /\bBearer\s+\S+|(?:password|token|api[_-]?key)\s*[=:]\s*\S+/i.test(value)
-    )
+    if (typeof value === "string" && containsCredential(value))
       throw Error("BLK-BUILDER-001");
     if (value && typeof value === "object")
       Object.values(value).forEach((v) => visit(v, depth + 1));

@@ -21,6 +21,9 @@ export async function inspectBuilder(
   if (request.selection.some((id) => !blocks.some((b) => b.id === id)))
     throw Error("BLK-BUILDER-002");
   const compiled = await compileProject(project, registry);
+  const declaredIds = new Set(
+    project.manifest.resources.map((r) => r.resourceId),
+  );
   const summaries = blocks.map((b) => ({
     id: b.id,
     type: b.type,
@@ -49,11 +52,13 @@ export async function inspectBuilder(
     resources: [
       ...Object.values(project.resources),
       ...[...(registry?.values() ?? [])],
-    ].map((r) => ({
-      resourceId: r.resourceId,
-      kind: r.kind,
-      displayName: r.displayName,
-    })),
+    ]
+      .filter((r) => declaredIds.has(r.resourceId))
+      .map((r) => ({
+        resourceId: r.resourceId,
+        kind: r.kind,
+        displayName: r.displayName,
+      })),
     catalog: catalog.map(
       ({ type, label, fields, inputs, requiredInputs, fieldOptions }) => ({
         type,

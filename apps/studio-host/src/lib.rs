@@ -1,4 +1,6 @@
 pub mod agent_data;
+pub mod builder;
+mod surface_spec;
 mod approval_ledger;
 pub mod conversion;
 pub mod knowledge;

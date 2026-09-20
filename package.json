@@ -1,11 +1,11 @@
 {
   "name": "blocky-studio",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.23.0",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.19.0"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -15,14 +15,15 @@
     "check:core": "pnpm check && pnpm test:component && pnpm test:host && pnpm build:cli && pnpm test:cli && pnpm test:e2e:build && pnpm test:e2e && pwsh -NoProfile -File scripts/check-native-core.ps1 core",
     "check:full": "pnpm check:core && pwsh -NoProfile -File scripts/check-native-core.ps1 full",
     "blocky": "node tools/blocky-cli/dist/main.mjs",
-    "build:cli": "cargo build --manifest-path apps/studio-host/Cargo.toml --release --bin blocky-project-io && pnpm --dir tools/blocky-cli build",
+    "build:cli": "pnpm build:builder && cargo build --manifest-path apps/studio-host/Cargo.toml --release --bin blocky-project-io && pnpm --dir tools/blocky-cli build",
+    "build:builder": "node scripts/build-builder.mjs",
     "test:component": "vitest run tests/component",
     "test:host": "cargo test --manifest-path apps/studio-host/Cargo.toml --lib --bin blocky-project-io",
     "test:cli": "vitest run tests/cli",
     "test:e2e:build": "pwsh -NoProfile -File scripts/build-native-tests.ps1",
     "test:e2e": "wdio run tests/e2e/wdio.conf.ts",
-    "dev": "pnpm --dir apps/studio-host tauri dev",
-    "build": "pnpm --dir apps/studio-host tauri build --no-bundle",
+    "dev": "pnpm build:builder && pnpm --dir apps/studio-host tauri dev",
+    "build": "pnpm build:builder && pnpm --dir apps/studio-host tauri build --no-bundle && node scripts/install-builder.mjs apps/studio-host/target/release",
     "build:release": "pwsh -NoProfile -File scripts/build-release.ps1",
     "check:release": "node scripts/check-release.mjs",
     "package:release": "node scripts/package-release.mjs"

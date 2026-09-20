@@ -70,14 +70,22 @@ describe("Blocky native editor", () => {
     const canvas = page.locator(".blockly-host");
     const background = page.locator(".blocklyMainBackground");
     const blank = await background.evaluate((el) => {
-      const r=el.getBoundingClientRect();
-      for(let y=r.top+20;y<Math.min(r.bottom,innerHeight)-20;y+=25)
-        for(let x=r.left+20;x<Math.min(r.right,innerWidth)-20;x+=25)
-          if(document.elementFromPoint(x,y)===el)return {x,y};
+      const r = el.getBoundingClientRect();
+      for (
+        let y = r.top + 20;
+        y < Math.min(r.bottom, innerHeight) - 20;
+        y += 25
+      )
+        for (
+          let x = r.left + 20;
+          x < Math.min(r.right, innerWidth) - 20;
+          x += 25
+        )
+          if (document.elementFromPoint(x, y) === el) return { x, y };
       return null;
     });
-    if(!blank)throw Error('No observed blank canvas point');
-    await page.mouse.click(blank.x,blank.y);
+    if (!blank) throw Error("No observed blank canvas point");
+    await page.mouse.click(blank.x, blank.y);
     expect(
       await canvas.evaluate((el) => el.contains(document.activeElement)),
     ).toBe(true);
@@ -105,20 +113,72 @@ describe("Blocky native editor", () => {
     await expect($(".bottom-panel")).toBeDisplayed();
     await expect($$(".workspace-tabs > div")).toBeElementsArrayOfSize(2);
   });
-  it("reviews explicit surface permissions, runs the actual isolated page and reopens its tab", async () => {
+  it("generates a local builder proposal, renders actual readonly blocks, rejects and accepts with undo", async () => {
+    await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
+    );
+    await page
+      .getByRole("button", { name: "Blocky 构建助手", exact: true })
+      .click();
+    await page.getByLabel("构建需求").fill("植物课堂助手");
+    await page.getByRole("button", { name: "生成方案", exact: true }).click();
+    try {
+      await page
+        .getByRole("button", { name: "审阅候选差异", exact: true })
+        .waitFor({ timeout: 30000 });
+    } catch (error) {
+      console.log(
+        "BUILDER_UI_FAILURE",
+        await page.getByRole("dialog", { name: "Blocky 构建助手" }).innerText(),
+      );
+      await page.getByRole("button", { name: "关闭构建助手" }).click();
+      throw error;
+    }
+    await page
+      .getByRole("button", { name: "审阅候选差异", exact: true })
+      .click();
+    await page
+      .locator('[aria-label="只读积木画布"] .blocklyBlockCanvas')
+      .first()
+      .waitFor();
+    expect(
+      await page.locator('[aria-label="只读积木画布"] .blocklyPath').count(),
+    ).toBeGreaterThan(0);
+    await page.getByRole("button", { name: "拒绝", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Blocky 构建助手", exact: true })
+      .click();
+    await page.getByLabel("构建需求").fill("植物课堂助手");
+    await page.getByRole("button", { name: "生成方案", exact: true }).click();
+    await page
+      .getByRole("button", { name: "审阅候选差异", exact: true })
+      .click({ timeout: 30000 });
+    await page.getByRole("button", { name: "接受变更", exact: true }).click();
+    await page.waitForFunction(() =>
+      document.querySelector(".statusbar")?.textContent?.includes("已应用"),
+    );
+    await page.keyboard.press("Control+z");
+  });
+  it("opens a previously accepted legacy surface, runs the isolated page and reopens its tab", async () => {
     await $(
       "//aside[contains(@class,'library')]//button[contains(.,'研究助手')]",
     ).click();
-    await $("button=创建应用界面").click();
-    await $("dialog[aria-label='审阅变更']").waitForDisplayed();
-    await expect($("[aria-label='应用界面文件变更']")).toBeDisplayed();
-    for (const checkbox of await $$(".permission-choice input"))
-      await checkbox.click();
-    await $("//dialog//button[contains(.,'接受变更')]").click();
-    try { await $("iframe[title='资料问答']").waitForDisplayed(); }
-    catch(error) {
-      console.log('SURFACE_ACCEPT_FAILURE',await page.locator('dialog').allTextContents(),await page.locator('.statusbar').innerText());
-      await page.screenshot({path:'try/stage4/native/surface-accept-failure.png'});
+    expect(
+      await page.evaluate(() =>
+        (window as any).__BLOCKY_ACCEPTANCE__.loadSurfaceRegressionProject(),
+      ),
+    ).toMatchObject({ same: true });
+    try {
+      await $("iframe[title='资料问答']").waitForDisplayed();
+    } catch (error) {
+      console.log(
+        "SURFACE_ACCEPT_FAILURE",
+        await page.locator("dialog").allTextContents(),
+        await page.locator(".statusbar").innerText(),
+      );
+      await page.screenshot({
+        path: "try/stage4/native/surface-accept-failure.png",
+      });
       throw error;
     }
     const frame = page.frameLocator("iframe[title='资料问答']");
@@ -222,12 +282,72 @@ describe("Blocky native editor", () => {
     await $(
       "//aside[contains(@class,'library')]//button[contains(.,'问答页面')]",
     ).click();
-    try { await $("iframe[title='资料问答']").waitForDisplayed(); }
-    catch(error) {
-      console.log('SURFACE_ACCEPT_FAILURE',await page.locator('dialog').allTextContents(),await page.locator('.statusbar').innerText());
-      await page.screenshot({path:'try/stage4/native/surface-accept-failure.png'});
+    try {
+      await $("iframe[title='资料问答']").waitForDisplayed();
+    } catch (error) {
+      console.log(
+        "SURFACE_ACCEPT_FAILURE",
+        await page.locator("dialog").allTextContents(),
+        await page.locator(".statusbar").innerText(),
+      );
+      await page.screenshot({
+        path: "try/stage4/native/surface-accept-failure.png",
+      });
       throw error;
     }
+  });
+  it("operates a generated task page with attachment, approval, progress, viewport and preview lifecycle", async () => {
+    expect(
+      await page.evaluate(() =>
+        (window as any).__BLOCKY_ACCEPTANCE__.loadSurfaceRegressionProject(
+          true,
+        ),
+      ),
+    ).toMatchObject({ same: true });
+    const frame = page.frameLocator('iframe[title="学习资料查询"]');
+    await frame.getByLabel("问题", { exact: true }).fill("水循环如何形成？");
+    await frame.locator("#attachment").setInputFiles({
+      name: "class-notes.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("课堂笔记：观察蒸发与降水。"),
+    });
+    await frame.getByRole("button", { name: "查询资料", exact: true }).click();
+    await page
+      .getByRole("dialog", { name: "运行应用页面" })
+      .getByRole("button", { name: "取消", exact: true })
+      .click();
+    await page.waitForFunction(() => document.querySelector("iframe") !== null);
+    await browser.waitUntil(async () =>
+      (await frame.locator("#status").innerText()).includes("未能完成"),
+    );
+    await frame.getByRole("button", { name: "查询资料", exact: true }).click();
+    await page
+      .getByRole("button", { name: "允许本次运行", exact: true })
+      .click();
+    await browser.waitUntil(
+      async () => (await frame.locator("#answer").innerText()).includes("蒸发"),
+      { timeout: 15000 },
+    );
+    for (const viewport of ["mobile", "tablet", "desktop"]) {
+      await page.getByLabel("预览视口", { exact: true }).selectOption(viewport);
+      expect(await frame.locator("#submit").isVisible()).toBe(true);
+      const width = await frame.locator("body").evaluate(() => innerWidth);
+      expect(width).toBe(
+        viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1280,
+      );
+      if (viewport === "mobile")
+        expect(
+          (await page.locator("iframe").boundingBox())!.width,
+        ).toBeLessThanOrEqual(390);
+    }
+    await mkdir("try/stage5/native", { recursive: true });
+    await page.screenshot({ path: "try/stage5/native/generated-surface.png" });
+    await page.getByRole("button", { name: "停止预览", exact: true }).click();
+    expect(await page.locator("iframe").count()).toBe(0);
+    await page.getByRole("button", { name: "启动预览", exact: true }).click();
+    await frame.locator("#submit").waitFor();
+    await page.getByRole("button", { name: "刷新", exact: true }).click();
+    await frame.locator("#submit").waitFor();
   });
   it("keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls", async () => {
     await $(
@@ -256,18 +376,35 @@ describe("Blocky native editor", () => {
     await expect($$(".panel-body .log-row")).toBeElementsArrayOfSize(0);
     await browser.saveScreenshot("try/stage2-e2e/native-output.png");
   });
-  it('runs stage 4 conditional JSON output and saves new semantics through native storage', async()=>{
-    const stored=await page.evaluate(()=>(window as any).__BLOCKY_ACCEPTANCE__.loadAgentSemanticsProject());
-    expect(stored).toEqual({same:true,minimumReaderVersion:'0.4.0'});
-    await page.locator('.run-panel').getByRole('button',{name:'▶ 运行',exact:true}).click();
-    await page.waitForFunction(()=>document.querySelector('.answer pre')?.textContent?.includes('true'));
-    expect(await page.locator('.answer pre').innerText()).toContain('"ok": true');
-    await page.getByLabel('向 Agent 提问').fill('no');
-    await page.locator('.run-panel').getByRole('button',{name:'▶ 运行',exact:true}).click();
-    await page.waitForFunction(()=>document.querySelector('.answer pre')?.textContent?.includes('false'));
-    expect(await page.locator('.answer pre').innerText()).toContain('"ok": false');
-    await mkdir('try/stage4/native',{recursive:true});
-    await page.screenshot({path:'try/stage4/native/structured-branches.png'});
+  it("runs stage 4 conditional JSON output and saves new semantics through native storage", async () => {
+    const stored = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadAgentSemanticsProject(),
+    );
+    expect(stored).toEqual({ same: true, minimumReaderVersion: "0.4.0" });
+    await page
+      .locator(".run-panel")
+      .getByRole("button", { name: "▶ 运行", exact: true })
+      .click();
+    await page.waitForFunction(() =>
+      document.querySelector(".answer pre")?.textContent?.includes("true"),
+    );
+    expect(await page.locator(".answer pre").innerText()).toContain(
+      '"ok": true',
+    );
+    await page.getByLabel("向 Agent 提问").fill("no");
+    await page
+      .locator(".run-panel")
+      .getByRole("button", { name: "▶ 运行", exact: true })
+      .click();
+    await page.waitForFunction(() =>
+      document.querySelector(".answer pre")?.textContent?.includes("false"),
+    );
+    expect(await page.locator(".answer pre").innerText()).toContain(
+      '"ok": false',
+    );
+    await mkdir("try/stage4/native", { recursive: true });
+    await page.screenshot({
+      path: "try/stage4/native/structured-branches.png",
+    });
   });
-
 });

@@ -28,6 +28,10 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
+    if value["operation"].as_str().is_some_and(|s|s.starts_with("builder-")) {
+        let result=std::env::var_os("LOCALAPPDATA").map(std::path::PathBuf::from).ok_or_else(||"BLK-BUILDER-STATE".to_owned()).and_then(|root|blocky_studio::builder::dispatch(root.join("ai.blocky.studio"),&value));
+        return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};
+    }
     if value["operation"]
         .as_str()
         .is_some_and(|s| s.starts_with("agent-"))

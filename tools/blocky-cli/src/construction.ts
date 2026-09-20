@@ -16,13 +16,23 @@ import {
   applyPatch as applyPatchDomain,
 } from "@blocky/builder-protocol";
 import { conversionCandidate as conversionCandidateDomain } from "@blocky/conversion-core";
-import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
+import {
+  draftSurface as draftSurfaceDomain,
+  draftGeneratedSurface,
+  buildSurface,
+} from "@blocky/app-surface";
 import { readProject, applyProjectPatch, validatePatch } from "./native-store";
 import { type Args, allow, required } from "./arguments";
 import { envelope, CliError } from "./protocol";
-import { artifactInfo, readJsonArtifact, writeJsonArtifact } from "./artifacts";
+import {
+  artifactInfo,
+  readJsonArtifact,
+  writeJsonArtifact,
+  writeTextArtifact,
+} from "./artifacts";
 const operations = [
   "surface.create",
+  "surface.build",
   "blueprint.create",
   "blueprint.show",
   "blueprint.official",
@@ -35,7 +45,8 @@ const operations = [
   "conversion.scan",
 ];
 export const constructionHelp = [
-  "surface create <file.blocky> --module <id> --output <patch.json> --json",
+  "surface create <file.blocky> --module <id> [--spec <surface-spec.json>] --output <patch.json> --json",
+  "surface build <file.blocky> --surface-id <id> --output <page.html> --json",
   "blueprint create <file.blocky> --module <id> --blocks <id,id> --name <name> --output <blueprint.json> --json",
   "blueprint show <blueprint.json> --json",
   "blueprint official <starter-id> --output <blueprint.json> --json",
@@ -59,9 +70,11 @@ function unwrapPatch(input: unknown) {
     input &&
     typeof input === "object" &&
     "schemaVersion" in input &&
-    ["blocky.conversion/v1alpha1", "blocky.conversion/v1"].includes(
-      String(input.schemaVersion),
-    ) &&
+    [
+      "blocky.conversion/v1alpha1",
+      "blocky.conversion/v1",
+      "blocky.builder-candidate/v1",
+    ].includes(String(input.schemaVersion)) &&
     "patch" in input
   )
     return input.patch;
@@ -113,7 +126,8 @@ export async function construction(args: Args, signal: AbortSignal) {
       };
     }
     const allowed: Record<string, string[]> = {
-      "surface.create": ["module", "output", "json"],
+      "surface.create": ["module", "spec", "output", "json"],
+      "surface.build": ["surface-id", "output", "json"],
       "blueprint.create": ["module", "blocks", "name", "output", "json"],
       "blueprint.insert": [
         "module",
@@ -140,6 +154,19 @@ export async function construction(args: Args, signal: AbortSignal) {
     };
     allow(args, allowed[command], 3);
     const project = await readProject(args.words[2]);
+    if (command === "surface.build") {
+      const built = buildSurface(project, required(args, "surface-id"));
+      signal.throwIfAborted();
+      const result = envelope(command, {
+        surfaceId: built.surfaceId,
+        outputRef: built.outputRef,
+        dependencies: built.dependencies,
+      });
+      result.artifacts = [
+        await writeTextArtifact(required(args, "output"), built.html),
+      ];
+      return { code: 0, result };
+    }
     const userRegistry = project.manifest.resources.some(
       (r) => r.scope === "user",
     )
@@ -185,11 +212,19 @@ export async function construction(args: Args, signal: AbortSignal) {
       );
 
     if (command === "surface.create") {
-      const draft = await draftSurface(
-        project,
-        required(args, "module"),
-        "explicit-user-command",
-      );
+      const draft = args.options.has("spec")
+        ? await draftGeneratedSurface(
+            project,
+            required(args, "module"),
+            "explicit-user-command",
+            await readJsonArtifact(required(args, "spec")),
+            userRegistry,
+          )
+        : await draftSurface(
+            project,
+            required(args, "module"),
+            "explicit-user-command",
+          );
       const patch = await makePatch(project, [
         { op: "app-surface.add", ...draft },
       ]);

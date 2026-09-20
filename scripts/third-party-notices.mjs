@@ -13,6 +13,12 @@ const registry = await json("vendor/licenses/registry.json").catch((error) => {
 });
 const modelRegistry = await json("vendor/models/registry.json");
 const entries = [
+  {
+    name: "node",
+    version: "22.23.1",
+    license: "MIT and bundled third-party licenses",
+    path: resolve("vendor/node"),
+  },
   ...js.flatMap((p) =>
     p.paths.map((path, i) => ({
       name: p.name,

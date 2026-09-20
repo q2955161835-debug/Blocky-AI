@@ -1,10 +1,15 @@
-import { catalog, catalogVersion, getBlock, createAgentExample } from "@blocky/block-catalog";
+import {
+  catalog,
+  catalogVersion,
+  getBlock,
+  createAgentExample,
+} from "@blocky/block-catalog";
 import {
   officialStarters,
   createBlueprintProject,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
-import { runAgent } from './run-agent';
+import { runAgent } from "./run-agent";
 import { projectDigest } from "@blocky/project-model";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
@@ -20,6 +25,8 @@ import {
 } from "./native-store";
 import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
+import { builderCommand, builderHelp } from "./builder";
+import { builderWorkCommand, builderWorkHelp } from "./builder-work";
 import { conversion, conversionHelp } from "./conversion";
 import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
@@ -32,13 +39,15 @@ import {
   userRegistryMap,
 } from "./user-config";
 export const help = {
-  version: "0.4.0",
+  version: "0.5.0",
   commands: [
     ...knowledgeHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
     ...constructionHelp,
+    ...builderHelp,
+    ...builderWorkHelp,
     ...conversionHelp,
     ...taskHelp,
     "diagnostics export <logs.json> --output <diagnostics.json> [--channel <name>] --json",
@@ -65,6 +74,10 @@ export async function dispatch(
   signal: AbortSignal,
 ) {
   const command = args.words.slice(0, 2).join(".");
+  const workResult = await builderWorkCommand(args, signal);
+  if (workResult) return workResult;
+  const builderResult = await builderCommand(args, signal);
+  if (builderResult) return builderResult;
   const knowledge = await knowledgeCommand(args, signal);
   if (knowledge) return knowledge;
   if (
@@ -79,14 +92,14 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope("version", {
-        cli: "0.4.0",
-        core: "0.4.0",
+        cli: "0.5.0",
+        core: "0.5.0",
         projectSchema: "blocky.project/v1",
         skills: null,
       }),
     };
   }
-  if (args.options.has("live") && command !== 'run.start')
+  if (args.options.has("live") && command !== "run.start")
     throw new CliError(
       4,
       "BLK-PERM-001",
@@ -98,7 +111,7 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        cli: "0.4.0",
+        cli: "0.5.0",
         nativeStore: await doctor(),
         runtime: "deterministic",
         modelApiCalled: false,
@@ -135,18 +148,37 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        templates: [...officialStarters.map((s) => ({
-          ...s,
-          templateId: s.id,
-          kind: "blueprint",
-          compatibilityClaim: "none",
-        })), {id:'agent-loop',templateId:'agent-loop',displayName:'文本分析 Agent',kind:'project',compatibilityClaim:'none'}],
+        templates: [
+          ...officialStarters.map((s) => ({
+            ...s,
+            templateId: s.id,
+            kind: "blueprint",
+            compatibilityClaim: "none",
+          })),
+          {
+            id: "agent-loop",
+            templateId: "agent-loop",
+            displayName: "文本分析 Agent",
+            kind: "project",
+            compatibilityClaim: "none",
+          },
+        ],
       }),
     };
   }
   if (command === "template.show") {
     allow(args, ["json"], 3);
-    if(args.words[2]==='agent-loop')return {code:0,result:envelope(command,{templateId:'agent-loop',kind:'project',displayName:'文本分析 Agent',sampleInput:'Hello Blocky',compatibilityClaim:'none'})};
+    if (args.words[2] === "agent-loop")
+      return {
+        code: 0,
+        result: envelope(command, {
+          templateId: "agent-loop",
+          kind: "project",
+          displayName: "文本分析 Agent",
+          sampleInput: "Hello Blocky",
+          compatibilityClaim: "none",
+        }),
+      };
     const selected = officialStarters.find((s) => s.id === args.words[2]);
     if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     return {
@@ -161,10 +193,16 @@ export async function dispatch(
   }
   if (command === "project.create") {
     allow(args, ["json", "template", "output"], 2);
-    if (required(args,'template')!=='agent-loop' && !officialStarters.some((s) => s.id === required(args, "template")))
+    if (
+      required(args, "template") !== "agent-loop" &&
+      !officialStarters.some((s) => s.id === required(args, "template"))
+    )
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     const output = required(args, "output"),
-      project = required(args,'template')==='agent-loop'?createAgentExample():await createBlueprintProject(required(args, "template"));
+      project =
+        required(args, "template") === "agent-loop"
+          ? createAgentExample()
+          : await createBlueprintProject(required(args, "template"));
     await createProject(output, project);
     const bytes = await readFile(output);
     const result = envelope(command, {
@@ -210,13 +248,26 @@ export async function dispatch(
   allow(
     args,
     command === "run.start"
-      ? ["simulate", "live", "jsonl", "input", "entry", "module", "timeout", "run-id", "approval-file", "interactive", "output"]
+      ? [
+          "simulate",
+          "live",
+          "jsonl",
+          "input",
+          "entry",
+          "module",
+          "timeout",
+          "run-id",
+          "approval-file",
+          "interactive",
+          "output",
+        ]
       : ["json"],
     moduleList ? 4 : 3,
   );
   if (
     command === "run.start" &&
-    (args.options.has('simulate') === args.options.has('live') || !args.options.has("jsonl"))
+    (args.options.has("simulate") === args.options.has("live") ||
+      !args.options.has("jsonl"))
   )
     throw new CliError(
       2,
@@ -304,5 +355,12 @@ export async function dispatch(
       "项目存在编译错误，未执行运行。",
       "使用 project validate 查看结构化诊断。",
     );
-  return runAgent(args, project, compiled.interaction.entries, userRegistry, write, signal);
+  return runAgent(
+    args,
+    project,
+    compiled.interaction.entries,
+    userRegistry,
+    write,
+    signal,
+  );
 }

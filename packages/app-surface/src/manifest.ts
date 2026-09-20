@@ -7,11 +7,15 @@ import {
   type Json,
 } from "@blocky/language-schema";
 import sources from "./sources.json";
+import { generatedSourceFiles } from "./generated";
 const id = z.string().regex(stableId).max(200),
   ref = z.string().refine(validRef);
 export const surfaceManifest = z
   .object({
-    schemaVersion: z.literal("blocky.app-surface/v1alpha1"),
+    schemaVersion: z.enum([
+      "blocky.app-surface/v1alpha1",
+      "blocky.app-surface/v1",
+    ]),
     surfaceId: id,
     displayName: z.string().min(1).max(100),
     sourceRootRef: ref,
@@ -97,10 +101,21 @@ export function validateSurface(
     )
       throw Error();
     const expected = {
-      ...sourceFiles(m.surfaceId),
+      ...(m.schemaVersion === "blocky.app-surface/v1"
+        ? generatedSourceFiles(
+            m.surfaceId,
+            draft.files[`${base}/surface-spec.json`],
+          )
+        : sourceFiles(m.surfaceId)),
       [`${base}/manifest.json`]: m,
       [m.bridgeRef]: b,
     };
+    if (
+      m.schemaVersion === "blocky.app-surface/v1" &&
+      (draft.files[`${base}/surface-spec.json`] as { title?: string })
+        ?.title !== m.displayName
+    )
+      throw Error();
     if (canonicalJson(draft.files) !== canonicalJson(expected)) throw Error();
     return draft;
   } catch {

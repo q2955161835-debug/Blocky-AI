@@ -1,0 +1,175 @@
+[
+  {
+    "name": "inspect",
+    "description": "Read the authorized module, selection, catalog and diagnostics. No file or shell access.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "draft",
+    "description": "Create a visible plan and acceptance criteria before proposing changes. Explain intent must include explanation and never patch.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan",
+        "acceptanceCriteria"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "patch",
+    "description": "Propose semantic operations, never write the project. Requires draft. Allowed block.add, block.update(fields), block.move(x,y), block.remove in the target module only. Repair allows only selected/diagnostic field updates. Optional surface is a typed task form spec compiled into locked source; requires explicit createSurface. Use empty operations for surface-only proposals.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "surface": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "type": "string",
+              "const": "blocky.surface-spec/v1"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "layout": {
+              "type": "string",
+              "enum": [
+                "stack",
+                "split"
+              ]
+            },
+            "submitLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "resultLabel": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "attachment": {
+              "type": "boolean"
+            },
+            "confirmation": {
+              "type": "boolean"
+            },
+            "fields": {
+              "minItems": 1,
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]{0,39}$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "textarea",
+                      "select"
+                    ]
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "options": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "type",
+                  "required",
+                  "options"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "title",
+            "description",
+            "layout",
+            "submitLabel",
+            "resultLabel",
+            "attachment",
+            "confirmation",
+            "fields"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "operations"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "verify",
+    "description": "Compile candidate without running models or tools. Required after patch. No shell or filesystem access.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  }
+]

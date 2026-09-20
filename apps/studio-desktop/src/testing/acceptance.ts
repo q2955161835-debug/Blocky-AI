@@ -12,6 +12,9 @@ import { Runtime } from "@blocky/runtime-core";
 import { Blockly } from "../../../../packages/ui-editor/src/blocks";
 import { invoke } from "@tauri-apps/api/core";
 import type { Studio } from "../composition/useStudio";
+import { draftSurface, draftGeneratedSurface } from "@blocky/app-surface";
+import { makePatch, applyPatch } from "@blocky/builder-protocol";
+import { validatePatch } from "../composition/host";
 
 // This module is imported only by the native-test build, never by ordinary builds.
 export function install(get: () => Studio) {
@@ -149,21 +152,64 @@ export function install(get: () => Studio) {
   };
   const api = {
     async loadAgentSemanticsProject() {
-      const project = createAgentExample('stage4-native-semantics');
+      const project = createAgentExample("stage4-native-semantics");
       // Pure language fixture. Actual Host approval/tool UI is separately tested in the ordinary candidate.
-      const body = project.workspaces['research-agent'].blocks.blocks[0].inputs!.BODY.block!;
-      body.next = {block:{type:'core.logic.condition',id:'native-condition',fields:{SOURCE:'input',OP:'equals',VALUE:'yes'},inputs:{
-        THEN:{block:{type:'core.data.set',id:'native-yes',fields:{VALUE:'{"ok":true}'}}},
-        ELSE:{block:{type:'core.data.set',id:'native-no',fields:{VALUE:'{"ok":false}'}}},
-      },next:{block:{type:'core.output.structured',id:'native-output',fields:{SCHEMA:'schemas/native-result.json'}}}}};
-      project.schemas['schemas/native-result.json']={type:'object',properties:{ok:{type:'boolean'}},required:['ok'],additionalProperties:false};
+      const body =
+        project.workspaces["research-agent"].blocks.blocks[0].inputs!.BODY
+          .block!;
+      body.next = {
+        block: {
+          type: "core.logic.condition",
+          id: "native-condition",
+          fields: { SOURCE: "input", OP: "equals", VALUE: "yes" },
+          inputs: {
+            THEN: {
+              block: {
+                type: "core.data.set",
+                id: "native-yes",
+                fields: { VALUE: '{"ok":true}' },
+              },
+            },
+            ELSE: {
+              block: {
+                type: "core.data.set",
+                id: "native-no",
+                fields: { VALUE: '{"ok":false}' },
+              },
+            },
+          },
+          next: {
+            block: {
+              type: "core.output.structured",
+              id: "native-output",
+              fields: { SCHEMA: "schemas/native-result.json" },
+            },
+          },
+        },
+      };
+      project.schemas["schemas/native-result.json"] = {
+        type: "object",
+        properties: { ok: { type: "boolean" } },
+        required: ["ok"],
+        additionalProperties: false,
+      };
       get().controller.replace(project);
-      get().setSession(restoreSession(project,null));
-      get().setQuestion('yes');get().setStarted(true);
-      await paint();await wait(()=>!get().compiling && get().canRun);
-      const files=encodeProject(project);
-      const restored=await invoke<Record<string,string>>('acceptance_round_trip',{files});
-      return {same:canonicalJson(encodeProject(decodeProject(restored)))===canonicalJson(files),minimumReaderVersion:project.manifest.format.minimumReaderVersion};
+      get().setSession(restoreSession(project, null));
+      get().setQuestion("yes");
+      get().setStarted(true);
+      await paint();
+      await wait(() => !get().compiling && get().canRun);
+      const files = encodeProject(project);
+      const restored = await invoke<Record<string, string>>(
+        "acceptance_round_trip",
+        { files },
+      );
+      return {
+        same:
+          canonicalJson(encodeProject(decodeProject(restored))) ===
+          canonicalJson(files),
+        minimumReaderVersion: project.manifest.format.minimumReaderVersion,
+      };
     },
     async loadLegacyRegressionProject() {
       const project = createStarter();
@@ -173,6 +219,66 @@ export function install(get: () => Studio) {
       get().setStarted(true);
       await paint();
       await wait(() => !get().compiling && get().canRun);
+    },
+    async loadSurfaceRegressionProject(generated = false) {
+      const project = createStarter();
+      get().controller.replace(project);
+      get().setSession(restoreSession(project, null));
+      get().setStarted(true);
+      await paint();
+      await wait(() => !get().compiling);
+      const spec = {
+        schemaVersion: "blocky.surface-spec/v1",
+        title: "学习资料查询",
+        description: "填写问题并附加课堂笔记",
+        layout: "split",
+        submitLabel: "查询资料",
+        resultLabel: "资料回答",
+        attachment: true,
+        confirmation: true,
+        fields: [
+          {
+            id: "question",
+            label: "问题",
+            type: "textarea",
+            required: true,
+            options: [],
+          },
+        ],
+      };
+      const draft = generated
+        ? await draftGeneratedSurface(
+            project,
+            "research-agent",
+            "explicit-user-command",
+            spec,
+          )
+        : await draftSurface(
+            project,
+            "research-agent",
+            "explicit-user-command",
+          );
+      const patch = await makePatch(project, [
+        { op: "app-surface.add", ...draft },
+      ]);
+      await applyPatch(
+        get().controller,
+        patch,
+        patch.permissionDelta,
+        validatePatch,
+      );
+      get().openSurface(draft.manifest.surfaceId);
+      await paint();
+      await wait(() => !get().compiling);
+      const files = encodeProject(get().controller.getSnapshot().project),
+        restored = await invoke<Record<string, string>>(
+          "acceptance_round_trip",
+          { files },
+        );
+      return {
+        surfaceId: draft.manifest.surfaceId,
+        same: canonicalJson(files) === canonicalJson(restored),
+      };
     },
     async performance() {
       const loadMetric = metric(),

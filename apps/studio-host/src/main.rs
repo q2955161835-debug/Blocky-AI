@@ -2,6 +2,7 @@
 #[cfg(feature = "wdio")]
 mod acceptance;
 mod agent_data_commands;
+mod builder_commands;
 mod commands;
 mod conversion_commands;
 mod knowledge_commands;
@@ -31,6 +32,7 @@ fn main() {
         .plugin(tauri_plugin_wdio_webdriver::init());
     builder
         .manage(commands::Handles::default())
+        .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
@@ -103,6 +105,8 @@ fn main() {
             commands::save_project,
             commands::validate_patch,
             commands::authorize_surface,
+            builder_commands::builder_run,
+            builder_commands::builder_cancel,
             task_commands::start_task,
             task_commands::task_status,
             task_commands::cancel_task,

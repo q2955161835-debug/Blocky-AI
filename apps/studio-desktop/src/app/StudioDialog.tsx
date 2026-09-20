@@ -17,6 +17,7 @@ export type Popup =
         | "resources"
         | "context"
         | "about"
+        | "builder"
         | ConstructionKind;
       x?: number;
       y?: number;

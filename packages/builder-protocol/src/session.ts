@@ -15,6 +15,7 @@ import {
 } from "./request";
 import { makePatch, previewPatch } from "./preview";
 import { parsePatch } from "./validate";
+import { draftGeneratedSurface, surfaceSpecSchema } from "@blocky/app-surface";
 
 export type BuilderResult = {
   requestId: string;
@@ -75,6 +76,18 @@ export async function createBuilderSession(
       targetModuleIds: [request.moduleId],
       selectedBlockIds: [...request.selection],
       createSurface: request.createSurface,
+      requiredResources: inspected.resources.map(({ resourceId, kind }) => ({
+        resourceId,
+        kind,
+      })),
+      requestedCapabilities: [],
+      source: {
+        catalogVersion: inspected.catalogVersion,
+        moduleId: request.moduleId,
+        blockIds: request.selection.length
+          ? [...request.selection]
+          : inspected.blocks.map((b) => b.id),
+      },
     };
     review = undefined;
     verification = undefined;
@@ -86,61 +99,83 @@ export async function createBuilderSession(
     if (!spec || pending) throw Error("BLK-BUILDER-004");
     builderInputBudget(value);
     const envelope = z
-      .object({ operations: z.array(z.unknown()).min(1).max(100) })
+      .object({
+        operations: z.array(z.unknown()).max(100),
+        surface: surfaceSpecSchema.optional(),
+      })
       .strict()
       .safeParse(value);
     if (!envelope.success) throw Error("BLK-BUILDER-001");
-    // Parse using the same semantic operation schema as desktop, CLI and Host.
-    const parsed = parsePatch({
-      schemaVersion: "blocky.patch/v1alpha1",
-      patchId: `patch-${crypto.randomUUID()}`,
-      projectId: request.projectId,
-      baseDigest: inspected.baseDigest,
-      catalogVersion: inspected.catalogVersion,
-      operations: envelope.data.operations,
-      permissionDelta: [],
-      diagnostics: [],
-    });
-    const repairScope = new Set(
-      request.selection.length
-        ? request.selection
-        : inspected.diagnostics.flatMap((d) =>
-            d.source?.blockId ? [d.source.blockId] : [],
-          ),
-    );
-    for (const op of parsed.operations) {
-      if (op.op === "app-surface.add") {
-        if (
-          !request.createSurface ||
-          request.intent !== "build" ||
-          op.manifest.associatedModuleIds.some((id) => id !== request.moduleId)
-        )
-          throw Error("BLK-BUILDER-003");
-      } else {
-        if (op.moduleId !== request.moduleId) throw Error("BLK-BUILDER-003");
-        if (request.intent === "repair") {
-          if (op.op !== "block.update" || !repairScope.has(op.blockId))
-            throw Error("BLK-BUILDER-003");
-        }
-        if (op.op === "block.add") {
-          const oldIds = new Set(
-            [
-              ...walkBlocks(project.workspaces[request.moduleId].blocks.blocks),
-            ].map((b) => b.id),
-          );
-          if ([...walkBlocks([op.payload])].some((b) => oldIds.has(b.id)))
-            throw Error("BLK-BUILDER-003");
-        }
-      }
-    }
     pending = true;
     try {
+      const operations = [...envelope.data.operations];
+      if (envelope.data.surface) {
+        if (!request.createSurface || request.intent !== "build")
+          throw Error("BLK-BUILDER-003");
+        const surface = await draftGeneratedSurface(
+          project,
+          request.moduleId,
+          "explicit-user-command",
+          envelope.data.surface,
+          registry,
+        );
+        operations.push({ op: "app-surface.add", ...surface });
+      }
+      if (!operations.length) throw Error("BLK-BUILDER-001");
+      // Parse using the same semantic operation schema as desktop, CLI and Host.
+      const parsed = parsePatch({
+        schemaVersion: "blocky.patch/v1alpha1",
+        patchId: `patch-${crypto.randomUUID()}`,
+        projectId: request.projectId,
+        baseDigest: inspected.baseDigest,
+        catalogVersion: inspected.catalogVersion,
+        operations,
+        permissionDelta: [],
+        diagnostics: [],
+      });
+      const repairScope = new Set(
+        request.selection.length
+          ? request.selection
+          : inspected.diagnostics.flatMap((d) =>
+              d.source?.blockId ? [d.source.blockId] : [],
+            ),
+      );
+      for (const op of parsed.operations) {
+        if (op.op === "app-surface.add") {
+          if (
+            !request.createSurface ||
+            request.intent !== "build" ||
+            op.manifest.associatedModuleIds.some(
+              (id) => id !== request.moduleId,
+            )
+          )
+            throw Error("BLK-BUILDER-003");
+        } else {
+          if (op.moduleId !== request.moduleId) throw Error("BLK-BUILDER-003");
+          if (request.intent === "repair") {
+            if (op.op !== "block.update" || !repairScope.has(op.blockId))
+              throw Error("BLK-BUILDER-003");
+          }
+          if (op.op === "block.add") {
+            const oldIds = new Set(
+              [
+                ...walkBlocks(
+                  project.workspaces[request.moduleId].blocks.blocks,
+                ),
+              ].map((b) => b.id),
+            );
+            if ([...walkBlocks([op.payload])].some((b) => oldIds.has(b.id)))
+              throw Error("BLK-BUILDER-003");
+          }
+        }
+      }
       const candidate = await makePatch(project, parsed.operations, registry);
       const nextReview = await previewPatch(project, candidate, registry);
       guard();
       if (canonicalJson(project) === canonicalJson(nextReview.next))
         throw Error("BLK-BUILDER-005");
       review = nextReview;
+      spec.requestedCapabilities = [...review.permissionDelta];
       verification = undefined;
       return structuredClone(review);
     } finally {
@@ -151,13 +186,18 @@ export async function createBuilderSession(
     guard();
     if (!spec || pending || (request.intent !== "explain" && !review))
       throw Error("BLK-BUILDER-004");
-    const compiled = await compileProject(review?.next ?? project, registry);
-    guard();
-    verification = {
-      passed: !compiled.diagnostics.some((d) => d.severity === "error"),
-      diagnosticCount: compiled.diagnostics.length,
-    };
-    return structuredClone(verification);
+    pending = true;
+    try {
+      const compiled = await compileProject(review?.next ?? project, registry);
+      guard();
+      verification = {
+        passed: !compiled.diagnostics.some((d) => d.severity === "error"),
+        diagnosticCount: compiled.diagnostics.length,
+      };
+      return structuredClone(verification);
+    } finally {
+      pending = false;
+    }
   };
   const result = (): BuilderResult => {
     guard();

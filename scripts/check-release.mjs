@@ -14,6 +14,21 @@ const files = [
   "tools/blocky-cli/dist/bin/DirectML.dll",
 ];
 const vendorFiles = [
+  {
+    path: "try/stage5/builder-runtime/node.exe",
+    asset: {
+      sha256:
+        "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed",
+      bytes: 86989128,
+    },
+  },
+  {
+    path: "vendor/node/LICENSE",
+    asset: {
+      sha256:
+        "c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4",
+    },
+  },
   ...registry.model.files.map((asset) => ({
     path: `try/stage3/models/${registry.model.directory}/${asset.name}`,
     asset,
@@ -23,6 +38,20 @@ const vendorFiles = [
     asset: license,
   })),
 ];
+const builderLock = JSON.parse(
+  await readFile("packages/builder-engine/runtime-lock.json", "utf8"),
+);
+for (const item of builderLock.files) {
+  const path = `try/stage5/builder-runtime/${item.name}`,
+    bytes = await readFile(path);
+  if (
+    bytes.length !== item.bytes ||
+    createHash("sha256").update(bytes).digest("hex") !== item.sha256
+  )
+    throw Error("Builder runtime mismatch");
+  if (item.name !== "node.exe") files.push(path);
+}
+files.push("try/stage5/builder-runtime/manifest.json");
 for (const { path, asset } of vendorFiles) {
   const bytes = await readFile(path);
   if (

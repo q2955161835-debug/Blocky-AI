@@ -1,5 +1,8 @@
 mod transport;
 mod types;
+pub(crate) mod builder;
+#[cfg(test)]
+mod builder_tests;
 use serde_json::Value;
 use std::{
     collections::{HashMap, HashSet},

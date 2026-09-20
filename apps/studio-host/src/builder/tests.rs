@@ -1,0 +1,57 @@
+use super::*;
+fn start() -> BuilderStart {
+    let project = json!({"manifest":{"schemaVersion":"blocky.project/v1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.4.0","minimumReaderVersion":"0.4.0"}},"workspaces":{"main":{"blocks":{"languageVersion":0,"blocks":[]}}},"resources":{},"schemas":{},"surfaces":{}});
+    serde_json::from_value(json!({"request":{"schemaVersion":"blocky.builder-request/v1","requestId":"explain-empty","projectId":"sample","intent":"explain","prompt":"解释当前选择","moduleId":"main","selection":[],"createSurface":false},"originalJson":project.to_string(),"mode":"deterministic","resourceId":null,"maxTurns":1})).unwrap()
+}
+#[test]
+fn real_sidecar_is_read_only_and_reaped_before_completion() {
+    let root = tempfile::tempdir().unwrap();
+    let host = BuilderHost::default();
+    let s = start();
+    let result = host
+        .run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
+        .unwrap();
+    assert_eq!(result["engine"], "pi-agent-core/0.86.0");
+    assert_eq!(result["modelApiCalled"], false);
+    assert!(result.get("patch").is_none());
+    assert!(host.state.lock().unwrap().active.is_empty());
+    assert!(
+        host.run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
+            .is_err()
+    );
+    host.shutdown().unwrap();
+}
+#[test]
+fn request_and_approval_boundaries_reject_before_launch() {
+    let mut s = start();
+    s.request.create_surface = true;
+    assert!(s.validate().is_err());
+    s = start();
+    s.max_turns = 5;
+    assert!(s.validate().is_err());
+    s = start();
+    s.request.module_id = "other".into();
+    assert!(s.validate().is_err());
+    s = start();
+    let root = tempfile::tempdir().unwrap();
+    assert!(
+        BuilderHost::default()
+            .run(root.path().to_owned(), s, "forged")
+            .is_err()
+    );
+}
+#[test]
+fn rejects_credentials_before_sidecar() {
+    for text in [
+        format!("sk-{}", "a".repeat(32)),
+        format!("ghp_{}", "a".repeat(36)),
+        format!("github_pat_{}", "a".repeat(30)),
+        format!("AKIA{}", "A".repeat(16)),
+        format!("xoxb-{}", "a".repeat(24)),
+        "-----BEGIN PRIVATE KEY-----".into(),
+    ] {
+        let mut s = start();
+        s.request.prompt = text;
+        assert_eq!(s.validate().unwrap_err(), "BLK-BUILDER-001");
+    }
+}

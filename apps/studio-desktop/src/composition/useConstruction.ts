@@ -250,6 +250,13 @@ export function useConstruction(studio: Studio) {
     setReview(undefined);
     setCandidate(undefined);
   };
+  const reviewBuilder = (patch: unknown) =>
+    perform(async () => {
+      setReview(
+        await previewPatch(studio.controller.getSnapshot().project, patch),
+      );
+      setCandidate(undefined);
+    });
   const storeBlueprint = (value: Blueprint) => {
     if (legacy.length || libraryUnavailable) throw Error("BLK-BLUEPRINT-001");
     const next = [
@@ -391,6 +398,7 @@ export function useConstruction(studio: Studio) {
     bindings,
     setBindings,
     review,
+    reviewBuilder,
     candidate,
     busy: busy || conversion.busy || blueprintUpdate.busy,
     clipboard,

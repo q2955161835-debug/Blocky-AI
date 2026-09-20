@@ -21,6 +21,8 @@ import {
   type ConstructionKind,
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
+import { useBuilder } from "../composition/useBuilder";
+import { BuilderDialog } from "./BuilderDialog";
 import { useTask } from "../composition/useTask";
 import { useTerminals } from "../composition/useTerminals";
 import { SurfacePreview } from "./SurfacePreview";
@@ -47,6 +49,8 @@ export function App() {
     };
   }, []);
   const construction = useConstruction(s);
+  const builder = useBuilder(s);
+  const [builderSurface, setBuilderSurface] = useState(false);
   const task = useTask(s);
   const terminals = useTerminals(s);
   const logs = useLogs(s),
@@ -65,6 +69,7 @@ export function App() {
   useEffect(() => {
     if (lifecycle.requested) {
       construction.conversion.cancel();
+      builder.clear();
       setPopup(null);
       construction.reject();
     }
@@ -102,11 +107,18 @@ export function App() {
     "edit.collapse": () => api.current?.collapse(true),
     "edit.expand": () => api.current?.collapse(false),
     "build.convert": () => show("conversion"),
+    "build.assistant": () => {
+      builder.clear();
+      setBuilderSurface(false);
+      show("builder");
+    },
     "terminal.create": () => void terminals.create(),
     "terminal.run-task": task.start,
     "terminal.stop-task": task.cancel,
-    "build.surface": async () => {
-      if (await construction.createSurface()) show("patch-review");
+    "build.surface": () => {
+      builder.clear();
+      setBuilderSurface(true);
+      show("builder");
     },
     "terminal.stop": () => void terminals.close(),
     "window.exit": lifecycle.request,
@@ -158,6 +170,12 @@ export function App() {
     (id !== "terminal.run-task" ||
       (s.started && !s.busy && !task.active && !task.pending)) &&
     (id !== "terminal.stop-task" || task.active) &&
+    (id !== "build.assistant" ||
+      (s.started &&
+        !s.busy &&
+        !s.running &&
+        !builder.busy &&
+        !!s.snapshot.project.workspaces[s.session.active])) &&
     (id !== "build.surface" ||
       (s.started &&
         !s.busy &&
@@ -320,9 +338,12 @@ export function App() {
             <span className="spacer" />
             {commands
               .filter((c) =>
-                ["edit.blueprint", "build.convert", "build.surface"].includes(
-                  c.commandId,
-                ),
+                [
+                  "edit.blueprint",
+                  "build.assistant",
+                  "build.convert",
+                  "build.surface",
+                ].includes(c.commandId),
               )
               .map((c) => (
                 <button
@@ -570,11 +591,30 @@ export function App() {
       {s.confirmation && (
         <ConfirmationDialog
           message={s.confirmation}
+          labels={s.confirmationLabels}
           answer={s.answerConfirmation}
         />
       )}
       {lifecycle.requested && (
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
+      )}
+      {popup?.kind === "builder" && !s.confirmation && (
+        <BuilderDialog
+          key={`builder-${builderSurface}`}
+          studio={s}
+          builder={builder}
+          createSurface={builderSurface}
+          close={() => setPopup(null)}
+          review={() =>
+            void (async () => {
+              if (
+                builder.result?.patch &&
+                (await construction.reviewBuilder(builder.result.patch))
+              )
+                show("patch-review");
+            })()
+          }
+        />
       )}
       {popup &&
         [
@@ -596,6 +636,7 @@ export function App() {
         )}
       {popup &&
         popup.kind !== "menu" &&
+        popup.kind !== "builder" &&
         ![
           "blueprint-save",
           "blueprint-insert",

@@ -51,7 +51,7 @@ export async function migrateProject(
     )
       throw Error("BLK-MIG-001");
     if (
-      !["0.1.0", "0.2.0", "0.3.0", "0.4.0"].includes(
+      !["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0"].includes(
         source.format?.minimumReaderVersion,
       )
     )
@@ -64,7 +64,7 @@ export async function migrateProject(
         schemaVersion: "blocky.project/v1",
         format: {
           ...source.format,
-          minimumReaderVersion: ["0.3.0", "0.4.0"].includes(
+          minimumReaderVersion: ["0.3.0", "0.4.0", "0.5.0"].includes(
             source.format.minimumReaderVersion,
           )
             ? source.format.minimumReaderVersion

@@ -1,0 +1,12 @@
+{
+  "localStorageBlocked": true,
+  "cookieBlocked": true,
+  "parentBlocked": true,
+  "siblingBlocked": true,
+  "hostAbsent": true,
+  "scriptBlocked": true,
+  "networkBlocked": true,
+  "cspPreventsNetworkDispatch": true,
+  "siblingInitRejected": true,
+  "parentInitAccepted": true
+}

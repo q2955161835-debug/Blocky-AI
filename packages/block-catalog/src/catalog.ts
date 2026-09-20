@@ -40,6 +40,10 @@ export const beginnerCategories = [
   "会行动",
   "会回答",
 ];
-export const catalog: BlockDefinition[] = [...definitions, ...textPrimitives, ...agentPrimitives];
-export const catalogVersion = "0.4.0";
+export const catalog: BlockDefinition[] = [
+  ...definitions,
+  ...textPrimitives,
+  ...agentPrimitives,
+];
+export const catalogVersion = "0.5.0";
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);

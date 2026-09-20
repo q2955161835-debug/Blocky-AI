@@ -24,6 +24,57 @@ const update = {
   blockId: "research-root",
   payload: { fields: { ROLE: "讲解植物生长" } },
 };
+it("serializes candidate generation and verification against competing drafts", async () => {
+  const session = await createBuilderSession(
+    createStarter(),
+    request({ createSurface: true }),
+  );
+  session.draft(plan);
+  const patching = session.patch({
+    operations: [],
+    surface: {
+      schemaVersion: "blocky.surface-spec/v1",
+      title: "查询",
+      description: "",
+      layout: "stack",
+      submitLabel: "查询",
+      resultLabel: "结果",
+      attachment: false,
+      confirmation: false,
+      fields: [
+        {
+          id: "q",
+          label: "问题",
+          type: "textarea",
+          required: true,
+          options: [],
+        },
+      ],
+    },
+  });
+  expect(() => session.draft(plan)).toThrow("BLK-BUILDER-004");
+  await expect(session.verify()).rejects.toThrow("BLK-BUILDER-004");
+  await patching;
+  const verifying = session.verify();
+  await expect(session.patch({ operations: [update] })).rejects.toThrow(
+    "BLK-BUILDER-004",
+  );
+  await verifying;
+  expect(session.result().verification?.passed).toBe(true);
+});
+it("rejects unlabelled credential shapes in requests before engine dispatch", () => {
+  for (const secret of [
+    "sk-" + "a".repeat(32),
+    "ghp_" + "a".repeat(36),
+    "github_pat_" + "a".repeat(30),
+    "AKIA" + "A".repeat(16),
+    "xoxb-" + "a".repeat(24),
+    "-----BEGIN PRIVATE KEY-----",
+  ])
+    expect(() => parseBuilderRequest(request({ prompt: secret }))).toThrow(
+      "BLK-BUILDER-001",
+    );
+});
 
 it("stages a scoped plan and candidate without editing and applies through the existing transaction", async () => {
   const project = createStarter(),

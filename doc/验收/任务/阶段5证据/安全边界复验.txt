@@ -1,0 +1,5 @@
+   Compiling stage5-surface-security v0.0.0 (D:\1Folder\Blocky-AI\try\stage5\security)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.83s
+     Running `apps/studio-host/target\debug\stage5-surface-security.exe`
+rustAcceptedUtf16OverLimit=false
+rustAcceptedOver100kSurface=false draftBytes=113069

@@ -1,0 +1,50 @@
+[
+  {
+    "path": "packages/app-surface/src/generated.ts",
+    "sha256": "199cd8b3abe38c13184fb3d6d89b1df15e973894f3320776cd7c804bd36dba96"
+  },
+  {
+    "path": "packages/app-surface/src/manifest.ts",
+    "sha256": "47febf76a08e434518d76c43213bdde2df7b1e6caeb1c01cd8cb084494e93f87"
+  },
+  {
+    "path": "packages/app-surface/src/preview.ts",
+    "sha256": "7db5ca346fcb95058d101ab89d3ef1d899adefab41536cf5db8bc0ab5386fee6"
+  },
+  {
+    "path": "packages/app-surface/src/bridge.ts",
+    "sha256": "a9af49453206ea3d53dbfade817cacbd270afe910b5661b47e1577508600789f"
+  },
+  {
+    "path": "packages/app-surface/src/task-bridge.ts",
+    "sha256": "7ad47320cf10aa91d3ef77c4f0abce0f5a3e8a10476dd044954cc4a72472e51b"
+  },
+  {
+    "path": "packages/app-surface/src/generated-runtime.js",
+    "sha256": "ae5a6d7168b3733e31815398423cd78201928ceb4b8b6d3f1a9bf948f678c73e"
+  },
+  {
+    "path": "packages/app-surface/src/generated-sources.json",
+    "sha256": "561221073a12a52610118d1571a6c6b1aab2f4ec539b30062f28d47f1c32d6ab"
+  },
+  {
+    "path": "apps/studio-host/src/surface_spec.rs",
+    "sha256": "850260bdc7680f5aa854fcc10b7e9ec2b1c09172ae074ebbc6ce5279026d8bf9"
+  },
+  {
+    "path": "apps/studio-host/src/surface_guard.rs",
+    "sha256": "ee70bec5b7f485f1a5ba3b0ec9a6c670ef01890eef558bb6a7ff3855a29caf8b"
+  },
+  {
+    "path": "apps/studio-desktop/src/app/SurfacePreview.tsx",
+    "sha256": "85325940033c55d1b4153332943f74efbbb72f987ca0ef133147dbfc774e8288"
+  },
+  {
+    "path": "apps/studio-host/src/builder/process.rs",
+    "sha256": "01fe2b3352cbb4038107eee08cad70a7d7bc2ead71e7bf3a5c1a8bf6a6717649"
+  },
+  {
+    "path": "apps/studio-host/src/provider/builder.rs",
+    "sha256": "9677fa89a82abe3a415b012d85c723d8d7e64f18bd1d4ae0ca0e07a2da7445f0"
+  }
+]

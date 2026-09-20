@@ -57,6 +57,7 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["run.pause", "run", "暂停 / 继续问答运行", ""],
   ["window.exit", "window", "退出 Blocky Studio", ""],
   ["build.convert", "build", "从仓库快照生成候选", ""],
+  ["build.assistant", "build", "Blocky 构建助手", ""],
   ["build.surface", "build", "创建应用界面", ""],
   ["terminal.create", "terminal", "新建终端", ""],
   ["terminal.stop", "terminal", "关闭当前终端", ""],

@@ -948,6 +948,8 @@ dialog.popup p {
   margin: 8px 0;
 }
 .surface-preview {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 200px;
   overflow: hidden;
@@ -958,10 +960,18 @@ dialog.popup p {
   display: none;
 }
 .surface-preview iframe {
-  width: 100%;
-  height: 100%;
+  position:absolute;
+  top:0;
   border: 0;
 }
+.surface-viewport { position:relative;flex:1;min-height:0;overflow:hidden; }
+.surface-toolbar { display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--panel);border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.surface-toolbar label { display:flex;align-items:center;gap:6px; }
+.builder-dialog { width:min(800px,90vw); }
+.builder-dialog .settings label { display:flex;flex-direction:column;align-items:stretch;gap:8px; }
+.builder-dialog .settings label:has(input[type="checkbox"]) { flex-direction:row;align-items:center; }
+.builder-dialog textarea { width:100%;min-height:110px;resize:vertical; }
+.builder-dialog .actions { display:flex;gap:8px;flex-wrap:wrap; }
 .user-terminals {
   min-height: 0;
   overflow: hidden;

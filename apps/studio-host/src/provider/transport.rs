@@ -77,6 +77,10 @@ pub fn consume(mut reader: impl std::io::Read, cancel: &AtomicBool) -> Result<Ve
     Ok(bytes)
 }
 pub fn send(r: &ProviderRequest, key: &[u8], cancel: &AtomicBool) -> Result<Value, String> {
+    let bytes = send_raw(&r.body(), r.timeout_ms, key, cancel)?;
+    parse(&bytes, r.max_output_tokens)
+}
+pub(crate) fn send_raw(body: &Value, timeout_ms: u64, key: &[u8], cancel: &AtomicBool) -> Result<Vec<u8>, String> {
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-PROVIDER-CANCELLED".into());
     }
@@ -85,19 +89,20 @@ pub fn send(r: &ProviderRequest, key: &[u8], cancel: &AtomicBool) -> Result<Valu
         .https_only(true)
         .no_proxy()
         .redirect(reqwest::redirect::Policy::none())
-        .timeout(Duration::from_millis(r.timeout_ms))
-        .connect_timeout(Duration::from_millis(r.timeout_ms.min(10000)))
+        .timeout(Duration::from_millis(timeout_ms))
+        .connect_timeout(Duration::from_millis(timeout_ms.min(10000)))
         .build()
         .map_err(|_| "BLK-PROVIDER-TRANSPORT")?;
-    send_using(client, ENDPOINT, r, key, cancel)
+    exchange_using(client, ENDPOINT, body, timeout_ms, key, cancel)
 }
-fn send_using(
+fn exchange_using(
     client: reqwest::Client,
     endpoint: &str,
-    r: &ProviderRequest,
+    body: &Value,
+    timeout_ms: u64,
     key: &str,
     cancel: &AtomicBool,
-) -> Result<Value, String> {
+) -> Result<Vec<u8>, String> {
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
@@ -113,22 +118,22 @@ fn send_using(
         tokio::select! {
             biased;
             _=cancelled=>Err("BLK-PROVIDER-CANCELLED".into()),
-            _=tokio::time::sleep(Duration::from_millis(r.timeout_ms))=>Err("BLK-PROVIDER-TIMEOUT".into()),
-            result=exchange(client,endpoint,r,key)=>result,
+            _=tokio::time::sleep(Duration::from_millis(timeout_ms))=>Err("BLK-PROVIDER-TIMEOUT".into()),
+            result=exchange(client,endpoint,body,key)=>result,
         }
     })
 }
 async fn exchange(
     client: reqwest::Client,
     endpoint: &str,
-    r: &ProviderRequest,
+    body: &Value,
     key: &str,
-) -> Result<Value, String> {
+) -> Result<Vec<u8>, String> {
     let mut response = client
         .post(endpoint)
         .bearer_auth(key)
         .header("Content-Type", "application/json")
-        .body(r.body().to_string())
+        .body(body.to_string())
         .send()
         .await
         .map_err(|e| {
@@ -155,7 +160,7 @@ async fn exchange(
         }
         bytes.extend_from_slice(&chunk);
     }
-    parse(&bytes, r.max_output_tokens)
+    Ok(bytes)
 }
 #[cfg(test)]
 pub(super) fn mock_send(
@@ -169,5 +174,6 @@ pub(super) fn mock_send(
         .timeout(Duration::from_millis(r.timeout_ms))
         .build()
         .unwrap();
-    send_using(client, endpoint, r, "synthetic-test-key", cancel)
+    let bytes = exchange_using(client, endpoint, &r.body(), r.timeout_ms, "synthetic-test-key", cancel)?;
+    parse(&bytes, r.max_output_tokens)
 }

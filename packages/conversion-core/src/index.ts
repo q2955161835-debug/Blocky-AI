@@ -1,4 +1,5 @@
 import fixture from "../fixtures/haystack-bm25.json";
+export { runBuilderWork } from "./builder-work";
 export {
   analyzeFile,
   type FileAnalysis,

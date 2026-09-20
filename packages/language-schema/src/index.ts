@@ -4,6 +4,7 @@ export {
   type NumericExpression,
   type ExpressionProgram,
 } from "./expression";
+export { containsCredential } from "./credentials";
 export type Json =
   | null
   | boolean

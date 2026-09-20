@@ -25,7 +25,10 @@ type Reply = {
   project?: Project;
   value?: unknown;
 };
-function request(input: Record<string, unknown>, signal?: AbortSignal): Promise<Reply> {
+function request(
+  input: Record<string, unknown>,
+  signal?: AbortSignal,
+): Promise<Reply> {
   signal?.throwIfAborted();
   if (!existsSync(helper))
     throw new CliError(
@@ -47,15 +50,20 @@ function request(input: Record<string, unknown>, signal?: AbortSignal): Promise<
         child.kill();
         finish(new CliError(6, "BLK-HOST-002", "原生存储请求超时。"));
       },
-      /^(conversion-|provider-)/.test(String(input.operation)) ? 130000 : 30000,
+      /^(conversion-|provider-|builder-)/.test(String(input.operation))
+        ? 130000
+        : 30000,
     );
-    const cancel = () => { child.kill(); finish(new CliError(7,'BLK-RUN-005','已停止')); };
-    signal?.addEventListener('abort',cancel,{once:true});
+    const cancel = () => {
+      child.kill();
+      finish(new CliError(7, "BLK-RUN-005", "已停止"));
+    };
+    signal?.addEventListener("abort", cancel, { once: true });
     function finish(error?: Error) {
       if (finished) return;
       finished = true;
       clearTimeout(timer);
-      signal?.removeEventListener('abort',cancel);
+      signal?.removeEventListener("abort", cancel);
       if (error) {
         reject(error);
         return;
@@ -117,7 +125,7 @@ export async function nativeUserOperation(
   const reply = (
     operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
       ? await knowledgeTransport.request({ operation, ...fields })
-      : await request({ operation, ...fields },signal)
+      : await request({ operation, ...fields }, signal)
   ) as Reply;
   if (
     reply.schemaVersion !== "blocky.project-io/v1alpha1" ||

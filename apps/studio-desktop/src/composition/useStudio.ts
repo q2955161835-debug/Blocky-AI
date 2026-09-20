@@ -19,7 +19,7 @@ import {
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
-import { studioAgentServices } from './agent';
+import { studioAgentServices } from "./agent";
 import {
   RedactedBus,
   projectLog,
@@ -34,7 +34,8 @@ import {
   saveMigration,
 } from "./host";
 export function useStudio() {
-  const { confirmation, answerConfirmation, confirm } = useConfirmation();
+  const { confirmation, confirmationLabels, answerConfirmation, confirm } =
+    useConfirmation();
   const [controller] = useState(() => new ProjectController(createStarter()));
   const snapshot = useSyncExternalStore(
     controller.subscribe,
@@ -83,7 +84,10 @@ export function useStudio() {
     ioBusy = useRef(false);
   const [runtime] = useState(
       () =>
-        new Runtime({ delayMs: 160, adapters: hostAdapters(knowledgeNative,studioAgentServices()) }),
+        new Runtime({
+          delayMs: 160,
+          adapters: hostAdapters(knowledgeNative, studioAgentServices()),
+        }),
     ),
     [bus] = useState(() => new RedactedBus());
   const [compiler] = useState(() => new IncrementalCompiler());
@@ -164,6 +168,7 @@ export function useStudio() {
     moduleId: string;
     interactionId: string;
     signal: AbortSignal;
+    onProgress?: (message: string) => void;
   }) => {
     if (
       closing.current ||
@@ -210,6 +215,7 @@ export function useStudio() {
           onEvent(event) {
             setEvents((current) => [...current, event].slice(-500));
             const line = projectLog(event);
+            request?.onProgress?.(line.summary);
             bus.write(
               "runtime",
               line.level as "info" | "warning" | "error",
@@ -300,7 +306,10 @@ export function useStudio() {
         !(await confirm("新建项目将放弃当前未保存的修改。"))
       )
         return;
-      const p = starterId==='agent-loop' ? createAgentExample() : await createBlueprintProject(starterId);
+      const p =
+        starterId === "agent-loop"
+          ? createAgentExample()
+          : await createBlueprintProject(starterId);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -309,7 +318,10 @@ export function useStudio() {
       setSelected(null);
       setSession(restoreSession(p, null));
       setQuestion(
-        starterId==='agent-loop'?'Hello Blocky\n一起学习':officialStarters.find((s) => s.id === starterId)?.sampleInput ?? "",
+        starterId === "agent-loop"
+          ? "Hello Blocky\n一起学习"
+          : (officialStarters.find((s) => s.id === starterId)?.sampleInput ??
+              ""),
       );
     } catch {
       setMessage("蓝图无法创建，请检查公开插槽和本机配置。");
@@ -464,6 +476,7 @@ export function useStudio() {
     diagnostics: [...(compiled?.diagnostics ?? []), ...session.diagnostics],
     setInteractionId,
     confirmation,
+    confirmationLabels,
     answerConfirmation,
   };
 }

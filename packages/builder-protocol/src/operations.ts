@@ -21,6 +21,8 @@ export function projectWithOperations(
         manifestRef: `surfaces/${draft.manifest.surfaceId}/manifest.json`,
       });
       Object.assign(next.surfaces, draft.files);
+      if (draft.manifest.schemaVersion === "blocky.app-surface/v1")
+        next.manifest.format.minimumReaderVersion = "0.5.0";
       continue;
     }
     const roots = next.workspaces[operation.moduleId]?.blocks.blocks;

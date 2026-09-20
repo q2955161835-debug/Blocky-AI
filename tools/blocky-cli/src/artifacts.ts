@@ -29,13 +29,16 @@ export async function readJsonArtifact(
   }
 }
 export async function writeJsonArtifact(path: string, value: unknown) {
+  return writeTextArtifact(path, JSON.stringify(value, null, 2) + "\n");
+}
+export async function writeTextArtifact(path: string, value: string) {
   const temporary = join(dirname(path), `.blocky-${randomUUID()}.tmp`);
   let created = false;
   try {
     const file = await open(temporary, "wx");
     created = true;
     try {
-      await file.writeFile(JSON.stringify(value, null, 2) + "\n");
+      await file.writeFile(value);
       await file.sync();
     } finally {
       await file.close();

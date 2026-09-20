@@ -10,46 +10,7 @@ use std::{
     time::{Duration, Instant},
 };
 #[cfg(windows)]
-struct Job(isize);
-#[cfg(windows)]
-impl Job {
-    fn settle(&self) -> bool {
-        crate::process_job::settle_job(self.0 as _, Duration::from_secs(2))
-    }
-}
-#[cfg(windows)]
-impl Drop for Job {
-    fn drop(&mut self) {
-        unsafe {
-            windows_sys::Win32::Foundation::CloseHandle(self.0 as _);
-        }
-    }
-}
-#[cfg(windows)]
-fn attach(child: &std::process::Child) -> Result<Job, String> {
-    use std::os::windows::io::AsRawHandle;
-    use windows_sys::Win32::System::JobObjects::*;
-    unsafe {
-        let handle = CreateJobObjectW(std::ptr::null(), std::ptr::null());
-        if handle.is_null() {
-            return Err("BLK-TERM-001".into());
-        }
-        let job = Job(handle as isize);
-        let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = std::mem::zeroed();
-        info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
-        if SetInformationJobObject(
-            handle,
-            JobObjectExtendedLimitInformation,
-            &info as *const _ as _,
-            std::mem::size_of_val(&info) as u32,
-        ) == 0
-            || AssignProcessToJobObject(handle, child.as_raw_handle() as _) == 0
-        {
-            return Err("BLK-TERM-001".into());
-        }
-        Ok(job)
-    }
-}
+use crate::process_job::attach;
 pub(super) fn launch(
     request: TaskRequest,
     files: ProjectFiles,
