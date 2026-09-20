@@ -45,18 +45,163 @@
     "name": "patch",
     "description": "Propose semantic operations, never write the project. Requires draft. Allowed block.add, block.update(fields), block.move(x,y), block.remove in the target module only. Repair allows only selected/diagnostic field updates. Optional surface is a typed task form spec compiled into locked source; requires explicit createSurface. Use empty operations for surface-only proposals.",
     "parameters": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
         "operations": {
+          "maxItems": 100,
           "type": "array",
           "items": {
-            "type": "object"
-          },
-          "minItems": 0,
-          "maxItems": 100
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "block.add"
+                  },
+                  "moduleId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "blockId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "payload": {
+                    "$ref": "#/$defs/__schema0"
+                  }
+                },
+                "required": [
+                  "op",
+                  "moduleId",
+                  "blockId",
+                  "payload"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "block.update"
+                  },
+                  "moduleId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "blockId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "fields": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": "string",
+                          "maxLength": 16000
+                        }
+                      }
+                    },
+                    "required": [
+                      "fields"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "op",
+                  "moduleId",
+                  "blockId",
+                  "payload"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "block.move"
+                  },
+                  "moduleId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "blockId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "number",
+                        "minimum": -100000,
+                        "maximum": 100000
+                      },
+                      "y": {
+                        "type": "number",
+                        "minimum": -100000,
+                        "maximum": 100000
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "op",
+                  "moduleId",
+                  "blockId",
+                  "payload"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "op": {
+                    "type": "string",
+                    "const": "block.remove"
+                  },
+                  "moduleId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  },
+                  "blockId": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+                  }
+                },
+                "required": [
+                  "op",
+                  "moduleId",
+                  "blockId"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
         },
         "surface": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "schemaVersion": {
@@ -160,7 +305,148 @@
       "required": [
         "operations"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$defs": {
+        "__schema0": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "id": {
+              "type": "string",
+              "maxLength": 200,
+              "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+            },
+            "fields": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/__schema1"
+              }
+            },
+            "inputs": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "block": {
+                    "$ref": "#/$defs/__schema0"
+                  },
+                  "shadow": {
+                    "$ref": "#/$defs/__schema0"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "next": {
+              "type": "object",
+              "properties": {
+                "block": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              },
+              "required": [
+                "block"
+              ],
+              "additionalProperties": false
+            },
+            "x": {
+              "type": "number",
+              "minimum": -100000,
+              "maximum": 100000
+            },
+            "y": {
+              "type": "number",
+              "minimum": -100000,
+              "maximum": 100000
+            },
+            "disabled": {
+              "type": "boolean"
+            },
+            "collapsed": {
+              "type": "boolean"
+            },
+            "extraState": {
+              "$ref": "#/$defs/__schema2"
+            }
+          },
+          "required": [
+            "type",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "__schema1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/__schema1"
+              }
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/__schema1"
+              }
+            }
+          ]
+        },
+        "__schema2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/__schema2"
+              }
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/__schema2"
+              }
+            }
+          ]
+        }
+      }
     }
   },
   {

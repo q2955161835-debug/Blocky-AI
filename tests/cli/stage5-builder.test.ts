@@ -41,6 +41,8 @@ it("CLI inspects and drafts through the shared builder and preserves the origina
     const result = JSON.parse(await readFile(candidate, "utf8"));
     expect(result.patch.operations.length).toBeGreaterThan(0);
     expect(result.modelApiCalled).toBe(false);
+    const evidence = await run(["builder", "evidence", "--request-id", result.requestId, "--json"]);
+    expect(evidence.result.data).toMatchObject({requestId:result.requestId,outcome:"completed",attempts:[]});
     const workInput = join(root, "work-input.json"),
       workCandidate = join(root, "work-candidate.json");
     await writeFile(

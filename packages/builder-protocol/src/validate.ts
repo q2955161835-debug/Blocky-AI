@@ -8,8 +8,7 @@ import {
 import { draftSchema } from "@blocky/app-surface";
 const id = z.string().regex(stableId).max(200);
 const source = { moduleId: id, blockId: id };
-const operation = z.discriminatedUnion("op", [
-  draftSchema.extend({ op: z.literal("app-surface.add") }).strict(),
+export const builderOperationSchema = z.discriminatedUnion("op", [
   z
     .object({
       op: z.literal("block.add"),
@@ -39,6 +38,10 @@ const operation = z.discriminatedUnion("op", [
     })
     .strict(),
   z.object({ op: z.literal("block.remove"), ...source }).strict(),
+]);
+const operation = z.union([
+  draftSchema.extend({ op: z.literal("app-surface.add") }).strict(),
+  builderOperationSchema,
 ]);
 const diagnosticSource = z
   .object({

@@ -1,0 +1,42 @@
+[
+  {
+    "path": "apps/studio-host/src/builder/evidence.rs",
+    "sha256": "eccda89801e4cf4d75b9e825752cfa2d436d5ed80ed60f12d1a7d36ad3fc775d"
+  },
+  {
+    "path": "apps/studio-host/src/builder/mod.rs",
+    "sha256": "73e570e5d0bac29e0dc7725995dc79d479af8bdbc036a03a899851b0e6a78715"
+  },
+  {
+    "path": "apps/studio-host/src/builder/process.rs",
+    "sha256": "90cad5d7413323973bca656942f46b5d2e98cf9bdefc147ce4765aa91abeb67b"
+  },
+  {
+    "path": "apps/studio-host/src/provider/builder.rs",
+    "sha256": "d4fc912c00b65389fbe18eed8f5b4d50f6726f7cdd0012830b2ff10a2a657a85"
+  },
+  {
+    "path": "apps/studio-host/src/provider/transport.rs",
+    "sha256": "0eb56022d7897ae7e0b7426dbb3953c06f966a12eb00ea5462528dabac03d8ba"
+  },
+  {
+    "path": "apps/studio-host/src/builder_commands.rs",
+    "sha256": "2fe7112592c9341fdedf8f77c85dfb1757b1dd824f85e6c92bb5da6875baf851"
+  },
+  {
+    "path": "apps/studio-desktop/src/composition/useBuilder.ts",
+    "sha256": "e0d5a80fbefc8d3beae5b5449e3092b53bf0d49b3410705618ac82a93edd3559"
+  },
+  {
+    "path": "tools/blocky-cli/src/builder.ts",
+    "sha256": "ca09edf8c2bb07c8e1bb09143603da134f9593c891871164cc69caa2e97ee9d4"
+  },
+  {
+    "path": "packages/builder-engine/src/tool-schemas.json",
+    "sha256": "ad2884e5b56a0019aa1ceace131ef939b8ad82f956339968023b12ac914205dc"
+  },
+  {
+    "path": "scripts/generate-builder-schemas.ts",
+    "sha256": "1bfe1ee20f80eba3ae130b538249c9402b334df586cd32df7b7936764791e2d4"
+  }
+]

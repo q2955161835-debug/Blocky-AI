@@ -1,5 +1,6 @@
 export {
   parsePatch,
+  builderOperationSchema,
   type SemanticPatch,
   type PatchOperation,
 } from "./validate";

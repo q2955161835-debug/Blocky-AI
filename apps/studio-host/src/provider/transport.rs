@@ -1,5 +1,5 @@
 use super::types::*;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::{
     sync::atomic::{AtomicBool, Ordering},
     time::Duration,
@@ -80,7 +80,21 @@ pub fn send(r: &ProviderRequest, key: &[u8], cancel: &AtomicBool) -> Result<Valu
     let bytes = send_raw(&r.body(), r.timeout_ms, key, cancel)?;
     parse(&bytes, r.max_output_tokens)
 }
-pub(crate) fn send_raw(body: &Value, timeout_ms: u64, key: &[u8], cancel: &AtomicBool) -> Result<Vec<u8>, String> {
+pub(crate) fn send_raw(
+    body: &Value,
+    timeout_ms: u64,
+    key: &[u8],
+    cancel: &AtomicBool,
+) -> Result<Vec<u8>, String> {
+    send_raw_observed(body, timeout_ms, key, cancel, &mut || Ok(()))
+}
+pub(crate) fn send_raw_observed(
+    body: &Value,
+    timeout_ms: u64,
+    key: &[u8],
+    cancel: &AtomicBool,
+    before_send: &mut dyn FnMut() -> Result<(), String>,
+) -> Result<Vec<u8>, String> {
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-PROVIDER-CANCELLED".into());
     }
@@ -93,7 +107,7 @@ pub(crate) fn send_raw(body: &Value, timeout_ms: u64, key: &[u8], cancel: &Atomi
         .connect_timeout(Duration::from_millis(timeout_ms.min(10000)))
         .build()
         .map_err(|_| "BLK-PROVIDER-TRANSPORT")?;
-    exchange_using(client, ENDPOINT, body, timeout_ms, key, cancel)
+    exchange_using(client, ENDPOINT, body, timeout_ms, key, cancel, before_send)
 }
 fn exchange_using(
     client: reqwest::Client,
@@ -102,6 +116,7 @@ fn exchange_using(
     timeout_ms: u64,
     key: &str,
     cancel: &AtomicBool,
+    before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
@@ -119,7 +134,7 @@ fn exchange_using(
             biased;
             _=cancelled=>Err("BLK-PROVIDER-CANCELLED".into()),
             _=tokio::time::sleep(Duration::from_millis(timeout_ms))=>Err("BLK-PROVIDER-TIMEOUT".into()),
-            result=exchange(client,endpoint,body,key)=>result,
+            result=exchange(client,endpoint,body,key,before_send)=>result,
         }
     })
 }
@@ -128,21 +143,23 @@ async fn exchange(
     endpoint: &str,
     body: &Value,
     key: &str,
+    before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
-    let mut response = client
+    let request = client
         .post(endpoint)
         .bearer_auth(key)
         .header("Content-Type", "application/json")
         .body(body.to_string())
-        .send()
-        .await
-        .map_err(|e| {
-            if e.is_timeout() {
-                "BLK-PROVIDER-TIMEOUT"
-            } else {
-                "BLK-PROVIDER-TRANSPORT"
-            }
-        })?;
+        .build()
+        .map_err(|_| "BLK-PROVIDER-CONFIG")?;
+    before_send()?;
+    let mut response = client.execute(request).await.map_err(|e| {
+        if e.is_timeout() {
+            "BLK-PROVIDER-TIMEOUT"
+        } else {
+            "BLK-PROVIDER-TRANSPORT"
+        }
+    })?;
     status(response.status().as_u16())?;
     if response.content_length().is_some_and(|n| n > 262144) {
         return Err("BLK-PROVIDER-LIMIT".into());
@@ -174,6 +191,37 @@ pub(super) fn mock_send(
         .timeout(Duration::from_millis(r.timeout_ms))
         .build()
         .unwrap();
-    let bytes = exchange_using(client, endpoint, &r.body(), r.timeout_ms, "synthetic-test-key", cancel)?;
+    let bytes = exchange_using(
+        client,
+        endpoint,
+        &r.body(),
+        r.timeout_ms,
+        "synthetic-test-key",
+        cancel,
+        &mut || Ok(()),
+    )?;
     parse(&bytes, r.max_output_tokens)
+}
+
+#[cfg(test)]
+mod observation_tests {
+    use super::*;
+    #[test]
+    fn rejected_preflight_never_marks_network_attempted() {
+        for (cancelled, key) in [(true, b"synthetic".as_slice()), (false, &[255u8][..])] {
+            let mut observed = false;
+            let result = send_raw_observed(
+                &json!({}),
+                100,
+                key,
+                &AtomicBool::new(cancelled),
+                &mut || {
+                    observed = true;
+                    Ok(())
+                },
+            );
+            assert!(result.is_err());
+            assert!(!observed);
+        }
+    }
 }

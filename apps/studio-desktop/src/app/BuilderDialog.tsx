@@ -167,6 +167,20 @@ export function BuilderDialog({
             <code>{builder.error}</code>
           </p>
         )}
+        {builder.evidence && (
+          <details>
+            <summary>本次调用记录</summary>
+            <p>{builder.evidence.attempts.length} 次调用尝试</p>
+            {builder.evidence.attempts.map((a) => (
+              <p key={a.turn}>
+                {a.response
+                  ? `${a.response.model} · ${a.response.totalTokens} Token · ${a.response.responseId}`
+                  : "未取得用量"}{" "}
+                · {a.outcome}
+              </p>
+            ))}
+          </details>
+        )}
         {result && (
           <section aria-label="构建方案">
             <h3>搭建计划</h3>

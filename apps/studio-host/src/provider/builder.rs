@@ -193,6 +193,8 @@ pub fn generate(
     binding: &ProviderRequest,
     messages: Value,
     cancel: &AtomicBool,
+    metadata: &mut Option<crate::builder::evidence::ResponseMetadata>,
+    before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Value, String> {
     validate_messages(&messages)?;
     binding.validate()?;
@@ -205,10 +207,13 @@ pub fn generate(
     body["tools"] = tool_definitions()?;
     body["tool_choice"] = json!("auto");
     body["parallel_tool_calls"] = json!(false);
-    let response = crate::secret_store::SecretStore::new(root.join("secrets"))
-        .with_secret(&binding.secret_ref, |key| {
-            transport::send_raw(&body, binding.timeout_ms, key, cancel)
-        })??;
+    let response = crate::secret_store::SecretStore::new(root.join("secrets")).with_secret(
+        &binding.secret_ref,
+        |key| {
+            transport::send_raw_observed(&body, binding.timeout_ms, key, cancel, before_send)
+        },
+    )??;
+    *metadata = crate::builder::evidence::response_metadata(&response);
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-BUILDER-CANCELLED".into());
     }

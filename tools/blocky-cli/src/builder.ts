@@ -11,6 +11,7 @@ import { allow, required, integer, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 
 export const builderHelp = [
+  "builder evidence --request-id <id> --json",
   "builder inspect <file.blocky> --module <id> [--blocks <id,id>] --json",
   "builder draft|explain|repair <file.blocky> --module <id> --prompt <text> [--blocks <id,id>] [--surface] [--live --model <resource-id> --request-id <id> --approve <request-digest>] [--turns 4] --output <candidate.json> --json",
   "builder patch|verify <file.blocky> --candidate <candidate.json> --json",
@@ -19,6 +20,20 @@ export async function builderCommand(args: Args, signal: AbortSignal) {
   if (args.words[0] !== "builder") return;
   const action = args.words[1],
     command = `builder.${action}`;
+  if (action === "evidence") {
+    allow(args, ["request-id", "json"], 2);
+    return {
+      code: 0,
+      result: envelope(
+        command,
+        await nativeUserOperation(
+          "builder-evidence",
+          { requestId: required(args, "request-id") },
+          signal,
+        ),
+      ),
+    };
+  }
   if (
     ![
       "inspect",

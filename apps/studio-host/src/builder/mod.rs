@@ -1,16 +1,17 @@
+pub(crate) mod evidence;
 mod input_guard;
 mod process;
 #[cfg(test)]
 mod tests;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{HashMap, HashSet},
     path::{Path, PathBuf},
     sync::{
-        Arc, Mutex,
         atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
     },
     time::{Duration, Instant},
 };
@@ -149,20 +150,51 @@ impl BuilderHost {
             s.active
                 .insert(start.request.request_id.clone(), cancel.clone());
         }
-        let result = process::run(&root, &start, project, &registry, b.as_ref(), &cancel);
+        let mut evidence = evidence::Evidence::new(&start);
+        let result = evidence.save(&root).and_then(|_| {
+            process::run(
+                &root,
+                &start,
+                project,
+                &registry,
+                b.as_ref(),
+                &cancel,
+                &mut evidence,
+            )
+        });
         self.state
             .lock()
             .map_err(|_| "BLK-BUILDER-STATE")?
             .active
             .remove(&start.request.request_id);
-        if cancel.load(Ordering::SeqCst)
-            && result.as_ref().err().is_none_or(|code| code != "BLK-BUILDER-TIMEOUT")
-        {
-            return Err("BLK-BUILDER-CANCELLED".into());
+        let result = (|| {
+            if cancel.load(Ordering::SeqCst)
+                && result
+                    .as_ref()
+                    .err()
+                    .is_none_or(|code| code != "BLK-BUILDER-TIMEOUT")
+            {
+                return Err("BLK-BUILDER-CANCELLED".into());
+            }
+            let result = result?;
+            validate_result(&start, &result, &registry)?;
+            Ok(result)
+        })();
+        let end = evidence::now().max(evidence.attempts.last().map(|a| a.completed_at_ms.unwrap_or(a.started_at_ms)).unwrap_or(evidence.started_at_ms));
+        evidence.completed_at_ms = Some(end);
+        evidence.outcome = result
+            .as_ref()
+            .err()
+            .cloned()
+            .unwrap_or_else(|| "completed".into());
+        for attempt in &mut evidence.attempts {
+            if attempt.completed_at_ms.is_none() {
+                attempt.completed_at_ms = Some(end);
+                attempt.outcome = result.as_ref().err().cloned().unwrap_or_else(|| "BLK-BUILDER-EVIDENCE".into());
+            }
         }
-        let result = result?;
-        validate_result(&start, &result, &registry)?;
-        Ok(result)
+        evidence.save(&root)?;
+        result
     }
     pub fn cancel(&self, id: &str) -> Result<(), String> {
         if id.len() > 128 || !crate::project_store::stable(id) {
@@ -253,6 +285,20 @@ fn validate_result(start: &BuilderStart, result: &Value, registry: &Value) -> Re
     Ok(())
 }
 pub fn dispatch(root: PathBuf, value: &Value) -> Result<Value, String> {
+    if value["operation"] == "builder-evidence" {
+        #[derive(Deserialize)]
+        #[serde(rename_all = "camelCase", deny_unknown_fields)]
+        struct Read {
+            schema_version: String,
+            operation: String,
+            request_id: String,
+        }
+        let r: Read = serde_json::from_value(value.clone()).map_err(|_| INVALID)?;
+        if r.schema_version != "blocky.project-io/v1alpha1" || r.operation != "builder-evidence" {
+            return Err(INVALID.into());
+        }
+        return evidence::read(&root, &r.request_id);
+    }
     #[derive(Deserialize)]
     #[serde(rename_all = "camelCase", deny_unknown_fields)]
     struct Envelope {

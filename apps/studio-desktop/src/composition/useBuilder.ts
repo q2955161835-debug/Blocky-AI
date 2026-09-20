@@ -32,13 +32,29 @@ export type BuilderInput = {
   mode: "deterministic" | "live";
   resourceId: string;
 };
+export type BuilderEvidence = {
+  requestId: string;
+  outcome: string;
+  attempts: {
+    turn: number;
+    outcome: string;
+    response: null | {
+      model: string;
+      responseId: string;
+      inputTokens: number;
+      outputTokens: number;
+      totalTokens: number;
+    };
+  }[];
+};
 export function useBuilder(studio: Studio) {
   const current = useRef(studio);
   current.current = studio;
   const active = useRef<string | undefined>(undefined);
   const [busy, setBusy] = useState(false),
     [result, setResult] = useState<BuilderProposal>(),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [evidence, setEvidence] = useState<BuilderEvidence>();
   const clear = () => {
     const id = active.current;
     active.current = undefined;
@@ -46,6 +62,7 @@ export function useBuilder(studio: Studio) {
     setBusy(false);
     setResult(undefined);
     setError("");
+    setEvidence(undefined);
   };
   const scope = `${studio.snapshot.project.manifest.projectId}/${studio.session.active}/${studio.selectedRoots.join(",")}/${studio.selected ?? ""}`;
   useEffect(() => {
@@ -64,6 +81,7 @@ export function useBuilder(studio: Studio) {
     setBusy(true);
     setResult(undefined);
     setError("");
+    setEvidence(undefined);
     try {
       const project = s.controller.getSnapshot().project;
       const request = parseBuilderRequest({
@@ -116,6 +134,11 @@ export function useBuilder(studio: Studio) {
       if (active.current === id) {
         const code = cause instanceof Error ? cause.message : String(cause);
         setError(/^BLK-[A-Z0-9-]+$/.test(code) ? code : "BLK-BUILDER-ENGINE");
+        const recorded = await invoke<BuilderEvidence>("builder_evidence", {
+          requestId: id,
+        }).catch(() => undefined);
+        if (active.current === id && recorded?.requestId === id)
+          setEvidence(recorded);
       }
     } finally {
       if (active.current === id) {
@@ -124,6 +147,6 @@ export function useBuilder(studio: Studio) {
       }
     }
   };
-  return { busy, result, error, generate, clear };
+  return { busy, result, error, evidence, generate, clear };
 }
 export type Builder = ReturnType<typeof useBuilder>;

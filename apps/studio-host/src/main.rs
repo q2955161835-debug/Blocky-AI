@@ -107,6 +107,7 @@ fn main() {
             commands::authorize_surface,
             builder_commands::builder_run,
             builder_commands::builder_cancel,
+            builder_commands::builder_evidence,
             task_commands::start_task,
             task_commands::task_status,
             task_commands::cancel_task,

@@ -1,14 +1,13 @@
 use super::BuilderStart;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     io::{BufRead, BufReader, Read, Write},
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::{
-        Arc,
         atomic::{AtomicBool, Ordering},
-        mpsc,
+        mpsc, Arc,
     },
     time::{Duration, Instant},
 };
@@ -98,6 +97,7 @@ pub(super) fn run(
     registry: &Value,
     binding: Option<&crate::provider::ProviderRequest>,
     cancel: &Arc<AtomicBool>,
+    evidence: &mut super::evidence::Evidence,
 ) -> Result<Value, String> {
     let directory = assets()?.canonicalize().map_err(|_| ERROR)?;
     verify_assets(&directory)?;
@@ -218,12 +218,37 @@ pub(super) fn run(
                     }
                     let mut bounded = binding.unwrap().clone();
                     bounded.timeout_ms = bounded.timeout_ms.min(remaining);
-                    let value = crate::provider::builder::generate(
+                    evidence.attempts.push(super::evidence::Attempt {
+                        turn,
+                        started_at_ms: super::evidence::now().max(evidence.attempts.last().and_then(|a| a.completed_at_ms).unwrap_or(evidence.started_at_ms)),
+                        completed_at_ms: None,
+                        network_attempted: false,
+                        outcome: "started".into(),
+                        response: None,
+                    });
+                    evidence.save(root)?;
+                    let mut metadata = None;
+                    let generated = crate::provider::builder::generate(
                         root,
                         &bounded,
                         frame["messages"].clone(),
                         cancel,
-                    )?;
+                        &mut metadata,
+                        &mut || {
+                            evidence.attempts.last_mut().ok_or(ERROR)?.network_attempted = true;
+                            evidence.save(root)
+                        },
+                    );
+                    let attempt = evidence.attempts.last_mut().ok_or(ERROR)?;
+                    attempt.completed_at_ms = Some(super::evidence::now().max(attempt.started_at_ms));
+                    attempt.response = metadata;
+                    attempt.outcome = generated
+                        .as_ref()
+                        .err()
+                        .cloned()
+                        .unwrap_or_else(|| "response".into());
+                    evidence.save(root)?;
+                    let value = generated?;
                     send(
                         &mut stdin,
                         id,
@@ -235,6 +260,14 @@ pub(super) fn run(
                         !["schemaVersion", "requestId", "kind", "event"].contains(&k.as_str())
                     }) {
                         return Err("BLK-BUILDER-WIRE".into());
+                    }
+                    if frame["event"]["kind"] == "tool.started" {
+                        let tool = frame["event"]["tool"]
+                            .as_str()
+                            .filter(|s| ["inspect", "draft", "patch", "verify"].contains(s))
+                            .ok_or(ERROR)?;
+                        evidence.tools.push(tool.into());
+                        evidence.save(root)?;
                     }
                 }
                 Some("complete") => {
