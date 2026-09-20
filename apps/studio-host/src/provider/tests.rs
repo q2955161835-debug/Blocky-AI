@@ -127,10 +127,37 @@ fn mock_server(
     body: String,
     delay_ms: u64,
 ) -> (String, std::thread::JoinHandle<String>) {
+    let (endpoint, join, _) = mock_server_ready(status, body, delay_ms);
+    (endpoint, join)
+}
+fn mock_server_ready(
+    status: u16,
+    body: String,
+    delay_ms: u64,
+) -> (
+    String,
+    std::thread::JoinHandle<String>,
+    std::sync::mpsc::Receiver<()>,
+) {
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let (ready_tx, ready_rx) = std::sync::mpsc::channel();
     let endpoint = format!("http://{}/chat/completions", listener.local_addr().unwrap());
     let join = std::thread::spawn(move || {
-        let (mut socket, _) = listener.accept().unwrap();
+        let started = std::time::Instant::now();
+        let mut socket = loop {
+            match listener.accept() {
+                Ok((socket, _)) => break socket,
+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    if started.elapsed() > Duration::from_secs(3) {
+                        return String::new();
+                    }
+                    std::thread::sleep(Duration::from_millis(5));
+                }
+                Err(e) => panic!("mock accept: {e}"),
+            }
+        };
+        socket.set_nonblocking(false).unwrap();
         socket
             .set_read_timeout(Some(Duration::from_secs(2)))
             .unwrap();
@@ -157,6 +184,7 @@ fn mock_server(
                 }
             }
         }
+        let _ = ready_tx.send(());
         std::thread::sleep(Duration::from_millis(delay_ms));
         let _ = write!(
             socket,
@@ -165,7 +193,7 @@ fn mock_server(
         );
         String::from_utf8(bytes).unwrap()
     });
-    (endpoint, join)
+    (endpoint, join, ready_rx)
 }
 #[test]
 fn real_http_transport_with_local_only_mock_checks_auth_and_errors() {
@@ -197,11 +225,9 @@ fn real_http_transport_with_local_only_mock_checks_auth_and_errors() {
             assert_eq!(result.unwrap()["transport"], "remote");
         }
         let received = join.join().unwrap();
-        assert!(
-            received
-                .to_lowercase()
-                .contains("authorization: bearer synthetic-test-key")
-        );
+        assert!(received
+            .to_lowercase()
+            .contains("authorization: bearer synthetic-test-key"));
         assert!(received.contains("\"max_tokens\":1024"));
         assert!(received.contains("\"stream\":false"));
     }
@@ -216,11 +242,11 @@ fn transport_timeout_and_late_cancel_settle_without_orphans() {
         "BLK-PROVIDER-TIMEOUT"
     );
     join.join().unwrap();
-    let (endpoint, join) = mock_server(200, response().to_string(), 80);
+    let (endpoint, join, ready) = mock_server_ready(200, response().to_string(), 250);
     let cancel = Arc::new(AtomicBool::new(false));
     let c = cancel.clone();
     let worker = std::thread::spawn(move || transport::mock_send(&endpoint, &request(), &c));
-    std::thread::sleep(Duration::from_millis(20));
+    ready.recv_timeout(Duration::from_secs(3)).unwrap();
     cancel.store(true, Ordering::SeqCst);
     assert_eq!(
         worker.join().unwrap().unwrap_err(),
