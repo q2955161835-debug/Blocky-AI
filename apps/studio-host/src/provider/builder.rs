@@ -1,5 +1,5 @@
-use super::{ProviderRequest, transport, types};
-use serde_json::{Value, json};
+use super::{transport, types, ProviderRequest};
+use serde_json::{json, Value};
 use std::{
     collections::BTreeSet,
     path::Path,
@@ -19,7 +19,13 @@ fn fields(value: &Value, names: &[&str]) -> Result<(), String> {
     Ok(())
 }
 fn call(value: &Value) -> Result<(String, Value), String> {
-    fields(value, &["id", "type", "function"])?;
+    fields(value, &["id", "type", "function", "index"])?;
+    if value
+        .get("index")
+        .is_some_and(|index| index.as_u64().is_none_or(|n| n >= 8))
+    {
+        return Err(ERROR.into());
+    }
     fields(&value["function"], &["name", "arguments"])?;
     let id = value["id"]
         .as_str()

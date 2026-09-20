@@ -132,3 +132,24 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 ```
 
 页面命令先生成可审阅候选，授权应用后才写入新项目；CLI 不打开浏览器或发布站点。具名任务执行真实受限 Rust 子进程，取消和超时等待结算，没有任意 Shell 或用户 PTY。诊断导出只保留时间、序号、级别、通道及合法丢弃计数，排除问题、答案、消息正文与属性；输出仍拒绝覆盖。以上阶段 2 历史模型结果来自确定性本地适配器，未真实调用外部大模型 API；阶段 4 的真实模型路径见前述运行说明。
+
+## 阶段 5 构建助手与页面规格
+
+构建命令只生成候选，明确接受仍使用 `patch apply`。默认本地模拟仅调整角色或解释选择，不调用外部模型；自然语言生成页面和修复需选择已配置在线模型。
+
+```powershell
+.\blocky.cmd builder inspect .\try\my-project.blocky --module research-agent --json
+.\blocky.cmd builder draft .\try\my-project.blocky --module research-agent --prompt 植物教学助手 --output .\try\builder-candidate.json --json
+.\blocky.cmd builder explain .\try\my-project.blocky --module research-agent --blocks research-root --prompt 解释所选 --output .\try\explanation.json --json
+.\blocky.cmd builder verify .\try\my-project.blocky --candidate .\try\builder-candidate.json --json
+.\blocky.cmd patch preview .\try\my-project.blocky --patch .\try\builder-candidate.json --json
+.\blocky.cmd patch apply .\try\my-project.blocky --patch .\try\builder-candidate.json --output .\try\accepted.blocky --json
+.\blocky.cmd surface create .\try\my-project.blocky --module research-agent --spec .\try\surface-spec.json --output .\try\surface-candidate.json --json
+.\blocky.cmd surface build .\try\with-page.blocky --surface-id surface-example --output .\try\page.html --json
+```
+
+在线构建在 `builder draft/explain/repair` 增加 `--live --model <已配置资源ID> --request-id <唯一ID> --turns 4`。首次无 `--approve` 只返回预检；核对项目、模型、输入范围和预算后，以完全相同参数增加 `--approve <requestDigest>` 执行。批准一次使用，不自动重试；模型密钥仍由 Host 安全存储读取，不放命令行。需要页面时明确增加 `--surface`，模型建议不能代替授权。
+
+`surface-spec.json` 使用 `blocky.surface-spec/v1`，字段及受控桥接见[契约 14](../../doc/技术设计/正式契约/14-阶段5构建助手与应用界面.md)。页面构建验证已接受源码并生成离线 HTML；不执行 npm 脚本，不发布。旧版未提供 `--spec` 的固定页面命令继续兼容。
+
+`builder work <工作标识> <项目> --input <JSON> --output <JSON> --json` 支持 `build-blocky-agents`、`create-blocky-blocks`、`convert-github-project-to-blocky` 和 `reverse-agent-to-blocky`；前三者提供候选，逆向提供来源/保留项报告及可选候选。工作标识不代表已安装或发布官方 Skill，逆向不承诺完整框架兼容。

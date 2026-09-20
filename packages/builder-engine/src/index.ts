@@ -71,7 +71,8 @@ export async function runBuilderEngine(
   const toolsUsed: string[] = [],
     generations: Omit<BuilderGeneration, "content">[] = [];
   let turns = 0,
-    failure: string | undefined;
+    failure: string | undefined,
+    candidatePendingVerification = false;
   const events: BuilderEvent[] = [];
   const emit = (kind: string, extra: { tool?: string; turn?: number } = {}) => {
     const event = builderEventSchema.parse({
@@ -108,6 +109,8 @@ export async function runBuilderEngine(
       emit("tool.started", { tool: schema.name });
       try {
         const result = await session.call(schema.name, args);
+        if (schema.name === "patch") candidatePendingVerification = true;
+        if (schema.name === "verify") candidatePendingVerification = false;
         toolsUsed.push(schema.name);
         emit("tool.completed", { tool: schema.name });
         // Do not feed the entire candidate/project back to the model.
@@ -266,8 +269,21 @@ export async function runBuilderEngine(
       !builderTools.includes(toolCall.name as (typeof builderTools)[number])
         ? { block: true, terminate: true, reason: failure ?? "BLK-BUILDER-003" }
         : undefined,
-    shouldStopAfterTurn: () => {
+    shouldStopAfterTurn: async () => {
       if (failure) return true;
+      // Compilation is a trusted deterministic step, not another paid model decision.
+      if (candidatePendingVerification) {
+        try {
+          emit("tool.started", { tool: "verify" });
+          await session.call("verify", {});
+          toolsUsed.push("verify");
+          emit("tool.completed", { tool: "verify" });
+          candidatePendingVerification = false;
+        } catch (error) {
+          failure = safeBuilderError(error);
+          return true;
+        }
+      }
       try {
         session.result();
         return true;

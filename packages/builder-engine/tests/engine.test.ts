@@ -108,3 +108,25 @@ it("drops a transport response arriving after cancellation", async () => {
     }),
   ).rejects.toThrow();
 });
+
+it("verifies a completed candidate locally without buying an extra model turn", async () => {
+  let calls = 0;
+  const result = await runBuilderEngine(createStarter(), request, {
+    mode: "deterministic",
+    modelId: "test-model",
+    generate: async () => {
+      calls++;
+      if (calls > 2) throw Error("BLK-BUILDER-BUDGET");
+      return {
+        ...response,
+        content: [structuredClone(response.content[calls - 1])],
+      };
+    },
+  });
+  expect(calls).toBe(2);
+  expect(result.toolsUsed).toEqual(["draft", "patch", "verify"]);
+  expect(result.verification?.passed).toBe(true);
+  expect(
+    result.events.filter((e) => e.kind === "tool.completed").map((e) => e.tool),
+  ).toEqual(["draft", "patch", "verify"]);
+});
