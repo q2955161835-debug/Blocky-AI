@@ -2,6 +2,7 @@
 vendor/wry/** -text
 vendor/licenses/** -text
 vendor/models/** -text
+vendor/node/LICENSE -text
 # Locked upstream licenses retain their original whitespace and checksums.
 vendor/models/licenses/** whitespace=-trailing-space
 doc/验收/任务/阶段1证据/** -text
