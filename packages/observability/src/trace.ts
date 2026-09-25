@@ -31,6 +31,7 @@ export class TraceSession {
   add(event: RuntimeEvent): TraceFrame {
     if (this.runId && this.runId !== event.runId) throw Error("BLK-TRACE-002");
     if (event.sequence <= this.lastSequence) throw Error("BLK-TRACE-002");
+    if (!safeTimestamp(event.timestamp)) throw Error("BLK-TRACE-003");
     this.runId = event.runId;
     this.lastSequence = event.sequence;
     const data = event.data;
@@ -42,7 +43,7 @@ export class TraceSession {
       projectId: event.projectId,
       ...(event.moduleId ? { moduleId: event.moduleId } : {}),
       ...(event.blockId ? { blockId: event.blockId } : {}),
-      ...(event.correlationId ? { correlationId: event.correlationId } : {}),
+      ...(event.correlationId && safeTraceId(event.correlationId) ? { correlationId: event.correlationId } : {}),
       summary: event.type,
       ...(typeof data.code === "string" && /^BLK-[A-Z0-9-]{3,64}$/.test(data.code) ? { code: data.code } : {}),
       ...(typeof data.elapsedMs === "number" && Number.isSafeInteger(data.elapsedMs) && data.elapsedMs >= 0 ? { elapsedMs: data.elapsedMs } : {}),
@@ -93,11 +94,11 @@ export function inspectTraceExport(input: unknown): { runId: string | null; drop
     const hasId = (key: string) => typeof frame[key] === "string" && stableId.test(String(frame[key]));
     if (!hasId("runId") || !hasId("projectId") || frame.runId !== trace.runId ||
         !Number.isSafeInteger(frame.sequence) || Number(frame.sequence) <= last ||
-        typeof frame.timestamp !== "string" || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d/.test(frame.timestamp) ||
+        typeof frame.timestamp !== "string" || !safeTimestamp(frame.timestamp) ||
         typeof frame.type !== "string" || !/^(run|block|model|tool|checkpoint)\.[a-z-]+$/.test(frame.type) ||
         frame.summary !== frame.type ||
         (["moduleId", "blockId"].some((key) => frame[key] !== undefined && !hasId(key))) ||
-        (frame.correlationId !== undefined && (typeof frame.correlationId !== "string" || frame.correlationId.length > 160)) ||
+        (frame.correlationId !== undefined && (typeof frame.correlationId !== "string" || !safeTraceId(frame.correlationId))) ||
         !frame.redaction || typeof frame.redaction !== "object" || Array.isArray(frame.redaction))
       throw Error("BLK-TRACE-003");
     last = Number(frame.sequence);
@@ -128,4 +129,10 @@ function validUsage(value: unknown): value is TraceFrame["usage"] {
   return ["inputTokens", "outputTokens", "totalTokens"].every(
     (key) => typeof usage[key] === "number" && Number.isSafeInteger(usage[key]) && Number(usage[key]) >= 0,
   ) && Number(usage.totalTokens) === Number(usage.inputTokens) + Number(usage.outputTokens);
+}
+function safeTraceId(value: string): boolean {
+  return value.length <= 160 && stableId.test(value);
+}
+function safeTimestamp(value: string): boolean {
+  return /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(value) && Number.isFinite(Date.parse(value));
 }
