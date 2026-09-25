@@ -27,8 +27,10 @@ describe("attended RPA boundary", () => {
   });
   it("verifies a completed effect before skipping it on resume", async () => {
     const host = adapter();
-    const receipts = await new AttendedRpaRun().run(plan, grant, host, { now: () => 1000 });
+    const events: string[] = [];
+    const receipts = await new AttendedRpaRun().run(plan, grant, host, { now: () => 1000, onEvent: (event) => events.push(event.type) });
     expect(receipts).toEqual([{ stepId: "click-1", effectKey: "send-1", targetIdentity: "https://example.test", status: "completed", verified: false }]);
+    expect(events.at(-1)).toBe("run.completed");
     const resumed = adapter();
     await new AttendedRpaRun().run(plan, grant, resumed, { now: () => 1000, receipts });
     expect(resumed.verifyReceipt).toHaveBeenCalledOnce();
@@ -79,6 +81,26 @@ describe("attended RPA boundary", () => {
     );
     const short = { ...plan, steps: [plan.steps[0], { ...plan.steps[1], timeoutMs: 100 }] };
     await expect(run.run(short, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-TIMEOUT-001");
+    expect(run.checkpointReceipts[0].status).toBe("uncertain");
+  });
+  it("waits for an in-flight effect to settle before reporting stopped", async () => {
+    const run = new AttendedRpaRun();
+    const events: string[] = [];
+    let settle!: () => void;
+    const host = adapter();
+    vi.mocked(host.perform).mockImplementationOnce(async () => {}).mockImplementationOnce(() =>
+      new Promise<void>((resolve) => { settle = resolve; }),
+    );
+    const pending = run.run(plan, grant, host, { now: () => 1000, onEvent: (event) => events.push(event.type) });
+    await vi.waitFor(() => expect(host.perform).toHaveBeenCalledTimes(2));
+    run.stop();
+    expect(run.status).toBe("stopping");
+    expect(events).toContain("run.stop-requested");
+    expect(events).not.toContain("run.stopped");
+    settle();
+    await expect(pending).rejects.toThrow();
+    expect(run.status).toBe("stopped");
+    expect(events.at(-1)).toBe("run.stopped");
     expect(run.checkpointReceipts[0].status).toBe("uncertain");
   });
   it("rechecks Host authorization before every step", async () => {

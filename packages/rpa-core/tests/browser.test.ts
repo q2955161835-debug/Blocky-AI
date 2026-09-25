@@ -26,3 +26,18 @@ it("binds browser operations to one Host-selected origin and semantic locator", 
   await expect(new AttendedRpaRun().run(plan, grant, adapter, { now: () => 1000 })).rejects.toThrow("BLK-RPA-TARGET-001");
   expect(target.click).toHaveBeenCalledOnce();
 });
+
+it("does not act when the tab navigates away while waiting for a locator", async () => {
+  let url = "https://example.test/flow";
+  const target = {
+    waitFor: vi.fn(async () => { url = "https://evil.test/flow"; }),
+    count: vi.fn(async () => 1), click: vi.fn(async () => {}),
+  };
+  const page = { isClosed: () => false, url: () => url, getByRole: vi.fn(() => target) } as unknown as Page;
+  const adapter = new BrowserRpaAdapter(page, "https://example.test", { verifyGrant: async () => true });
+  const plan = { schemaVersion: "blocky.rpa/v1", planId: "navigation-flow", target: { kind: "browser", identity: "https://example.test" },
+    steps: [{ stepId: "click-1", action: "click", locator: { kind: "browser", role: "button", name: "Submit" }, timeoutMs: 5000, effectKey: "submit-1" }] };
+  const grant = { schemaVersion: "blocky.rpa-grant/v1", sessionId: "browser-session", targetIdentity: "https://example.test", actions: ["click"], expiresAt: 2000 };
+  await expect(new AttendedRpaRun().run(plan, grant, adapter, { now: () => 1000 })).rejects.toThrow("BLK-RPA-TARGET-001");
+  expect(target.click).not.toHaveBeenCalled();
+});

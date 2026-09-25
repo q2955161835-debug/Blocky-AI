@@ -32,4 +32,11 @@ it("runs an independent rule module entry without an Agent root", async () => {
   expect(result.status).toBe("completed");
   expect(result.answer).toBe("规则结果");
   expect(result.events.find((event) => event.type === "block.completed" && event.blockId === "rule-reply")?.data.elapsedMs).toBeTypeOf("number");
+  const selected = await new Runtime().run(project, "rule-entry", "input", { debug: { startBlockId: "rule-reply" } });
+  expect(selected.status).toBe("completed");
+  expect(selected.answer).toBe("规则结果");
+  expect(selected.events.filter((event) => event.type === "block.completed" && event.blockId === "rule-reply")).toHaveLength(1);
+  const unsafe = await new Runtime().run(project, "rule-entry", "input", { debug: { startBlockId: "rule-message" } });
+  expect(unsafe.status).toBe("failed");
+  expect(unsafe.events.find((event) => event.type === "run.failed")?.data.code).toBe("BLK-RUN-009");
 });

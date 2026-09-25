@@ -45,6 +45,8 @@ export class BrowserRpaAdapter implements RpaAdapter {
     await target.waitFor({ state: "visible", timeout: step.timeoutMs });
     signal.throwIfAborted();
     if (await target.count() !== 1) throw Error("BLK-RPA-LOCATOR-004");
+    // A page can navigate while a locator is waiting. Rebind immediately before the action.
+    if (!await this.verifyTarget(signal)) throw Error("BLK-RPA-TARGET-001");
     switch (step.action) {
       case "find": case "wait": break;
       case "read": {

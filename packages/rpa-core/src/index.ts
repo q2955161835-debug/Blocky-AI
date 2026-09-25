@@ -54,9 +54,11 @@ export const rpaGrantSchema = z.object({
 }).strict();
 export type RpaGrant = z.output<typeof rpaGrantSchema>;
 export type RpaReceipt = { stepId: string; effectKey: string; targetIdentity: string; status: "completed" | "uncertain"; verified: boolean };
-export type RpaEvent = { type: "step.started" | "step.completed" | "step.skipped" | "run.paused" | "run.resumed" | "run.stopped"; stepId?: string; action?: RpaAction; locatorKind?: RpaStep["locator"]["kind"]; effectKey?: string; summary: string };
+export type RpaEvent = { type: "step.started" | "step.completed" | "step.skipped" | "run.paused" | "run.resumed" | "run.stop-requested" | "run.stopped" | "run.completed" | "run.failed"; stepId?: string; action?: RpaAction; locatorKind?: RpaStep["locator"]["kind"]; effectKey?: string; summary: string };
 
-/** Host-owned adapter. It must bind every operation to the same inspected app/window or tab. */
+/** Host-owned adapter. It must bind every operation to the same inspected app/window or tab.
+ * perform must settle after an abort; the runner waits for settlement before reporting stopped.
+ */
 export interface RpaAdapter {
   readonly targetIdentity: string;
   verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean>;
@@ -67,7 +69,7 @@ export interface RpaAdapter {
 
 /** Attended execution. Receipt verification is mandatory before resuming an effect. */
 export class AttendedRpaRun {
-  private state: "idle" | "running" | "paused" | "stopped" = "idle";
+  private state: "idle" | "running" | "paused" | "stopping" | "stopped" = "idle";
   private controller = new AbortController();
   private onEvent?: (event: RpaEvent) => void;
   private receiptLog: RpaReceipt[] = [];
@@ -75,7 +77,12 @@ export class AttendedRpaRun {
   get checkpointReceipts(): RpaReceipt[] { return structuredClone(this.receiptLog); }
   pause() { if (this.state === "running") { this.state = "paused"; this.onEvent?.({ type: "run.paused", summary: "等待人工继续" }); } }
   resume() { if (this.state === "paused") { this.state = "running"; this.onEvent?.({ type: "run.resumed", summary: "人工已继续" }); } }
-  stop() { this.state = "stopped"; this.controller.abort(); this.onEvent?.({ type: "run.stopped", summary: "运行已停止" }); }
+  stop() {
+    if (this.state !== "running" && this.state !== "paused") return;
+    this.state = "stopping";
+    this.controller.abort();
+    this.onEvent?.({ type: "run.stop-requested", summary: "正在停止当前步骤" });
+  }
   async run(planInput: unknown, grantInput: unknown, adapter: RpaAdapter, options: { receipts?: RpaReceipt[]; now?: () => number; onEvent?: (event: RpaEvent) => void } = {}): Promise<RpaReceipt[]> {
     if (this.state !== "idle") throw Error("BLK-RPA-STATE-001");
     const plan = rpaPlanSchema.parse(planInput);
@@ -99,6 +106,7 @@ export class AttendedRpaRun {
     this.receiptLog = receipts;
     this.onEvent = options.onEvent;
     this.state = "running";
+    let completed = false;
     try {
       for (const step of plan.steps) {
         while (this.status === "paused") await new Promise((resolve) => setTimeout(resolve, 20));
@@ -121,28 +129,30 @@ export class AttendedRpaRun {
         if (current) current.status = "completed";
         this.onEvent?.({ type: "step.completed", stepId: step.stepId, action: step.action, locatorKind: step.locator.kind, effectKey: step.effectKey, summary: "步骤完成" });
       }
+      completed = true;
       return receipts;
-    } finally { this.state = "stopped"; }
+    } finally {
+      this.state = "stopped";
+      this.onEvent?.(completed
+        ? { type: "run.completed", summary: "运行已完成" }
+        : signal.aborted
+          ? { type: "run.stopped", summary: "运行已停止" }
+          : { type: "run.failed", summary: "运行失败" });
+    }
   }
 }
 
 async function boundedPerform(adapter: RpaAdapter, step: RpaStep, signal: AbortSignal): Promise<void> {
   const deadline = AbortSignal.timeout(step.timeoutMs);
   const operationSignal = AbortSignal.any([signal, deadline]);
-  let abort: (() => void) | undefined;
   try {
-    await Promise.race([
-      adapter.perform(step, operationSignal),
-      new Promise<never>((_resolve, reject) => {
-        abort = () => reject(signal.aborted ? signal.reason : Error("BLK-RPA-TIMEOUT-001"));
-        operationSignal.addEventListener("abort", abort, { once: true });
-      }),
-    ]);
+    // An operation that has reached the OS/browser must settle before run()
+    // reports stopped. Returning early could leave a click in flight.
+    await adapter.perform(step, operationSignal);
+    operationSignal.throwIfAborted();
   } catch (error) {
     if (deadline.aborted && !signal.aborted) throw Error("BLK-RPA-TIMEOUT-001");
     throw error;
-  } finally {
-    if (abort) operationSignal.removeEventListener("abort", abort);
   }
 }
 

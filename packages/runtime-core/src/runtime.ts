@@ -155,12 +155,18 @@ export class Runtime {
       const root = module.roots.find((n) => n.nodeId === entry.ownerAgentId);
       const selectedEntry = root && findEntry(root, entry.interactionId);
       if (!root || !selectedEntry) throw Error("BLK-RUN-001");
+      const handler = selectedEntry === root && selectedEntry.blockType === "core.interaction.chat_entry"
+        ? selectedEntry.inputs.HANDLER
+        : undefined;
+      const handlerHead = handler && !Array.isArray(handler) ? handler : undefined;
       const startNode = options.debug?.startBlockId
-        ? findInNextChain(selectedEntry, options.debug.startBlockId)
+        ? options.debug.startBlockId === handlerHead?.nodeId
+          ? handlerHead
+          : findInNextChain(selectedEntry, options.debug.startBlockId)
         : selectedEntry;
       if (!startNode) throw Error("BLK-RUN-009");
       if (startNode !== selectedEntry &&
-          (selectedEntry === root || selectedEntry.next !== startNode))
+          (selectedEntry === root ? startNode !== handlerHead : selectedEntry.next !== startNode))
         throw Error("BLK-RUN-010");
       const pauseBoundary = async (moduleId?: string, blockId?: string) => {
         if (blockId && (this.stepNext || this.breakpoints.has(JSON.stringify([moduleId, blockId])))) {
@@ -248,8 +254,11 @@ export class Runtime {
                   signal.throwIfAborted();
                   await pauseBoundary();
                   runBudget.step();
+                  const expressionStartedAt = performance.now();
                   emit("block.started", moduleId, value.nodeId, {
                     summary: "正在运行",
+                    blockType: value.blockType,
+                    inputPorts: Object.keys(value.inputs).sort(),
                   });
                   await wait(this.options.delayMs ?? 0, signal);
                   let result: Json;
@@ -270,6 +279,8 @@ export class Runtime {
                   signal.throwIfAborted();
                   emit("block.completed", moduleId, value.nodeId, {
                     summary: "已完成",
+                    elapsedMs: Math.max(0, Math.floor(performance.now() - expressionStartedAt)),
+                    outputType: result === null ? "null" : Array.isArray(result) ? "array" : typeof result,
                   });
                   return result;
                 };
@@ -488,6 +499,8 @@ export class Runtime {
                 break;
             }
           if (node === root && node !== selectedEntry) await execute(startNode, moduleId);
+          else if (node === selectedEntry && startNode === handlerHead && startNode !== selectedEntry)
+            await execute(startNode, moduleId);
           else if (!handled && node.blockType !== "core.message.reply")
             for (const value of Object.values(node.inputs))
               for (const child of value

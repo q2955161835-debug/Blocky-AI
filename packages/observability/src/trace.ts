@@ -14,6 +14,13 @@ export type TraceFrame = {
   code?: string;
   elapsedMs?: number;
   resultCount?: number;
+  blockType?: string;
+  transport?: "local" | "remote";
+  model?: string;
+  outputBytes?: number;
+  inputPorts?: string[];
+  outputType?: string;
+  budget?: { steps: number; calls: number; reservedOutputTokens: number };
   usage?: { inputTokens: number; outputTokens: number; totalTokens: number };
   redaction: { applied: boolean; categories: string[] };
 };
@@ -48,6 +55,13 @@ export class TraceSession {
       ...(typeof data.code === "string" && /^BLK-[A-Z0-9-]{3,64}$/.test(data.code) ? { code: data.code } : {}),
       ...(typeof data.elapsedMs === "number" && Number.isSafeInteger(data.elapsedMs) && data.elapsedMs >= 0 ? { elapsedMs: data.elapsedMs } : {}),
       ...(typeof data.resultCount === "number" && Number.isSafeInteger(data.resultCount) && data.resultCount >= 0 ? { resultCount: data.resultCount } : {}),
+      ...(validBlockType(data.blockType) ? { blockType: data.blockType } : {}),
+      ...(validTransport(data.transport) ? { transport: data.transport } : {}),
+      ...(validModelId(data.model) ? { model: data.model } : {}),
+      ...(typeof data.outputBytes === "number" && Number.isSafeInteger(data.outputBytes) && data.outputBytes >= 0 ? { outputBytes: data.outputBytes } : {}),
+      ...(validPorts(data.inputPorts) ? { inputPorts: [...data.inputPorts] } : {}),
+      ...(validOutputType(data.outputType) ? { outputType: data.outputType } : {}),
+      ...(validBudget(data.budget) ? { budget: { ...data.budget } } : {}),
       ...(validUsage(data.usage) ? { usage: data.usage } : {}),
       redaction: { ...event.redaction, categories: [...event.redaction.categories] },
     };
@@ -115,6 +129,13 @@ export function inspectTraceExport(input: unknown): { runId: string | null; drop
       ...(typeof frame.code === "string" && /^BLK-[A-Z0-9-]{3,64}$/.test(frame.code) ? { code: frame.code } : {}),
       ...(Number.isSafeInteger(frame.elapsedMs) && Number(frame.elapsedMs) >= 0 ? { elapsedMs: Number(frame.elapsedMs) } : {}),
       ...(Number.isSafeInteger(frame.resultCount) && Number(frame.resultCount) >= 0 ? { resultCount: Number(frame.resultCount) } : {}),
+      ...(validBlockType(frame.blockType) ? { blockType: frame.blockType } : {}),
+      ...(validTransport(frame.transport) ? { transport: frame.transport } : {}),
+      ...(validModelId(frame.model) ? { model: frame.model } : {}),
+      ...(Number.isSafeInteger(frame.outputBytes) && Number(frame.outputBytes) >= 0 ? { outputBytes: Number(frame.outputBytes) } : {}),
+      ...(validPorts(frame.inputPorts) ? { inputPorts: [...frame.inputPorts] } : {}),
+      ...(validOutputType(frame.outputType) ? { outputType: frame.outputType } : {}),
+      ...(validBudget(frame.budget) ? { budget: { ...frame.budget } } : {}),
       ...(validUsage(frame.usage) ? { usage: frame.usage } : {}),
       redaction: { applied: redaction.applied, categories: [...redaction.categories] as string[] },
     };
@@ -129,6 +150,29 @@ function validUsage(value: unknown): value is TraceFrame["usage"] {
   return ["inputTokens", "outputTokens", "totalTokens"].every(
     (key) => typeof usage[key] === "number" && Number.isSafeInteger(usage[key]) && Number(usage[key]) >= 0,
   ) && Number(usage.totalTokens) === Number(usage.inputTokens) + Number(usage.outputTokens);
+}
+function validPorts(value: unknown): value is string[] {
+  return Array.isArray(value) && value.length <= 32 &&
+    value.every((port) => typeof port === "string" && /^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(port));
+}
+function validBlockType(value: unknown): value is string {
+  return typeof value === "string" && value.length <= 128 && /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(value);
+}
+function validTransport(value: unknown): value is "local" | "remote" {
+  return value === "local" || value === "remote";
+}
+function validModelId(value: unknown): value is string {
+  return typeof value === "string" && value.length <= 100 && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value);
+}
+function validOutputType(value: unknown): value is string {
+  return typeof value === "string" && ["null", "array", "object", "string", "number", "boolean", "undefined", "text"].includes(value);
+}
+function validBudget(value: unknown): value is NonNullable<TraceFrame["budget"]> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const budget = value as Record<string, unknown>;
+  return ["steps", "calls", "reservedOutputTokens"].every((key) =>
+    typeof budget[key] === "number" && Number.isSafeInteger(budget[key]) && Number(budget[key]) >= 0,
+  );
 }
 function safeTraceId(value: string): boolean {
   return value.length <= 160 && stableId.test(value);

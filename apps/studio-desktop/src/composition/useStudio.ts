@@ -86,10 +86,13 @@ export function useStudio() {
       (e) => interactionKey(e) === preferredEntryId,
     ) ?? compiled?.interaction.entries[0];
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
+    [droppedEvents, setDroppedEvents] = useState(0),
     [result, setResult] = useState<RunResult>(),
     [running, setRunning] = useState(false),
     [question, setQuestion] = useState("为什么树叶在秋天会变黄？");
   const handle = useRef<string | undefined>(undefined),
+    eventBuffer = useRef<RuntimeEvent[]>([]),
+    droppedEventCount = useRef(0),
     abort = useRef<AbortController | null>(null),
     runBusy = useRef(false),
     ioBusy = useRef(false);
@@ -204,7 +207,10 @@ export function useStudio() {
     runBusy.current = true;
     if (request) setQuestion(request.question);
     setRunning(true);
+    eventBuffer.current = [];
+    droppedEventCount.current = 0;
     setEvents([]);
+    setDroppedEvents(0);
     setResult(undefined);
     abort.current = new AbortController();
     const controller = abort.current;
@@ -227,7 +233,13 @@ export function useStudio() {
           onEvent(event) {
             if (event.type === "run.paused") setPaused(true);
             if (event.type === "run.resumed") setPaused(false);
-            setEvents((current) => [...current, event].slice(-500));
+            eventBuffer.current.push(event);
+            if (eventBuffer.current.length > 500) {
+              eventBuffer.current.shift();
+              droppedEventCount.current++;
+              setDroppedEvents(droppedEventCount.current);
+            }
+            setEvents([...eventBuffer.current]);
             const line = projectLog(event);
             request?.onProgress?.(line.summary);
             bus.write(
@@ -298,7 +310,10 @@ export function useStudio() {
         controller.replace(opened.project);
         handle.current = opened.handle;
         setStarted(true);
+        eventBuffer.current = [];
+        droppedEventCount.current = 0;
         setEvents([]);
+        setDroppedEvents(0);
         setResult(undefined);
         setSelected(null);
         setMessage("已打开项目并重新编译");
@@ -327,7 +342,10 @@ export function useStudio() {
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
+      eventBuffer.current = [];
+      droppedEventCount.current = 0;
       setEvents([]);
+      setDroppedEvents(0);
       setResult(undefined);
       setSelected(null);
       setSession(restoreSession(p, null));
@@ -495,6 +513,7 @@ export function useStudio() {
     back,
     canGoBack: history.length > 0,
     events,
+    droppedEvents,
     result,
     invalidateKnowledgeEvidence: () => {
       abort.current?.abort();
