@@ -153,3 +153,5 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 `surface-spec.json` 使用 `blocky.surface-spec/v1`，字段及受控桥接见[契约 14](../../doc/技术设计/正式契约/14-阶段5构建助手与应用界面.md)。页面构建验证已接受源码并生成离线 HTML；不执行 npm 脚本，不发布。旧版未提供 `--spec` 的固定页面命令继续兼容。
 
 `builder work <工作标识> <项目> --input <JSON> --output <JSON> --json` 支持 `build-blocky-agents`、`create-blocky-blocks`、`convert-github-project-to-blocky` 和 `reverse-agent-to-blocky`；前三者提供候选，逆向提供来源/保留项报告及可选候选。工作标识不代表已安装或发布官方 Skill，逆向不承诺完整框架兼容。
+
+构建失败后可用 `builder evidence --request-id <id> --json` 查询 Host 最近一次调用记录。只保存安全的响应标识、实际模型、用量和稳定错误码，不保存提示词或模型正文；其他请求 ID 和不一致记录均拒绝。`networkAttempted` 只表示进入发送步骤，不能代替供应商响应证据。记录位于本机应用数据目录的 `builder-evidence/latest.json`，不写入项目。

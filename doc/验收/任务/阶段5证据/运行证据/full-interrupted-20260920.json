@@ -1,0 +1,27 @@
+{
+  "runId": "849fa550-1e77-4940-94dd-f192e37ee84c",
+  "passed": false,
+  "schemaVersion": "blocky.soak/v1",
+  "startedAt": "2026-09-20T09:57:53.763Z",
+  "cycles": 38,
+  "roundTrips": 3,
+  "binary": {
+    "bytes": 45129728,
+    "sha256": "162745010de8389ac30391ddc9d259968ab4c487fbf8cc4d1c0f207c9bc17dd8"
+  },
+  "preparation": {
+    "baseline": "65e6477eb23fcbe24f3b0e421014345cf264bc3a002a701c2a80f77e18ea8dc0",
+    "blocks": 100,
+    "nodes": 100
+  },
+  "failure": "page.evaluate: Target page, context or browser has been closed",
+  "nativeWindow": null,
+  "elapsedMs": 190378,
+  "warmHeap": 0,
+  "finalHeap": 0,
+  "heapDelta": null,
+  "trustedInput": null,
+  "errors": [],
+  "outbound": [],
+  "endedAt": "2026-09-20T10:01:04.141Z"
+}
