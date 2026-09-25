@@ -14,6 +14,15 @@ function adapter(): RpaAdapter {
   return { targetIdentity: "https://example.test", verifyGrant: vi.fn(async () => true), verifyTarget: vi.fn(async () => true), verifyReceipt: vi.fn(async () => true), perform: vi.fn(async () => {}) };
 }
 describe("attended RPA boundary", () => {
+  it("rejects ambiguous input references and oversized identifiers before Host execution", () => {
+    const windowsPlan = { ...plan, target: { kind: "windows", identity: "owned-window" } };
+    const fill = { stepId: "fill-1", action: "fill", locator: { kind: "uia", automationId: "field" }, timeoutMs: 5000, effectKey: "fill-effect" };
+    for (const value of [{ kind: "secret-ref" }, { kind: "manual-input", ref: "provider-secret" }]) {
+      expect(rpaPlanSchema.safeParse({ ...windowsPlan, steps: [{ ...fill, value }] }).success).toBe(false);
+    }
+    expect(rpaPlanSchema.safeParse({ ...plan, planId: "x".repeat(201) }).success).toBe(false);
+    expect(rpaPlanSchema.safeParse({ ...windowsPlan, steps: [{ ...fill, value: { kind: "manual-input" } }] }).success).toBe(true);
+  });
   it("rejects an unapproved target/action and coordinate fallback", async () => {
     const host = adapter();
     await expect(new AttendedRpaRun().run(plan, { ...grant, targetIdentity: "https://other.test" }, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-PERM-001");

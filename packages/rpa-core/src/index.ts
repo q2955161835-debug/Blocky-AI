@@ -1,7 +1,7 @@
 import { z } from "zod";
 export { BrowserRpaAdapter, type BrowserRpaPorts } from "./browser";
 
-const id = z.string().regex(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/);
+const id = z.string().max(200).regex(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/);
 const locator = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("browser"), role: z.string().min(1).max(80), name: z.string().max(200).optional() }).strict(),
   z.object({ kind: z.literal("uia"), automationId: z.string().min(1).max(200).optional(), name: z.string().min(1).max(200).optional(), controlType: z.string().min(1).max(80).optional() }).strict(),
@@ -31,6 +31,8 @@ export const rpaPlanSchema = z.object({
     if (step.locator.kind === "uia" && !step.locator.automationId && !step.locator.name && !step.locator.controlType)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-001", path: ["steps", index, "locator"] });
     if (step.action === "fill" && !step.value || step.action !== "fill" && step.value)
+      ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });
+    if (step.value && (step.value.kind === "secret-ref" && !step.value.ref || step.value.kind === "manual-input" && step.value.ref))
       ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });
     if (["click", "fill"].includes(step.action) && !step.effectKey)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-EFFECT-001", path: ["steps", index, "effectKey"] });

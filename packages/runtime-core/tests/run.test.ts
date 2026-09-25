@@ -89,6 +89,7 @@ describe("runtime executes edited project through injected adapters", () => {
     const options = {
       nextSequence: () => ++sequence,
       now: () => "2026-09-16T00:00:00.000Z",
+      monotonicNow: () => 0,
       newId: () => "run-fixed",
     };
     const a = await new Runtime(options).run(

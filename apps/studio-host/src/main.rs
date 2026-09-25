@@ -8,6 +8,7 @@ mod conversion_commands;
 mod knowledge_commands;
 mod log_commands;
 mod provider_commands;
+mod rpa_commands;
 mod secret_commands;
 mod task_commands;
 mod terminal_commands;
@@ -18,6 +19,7 @@ use blocky_studio::project_store;
 use tauri::Manager;
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         _ => {}
@@ -35,6 +37,7 @@ fn main() {
         .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
+        .manage(blocky_studio::rpa::RpaHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
@@ -63,6 +66,14 @@ fn main() {
         })
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
+            rpa_commands::rpa_targets,
+            rpa_commands::rpa_authorize,
+            rpa_commands::rpa_cancel_authorization,
+            rpa_commands::rpa_step,
+            rpa_commands::rpa_status,
+            rpa_commands::rpa_pause,
+            rpa_commands::rpa_resume,
+            rpa_commands::rpa_stop,
             agent_data_commands::agent_memory_authorize,
             agent_data_commands::agent_memory,
             agent_data_commands::agent_memory_cancel,

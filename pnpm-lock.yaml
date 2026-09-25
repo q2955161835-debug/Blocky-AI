@@ -122,6 +122,9 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../../packages/resource-registry
+      '@blocky/rpa-core':
+        specifier: workspace:*
+        version: link:../../packages/rpa-core
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core

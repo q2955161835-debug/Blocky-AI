@@ -11,6 +11,7 @@ mod patch_links;
 pub(crate) mod process_job;
 pub mod project_store;
 pub mod provider;
+pub mod rpa;
 pub mod secret_store;
 pub mod strict_json;
 pub mod surface_guard;

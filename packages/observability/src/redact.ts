@@ -1,6 +1,7 @@
 import type { Json } from "@blocky/language-schema";
 const sensitiveKey =
   /authorization|cookie|password|api[_-]?key|token|secret|^(?:prompt|body|stdout|stderr|environment)$/i;
+const tokenCounters = new Set(["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens"]);
 export function redact(input: unknown): {
   value: Json;
   redaction: { applied: boolean; categories: string[] };
@@ -50,6 +51,8 @@ export function redact(input: unknown): {
         Object.entries(v)
           .slice(0, 1000)
           .map(([k, x]) => {
+            if (tokenCounters.has(k) && typeof x === "number" && Number.isSafeInteger(x) && x >= 0)
+              return [k, x];
             if (sensitiveKey.test(k)) {
               categories.add("credential");
               return [k, "[已脱敏]"];

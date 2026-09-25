@@ -22,6 +22,7 @@
     "@blocky/project-migration": "workspace:*",
     "@blocky/project-model": "workspace:*",
     "@blocky/runtime-core": "workspace:*",
+    "@blocky/rpa-core": "workspace:*",
     "@blocky/settings-core": "workspace:*",
     "@blocky/terminal-protocol": "workspace:*",
     "@blocky/test-fixtures": "workspace:*",

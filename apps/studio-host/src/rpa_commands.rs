@@ -1,0 +1,94 @@
+use blocky_studio::rpa::{self, RpaHost, protocol::Plan};
+use serde_json::Value;
+use tauri::Manager;
+fn visible(window: &tauri::WebviewWindow) -> Result<(), String> {
+    crate::window_lifecycle::visible(window)
+}
+fn main_window(window: &tauri::WebviewWindow) -> Result<(), String> {
+    if window.label() != "main" {
+        return Err("BLK-RPA-PERM-001".into());
+    }
+    Ok(())
+}
+#[tauri::command]
+pub fn rpa_targets(window: tauri::WebviewWindow) -> Result<Vec<rpa::target::Target>, String> {
+    visible(&window)?;
+    Ok(rpa::target::list())
+}
+#[tauri::command]
+pub async fn rpa_authorize(
+    window: tauri::WebviewWindow,
+    request_id: String,
+    plan: Plan,
+) -> Result<Value, String> {
+    visible(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        visible(&window)?;
+        let grant = window
+            .state::<RpaHost>()
+            .authorize_attended(&request_id, plan)?;
+        if let Err(code) = visible(&window) {
+            if let Some(token) = grant["sessionId"].as_str() {
+                window.state::<RpaHost>().stop(token)?;
+            }
+            return Err(code);
+        }
+        Ok(grant)
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_cancel_authorization(
+    window: tauri::WebviewWindow,
+    request_id: String,
+) -> Result<(), String> {
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        window.state::<RpaHost>().cancel_authorization(&request_id)
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_step(
+    window: tauri::WebviewWindow,
+    token: String,
+    step_id: String,
+    manual_input: Option<String>,
+) -> Result<Value, String> {
+    visible(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        visible(&window)?;
+        let host = window.state::<RpaHost>();
+        let reference = host.input_reference(&token, &step_id)?;
+        match reference {
+            Some(input) if input.kind == "secret-ref" => Err("BLK-RPA-SENSITIVE-001".into()),
+            _ => host.step(&token, &step_id, manual_input),
+        }
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub fn rpa_status(window: tauri::WebviewWindow, token: String) -> Result<Value, String> {
+    main_window(&window)?;
+    window.state::<RpaHost>().status(&token)
+}
+#[tauri::command]
+pub fn rpa_pause(window: tauri::WebviewWindow, token: String) -> Result<(), String> {
+    main_window(&window)?;
+    window.state::<RpaHost>().pause(&token)
+}
+#[tauri::command]
+pub fn rpa_resume(window: tauri::WebviewWindow, token: String) -> Result<(), String> {
+    visible(&window)?;
+    window.state::<RpaHost>().resume(&token)
+}
+#[tauri::command]
+pub async fn rpa_stop(window: tauri::WebviewWindow, token: String) -> Result<(), String> {
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || window.state::<RpaHost>().stop(&token))
+        .await
+        .map_err(|_| "BLK-RPA-WORKER-001")?
+}

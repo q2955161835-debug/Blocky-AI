@@ -64,6 +64,7 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["view.show-run-log", "view", "运行日志", ""],
   ["view.back", "view", "返回上一位置", "Alt+ArrowLeft"],
   ["run.start", "run", "运行", "F5"],
+  ["run.rpa", "run", "桌面自动化", ""],
   ["run.stop", "run", "停止", "Shift+F5"],
   ["run.pause", "run", "暂停 / 继续问答运行", ""],
   ["run.step", "run", "单步越过", "F10"],

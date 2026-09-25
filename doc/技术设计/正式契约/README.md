@@ -53,6 +53,8 @@
 
 ## 3. 唯一数据流
 
+阶段 6–7 开发接口补充：`blocky.trace/v1`、`blocky.rpa/v1`、`blocky.rpa-grant/v1`、`blocky.rpa-session/v1` 与草案工件的实际消费者及未实现范围见 [契约 15](15-阶段6-7调试与有人值守自动化.md)。旧 RPA alpha 契约保留为完整目标，不等于当前实现已覆盖。
+
 阶段 1 新增注册（2026-09-16 用户授权同步 CLI）：`blocky.cli/v1` 和 `blocky.project-io/v1alpha1`，定义与消费者见 [CLI 与项目存储协议](08-CLI与项目存储协议.md)。阶段 2 将项目、模块 IR 与项目 IR 提升为 `v1`，旧 `v1alpha1` 和尖峰格式只能经 `blocky.migration/v1` 显式迁移，不改变未改协议的 alpha 版本。
 
 D 增补注册：`blocky.blueprint/v1alpha1`、`blocky.source-snapshot/v1alpha1`、`blocky.conversion/v1alpha1`，以及冻结 SemanticPatch 的当前支持子集，见 [蓝图与候选补丁](09-蓝图与候选补丁.md)。

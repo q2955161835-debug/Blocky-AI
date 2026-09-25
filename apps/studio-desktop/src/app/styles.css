@@ -834,8 +834,17 @@ dialog.popup p {
 }
 .context-popup {
   position: absolute;
-  width: 350px;
+  width: min(350px, calc(100vw - 16px));
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
 }
+.context-popup .popup-list { min-height: 0; }
+.rpa-panel { width: min(680px, calc(100vw - 32px)); max-height: calc(100vh - 140px); overflow: auto; }
+.rpa-panel label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0; }
+.rpa-panel select, .rpa-panel input, .rpa-panel textarea { max-width: 100%; min-width: 0; }
+.rpa-panel li { margin: 8px 0; overflow-wrap: anywhere; }
+.rpa-controls { display: flex; gap: 8px; position: sticky; bottom: 0; background: #292f3a; padding: 8px 0; }
 .settings {
   padding: 5px 10px 15px;
 }

@@ -34,6 +34,7 @@ import { useLifecycle } from "../composition/useLifecycle";
 import { ExitDialog } from "./ExitDialog";
 import { MenuBar } from "./MenuBar";
 import { useModalFocus } from "../composition/useModalFocus";
+import { RpaPanel } from "./RpaPanel";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -139,6 +140,7 @@ export function App() {
     "terminal.stop": () => void terminals.close(),
     "window.exit": lifecycle.request,
     "run.pause": s.togglePause,
+    "run.rpa": () => show("rpa"),
     "run.step": s.step,
     "run.from-selection": () => void s.runFromSelected(commandBlockId ?? undefined),
     "run.toggle-breakpoint": () => {
@@ -646,6 +648,7 @@ export function App() {
           answer={s.answerConfirmation}
         />
       )}
+      {popup?.kind === "rpa" && !s.confirmation && <RpaPanel close={() => setPopup(null)} />}
       {lifecycle.requested && (
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}
@@ -688,6 +691,7 @@ export function App() {
       {popup &&
         popup.kind !== "menu" &&
         popup.kind !== "builder" &&
+        popup.kind !== "rpa" &&
         ![
           "blueprint-save",
           "blueprint-insert",

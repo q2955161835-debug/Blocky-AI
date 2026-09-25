@@ -26,6 +26,7 @@ type Options = {
   adapters?: Adapters;
   capabilities?: string[];
   now?: () => string;
+  monotonicNow?: () => number;
   newId?: () => string;
   delayMs?: number;
   nextSequence?: () => number;
@@ -45,6 +46,7 @@ export class Runtime {
   private readonly sessionMemory = new Map<string, Json>();
   private factory: EventFactory;
   private options: Options;
+  private monotonicNow: () => number;
   private running = false;
   private paused = false;
   private stepNext = false;
@@ -64,6 +66,7 @@ export class Runtime {
   }
   constructor(options: Options = {}) {
     this.options = options;
+    this.monotonicNow = options.monotonicNow ?? (() => performance.now());
     this.sessionId = options.sessionId ?? `session-${crypto.randomUUID()}`;
     this.factory = new EventFactory(options.now, options.nextSequence);
   }
@@ -186,7 +189,7 @@ export class Runtime {
       };
       const execute = async (node: IrNode, moduleId: string): Promise<void> => {
         signal.throwIfAborted();
-        const startedAt = performance.now();
+        const startedAt = this.monotonicNow();
         // Each chat block starts its own stack. A different entry is a boundary.
         if (
           ["core.interaction.chat", "core.interaction.chat_entry"].includes(
@@ -254,7 +257,7 @@ export class Runtime {
                   signal.throwIfAborted();
                   await pauseBoundary();
                   runBudget.step();
-                  const expressionStartedAt = performance.now();
+                  const expressionStartedAt = this.monotonicNow();
                   emit("block.started", moduleId, value.nodeId, {
                     summary: "正在运行",
                     blockType: value.blockType,
@@ -279,7 +282,7 @@ export class Runtime {
                   signal.throwIfAborted();
                   emit("block.completed", moduleId, value.nodeId, {
                     summary: "已完成",
-                    elapsedMs: Math.max(0, Math.floor(performance.now() - expressionStartedAt)),
+                    elapsedMs: Math.max(0, Math.floor(this.monotonicNow() - expressionStartedAt)),
                     outputType: result === null ? "null" : Array.isArray(result) ? "array" : typeof result,
                   });
                   return result;
@@ -511,7 +514,7 @@ export class Runtime {
                 await execute(child, moduleId);
           emit("block.completed", moduleId, node.nodeId, {
             summary: "已完成",
-            elapsedMs: Math.max(0, Math.floor(performance.now() - startedAt)),
+            elapsedMs: Math.max(0, Math.floor(this.monotonicNow() - startedAt)),
             outputType: agent.value === null ? "null" : Array.isArray(agent.value) ? "array" : typeof agent.value,
             budget: {
               steps: runBudget.steps,

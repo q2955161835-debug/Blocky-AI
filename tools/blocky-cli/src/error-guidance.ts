@@ -1,4 +1,11 @@
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-RPA-LOCATOR-003": { message: "定位器匹配多个控件。", hint: "补充 automationId、name 或 controlType，使目标唯一；不会自动选择第一个。" },
+  "BLK-RPA-LOCATOR-004": { message: "目标窗口内未找到控件。", hint: "检查控件标识、窗口状态和权限；需要等待出现时使用 wait 步骤。" },
+  "BLK-RPA-TARGET-001": { message: "目标窗口已失效或身份发生变化。", hint: "重新运行 rpa targets，核对目标后生成新的授权；不要沿用旧窗口句柄。" },
+  "BLK-RPA-SENSITIVE-001": { message: "当前桌面自动化不允许此敏感输入操作。", hint: "密码控件和通用 SecretStore 引用尚未开放给 RPA；由用户在目标应用中直接完成敏感步骤。" },
+  "BLK-RPA-RECEIPT-002": { message: "副作用结果尚未核对，禁止重放。", hint: "查看 checkpoint 与目标应用，核对实际结果后再安排新的流程。" },
+  "BLK-RPA-SETTLEMENT-001": { message: "自动化进程尚未确认全部结算。", hint: "保留 uncertain 回执，检查剩余进程；不能将此状态视为已停止或重新运行。" },
+  "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "当前原生执行支持 Windows UIA 的 find/read/click/fill/wait；浏览器、坐标回退和截图仍在开发。" },
   "BLK-PATCH-001": {
     message: "项目基线已改变，候选或恢复请求已过期。",
     hint: "重新运行 project inspect 获取 digest，再生成或审查候选；不要重用旧批准。",

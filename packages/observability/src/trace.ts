@@ -61,8 +61,8 @@ export class TraceSession {
       ...(typeof data.outputBytes === "number" && Number.isSafeInteger(data.outputBytes) && data.outputBytes >= 0 ? { outputBytes: data.outputBytes } : {}),
       ...(validPorts(data.inputPorts) ? { inputPorts: [...data.inputPorts] } : {}),
       ...(validOutputType(data.outputType) ? { outputType: data.outputType } : {}),
-      ...(validBudget(data.budget) ? { budget: { ...data.budget } } : {}),
-      ...(validUsage(data.usage) ? { usage: data.usage } : {}),
+      ...(validBudget(data.budget) ? { budget: budgetMetadata(data.budget) } : {}),
+      ...(validUsage(data.usage) ? { usage: usageMetadata(data.usage) } : {}),
       redaction: { ...event.redaction, categories: [...event.redaction.categories] },
     };
     this.frames.push(frame);
@@ -135,8 +135,8 @@ export function inspectTraceExport(input: unknown): { runId: string | null; drop
       ...(Number.isSafeInteger(frame.outputBytes) && Number(frame.outputBytes) >= 0 ? { outputBytes: Number(frame.outputBytes) } : {}),
       ...(validPorts(frame.inputPorts) ? { inputPorts: [...frame.inputPorts] } : {}),
       ...(validOutputType(frame.outputType) ? { outputType: frame.outputType } : {}),
-      ...(validBudget(frame.budget) ? { budget: { ...frame.budget } } : {}),
-      ...(validUsage(frame.usage) ? { usage: frame.usage } : {}),
+      ...(validBudget(frame.budget) ? { budget: budgetMetadata(frame.budget) } : {}),
+      ...(validUsage(frame.usage) ? { usage: usageMetadata(frame.usage) } : {}),
       redaction: { applied: redaction.applied, categories: [...redaction.categories] as string[] },
     };
   });
@@ -144,7 +144,13 @@ export function inspectTraceExport(input: unknown): { runId: string | null; drop
   return { runId: trace.runId as string | null, dropped: Number(trace.dropped), frames };
 }
 
-function validUsage(value: unknown): value is TraceFrame["usage"] {
+function usageMetadata(value: NonNullable<TraceFrame["usage"]>) {
+  return { inputTokens: value.inputTokens, outputTokens: value.outputTokens, totalTokens: value.totalTokens };
+}
+function budgetMetadata(value: NonNullable<TraceFrame["budget"]>) {
+  return { steps: value.steps, calls: value.calls, reservedOutputTokens: value.reservedOutputTokens };
+}
+function validUsage(value: unknown): value is NonNullable<TraceFrame["usage"]> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const usage = value as Record<string, unknown>;
   return ["inputTokens", "outputTokens", "totalTokens"].every(

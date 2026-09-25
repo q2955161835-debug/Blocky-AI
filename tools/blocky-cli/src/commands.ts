@@ -94,7 +94,7 @@ export async function dispatch(
   if (productivity) return productivity;
   const editor = await editorCommand(args, signal);
   if (editor) return editor;
-  const rpa = await rpaCommand(args);
+  const rpa = await rpaCommand(args, write, signal);
   if (rpa) return rpa;
   const trace = await traceCommand(args);
   if (trace) return trace;

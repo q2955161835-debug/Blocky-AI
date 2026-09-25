@@ -18,6 +18,7 @@ export type Popup =
         | "annotation"
         | "about"
         | "builder"
+        | "rpa"
         | ConstructionKind;
       x?: number;
       y?: number;
@@ -74,8 +75,9 @@ export function StudioDialog({
         style={
           popup.kind === "context"
             ? {
-                left: Math.min(popup.x ?? 0, window.innerWidth - 360),
-                top: Math.min(popup.y ?? 0, window.innerHeight - 360),
+                left: Math.max(8, Math.min(popup.x ?? 0, window.innerWidth - 360)),
+                top: Math.max(8, Math.min(popup.y ?? 0, window.innerHeight - 360)),
+                maxHeight: window.innerHeight - Math.max(8, Math.min(popup.y ?? 0, window.innerHeight - 360)) - 8,
               }
             : undefined
         }

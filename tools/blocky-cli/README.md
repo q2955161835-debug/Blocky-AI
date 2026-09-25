@@ -164,6 +164,24 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 息壤测试模型使用用户资源 `provider=xirang`、`implementationRef={"kind":"adapter","id":"xirang-v1"}`、`modelId=deepseek-v4-pro`。将本机 `.env` 中的 `XIRANG_API_KEY` 通过 `secret import` 导入独立 secretRef 后，用 `builder draft ... --live --model <resource-id>` 选择。预检返回的服务/模型及摘要需一起审核，修改 Provider 资源后旧批准不能继续使用。
 
+## 有人值守 Windows 自动化
+
+```powershell
+.\blocky.cmd rpa targets --json
+.\blocky.cmd schema show blocky.rpa/v1 --json
+.\blocky.cmd rpa validate .\try\automation.json --json
+.\blocky.cmd rpa run .\try\automation.json --jsonl
+.\blocky.cmd diagnostics explain BLK-RPA-LOCATOR-003 --json
+```
+
+目标 identity 必须来自当前 `rpa targets`；原生对话框会要求核对计划与窗口。当前执行支持 Windows UIA 的查找、读取、点击、填写与等待。浏览器、坐标和截图会明确报不支持，不降级成模拟结果。
+
+填写步骤使用 `manual-input`，可增加 `--inputs <JSON文件>` 提供按 stepId 索引的普通填写值；每步仍需原生确认实际内容。不要在此文件保存密码或密钥；Host 不允许读取通用 SecretStore 引用或操作密码控件。输入不会进入项目、日志和 checkpoint。
+
+`--control-stdin` 启用逐行 JSON 控制，如 `{"operation":"pause"}`，其余操作为 `resume`、`stop`、`status`。SIGINT/SIGTERM 也请求停止并等待 Host 结算。`step.result` 是显式读取结果，`step.completed` 是无正文事件；最终响应包含读取结果与 checkpoint。`settled=false` 或 `uncertain` 不能当成已停止/已完成，禁止自动重放。当前尚不支持持久检查点恢复。
+
+完整支持范围见[契约 15](../../doc/技术设计/正式契约/15-阶段6-7调试与有人值守自动化.md)。真实大模型 API 调用：否。
+
 ## Agent 生产力闭环
 
 先发现真实接口和积木，再提交编辑。Schema 由实际运行时校验器导出；目录字段和 Host 语义检查仍会进一步约束输入。

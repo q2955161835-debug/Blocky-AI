@@ -2,6 +2,7 @@ import { expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { parse } from "../../tools/blocky-cli/src/arguments";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
 function run(args: string[]) {
@@ -23,5 +24,26 @@ it("imports a recording as a pending review draft without typed values", async (
     const plan = join(dir, "reviewed.json");
     await writeFile(plan, JSON.stringify(JSON.parse(draft).plan));
     expect(run(["rpa", "validate", plan, "--json"]).code).toBe(0);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+it("discovers real native targets and exposes attended execution commands", () => {
+  expect(parse(["rpa", "run", "plan.json", "--control-stdin", "--jsonl"]).options.get("control-stdin")).toBe(true);
+  const targets = run(["rpa", "targets", "--json"]);
+  expect(targets.code).toBe(0);
+  expect(Array.isArray(targets.result.data.targets)).toBe(true);
+  expect(targets.result.data.modelApiCalled).toBe(false);
+  const commands = run(["command", "list", "--query", "rpa run", "--json"]);
+  expect(commands.result.data.commands[0].usage).toContain("--control-stdin");
+});
+it("rejects unsupported native execution before opening an approval dialog", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-rpa-native-"));
+  try {
+    const plan = join(dir, "plan.json");
+    await writeFile(plan, JSON.stringify({ schemaVersion: "blocky.rpa/v1", planId: "unsupported", target: { kind: "browser", identity: "https://example.test" }, steps: [{ stepId: "read", action: "read", locator: { kind: "browser", role: "textbox" }, timeoutMs: 100 }] }));
+    const outcome = run(["rpa", "run", plan, "--jsonl"]);
+    expect(outcome.code).toBe(7);
+    expect(outcome.result.error.code).toBe("BLK-RPA-UNSUPPORTED-001");
+    expect(outcome.result.data.completed).toBe(false);
+    expect(outcome.result.data.modelApiCalled).toBe(false);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });

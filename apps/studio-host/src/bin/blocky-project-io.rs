@@ -28,6 +28,10 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
+    if value["operation"]=="rpa-targets" {
+        if value["schemaVersion"]!=SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) {return json!({"ok":false,"code":"BLK-CLI-002"});}
+        return json!({"ok":true,"value":blocky_studio::rpa::target::list()});
+    }
     if value["operation"].as_str().is_some_and(|s|s.starts_with("builder-")) {
         let result=std::env::var_os("LOCALAPPDATA").map(std::path::PathBuf::from).ok_or_else(||"BLK-BUILDER-STATE".to_owned()).and_then(|root|blocky_studio::builder::dispatch(root.join("ai.blocky.studio"),&value));
         return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};
@@ -274,6 +278,8 @@ fn execute_value(value: Value) -> Value {
 }
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
+        Some("--blocky-rpa-run") => std::process::exit(blocky_studio::rpa::runner_main()),
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         Some("--blocky-knowledge-session") => std::process::exit(knowledge_session()),
