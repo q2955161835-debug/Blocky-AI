@@ -31,7 +31,7 @@ fn identifier(s: &str, max: usize) -> bool {
 }
 impl ResponseMetadata {
     fn valid(&self) -> bool {
-        self.provider == "deepseek"
+        ["deepseek", "xirang"].contains(&self.provider.as_str())
             && identifier(&self.model, 128)
             && identifier(&self.response_id, 256)
             && [
@@ -47,10 +47,10 @@ impl ResponseMetadata {
             && self.input_tokens.checked_add(self.output_tokens) == Some(self.total_tokens)
     }
 }
-pub fn response_metadata(bytes: &[u8]) -> Option<ResponseMetadata> {
+pub fn response_metadata(bytes: &[u8], provider: &str) -> Option<ResponseMetadata> {
     let v = crate::strict_json::parse(bytes).ok()?;
     let meta = ResponseMetadata {
-        provider: "deepseek".into(),
+        provider: provider.into(),
         model: v["model"].as_str()?.into(),
         response_id: v["id"].as_str()?.into(),
         input_tokens: v["usage"]["prompt_tokens"].as_u64()?,
@@ -238,13 +238,13 @@ mod tests {
     #[test]
     fn preserves_usage_for_rejected_response_without_content() {
         let v = json!({"id":"response-1","model":"deepseek-flash","choices":[{"finish_reason":"tool_calls","message":{"content":"synthetic-private-body"}}],"usage":{"prompt_tokens":4,"completion_tokens":2,"total_tokens":6},"Authorization":"synthetic-private-header"});
-        let m = response_metadata(v.to_string().as_bytes()).unwrap();
+        let m = response_metadata(v.to_string().as_bytes(), "deepseek").unwrap();
         let safe = serde_json::to_string(&m).unwrap();
         assert!(!safe.contains("private"));
         assert!(safe.contains("response-1"));
         let mut bad = v;
         bad["id"] = json!("Bearer secret");
-        assert!(response_metadata(bad.to_string().as_bytes()).is_none());
+        assert!(response_metadata(bad.to_string().as_bytes(), "deepseek").is_none());
     }
     #[test]
     fn evidence_read_is_strict_scoped_and_latest_only() {

@@ -284,11 +284,9 @@ describe("Blocky native editor", () => {
     }
     expect(await frame.locator("#citations").innerText()).toContain("水循环");
     await browser.saveScreenshot("try/stage2-e2e/native-surface.png");
-    await $("[aria-label='关闭 问答页面']").click();
+    await $("[aria-label='关闭 资料问答']").click();
     await expect($$("iframe")).toBeElementsArrayOfSize(0);
-    await $(
-      "//aside[contains(@class,'library')]//button[contains(.,'问答页面')]",
-    ).click();
+    await page.locator(".library").getByRole("button", { name: "◉ 资料问答", exact: true }).click();
     try {
       await $("iframe[title='资料问答']").waitForDisplayed();
     } catch (error) {

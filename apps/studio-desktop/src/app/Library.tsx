@@ -1,5 +1,6 @@
 import { catalog, categories, beginnerCategories } from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
+import { surfaceTitle } from "@blocky/app-surface";
 import type { Blueprint } from "@blocky/block-catalog";
 import type { Construction } from "../composition/useConstruction";
 const projection: Record<number, number> = {
@@ -143,7 +144,7 @@ export function Library({
             key={surface.surfaceId}
             onClick={() => s.openSurface(surface.surfaceId)}
           >
-            ◉ 问答页面
+            ◉ {surfaceTitle(s.snapshot.project, surface.surfaceId)}
           </button>
         ))}
         {s.snapshot.project.manifest.modules.map((m) => (

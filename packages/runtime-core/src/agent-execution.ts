@@ -45,7 +45,13 @@ export class AgentExecution {
     requestId: string,
   ): Promise<boolean> {
     const key = implementationKey(resource.definition.implementationRef);
-    if (!["adapter://deepseek-v1", "adapter://generator-v1"].includes(key))
+    if (
+      ![
+        "adapter://deepseek-v1",
+        "adapter://xirang-v1",
+        "adapter://generator-v1",
+      ].includes(key)
+    )
       return false;
     if (this.requireEvidence && !citations.length) {
       this.generated = "资料没有提供足够依据，请补充资料或澄清问题。";

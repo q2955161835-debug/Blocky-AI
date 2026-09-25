@@ -155,3 +155,5 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 `builder work <工作标识> <项目> --input <JSON> --output <JSON> --json` 支持 `build-blocky-agents`、`create-blocky-blocks`、`convert-github-project-to-blocky` 和 `reverse-agent-to-blocky`；前三者提供候选，逆向提供来源/保留项报告及可选候选。工作标识不代表已安装或发布官方 Skill，逆向不承诺完整框架兼容。
 
 构建失败后可用 `builder evidence --request-id <id> --json` 查询 Host 最近一次调用记录。只保存安全的响应标识、实际模型、用量和稳定错误码，不保存提示词或模型正文；其他请求 ID 和不一致记录均拒绝。`networkAttempted` 只表示进入发送步骤，不能代替供应商响应证据。记录位于本机应用数据目录的 `builder-evidence/latest.json`，不写入项目。
+
+息壤测试模型使用用户资源 `provider=xirang`、`implementationRef={"kind":"adapter","id":"xirang-v1"}`、`modelId=deepseek-v4-pro`。将本机 `.env` 中的 `XIRANG_API_KEY` 通过 `secret import` 导入独立 secretRef 后，用 `builder draft ... --live --model <resource-id>` 选择。预检返回的服务/模型及摘要需一起审核，修改 Provider 资源后旧批准不能继续使用。

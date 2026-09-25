@@ -1,0 +1,58 @@
+{
+  "baseCommit": "0b2b73d42a94458ac9567c365a2a1f9d90acb63d",
+  "snapshotTime": "2026-09-25T18:23:52.5871345+08:00",
+  "files": [
+    {
+      "path": "apps/studio-host/src/provider/types.rs",
+      "sha256": "7291b2244920d340e619e453f6904403e57e8b5f54d47cb0f259fa39e72c943e"
+    },
+    {
+      "path": "apps/studio-host/src/provider/transport.rs",
+      "sha256": "7ec095e33d113c0f3e84db07f0841c1f573601c96d5b597b7456f9130273e1f5"
+    },
+    {
+      "path": "apps/studio-host/src/provider/builder.rs",
+      "sha256": "dc54a9a48ba3f9e785a01b10b6c01103292674dc8e7ce24af97bd06c12be00bf"
+    },
+    {
+      "path": "apps/studio-host/src/provider/mod.rs",
+      "sha256": "97cea5ece259000202c579211f8bbdf1fd87e4e8271aff9195ca383e771a64fc"
+    },
+    {
+      "path": "apps/studio-host/src/builder/mod.rs",
+      "sha256": "46fc998979b3635b2e8ee331a24beb7f58417904a1679c98c3609b10e8ce80d9"
+    },
+    {
+      "path": "apps/studio-host/src/builder/process.rs",
+      "sha256": "559c61edc699693f64f0208c54c0d5976639857c074e87759c7262cf2475e543"
+    },
+    {
+      "path": "apps/studio-host/src/builder/evidence.rs",
+      "sha256": "db1ca714d7c6b1f7e297aca274eeb80b6e2b72604aa55765cf83fb96d00208fd"
+    },
+    {
+      "path": "apps/studio-host/src/builder_commands.rs",
+      "sha256": "af2c697c98648052c6c33f999f1a3a1d9320987b34a1b92b0e32c24342b8f431"
+    },
+    {
+      "path": "apps/studio-host/src/provider_commands.rs",
+      "sha256": "ece6808cb6edcc51e5d58e9c064a6a0ccca820b9f05fe06370feda31c7d42692"
+    },
+    {
+      "path": "packages/resource-registry/src/validate.ts",
+      "sha256": "39e2f2493234f9864ad5b53a5f9caea084c6bf7e3adbff12d30aefa0d25be017"
+    },
+    {
+      "path": "packages/runtime-core/src/agent-execution.ts",
+      "sha256": "16e07696dbafafe5ae0014c108ffc685bf43a89043d901fdfc82ba8b6889695e"
+    },
+    {
+      "path": "packages/runtime-core/src/native-agent.ts",
+      "sha256": "933efc8c0f6223b94882df59a462576a2c86231351194a2dec86681103b6e0b5"
+    },
+    {
+      "path": "apps/studio-desktop/src/app/BuilderDialog.tsx",
+      "sha256": "a0f39adfed79cdb58edc5638ae9d003483a726ebe5d5e6acf26ac16816952efb"
+    }
+  ]
+}

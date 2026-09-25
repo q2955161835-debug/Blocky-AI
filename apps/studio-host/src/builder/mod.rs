@@ -114,20 +114,34 @@ fn binding(
             })
         })
         .ok_or("BLK-PROVIDER-CONFIG")?;
-    let request:crate::provider::ProviderRequest=serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":start.request.request_id,"projectId":start.request.project_id,"resourceId":r["resourceId"],"secretRef":r["secretBindings"][0]["secretRef"],"modelId":r["definition"]["modelId"],"messages":[{"role":"user","content":"Blocky 构建会话"}],"maxOutputTokens":1024,"timeoutMs":60000})).map_err(|_|"BLK-PROVIDER-CONFIG")?;
+    let request:crate::provider::ProviderRequest=serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":start.request.request_id,"projectId":start.request.project_id,"resourceId":r["resourceId"],"secretRef":r["secretBindings"][0]["secretRef"],"provider":r["definition"]["provider"],"modelId":r["definition"]["modelId"],"messages":[{"role":"user","content":"Blocky 构建会话"}],"maxOutputTokens":1024,"timeoutMs":60000})).map_err(|_|"BLK-PROVIDER-CONFIG")?;
     crate::provider::ProviderHost::default().preflight(root, &request)?;
     Ok(Some(request))
+}
+fn approval_digest(
+    start: &BuilderStart,
+    binding: Option<&crate::provider::ProviderRequest>,
+) -> Result<String, String> {
+    let request = start.digest()?;
+    match binding {
+        None => Ok(request),
+        Some(b) => Ok(format!(
+            "{:x}",
+            Sha256::digest(format!("{request}:{}", b.digest()?))
+        )),
+    }
 }
 impl BuilderHost {
     pub fn preflight(&self, root: &Path, start: &BuilderStart) -> Result<Value, String> {
         let project = start.validate()?;
         let b = binding(root, start)?;
         Ok(
-            json!({"requestDigest":start.digest()?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"modelId":b.as_ref().map(|b|b.model_id.as_str()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义"}),
+            json!({"requestDigest":approval_digest(start,b.as_ref())?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"provider":b.as_ref().map(|b|b.provider_name()),"endpoint":b.as_ref().map(|b|b.endpoint()),"modelId":b.as_ref().map(|b|b.model_id.as_str()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义"}),
         )
     }
     pub fn run(&self, root: PathBuf, start: BuilderStart, digest: &str) -> Result<Value, String> {
-        if start.digest()? != digest {
+        let b = binding(&root, &start)?;
+        if approval_digest(&start, b.as_ref())? != digest {
             return Err("BLK-PERM-001".into());
         }
         let project = start.validate()?;
@@ -135,7 +149,6 @@ impl BuilderHost {
         if input_guard::credentials(&registry) {
             return Err(INVALID.into());
         }
-        let b = binding(&root, &start)?;
         let cancel = Arc::new(AtomicBool::new(false));
         {
             let mut s = self.state.lock().map_err(|_| "BLK-BUILDER-STATE")?;
@@ -180,7 +193,13 @@ impl BuilderHost {
             validate_result(&start, &result, &registry)?;
             Ok(result)
         })();
-        let end = evidence::now().max(evidence.attempts.last().map(|a| a.completed_at_ms.unwrap_or(a.started_at_ms)).unwrap_or(evidence.started_at_ms));
+        let end = evidence::now().max(
+            evidence
+                .attempts
+                .last()
+                .map(|a| a.completed_at_ms.unwrap_or(a.started_at_ms))
+                .unwrap_or(evidence.started_at_ms),
+        );
         evidence.completed_at_ms = Some(end);
         evidence.outcome = result
             .as_ref()
@@ -190,7 +209,11 @@ impl BuilderHost {
         for attempt in &mut evidence.attempts {
             if attempt.completed_at_ms.is_none() {
                 attempt.completed_at_ms = Some(end);
-                attempt.outcome = result.as_ref().err().cloned().unwrap_or_else(|| "BLK-BUILDER-EVIDENCE".into());
+                attempt.outcome = result
+                    .as_ref()
+                    .err()
+                    .cloned()
+                    .unwrap_or_else(|| "BLK-BUILDER-EVIDENCE".into());
             }
         }
         evidence.save(&root)?;
@@ -329,14 +352,14 @@ pub fn dispatch(root: PathBuf, value: &Value) -> Result<Value, String> {
                 preview["approvalExpiresAt"] = crate::approval_ledger::issue(
                     &root.join("approvals"),
                     &identity,
-                    &e.start.digest()?,
+                    preview["requestDigest"].as_str().ok_or(INVALID)?,
                 )?
                 .into();
             }
             Ok(preview)
         }
         "builder-run" => {
-            let digest = e.start.digest()?;
+            let digest = approval_digest(&e.start, binding(&root, &e.start)?.as_ref())?;
             if e.start.mode == "live" {
                 let a = e
                     .approval

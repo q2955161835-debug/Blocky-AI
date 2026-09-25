@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 pub const ENDPOINT: &str = "https://api.deepseek.com/chat/completions";
+pub const XIRANG_ENDPOINT: &str = "https://ai.ctaigw.cn/v1/chat/completions";
 pub const INVALID: &str = "BLK-PROVIDER-INVALID";
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -12,6 +13,8 @@ pub struct ProviderRequest {
     pub resource_id: String,
     pub secret_ref: String,
     pub model_id: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<String>,
     pub messages: Vec<Message>,
     pub max_output_tokens: u32,
     pub timeout_ms: u64,
@@ -25,8 +28,19 @@ pub struct Message {
     pub content: String,
 }
 impl ProviderRequest {
+    pub fn provider_name(&self) -> &str {
+        self.provider.as_deref().unwrap_or("deepseek")
+    }
+    pub fn endpoint(&self) -> &'static str {
+        if self.provider_name() == "xirang" {
+            XIRANG_ENDPOINT
+        } else {
+            ENDPOINT
+        }
+    }
     pub fn validate(&self) -> Result<(), String> {
         if self.schema_version != "blocky.provider-request/v1"
+            || !["deepseek", "xirang"].contains(&self.provider_name())
             || [
                 &self.request_id,
                 &self.project_id,
@@ -68,7 +82,7 @@ impl ProviderRequest {
     }
     pub fn preflight(&self) -> Result<Value, String> {
         Ok(
-            json!({"requestDigest":self.digest()?,"provider":"deepseek","endpoint":ENDPOINT,"projectId":self.project_id,"resourceId":self.resource_id,"modelId":self.model_id,"inputBytes":self.messages.iter().map(|m|m.content.len()).sum::<usize>(),"maxOutputTokens":self.max_output_tokens,"timeoutMs":self.timeout_ms}),
+            json!({"requestDigest":self.digest()?,"provider":self.provider_name(),"endpoint":self.endpoint(),"projectId":self.project_id,"resourceId":self.resource_id,"modelId":self.model_id,"inputBytes":self.messages.iter().map(|m|m.content.len()).sum::<usize>(),"maxOutputTokens":self.max_output_tokens,"timeoutMs":self.timeout_ms}),
         )
     }
     pub fn body(&self) -> Value {
@@ -91,17 +105,26 @@ pub fn check_binding(registry: &Value, r: &ProviderRequest) -> Result<(), String
         .ok_or("BLK-PROVIDER-CONFIG")?;
     if resource["kind"] != "model"
         || resource["scope"] != "user"
-        || d["provider"] != "deepseek"
+        || d["provider"] != r.provider_name()
         || d["protocol"] != "openai-chat"
         || d["modelId"] != r.model_id
         || d["baseUrl"].as_str().is_some_and(|s| {
-            ![
-                "https://api.deepseek.com",
-                "https://api.deepseek.com/",
-                "https://api.deepseek.com/v1",
-                "https://api.deepseek.com/v1/",
-            ]
-            .contains(&s)
+            let allowed = if r.provider_name() == "xirang" {
+                [
+                    "https://ai.ctaigw.cn",
+                    "https://ai.ctaigw.cn/",
+                    "https://ai.ctaigw.cn/v1",
+                    "https://ai.ctaigw.cn/v1/",
+                ]
+            } else {
+                [
+                    "https://api.deepseek.com",
+                    "https://api.deepseek.com/",
+                    "https://api.deepseek.com/v1",
+                    "https://api.deepseek.com/v1/",
+                ]
+            };
+            !allowed.contains(&s)
         })
         || bindings.len() != 1
         || bindings[0]["fieldId"] != "apiKey"

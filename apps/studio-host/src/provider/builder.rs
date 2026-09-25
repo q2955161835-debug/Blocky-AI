@@ -210,12 +210,21 @@ pub fn generate(
     let response = crate::secret_store::SecretStore::new(root.join("secrets")).with_secret(
         &binding.secret_ref,
         |key| {
-            transport::send_raw_observed(&body, binding.timeout_ms, key, cancel, before_send)
+            transport::send_raw_observed(
+                binding.endpoint(),
+                &body,
+                binding.timeout_ms,
+                key,
+                cancel,
+                before_send,
+            )
         },
     )??;
-    *metadata = crate::builder::evidence::response_metadata(&response);
+    *metadata = crate::builder::evidence::response_metadata(&response, binding.provider_name());
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-BUILDER-CANCELLED".into());
     }
-    parse_response(&response, binding.max_output_tokens)
+    let mut result = parse_response(&response, binding.max_output_tokens)?;
+    result["provider"] = json!(binding.provider_name());
+    Ok(result)
 }

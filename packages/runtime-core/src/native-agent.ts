@@ -61,7 +61,7 @@ export function nativeAgentServices(
       );
       if (
         resource.scope !== "user" ||
-        d.provider !== "deepseek" ||
+        !["deepseek", "xirang"].includes(String(d.provider)) ||
         d.protocol !== "openai-chat" ||
         typeof d.modelId !== "string" ||
         !binding
@@ -82,6 +82,7 @@ export function nativeAgentServices(
         resourceId: resource.resourceId,
         secretRef: binding.secretRef,
         modelId: d.modelId,
+        ...(d.provider === "xirang" ? { provider: "xirang" } : {}),
         messages: input.messages,
         maxOutputTokens: Math.min(1024, input.maxOutputTokens),
         timeoutMs: integer(d.timeoutMs, 1, 120000),

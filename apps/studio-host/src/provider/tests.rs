@@ -36,6 +36,33 @@ fn request_limits_and_exact_digest() {
     assert!(serde_json::from_value::<ProviderRequest>(v).is_err());
 }
 #[test]
+fn xirang_route_is_fixed_bound_and_separate_from_official_credentials() {
+    let mut value = serde_json::to_value(request()).unwrap();
+    value["provider"] = json!("xirang");
+    value["modelId"] = json!("deepseek-v4-pro");
+    let r: ProviderRequest = serde_json::from_value(value).unwrap();
+    assert_eq!(
+        r.preflight().unwrap()["endpoint"],
+        "https://ai.ctaigw.cn/v1/chat/completions"
+    );
+    assert_eq!(r.preflight().unwrap()["provider"], "xirang");
+    let mut v = registry();
+    v["resources"][0]["definition"]["provider"] = json!("xirang");
+    v["resources"][0]["definition"]["modelId"] = json!("deepseek-v4-pro");
+    v["resources"][0]["definition"]["baseUrl"] = json!("https://ai.ctaigw.cn/v1");
+    assert!(types::check_binding(&v, &r).is_ok());
+    for url in [
+        "https://api.deepseek.com",
+        "https://ai.ctaigw.cn.evil.invalid/v1",
+        "http://ai.ctaigw.cn/v1",
+        "https://localhost/v1",
+        "https://ai.ctaigw.cn/v1?x=1",
+    ] {
+        v["resources"][0]["definition"]["baseUrl"] = json!(url);
+        assert!(types::check_binding(&v, &r).is_err());
+    }
+}
+#[test]
 fn binding_is_host_owned_and_cannot_override_endpoint_or_secret() {
     let r = request();
     let v = registry();

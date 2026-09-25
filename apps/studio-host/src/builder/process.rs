@@ -220,7 +220,13 @@ pub(super) fn run(
                     bounded.timeout_ms = bounded.timeout_ms.min(remaining);
                     evidence.attempts.push(super::evidence::Attempt {
                         turn,
-                        started_at_ms: super::evidence::now().max(evidence.attempts.last().and_then(|a| a.completed_at_ms).unwrap_or(evidence.started_at_ms)),
+                        started_at_ms: super::evidence::now().max(
+                            evidence
+                                .attempts
+                                .last()
+                                .and_then(|a| a.completed_at_ms)
+                                .unwrap_or(evidence.started_at_ms),
+                        ),
                         completed_at_ms: None,
                         network_attempted: false,
                         outcome: "started".into(),
@@ -240,7 +246,8 @@ pub(super) fn run(
                         },
                     );
                     let attempt = evidence.attempts.last_mut().ok_or(ERROR)?;
-                    attempt.completed_at_ms = Some(super::evidence::now().max(attempt.started_at_ms));
+                    attempt.completed_at_ms =
+                        Some(super::evidence::now().max(attempt.started_at_ms));
                     attempt.response = metadata;
                     attempt.outcome = generated
                         .as_ref()

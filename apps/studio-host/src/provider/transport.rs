@@ -77,24 +77,30 @@ pub fn consume(mut reader: impl std::io::Read, cancel: &AtomicBool) -> Result<Ve
     Ok(bytes)
 }
 pub fn send(r: &ProviderRequest, key: &[u8], cancel: &AtomicBool) -> Result<Value, String> {
-    let bytes = send_raw(&r.body(), r.timeout_ms, key, cancel)?;
-    parse(&bytes, r.max_output_tokens)
-}
-pub(crate) fn send_raw(
-    body: &Value,
-    timeout_ms: u64,
-    key: &[u8],
-    cancel: &AtomicBool,
-) -> Result<Vec<u8>, String> {
-    send_raw_observed(body, timeout_ms, key, cancel, &mut || Ok(()))
+    r.validate()?;
+    let bytes = send_raw_observed(
+        r.endpoint(),
+        &r.body(),
+        r.timeout_ms,
+        key,
+        cancel,
+        &mut || Ok(()),
+    )?;
+    let mut result = parse(&bytes, r.max_output_tokens)?;
+    result["provider"] = json!(r.provider_name());
+    Ok(result)
 }
 pub(crate) fn send_raw_observed(
+    endpoint: &'static str,
     body: &Value,
     timeout_ms: u64,
     key: &[u8],
     cancel: &AtomicBool,
     before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
+    if ![ENDPOINT, XIRANG_ENDPOINT].contains(&endpoint) {
+        return Err("BLK-PROVIDER-CONFIG".into());
+    }
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-PROVIDER-CANCELLED".into());
     }
@@ -107,7 +113,7 @@ pub(crate) fn send_raw_observed(
         .connect_timeout(Duration::from_millis(timeout_ms.min(10000)))
         .build()
         .map_err(|_| "BLK-PROVIDER-TRANSPORT")?;
-    exchange_using(client, ENDPOINT, body, timeout_ms, key, cancel, before_send)
+    exchange_using(client, endpoint, body, timeout_ms, key, cancel, before_send)
 }
 fn exchange_using(
     client: reqwest::Client,
@@ -211,6 +217,7 @@ mod observation_tests {
         for (cancelled, key) in [(true, b"synthetic".as_slice()), (false, &[255u8][..])] {
             let mut observed = false;
             let result = send_raw_observed(
+                ENDPOINT,
                 &json!({}),
                 100,
                 key,

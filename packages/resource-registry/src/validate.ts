@@ -174,10 +174,25 @@ export function validateResource(input: unknown): Resource {
       invalidResource();
   } else {
     check(config, metadata.definitionSchema);
-    const builtinModel = input.kind === 'model' && record(config.implementationRef) && config.implementationRef.kind==='adapter' &&
-      ((config.implementationRef.id==='generator-v1' && config.provider==='deterministic' && config.protocol==='local') ||
-       (config.implementationRef.id==='deepseek-v1' && config.provider==='deepseek' && config.protocol==='openai-chat'));
-    if (input.kind === "model" && !builtinModel && !config.baseUrl && !bound.has("baseUrl"))
+    const builtinModel =
+      input.kind === "model" &&
+      record(config.implementationRef) &&
+      config.implementationRef.kind === "adapter" &&
+      ((config.implementationRef.id === "generator-v1" &&
+        config.provider === "deterministic" &&
+        config.protocol === "local") ||
+        (config.implementationRef.id === "deepseek-v1" &&
+          config.provider === "deepseek" &&
+          config.protocol === "openai-chat") ||
+        (config.implementationRef.id === "xirang-v1" &&
+          config.provider === "xirang" &&
+          config.protocol === "openai-chat"));
+    if (
+      input.kind === "model" &&
+      !builtinModel &&
+      !config.baseUrl &&
+      !bound.has("baseUrl")
+    )
       invalidResource();
     if (
       input.kind === "knowledge" &&

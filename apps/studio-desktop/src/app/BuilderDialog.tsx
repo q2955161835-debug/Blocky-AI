@@ -27,7 +27,7 @@ export function BuilderDialog({
     (r) =>
       r.kind === "model" &&
       r.scope === "user" &&
-      r.definition.provider === "deepseek",
+      ["deepseek", "xirang"].includes(String(r.definition.provider)),
   );
   const dismiss = () => {
     builder.clear();

@@ -38,7 +38,9 @@ pub async fn provider_call(
         .collect::<Vec<_>>()
         .join("\n");
     let description = format!(
-        "发送至 DeepSeek 官方服务\n项目：{}\n资源：{}\n模型：{}\n输入：{} bytes\n输出上限：{} tokens\n超时：{} ms\n消息范围：\n{}\n请求摘要：{}",
+        "发送至 {}\n地址：{}\n项目：{}\n资源：{}\n模型：{}\n输入：{} bytes\n输出上限：{} tokens\n超时：{} ms\n消息范围：\n{}\n请求摘要：{}",
+        if request.provider_name() == "xirang" { "息壤" } else { "DeepSeek" },
+        request.endpoint(),
         request.project_id,
         request.resource_id,
         request.model_id,

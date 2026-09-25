@@ -26,6 +26,7 @@ import { BuilderDialog } from "./BuilderDialog";
 import { useTask } from "../composition/useTask";
 import { useTerminals } from "../composition/useTerminals";
 import { SurfacePreview } from "./SurfacePreview";
+import { surfaceTitle } from "@blocky/app-surface";
 import { useLogs } from "../composition/useLogs";
 import { useLifecycle } from "../composition/useLifecycle";
 import { ExitDialog } from "./ExitDialog";
@@ -421,7 +422,12 @@ export function App() {
                     s.snapshot.project.manifest.appSurfaces.some(
                       (v) => v.surfaceId === id.slice(8),
                     )
-                      ? { displayName: "问答页面" }
+                      ? {
+                          displayName: surfaceTitle(
+                            s.snapshot.project,
+                            id.slice(8),
+                          ),
+                        }
                       : undefined);
                   return (
                     m && (

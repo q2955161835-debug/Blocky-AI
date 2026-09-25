@@ -137,3 +137,14 @@ export function surfaceFromProject(project: Project, surfaceId: string) {
     ),
   });
 }
+
+/** Navigation reads the accepted manifest without rebuilding the page on every render. */
+export function surfaceTitle(project: Project, surfaceId: string): string {
+  const descriptor = project.manifest.appSurfaces.find(
+    (s) => s.surfaceId === surfaceId,
+  );
+  const parsed = surfaceManifest.safeParse(
+    descriptor ? project.surfaces[descriptor.manifestRef] : undefined,
+  );
+  return parsed.success ? parsed.data.displayName : "应用界面";
+}

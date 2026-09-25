@@ -160,7 +160,7 @@ it("a deadline terminates a hanging model as failed, not user-cancelled", async 
   expect(r.status).toBe("failed");
   expect(r.events.at(-1)?.data.code).toBe("BLK-RUN-007");
 });
-it("native live requests require an exact CLI approval and never expose secrets", async () => {
+it.each(["deepseek", "xirang"])("%s live requests require an exact CLI approval and never expose secrets", async (provider) => {
   const calls: string[] = [];
   const pending: unknown[] = [];
   const resource: Resource = {
@@ -172,15 +172,18 @@ it("native live requests require an exact CLI approval and never expose secrets"
     capabilityRequirements: [],
     secretBindings: [{ fieldId: "apiKey", secretRef: "key-ref" }],
     definition: {
-      provider: "deepseek",
+      provider,
       protocol: "openai-chat",
       modelId: "configured-model",
       timeoutMs: 1000,
     },
   };
   const services = nativeAgentServices(
-    async (operation) => {
+    async (operation, fields) => {
       calls.push(operation);
+      const request = fields.request as { provider?: string; secretRef: string };
+      expect(request.provider ?? "deepseek").toBe(provider);
+      expect(request.secretRef).toBe("key-ref");
       return { requestDigest: "a".repeat(64) };
     },
     { mode: "cli", pending: (p) => pending.push(p) },
@@ -200,15 +203,15 @@ it("native live requests require an exact CLI approval and never expose secrets"
   expect(calls).toEqual(["provider-preflight"]);
   expect(pending).toHaveLength(1);
 });
-it("remote generation reports actual API usage and keeps synthetic no-evidence response local", async () => {
+it.each(["deepseek", "xirang"])("%s generation reports actual API usage and keeps synthetic no-evidence response local", async (provider) => {
   const p = createStarter();
   p.resources["local-composer"].definition = {
-    provider: "deepseek",
+    provider,
     protocol: "openai-chat",
     modelId: "configured-model",
     timeoutMs: 1000,
     capabilities: ["text"],
-    implementationRef: { kind: "adapter", id: "deepseek-v1" },
+    implementationRef: { kind: "adapter", id: `${provider}-v1` },
   };
   const adapters = localAdapters();
   adapters.agent = {

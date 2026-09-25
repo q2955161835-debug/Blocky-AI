@@ -1,0 +1,30 @@
+{
+  "runId": "2f4d53f8-17ea-4cad-979e-1741ad10a954",
+  "passed": false,
+  "schemaVersion": "blocky.soak/v1",
+  "startedAt": "2026-09-25T10:03:11.983Z",
+  "cycles": 31,
+  "roundTrips": 2,
+  "binary": {
+    "bytes": 45129728,
+    "sha256": "d74947cec6ad70ae03ad45d772a97ddc9163ed8a6b857e6c5813dfcdcee84345"
+  },
+  "preparation": {
+    "baseline": "e3ae8d4b3cf25f3d180346b9352284c43a20aba9bf901395e63c937a79a38c39",
+    "blocks": 100,
+    "nodes": 100
+  },
+  "failure": "page.evaluate: Error: studio runtime did not finish: {\"cycle\":32,\"status\":\"not-started\",\"hostAllowsNewRun\":false,\"visibility\":\"visible\",\"focused\":true,\"compiling\":false,\"compiled\":true,\"canRun\":true,\"running\":false,\"busy\":false,\"exiting\":false,\"editedRevision\":84,\"renderedRevision\":84,\"controllerRevision\":84,\"paths\":[\"/workspaces/research-agent/blocks/blocks/0/fields/ROLE\"]}\n    at Object.cycle (http://tauri.localhost/assets/acceptance-BqxVuYI1.js:1:6605)\n    at async <anonymous>:337:30",
+  "nativeWindow": {
+    "visible": false,
+    "minimized": true
+  },
+  "elapsedMs": 155465,
+  "warmHeap": 0,
+  "finalHeap": 0,
+  "heapDelta": null,
+  "trustedInput": [],
+  "errors": [],
+  "outbound": [],
+  "endedAt": "2026-09-25T10:05:47.448Z"
+}
