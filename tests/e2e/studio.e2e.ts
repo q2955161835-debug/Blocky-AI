@@ -213,7 +213,7 @@ describe("Blocky native editor", () => {
       core.invoke("append_diagnostics", {
         records: [
           {
-            timestamp: "2026-09-16T00:00:00.000Z",
+            timestamp: new Date().toISOString(),
             sequence: 888888,
             level: "warning",
             channel: "preview",
@@ -221,6 +221,13 @@ describe("Blocky native editor", () => {
         ],
       }),
     );
+    const seeded = await browser.tauri.execute(async ({ core }) => {
+      const data = (await core.invoke("read_diagnostics", {
+        channel: "preview",
+      })) as { records: { sequence: number }[] };
+      return data.records.some((r) => r.sequence === 888888);
+    });
+    expect(seeded).toBe(true);
     const denied = await frame.locator("body").evaluate(async () => {
       let parentAccess = false,
         httpReached = false;
