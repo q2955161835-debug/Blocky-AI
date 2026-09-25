@@ -4,6 +4,7 @@ import {
   EventFactory,
   type RuntimeEvent,
   type EventType,
+  type TraceDetails,
 } from "@blocky/observability";
 import { parseProject } from "@blocky/project-model";
 import {
@@ -205,6 +206,8 @@ export class Runtime {
           blockType: node.blockType,
           inputPorts: Object.keys(node.inputs).sort(),
         });
+        let details: TraceDetails | undefined;
+        const reportDetails = (value: TraceDetails) => { details = structuredClone(value); };
         try {
           await wait(this.options.delayMs ?? 0, signal);
           signal.throwIfAborted();
@@ -221,15 +224,13 @@ export class Runtime {
               toolCorrelation,
             );
           try {
-            handled = await agent.execute(node, (child) =>
-              execute(child, moduleId),
-            );
+            handled = await agent.execute(node, (child) => execute(child, moduleId), reportDetails);
             if (toolCall)
               emit(
                 "tool.completed",
                 moduleId,
                 node.nodeId,
-                { summary: "工具运行完成" },
+                { summary: "工具运行完成", ...(details ? { details } : {}) },
                 toolCorrelation,
               );
           } catch (error) {
@@ -241,6 +242,7 @@ export class Runtime {
                 {
                   code: signal.aborted ? "BLK-RUN-005" : safeCode(error),
                   summary: "工具调用未完成",
+                  ...(details ? { details } : {}),
                 },
                 toolCorrelation,
               );
@@ -424,15 +426,17 @@ export class Runtime {
                   correlationId,
                 );
                 try {
+                  const generationCount = agent.generations.length;
                   if (
                     await agent.compose(
                       resource,
                       role,
                       citations,
                       correlationId,
+                      reportDetails,
                     )
                   ) {
-                    const generation = agent.generations.at(-1);
+                    const generation = agent.generations.length > generationCount ? agent.generations.at(-1) : undefined;
                     emit(
                       "model.completed",
                       moduleId,
@@ -443,6 +447,7 @@ export class Runtime {
                           generation?.transport ?? "local",
                         ...(generation?.usage ? { usage: generation.usage } : {}),
                         ...(generation ? { model: generation.model } : {}),
+                        ...(details ? { details } : {}),
                       },
                       correlationId,
                     );
@@ -488,6 +493,7 @@ export class Runtime {
                       summary: signal.aborted
                         ? "整理调用已取消"
                         : "整理调用失败",
+                      ...(details ? { details } : {}),
                     },
                     correlationId,
                   );
@@ -515,6 +521,7 @@ export class Runtime {
           emit("block.completed", moduleId, node.nodeId, {
             summary: "已完成",
             elapsedMs: Math.max(0, Math.floor(this.monotonicNow() - startedAt)),
+            ...(details ? { details } : {}),
             outputType: agent.value === null ? "null" : Array.isArray(agent.value) ? "array" : typeof agent.value,
             budget: {
               steps: runBudget.steps,
@@ -527,6 +534,7 @@ export class Runtime {
             emit("block.failed", moduleId, node.nodeId, {
               code: safeCode(error),
               summary: "积木运行失败",
+              ...(details ? { details } : {}),
             });
           throw error;
         }

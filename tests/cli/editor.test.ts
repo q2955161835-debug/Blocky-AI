@@ -16,6 +16,10 @@ it("uses the shared edit transaction and produces a read-only trace without mode
   const directory = await mkdtemp(resolve("try/stage7-editor-"));
   try {
     const original = createStarter();
+    original.resources["local-composer"].definition = {
+      provider: "deterministic", modelId: "generator-v1", protocol: "local", timeoutMs: 1000,
+      capabilities: ["text"], implementationRef: { kind: "adapter", id: "generator-v1" },
+    };
     createModule(original, "target-canvas", "目标画布");
     const source = join(directory, "source.blocky");
     const edited = join(directory, "edited.blocky");
@@ -47,6 +51,8 @@ it("uses the shared edit transaction and produces a read-only trace without mode
     const inspected = run(["trace", "inspect", trace, "--json"]);
     expect(inspected.code).toBe(0);
     expect(inspected.lines[0].data.frames.length).toBeGreaterThan(0);
+    expect(inspected.lines[0].data.frames.find((frame: { type: string }) => frame.type === "model.completed").details)
+      .toMatchObject({ model: { maxOutputTokens: 1024 }, context: { evidenceCount: 1 }, guard: { decision: "passed" } });
     const replayed = run(["trace", "replay", trace, "--json"]);
     expect(replayed.code).toBe(0);
     expect(replayed.lines[0].data.externalCalls).toBe(0);

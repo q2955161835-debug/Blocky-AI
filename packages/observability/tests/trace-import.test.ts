@@ -1,6 +1,23 @@
 import { expect, it } from "vitest";
 import { inspectTraceExport, TraceSession, EventFactory } from "../src";
 
+it("rebuilds detail metadata on live projection and import, dropping arbitrary nested data", () => {
+  const factory = new EventFactory(() => "2026-09-26T00:00:00.000Z");
+  const details = { model: { maxOutputTokens: 20, apiKey: "SECRET" }, memory: { action: "read", scope: "session", key: "PRIVATE_KEY" },
+    tool: { source: "input", inputType: "string", inputBytes: 4, outputType: "object", outputBytes: 10, body: "PRIVATE_BODY" },
+    guard: { policy: "require", decision: "rejected", evidence: "PRIVATE_EVIDENCE" } };
+  const trace = new TraceSession();
+  trace.add(factory.create({ projectId: "project-1", runId: "run-1", type: "run.started", data: { details } }));
+  expect(trace.list()[0].details).toEqual({ model: { maxOutputTokens: 20 }, memory: { action: "read", scope: "session" },
+    tool: { source: "input", inputType: "string", inputBytes: 4, outputType: "object", outputBytes: 10 }, guard: { policy: "require", decision: "rejected" } });
+  const imported = trace.export(); Object.assign(imported.frames[0].details!, details);
+  const safe = inspectTraceExport(imported);
+  expect(JSON.stringify(safe)).not.toMatch(/PRIVATE|SECRET/);
+  Object.assign(imported.frames[0].details!, { memory: { action: "PRIVATE_ACTION", scope: "session" }, model: { maxOutputTokens: "PRIVATE_LIMIT" } });
+  expect(inspectTraceExport(imported).frames[0].details?.memory).toBeUndefined();
+  expect(inspectTraceExport(imported).frames[0].details?.model).toBeUndefined();
+});
+
 it("rejects injected text in imported trace metadata", () => {
   const trace = new TraceSession();
   trace.add({ eventVersion: "blocky.event/v1alpha1", projectId: "project-1", runId: "run-1", sequence: 1,

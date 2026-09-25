@@ -66,6 +66,7 @@ export type OutputFile = {
   format: "text" | "json";
   content: string;
 };
+export const contextEvidence = (citations: Citation[]) => citations.map(c => ({ id: c.id, title: c.title, text: c.text }));
 export function messages(
   role: string,
   instruction: string,
@@ -78,11 +79,7 @@ export function messages(
   const context = canonicalJson({
     memory,
     toolResult: value,
-    evidence: citations.map((c) => ({
-      id: c.id,
-      title: c.title,
-      text: c.text,
-    })),
+    evidence: contextEvidence(citations),
   });
   if (utf8(system) + utf8(context) + utf8(input) > 32768)
     throw Error("BLK-CONTEXT-001");

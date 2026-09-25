@@ -1,5 +1,6 @@
 import type { RuntimeEvent } from "./events";
 import { stableId } from "@blocky/language-schema";
+import { projectTraceDetails, type TraceDetails } from "./trace-details";
 
 export type TraceFrame = {
   runId: string;
@@ -22,6 +23,7 @@ export type TraceFrame = {
   outputType?: string;
   budget?: { steps: number; calls: number; reservedOutputTokens: number };
   usage?: { inputTokens: number; outputTokens: number; totalTokens: number };
+  details?: TraceDetails;
   redaction: { applied: boolean; categories: string[] };
 };
 
@@ -63,6 +65,7 @@ export class TraceSession {
       ...(validOutputType(data.outputType) ? { outputType: data.outputType } : {}),
       ...(validBudget(data.budget) ? { budget: budgetMetadata(data.budget) } : {}),
       ...(validUsage(data.usage) ? { usage: usageMetadata(data.usage) } : {}),
+      ...(data.details ? { details: projectTraceDetails(data.details) } : {}),
       redaction: { ...event.redaction, categories: [...event.redaction.categories] },
     };
     this.frames.push(frame);
@@ -137,6 +140,7 @@ export function inspectTraceExport(input: unknown): { runId: string | null; drop
       ...(validOutputType(frame.outputType) ? { outputType: frame.outputType } : {}),
       ...(validBudget(frame.budget) ? { budget: budgetMetadata(frame.budget) } : {}),
       ...(validUsage(frame.usage) ? { usage: usageMetadata(frame.usage) } : {}),
+      ...(frame.details ? { details: projectTraceDetails(frame.details) } : {}),
       redaction: { applied: redaction.applied, categories: [...redaction.categories] as string[] },
     };
   });

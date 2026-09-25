@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { TraceSession } from "@blocky/observability";
 import type { Studio } from "../composition/useStudio";
+import { TraceDetails } from "./TraceDetails";
 
 export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext?(x: number, y: number): void }) {
   const [selectedSequence, setSelectedSequence] = useState<number>();
@@ -60,6 +61,7 @@ export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext
             {selected.outputType && <p>输出类型：{selected.outputType}</p>}
             {selected.budget && <p>预算：步骤 {selected.budget.steps}，调用 {selected.budget.calls}，预留输出 Token {selected.budget.reservedOutputTokens}</p>}
             {selected.usage && <p>Token：输入 {selected.usage.inputTokens}，输出 {selected.usage.outputTokens}，合计 {selected.usage.totalTokens}</p>}
+            <TraceDetails details={selected.details} />
             {selected.redaction.applied && <p>已脱敏：{selected.redaction.categories.join("、")}</p>}
           </div>
         )}

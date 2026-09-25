@@ -1,5 +1,6 @@
 import {
   stableId,
+  canonicalJson,
   type IrNode,
   type Json,
   type Project,
@@ -12,11 +13,15 @@ import {
   checkGeneration,
   checkGenerationMetadata,
   messages,
+  contextEvidence,
   type AgentServices,
   type Generation,
   type OutputFile,
 } from "./agent-context";
 import { validateOutput } from "./output-schema";
+import type { TraceDetails } from "@blocky/observability";
+
+const valueType = (value: Json) => value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 
 /** Run-local values; persistence and external effects belong to injected Host ports. */
 export class AgentExecution {
@@ -43,6 +48,7 @@ export class AgentExecution {
     role: string,
     citations: Citation[],
     requestId: string,
+    report: (details: TraceDetails) => void = () => {},
   ): Promise<boolean> {
     const key = implementationKey(resource.definition.implementationRef);
     if (
@@ -53,7 +59,16 @@ export class AgentExecution {
       ].includes(key)
     )
       return false;
+    const details: TraceDetails = {
+      context: { roleBytes: utf8(role), instructionBytes: utf8(this.instruction), userBytes: utf8(this.question),
+        memoryBytes: utf8(JSON.stringify(this.memory)), resultBytes: utf8(JSON.stringify(this.value)),
+        evidenceCount: citations.length, evidenceBytes: utf8(canonicalJson(contextEvidence(citations))) },
+      guard: { policy: this.requireEvidence ? "require" : "optional", decision: "checking" },
+    };
+    report(details);
     if (this.requireEvidence && !citations.length) {
+      details.guard!.decision = "insufficient-evidence";
+      report(details);
       this.generated = "资料没有提供足够依据，请补充资料或澄清问题。";
       this.value = this.generated;
       return true;
@@ -65,6 +80,8 @@ export class AgentExecution {
     const limit = this.budget.reserveOutput(
       integer(parameters?.maxOutputTokens ?? 1024, 1, 4096),
     );
+    details.model = { maxOutputTokens: limit };
+    report(details);
     const input = messages(
       role,
       this.instruction,
@@ -106,16 +123,24 @@ export class AgentExecution {
     this.budget.check();
     checkGenerationMetadata(result);
     this.generations.push({ ...result, text: "" });
-    if (this.services.validateCitations)
-      await abortable(
-        this.services.validateCitations(
-          this.project.manifest.projectId,
-          citations,
+    try {
+      if (this.services.validateCitations)
+        await abortable(
+          this.services.validateCitations(
+            this.project.manifest.projectId,
+            citations,
+            this.budget.signal,
+          ),
           this.budget.signal,
-        ),
-        this.budget.signal,
-      );
-    checkGeneration(result, citations, this.requireEvidence);
+        );
+      checkGeneration(result, citations, this.requireEvidence);
+    } catch (error) {
+      details.guard!.decision = "rejected";
+      report(details);
+      throw error;
+    }
+    details.guard!.decision = "passed";
+    report(details);
     if (result.usage && result.usage.outputTokens > limit)
       throw Error("BLK-RUN-004");
     this.generations[this.generations.length - 1] = result;
@@ -126,6 +151,7 @@ export class AgentExecution {
   async execute(
     node: IrNode,
     execute: (node: IrNode) => Promise<void>,
+    report: (details: TraceDetails) => void = () => {},
   ): Promise<boolean> {
     const f = node.fields;
     switch (node.blockType) {
@@ -191,6 +217,7 @@ export class AgentExecution {
           | "read"
           | "write"
           | "delete";
+        report({ memory: { action, scope: f.SCOPE as "session" | "project" } });
         const value = f.SOURCE === "input" ? this.question : this.value;
         if (utf8(JSON.stringify(value)) > 32768) throw Error("BLK-MEMORY-001");
         this.budget.call();
@@ -249,6 +276,8 @@ export class AgentExecution {
         const input = f.SOURCE === "input" ? this.question : this.value;
         for (const [kind, value] of [["inputSchemaRef", input]] as const)
           this.validateResourceSchema(resource, kind, value);
+        const detail: TraceDetails = { tool: { source: f.SOURCE as "input" | "result", inputType: valueType(input), inputBytes: utf8(JSON.stringify(input)) } };
+        report(detail);
         this.budget.call();
         const value = await abortable(
           this.services.tool(
@@ -265,6 +294,9 @@ export class AgentExecution {
         );
         this.budget.check();
         this.validateResourceSchema(resource, "outputSchemaRef", value);
+        detail.tool!.outputType = valueType(value);
+        detail.tool!.outputBytes = utf8(JSON.stringify(value));
+        report(detail);
         this.value = value;
         break;
       }
@@ -272,6 +304,7 @@ export class AgentExecution {
         if (!["require", "optional"].includes(String(f.POLICY)))
           throw Error("BLK-GUARD-001");
         this.requireEvidence = f.POLICY === "require";
+        report({ guard: { policy: f.POLICY as "require" | "optional", decision: "configured" } });
         break;
       case "core.output.structured": {
         const schema = this.project.schemas[String(f.SCHEMA)];
