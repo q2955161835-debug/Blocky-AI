@@ -298,11 +298,12 @@ fn find_mut<'a>(block: &'a mut Value, id: &str) -> Option<&'a mut Value> {
     }
     None
 }
-fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, String> {
+fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Result<BTreeSet<String>, String> {
     fn visit(
         b: &Value,
         p: &Value,
         registry: &Value,
+        allow_unresolved: bool,
         out: &mut BTreeSet<String>,
     ) -> Result<(), String> {
         if b["disabled"] != true {
@@ -318,8 +319,10 @@ fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, St
                 };
                 let reference = array(&p["manifest"]["resources"])?
                     .iter()
-                    .find(|r| r["resourceId"] == resource_id && r["kind"] == expected)
-                    .ok_or(INVALID)?;
+                    .find(|r| r["resourceId"] == resource_id && r["kind"] == expected);
+                // An unresolved old reference grants no capabilities. The repaired
+                // project is checked strictly, and new capabilities still need approval.
+                if let Some(reference) = reference {
                 let resource = if reference["scope"] == "project" {
                     &p["resources"][resource_id]
                 } else if reference["scope"] == "user"
@@ -352,17 +355,20 @@ fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, St
                 for cap in array(&resource["capabilityRequirements"])? {
                     out.insert(text(cap)?.into());
                 }
+                } else if !allow_unresolved {
+                    return Err(INVALID.into());
+                }
             }
             if let Some(inputs) = b.get("inputs") {
                 for input in inputs.as_object().ok_or(INVALID)?.values() {
                     if let Some(child) = input.get("block").or_else(|| input.get("shadow")) {
-                        visit(child, p, registry, out)?;
+                        visit(child, p, registry, allow_unresolved, out)?;
                     }
                 }
             }
         }
         if let Some(next) = b.get("next") {
-            visit(&next["block"], p, registry, out)?;
+            visit(&next["block"], p, registry, allow_unresolved, out)?;
         }
         Ok(())
     }
@@ -375,7 +381,7 @@ fn permissions(project: &Value, registry: &Value) -> Result<BTreeSet<String>, St
     }
     for workspace in project["workspaces"].as_object().ok_or(INVALID)?.values() {
         for block in array(&workspace["blocks"]["blocks"])? {
-            visit(block, project, registry, &mut result)?;
+            visit(block, project, registry, allow_unresolved, &mut result)?;
         }
     }
     Ok(result)
@@ -539,8 +545,8 @@ pub fn validate_with_registry(
     }
     project_files(&next)?;
     crate::patch_links::validate(&next)?;
-    let before = permissions(&original, registry)?;
-    let after = permissions(&next, registry)?;
+    let before = permissions(&original, registry, true)?;
+    let after = permissions(&next, registry, false)?;
     let delta: BTreeSet<String> = after.difference(&before).cloned().collect();
     let declared: BTreeSet<String> = array(&patch["permissionDelta"])?
         .iter()

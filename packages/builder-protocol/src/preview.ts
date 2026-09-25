@@ -16,6 +16,7 @@ const same = (a: string[], b: string[]) =>
 async function permissions(
   project: Project,
   userRegistry?: Map<string, Resource>,
+  allowUnresolved = false,
 ) {
   const compiled = await compileProject(project, userRegistry),
     values = new Set(compiled.tools.flatMap((t) => t.permissions));
@@ -26,6 +27,17 @@ async function permissions(
   for (const module of compiled.modules)
     for (const { node } of walkNodes(module.roots)) {
       if (node.blockType === "core.model.compose") {
+        // A broken old reference cannot grant capabilities. The resulting
+        // project is still compiled and resolved strictly before acceptance.
+        if (
+          allowUnresolved &&
+          !project.manifest.resources.some(
+            (r) =>
+              r.resourceId === String(node.fields.RESOURCE) &&
+              r.kind === "model",
+          )
+        )
+          continue;
         const resource = resolveResource(
           project,
           String(node.fields.RESOURCE),
@@ -51,7 +63,7 @@ export async function previewPatch(
   if (patch.catalogVersion !== catalogVersion) throw Error("BLK-PATCH-002");
   const next = projectWithOperations(project, patch.operations);
   const [before, after] = await Promise.all([
-    permissions(project, userRegistry),
+    permissions(project, userRegistry, true),
     permissions(next, userRegistry),
   ]);
   if (after.compiled.diagnostics.some((d) => d.severity === "error"))
@@ -103,7 +115,7 @@ export async function makePatch(
 ) {
   const next = projectWithOperations(project, operations);
   const [before, after] = await Promise.all([
-    permissions(project, userRegistry),
+    permissions(project, userRegistry, true),
     permissions(next, userRegistry),
   ]);
   const patch = {

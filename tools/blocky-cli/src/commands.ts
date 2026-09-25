@@ -27,6 +27,9 @@ import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
 import { builderCommand, builderHelp } from "./builder";
 import { builderWorkCommand, builderWorkHelp } from "./builder-work";
+import { discoveryCommand, discoveryHelp } from "./discovery";
+import { blockQueryCommand, blockQueryHelp } from "./block-query";
+import { productivityCommand, productivityHelp } from "./productivity";
 import { conversion, conversionHelp } from "./conversion";
 import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
@@ -41,6 +44,9 @@ import {
 export const help = {
   version: "0.5.0",
   commands: [
+    ...discoveryHelp,
+    ...blockQueryHelp,
+    ...productivityHelp,
     ...knowledgeHelp,
     ...foundationsHelp,
     ...userConfigHelp,
@@ -74,6 +80,12 @@ export async function dispatch(
   signal: AbortSignal,
 ) {
   const command = args.words.slice(0, 2).join(".");
+  const discovered = discoveryCommand(args, help.commands);
+  if (discovered) return discovered;
+  const blocks = await blockQueryCommand(args);
+  if (blocks) return blocks;
+  const productivity = await productivityCommand(args, signal);
+  if (productivity) return productivity;
   const workResult = await builderWorkCommand(args, signal);
   if (workResult) return workResult;
   const builderResult = await builderCommand(args, signal);

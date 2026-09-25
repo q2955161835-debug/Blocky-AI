@@ -1,6 +1,6 @@
 # Blocky CLI
 
-与桌面端同步开发的命令行入口。当前使用同一 Project Model、Compiler、Runtime 和 Rust 项目存储；本地确定性适配器未真实调用外部大模型 API。阶段 2 `0.2.0` 的 CLI/桌面共享入口已纳入 16/16 独立最终验收；普通候选绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，后续文档提交后的 HEAD 不替代该来源。
+Agent 使用 Blocky 的核心入口，与桌面共享 Project Model、Compiler、Runtime 和 Rust 项目存储。常用任务通过结构化命令完成发现、编辑、审查、运行与恢复，不依赖电脑控制补齐业务能力。本地确定性模式不调用外部大模型；在线模式须使用 Host 预检与批准。
 
 从仓库根构建：`pnpm build:cli`。运行 `./blocky.cmd --help` 查看**实际已实现**的命令。需 Node.js 22.12 或以上；依赖位于项目环境，不全局安装。
 
@@ -157,3 +157,39 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 构建失败后可用 `builder evidence --request-id <id> --json` 查询 Host 最近一次调用记录。只保存安全的响应标识、实际模型、用量和稳定错误码，不保存提示词或模型正文；其他请求 ID 和不一致记录均拒绝。`networkAttempted` 只表示进入发送步骤，不能代替供应商响应证据。记录位于本机应用数据目录的 `builder-evidence/latest.json`，不写入项目。
 
 息壤测试模型使用用户资源 `provider=xirang`、`implementationRef={"kind":"adapter","id":"xirang-v1"}`、`modelId=deepseek-v4-pro`。将本机 `.env` 中的 `XIRANG_API_KEY` 通过 `secret import` 导入独立 secretRef 后，用 `builder draft ... --live --model <resource-id>` 选择。预检返回的服务/模型及摘要需一起审核，修改 Provider 资源后旧批准不能继续使用。
+
+## Agent 生产力闭环
+
+先发现真实接口和积木，再提交编辑。Schema 由实际运行时校验器导出；目录字段和 Host 语义检查仍会进一步约束输入。
+
+```powershell
+.\blocky.cmd command list --query patch --json
+.\blocky.cmd schema list --json
+.\blocky.cmd schema show blocky.cli-operations/v1 --json
+.\blocky.cmd project block list .\try\my-project.blocky --module research-agent --limit 100 --json
+.\blocky.cmd project block show .\try\my-project.blocky --module research-agent --block research-root --json
+.\blocky.cmd project checkpoint .\try\my-project.blocky --output .\try\before-edit.blocky --json
+.\blocky.cmd patch create .\try\my-project.blocky --operations .\try\edits.json --output .\try\batch-patch.json --json
+.\blocky.cmd patch preview .\try\my-project.blocky --patch .\try\batch-patch.json --json
+.\blocky.cmd patch apply .\try\my-project.blocky --patch .\try\batch-patch.json --output .\try\edited.blocky --json
+.\blocky.cmd project diff .\try\before-edit.blocky .\try\edited.blocky --json
+.\blocky.cmd project inspect .\try\edited.blocky --json
+.\blocky.cmd project restore .\try\edited.blocky --checkpoint .\try\before-edit.blocky --expect-digest '<上一步的当前digest>' --output .\try\restored.blocky --json
+.\blocky.cmd project compile .\try\restored.blocky --json
+.\blocky.cmd diagnostics explain BLK-PATCH-002 --json
+```
+
+`edits.json` 是 1–500 项严格操作数组，例如：
+
+```json
+[
+  {"op":"block.update","moduleId":"research-agent","blockId":"research-root","payload":{"fields":{"ROLE":"植物教师"}}},
+  {"op":"block.move","moduleId":"research-agent","blockId":"research-root","payload":{"x":220,"y":140}}
+]
+```
+
+批量操作按数组顺序生成一个候选事务，任一操作无效就不写候选；`patch create` 只验证并列出权限增量，不批准权限或修改项目。实际应用仍使用 `patch apply` 的 Host 复核和 `--approve-permissions`，过期候选不能应用。
+
+积木列表返回稳定 ID、模块、父子/next/input/shadow 关系和字段，可按模块、类型或文本筛选。列表及项目差异使用 `nextCursor` 分页；传回 `--cursor`，不要把第一页当成全部结果。差异通过 JSON Pointer 定位项目事实，包含前后摘要；不同项目 ID 拒绝比较。
+
+检查点仍是普通 `.blocky` 文件。恢复要求检查点与当前项目 ID 相同、当前摘要匹配，只写新的输出路径，不覆盖当前文件、不运行作品、不重放副作用。它恢复项目事实，不回滚用户资源、安全存储、知识索引或运行日志。编辑中项目的诊断会明确返回，运行门禁保持不变。所有新输出都拒绝覆盖已有目标。

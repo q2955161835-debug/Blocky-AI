@@ -6,6 +6,7 @@ import { encodeProject, decodeProject } from "@blocky/project-format";
 import type { Project } from "@blocky/language-schema";
 import { canonicalJson } from "@blocky/language-schema";
 import { CliError } from "./protocol";
+import { errorGuidance } from "./error-guidance";
 import { KnowledgeTransport } from "./knowledge-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = import.meta.url.endsWith("/main.mjs")
@@ -140,7 +141,11 @@ export async function nativeUserOperation(
         ? "资料操作失败，请检查来源与权限。"
         : operation.startsWith("conversion-")
           ? "仓库转换操作失败，请检查版本、目录、工件与预算。"
-          : "本机配置操作失败，未返回秘密内容。",
+          : (errorGuidance(reply.code ?? "")?.message ??
+            (operation.startsWith("builder-")
+              ? "构建操作未完成；原项目保持不变。"
+              : "本机配置操作失败，未返回秘密内容。")),
+      errorGuidance(reply.code ?? "")?.hint,
     );
   return reply.value;
 }

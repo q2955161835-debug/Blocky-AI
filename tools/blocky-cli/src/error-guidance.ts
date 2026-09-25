@@ -1,0 +1,44 @@
+const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-PATCH-001": {
+    message: "项目基线已改变，候选或恢复请求已过期。",
+    hint: "重新运行 project inspect 获取 digest，再生成或审查候选；不要重用旧批准。",
+  },
+  "BLK-PATCH-002": {
+    message: "补丁未通过结构、目录或 Host 校验；原项目未改变。",
+    hint: "运行 schema show blocky.cli-operations/v1 和 patch preview；构建请求可用 builder evidence --request-id 查询失败阶段。",
+  },
+  "BLK-PATCH-003": {
+    message: "补丁权限增量不一致，或新增权限尚未批准。",
+    hint: "运行 patch preview 审查 permissionDelta，再用 --approve-permissions 批准确需的权限。",
+  },
+  "BLK-PATCH-004": {
+    message: "候选应用后仍有编译错误。",
+    hint: "运行 project compile 与 project block show 定位诊断，修正候选后重新验证。",
+  },
+  "BLK-RESOURCE-001": {
+    message: "积木引用的资源不存在或类型不匹配。",
+    hint: "运行 project resource list 与 project block show，使用已声明且类型正确的资源。",
+  },
+  "BLK-RESOURCE-002": {
+    message: "资源秘密引用不一致。",
+    hint: "核对 resource list 与 secret status；不要在积木或参数中写入密钥。",
+  },
+  "BLK-BUILDER-LOCAL-LIMIT": {
+    message: "离线构建仅支持角色调整和解释，当前需求需要在线模型。",
+    hint: "选择已配置资源使用 builder draft/explain/repair --live --model，先预检再批准。",
+  },
+  "BLK-CONFIG-001": {
+    message: "目标积木、字段或配置值无效。",
+    hint: "使用 project block show 查询字段，catalog show 获取目录定义。",
+  },
+  "BLK-CLI-005": {
+    message: "输出目标已存在，未覆盖。",
+    hint: "选择新的 --output 路径，保留原文件作为检查点。",
+  },
+  "BLK-PERM-001": {
+    message: "请求尚未获准，或批准已失效。",
+    hint: "重新预检项目、资源与摘要，仅批准本次明确的操作。",
+  },
+};
+export const errorGuidance = (code: string) =>
+  Object.hasOwn(guidance, code) ? guidance[code] : undefined;
