@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "workspace": "D:\\1Folder\\Blocky-AI",
+  "generatedAtLocal": "2026-09-25T22:19:46+08:00",
+  "moved": [
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\stage5\\final-lifecycle-probe\\target",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\阶段5-2026-09-25\\final-lifecycle-probe-target",
+      "bytes": 3638807203,
+      "files": 9815,
+      "directories": 1686,
+      "reversible": true,
+      "operationStartedAtLocal": "2026-09-25T22:19:45+08:00",
+      "operationFinishedAtLocal": "2026-09-25T22:19:46+08:00",
+      "purpose": "可恢复整理阶段5 final-lifecycle-probe 编译缓存；只移动 target，原始源码与原路径日志保留。",
+      "sourceInventory": "try/stage5/storage-inventory.json",
+      "acceptanceReadback": "stage5_final_resume confirmed the fixed logs/reports are sufficient and no probe target rerun is needed.",
+      "fullRunRelation": "Independent target; parent authorized move while Full was active. No Full cache or log was touched.",
+      "reparsePointsChecked": 0
+    }
+  ],
+  "restore": "Move the destination directory back to the original source path; verify the original path does not exist first."
+}
