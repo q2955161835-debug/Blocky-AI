@@ -226,7 +226,7 @@ export { ProjectController } from "./controller";
 export { createModule, renameModule, deleteModule } from "./modules";
 export { activateTab, closeTab, restoreTab, moveTab, cycleTab } from "./tabs";
 export { configureBlock, findBlock } from "./configure";
-export { editSelection, copyAcrossModules, selectionEditSchema, editorOperationSchema, type SelectionEdit } from "./editor-ops";
+export { editSelection, copyAcrossModules, selectionEditSchema, editorOperationSchema, codeState, type CodeState, type SelectionEdit } from "./editor-ops";
 export { projectMap, affectedModules, type ModuleMapEntry } from "./project-map";
 export {
   restoreSession,

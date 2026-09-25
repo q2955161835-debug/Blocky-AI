@@ -53,7 +53,7 @@ export const rpaGrantSchema = z.object({
   coordinateFallback: z.boolean().default(false),
 }).strict();
 export type RpaGrant = z.output<typeof rpaGrantSchema>;
-export type RpaReceipt = { stepId: string; effectKey: string; targetIdentity: string; status: "completed"; verified: boolean };
+export type RpaReceipt = { stepId: string; effectKey: string; targetIdentity: string; status: "completed" | "uncertain"; verified: boolean };
 export type RpaEvent = { type: "step.started" | "step.completed" | "step.skipped" | "run.paused" | "run.resumed" | "run.stopped"; stepId?: string; action?: RpaAction; locatorKind?: RpaStep["locator"]["kind"]; effectKey?: string; summary: string };
 
 /** Host-owned adapter. It must bind every operation to the same inspected app/window or tab. */
@@ -69,7 +69,9 @@ export class AttendedRpaRun {
   private state: "idle" | "running" | "paused" | "stopped" = "idle";
   private controller = new AbortController();
   private onEvent?: (event: RpaEvent) => void;
+  private receiptLog: RpaReceipt[] = [];
   get status() { return this.state; }
+  get checkpointReceipts(): RpaReceipt[] { return structuredClone(this.receiptLog); }
   pause() { if (this.state === "running") { this.state = "paused"; this.onEvent?.({ type: "run.paused", summary: "等待人工继续" }); } }
   resume() { if (this.state === "paused") { this.state = "running"; this.onEvent?.({ type: "run.resumed", summary: "人工已继续" }); } }
   stop() { this.state = "stopped"; this.controller.abort(); this.onEvent?.({ type: "run.stopped", summary: "运行已停止" }); }
@@ -83,14 +85,16 @@ export class AttendedRpaRun {
       throw Error("BLK-RPA-PERM-001");
     if (plan.steps.some((step) => !grant.actions.includes(step.action) || step.locator.kind === "coordinate" && !grant.coordinateFallback))
       throw Error("BLK-RPA-PERM-001");
-    const receipts = [...(options.receipts ?? [])];
+    const receipts = structuredClone(options.receipts ?? []);
     const seen = new Set<string>();
     for (const receipt of receipts) {
       const step = plan.steps.find((item) => item.stepId === receipt.stepId);
-      if (!step || !step.effectKey || step.effectKey !== receipt.effectKey || receipt.targetIdentity !== plan.target.identity || seen.has(receipt.stepId))
+      if (!step || !step.effectKey || step.effectKey !== receipt.effectKey || receipt.targetIdentity !== plan.target.identity ||
+          !["completed", "uncertain"].includes(receipt.status) || typeof receipt.verified !== "boolean" || seen.has(receipt.stepId))
         throw Error("BLK-RPA-RECEIPT-001");
       seen.add(receipt.stepId);
     }
+    this.receiptLog = receipts;
     this.onEvent = options.onEvent;
     this.state = "running";
     try {
@@ -101,17 +105,41 @@ export class AttendedRpaRun {
         const prior = receipts.find((receipt) => receipt.stepId === step.stepId);
         if (prior) {
           if (!await adapter.verifyReceipt(prior, step, signal)) throw Error("BLK-RPA-RECEIPT-002");
+          prior.status = "completed";
+          prior.verified = true;
           this.onEvent?.({ type: "step.skipped", stepId: step.stepId, action: step.action, locatorKind: step.locator.kind, effectKey: prior.effectKey, summary: "已验证完成，跳过副作用" });
           continue;
         }
         this.onEvent?.({ type: "step.started", stepId: step.stepId, action: step.action, locatorKind: step.locator.kind, summary: "开始步骤" });
-        await adapter.perform(step, signal);
+        const current: RpaReceipt | undefined = step.effectKey ? { stepId: step.stepId, effectKey: step.effectKey, targetIdentity: plan.target.identity, status: "uncertain", verified: false } : undefined;
+        if (current) receipts.push(current);
+        await boundedPerform(adapter, step, signal);
         signal.throwIfAborted();
-        if (step.effectKey) receipts.push({ stepId: step.stepId, effectKey: step.effectKey, targetIdentity: plan.target.identity, status: "completed", verified: false });
+        if (current) current.status = "completed";
         this.onEvent?.({ type: "step.completed", stepId: step.stepId, action: step.action, locatorKind: step.locator.kind, effectKey: step.effectKey, summary: "步骤完成" });
       }
       return receipts;
     } finally { this.state = "stopped"; }
+  }
+}
+
+async function boundedPerform(adapter: RpaAdapter, step: RpaStep, signal: AbortSignal): Promise<void> {
+  const deadline = AbortSignal.timeout(step.timeoutMs);
+  const operationSignal = AbortSignal.any([signal, deadline]);
+  let abort: (() => void) | undefined;
+  try {
+    await Promise.race([
+      adapter.perform(step, operationSignal),
+      new Promise<never>((_resolve, reject) => {
+        abort = () => reject(signal.aborted ? signal.reason : Error("BLK-RPA-TIMEOUT-001"));
+        operationSignal.addEventListener("abort", abort, { once: true });
+      }),
+    ]);
+  } catch (error) {
+    if (deadline.aborted && !signal.aborted) throw Error("BLK-RPA-TIMEOUT-001");
+    throw error;
+  } finally {
+    if (abort) operationSignal.removeEventListener("abort", abort);
   }
 }
 

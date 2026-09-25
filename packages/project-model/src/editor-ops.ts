@@ -1,4 +1,4 @@
-import { stableId, type Project, type Workspace, type WorkspaceBlock } from "@blocky/language-schema";
+import { parseExpressionProgram, stableId, type Project, type Workspace, type WorkspaceBlock } from "@blocky/language-schema";
 import { z } from "zod";
 
 type Alignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
@@ -26,6 +26,7 @@ type EditorData = {
   schemaVersion: "blocky.editor/v1";
   group?: { id: string; label: string; kind: "group" | "region" };
   note?: string;
+  codeEdited?: boolean;
 };
 
 function metadata(block: WorkspaceBlock): EditorData {
@@ -37,6 +38,22 @@ function metadata(block: WorkspaceBlock): EditorData {
       (value as Record<string, unknown>).schemaVersion !== "blocky.editor/v1")
     throw Error("BLK-EDIT-004");
   return value as EditorData;
+}
+
+export type CodeState = "official-default" | "custom-valid" | "warning" | "invalid";
+export function codeState(block: WorkspaceBlock): CodeState {
+  if (block.type !== "core.data.transform") throw Error("BLK-EDIT-005");
+  try { parseExpressionProgram(block.fields?.PROGRAM); }
+  catch { return "invalid"; }
+  if (block.fields?.SOURCE !== undefined) return "warning";
+  try { return metadata(block).codeEdited ? "custom-valid" : "official-default"; }
+  catch { return "warning"; }
+}
+
+export function markCodeEdited(block: WorkspaceBlock): void {
+  const data = metadata(block);
+  data.codeEdited = true;
+  block.data = JSON.stringify(data);
 }
 
 function roots(workspace: Workspace, ids: string[]): WorkspaceBlock[] {

@@ -1,5 +1,6 @@
 import type { Project, WorkspaceBlock } from "@blocky/language-schema";
 import { getBlock } from "@blocky/block-catalog";
+import { markCodeEdited } from "./editor-ops";
 export function findBlock(
   blocks: WorkspaceBlock[],
   id: string,
@@ -44,4 +45,5 @@ export function configureBlock(
   block.fields[field] = definition.jsonFields?.includes(field)
     ? JSON.parse(value)
     : value;
+  if (block.type === "core.data.transform" && field === "PROGRAM") markCodeEdited(block);
 }

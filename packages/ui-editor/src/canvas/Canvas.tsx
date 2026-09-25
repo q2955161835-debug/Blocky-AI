@@ -19,7 +19,7 @@ type Props = {
   onSelect(id: string | null): void;
   onSelection?(ids: string[]): void;
   onSearch(): void;
-  onContext(x: number, y: number): void;
+  onContext(x: number, y: number, scope: "blank" | "block" | "multi", blockId?: string): void;
   handle: (api: CanvasHandle | null) => void;
   events: RuntimeEvent[];
   focusId?: string;
@@ -183,7 +183,18 @@ export function Canvas(props: Props) {
     const context = (e: MouseEvent) => {
       e.preventDefault();
       e.stopImmediatePropagation();
-      latest.current.onContext(e.clientX, e.clientY);
+      const target = e.target instanceof Element ? e.target : null;
+      const element = target?.closest(".blocklyDraggable");
+      const id = element?.getAttribute("data-id") ??
+        (target ? ws.getAllBlocks(false).find((block) => block.getSvgRoot()?.contains(target))?.id : undefined);
+      const blockId = id && ws.getBlockById(id) ? id : undefined;
+      const rootId = blockId && ws.getBlockById(blockId)?.getRootBlock().id;
+      const selected = selection.current?.current() ?? [];
+      const multi = !!rootId && selected.length > 1 && selected.includes(rootId);
+      if (blockId) ws.getBlockById(blockId)?.select();
+      latest.current.onContext(e.clientX, e.clientY,
+        !blockId ? "blank" : multi ? "multi" : "block",
+        blockId);
     };
     el.addEventListener("keydown", keydown, true);
     window.addEventListener("keyup", keyup);

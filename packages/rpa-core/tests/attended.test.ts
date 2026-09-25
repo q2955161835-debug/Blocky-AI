@@ -52,4 +52,30 @@ describe("attended RPA boundary", () => {
     expect(draft.steps[0].value).toEqual({ kind: "manual-input" });
     expect(() => rpaPlanSchema.parse({ ...plan, steps: [plan.steps[1], plan.steps[1]] })).toThrow();
   });
+  it("retains an uncertain receipt after an interrupted effect and requires verification", async () => {
+    const run = new AttendedRpaRun();
+    const host = adapter();
+    vi.mocked(host.perform).mockImplementationOnce(async () => {}).mockImplementationOnce(async () => { throw Error("network interrupted"); });
+    await expect(run.run(plan, grant, host, { now: () => 1000 })).rejects.toThrow("network interrupted");
+    const receipts = run.checkpointReceipts;
+    expect(receipts).toEqual([{ stepId: "click-1", effectKey: "send-1", targetIdentity: "https://example.test", status: "uncertain", verified: false }]);
+    const resumed = adapter();
+    vi.mocked(resumed.verifyReceipt).mockResolvedValue(false);
+    await expect(new AttendedRpaRun().run(plan, grant, resumed, { now: () => 1000, receipts })).rejects.toThrow("BLK-RPA-RECEIPT-002");
+    expect(resumed.perform).toHaveBeenCalledOnce();
+    vi.mocked(resumed.verifyReceipt).mockResolvedValue(true);
+    const verified = await new AttendedRpaRun().run(plan, grant, resumed, { now: () => 1000, receipts });
+    expect(verified[0]).toMatchObject({ status: "completed", verified: true });
+    expect(resumed.perform).toHaveBeenCalledTimes(2); // two read-only find steps, no re-click
+  });
+  it("times out a slow effect and keeps an uncertain checkpoint", async () => {
+    const run = new AttendedRpaRun();
+    const host = adapter();
+    vi.mocked(host.perform).mockImplementationOnce(async () => {}).mockImplementationOnce((_step, signal) =>
+      new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(signal.reason), { once: true })),
+    );
+    const short = { ...plan, steps: [plan.steps[0], { ...plan.steps[1], timeoutMs: 100 }] };
+    await expect(run.run(short, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-TIMEOUT-001");
+    expect(run.checkpointReceipts[0].status).toBe("uncertain");
+  });
 });

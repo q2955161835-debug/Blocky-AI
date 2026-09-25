@@ -77,7 +77,7 @@ export function App() {
       construction.reject();
     }
   }, [lifecycle.requested]);
-  const show = (kind: Exclude<NonNullable<Popup>["kind"], "menu">) => {
+  const show = (kind: Exclude<NonNullable<Popup>["kind"], "menu" | "context">) => {
     setQuery("");
     setPopup({ kind });
   };
@@ -140,6 +140,10 @@ export function App() {
     "run.from-selection": () => void s.runFromSelected(),
     "run.toggle-breakpoint": () => {
       if (s.selected && s.session.active) s.toggleBreakpoint(s.session.active, s.selected);
+    },
+    "edit.insert-block": () => {
+      if (popup?.kind === "context" && popup.scope === "library" && popup.blockType)
+        api.current?.add(popup.blockType);
     },
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
@@ -212,6 +216,8 @@ export function App() {
       (s.selectedRoots.length > 0 && !s.running && !s.busy)) &&
     (id !== "edit.paste" ||
       (!!construction.clipboard && !!s.session.active && !s.running)) &&
+    (id !== "edit.insert-block" ||
+      (popup?.kind === "context" && popup.scope === "library" && !!popup.blockType && !s.busy && !s.running)) &&
     (id !== "build.convert" ||
       (!!s.session.active && s.started && !s.busy && !s.running)) &&
     !(s.busy && id.startsWith("file.")) &&
@@ -432,6 +438,7 @@ export function App() {
               }}
               search={() => show("blocks")}
               add={(type) => api.current?.add(type)}
+              onContext={(blockType, x, y) => setPopup({ kind: "context", scope: "library", blockType, x, y })}
             />
             <section
               className={`workspace ${s.session.dock === "right" && s.session.panel && !s.session.maximized ? "panel-right" : ""}`}
@@ -539,7 +546,7 @@ export function App() {
                     onSelect={s.setSelected}
                     onSelection={s.setSelectedRoots}
                     onSearch={() => show("blocks")}
-                    onContext={(x, y) => setPopup({ kind: "context", x, y })}
+                    onContext={(x, y, scope) => setPopup({ kind: "context", scope, x, y })}
                     handle={(value) => {
                       api.current = value;
                     }}
@@ -602,7 +609,8 @@ export function App() {
                 studio={s}
                 resources={() => void execute("settings.resources")}
               />
-              <RunPanel studio={s} execute={execute} />
+              <RunPanel studio={s} execute={execute}
+                onTraceContext={(x, y) => setPopup({ kind: "context", scope: "event", x, y })} />
               <ProjectMap studio={s} />
               <EditorTools studio={s} execute={execute} enabled={enabled} />
               <Inspector

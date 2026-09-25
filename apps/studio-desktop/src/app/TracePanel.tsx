@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { TraceSession } from "@blocky/observability";
 import type { Studio } from "../composition/useStudio";
 
-export function TracePanel({ studio: s }: { studio: Studio }) {
+export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext?(x: number, y: number): void }) {
   const [selectedSequence, setSelectedSequence] = useState<number>();
   const frames = useMemo(() => {
     const session = new TraceSession();
@@ -33,6 +33,11 @@ export function TracePanel({ studio: s }: { studio: Studio }) {
               key={frame.sequence}
               aria-current={index === selectedIndex ? "step" : undefined}
               onClick={() => choose(index)}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                choose(index);
+                onContext?.(event.clientX, event.clientY);
+              }}
             >
               #{frame.sequence} {frame.type} <small>{frame.blockId ?? "项目"}</small>
             </button>

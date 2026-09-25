@@ -34,6 +34,7 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["edit.duplicate", "edit", "复制副本", "Ctrl+D"],
   ["edit.cut", "edit", "剪切积木", "Ctrl+X"],
   ["edit.paste", "edit", "粘贴积木", "Ctrl+V"],
+  ["edit.insert-block", "edit", "添加此积木", ""],
   ["edit.delete", "edit", "删除选择", "Delete"],
   ["edit.select-all", "edit", "选择全部积木", "Ctrl+A"],
   ["edit.clear-selection", "edit", "清除选择", ""],
@@ -81,6 +82,13 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["help.about", "help", "关于 Blocky Studio", ""],
   ["help.shortcuts", "help", "快捷键", ""],
 ];
+const contextCommands: Record<string, string[]> = {
+  blank: ["edit.paste", "edit.select-all", "view.command-center", "run.start"],
+  block: ["edit.copy", "edit.duplicate", "edit.cut", "edit.delete", "edit.annotate", "edit.enable", "edit.disable", "run.toggle-breakpoint", "run.from-selection"],
+  multi: ["edit.copy", "edit.cut", "edit.delete", "edit.group", "edit.ungroup", "edit.region", "edit.annotate", "edit.align-left", "edit.align-top", "edit.distribute-horizontal", "edit.distribute-vertical", "edit.enable", "edit.disable"],
+  library: ["edit.insert-block", "view.command-center"],
+  event: ["view.show-run-log", "run.toggle-breakpoint", "view.back"],
+};
 export const commands: CommandDefinition[] = specs.map(
   ([commandId, category, label, key]) => ({
     schemaVersion: "blocky.command/v1alpha1",
@@ -94,7 +102,10 @@ export const commands: CommandDefinition[] = specs.map(
       ...(commandId === "run.stop" ? ["Escape"] : []),
       ...(commandId === "view.command-center" ? ["Ctrl+Shift+P"] : []),
     ],
-    contexts: ["studio"],
+    contexts: [
+      ...(commandId === "edit.insert-block" ? [] : ["studio"]),
+      ...Object.entries(contextCommands).filter(([, ids]) => ids.includes(commandId)).map(([scope]) => scope),
+    ],
     selection: commandId === "edit.blueprint" ? "multiple" : "any",
     danger: commandId === "edit.delete-canvas" ? "destructive" : "none",
     undo:

@@ -7,7 +7,7 @@ import { RunOutputs } from './RunOutputs';
 import { RunModelChoice } from './RunModelChoice';
 import { RunBudgetSummary } from './RunBudgetSummary';
 import { TracePanel } from './TracePanel';
-export function RunPanel({ studio: s, execute }: { studio: Studio; execute(id: string): void }) {
+export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studio; execute(id: string): void; onTraceContext?(x: number, y: number): void }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
     <section className="run-panel">
@@ -120,7 +120,7 @@ export function RunPanel({ studio: s, execute }: { studio: Studio; execute(id: s
               )}
             </article>
           )}
-          <TracePanel studio={s} />
+          <TracePanel studio={s} onContext={onTraceContext} />
         </>
       )}
     </section>

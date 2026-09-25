@@ -15,7 +15,6 @@ export type Popup =
         | "settings"
         | "shortcuts"
         | "resources"
-        | "context"
         | "annotation"
         | "about"
         | "builder"
@@ -23,6 +22,7 @@ export type Popup =
       x?: number;
       y?: number;
     }
+  | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string }
   | { kind: "menu"; category: MenuCategory }
   | null;
 export function StudioDialog({
@@ -67,6 +67,8 @@ export function StudioDialog({
                 ? "搜索积木"
                 : popup.kind === "annotation"
                   ? "积木注释"
+                  : popup.kind === "context"
+                    ? "上下文菜单"
                   : "命令中心"
         }
         style={
@@ -88,6 +90,8 @@ export function StudioDialog({
                   ? "搜索积木"
                   : popup.kind === "annotation"
                     ? "积木注释"
+                    : popup.kind === "context"
+                      ? "上下文菜单"
                     : "命令中心"}
           </strong>
           <button onClick={() => setPopup(null)} aria-label="关闭弹层">
@@ -146,9 +150,7 @@ export function StudioDialog({
                     .filter(
                       (c) =>
                         actions[c.commandId] &&
-                        (popup.kind !== "context" ||
-                          c.category === "edit" ||
-                          c.category === "run") &&
+                        (popup.kind === "context" ? c.contexts.includes(popup.scope) : c.contexts.includes("studio")) &&
                         (c.label.includes(query) ||
                           c.category === query ||
                           c.commandId.includes(query)),

@@ -25,6 +25,7 @@ export function Library({
   insert,
   construction: c,
   update,
+  onContext,
 }: {
   studio: Studio;
   search(): void;
@@ -33,6 +34,7 @@ export function Library({
   insert(blueprint: Blueprint): void;
   construction: Construction;
   update(mode: "update" | "restore"): void;
+  onContext(type: string, x: number, y: number): void;
 }) {
   const paletteNames =
     s.preferences.view === "beginner" ? beginnerCategories : categories;
@@ -80,6 +82,10 @@ export function Library({
                   className="palette-block"
                   style={{ borderLeftColor: b.color }}
                   onClick={() => add(b.type)}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    onContext(b.type, event.clientX, event.clientY);
+                  }}
                 >
                   {b.label}
                   <span>＋</span>

@@ -1,5 +1,20 @@
 import { getBlock } from "@blocky/block-catalog";
+import { parseExpressionProgram } from "@blocky/language-schema";
+import { codeState } from "@blocky/project-model";
 import { useEffect, useState } from "react";
+function ProgramInput({ value, save }: { value: unknown; save(text: string): void }) {
+  const [text, setText] = useState(JSON.stringify(value ?? null, null, 2));
+  useEffect(() => setText(JSON.stringify(value ?? null, null, 2)), [value]);
+  let valid = false;
+  try { parseExpressionProgram(JSON.parse(text)); valid = true; } catch { /* show draft error */ }
+  return (
+    <div className="program-editor">
+      <textarea aria-label="表达式程序" value={text} onChange={(event) => setText(event.target.value)} />
+      {!valid && <small role="alert">无效：表达式结构不符合安全语言，不能运行。</small>}
+      <button disabled={!valid || text === JSON.stringify(value ?? null, null, 2)} onClick={() => save(text)}>保存表达式</button>
+    </div>
+  );
+}
 function JsonInput({
   value,
   save,
@@ -70,6 +85,11 @@ export function Inspector({
       <div className="section-label">
         积木配置 <span>{def?.label}</span>
       </div>
+      {block.type === "core.data.transform" && (
+        <p className={`code-state code-state-${codeState(block)}`} role="status">
+          {({ "official-default": "官方默认 ✓", "custom-valid": "已自定义有效 ✓", warning: "警告 ⚠：源码说明不参与执行", invalid: "无效 ✖：不能运行" })[codeState(block)]}
+        </p>
+      )}
       {(def?.fields ?? []).map((field) => (
         <label key={field}>
           {
@@ -86,7 +106,9 @@ export function Inspector({
               } as Record<string, string>
             )[field]
           }
-          {def?.jsonFields?.includes(field) ? (
+          {block.type === "core.data.transform" && field === "PROGRAM" ? (
+            <ProgramInput value={block.fields?.PROGRAM} save={(text) => s.updateField(block.id, field, text)} />
+          ) : def?.jsonFields?.includes(field) ? (
             <JsonInput
               value={block.fields?.[field]}
               save={(text) => s.updateField(block.id, field, text)}

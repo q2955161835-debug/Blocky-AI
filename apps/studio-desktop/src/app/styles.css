@@ -1130,3 +1130,9 @@ dialog.popup p {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.program-editor { display: grid; gap: 6px; }
+.program-editor textarea { min-height: 130px; font-family: ui-monospace, Consolas, monospace; }
+.code-state { display: inline-block; padding: 3px 8px; border: 1px solid currentColor; border-radius: 6px; font-weight: 600; }
+.code-state-official-default, .code-state-custom-valid { color: #7ad6a3; }
+.code-state-warning { color: #efc76b; }
+.code-state-invalid { color: #f09191; }

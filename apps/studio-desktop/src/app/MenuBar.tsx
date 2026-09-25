@@ -64,8 +64,9 @@ export function MenuBar({
         const expanded = active === category;
         const items = commands.filter(
           (c) =>
-            c.category === category ||
-            (category === "file" && c.category === "window"),
+            c.contexts.includes("studio") &&
+            (c.category === category ||
+            (category === "file" && c.category === "window")),
         );
         return (
           <div key={category} className="menu-anchor" role="none">
