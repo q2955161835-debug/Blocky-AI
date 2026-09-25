@@ -192,6 +192,8 @@ export function Canvas(props: Props) {
       const selected = selection.current?.current() ?? [];
       const multi = !!rootId && selected.length > 1 && selected.includes(rootId);
       if (blockId) ws.getBlockById(blockId)?.select();
+      latest.current.onSelect(blockId ?? null);
+      if (rootId && !multi) latest.current.onSelection?.([rootId]);
       latest.current.onContext(e.clientX, e.clientY,
         !blockId ? "blank" : multi ? "multi" : "block",
         blockId);

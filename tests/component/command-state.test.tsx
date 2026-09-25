@@ -12,7 +12,13 @@ import {
 import { App } from "../../apps/studio-desktop/src/app/App";
 const io = vi.hoisted(() => ({ save: vi.fn() }));
 vi.mock("../../packages/ui-editor/src/index.ts", () => ({
-  Canvas: () => null,
+  Canvas: ({ onContext, onSelect }: {
+    onContext: (x: number, y: number, scope: "block", blockId: string) => void;
+    onSelect: (id: string | null) => void;
+  }) => <button onClick={() => {
+    onContext(400, 280, "block", "research-root");
+    onSelect(null); // Dialog focus can clear Blockly selection after the context target is captured.
+  }}>测试积木右键</button>,
 }));
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: vi.fn(),
@@ -101,4 +107,14 @@ it("disables both runtime controls while saving and restores them after cancella
       .getAllByRole("button", { name: "▶ 运行" })
       .every((b) => !(b as HTMLButtonElement).disabled),
   ).toBe(true);
+});
+
+it("keeps the context block target when opening the menu clears canvas focus", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
+  await waitFor(() => expect((screen.getAllByRole("button", { name: "▶ 运行" })[0] as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole("button", { name: "测试积木右键" }));
+  const dialog = screen.getByRole("dialog", { name: "上下文菜单" });
+  await waitFor(() => expect((within(dialog).getByRole("button", { name: /从所选积木运行/ }) as HTMLButtonElement).disabled).toBe(false));
+  expect((within(dialog).getByRole("button", { name: /切换断点/ }) as HTMLButtonElement).disabled).toBe(false);
 });

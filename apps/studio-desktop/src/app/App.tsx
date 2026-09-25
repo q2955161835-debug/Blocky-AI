@@ -60,6 +60,9 @@ export function App() {
     lifecycle = useLifecycle(s, logs, task);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
+  const commandBlockId = popup?.kind === "context" && popup.blockId
+    ? popup.blockId
+    : s.selected;
   useModalFocus(
     s.confirmation
       ? "confirmation"
@@ -137,9 +140,9 @@ export function App() {
     "window.exit": lifecycle.request,
     "run.pause": s.togglePause,
     "run.step": s.step,
-    "run.from-selection": () => void s.runFromSelected(),
+    "run.from-selection": () => void s.runFromSelected(commandBlockId ?? undefined),
     "run.toggle-breakpoint": () => {
-      if (s.selected && s.session.active) s.toggleBreakpoint(s.session.active, s.selected);
+      if (commandBlockId && s.session.active) s.toggleBreakpoint(s.session.active, commandBlockId);
     },
     "edit.insert-block": () => {
       if (popup?.kind === "context" && popup.scope === "library" && popup.blockType)
@@ -228,8 +231,8 @@ export function App() {
     (id !== "run.stop" || s.running) &&
     (id !== "run.pause" || s.running) &&
     (id !== "run.step" || (s.running && s.paused)) &&
-    (id !== "run.from-selection" || (!!s.selected && s.canRun)) &&
-    (id !== "run.toggle-breakpoint" || (!!s.selected && !s.running)) &&
+    (id !== "run.from-selection" || (!!commandBlockId && s.canRun)) &&
+    (id !== "run.toggle-breakpoint" || (!!commandBlockId && !s.running)) &&
     (![
       "edit.group", "edit.ungroup", "edit.region", "edit.annotate", "edit.enable", "edit.disable",
     ].includes(id) || (s.selectedRoots.length > 0 && !s.running && !s.busy)) &&
@@ -546,7 +549,10 @@ export function App() {
                     onSelect={s.setSelected}
                     onSelection={s.setSelectedRoots}
                     onSearch={() => show("blocks")}
-                    onContext={(x, y, scope) => setPopup({ kind: "context", scope, x, y })}
+                    onContext={(x, y, scope, blockId) => {
+                      s.setSelected(blockId ?? null);
+                      setPopup({ kind: "context", scope, x, y, blockId });
+                    }}
                     handle={(value) => {
                       api.current = value;
                     }}

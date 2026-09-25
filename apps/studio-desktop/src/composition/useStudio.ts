@@ -480,9 +480,9 @@ export function useStudio() {
     },
     breakpoints,
     toggleBreakpoint,
-    runFromSelected: () =>
-      selected && session.active
-        ? run(undefined, { startBlockId: selected })
+    runFromSelected: (blockId?: string) =>
+      (blockId ?? selected) && session.active
+        ? run(undefined, { startBlockId: (blockId ?? selected)! })
         : undefined,
     compiled,
     compiling,

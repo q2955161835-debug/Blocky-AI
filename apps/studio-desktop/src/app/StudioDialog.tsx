@@ -22,7 +22,7 @@ export type Popup =
       x?: number;
       y?: number;
     }
-  | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string }
+  | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string; blockId?: string }
   | { kind: "menu"; category: MenuCategory }
   | null;
 export function StudioDialog({
