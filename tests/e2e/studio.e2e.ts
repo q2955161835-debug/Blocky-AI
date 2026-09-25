@@ -455,4 +455,19 @@ describe("Blocky native editor", () => {
       path: "try/stage4/native/structured-branches.png",
     });
   });
+  it("creates an architecture starter and retains state through desktop input runs", async () => {
+    await page.reload();
+    await page.getByLabel("架构起点").getByRole("button", { name: /有限状态机/ }).click();
+    await page.locator(".blocklyDraggable").first().waitFor();
+    expect(await page.getByLabel("画布名称").inputValue()).toBe("有限状态机");
+    for (const [input, expected] of [["start", "running"], ["finish", "done"], ["start", "done"]]) {
+      await page.getByLabel("向 Agent 提问").fill(input);
+      const run = page.locator(".run-panel").getByRole("button", { name: "▶ 运行", exact: true });
+      await run.click();
+      await page.waitForFunction(expected => document.querySelector(".answer pre")?.textContent === JSON.stringify(expected), expected);
+      await page.waitForFunction(() => !document.querySelector<HTMLButtonElement>(".run-actions button.primary")?.disabled);
+    }
+    await mkdir("try/stage7/native", { recursive: true });
+    await page.screenshot({ path: "try/stage7/native/state-machine.png" });
+  });
 });

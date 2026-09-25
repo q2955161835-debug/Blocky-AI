@@ -6,6 +6,7 @@ import {
   hostAdapters,
   nativeAgentServices,
   type PendingApproval,
+  type RunResult,
 } from "@blocky/runtime-core";
 import {
   stableId,
@@ -17,6 +18,8 @@ import { type Args, required, integer } from "./arguments";
 import { nativeUserOperation } from "./native-store";
 import { envelope, CliError } from "./protocol";
 import { TraceSession } from "@blocky/observability";
+import { readJsonArtifact } from "./artifacts";
+import { runInputsSchema } from "./run-inputs";
 export async function runAgent(
   args: Args,
   project: Project,
@@ -25,9 +28,44 @@ export async function runAgent(
   write: (value: unknown) => void,
   signal: AbortSignal,
 ) {
-  const question = required(args, "input");
-  if (Buffer.byteLength(question) > 16000)
+  if (args.options.has("input") === args.options.has("inputs-file"))
+    throw new CliError(
+      2,
+      "BLK-CLI-002",
+      "请选择 --input 或 --inputs-file 之一。",
+    );
+  let questions: string[];
+  if (args.options.has("inputs-file")) {
+    let input: unknown;
+    try {
+      input = await readJsonArtifact(required(args, "inputs-file"), 128 * 1024);
+    } catch {
+      throw new CliError(
+        2,
+        "BLK-CLI-002",
+        "连续输入须为不超过 128 KiB 的 JSON 文件。",
+      );
+    }
+    const parsed = runInputsSchema.safeParse(input);
+    if (
+      !parsed.success ||
+      parsed.data.some((q) => Buffer.byteLength(q) > 16000)
+    )
+      throw new CliError(
+        2,
+        "BLK-CLI-002",
+        "连续输入须含 1–32 个字符串，每项最多 16000 字节。",
+      );
+    questions = parsed.data;
+  } else questions = [required(args, "input")];
+  if (questions.some((q) => Buffer.byteLength(q) > 16000))
     throw new CliError(2, "BLK-CLI-002", "问题输入超过 16000 字节。");
+  if (questions.length > 1 && args.options.has("output"))
+    throw new CliError(
+      2,
+      "BLK-CLI-002",
+      "连续输入的文件结果在 runs 中返回；单个 --output 仅用于一次输入。",
+    );
   const candidates = entries.filter(
     (e) =>
       !args.options.has("module") || e.moduleId === args.options.get("module"),
@@ -38,21 +76,36 @@ export async function runAgent(
   if (matches.length !== 1)
     throw new CliError(3, "BLK-RUN-001", "交互入口不存在或不唯一。");
   const fromBlock = args.options.get("from-block");
-  if (fromBlock !== undefined && (typeof fromBlock !== "string" || !stableId.test(fromBlock)))
+  if (
+    fromBlock !== undefined &&
+    (typeof fromBlock !== "string" || !stableId.test(fromBlock))
+  )
     throw new CliError(2, "BLK-CLI-002", "所选积木 ID 无效。");
   const breakpoint = args.options.get("breakpoint");
   let breakpoints: { moduleId: string; blockId: string }[] = [];
   if (breakpoint !== undefined) {
     if (typeof breakpoint !== "string" || !args.options.has("debug-actions"))
-      throw new CliError(2, "BLK-CLI-002", "断点需要 --debug-actions 文件指定每次暂停后的动作。");
+      throw new CliError(
+        2,
+        "BLK-CLI-002",
+        "断点需要 --debug-actions 文件指定每次暂停后的动作。",
+      );
     const pairs = breakpoint.split(",");
-    if (pairs.length > 64 || pairs.some((pair) => !/^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$/.test(pair)))
+    if (
+      pairs.length > 64 ||
+      pairs.some((pair) => !/^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$/.test(pair))
+    )
       throw new CliError(2, "BLK-CLI-002", "断点应为 module-id:block-id。");
     breakpoints = pairs.map((pair) => {
       const [moduleId, blockId] = pair.split(":");
       return { moduleId, blockId };
     });
-    if (breakpoints.some(({ moduleId, blockId }) => !stableId.test(moduleId) || !stableId.test(blockId)))
+    if (
+      breakpoints.some(
+        ({ moduleId, blockId }) =>
+          !stableId.test(moduleId) || !stableId.test(blockId),
+      )
+    )
       throw new CliError(2, "BLK-CLI-002", "断点应为 module-id:block-id。");
   }
   if (args.options.has("debug-actions") && !breakpoints.length)
@@ -60,12 +113,24 @@ export async function runAgent(
   let debugActions: ("step" | "continue" | "stop")[] = [];
   if (breakpoints.length) {
     const bytes = await readFile(required(args, "debug-actions"));
-    if (bytes.length > 4096) throw new CliError(2, "BLK-CLI-002", "调试动作文件过大。");
+    if (bytes.length > 4096)
+      throw new CliError(2, "BLK-CLI-002", "调试动作文件过大。");
     let parsed: unknown;
-    try { parsed = JSON.parse(bytes.toString("utf8")); }
-    catch { throw new CliError(2, "BLK-CLI-002", "调试动作须为 JSON 数组。"); }
-    if (!Array.isArray(parsed) || parsed.length > 100 || parsed.some((item) => !["step", "continue", "stop"].includes(item)))
-      throw new CliError(2, "BLK-CLI-002", "调试动作只能是 step、continue 或 stop。");
+    try {
+      parsed = JSON.parse(bytes.toString("utf8"));
+    } catch {
+      throw new CliError(2, "BLK-CLI-002", "调试动作须为 JSON 数组。");
+    }
+    if (
+      !Array.isArray(parsed) ||
+      parsed.length > 100 ||
+      parsed.some((item) => !["step", "continue", "stop"].includes(item))
+    )
+      throw new CliError(
+        2,
+        "BLK-CLI-002",
+        "调试动作只能是 step、continue 或 stop。",
+      );
     debugActions = parsed;
   }
   const runId = String(
@@ -138,35 +203,50 @@ export async function runAgent(
           }
         : {}),
     });
+    let ordinal = 0;
     const runtime = new Runtime({
-      newId: () => runId,
+      newId: () => (questions.length === 1 ? runId : `${runId}-r${++ordinal}`),
       sessionId: `session-${runId}`,
       adapters: hostAdapters(call, services),
     });
-    const trace = new TraceSession();
-    const result = await runtime.run(
-      project,
-      matches[0].interactionId,
-      question,
-      {
-        moduleId: matches[0].moduleId,
-        userRegistry,
-        signal: abort.signal,
-        debug: { breakpoints, ...(fromBlock ? { startBlockId: fromBlock } : {}) },
-        onEvent(event) {
-          trace.add(event);
-          write(event);
-          if (event.type === "run.paused") {
-            const action = debugActions.shift() ?? "stop";
-            if (action === "step") runtime.step();
-            else if (action === "continue") runtime.resume();
-            else abort.abort();
-          }
+    let trace = new TraceSession();
+    const results: RunResult[] = [];
+    for (const question of questions) {
+      trace = new TraceSession();
+      const result = await runtime.run(
+        project,
+        matches[0].interactionId,
+        question,
+        {
+          moduleId: matches[0].moduleId,
+          userRegistry,
+          signal: abort.signal,
+          debug: {
+            breakpoints,
+            ...(fromBlock ? { startBlockId: fromBlock } : {}),
+          },
+          onEvent(event) {
+            trace.add(event);
+            write(event);
+            if (event.type === "run.paused") {
+              const action = debugActions.shift() ?? "stop";
+              if (action === "step") runtime.step();
+              else if (action === "continue") runtime.resume();
+              else abort.abort();
+            }
+          },
         },
-      },
-    );
+      );
+      results.push(result);
+      if (result.status !== "completed") break;
+    }
+    const result = results[results.length - 1];
     if (args.options.has("trace-output"))
-      await atomicOutput(required(args, "trace-output"), JSON.stringify(trace.export(), null, 2), signal);
+      await atomicOutput(
+        required(args, "trace-output"),
+        JSON.stringify(trace.export(), null, 2),
+        signal,
+      );
     if (args.options.has("output") && result.status === "completed") {
       if (result.files?.length !== 1)
         throw new CliError(
@@ -184,8 +264,24 @@ export async function runAgent(
     const response = envelope("run.start", {
       ...result,
       events: undefined,
-      eventCount: result.events.length,
-      runId,
+      modelApiCalled: results.some((r) => r.modelApiCalled),
+      eventCount: results.reduce((sum, r) => sum + r.events.length, 0),
+      runId: result.events[0]?.runId ?? runId,
+      ...(questions.length > 1
+        ? {
+            sessionId: `session-${runId}`,
+            requestedInputs: questions.length,
+            completedInputs: results.filter((r) => r.status === "completed")
+              .length,
+            runs: results.map((r) => ({
+              ...r,
+              events: undefined,
+              eventCount: r.events.length,
+              runId: r.events[0]?.runId,
+            })),
+            traceScope: "last-run",
+          }
+        : {}),
       pendingApprovals: pending,
     });
     response.ok = result.status === "completed";

@@ -10,8 +10,10 @@ import { rpaPlanSchema, rpaGrantSchema } from "@blocky/rpa-core";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
+import { runInputsSchema } from "./run-inputs";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.run-inputs/v1": runInputsSchema,
   "blocky.cli-operations/v1": operationsInput,
   "blocky.builder-request/v1": builderRequestSchema,
   "blocky.builder-draft/v1": draftInputSchema,

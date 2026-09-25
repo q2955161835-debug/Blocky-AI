@@ -6,6 +6,8 @@ import {
 } from "@blocky/block-catalog";
 import {
   officialStarters,
+  architectureStarters,
+  createArchitectureStarter,
   createBlueprintProject,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
@@ -76,7 +78,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> (--simulate | --live) --input <question> [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <trace.json>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
+    "run start <file.blocky> (--simulate | --live) (--input <question> | --inputs-file <strings.json>) [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <last-run.json>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -179,6 +181,7 @@ export async function dispatch(
             kind: "blueprint",
             compatibilityClaim: "none",
           })),
+          ...architectureStarters.map(s => ({ ...s, templateId: s.id, kind: "project", compatibilityClaim: "none" })),
           {
             id: "agent-loop",
             templateId: "agent-loop",
@@ -203,14 +206,14 @@ export async function dispatch(
           compatibilityClaim: "none",
         }),
       };
-    const selected = officialStarters.find((s) => s.id === args.words[2]);
+    const selected = [...officialStarters, ...architectureStarters].find((s) => s.id === args.words[2]);
     if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     return {
       code: 0,
       result: envelope(command, {
         ...selected,
         templateId: selected.id,
-        kind: "blueprint",
+        kind: architectureStarters.some(s => s.id === selected.id) ? "project" : "blueprint",
         compatibilityClaim: "none",
       }),
     };
@@ -219,6 +222,7 @@ export async function dispatch(
     allow(args, ["json", "template", "output"], 2);
     if (
       required(args, "template") !== "agent-loop" &&
+      !architectureStarters.some(s => s.id === required(args, "template")) &&
       !officialStarters.some((s) => s.id === required(args, "template"))
     )
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
@@ -226,7 +230,9 @@ export async function dispatch(
       project =
         required(args, "template") === "agent-loop"
           ? createAgentExample()
-          : await createBlueprintProject(required(args, "template"));
+          : architectureStarters.some(s => s.id === required(args, "template"))
+            ? createArchitectureStarter(required(args, "template"))
+            : await createBlueprintProject(required(args, "template"));
     await createProject(output, project);
     const bytes = await readFile(output);
     const result = envelope(command, {
@@ -288,6 +294,7 @@ export async function dispatch(
           "breakpoint",
           "debug-actions",
           "trace-output",
+          "inputs-file",
         ]
       : ["json"],
     moduleList ? 4 : 3,

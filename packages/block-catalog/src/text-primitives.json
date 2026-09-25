@@ -30,7 +30,7 @@
     "optionalFields": ["NAME"],
     "inputs": ["CAPABILITIES", "HANDLER"],
     "requiredInputs": ["HANDLER"],
-    "inputChecks": { "CAPABILITIES": "entry-capability", "HANDLER": "command" },
+    "inputChecks": { "CAPABILITIES": "entry-capability", "HANDLER": ["command", "step"] },
     "statement": true,
     "statementCheck": "agent-member"
   },

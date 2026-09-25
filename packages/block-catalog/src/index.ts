@@ -1,5 +1,6 @@
 export * from "./catalog";
 export { createAgentExample } from './agent-example';
+export { architectureStarters, createArchitectureStarter } from "./starters/architectures";
 export {
   officialStarters,
   createOfficialStarter,

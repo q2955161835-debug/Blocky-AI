@@ -18,6 +18,8 @@ import {
   createBlueprintProject,
   createAgentExample,
   officialStarters,
+  architectureStarters,
+  createArchitectureStarter,
 } from "@blocky/block-catalog";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
@@ -338,7 +340,9 @@ export function useStudio() {
       const p =
         starterId === "agent-loop"
           ? createAgentExample()
-          : await createBlueprintProject(starterId);
+          : architectureStarters.some(s => s.id === starterId)
+            ? createArchitectureStarter(starterId)
+            : await createBlueprintProject(starterId);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -352,7 +356,7 @@ export function useStudio() {
       setQuestion(
         starterId === "agent-loop"
           ? "Hello Blocky\n一起学习"
-          : (officialStarters.find((s) => s.id === starterId)?.sampleInput ??
+          : ([...officialStarters, ...architectureStarters].find((s) => s.id === starterId)?.sampleInput ??
               ""),
       );
     } catch {

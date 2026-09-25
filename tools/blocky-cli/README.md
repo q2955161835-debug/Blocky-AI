@@ -21,6 +21,10 @@ $LASTEXITCODE
 
 ## 阶段 6–7 开发命令
 
+`template list/show` 与欢迎页提供 `state-machine`、`behavior-tree`、`rule-engine` 和 `hybrid-router` 架构起点。它们是可编辑的普通模块积木组合，不要求 Agent 根。状态机使用当前会话记忆；退出程序或另开 CLI 运行不会保留此状态。
+
+`run start --inputs-file <inputs.json>` 可替代 `--input`，在同一会话按顺序执行 1–32 个字符串；每项最多 16000 UTF-8 字节，文件最多 128 KiB。用 `schema show blocky.run-inputs/v1 --json` 获取输入结构。失败、拒绝授权或取消后不继续剩余输入，整批共享命令超时；每次模型/工具请求仍遵守原有批准要求。JSONL 输出所有运行事件，最终 `runs` 分别返回结果和运行 ID，`completedInputs/requestedInputs` 表示进度。`--trace-output` 只导出最后一次尝试的运行，响应注明 `traceScope:last-run`；多次输入不能使用单个 `--output` 文件路径。
+
 本节命令位于开发分支，尚未完成阶段交付。`run start` 可使用 `--breakpoint <module:block>`、`--debug-actions <actions.json>`（`step`、`continue`、`stop` 数组）、`--from-block <id>` 和 `--trace-output <trace.json>`；轨迹文件只保存受限元数据，`trace inspect/replay` 只读，不重发模型或工具调用。从所选积木运行若会跳过前置步骤，返回 `BLK-RUN-010`。
 
 `project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。真实浏览器和 Windows UIA Host 执行、普通包操作及相关权限门禁仍未完成。
