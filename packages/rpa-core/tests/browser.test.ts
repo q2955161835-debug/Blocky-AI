@@ -10,7 +10,7 @@ it("binds browser operations to one Host-selected origin and semantic locator", 
   let url = "https://example.test/flow";
   const page = { isClosed: () => false, url: () => url, getByRole: vi.fn(() => target), mouse: { click: vi.fn(async () => {}) } } as unknown as Page;
   const seen: string[] = [];
-  const adapter = new BrowserRpaAdapter(page, "https://example.test", { receiveRead: (_id, value) => seen.push(value), verifyEffect: async () => true });
+  const adapter = new BrowserRpaAdapter(page, "https://example.test", { verifyGrant: async () => true, receiveRead: (_id, value) => seen.push(value), verifyEffect: async () => true });
   const plan = { schemaVersion: "blocky.rpa/v1", planId: "browser-flow", target: { kind: "browser", identity: "https://example.test" }, steps: [
     { stepId: "read-1", action: "read", locator: { kind: "browser", role: "heading", name: "Result" }, timeoutMs: 5000 },
     { stepId: "click-1", action: "click", locator: { kind: "browser", role: "button", name: "Submit" }, timeoutMs: 5000, effectKey: "submit-1" },

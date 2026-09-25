@@ -59,6 +59,7 @@ export type RpaEvent = { type: "step.started" | "step.completed" | "step.skipped
 /** Host-owned adapter. It must bind every operation to the same inspected app/window or tab. */
 export interface RpaAdapter {
   readonly targetIdentity: string;
+  verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean>;
   verifyTarget(signal: AbortSignal): Promise<boolean>;
   verifyReceipt(receipt: RpaReceipt, step: RpaStep, signal: AbortSignal): Promise<boolean>;
   perform(step: RpaStep, signal: AbortSignal): Promise<void>;
@@ -85,6 +86,7 @@ export class AttendedRpaRun {
       throw Error("BLK-RPA-PERM-001");
     if (plan.steps.some((step) => !grant.actions.includes(step.action) || step.locator.kind === "coordinate" && !grant.coordinateFallback))
       throw Error("BLK-RPA-PERM-001");
+    if (!await adapter.verifyGrant(grant, plan, signal)) throw Error("BLK-RPA-PERM-001");
     const receipts = structuredClone(options.receipts ?? []);
     const seen = new Set<string>();
     for (const receipt of receipts) {
@@ -101,7 +103,8 @@ export class AttendedRpaRun {
       for (const step of plan.steps) {
         while (this.status === "paused") await new Promise((resolve) => setTimeout(resolve, 20));
         signal.throwIfAborted();
-        if (grant.expiresAt <= now() || !await adapter.verifyTarget(signal)) throw Error("BLK-RPA-TARGET-001");
+        if (grant.expiresAt <= now() || !await adapter.verifyGrant(grant, plan, signal)) throw Error("BLK-RPA-PERM-001");
+        if (!await adapter.verifyTarget(signal)) throw Error("BLK-RPA-TARGET-001");
         const prior = receipts.find((receipt) => receipt.stepId === step.stepId);
         if (prior) {
           if (!await adapter.verifyReceipt(prior, step, signal)) throw Error("BLK-RPA-RECEIPT-002");

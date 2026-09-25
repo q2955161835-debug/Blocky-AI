@@ -1,7 +1,8 @@
 import type { Page } from "playwright-core";
-import type { RpaAdapter, RpaReceipt, RpaStep } from "./index";
+import type { RpaAdapter, RpaGrant, RpaPlan, RpaReceipt, RpaStep } from "./index";
 
 export type BrowserRpaPorts = {
+  verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean>;
   resolveInput?(step: RpaStep, signal: AbortSignal): Promise<string>;
   receiveRead?(stepId: string, text: string): void;
   receiveScreenshot?(stepId: string, image: Uint8Array): void;
@@ -11,7 +12,7 @@ export type BrowserRpaPorts = {
 /** Page is injected by the Host after the user chooses a tab; this adapter never attaches to a browser itself. */
 export class BrowserRpaAdapter implements RpaAdapter {
   readonly targetIdentity: string;
-  constructor(private readonly page: Page, origin: string, private readonly ports: BrowserRpaPorts = {}) {
+  constructor(private readonly page: Page, origin: string, private readonly ports: BrowserRpaPorts) {
     const parsed = new URL(origin);
     if (!(["https:", "http:"].includes(parsed.protocol)) || parsed.origin !== origin)
       throw Error("BLK-RPA-TARGET-001");
@@ -22,6 +23,9 @@ export class BrowserRpaAdapter implements RpaAdapter {
     if (this.page.isClosed()) return false;
     try { return new URL(this.page.url()).origin === this.targetIdentity; }
     catch { return false; }
+  }
+  verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean> {
+    return this.ports.verifyGrant(grant, plan, signal);
   }
   async verifyReceipt(receipt: RpaReceipt, step: RpaStep, signal: AbortSignal): Promise<boolean> {
     if (!await this.verifyTarget(signal)) return false;

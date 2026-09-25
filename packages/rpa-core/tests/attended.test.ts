@@ -11,7 +11,7 @@ const plan: RpaPlan = {
 };
 const grant = { schemaVersion: "blocky.rpa-grant/v1", sessionId: "session-1", targetIdentity: "https://example.test", actions: ["find", "click"], expiresAt: 2000 };
 function adapter(): RpaAdapter {
-  return { targetIdentity: "https://example.test", verifyTarget: vi.fn(async () => true), verifyReceipt: vi.fn(async () => true), perform: vi.fn(async () => {}) };
+  return { targetIdentity: "https://example.test", verifyGrant: vi.fn(async () => true), verifyTarget: vi.fn(async () => true), verifyReceipt: vi.fn(async () => true), perform: vi.fn(async () => {}) };
 }
 describe("attended RPA boundary", () => {
   it("rejects an unapproved target/action and coordinate fallback", async () => {
@@ -21,6 +21,9 @@ describe("attended RPA boundary", () => {
     const coordinate = { ...plan, steps: [{ ...plan.steps[1], locator: { kind: "coordinate", x: 10, y: 20, riskAccepted: true } }] };
     await expect(new AttendedRpaRun().run(coordinate, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-PERM-001");
     expect(host.perform).not.toHaveBeenCalled();
+    vi.mocked(host.verifyGrant).mockResolvedValue(false);
+    await expect(new AttendedRpaRun().run(plan, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-PERM-001");
+    expect(host.verifyTarget).not.toHaveBeenCalled();
   });
   it("verifies a completed effect before skipping it on resume", async () => {
     const host = adapter();
@@ -77,5 +80,11 @@ describe("attended RPA boundary", () => {
     const short = { ...plan, steps: [plan.steps[0], { ...plan.steps[1], timeoutMs: 100 }] };
     await expect(run.run(short, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-TIMEOUT-001");
     expect(run.checkpointReceipts[0].status).toBe("uncertain");
+  });
+  it("rechecks Host authorization before every step", async () => {
+    const host = adapter();
+    vi.mocked(host.verifyGrant).mockResolvedValueOnce(true).mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    await expect(new AttendedRpaRun().run(plan, grant, host, { now: () => 1000 })).rejects.toThrow("BLK-RPA-PERM-001");
+    expect(host.perform).toHaveBeenCalledOnce();
   });
 });
