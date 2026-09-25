@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "blocky.stage5-candidate3-independent/v1",
+  "sourceCommit": "4a4138af7e9e11c89e5e711a8b49665a4b682118",
+  "candidateDirectory": "dist/Blocky-Studio-0.5.0-candidate3",
+  "packageFiles": 25,
+  "packageBytes": 341679549,
+  "packagedCliSha256": "c4d3baf3941e4d6ca0dc1ec8b7e3514b10953647aa1fd1355492bac67538569e",
+  "rootBuiltCliSha256": "c4d3baf3941e4d6ca0dc1ec8b7e3514b10953647aa1fd1355492bac67538569e",
+  "guiOperated": false,
+  "cliProductivity": {
+    "discoverCommands": true,
+    "operationsSchema": "blocky.cli-operations/v1",
+    "page1Ids": [
+      "research-root",
+      "on-question"
+    ],
+    "page2Ids": [
+      "call-citation",
+      "compose-answer"
+    ],
+    "shownBlock": "call-citation",
+    "batchOperations": 2,
+    "candidateOnly": true,
+    "permissionDelta": [],
+    "beforeDigest": "9c38248500aa9fe2fc2efad064c1c6180a2919e2d3b86329518b12c024b28dbc",
+    "afterDigest": "1a2c76bb3acfa6ab05d0d6579cf71e66b16389196c853158e97df44e3cb791d4",
+    "diffPaths": [
+      "/workspaces/research-agent/blocks/blocks/0/fields/ROLE",
+      "/workspaces/research-agent/blocks/blocks/0/inputs/BODY/block/fields/NAME"
+    ],
+    "appliedCompileOk": true,
+    "restoredCompileOk": true,
+    "restoredSemanticSame": true,
+    "sourceSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd",
+    "checkpointSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd",
+    "restoredSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd"
+  },
+  "negatives": {
+    "stale": {
+      "code": "BLK-PATCH-001",
+      "outputAbsent": true
+    },
+    "cross": {
+      "code": "BLK-REF-001",
+      "outputAbsent": true
+    },
+    "reapply": {
+      "code": "BLK-PATCH-001",
+      "outputAbsent": true
+    },
+    "no-permission": {
+      "code": "BLK-PATCH-003",
+      "outputAbsent": true
+    }
+  },
+  "batchInvalid": {
+    "code": "BLK-CONFIG-001",
+    "candidateAbsent": true
+  },
+  "offlineHostRepair": {
+    "createOk": true,
+    "applyOk": true,
+    "beforeCodes": [
+      "BLK-RESOURCE-001"
+    ],
+    "afterCodes": [],
+    "permissionDelta": [],
+    "diffPaths": [
+      "/workspaces/research-agent/blocks/blocks/0/inputs/BODY/block/next/block/fields/RESOURCE"
+    ]
+  },
+  "liveRepair": {
+    "requestId": "stage5-xirang-repair-candidate3-001",
+    "outcome": "completed",
+    "responseCount": 2,
+    "inputTokens": 8887,
+    "outputTokens": 404,
+    "totalTokens": 9291,
+    "modelApiCalled": true,
+    "verificationPassed": true,
+    "candidateSha256": "920b76bb83a3d68fc5bb5dfeee91e4121905b9c386b961fe941241ebebebf172",
+    "permissionDelta": [],
+    "operations": 1,
+    "diffPaths": [
+      "/workspaces/research-agent/blocks/blocks/0/inputs/BODY/block/next/block/fields/RESOURCE"
+    ],
+    "compileAfterOk": true,
+    "undoSemanticSame": true,
+    "damagedOriginalSha256": "8544b6b6a2ce0b7b288e5c596988fccfa31861e401350df6c9032ba89ca02101",
+    "appliedSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd",
+    "undoCheckpointSha256": "84df21e553a3707ed8bd99c3be6db18047768350beed4abbda076d3168d9d78e"
+  }
+}

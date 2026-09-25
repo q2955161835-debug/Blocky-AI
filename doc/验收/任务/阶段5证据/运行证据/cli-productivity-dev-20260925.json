@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "blocky.stage5-cli-productivity-evidence/v1",
+  "scope": "development CLI, no ordinary release candidate claim",
+  "externalModelApiCalled": false,
+  "discovery": {
+    "commandQueryCount": 7,
+    "blockSearchTotal": 1,
+    "blockPage2Ids": [
+      "call-citation",
+      "compose-answer"
+    ]
+  },
+  "batch": {
+    "operations": 2,
+    "sourceDigest": "9c38248500aa9fe2fc2efad064c1c6180a2919e2d3b86329518b12c024b28dbc",
+    "previewNextDigest": "1a2c76bb3acfa6ab05d0d6579cf71e66b16389196c853158e97df44e3cb791d4",
+    "permissionDelta": [],
+    "diagnostics": [],
+    "appliedDigest": "1a2c76bb3acfa6ab05d0d6579cf71e66b16389196c853158e97df44e3cb791d4",
+    "diffTotal": 2,
+    "diffPaths": [
+      "/workspaces/research-agent/blocks/blocks/0/fields/ROLE",
+      "/workspaces/research-agent/blocks/blocks/0/inputs/BODY/block/fields/NAME"
+    ],
+    "compileOk": true
+  },
+  "restore": {
+    "beforeDigest": "1a2c76bb3acfa6ab05d0d6579cf71e66b16389196c853158e97df44e3cb791d4",
+    "afterDigest": "9c38248500aa9fe2fc2efad064c1c6180a2919e2d3b86329518b12c024b28dbc",
+    "semanticDiffTotal": 0,
+    "sourceSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd",
+    "checkpointSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd",
+    "restoredSha256": "5352cfb64e1316e6602a3929c8f92e747d00c1dcd4b44c64d894e30109c2c6dd"
+  },
+  "negative": {
+    "errors": {
+      "stale": "BLK-PATCH-001",
+      "cross": "BLK-REF-001",
+      "reapply": "BLK-PATCH-001",
+      "badField": "BLK-CONFIG-001"
+    },
+    "staleOutputAbsent": true,
+    "crossProjectOutputAbsent": true,
+    "reapplyOutputAbsent": true,
+    "badPatchOutputAbsent": true
+  }
+}

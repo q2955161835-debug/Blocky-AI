@@ -1,0 +1,58 @@
+{
+  "baseCommit": "6d36db8185e7a8bad422cb2d8607f20c5de58fcc",
+  "snapshotTime": "2026-09-25T23:08:12.4973731+08:00",
+  "files": [
+    {
+      "path": "apps/studio-host/src/patch_guard.rs",
+      "sha256": "7faa97c038e3d149571fb052b6b9bed2255b6d7e93d7d965f136893e77594c32"
+    },
+    {
+      "path": "packages/builder-protocol/src/preview.ts",
+      "sha256": "466bb14e60b429b47b787ef3c02444394fa2a32a216e321450a2af83148c0b6e"
+    },
+    {
+      "path": "tools/blocky-cli/src/discovery.ts",
+      "sha256": "feff8881ae9b74975bd36b5fd44e8dd87a830a8d59e7a5f868235d7a0be25be2"
+    },
+    {
+      "path": "tools/blocky-cli/src/block-query.ts",
+      "sha256": "ed2fb40050e67e343aed6e35520fd072760018f4213127e8568a614361423b8a"
+    },
+    {
+      "path": "tools/blocky-cli/src/productivity.ts",
+      "sha256": "115610243174d8e7ef7950252bedebcf6896595e2f0aaf4912a9a256cd17f5f1"
+    },
+    {
+      "path": "tools/blocky-cli/src/project-diff.ts",
+      "sha256": "fe4a9ee72aa5cd90a8a8b4136617da7cde6e2db8bcb11bed20575f1388a38ff6"
+    },
+    {
+      "path": "tools/blocky-cli/src/error-guidance.ts",
+      "sha256": "5a80706198371be5e78aa0e27f9c39d26d400607a8dd7737aa21f84ce1f6c389"
+    },
+    {
+      "path": "tools/blocky-cli/src/commands.ts",
+      "sha256": "9947f3a4694a46a98c15b11103e6e57b3ca9252c329eee7c44fe5aca2255b221"
+    },
+    {
+      "path": "tools/blocky-cli/src/native-store.ts",
+      "sha256": "74722e5558be414bb29797d7ca3dbf4830447fbb1c58a6e679cb8488634aac10"
+    },
+    {
+      "path": "tools/blocky-cli/src/artifacts.ts",
+      "sha256": "7b6772eefe9c35698e42f8a1b7434e19a84f8df09172b43d7be570e290790723"
+    },
+    {
+      "path": "tools/blocky-cli/src/run-agent.ts",
+      "sha256": "3e47f2f39e7fc46081f17aab73e7f71580561e98b8fe38875550747e6db61d4b"
+    },
+    {
+      "path": "tools/blocky-cli/dist/main.mjs",
+      "sha256": "c4d3baf3941e4d6ca0dc1ec8b7e3514b10953647aa1fd1355492bac67538569e"
+    },
+    {
+      "path": "tools/blocky-cli/dist/bin/blocky-project-io.exe",
+      "sha256": "3c6ea5a3906fee0a80fe89f70ddf7153a34491e29e2ceadd31fff2580df0b30e"
+    }
+  ]
+}

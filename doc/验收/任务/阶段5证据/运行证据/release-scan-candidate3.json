@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "blocky.release-scan/v1",
+  "checkedAt": "2026-09-25T15:16:07.865Z",
+  "commit": "4a4138af7e9e11c89e5e711a8b49665a4b682118",
+  "positiveControl": true,
+  "modelId": "multilingual-e5-small-int8-v1",
+  "vcRuntime": {
+    "status": "available",
+    "version": "14.51.36247",
+    "redistribution": "system prerequisite; not bundled",
+    "files": [
+      "msvcp140.dll",
+      "msvcp140_1.dll",
+      "vcruntime140.dll",
+      "vcruntime140_1.dll"
+    ]
+  },
+  "scope": "ordinary binaries, CLI bundle and production browser assets; pattern checks are not a general secret detector",
+  "artifacts": [
+    {
+      "path": "try/release-native-target/release/blocky-studio.exe",
+      "bytes": 42542080,
+      "sha256": "04248fda6d809999ba3f19118441e4768a4a6b3d87489518f9899ccb26558d88",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/bin/blocky-project-io.exe",
+      "bytes": 32367104,
+      "sha256": "7f26a6d6edeee855577c01ebd8c46f048e305e2e22f5cd68fbda8f9e7fee3a04",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/main.mjs",
+      "bytes": 1485113,
+      "sha256": "c4d3baf3941e4d6ca0dc1ec8b7e3514b10953647aa1fd1355492bac67538569e",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/blocky.cmd",
+      "bytes": 184,
+      "sha256": "6eb03dcd826020078a2b1278ac25697a4613a65690f482dcaada60430683d82b",
+      "failures": []
+    },
+    {
+      "path": "try/release-native-target/release/DirectML.dll",
+      "bytes": 18527776,
+      "sha256": "9c9e6d822561c6c41b90e6994b3e8857cf1d66dbfb1e0c4c799c7c89b4e92da1",
+      "failures": []
+    },
+    {
+      "path": "tools/blocky-cli/dist/bin/DirectML.dll",
+      "bytes": 18527776,
+      "sha256": "9c9e6d822561c6c41b90e6994b3e8857cf1d66dbfb1e0c4c799c7c89b4e92da1",
+      "failures": []
+    },
+    {
+      "path": "try/stage5/builder-runtime/builder.mjs",
+      "bytes": 575443,
+      "sha256": "6592c14a775565cc58dc2057466bcaf5bef56721e1634c1cbcbcb45991394f18",
+      "failures": []
+    },
+    {
+      "path": "try/stage5/builder-runtime/manifest.json",
+      "bytes": 416,
+      "sha256": "3fbc19292cca6f75b7dca8875e33cc5465958e68b92de2464aeece3754aeccb4",
+      "failures": []
+    },
+    {
+      "path": "try/stage5/builder-runtime/node.exe",
+      "bytes": 86989128,
+      "sha256": "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed",
+      "failures": []
+    },
+    {
+      "path": "vendor/node/LICENSE",
+      "bytes": 145485,
+      "sha256": "c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4",
+      "failures": []
+    },
+    {
+      "path": "try/stage3/models/multilingual-e5-small/model_quantized.onnx",
+      "bytes": 118308185,
+      "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+      "failures": []
+    },
+    {
+      "path": "try/stage3/models/multilingual-e5-small/tokenizer.json",
+      "bytes": 17082730,
+      "sha256": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39",
+      "failures": []
+    },
+    {
+      "path": "try/stage3/models/multilingual-e5-small/config.json",
+      "bytes": 658,
+      "sha256": "cb99455288675345e1a4f411438d5d0adbba5fbd3a67ea4fb03c015433b996c1",
+      "failures": []
+    },
+    {
+      "path": "try/stage3/models/multilingual-e5-small/special_tokens_map.json",
+      "bytes": 167,
+      "sha256": "d05497f1da52c5e09554c0cd874037a083e1dc1b9cfd48034d1c717f1afc07a7",
+      "failures": []
+    },
+    {
+      "path": "try/stage3/models/multilingual-e5-small/tokenizer_config.json",
+      "bytes": 443,
+      "sha256": "a1d6bc8734a6f635dc158508bef000f8e2e5a759c7d92f984b2c86e5ff53425b",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/LICENSE.e5",
+      "bytes": 1104,
+      "sha256": "904dc4d8749877f1dba1cda48200d2462dccbeb7c134d5e4ef6fa75e0198c8fe",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/LICENSE.DirectML.txt",
+      "bytes": 10439,
+      "sha256": "a05138e3a085ff60a44881eedfa58dccb03ecc1d7b1f6ae888418e8c2fec4b8d",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/NOTICE.DirectML.txt",
+      "bytes": 4577,
+      "sha256": "2c95795c13ff48a58b6ed916f37901c23d964b5d9d601af422f17ad2172e7950",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/LICENSE.ONNX-Runtime.txt",
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/NOTICE.ONNX-Runtime.txt",
+      "bytes": 325054,
+      "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+      "failures": []
+    },
+    {
+      "path": "vendor/models/licenses/LICENSE.VC-Runtime.txt",
+      "bytes": 6589,
+      "sha256": "7e96c27c67ef3e7cabc55e1dee05727e67d261f3944155a816a07dbf9b78fb1d",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-B5B5nTDu.css",
+      "bytes": 17220,
+      "sha256": "c2ac8be638c51ca10c9ebb25863639ffb45754924d6e7be5b162ea206cc8a5ab",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-D0Z5zlUj.js",
+      "bytes": 1615916,
+      "sha256": "77f5c6aeb7091497ec430513cb3819db7b30b313814ae5ed901e8bd0d6dd6775",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-B1njb2Cr.css",
+      "bytes": 3962,
+      "sha256": "c2de618f9656c020d82d4b20996ed7efcd03fd4621fe78804b060f38e003412f",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-DLmZUxw2.js",
+      "bytes": 334202,
+      "sha256": "e36a90cef206da0d3f37ed29199820d7a0c35dc1c6c22c0a600e0c85753c6a98",
+      "failures": []
+    },
+    {
+      "path": "apps/studio-desktop/dist/index.html",
+      "bytes": 359,
+      "sha256": "7aeea890bca2cde626d488178f4e088d919320d70ec89b257b7d902132b7a433",
+      "failures": []
+    }
+  ],
+  "passed": true
+}
