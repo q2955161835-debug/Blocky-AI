@@ -13,6 +13,8 @@ import { Canvas, type CanvasHandle } from "@blocky/ui-editor";
 import { useStudio } from "../composition/useStudio";
 import { Inspector } from "./Inspector";
 import { RunPanel } from "./RunPanel";
+import { ProjectMap } from "./ProjectMap";
+import { EditorTools } from "./EditorTools";
 import { StarterGuide } from "./StarterGuide";
 import { BottomPanel } from "./BottomPanel";
 import { ConfirmationDialog } from "./ConfirmationDialog";
@@ -107,6 +109,16 @@ export function App() {
     "edit.clear-selection": () => api.current?.clearSelection(),
     "edit.collapse": () => api.current?.collapse(true),
     "edit.expand": () => api.current?.collapse(false),
+    "edit.group": () => s.applySelectionEdit({ kind: "group", groupId: `group-${crypto.randomUUID()}`, label: "组合" }),
+    "edit.ungroup": () => s.applySelectionEdit({ kind: "ungroup" }),
+    "edit.region": () => s.applySelectionEdit({ kind: "group", groupId: `region-${crypto.randomUUID()}`, label: "区域", region: true }),
+    "edit.annotate": () => show("annotation"),
+    "edit.align-left": () => s.applySelectionEdit({ kind: "align", axis: "left" }),
+    "edit.align-top": () => s.applySelectionEdit({ kind: "align", axis: "top" }),
+    "edit.distribute-horizontal": () => s.applySelectionEdit({ kind: "distribute", axis: "horizontal" }),
+    "edit.distribute-vertical": () => s.applySelectionEdit({ kind: "distribute", axis: "vertical" }),
+    "edit.enable": () => s.applySelectionEdit({ kind: "enable", value: true }),
+    "edit.disable": () => s.applySelectionEdit({ kind: "enable", value: false }),
     "build.convert": () => show("conversion"),
     "build.assistant": () => {
       builder.clear();
@@ -124,6 +136,11 @@ export function App() {
     "terminal.stop": () => void terminals.close(),
     "window.exit": lifecycle.request,
     "run.pause": s.togglePause,
+    "run.step": s.step,
+    "run.from-selection": () => void s.runFromSelected(),
+    "run.toggle-breakpoint": () => {
+      if (s.selected && s.session.active) s.toggleBreakpoint(s.session.active, s.selected);
+    },
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
     "view.show-problems": () =>
@@ -204,6 +221,18 @@ export function App() {
     (id !== "run.start" || (s.started && s.canRun)) &&
     (id !== "run.stop" || s.running) &&
     (id !== "run.pause" || s.running) &&
+    (id !== "run.step" || (s.running && s.paused)) &&
+    (id !== "run.from-selection" || (!!s.selected && s.canRun)) &&
+    (id !== "run.toggle-breakpoint" || (!!s.selected && !s.running)) &&
+    (![
+      "edit.group", "edit.ungroup", "edit.region", "edit.annotate", "edit.enable", "edit.disable",
+    ].includes(id) || (s.selectedRoots.length > 0 && !s.running && !s.busy)) &&
+    (![
+      "edit.align-left", "edit.align-top",
+    ].includes(id) || (s.selectedRoots.length >= 2 && !s.running && !s.busy)) &&
+    (![
+      "edit.distribute-horizontal", "edit.distribute-vertical",
+    ].includes(id) || (s.selectedRoots.length >= 3 && !s.running && !s.busy)) &&
     (id !== "view.back" || s.canGoBack);
   const dispatcher = createCommandDispatcher(actions, (id) =>
     enabled(id)
@@ -573,7 +602,9 @@ export function App() {
                 studio={s}
                 resources={() => void execute("settings.resources")}
               />
-              <RunPanel studio={s} />
+              <RunPanel studio={s} execute={execute} />
+              <ProjectMap studio={s} />
+              <EditorTools studio={s} execute={execute} enabled={enabled} />
               <Inspector
                 studio={s}
                 configureResource={() => execute("settings.resources")}

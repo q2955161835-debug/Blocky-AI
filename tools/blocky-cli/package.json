@@ -26,7 +26,9 @@
     "@blocky/block-catalog": "workspace:*",
     "@blocky/runtime-core": "workspace:*",
     "@blocky/observability": "workspace:*",
+    "@blocky/rpa-core": "workspace:*",
     "@blocky/test-fixtures": "workspace:*",
-    "@blocky/project-format": "workspace:*"
+    "@blocky/project-format": "workspace:*",
+    "zod": "4.4.3"
   }
 }

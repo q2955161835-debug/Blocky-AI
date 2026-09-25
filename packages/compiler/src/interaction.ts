@@ -28,19 +28,21 @@ export function projectInteraction(
           node.blockType,
         )
       ) {
-        if (!owner)
+        const standalone = node.blockType === "core.interaction.chat_entry" &&
+          m.roots.some((root) => root.nodeId === node.nodeId);
+        if (!owner && !standalone)
           diagnostics.push(
-            diagnostic("BLK-TYPE-006", "聊天入口必须属于智能体", source),
+            diagnostic("BLK-TYPE-006", "聊天入口必须属于智能体或独立模块根", source),
           );
         else
           interaction.entries.push({
             interactionId: node.nodeId,
             moduleId: m.moduleId,
-            ownerAgentId: owner,
+            ownerAgentId: owner ?? node.nodeId,
             displayName:
               typeof node.fields.NAME === "string" && node.fields.NAME.trim()
                 ? node.fields.NAME
-                : `输入 ${interaction.entries.filter((e) => e.ownerAgentId === owner).length + 1}`,
+                : `输入 ${interaction.entries.filter((e) => e.ownerAgentId === (owner ?? node.nodeId)).length + 1}`,
             acceptedParts:
               node.blockType === "core.interaction.chat" ||
               hasTextCapability(node)

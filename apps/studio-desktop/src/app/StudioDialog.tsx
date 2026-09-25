@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { catalog } from "@blocky/block-catalog";
 import { commands } from "@blocky/command-system";
 import type { Studio } from "../composition/useStudio";
@@ -16,6 +16,7 @@ export type Popup =
         | "shortcuts"
         | "resources"
         | "context"
+        | "annotation"
         | "about"
         | "builder"
         | ConstructionKind;
@@ -45,6 +46,7 @@ export function StudioDialog({
   execute(id: string): void;
   add(type: string): void;
 }) {
+  const [note, setNote] = useState("");
   return (
     <div
       className="popup-backdrop"
@@ -63,7 +65,9 @@ export function StudioDialog({
               ? "资源管理"
               : popup.kind === "blocks"
                 ? "搜索积木"
-                : "命令中心"
+                : popup.kind === "annotation"
+                  ? "积木注释"
+                  : "命令中心"
         }
         style={
           popup.kind === "context"
@@ -82,13 +86,24 @@ export function StudioDialog({
                 ? "资源管理"
                 : popup.kind === "blocks"
                   ? "搜索积木"
-                  : "命令中心"}
+                  : popup.kind === "annotation"
+                    ? "积木注释"
+                    : "命令中心"}
           </strong>
           <button onClick={() => setPopup(null)} aria-label="关闭弹层">
             ×
           </button>
         </header>
-        {popup.kind === "resources" ? (
+        {popup.kind === "annotation" ? (
+          <form onSubmit={(event) => {
+            event.preventDefault();
+            s.applySelectionEdit({ kind: "annotate", note });
+            setPopup(null);
+          }}>
+            <label>注释<textarea aria-label="积木注释" maxLength={2000} value={note} onChange={(event) => setNote(event.target.value)} /></label>
+            <button type="submit" disabled={!s.selectedRoots.length}>保存注释</button>
+          </form>
+        ) : popup.kind === "resources" ? (
           <ResourcePanel studio={s} />
         ) : popup.kind === "shortcuts" ? (
           <ShortcutsPanel studio={s} />

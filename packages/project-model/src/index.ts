@@ -118,6 +118,7 @@ const blockSchema: z.ZodType = z.lazy(() =>
       x: z.number().finite().optional(),
       y: z.number().finite().optional(),
       disabled: z.boolean().optional(),
+      data: z.string().max(4096).optional(),
       extraState: z.json().optional(),
     })
     .passthrough(),
@@ -225,6 +226,8 @@ export { ProjectController } from "./controller";
 export { createModule, renameModule, deleteModule } from "./modules";
 export { activateTab, closeTab, restoreTab, moveTab, cycleTab } from "./tabs";
 export { configureBlock, findBlock } from "./configure";
+export { editSelection, copyAcrossModules, selectionEditSchema, editorOperationSchema, type SelectionEdit } from "./editor-ops";
+export { projectMap, affectedModules, type ModuleMapEntry } from "./project-map";
 export {
   restoreSession,
   serializeSession,

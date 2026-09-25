@@ -350,6 +350,15 @@ importers:
         specifier: workspace:*
         version: link:../language-schema
 
+  packages/rpa-core:
+    dependencies:
+      playwright-core:
+        specifier: 1.63.0
+        version: 1.63.0
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
   packages/runtime-core:
     dependencies:
       '@blocky/compiler':
@@ -447,6 +456,9 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../../packages/resource-registry
+      '@blocky/rpa-core':
+        specifier: workspace:*
+        version: link:../../packages/rpa-core
       '@blocky/runtime-core':
         specifier: workspace:*
         version: link:../../packages/runtime-core
@@ -459,6 +471,9 @@ importers:
       '@blocky/test-fixtures':
         specifier: workspace:*
         version: link:../../packages/test-fixtures
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
 packages:
 

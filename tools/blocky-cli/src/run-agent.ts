@@ -16,6 +16,7 @@ import {
 import { type Args, required, integer } from "./arguments";
 import { nativeUserOperation } from "./native-store";
 import { envelope, CliError } from "./protocol";
+import { TraceSession } from "@blocky/observability";
 export async function runAgent(
   args: Args,
   project: Project,
@@ -36,6 +37,37 @@ export async function runAgent(
     : candidates.slice(0, 1);
   if (matches.length !== 1)
     throw new CliError(3, "BLK-RUN-001", "交互入口不存在或不唯一。");
+  const fromBlock = args.options.get("from-block");
+  if (fromBlock !== undefined && (typeof fromBlock !== "string" || !stableId.test(fromBlock)))
+    throw new CliError(2, "BLK-CLI-002", "所选积木 ID 无效。");
+  const breakpoint = args.options.get("breakpoint");
+  let breakpoints: { moduleId: string; blockId: string }[] = [];
+  if (breakpoint !== undefined) {
+    if (typeof breakpoint !== "string" || !args.options.has("debug-actions"))
+      throw new CliError(2, "BLK-CLI-002", "断点需要 --debug-actions 文件指定每次暂停后的动作。");
+    const pairs = breakpoint.split(",");
+    if (pairs.length > 64 || pairs.some((pair) => !/^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$/.test(pair)))
+      throw new CliError(2, "BLK-CLI-002", "断点应为 module-id:block-id。");
+    breakpoints = pairs.map((pair) => {
+      const [moduleId, blockId] = pair.split(":");
+      return { moduleId, blockId };
+    });
+    if (breakpoints.some(({ moduleId, blockId }) => !stableId.test(moduleId) || !stableId.test(blockId)))
+      throw new CliError(2, "BLK-CLI-002", "断点应为 module-id:block-id。");
+  }
+  if (args.options.has("debug-actions") && !breakpoints.length)
+    throw new CliError(2, "BLK-CLI-002", "调试动作需要 --breakpoint。");
+  let debugActions: ("step" | "continue" | "stop")[] = [];
+  if (breakpoints.length) {
+    const bytes = await readFile(required(args, "debug-actions"));
+    if (bytes.length > 4096) throw new CliError(2, "BLK-CLI-002", "调试动作文件过大。");
+    let parsed: unknown;
+    try { parsed = JSON.parse(bytes.toString("utf8")); }
+    catch { throw new CliError(2, "BLK-CLI-002", "调试动作须为 JSON 数组。"); }
+    if (!Array.isArray(parsed) || parsed.length > 100 || parsed.some((item) => !["step", "continue", "stop"].includes(item)))
+      throw new CliError(2, "BLK-CLI-002", "调试动作只能是 step、continue 或 stop。");
+    debugActions = parsed;
+  }
   const runId = String(
     args.options.get("run-id") ?? `run-${crypto.randomUUID()}`,
   );
@@ -111,6 +143,7 @@ export async function runAgent(
       sessionId: `session-${runId}`,
       adapters: hostAdapters(call, services),
     });
+    const trace = new TraceSession();
     const result = await runtime.run(
       project,
       matches[0].interactionId,
@@ -119,9 +152,21 @@ export async function runAgent(
         moduleId: matches[0].moduleId,
         userRegistry,
         signal: abort.signal,
-        onEvent: write,
+        debug: { breakpoints, ...(fromBlock ? { startBlockId: fromBlock } : {}) },
+        onEvent(event) {
+          trace.add(event);
+          write(event);
+          if (event.type === "run.paused") {
+            const action = debugActions.shift() ?? "stop";
+            if (action === "step") runtime.step();
+            else if (action === "continue") runtime.resume();
+            else abort.abort();
+          }
+        },
       },
     );
+    if (args.options.has("trace-output"))
+      await atomicOutput(required(args, "trace-output"), JSON.stringify(trace.export(), null, 2), signal);
     if (args.options.has("output") && result.status === "completed") {
       if (result.files?.length !== 1)
         throw new CliError(

@@ -42,7 +42,7 @@ it("selects the second module even when its entry block ID is unchanged", async 
   await waitFor(() =>
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
   );
-  render(<RunPanel studio={hook.result.current} />);
+  render(<RunPanel studio={hook.result.current} execute={() => {}} />);
   fireEvent.change(screen.getByLabelText("运行入口"), {
     target: { value: JSON.stringify(["teacher-agent", "on-question"]) },
   });
@@ -79,7 +79,7 @@ it("runs the selected InteractionManifest entry instead of always executing the 
   await waitFor(() =>
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
   );
-  render(<RunPanel studio={hook.result.current} />);
+  render(<RunPanel studio={hook.result.current} execute={() => {}} />);
   fireEvent.change(screen.getByLabelText("运行入口"), {
     target: { value: JSON.stringify(["research-agent", "on-question-second"]) },
   });

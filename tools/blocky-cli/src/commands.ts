@@ -30,6 +30,9 @@ import { builderWorkCommand, builderWorkHelp } from "./builder-work";
 import { discoveryCommand, discoveryHelp } from "./discovery";
 import { blockQueryCommand, blockQueryHelp } from "./block-query";
 import { productivityCommand, productivityHelp } from "./productivity";
+import { editorCommand, editorHelp } from "./editor";
+import { rpaCommand, rpaHelp } from "./rpa";
+import { traceCommand, traceHelp } from "./trace";
 import { conversion, conversionHelp } from "./conversion";
 import { taskCommand, taskHelp } from "./tasks";
 import { exportDiagnostics } from "./diagnostics";
@@ -47,6 +50,9 @@ export const help = {
     ...discoveryHelp,
     ...blockQueryHelp,
     ...productivityHelp,
+    ...editorHelp,
+    ...rpaHelp,
+    ...traceHelp,
     ...knowledgeHelp,
     ...foundationsHelp,
     ...userConfigHelp,
@@ -70,7 +76,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> (--simulate | --live) --input <question> [--entry <id>] [--module <id>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
+    "run start <file.blocky> (--simulate | --live) --input <question> [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <trace.json>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -86,6 +92,12 @@ export async function dispatch(
   if (blocks) return blocks;
   const productivity = await productivityCommand(args, signal);
   if (productivity) return productivity;
+  const editor = await editorCommand(args, signal);
+  if (editor) return editor;
+  const rpa = await rpaCommand(args);
+  if (rpa) return rpa;
+  const trace = await traceCommand(args);
+  if (trace) return trace;
   const workResult = await builderWorkCommand(args, signal);
   if (workResult) return workResult;
   const builderResult = await builderCommand(args, signal);
@@ -272,6 +284,10 @@ export async function dispatch(
           "approval-file",
           "interactive",
           "output",
+          "from-block",
+          "breakpoint",
+          "debug-actions",
+          "trace-output",
         ]
       : ["json"],
     moduleList ? 4 : 3,

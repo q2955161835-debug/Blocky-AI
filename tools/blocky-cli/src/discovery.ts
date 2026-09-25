@@ -5,6 +5,8 @@ import {
 } from "@blocky/builder-protocol";
 import { surfaceSpecSchema } from "@blocky/app-surface";
 import { workspaceBlockShape } from "@blocky/block-catalog";
+import { editorOperationSchema } from "@blocky/project-model";
+import { rpaPlanSchema, rpaGrantSchema } from "@blocky/rpa-core";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
@@ -15,6 +17,9 @@ const schemas = {
   "blocky.builder-draft/v1": draftInputSchema,
   "blocky.surface-spec/v1": surfaceSpecSchema,
   "blocky.workspace-block/v1": workspaceBlockShape,
+  "blocky.editor-operation/v1": editorOperationSchema,
+  "blocky.rpa/v1": rpaPlanSchema,
+  "blocky.rpa-grant/v1": rpaGrantSchema,
 };
 export const discoveryHelp = [
   "command list [--query <text>] --json",

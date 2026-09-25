@@ -12,6 +12,19 @@ import {
 import { compileProject } from "../../compiler/src";
 import type { Workspace } from "../../language-schema/src";
 import { createTextProject } from "../../test-fixtures/src/text-project";
+import { editSelection } from "../../project-model/src";
+it("preserves editor group and note metadata through Blockly serialization", () => {
+  registerBlocks();
+  const source = createStarter().workspaces["research-agent"];
+  editSelection(source, ["research-root"], { kind: "group", groupId: "group-study", label: "研究区域", region: true });
+  editSelection(source, ["research-root"], { kind: "annotate", note: "检查证据" });
+  const workspace = new Blockly.Workspace();
+  try {
+    Blockly.serialization.workspaces.load(source, workspace);
+    const saved = Blockly.serialization.workspaces.save(workspace) as Workspace;
+    expect(saved.blocks.blocks[0].data).toEqual(source.blocks.blocks[0].data);
+  } finally { workspace.dispose(); }
+});
 it.each(officialStarters)(
   "$id preserves blueprint instance metadata, edited role and answer style through actual Blockly save/reload",
   async (starter) => {

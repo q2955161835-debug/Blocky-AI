@@ -9,6 +9,9 @@ import {
   ProjectController,
   restoreSession,
   configureBlock,
+  editSelection,
+  copyAcrossModules,
+  type SelectionEdit,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
 import {
@@ -65,9 +68,17 @@ export function useStudio() {
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
   const [selectedRoots, setSelectedRoots] = useState<string[]>([]);
+  const [breakpoints, setBreakpoints] = useState<{ moduleId: string; blockId: string }[]>([]);
+  const toggleBreakpoint = (moduleId: string, blockId: string) =>
+    setBreakpoints((current) =>
+      current.some((item) => item.moduleId === moduleId && item.blockId === blockId)
+        ? current.filter((item) => item.moduleId !== moduleId || item.blockId !== blockId)
+        : [...current, { moduleId, blockId }],
+    );
   useEffect(() => {
     setSelectedRoots([]);
   }, [session.active, snapshot.project.manifest.projectId]);
+  useEffect(() => setBreakpoints([]), [snapshot.project.manifest.projectId]);
   const [history, setHistory] = useState<SourceRef[]>([]);
   const [preferredEntryId, setInteractionId] = useState("");
   const activeEntry =
@@ -169,7 +180,7 @@ export function useStudio() {
     interactionId: string;
     signal: AbortSignal;
     onProgress?: (message: string) => void;
-  }) => {
+  }, debug?: { startBlockId?: string }) => {
     if (
       closing.current ||
       runBusy.current ||
@@ -210,9 +221,12 @@ export function useStudio() {
         request?.question ?? question,
         {
           moduleId: entry.moduleId,
+          debug: { breakpoints, ...debug },
           signal: abort.current.signal,
           userRegistry: resources.map,
           onEvent(event) {
+            if (event.type === "run.paused") setPaused(true);
+            if (event.type === "run.resumed") setPaused(false);
             setEvents((current) => [...current, event].slice(-500));
             const line = projectLog(event);
             request?.onProgress?.(line.summary);
@@ -378,6 +392,27 @@ export function useStudio() {
       setMessage("此配置值无效或超出长度限制，原配置保持不变。");
     }
   };
+  const applySelectionEdit = (edit: SelectionEdit) => {
+    try {
+      controller.edit((p) => {
+        const workspace = p.workspaces[session.active];
+        if (!workspace) throw Error("BLK-EDIT-001");
+        editSelection(workspace, selectedRoots, edit);
+      });
+    } catch {
+      setMessage("所选积木无法执行此编辑，项目保持不变。");
+    }
+  };
+  const copySelectionToModule = (targetModuleId: string) => {
+    try {
+      controller.edit((p) => {
+        copyAcrossModules(p, session.active, targetModuleId, selectedRoots, () => `block-${crypto.randomUUID()}`);
+      });
+      setMessage("已复制到目标画布，可撤销。");
+    } catch {
+      setMessage("跨画布复制未完成，请检查目标画布和所选积木。");
+    }
+  };
   const settle = async () => {
     closing.current = true;
     setExiting(true);
@@ -419,6 +454,18 @@ export function useStudio() {
     settle,
     paused,
     togglePause,
+    step: () => {
+      if (running && paused) {
+        runtime.step();
+        setPaused(false);
+      }
+    },
+    breakpoints,
+    toggleBreakpoint,
+    runFromSelected: () =>
+      selected && session.active
+        ? run(undefined, { startBlockId: selected })
+        : undefined,
     compiled,
     compiling,
     session,
@@ -464,6 +511,8 @@ export function useStudio() {
     fresh,
     startBlueprint,
     updateField,
+    applySelectionEdit,
+    copySelectionToModule,
     interactionId: activeEntry ? interactionKey(activeEntry) : "",
     canRun:
       !exiting &&

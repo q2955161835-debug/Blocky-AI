@@ -47,11 +47,20 @@ export class Runtime {
   private options: Options;
   private running = false;
   private paused = false;
+  private stepNext = false;
+  private breakpoints = new Set<string>();
   pause() {
     if (this.running) this.paused = true;
   }
   resume() {
     this.paused = false;
+    this.stepNext = false;
+  }
+  step() {
+    if (this.running && this.paused) {
+      this.stepNext = true;
+      this.paused = false;
+    }
   }
   constructor(options: Options = {}) {
     this.options = options;
@@ -66,6 +75,10 @@ export class Runtime {
       moduleId?: string;
       signal?: AbortSignal;
       onEvent?: (event: RuntimeEvent) => void;
+      debug?: {
+        breakpoints?: { moduleId: string; blockId: string }[];
+        startBlockId?: string;
+      };
       userRegistry?: Map<string, import("@blocky/language-schema").Resource>;
     } = {},
   ): Promise<RunResult> {
@@ -73,6 +86,15 @@ export class Runtime {
     const project = parseProject(input),
       runId = this.options.newId?.() ?? `run-${crypto.randomUUID()}`;
     this.running = true;
+    const breakpoints = options.debug?.breakpoints ?? [];
+    if (breakpoints.some(({ moduleId, blockId }) =>
+      !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(moduleId) ||
+      !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(blockId))) {
+      this.running = false;
+      throw Error("BLK-RUN-008");
+    }
+    this.breakpoints = new Set(breakpoints.map(({ moduleId, blockId }) => JSON.stringify([moduleId, blockId])));
+    this.stepNext = false;
     const events: RuntimeEvent[] = [];
     const runBudget = new RunBudget(options.signal);
     const signal = runBudget.signal;
@@ -133,18 +155,32 @@ export class Runtime {
       const root = module.roots.find((n) => n.nodeId === entry.ownerAgentId);
       const selectedEntry = root && findEntry(root, entry.interactionId);
       if (!root || !selectedEntry) throw Error("BLK-RUN-001");
-      const pauseBoundary = async () => {
+      const startNode = options.debug?.startBlockId
+        ? findInNextChain(selectedEntry, options.debug.startBlockId)
+        : selectedEntry;
+      if (!startNode) throw Error("BLK-RUN-009");
+      if (startNode !== selectedEntry &&
+          (selectedEntry === root || selectedEntry.next !== startNode))
+        throw Error("BLK-RUN-010");
+      const pauseBoundary = async (moduleId?: string, blockId?: string) => {
+        if (blockId && (this.stepNext || this.breakpoints.has(JSON.stringify([moduleId, blockId])))) {
+          this.paused = true;
+          this.stepNext = false;
+        }
         if (!this.paused) return;
-        emit("run.paused", undefined, undefined, { summary: "运行已暂停" });
+        emit("run.paused", moduleId, blockId, {
+          summary: "运行已暂停",
+          ...(blockId ? { blockId } : {}),
+        });
         while (this.paused) {
           await wait(20, signal);
         }
         signal.throwIfAborted();
-        emit("run.resumed", undefined, undefined, { summary: "运行已继续" });
+        emit("run.resumed", moduleId, blockId, { summary: "运行已继续" });
       };
       const execute = async (node: IrNode, moduleId: string): Promise<void> => {
         signal.throwIfAborted();
-        await pauseBoundary();
+        const startedAt = performance.now();
         // Each chat block starts its own stack. A different entry is a boundary.
         if (
           ["core.interaction.chat", "core.interaction.chat_entry"].includes(
@@ -153,8 +189,13 @@ export class Runtime {
           node.nodeId !== entry.interactionId
         )
           return;
+        await pauseBoundary(moduleId, node.nodeId);
         runBudget.step();
-        emit("block.started", moduleId, node.nodeId, { summary: "正在运行" });
+        emit("block.started", moduleId, node.nodeId, {
+          summary: "正在运行",
+          blockType: node.blockType,
+          inputPorts: Object.keys(node.inputs).sort(),
+        });
         try {
           await wait(this.options.delayMs ?? 0, signal);
           signal.throwIfAborted();
@@ -235,7 +276,11 @@ export class Runtime {
                 const text = await evaluate(node.inputs.MESSAGE);
                 if (typeof text !== "string") throw Error("BLK-TYPE-009");
                 answer += text;
-                emit("model.chunk", moduleId, node.nodeId, { text });
+                emit("model.chunk", moduleId, node.nodeId, {
+                  summary: "产生输出",
+                  outputType: "text",
+                  outputBytes: utf8(text),
+                });
                 break;
               }
               case "core.agent":
@@ -317,9 +362,7 @@ export class Runtime {
                     node.nodeId,
                     {
                       resultCount: citations.length,
-                      ...(!Array.isArray(retrieved)
-                        ? { summary: retrieved.summary }
-                        : {}),
+                      summary: "检索完成",
                     },
                     correlationId,
                   );
@@ -375,6 +418,7 @@ export class Runtime {
                       correlationId,
                     )
                   ) {
+                    const generation = agent.generations.at(-1);
                     emit(
                       "model.completed",
                       moduleId,
@@ -382,7 +426,9 @@ export class Runtime {
                       {
                         summary: "回答已生成",
                         transport:
-                          agent.generations.at(-1)?.transport ?? "local",
+                          generation?.transport ?? "local",
+                        ...(generation?.usage ? { usage: generation.usage } : {}),
+                        ...(generation ? { model: generation.model } : {}),
                       },
                       correlationId,
                     );
@@ -441,7 +487,7 @@ export class Runtime {
                   agent.generated ?? renderAnswer(citations, style, role);
                 break;
             }
-          if (node === root) await execute(selectedEntry, moduleId);
+          if (node === root && node !== selectedEntry) await execute(startNode, moduleId);
           else if (!handled && node.blockType !== "core.message.reply")
             for (const value of Object.values(node.inputs))
               for (const child of value
@@ -450,7 +496,16 @@ export class Runtime {
                   : [value]
                 : [])
                 await execute(child, moduleId);
-          emit("block.completed", moduleId, node.nodeId, { summary: "已完成" });
+          emit("block.completed", moduleId, node.nodeId, {
+            summary: "已完成",
+            elapsedMs: Math.max(0, Math.floor(performance.now() - startedAt)),
+            outputType: agent.value === null ? "null" : Array.isArray(agent.value) ? "array" : typeof agent.value,
+            budget: {
+              steps: runBudget.steps,
+              calls: runBudget.calls,
+              reservedOutputTokens: runBudget.usedOutput,
+            },
+          });
         } catch (error) {
           if (!signal.aborted)
             emit("block.failed", moduleId, node.nodeId, {
@@ -488,6 +543,8 @@ export class Runtime {
       await adapters.agent?.close?.(signal);
       this.running = false;
       this.paused = false;
+      this.stepNext = false;
+      this.breakpoints.clear();
     }
     return {
       status,
@@ -501,6 +558,11 @@ export class Runtime {
       modelApiCalled: agent.generations.some((g) => g.transport === "remote"),
     };
   }
+}
+function findInNextChain(node: IrNode, id: string): IrNode | undefined {
+  for (let current: IrNode | undefined = node; current; current = current.next)
+    if (current.nodeId === id) return current;
+  return undefined;
 }
 function findEntry(node: IrNode, id: string): IrNode | undefined {
   if (node.nodeId === id) return node;

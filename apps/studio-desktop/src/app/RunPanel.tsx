@@ -6,7 +6,8 @@ import type { EvidenceCitation } from "@blocky/knowledge-core";
 import { RunOutputs } from './RunOutputs';
 import { RunModelChoice } from './RunModelChoice';
 import { RunBudgetSummary } from './RunBudgetSummary';
-export function RunPanel({ studio: s }: { studio: Studio }) {
+import { TracePanel } from './TracePanel';
+export function RunPanel({ studio: s, execute }: { studio: Studio; execute(id: string): void }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
     <section className="run-panel">
@@ -73,6 +74,15 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
               ▶ 运行
             </button>
             {s.running && <button onClick={s.stop}>停止</button>}
+            {s.running && <button onClick={() => execute("run.pause")}>{s.paused ? "继续" : "暂停"}</button>}
+            {s.running && s.paused && <button onClick={() => execute("run.step")}>单步</button>}
+            {!s.running && s.selected && <button onClick={() => execute("run.from-selection")}>从所选处运行</button>}
+            {!s.running && s.selected && (
+              <button onClick={() => execute("run.toggle-breakpoint")}>
+                {s.breakpoints.some((item) => item.moduleId === s.session.active && item.blockId === s.selected)
+                  ? "移除断点" : "设置断点"}
+              </button>
+            )}
           </div>
           {s.result && (
             <article className="answer">
@@ -110,24 +120,7 @@ export function RunPanel({ studio: s }: { studio: Studio }) {
               )}
             </article>
           )}
-          <details className="trace">
-            <summary>运行轨迹 · {s.events.length} 个事件</summary>
-            {s.events.map((event) => (
-              <button
-                key={event.sequence}
-                onClick={() =>
-                  s.navigate({
-                    projectId: event.projectId,
-                    moduleId: event.moduleId,
-                    blockId: event.blockId,
-                  })
-                }
-              >
-                #{event.sequence} {event.type}
-                <small>{event.blockId ?? "项目"}</small>
-              </button>
-            ))}
-          </details>
+          <TracePanel studio={s} />
         </>
       )}
     </section>

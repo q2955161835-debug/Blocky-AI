@@ -393,6 +393,49 @@ kbd {
 .trace small {
   display: block;
 }
+.trace-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.trace-controls button {
+  width: auto;
+  white-space: nowrap;
+}
+.trace-controls span {
+  line-height: 1.4;
+}
+.trace-body {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(130px, 1fr);
+  gap: 10px;
+  max-height: 240px;
+  overflow: auto;
+}
+.trace-events button[aria-current="step"] {
+  outline: 2px solid var(--accent);
+}
+.trace-detail {
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.project-map, .editor-tools {
+  border-top: 1px solid var(--border);
+  padding: 12px 15px;
+  font-size: 11px;
+}
+.project-map-list, .editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.project-map-list button { text-align: left; }
+.project-map-list button[aria-current="page"] { outline: 2px solid var(--accent); }
+.project-map-list small { display: block; }
+.project-map-impact { line-height: 1.4; overflow-wrap: anywhere; }
+.editor-tools label { display: block; margin-top: 8px; }
+.editor-tools select { display: block; width: 100%; margin-top: 4px; }
 .inspector {
   border-top: 1px solid var(--border);
   padding: 16px 15px;

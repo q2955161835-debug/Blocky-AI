@@ -144,6 +144,7 @@ export type WorkspaceBlock = {
   x?: number;
   y?: number;
   disabled?: boolean;
+  data?: string;
   collapsed?: boolean;
   extraState?: Json;
 };
