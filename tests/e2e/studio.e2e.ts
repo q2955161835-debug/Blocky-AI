@@ -32,6 +32,49 @@ describe("Blocky native editor", () => {
   after(async () => {
     await cdp?.close().catch(() => {});
   });
+  it("navigates the real canvas with outline and overview without editing the project", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject());
+    const overview = page.getByLabel("画布导航", { exact: true });
+    await overview.locator(".overview-block").first().waitFor();
+    const before = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    await overview.getByText(/画布大纲 ·/).click();
+    await overview.getByLabel("查找画布积木").fill("on-question");
+    expect(await overview.locator(".canvas-outline button").count()).toBe(1);
+    await overview.locator(".canvas-outline button").click();
+    await page.waitForFunction(() => {
+      const selected = document.querySelector(".blocklySelected > .blocklyPath")?.getBoundingClientRect();
+      const canvas = document.querySelector(".blockly-host")?.getBoundingClientRect();
+      if (!selected || !canvas) return false;
+      const x = selected.left + selected.width / 2, y = selected.top + selected.height / 2;
+      return x >= canvas.left && x <= canvas.right && y >= canvas.top && y <= canvas.bottom;
+    });
+    const map = overview.getByRole("img", { name: "画布位置概览" });
+    const box = await map.boundingBox();
+    if (!box) throw Error("Missing minimap bounds");
+    const target = await overview.locator(".overview-block").first().evaluate(rect => ({
+      x: Number(rect.getAttribute("x")) + Number(rect.getAttribute("width")) / 2,
+      y: Number(rect.getAttribute("y")) + Number(rect.getAttribute("height")) / 2,
+      width: Number(rect.getAttribute("width")), height: Number(rect.getAttribute("height")),
+    }));
+    // The viewport outline intentionally overlays the block; use its observed screen point.
+    const blockBox = await overview.locator(".overview-block").first().boundingBox();
+    if (!blockBox) throw Error("Missing minimap block bounds");
+    await page.mouse.click(blockBox.x + blockBox.width / 2, blockBox.y + blockBox.height / 2);
+    await page.waitForFunction(target => {
+      const rect = document.querySelector(".overview-viewport");
+      return rect && Math.abs(Number(rect.getAttribute("x")) + Number(rect.getAttribute("width")) / 2 - target.x) <= target.tolerance &&
+        Math.abs(Number(rect.getAttribute("y")) + Number(rect.getAttribute("height")) / 2 - target.y) <= target.tolerance;
+    // Native pointer coordinates are quantized; allow one screen pixel of minimap precision.
+    }, { ...target, tolerance: Math.max(target.width / blockBox.width, target.height / blockBox.height) }, { timeout: 3000 }).catch(async error => {
+      console.log("OVERVIEW_CENTER", JSON.stringify({ target, actual: await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState()) }));
+      throw error;
+    });
+    const after = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    expect(after.digest).toBe(before.digest);
+    await mkdir("try/stage7/native", { recursive: true });
+    await page.screenshot({ path: "try/stage7/native/canvas-overview.png" });
+  });
   it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
     await page
       .locator(".welcome")

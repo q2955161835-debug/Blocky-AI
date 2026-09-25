@@ -4,6 +4,8 @@ import type { RuntimeEvent } from "@blocky/observability";
 import { canvasVisuals } from "./runtime-visuals";
 import { Blockly, registerBlocks, theme } from "../blocks";
 import { installSelection } from "../selection/gestures";
+import { CanvasOverview } from "./CanvasOverview";
+import { overviewLabels, type Overview } from "./overview";
 export type CanvasHandle = {
   add(type: string): void;
   focus(id: string): void;
@@ -35,6 +37,8 @@ export function Canvas(props: Props) {
   const selection = useRef<ReturnType<typeof installSelection> | null>(null);
   latest.current = props;
   const [announcement, setAnnouncement] = useState("");
+  const [overview, setOverview] = useState<Overview>({ blocks: [], viewport: { x: 0, y: 0, width: 1, height: 1 }, omitted: 0 });
+  const refreshOverview = useRef<() => void>(() => {});
   useEffect(() => {
     registerBlocks();
     const el = root.current!;
@@ -58,7 +62,33 @@ export function Canvas(props: Props) {
     });
     editor.current = ws;
     ws.MAX_UNDO = 0;
+    let overviewFrame = 0, overviewGeometryDirty = false;
+    let overviewBlocks: Overview["blocks"] = [], omitted = 0;
+    const updateOverview = (geometry = true) => {
+      overviewGeometryDirty ||= geometry;
+      if (overviewFrame) return;
+      overviewFrame = requestAnimationFrame(() => {
+        overviewFrame = 0;
+        const view = ws.getMetricsManager().getViewMetrics(true);
+        if (overviewGeometryDirty) {
+          overviewGeometryDirty = false;
+          const all = ws.getAllBlocks(true);
+          omitted = Math.max(0, all.length - 2000);
+          overviewBlocks = all.slice(0, 2000).map(block => {
+            const position = block.getRelativeToSurfaceXY(), size = block.getHeightWidth();
+            let depth = 0, parent = block.getSurroundParent();
+            while (parent && depth < 32) { depth++; parent = parent.getSurroundParent(); }
+            return { id: block.id, label: block.toString(80), x: position.x, y: position.y, width: size.width, height: size.height,
+              root: !block.getParent(), depth, ...overviewLabels(block.data) };
+          });
+        }
+        setOverview({ viewport: { x: view.left, y: view.top, width: view.width, height: view.height }, omitted, blocks: overviewBlocks });
+      });
+    };
+    refreshOverview.current = updateOverview;
     const listener = (event: Blockly.Events.Abstract) => {
+      if (!event.isUiEvent) updateOverview();
+      else if (event.type === Blockly.Events.VIEWPORT_CHANGE) updateOverview(false);
       if (event.type === Blockly.Events.VIEWPORT_CHANGE) {
         latest.current.onViewport({
           offsetX: ws.scrollX,
@@ -219,10 +249,12 @@ export function Canvas(props: Props) {
         latest.current.onChange(value, `move-${crypto.randomUUID()}`);
       },
     );
-    const observer = new ResizeObserver(() => Blockly.svgResize(ws));
+    const observer = new ResizeObserver(() => { Blockly.svgResize(ws); updateOverview(false); });
     observer.observe(el);
     return () => {
       observer.disconnect();
+      cancelAnimationFrame(overviewFrame);
+      refreshOverview.current = () => {};
       selection.current?.dispose();
       selection.current = null;
       ws.removeChangeListener(listener);
@@ -255,6 +287,7 @@ export function Canvas(props: Props) {
       Blockly.Events.enable();
     }
     selection.current?.refresh();
+    refreshOverview.current();
   }, [props.workspace, props.moduleId]);
   useEffect(() => {
     const ws = editor.current;
@@ -312,6 +345,15 @@ export function Canvas(props: Props) {
       <div className="runtime-status" role="status">
         {announcement}
       </div>
+      <CanvasOverview data={overview} focus={id => {
+        const ws = editor.current, block = ws?.getBlockById(id);
+        if (ws && block) { block.select(); ws.centerOnBlock(id); }
+      }} center={(x, y) => {
+        const ws = editor.current;
+        if (!ws || !Number.isFinite(x) || !Number.isFinite(y)) return;
+        const view = ws.getMetricsManager().getViewMetrics(true);
+        ws.scroll(ws.scrollX + (view.left + view.width / 2 - x) * ws.scale, ws.scrollY + (view.top + view.height / 2 - y) * ws.scale);
+      }} />
     </div>
   );
 }

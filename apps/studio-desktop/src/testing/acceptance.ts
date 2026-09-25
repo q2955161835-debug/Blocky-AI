@@ -151,6 +151,10 @@ export function install(get: () => Studio) {
       .slice(0, 30);
   };
   const api = {
+    async overviewState() {
+      const ws = workspace();
+      return { digest: await digest(get().controller.getSnapshot().project), viewport: ws.getMetricsManager().getViewMetrics(true) };
+    },
     async loadAgentSemanticsProject() {
       const project = createAgentExample("stage4-native-semantics");
       // Pure language fixture. Actual Host approval/tool UI is separately tested in the ordinary candidate.
