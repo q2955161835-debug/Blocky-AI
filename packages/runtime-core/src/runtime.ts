@@ -26,6 +26,7 @@ import { RpaExecution } from "./rpa-execution";
 import { isRpaSession, isRpaStep } from "@blocky/rpa-core";
 import type { Generation, OutputFile } from "./agent-context";
 import { WorkflowExecution,WorkflowWaiting,type WorkflowSummary } from "./workflow/runtime";
+import { resolveRunEntry } from "./entry";
 type Options = {
   sessionId?: string;
   adapters?: Adapters;
@@ -171,14 +172,11 @@ export class Runtime {
         (m) => m.moduleId === entry.moduleId,
       )!;
       const root = module.roots.find((n) => n.nodeId === entry.ownerAgentId);
-      const selectedEntry = root && findEntry(root, entry.interactionId);
-      if (!root || !selectedEntry) throw Error("BLK-RUN-001");
-      const handler = selectedEntry === root && selectedEntry.blockType === "core.interaction.chat_entry"
-        ? selectedEntry.inputs.HANDLER
-        : undefined;
-      const handlerHead = handler && !Array.isArray(handler) ? handler : undefined;
+      const boundary = root && resolveRunEntry(root, entry.interactionId);
+      if (!root || !boundary) throw Error("BLK-RUN-001");
+      const { selectedEntry, handlerHead } = boundary;
       if(options.workflowTaskId!==undefined){
-        const workflowRoot=handlerHead??selectedEntry.next;
+        const workflowRoot=boundary.workflowRoot;
         if(typeof options.workflowTaskId!=="string"||options.workflowTaskId.length>128||!/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(options.workflowTaskId)||workflowRoot?.blockType!=="runtime.task.durable")throw Error("BLK-WORKFLOW-BINDING");
       }
       const startNode = options.debug?.startBlockId
@@ -625,16 +623,6 @@ function findInNextChain(node: IrNode, id: string): IrNode | undefined {
   for (let current: IrNode | undefined = node; current; current = current.next)
     if (current.nodeId === id) return current;
   return undefined;
-}
-function findEntry(node: IrNode, id: string): IrNode | undefined {
-  if (node.nodeId === id) return node;
-  for (const value of Object.values(node.inputs)) {
-    for (const child of value ? (Array.isArray(value) ? value : [value]) : []) {
-      const found = findEntry(child, id);
-      if (found) return found;
-    }
-  }
-  return node.next ? findEntry(node.next, id) : undefined;
 }
 function safeCode(error: unknown) {
   return error instanceof Error && /^BLK-[A-Z0-9-]{3,64}$/.test(error.message)

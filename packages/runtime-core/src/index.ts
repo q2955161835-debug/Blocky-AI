@@ -1,4 +1,5 @@
 export { Runtime } from "./runtime";
+export { resolveRunEntry } from "./entry";
 export { localAdapters } from "./adapters";
 export { hostAdapters } from "./host-adapters";
 export type { Citation, Adapters } from "./adapters";

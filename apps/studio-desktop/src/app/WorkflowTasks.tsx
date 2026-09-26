@@ -81,6 +81,7 @@ export function WorkflowTasks({
     actionBusy.current = true;
     setBusy(true);
     const current = () => mounted.current && scope.current === projectId;
+    let applicationRequested = false;
     try {
       await validateTask(task);
       if (!current()) return;
@@ -96,12 +97,15 @@ export function WorkflowTasks({
       if (!accepted || !current()) return;
       await validateTask(task);
       if (!current()) return;
+      applicationRequested = true;
       await workflowNative.decide(task, decision, preview.requestDigest);
       if (current()) await refresh();
     } catch {
       if (current())
         setMessage(
-          "审批未应用：任务、项目或资源已改变，请恢复对应版本并刷新后重试。",
+          applicationRequested
+            ? "审批结果未确认，请刷新任务核对当前状态，不要直接重发决定。"
+            : "审批未应用：任务、项目或资源已改变，请恢复对应版本并刷新后重试。",
         );
     } finally {
       actionBusy.current = false;

@@ -36,12 +36,54 @@ afterEach(() => {
   cleanup();
   vi.resetAllMocks();
 });
+it("reports an unconfirmed result after a dispatched approval loses its acknowledgement without retrying", async () => {
+  io.list.mockResolvedValue([waiting]);
+  io.decide
+    .mockResolvedValueOnce({
+      applied: false,
+      requestDigest: "b".repeat(64),
+      task: waiting,
+    })
+    .mockRejectedValueOnce(Error("BLK-WORKFLOW-CHANNEL"));
+  render(
+    <WorkflowTasks
+      projectId="project-test"
+      disabled={false}
+      refreshKey=""
+      confirm={async () => true}
+      validateTask={async () => {}}
+      onResume={() => {}}
+      onLocate={() => {}}
+    />,
+  );
+  fireEvent.click(await screen.findByRole("button", { name: "批准" }));
+  await screen.findByText(/审批结果未确认/);
+  expect(screen.queryByText(/审批未应用/)).toBeNull();
+  expect(io.decide).toHaveBeenCalledTimes(2);
+});
 it("rechecks project and resource binding after confirmation before applying", async () => {
   io.list.mockResolvedValue([waiting]);
-  io.decide.mockResolvedValue({applied:false,requestDigest:"b".repeat(64),task:waiting});
-  const validate=vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(Error("BLK-WORKFLOW-BINDING"));
-  render(<WorkflowTasks projectId="project-test" disabled={false} refreshKey="" confirm={async()=>true} validateTask={validate} onResume={()=>{}} onLocate={()=>{}}/>);
-  fireEvent.click(await screen.findByRole("button",{name:"批准"}));
+  io.decide.mockResolvedValue({
+    applied: false,
+    requestDigest: "b".repeat(64),
+    task: waiting,
+  });
+  const validate = vi
+    .fn()
+    .mockResolvedValueOnce(undefined)
+    .mockRejectedValueOnce(Error("BLK-WORKFLOW-BINDING"));
+  render(
+    <WorkflowTasks
+      projectId="project-test"
+      disabled={false}
+      refreshKey=""
+      confirm={async () => true}
+      validateTask={validate}
+      onResume={() => {}}
+      onLocate={() => {}}
+    />,
+  );
+  fireEvent.click(await screen.findByRole("button", { name: "批准" }));
   await screen.findByText(/任务、项目或资源已改变/);
   expect(validate).toHaveBeenCalledTimes(2);
   expect(io.decide).toHaveBeenCalledTimes(1);

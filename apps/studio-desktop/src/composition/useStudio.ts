@@ -11,7 +11,6 @@ import {
   configureBlock,
   editSelection,
   copyAcrossModules,
-  findBlock,
   type SelectionEdit,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
@@ -28,6 +27,7 @@ import { knowledgeNative } from "./knowledge";
 import { studioAgentServices } from "./agent";
 import { studioRpaModules } from "./rpaModules";
 import { studioWorkflowPorts } from "./workflow";
+import { workflowEntry } from "./workflow-entry";
 import { useRpaInput } from "./useRpaInput";
 import {
   RedactedBus,
@@ -220,10 +220,7 @@ export function useStudio() {
             e.interactionId === request.interactionId,
         )
       : workflow
-        ? compiled.interaction.entries.find(e =>
-            workflow.projectId === snapshot.project.manifest.projectId &&
-            e.moduleId === workflow.moduleId &&
-            findBlock(snapshot.project.workspaces[e.moduleId]?.blocks.blocks ?? [], e.interactionId)?.inputs?.HANDLER?.block?.id === workflow.blockId)
+        ? workflowEntry(compiled, workflow)
         : activeEntry;
     if (!entry) {
       setMessage(workflow ? "工作流原入口已不存在，无法继续任务。" : "请先添加收到问题积木。");
