@@ -542,7 +542,7 @@ fn hung_worker_is_terminated_before_timeout_returns() {
     let error = process::run(
         &worker::Input {
             target: p.target,
-            root_id: None,
+            capture_path: None, root_id: None,
             step: None,
             input: None,
             approval: None,

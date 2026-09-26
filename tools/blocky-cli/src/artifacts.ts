@@ -32,6 +32,9 @@ export async function writeJsonArtifact(path: string, value: unknown) {
   return writeTextArtifact(path, JSON.stringify(value, null, 2) + "\n");
 }
 export async function writeTextArtifact(path: string, value: string) {
+  return writeBinaryArtifact(path, Buffer.from(value, "utf8"));
+}
+export async function writeBinaryArtifact(path: string, value: Uint8Array) {
   const temporary = join(dirname(path), `.blocky-${randomUUID()}.tmp`);
   let created = false;
   try {

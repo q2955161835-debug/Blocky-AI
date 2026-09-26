@@ -3,11 +3,13 @@ import { randomUUID } from "node:crypto";
 import { chromium, type Browser, type BrowserContext, type Page } from "playwright-core";
 import { BrowserRpaAdapter } from "./browser";
 import { BrowserRecording } from "./browser-recording";
+import { BrowserCapture } from "./browser-capture";
 import { rpaGrantSchema, rpaPlanSchema, type RpaGrant, type RpaPlan } from "./index";
 
 const stableId = /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/;
 export type BrowserTarget = { identity: string; projectId: string; origin: string };
-type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void>; recording?: BrowserRecording };
+type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void>; recording?: BrowserRecording; capture?: BrowserCapture };
+function clearCapture(session: Session) { session.capture?.clear(); session.capture = undefined; }
 
 /** Private pipe service owned by the native Host. Native approval must precede authorize(). */
 export class BrowserHost {
@@ -84,8 +86,9 @@ export class BrowserHost {
     const plan = rpaPlanSchema.parse(planInput), grant = rpaGrantSchema.parse(grantInput);
     if (session.recording || session.active || session.plan && session.next < session.plan.steps.length || session.target.projectId !== projectId
         || plan.target.kind !== "browser" || plan.target.identity !== identity || grant.targetIdentity !== identity || grant.expiresAt <= Date.now()
-        || plan.steps.some((step) => step.locator.kind !== "browser" || !grant.actions.includes(step.action) || step.action === "screenshot" || step.value?.kind === "secret-ref"))
+        || plan.steps.some((step) => step.locator.kind !== "browser" || !grant.actions.includes(step.action) || step.value?.kind === "secret-ref"))
       throw Error("BLK-RPA-PERM-001");
+    clearCapture(session);
     session.plan = structuredClone(plan); session.grant = structuredClone(grant); session.next = 0; session.failed = false;
   }
   async startRecording(identity: string, projectId: string, sessionId: string) {
@@ -107,17 +110,26 @@ export class BrowserHost {
     if (!recording || recording.status().sessionId !== sessionId) throw Error("BLK-RPA-PERM-001");
     return recording.stop("stopped");
   }
-  async perform(identity: string, token: string, stepId: string, input: string | undefined, signal: AbortSignal): Promise<{ text?: string }> {
+  readCapture(identity: string, token: string, captureId: string, stepId: string, offset: number) {
+    const session = this.session(identity);
+    if (!session.grant || session.grant.sessionId !== token || session.grant.expiresAt <= Date.now() || session.failed || session.active || !session.capture) throw Error("BLK-RPA-PERM-001");
+    const chunk = session.capture.read(captureId, stepId, offset);
+    if (chunk.done) session.capture = undefined;
+    return chunk;
+  }
+  async perform(identity: string, token: string, stepId: string, input: string | undefined, signal: AbortSignal) {
     signal.throwIfAborted();
     const session = this.session(identity), step = session.plan?.steps[session.next], grant = session.grant;
     if (!step || !grant || grant.sessionId !== token || grant.expiresAt <= Date.now() || session.failed || session.active || step.stepId !== stepId) throw Error("BLK-RPA-PERM-001");
     if (step.action === "fill" ? input === undefined || Buffer.byteLength(input) > 16384 || input.includes("\0") : input !== undefined) throw Error("BLK-RPA-INPUT-002");
-    const result: { text?: string } = {};
+    clearCapture(session);
+    const result: { text?: string; capture?: ReturnType<BrowserCapture["metadata"]> } = {};
     const adapter = new BrowserRpaAdapter(session.page, session.target.origin, {
       verifyGrant: async (candidate, plan) => candidate.sessionId === session.grant?.sessionId && candidate.targetIdentity === identity
         && candidate.expiresAt === session.grant.expiresAt && Date.now() < candidate.expiresAt && plan.target.identity === identity
         && JSON.stringify(candidate.actions) === JSON.stringify(session.grant.actions) && JSON.stringify(plan) === JSON.stringify(session.plan),
       resolveInput: async () => input!, receiveRead: (_stepId, text) => { result.text = text; },
+      receiveScreenshot: (id, bytes, masked) => { session.capture = new BrowserCapture(id, bytes, masked); result.capture = session.capture.metadata(); },
     }, identity);
     const deadline = AbortSignal.timeout(Math.min(step.timeoutMs, Math.max(1, grant.expiresAt - Date.now())));
     const operationSignal = AbortSignal.any([signal, deadline]);
@@ -131,6 +143,7 @@ export class BrowserHost {
       session.next++;
       return result;
     } catch (error) {
+      clearCapture(session);
       session.failed = true;
       if (operationSignal.aborted) {
         try { await this.close(identity); } catch { throw Error("BLK-RPA-SETTLEMENT-001"); }
@@ -147,6 +160,7 @@ export class BrowserHost {
     const session = this.sessions.get(identity);
     if (!session) return;
     session.closing ??= (async () => {
+      clearCapture(session);
       try { await session.recording?.stop("target-lost"); }
       finally { await session.context.close({ reason: "Blocky session closed" }); }
       await session.active?.catch(() => {});

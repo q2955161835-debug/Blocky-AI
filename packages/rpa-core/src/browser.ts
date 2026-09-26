@@ -5,7 +5,7 @@ export type BrowserRpaPorts = {
   verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean>;
   resolveInput?(step: RpaStep, signal: AbortSignal): Promise<string>;
   receiveRead?(stepId: string, text: string): void;
-  receiveScreenshot?(stepId: string, image: Uint8Array): void;
+  receiveScreenshot?(stepId: string, image: Uint8Array, maskedRegions: number): void;
   verifyEffect?(receipt: RpaReceipt, step: RpaStep, signal: AbortSignal): Promise<boolean>;
 };
 
@@ -72,7 +72,16 @@ export class BrowserRpaAdapter implements RpaAdapter {
       }
       case "screenshot": {
         if (!this.ports.receiveScreenshot) throw Error("BLK-RPA-PORT-001");
-        this.ports.receiveScreenshot(step.stepId, await target.screenshot({ timeout: step.timeoutMs }));
+        const box = await target.boundingBox({ timeout: step.timeoutMs });
+        if (!box || box.width < 1 || box.height < 1 || box.width > 2048 || box.height > 2048) throw Error("BLK-RPA-CAPTURE-003");
+        // Mask all form/editable fields, including ordinary inputs, and whole
+        // embedded documents whose private contents are not inspected here.
+        const mask = this.page.locator('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"],[role="searchbox"],[role="combobox"],[role="spinbutton"],iframe,frame,object,embed');
+        const maskedRegions = await mask.count();
+        if (maskedRegions > 2048) throw Error("BLK-RPA-CAPTURE-003");
+        const bytes = await target.screenshot({ timeout: step.timeoutMs, mask: [mask], maskColor: "#000000", animations: "disabled", caret: "hide", scale: "css" });
+        if (bytes.byteLength > 4 * 1024 * 1024 || !await this.verifyTarget(signal)) throw Error("BLK-RPA-CAPTURE-003");
+        this.ports.receiveScreenshot(step.stepId, bytes, maskedRegions);
         break;
       }
     }

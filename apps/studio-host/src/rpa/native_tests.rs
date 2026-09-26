@@ -236,7 +236,7 @@ fn recording_worker_captures_then_settles_and_detects_target_loss() {
         RecordingProcess::start_at(&exe, target.clone(), options.clone(), cancel.clone()).unwrap();
     let input = worker::Input {
         target: target.clone().into(),
-        root_id: None,
+        capture_path: None, root_id: None,
         step: Some(protocol::Step {
             step_id: "fill".into(),
             action: Action::Fill,
@@ -295,7 +295,7 @@ fn uia_records_owned_actions_without_typed_content() {
     let mut capture = recording::uia::Capture::start(target.clone(), options).unwrap();
     let mut input = worker::Input {
         target: target.into(),
-        root_id: None,
+        capture_path: None, root_id: None,
         step: None,
         input: None,
         approval: None,
@@ -380,7 +380,7 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
     let target = target::inspect(fixture.window).unwrap();
     let mut input = worker::Input {
         target: target.into(),
-        root_id: None,
+        capture_path: None, root_id: None,
         step: None,
         input: None,
         approval: None,
@@ -558,7 +558,7 @@ fn native_approval_worker_is_cancelled_without_a_user_decision() {
     let stop = cancel.clone();
     let input = worker::Input {
         target: target::inspect(fixture.window).unwrap().into(),
-        root_id: None,
+        capture_path: None, root_id: None,
         step: None,
         input: None,
         approval: Some("自动取消测试，不需要点击。".into()),

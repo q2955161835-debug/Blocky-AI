@@ -12,6 +12,7 @@ const frameSchema = z.discriminatedUnion("kind", [
   z.object({ ...base, kind: z.literal("inspect"), identity }).strict(),
   z.object({ ...base, kind: z.literal("authorize"), identity, projectId: stableId, plan: rpaPlanSchema, grant: rpaGrantSchema }).strict(),
   z.object({ ...base, kind: z.literal("perform"), identity, token: stableId, stepId: stableId, input: z.string().max(16384).optional() }).strict(),
+  z.object({ ...base, kind: z.literal("capture-read"), identity, token: stableId, captureId: z.string().regex(/^capture-[0-9a-f-]{36}$/), stepId: stableId, offset: z.number().int().min(0).max(4194303) }).strict(),
   z.object({ ...base, kind: z.literal("record-start"), identity, projectId: stableId, sessionId: stableId }).strict(),
   z.object({ ...base, kind: z.literal("record-status"), identity, sessionId: stableId }).strict(),
   z.object({ ...base, kind: z.literal("record-stop"), identity, sessionId: stableId }).strict(),
@@ -43,6 +44,7 @@ export class BrowserPipe {
           case "inspect": value = this.host.inspect(frame.identity); break;
           case "authorize": this.host.authorize(frame.identity, frame.projectId, frame.plan, frame.grant); value = { authorized: true }; break;
           case "perform": value = await this.host.perform(frame.identity, frame.token, frame.stepId, frame.input, new AbortController().signal); break;
+          case "capture-read": value = this.host.readCapture(frame.identity, frame.token, frame.captureId, frame.stepId, frame.offset); break;
           case "record-start": value = await this.host.startRecording(frame.identity, frame.projectId, frame.sessionId); break;
           case "record-status": value = this.host.recordingStatus(frame.identity, frame.sessionId); break;
           case "record-stop": value = await this.host.stopRecording(frame.identity, frame.sessionId); break;

@@ -22,6 +22,11 @@ mod cleanup_tests;
 mod worker;
 mod approval;
 mod input_policy;
+mod capture_png;
+mod capture_windows;
+#[cfg(test)]
+mod capture_cli_tests;
+pub mod captures;
 pub use runner::main as runner_main;
 pub use module_session::main as module_session_main;
 pub use worker::main as worker_main;
@@ -84,6 +89,7 @@ struct Approval {
 pub struct RpaHost {
     pub recording: recording::Host,
     journal: Option<journal::Store>,
+    captures: Option<captures::Store>,
     browsers: browser::Manager,
     sessions: Mutex<HashMap<String, Arc<Slot>>>,
     approvals: Mutex<HashMap<String, Arc<Approval>>>,
@@ -113,7 +119,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
         || plan
             .steps
             .iter()
-            .any(|s| !matches!(s.locator, Locator::Uia { .. }) || s.action == Action::Screenshot)
+            .any(|s| !matches!(s.locator, Locator::Uia { .. }))
     {
         return Err("BLK-RPA-UNSUPPORTED-001".into());
     }
@@ -124,7 +130,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
     let value = process::run(
         &worker::Input {
             target: target.clone().into(),
-            root_id: None,
+            capture_path: None, root_id: None,
             step: None,
             input: None,
             approval: None,
@@ -153,6 +159,7 @@ impl RpaHost {
     pub fn with_journal(root: std::path::PathBuf) -> Self {
         Self {
             recording: recording::Host::new(root.parent().unwrap_or(&root).join("recordings")),
+            captures: Some(captures::Store::new(root.parent().unwrap_or(&root).join("captures"))),
             browsers: browser::Manager::new(
                 root.parent().unwrap_or(&root).join("browser-sessions"),
             ),
@@ -244,7 +251,6 @@ impl RpaHost {
                 let target = start.prepare(&mut plan)?;
                 if plan.steps.iter().any(|s| {
                     !matches!(s.locator, Locator::Browser { .. })
-                        || s.action == Action::Screenshot
                         || s.value.as_ref().is_some_and(|v| v.kind == "secret-ref")
                 }) {
                     return Err("BLK-RPA-UNSUPPORTED-001".into());
@@ -289,7 +295,7 @@ impl RpaHost {
             );
             let request = worker::Input {
                 target: prepared.target.clone(),
-                root_id: None,
+                capture_path: None, root_id: None,
                 step: None,
                 input: None,
                 approval: Some(format!(
@@ -513,13 +519,19 @@ impl RpaHost {
         self.step_with(token, step_id, input, |request,timeout,cancel| {
             if request.input.is_some() {
                 let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
-                let confirm=worker::Input{target:request.target.clone(),root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step))};
+                let confirm=worker::Input{target:request.target.clone(),capture_path:None,root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step))};
                 process::run(&confirm,300000,cancel.clone())?;
             }
             // A long human review must not extend the grant lifetime.
             let slot=self.slot(token)?; let expires=slot.state.lock().map_err(|_|"BLK-RPA-STATE-001")?.expires;
             if expires<=now() {return Err("BLK-RPA-PERM-001".into());}
             let timeout=timeout.min(expires.saturating_sub(now()));
+            if request.step.as_ref().is_some_and(|step|step.action==Action::Screenshot) {
+                let s=slot.state.lock().map_err(|_|"BLK-RPA-STATE-001")?;
+                let checkpoint=s.checkpoint_id.clone().ok_or("BLK-RPA-CAPTURE-001")?;
+                let plan=s.plan.plan_id.clone();drop(s);
+                return self.capture_step(request,token,&checkpoint,&plan,timeout,cancel);
+            }
             match &request.target {
                 Binding::Windows(_)=>process::run(request,timeout,cancel),
                 Binding::Browser(target)=>{
@@ -530,6 +542,26 @@ impl RpaHost {
                 }
             }
         })
+    }
+    fn capture_step(&self,request:&worker::Input,token:&str,checkpoint:&str,plan:&str,timeout:u64,cancel:Arc<AtomicBool>)->Result<Value,String> {
+        let store=self.captures.as_ref().ok_or("BLK-RPA-CAPTURE-001")?;
+        let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
+        let (mut png,masked)=match &request.target {
+            Binding::Windows(_)=>{
+                let temporary=store.staging()?;let path=temporary.path().join("capture.bin");
+                let mut request=request.clone();request.capture_path=Some(path.clone());
+                let result=process::run(&request,timeout,cancel.clone())?;
+                let masked=result["maskedRegions"].as_u64().filter(|v|*v<=2048).ok_or("BLK-RPA-CAPTURE-002")?as u32;
+                let encrypted=captures::read_bounded(&path,capture_png::LIMIT+8192)?;
+                (crate::secret_store::crypt(&encrypted,false)?,masked)
+            }
+            Binding::Browser(target)=>self.browsers.capture(target,json!({"kind":"perform","identity":target.identity,"token":token,"stepId":step.step_id}),timeout,cancel.clone())?,
+        };
+        let result=if cancel.load(Ordering::SeqCst){Err("BLK-RPA-CANCELLED".into())}else{store.save(checkpoint,plan,&step.step_id,&png,masked)};
+        crate::secret_store::wipe(&mut png);
+        let meta=result?;
+        if cancel.load(Ordering::SeqCst){store.delete(&meta.capture_id)?;return Err("BLK-RPA-CANCELLED".into());}
+        Ok(json!({"capture":meta}))
     }
     pub fn input_reference(
         &self,
@@ -615,7 +647,7 @@ impl RpaHost {
             (
                 worker::Input {
                     target: s.target.clone(),
-                    root_id: Some(s.root_id.clone()),
+                    capture_path: None, root_id: Some(s.root_id.clone()),
                     step: Some(step),
                     input,
                     approval: None,

@@ -40,3 +40,17 @@ it("cannot execute without a Host, and cancellation waits for settlement before 
   await vi.waitFor(()=>expect(release).toBeTypeOf("function")); expect(terminal).toEqual([]);
   release(); expect((await pending).status).toBe("cancelled");expect(settled).toBe(true);expect(terminal).toHaveLength(1);
 });
+it("returns a bound capture reference and refuses an image from another checkpoint",async()=>{
+  const {project,root}=fixture();const session=root.inputs!.HANDLER.block!;
+  project.schemas["schemas/result.json"]={type:"object"};
+  session.inputs!.STEPS.block={id:"shot",type:"core.computer.capture",fields:{LOCATOR:{kind:"uia",automationId:"panel"},TIMEOUT_MS:"1000"}};
+  const capture={schemaVersion:"blocky.rpa-capture/v1"as const,captureId:"capture-11111111-1111-1111-1111-111111111111",checkpointId:"checkpoint-owned",planId:"owned",stepId:"shot",createdAt:1000,expiresAt:86401000,width:2,height:1,bytes:80,sha256:"a".repeat(64),maskedRegions:1};
+  const close=vi.fn(async()=>{});
+  const ports:RpaModulePorts={open:async()=>({checkpointId:"checkpoint-owned",close,perform:async()=>({capture})})};
+  const runtime=new Runtime({adapters:{...localAdapters(),rpa:ports}});
+  const result=await runtime.run(project,root.id,"x");
+  expect(result.status,JSON.stringify(result)).toBe("completed");expect(result.structured).toEqual(capture);
+  expect(JSON.stringify(result.events)).not.toMatch(/data:image|base64/);
+  capture.checkpointId="checkpoint-other";
+  expect((await runtime.run(project,root.id,"x")).status).toBe("failed");expect(close).toHaveBeenCalledTimes(2);
+});

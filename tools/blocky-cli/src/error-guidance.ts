@@ -1,3 +1,4 @@
+const captureHint = "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-RECORD-001": { message: "录制请求或结果不符合契约。", hint: "查看 blocky.rpa-recording-start/v1 和 result/v1 Schema；同一录制必须保留 projectId/sessionId 和目标绑定，不得添加输入正文。" },
   "BLK-RPA-RECORD-EMPTY": { message: "录制中没有可转换的步骤。", hint: "核对省略计数和目标；重新录制可唯一定位的点击或填写操作，或在面板手动添加步骤。" },
@@ -15,6 +16,11 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-LOCATOR-004": { message: "目标窗口内未找到控件。", hint: "检查控件标识、窗口状态和权限；需要等待出现时使用 wait 步骤。" },
   "BLK-RPA-TARGET-001": { message: "目标窗口已失效或身份发生变化。", hint: "重新运行 rpa targets，核对目标后生成新的授权；不要沿用旧窗口句柄。" },
   "BLK-RPA-SENSITIVE-001": { message: "此操作缺少敏感填写声明，或尝试读取敏感内容。", hint: "敏感填写使用 manual-input 与 sensitive:true；普通积木选择 INPUT_KIND=sensitive、SOURCE=manual，并逐步原生确认。读取敏感控件和通用 SecretStore 引用仍拒绝。" },
+  "BLK-RPA-CAPTURE-001": { message: "截图存储无法读取或写入。", hint: captureHint },
+  "BLK-RPA-CAPTURE-002": { message: "截图标识或内容无效。", hint: captureHint },
+  "BLK-RPA-CAPTURE-003": { message: "截图尺寸、大小或保留数量超过限制。", hint: "目标不超过 2048×2048，PNG 不超过 4 MiB，最多保留 32 张。" + captureHint },
+  "BLK-RPA-CAPTURE-004": { message: "截图已过期。", hint: "截图有效期 24 小时；需要新证据时重新授权截图步骤。" },
+  "BLK-RPA-CAPTURE-005": { message: "目标变化或无法可靠遮盖，未保存截图。", hint: "选择更小、稳定且可访问的区域；嵌入网页使用隔离浏览器截图。" },
   "BLK-RPA-PORT-001": { message: "当前运行没有可用的自动化 Host。", hint: "CLI 模块自动化必须显式使用 run start --live；simulate 不执行真实桌面操作。原生批准仍按次请求。" },
   "BLK-RPA-SCOPE-001": { message: "自动化步骤不在有效会话中。", hint: "把操作放入连接窗口或打开浏览器的步骤插槽；不要混入另一目标或嵌套控制流。" },
   "BLK-RPA-INPUT-002": { message: "本次运行缺少手动填写内容。", hint: "桌面在运行时输入；CLI 使用 --rpa-inputs，键为 moduleId/blockId。内容不写入项目或轨迹。" },

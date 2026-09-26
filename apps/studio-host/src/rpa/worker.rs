@@ -14,7 +14,7 @@ use uiautomation::{
     types::{Handle, TreeScope},
 };
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(super) struct Input {
     pub target: super::binding::Binding,
@@ -23,6 +23,7 @@ pub(super) struct Input {
     // Private pipe only; never a plan, result, log or CLI argument.
     pub input: Option<String>,
     pub approval: Option<String>,
+    pub capture_path: Option<std::path::PathBuf>,
 }
 fn matches(element: &UIElement, locator: &Locator) -> Result<bool, String> {
     match locator {
@@ -124,7 +125,7 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
     let Some(step) = &input.step else {
         return Ok(json!({"rootId":root_id}));
     };
-    if !matches!(step.locator, Locator::Uia { .. }) || step.action == Action::Screenshot {
+    if !matches!(step.locator, Locator::Uia { .. }) {
         return Err("BLK-RPA-UNSUPPORTED-001".into());
     }
     let start = Instant::now();
@@ -185,7 +186,10 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
                 .map_err(|_| "BLK-RPA-UIA-001")?;
             Ok(json!({"filled":true}))
         }
-        Action::Screenshot => Err("BLK-RPA-UNSUPPORTED-001".into()),
+        Action::Screenshot => {
+            let masked=super::capture_windows::capture(&automation,&root,&element,target,input.capture_path.as_deref().ok_or("BLK-RPA-CAPTURE-001")?)?;
+            Ok(json!({"maskedRegions":masked}))
+        },
     }
 }
 pub fn main() -> i32 {

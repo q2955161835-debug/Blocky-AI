@@ -5,8 +5,8 @@
   "files": [
     {
       "name": "browser.mjs",
-      "bytes": 355756,
-      "sha256": "10565d8ec8cd8f3a708a536a7542ce10c651e0d02dddcac3560d94d0bb51738f"
+      "bytes": 358673,
+      "sha256": "6e370fa01e8d621957e7bbd702c685a7caf9de39c06eb204237ebc6700ad0be4"
     },
     {
       "name": "node.exe",

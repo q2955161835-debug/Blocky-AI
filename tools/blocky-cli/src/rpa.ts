@@ -9,8 +9,12 @@ import { userRegistryMap } from "./user-config";
 import { runNativeRpa } from "./rpa-transport";
 import { recordingReview, rpaRecordingStartSchema } from "@blocky/rpa-core/recording";
 import { recordNativeRpa } from "./rpa-recording-transport";
+import { captureCommand } from "./rpa-captures";
 
 export const rpaHelp = [
+  "rpa captures --json",
+  "rpa capture-export <capture-id> --output <new.png> --json",
+  "rpa capture-delete <capture-id> --json",
   "rpa draft <project.blocky> --plan <plan.json> --module <id> [--browser-url <url>] --output <patch.json> --json",
   "rpa record <request.json> --control-stdin --output <recording.json> --jsonl",
   "rpa recording-draft <project.blocky> --recording <recording.json> --request <request.json> --module <id> --output <patch.json> --json",
@@ -25,6 +29,7 @@ export const rpaHelp = [
   "rpa recording-import <recording.json> --target-kind <browser|windows> --target-identity <identity> --plan-id <id> --output <draft.json> --json",
 ];
 export async function rpaCommand(args: Args, write: (value: unknown) => void, signal: AbortSignal) {
+  const capture = await captureCommand(args, signal); if (capture) return capture;
   const command = args.words.slice(0, 2).join(".");
   if (command === "rpa.record") {
     allow(args, ["control-stdin", "output", "jsonl"], 3);

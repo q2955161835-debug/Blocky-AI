@@ -104,6 +104,10 @@ export class RpaExecution {
       );
       this.signal.throwIfAborted();
       if (step.action === "read") state.value = result.text ?? null;
+      if (step.action === "screenshot") {
+        if (!result.capture || result.capture.checkpointId !== active.handle.checkpointId || result.capture.stepId !== step.stepId) throw Error("BLK-RPA-CAPTURE-002");
+        state.value = result.capture;
+      }
       detail.rpa!.phase = "completed";
       report(detail);
       return true;

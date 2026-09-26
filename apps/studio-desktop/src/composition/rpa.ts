@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { rpaCaptureSchema, rpaCaptureViewSchema } from "@blocky/rpa-core";
 import type { RpaGrant, RpaPlan, RpaReceipt, RpaRecovery, RpaBrowserStart, RpaCheckpointDelete } from "@blocky/rpa-core";
 import type { RpaRecordingStart, RpaRecordingStop } from "@blocky/rpa-core/recording";
 export type RpaRecordingStatus = {sessionId:string;state:"awaiting-approval"|"recording"|"stopping"|"stopped";count:number;omitted?:number;reason?:string};
@@ -8,6 +9,10 @@ export type RpaCheckpoint = { checkpointId: string; revision: number; planId: st
 export type RpaRecoveryPreview = { checkpoint: RpaCheckpoint; plan: RpaPlan };
 export type RpaRecoveryRun = { plan: RpaPlan; recovery: RpaRecovery; inputs: Record<string, string> };
 export const rpaNative = {
+  captures: async () => rpaCaptureSchema.array().max(32).parse(await invoke("rpa_captures")),
+  captureRead: async (captureId:string) => rpaCaptureViewSchema.parse(await invoke("rpa_capture_read",{captureId})),
+  captureDelete: (captureId:string) => invoke<{deleted:true}>("rpa_capture_delete",{captureId}),
+  captureExport: (captureId:string) => invoke<{exported:boolean}>("rpa_capture_export",{captureId}),
   recordStart: (request:RpaRecordingStart)=>invoke<RpaRecordingStatus>("rpa_record_start",{request}),
   recordStatus: (projectId:string,sessionId:string)=>invoke<RpaRecordingStatus>("rpa_record_status",{projectId,sessionId}),
   recordStop: (projectId:string,sessionId:string)=>invoke<RpaRecordingStop>("rpa_record_stop",{projectId,sessionId}),

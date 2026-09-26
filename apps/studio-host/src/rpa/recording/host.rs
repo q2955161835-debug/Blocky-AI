@@ -137,7 +137,7 @@ impl Host {
             crate::rpa::process::run(
                 &crate::rpa::worker::Input {
                     target: binding,
-                    root_id: None,
+                    capture_path: None, root_id: None,
                     step: None,
                     input: None,
                     approval: Some(description),

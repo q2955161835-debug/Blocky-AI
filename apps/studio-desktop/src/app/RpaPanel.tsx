@@ -3,6 +3,7 @@ import { rpaPlanSchema, rpaBrowserStartSchema, type RpaPlan, type RpaAction, typ
 import { rpaNative, type RpaTarget, type RpaStatus, type RpaRecoveryRun } from "../composition/rpa";
 import { RpaCheckpoints } from "./RpaCheckpoints";
 import { RpaRecorder } from "./RpaRecorder";
+import { RpaCaptures } from "./RpaCaptures";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
 export function RpaPanel({ close, projectId = "rpa-session", draft }: { close(): void; projectId?: string; draft?(plan:RpaPlan,browserUrl?:string):Promise<void> }) {
@@ -26,11 +27,11 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
     catch (error) { setMessage(errorCode(error)); }
   };
   const add = () => {
-    if (!value.trim() || steps.length >= 100) return;
+    if (!(value.trim() || kind === "browser" && action === "screenshot") || steps.length >= 100) return;
     const stepId = `step-${crypto.randomUUID()}`;
     setSteps((current) => [...current, {
       stepId, action, timeoutMs: 5000,
-      locator: kind==="browser" ? {kind:"browser",role,name:value.trim()} : { kind: "uia", ...(selector === "automationId" ? { automationId: value.trim() } : { name: value.trim() }) },
+      locator: kind==="browser" ? {kind:"browser",role,...(value.trim()?{name:value.trim()}:{})} : { kind: "uia", ...(selector === "automationId" ? { automationId: value.trim() } : { name: value.trim() }) },
       ...(action === "fill" ? { value: { kind: "manual-input" as const } } : {}),
       ...(["click", "fill"].includes(action) ? { effectKey: `effect-${crypto.randomUUID()}` } : {}),
     }]);
@@ -99,10 +100,10 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
       <label>目标类型<select disabled={steps.length>0} value={kind} onChange={(e)=>setKind(e.target.value as "windows"|"browser")}><option value="windows">Windows 窗口</option><option value="browser">隔离浏览器</option></select></label>
       {kind==="windows" ? <><button onClick={() => void refresh()}>刷新窗口列表</button>
       <label>目标窗口<select aria-label="RPA 目标窗口" value={identity} onChange={(e) => setIdentity(e.target.value)}><option value="">请选择窗口</option>{targets.map((target) => <option key={target.identity} value={target.identity}>{target.title} · {target.processId}</option>)}</select></label></> : <><label>起始网址<input type="url" maxLength={4096} value={url} onChange={(e)=>setUrl(e.target.value)} /></label><p>使用新的 Edge 会话，仅访问起始来源；不沿用已有登录状态。关闭面板后回收会话。</p></>}
-      <label>动作<select value={action} onChange={(e) => setAction(e.target.value as RpaAction)}>{(["find", "read", "click", "fill", "wait"] as const).map((key) => <option key={key} value={key}>{labels[key]}</option>)}</select></label>
-      {kind==="browser" ? <label>控件角色<select value={role} onChange={(e)=>setRole(e.target.value)}>{["button","textbox","link","heading","status","checkbox","combobox","listitem"].map((name)=><option key={name}>{name}</option>)}</select></label> : <label>查找方式<select value={selector} onChange={(e) => setSelector(e.target.value)}><option value="automationId">控件标识</option><option value="name">控件名称</option></select></label>}
+      <label>动作<select value={action} onChange={(e) => setAction(e.target.value as RpaAction)}>{(["find", "read", "click", "fill", "wait", "screenshot"] as const).map((key) => <option key={key} value={key}>{labels[key]}</option>)}</select></label>
+      {kind==="browser" ? <label>控件角色<select value={role} onChange={(e)=>setRole(e.target.value)}>{["button","textbox","link","heading","status","checkbox","combobox","listitem","main","group","form"].map((name)=><option key={name}>{name}</option>)}</select></label> : <label>查找方式<select value={selector} onChange={(e) => setSelector(e.target.value)}><option value="automationId">控件标识</option><option value="name">控件名称</option></select></label>}
       <input aria-label="RPA 控件定位值" maxLength={200} value={value} onChange={(e) => setValue(e.target.value)} />
-      <button disabled={!value.trim() || steps.length >= 100} onClick={add}>添加步骤</button>
+      <button disabled={!(value.trim() || kind === "browser" && action === "screenshot") || steps.length >= 100} onClick={add}>添加步骤</button>
       <ol>{steps.map((step) => <li key={step.stepId}>{labels[step.action]} · {step.locator.kind === "uia" ? step.locator.automationId ?? step.locator.name : step.locator.kind==="browser" ? `${step.locator.role} ${step.locator.name??""}` : step.locator.kind}
         {step.action === "fill" && <><label>敏感输入<input type="checkbox" aria-label={`敏感输入 ${step.stepId}`} checked={step.value?.sensitive === true} onChange={(e) => setSteps((current) => current.map((item) => item.stepId === step.stepId ? { ...item, value: { kind: "manual-input", ...(e.target.checked ? { sensitive: true } : {}) } } : item))} /></label>
           <label>填写内容<input type="password" aria-label={`填写内容 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label></>}
@@ -119,5 +120,6 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
     {readResults.length > 0 && <details><summary>读取结果</summary>{readResults.map((result) => <label key={result.stepId}>{result.stepId}<textarea readOnly value={result.text} /></label>)}</details>}
     {snapshot?.receipts.length ? <details><summary>操作回执</summary>{snapshot.receipts.map((receipt) => <p key={receipt.stepId}>{receipt.stepId}：{receipt.status === "completed" ? "调用已完成" : "结果待核对，请勿重复执行"}</p>)}</details> : null}
     <RpaCheckpoints disabled={locked} recover={run} />
+    <RpaCaptures disabled={locked} />
   </section></div>;
 }

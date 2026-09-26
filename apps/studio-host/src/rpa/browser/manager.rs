@@ -151,6 +151,14 @@ impl Manager {
         }
         Ok(())
     }
+    pub fn capture(&self,target:&BrowserTarget,request:Value,timeout:u64,cancel:Arc<AtomicBool>)->Result<(Vec<u8>,u32),String> {
+        let slot=self.slots.lock().map_err(|_|"BLK-RPA-STATE-001")?.get(&target.identity).cloned().ok_or("BLK-RPA-TARGET-001")?;
+        if slot.target!=*target{return Err("BLK-RPA-TARGET-001".into());}
+        let mut process=slot.process.try_lock().map_err(|_|"BLK-RPA-STATE-001")?;
+        let result=super::capture::receive(&mut process,request,timeout,cancel);
+        if result.is_err(){process.shutdown()?;}
+        result
+    }
     pub fn close(&self, target: &BrowserTarget) -> Result<(), String> {
         let slot = self
             .slots

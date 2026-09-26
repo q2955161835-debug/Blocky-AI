@@ -9,6 +9,7 @@ mod knowledge_commands;
 mod log_commands;
 mod provider_commands;
 mod rpa_commands;
+mod rpa_capture_commands;
 mod secret_commands;
 mod task_commands;
 mod terminal_commands;
@@ -96,6 +97,10 @@ fn main() {
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
             rpa_commands::rpa_targets,
+            rpa_capture_commands::rpa_captures,
+            rpa_capture_commands::rpa_capture_read,
+            rpa_capture_commands::rpa_capture_delete,
+            rpa_capture_commands::rpa_capture_export,
             rpa_commands::rpa_record_start,
             rpa_commands::rpa_record_status,
             rpa_commands::rpa_record_stop,

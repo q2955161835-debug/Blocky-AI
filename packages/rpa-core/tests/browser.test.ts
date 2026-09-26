@@ -2,6 +2,17 @@ import { expect, it, vi } from "vitest";
 import type { Page } from "playwright-core";
 import { AttendedRpaRun, BrowserRpaAdapter } from "../src";
 
+it("masks form fields and embedded pages before capturing the approved element", async () => {
+  const mask = { count: vi.fn(async () => 2) };
+  const target = { waitFor: vi.fn(async () => {}), count: vi.fn(async () => 1), boundingBox: vi.fn(async () => ({ x: 0, y: 0, width: 200, height: 100 })), screenshot: vi.fn(async () => new Uint8Array([1, 2])) };
+  const page = { isClosed: () => false, url: () => "https://example.test/form", getByRole: () => target, locator: vi.fn(() => mask) } as unknown as Page;
+  const receiveScreenshot = vi.fn();
+  const adapter = new BrowserRpaAdapter(page, "https://example.test", { verifyGrant: async () => true, receiveScreenshot });
+  await adapter.perform({ stepId: "shot", action: "screenshot", locator: { kind: "browser", role: "main" }, timeoutMs: 1000 }, new AbortController().signal);
+  expect(target.screenshot).toHaveBeenCalledWith(expect.objectContaining({ mask: [mask], maskColor: "#000000", animations: "disabled", caret: "hide", scale: "css" }));
+  expect(receiveScreenshot).toHaveBeenCalledWith("shot", new Uint8Array([1, 2]), 2);
+});
+
 it("binds browser operations to one Host-selected origin and semantic locator", async () => {
   const target = {
     waitFor: vi.fn(async () => {}), count: vi.fn(async () => 1), click: vi.fn(async () => {}),

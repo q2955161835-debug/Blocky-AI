@@ -12,7 +12,7 @@ pub(super) fn purpose(step: &Step) -> &'static str {
     if sensitive_fill(step) { "敏感人工输入" } else { "普通人工输入" }
 }
 pub(super) fn describe(step: &Step) -> String {
-    let input = if step.action == Action::Fill { format!("；{}", purpose(step)) } else { String::new() };
+    let input = if step.action == Action::Fill { format!("；{}", purpose(step)) } else if step.action == Action::Screenshot { "；遮盖输入区域，本机加密保留 24 小时，可随时删除。其他可见文字会进入图片。".into() } else { String::new() };
     format!("{}：{}{input}", step.action.label(), step.locator.description())
 }
 pub(super) fn confirmation(target: &str, step: &Step) -> String {

@@ -22,6 +22,8 @@ const schemas = {
   "blocky.workspace-block/v1": workspaceBlockShape,
   "blocky.editor-operation/v1": editorOperationSchema,
   "blocky.rpa/v1": rpaPlanSchema,
+  "blocky.rpa-capture/v1": rpaCaptureSchema,
+  "blocky.rpa-capture-view/v1": rpaCaptureViewSchema,
   "blocky.rpa-grant/v1": rpaGrantSchema,
   "blocky.rpa-recovery/v1": rpaRecoverySchema,
   "blocky.rpa-recording-start/v1": rpaRecordingStartSchema,
@@ -96,3 +98,4 @@ export function discoveryCommand(args: Args, commands: string[]) {
     };
   }
 }
+import { rpaCaptureSchema, rpaCaptureViewSchema } from "@blocky/rpa-core";

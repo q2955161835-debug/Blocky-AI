@@ -1,5 +1,7 @@
 import type { RpaModulePlan } from "./language";
 import type { RpaStep } from "./index";
+import { rpaCaptureSchema, type RpaCapture } from "./capture";
+export type RpaStepResult = { text?: string; capture?: RpaCapture };
 
 export type RpaModuleHandle = {
   checkpointId: string;
@@ -7,7 +9,7 @@ export type RpaModuleHandle = {
     step: RpaStep,
     input: string | undefined,
     signal: AbortSignal,
-  ): Promise<{ text?: string }>;
+  ): Promise<RpaStepResult>;
   /** Resolves only after native effects and owned processes settle. */
   close(): Promise<void>;
 };
@@ -19,12 +21,19 @@ export type RpaModulePorts = {
   ): Promise<string>;
 };
 
-export function readRpaResult(value: unknown): { text?: string } {
+export function readRpaResult(value: unknown): RpaStepResult {
   if (!value || typeof value !== "object" || Array.isArray(value))
     throw Error("BLK-RPA-WORKER-001");
   const text = (value as { text?: unknown }).text;
-  if (text === undefined) return {};
-  if (typeof text !== "string" || new TextEncoder().encode(text).length > 16384)
+  const capture = (value as { capture?: unknown }).capture;
+  const result: RpaStepResult = {};
+  if (capture !== undefined) {
+    const parsed = rpaCaptureSchema.safeParse(capture);
+    if (!parsed.success) throw Error("BLK-RPA-CAPTURE-002");
+    result.capture = parsed.data;
+  }
+  if (text !== undefined && (typeof text !== "string" || new TextEncoder().encode(text).length > 16384))
     throw Error("BLK-RPA-LIMIT-001");
-  return { text };
+  if (typeof text === "string") result.text = text;
+  return result;
 }

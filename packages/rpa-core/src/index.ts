@@ -205,3 +205,4 @@ export function recordingToDraft(actions: RecordedAction[], options: { includeSe
     ...(["click", "fill"].includes(item.action) ? { effectKey: `effect-${index + 1}` } : {}),
   })) };
 }
+export { rpaCaptureSchema, rpaCaptureIdSchema, rpaCaptureViewSchema, type RpaCapture } from "./capture";

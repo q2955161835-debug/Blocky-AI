@@ -1,4 +1,5 @@
 mod assets;
+mod capture;
 mod manager;
 mod process;
 pub(crate) use crate::rpa::ipc::PipeProcess as BrowserProcess;
