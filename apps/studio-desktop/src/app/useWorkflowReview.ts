@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { WorkflowSummary } from "@blocky/runtime-core";
+import type { ConfirmationLabels } from "../composition/useConfirmation";
 
 /** A confirmation cannot survive a project/run change, including switching away and back. */
 export function useWorkflowReview({
@@ -14,7 +15,7 @@ export function useWorkflowReview({
   projectId: string;
   refreshKey: string;
   disabled: boolean;
-  confirm(text: string): Promise<boolean>;
+  confirm(text: string, labels?: ConfirmationLabels): Promise<boolean>;
   validateTask(task: WorkflowSummary): Promise<void>;
   refresh(): Promise<void>;
   message(text: string): void;
@@ -46,6 +47,7 @@ export function useWorkflowReview({
     label: string,
     explanation: string,
     send: (approval?: string) => Promise<{ requestDigest: string }>,
+    confirmationLabels: ConfirmationLabels,
   ) => {
     if (disabled || active.current) return;
     active.current = true;
@@ -63,6 +65,7 @@ export function useWorkflowReview({
       if (!current()) return;
       const accepted = await confirm(
         `${explanation}\n任务 ${task.taskId} · 修订 ${task.revision}`,
+        confirmationLabels,
       );
       if (!accepted || !current()) return;
       await validateTask(task);

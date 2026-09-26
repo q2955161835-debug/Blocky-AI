@@ -6,6 +6,7 @@ import {
 } from "../composition/workflow";
 import { WorkflowReconciliation } from "./WorkflowReconciliation";
 import { useWorkflowReview } from "./useWorkflowReview";
+import type { ConfirmationLabels } from "../composition/useConfirmation";
 
 const labels: Record<WorkflowSummary["status"], string> = {
   ready: "可继续",
@@ -22,7 +23,7 @@ type Props = {
   projectId: string;
   refreshKey: string;
   disabled: boolean;
-  confirm(message: string): Promise<boolean>;
+  confirm(message: string, labels?: ConfirmationLabels): Promise<boolean>;
   validateTask(task: WorkflowSummary): Promise<void>;
   onResume(task: WorkflowSummary): void;
   onLocate(task: WorkflowSummary): void;
@@ -94,6 +95,11 @@ export function WorkflowTasks({
         approval
           ? workflowNative.decide(task, decision, approval)
           : workflowNative.decide(task, decision),
+      {
+        title: decision === "approve" ? "批准工作流步骤" : "拒绝工作流步骤",
+        acceptLabel: decision === "approve" ? "确认批准" : "确认拒绝",
+        rejectLabel: "取消",
+      },
     );
   const reconcile = (task: WorkflowSummary, choice: Choice) =>
     review(
@@ -104,6 +110,11 @@ export function WorkflowTasks({
         approval
           ? workflowNative.reconcile(task, choice, approval)
           : workflowNative.reconcile(task, choice),
+      {
+        title: "确认工作流核对",
+        acceptLabel: "保存核对结果",
+        rejectLabel: "取消",
+      },
     );
   return (
     <section aria-label="工作流任务">
