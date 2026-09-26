@@ -1,11 +1,30 @@
-import { diagnosticRecord, type LogRecord } from "@blocky/observability";
+import {
+  diagnosticRecord,
+  projectDiagnosticScope,
+  type LogRecord,
+} from "@blocky/observability";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 export async function exportDiagnostics(args: Args) {
   if (args.words.slice(0, 2).join(".") !== "diagnostics.export") return;
-  allow(args, ["output", "json", "channel", "from", "to"], 3);
-  const input = await readJsonArtifact(args.words[2], 25601024);
+  allow(
+    args,
+    [
+      "output",
+      "json",
+      "channel",
+      "from",
+      "to",
+      "project-id",
+      "run-id",
+      "module-id",
+      "block-id",
+      "correlation-id",
+    ],
+    3,
+  );
+  const input = await readJsonArtifact(args.words[2], 204801024);
   try {
     const raw = Array.isArray(input)
       ? input
@@ -58,6 +77,19 @@ export async function exportDiagnostics(args: Args) {
       };
     }
     let records = raw.map((record) => diagnosticRecord(record as LogRecord));
+    for (const [flag, key] of [
+      ["project-id", "projectId"],
+      ["run-id", "runId"],
+      ["module-id", "moduleId"],
+      ["block-id", "blockId"],
+      ["correlation-id", "correlationId"],
+    ] as const) {
+      if (!args.options.has(flag)) continue;
+      const value = required(args, flag);
+      if (projectDiagnosticScope({ [key]: value })[key] !== value)
+        throw Error();
+      records = records.filter((record) => record.scope?.[key] === value);
+    }
     const from = args.options.get("from"),
       to = args.options.get("to");
     for (const value of [from, to])

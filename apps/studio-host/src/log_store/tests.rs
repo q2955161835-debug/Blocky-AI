@@ -40,6 +40,8 @@ fn record(timestamp: &str, channel: &str, level: &str) -> Record {
         sequence: 1,
         channel: channel.into(),
         level: level.into(),
+        scope: None,
+        scope_omitted: None,
     }
 }
 #[test]
@@ -76,14 +78,14 @@ fn time_and_channel_selection_and_calendar_validation() {
             channel: Some("host".into()),
             from_timestamp: Some("2099-01-02T00:00:00.000Z".into()),
             to_timestamp: Some("2099-01-03T00:00:00.000Z".into()),
+            scope: None,
         })
         .unwrap();
     assert_eq!(out.records.len(), 1);
     assert_eq!(out.records[0].level, "error");
-    assert!(
-        s.append(vec![record("2099-02-29T00:00:00.000Z", "host", "info")])
-            .is_err()
-    );
+    assert!(s
+        .append(vec![record("2099-02-29T00:00:00.000Z", "host", "info")])
+        .is_err());
     let mut data = Diagnostics::default();
     data.records = vec![
         record("2020-01-01T00:00:00.000Z", "host", "error"),
@@ -170,15 +172,14 @@ fn corrupt_quarantine_is_never_overwritten_and_time_ranges_are_checked() {
         b"earlier-evidence"
     );
     let clean = LogStore::open(d.path().join("clean.json"));
-    assert!(
-        clean
-            .read_filtered(ExportFilter {
-                channel: None,
-                from_timestamp: Some("2099-02-01T00:00:00.000Z".into()),
-                to_timestamp: Some("2099-01-01T00:00:00.000Z".into())
-            })
-            .is_err()
-    );
+    assert!(clean
+        .read_filtered(ExportFilter {
+            channel: None,
+            from_timestamp: Some("2099-02-01T00:00:00.000Z".into()),
+            to_timestamp: Some("2099-01-01T00:00:00.000Z".into()),
+            scope: None,
+        })
+        .is_err());
     assert!(clean.read(Some("unregistered")).is_err());
     assert_eq!(timestamp_ms("1970-01-01T00:00:00.000Z").unwrap(), 0);
     assert_eq!(
@@ -186,4 +187,77 @@ fn corrupt_quarantine_is_never_overwritten_and_time_ranges_are_checked() {
             - timestamp_ms("2000-02-28T00:00:00.000Z").unwrap(),
         2 * 86400000
     );
+}
+#[test]
+fn scope_filter_survives_reopen_and_rejects_non_metadata() {
+    let d = dir();
+    let path = d.path().join("scope.json");
+    let store = LogStore::open(path.clone());
+    let mut first = record("2099-01-01T00:00:00.000Z", "runtime", "info");
+    first.scope = Some(Scope {
+        project_id: Some("project-a".into()),
+        run_id: Some("run-a".into()),
+        module_id: Some("main".into()),
+        block_id: Some("step-1".into()),
+        correlation_id: Some("call-1".into()),
+    });
+    first.scope_omitted = Some(true);
+    let mut second = first.clone();
+    second.scope.as_mut().unwrap().run_id = Some("run-b".into());
+    store
+        .append(vec![
+            first.clone(),
+            second,
+            record("2099-01-01T00:00:00.000Z", "host", "info"),
+        ])
+        .unwrap();
+    drop(store);
+    let store = LogStore::open(path);
+    let result = store
+        .read_filtered(ExportFilter {
+            scope: Some(Scope {
+                run_id: Some("run-a".into()),
+                block_id: Some("step-1".into()),
+                ..Scope::default()
+            }),
+            ..ExportFilter::default()
+        })
+        .unwrap();
+    assert_eq!(result.records.len(), 1);
+    assert_eq!(result.records[0].scope_omitted, Some(true));
+    assert_eq!(
+        result.records[0]
+            .scope
+            .as_ref()
+            .unwrap()
+            .correlation_id
+            .as_deref(),
+        Some("call-1")
+    );
+    first.scope.as_mut().unwrap().run_id = Some("Bearer private-value".into());
+    assert!(store.append(vec![first]).is_err());
+    let long = format!("run-{}-{}-1", "a".repeat(36), "b".repeat(160));
+    assert_eq!(long.len(), 203);
+    assert!(Scope {
+        correlation_id: Some(long),
+        ..Scope::default()
+    }
+    .validate()
+    .is_ok());
+    assert!(Scope {
+        correlation_id: Some("a".repeat(513)),
+        ..Scope::default()
+    }
+    .validate()
+    .is_err());
+    assert!(serde_json::from_value::<Scope>(serde_json::json!({"body":"private"})).is_err());
+    assert!(store
+        .read_filtered(ExportFilter {
+            scope: Some(Scope {
+                run_id: Some("../bad".into()),
+                ..Scope::default()
+            }),
+            ..ExportFilter::default()
+        })
+        .is_err());
 }

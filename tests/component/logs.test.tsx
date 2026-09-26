@@ -61,3 +61,41 @@ it("persists overflow counts after a failed write without exceeding the queue bo
   expect(sent.reduce((sum, x) => sum + x.args.droppedImportant, 0)).toBe(1);
   expect(hook.result.current.queueDroppedImportant).toBe(1);
 });
+it("uses the same run filter for the current view and native diagnostic export", async () => {
+  const sent: { name: string; args: any }[] = [];
+  (window as any).__TAURI_INTERNALS__ = {
+    invoke: async (name: string, args: any) => {
+      sent.push({ name, args });
+      return name === "export_diagnostics" ? true : {};
+    },
+  };
+  const studio = {
+    session: { outputChannel: "runtime" },
+    setSession: vi.fn(),
+    settings: { ready: true, layers: {} },
+    bus: { subscribe: () => () => {} },
+    setMessage: vi.fn(),
+  } as unknown as Studio;
+  const hook = renderHook(() => useLogs(studio));
+  await act(async () => {
+    hook.result.current.setScopeValue("run-a");
+  });
+  expect(
+    hook.result.current.matches({
+      channel: "runtime",
+      scope: { runId: "run-a" },
+    } as any),
+  ).toBe(true);
+  expect(
+    hook.result.current.matches({
+      channel: "runtime",
+      scope: { runId: "run-b" },
+    } as any),
+  ).toBe(false);
+  await act(async () => {
+    await hook.result.current.exportLogs();
+  });
+  expect(
+    sent.find((item) => item.name === "export_diagnostics")?.args,
+  ).toMatchObject({ channel: "runtime", scope: { runId: "run-a" } });
+});

@@ -34,43 +34,104 @@ describe("Blocky native editor", () => {
   });
   it("navigates the real canvas with outline and overview without editing the project", async () => {
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
-    await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject());
+    await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
+    );
     const overview = page.getByLabel("画布导航", { exact: true });
     await overview.locator(".overview-block").first().waitFor();
-    const before = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    const before = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.overviewState(),
+    );
     await overview.getByText(/画布大纲 ·/).click();
     await overview.getByLabel("查找画布积木").fill("on-question");
     expect(await overview.locator(".canvas-outline button").count()).toBe(1);
     await overview.locator(".canvas-outline button").click();
     await page.waitForFunction(() => {
-      const selected = document.querySelector(".blocklySelected > .blocklyPath")?.getBoundingClientRect();
-      const canvas = document.querySelector(".blockly-host")?.getBoundingClientRect();
+      const selected = document
+        .querySelector(".blocklySelected > .blocklyPath")
+        ?.getBoundingClientRect();
+      const canvas = document
+        .querySelector(".blockly-host")
+        ?.getBoundingClientRect();
       if (!selected || !canvas) return false;
-      const x = selected.left + selected.width / 2, y = selected.top + selected.height / 2;
-      return x >= canvas.left && x <= canvas.right && y >= canvas.top && y <= canvas.bottom;
+      const x = selected.left + selected.width / 2,
+        y = selected.top + selected.height / 2;
+      return (
+        x >= canvas.left &&
+        x <= canvas.right &&
+        y >= canvas.top &&
+        y <= canvas.bottom
+      );
     });
     const map = overview.getByRole("img", { name: "画布位置概览" });
     const box = await map.boundingBox();
     if (!box) throw Error("Missing minimap bounds");
-    const target = await overview.locator(".overview-block").first().evaluate(rect => ({
-      x: Number(rect.getAttribute("x")) + Number(rect.getAttribute("width")) / 2,
-      y: Number(rect.getAttribute("y")) + Number(rect.getAttribute("height")) / 2,
-      width: Number(rect.getAttribute("width")), height: Number(rect.getAttribute("height")),
-    }));
+    const target = await overview
+      .locator(".overview-block")
+      .first()
+      .evaluate((rect) => ({
+        x:
+          Number(rect.getAttribute("x")) +
+          Number(rect.getAttribute("width")) / 2,
+        y:
+          Number(rect.getAttribute("y")) +
+          Number(rect.getAttribute("height")) / 2,
+        width: Number(rect.getAttribute("width")),
+        height: Number(rect.getAttribute("height")),
+      }));
     // The viewport outline intentionally overlays the block; use its observed screen point.
-    const blockBox = await overview.locator(".overview-block").first().boundingBox();
+    const blockBox = await overview
+      .locator(".overview-block")
+      .first()
+      .boundingBox();
     if (!blockBox) throw Error("Missing minimap block bounds");
-    await page.mouse.click(blockBox.x + blockBox.width / 2, blockBox.y + blockBox.height / 2);
-    await page.waitForFunction(target => {
-      const rect = document.querySelector(".overview-viewport");
-      return rect && Math.abs(Number(rect.getAttribute("x")) + Number(rect.getAttribute("width")) / 2 - target.x) <= target.tolerance &&
-        Math.abs(Number(rect.getAttribute("y")) + Number(rect.getAttribute("height")) / 2 - target.y) <= target.tolerance;
-    // Native pointer coordinates are quantized; allow one screen pixel of minimap precision.
-    }, { ...target, tolerance: Math.max(target.width / blockBox.width, target.height / blockBox.height) }, { timeout: 3000 }).catch(async error => {
-      console.log("OVERVIEW_CENTER", JSON.stringify({ target, actual: await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState()) }));
-      throw error;
-    });
-    const after = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    await page.mouse.click(
+      blockBox.x + blockBox.width / 2,
+      blockBox.y + blockBox.height / 2,
+    );
+    await page
+      .waitForFunction(
+        (target) => {
+          const rect = document.querySelector(".overview-viewport");
+          return (
+            rect &&
+            Math.abs(
+              Number(rect.getAttribute("x")) +
+                Number(rect.getAttribute("width")) / 2 -
+                target.x,
+            ) <= target.tolerance &&
+            Math.abs(
+              Number(rect.getAttribute("y")) +
+                Number(rect.getAttribute("height")) / 2 -
+                target.y,
+            ) <= target.tolerance
+          );
+          // Native pointer coordinates are quantized; allow one screen pixel of minimap precision.
+        },
+        {
+          ...target,
+          tolerance: Math.max(
+            target.width / blockBox.width,
+            target.height / blockBox.height,
+          ),
+        },
+        { timeout: 3000 },
+      )
+      .catch(async (error) => {
+        console.log(
+          "OVERVIEW_CENTER",
+          JSON.stringify({
+            target,
+            actual: await page.evaluate(() =>
+              (window as any).__BLOCKY_ACCEPTANCE__.overviewState(),
+            ),
+          }),
+        );
+        throw error;
+      });
+    const after = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.overviewState(),
+    );
     expect(after.digest).toBe(before.digest);
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/canvas-overview.png" });
@@ -329,7 +390,10 @@ describe("Blocky native editor", () => {
     await browser.saveScreenshot("try/stage2-e2e/native-surface.png");
     await $("[aria-label='关闭 资料问答']").click();
     await expect($$("iframe")).toBeElementsArrayOfSize(0);
-    await page.locator(".library").getByRole("button", { name: "◉ 资料问答", exact: true }).click();
+    await page
+      .locator(".library")
+      .getByRole("button", { name: "◉ 资料问答", exact: true })
+      .click();
     try {
       await $("iframe[title='资料问答']").waitForDisplayed();
     } catch (error) {
@@ -457,33 +521,103 @@ describe("Blocky native editor", () => {
   });
   it("creates an architecture starter and retains state through desktop input runs", async () => {
     await page.reload();
-    await page.getByLabel("架构起点").getByRole("button", { name: /有限状态机/ }).click();
+    await page
+      .getByLabel("架构起点")
+      .getByRole("button", { name: /有限状态机/ })
+      .click();
     await page.locator(".blocklyDraggable").first().waitFor();
     expect(await page.getByLabel("画布名称").inputValue()).toBe("有限状态机");
-    for (const [input, expected] of [["start", "running"], ["finish", "done"], ["start", "done"]]) {
+    for (const [input, expected] of [
+      ["start", "running"],
+      ["finish", "done"],
+      ["start", "done"],
+    ]) {
       await page.getByLabel("向 Agent 提问").fill(input);
-      const run = page.locator(".run-panel").getByRole("button", { name: "▶ 运行", exact: true });
+      const run = page
+        .locator(".run-panel")
+        .getByRole("button", { name: "▶ 运行", exact: true });
       await run.click();
-      await page.waitForFunction(expected => document.querySelector(".answer pre")?.textContent === JSON.stringify(expected), expected);
-      await page.waitForFunction(() => !document.querySelector<HTMLButtonElement>(".run-actions button.primary")?.disabled);
+      await page.waitForFunction(
+        (expected) =>
+          document.querySelector(".answer pre")?.textContent ===
+          JSON.stringify(expected),
+        expected,
+      );
+      await page.waitForFunction(
+        () =>
+          !document.querySelector<HTMLButtonElement>(
+            ".run-actions button.primary",
+          )?.disabled,
+      );
     }
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/state-machine.png" });
   });
   it("renders four code badges and persistent markers without modifying the project", async () => {
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
-    const before = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadCodeStateProject());
-    for (const [state, label] of [["official-default", "✓ 官方默认"], ["custom-valid", "✓ 已自定义"], ["warning", "⚠ 代码警告"], ["invalid", "✖ 代码无效"]]) {
-      const block = page.locator(`.blocklyDraggable[data-code-state="${state}"]`);
+    const before = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadCodeStateProject(),
+    );
+    for (const [state, label] of [
+      ["official-default", "✓ 官方默认"],
+      ["custom-valid", "✓ 已自定义"],
+      ["warning", "⚠ 代码警告"],
+      ["invalid", "✖ 代码无效"],
+    ]) {
+      const block = page.locator(
+        `.blocklyDraggable[data-code-state="${state}"]`,
+      );
       expect(await block.count()).toBe(1);
-      expect((await block.locator(".blocky-code-badge").textContent())?.replace(/\s/g, " ")).toBe(label);
-      expect(await block.locator(":scope > .blocky-code-marker").count()).toBe(1);
+      expect(
+        (await block.locator(".blocky-code-badge").textContent())?.replace(
+          /\s/g,
+          " ",
+        ),
+      ).toBe(label);
+      expect(await block.locator(":scope > .blocky-code-marker").count()).toBe(
+        1,
+      );
     }
-    const after = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    const after = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.overviewState(),
+    );
     expect(after.digest).toBe(before.digest);
     expect(before.canRun).toBe(false);
     expect(before.invalid).toBe(true);
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/code-states.png" });
+  });
+  it("persists runtime correlation metadata and filters the output view", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
+    );
+    await page
+      .locator(".run-panel")
+      .getByRole("button", { name: "▶ 运行", exact: true })
+      .click();
+    await page.locator(".answer").waitFor();
+    await page.waitForFunction(async () => {
+      const state = await (
+        window as any
+      ).__BLOCKY_ACCEPTANCE__.diagnosticScopeState();
+      return state.storedForRun > 0 && state.blocksForRun > 0;
+    });
+    const state = await page.evaluate(() =>
+      (window as any).__BLOCKY_ACCEPTANCE__.diagnosticScopeState(),
+    );
+    await page
+      .locator(".panel-tabs")
+      .getByRole("button", { name: "输出", exact: true })
+      .click();
+    await page.getByRole("button", { name: "当前运行", exact: true }).click();
+    expect(await page.getByLabel("诊断关联标识").inputValue()).toBe(
+      state.runId,
+    );
+    expect(await page.locator(".panel-body .log-row").count()).toBeGreaterThan(
+      0,
+    );
+    await page.getByLabel("诊断关联标识").fill("run-does-not-exist");
+    expect(await page.locator(".panel-body .log-row").count()).toBe(0);
   });
 });

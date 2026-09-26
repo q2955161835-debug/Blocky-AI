@@ -64,7 +64,7 @@ export const help = {
     ...builderWorkHelp,
     ...conversionHelp,
     ...taskHelp,
-    "diagnostics export <logs.json> --output <diagnostics.json> [--channel <name>] --json",
+    "diagnostics export <logs.json> --output <diagnostics.json> [--channel <name>] [--project-id <id>] [--run-id <id>] [--module-id <id>] [--block-id <id>] [--correlation-id <id>] [--from <timestamp>] [--to <timestamp>] --json",
     "doctor --json",
     "catalog list [--limit 20] [--cursor 0] --json",
     "catalog show <block-id> --json",
@@ -181,7 +181,12 @@ export async function dispatch(
             kind: "blueprint",
             compatibilityClaim: "none",
           })),
-          ...architectureStarters.map(s => ({ ...s, templateId: s.id, kind: "project", compatibilityClaim: "none" })),
+          ...architectureStarters.map((s) => ({
+            ...s,
+            templateId: s.id,
+            kind: "project",
+            compatibilityClaim: "none",
+          })),
           {
             id: "agent-loop",
             templateId: "agent-loop",
@@ -206,14 +211,18 @@ export async function dispatch(
           compatibilityClaim: "none",
         }),
       };
-    const selected = [...officialStarters, ...architectureStarters].find((s) => s.id === args.words[2]);
+    const selected = [...officialStarters, ...architectureStarters].find(
+      (s) => s.id === args.words[2],
+    );
     if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     return {
       code: 0,
       result: envelope(command, {
         ...selected,
         templateId: selected.id,
-        kind: architectureStarters.some(s => s.id === selected.id) ? "project" : "blueprint",
+        kind: architectureStarters.some((s) => s.id === selected.id)
+          ? "project"
+          : "blueprint",
         compatibilityClaim: "none",
       }),
     };
@@ -222,7 +231,7 @@ export async function dispatch(
     allow(args, ["json", "template", "output"], 2);
     if (
       required(args, "template") !== "agent-loop" &&
-      !architectureStarters.some(s => s.id === required(args, "template")) &&
+      !architectureStarters.some((s) => s.id === required(args, "template")) &&
       !officialStarters.some((s) => s.id === required(args, "template"))
     )
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
@@ -230,7 +239,9 @@ export async function dispatch(
       project =
         required(args, "template") === "agent-loop"
           ? createAgentExample()
-          : architectureStarters.some(s => s.id === required(args, "template"))
+          : architectureStarters.some(
+                (s) => s.id === required(args, "template"),
+              )
             ? createArchitectureStarter(required(args, "template"))
             : await createBlueprintProject(required(args, "template"));
     await createProject(output, project);

@@ -1,5 +1,9 @@
 import { redact } from "./redact";
-import { diagnosticRecord } from "./diagnostics";
+import {
+  diagnosticRecord,
+  normalizeDiagnosticScope,
+  type DiagnosticScope,
+} from "./diagnostics";
 import type { Json } from "@blocky/language-schema";
 export type LogRecord = {
   schemaVersion: "blocky.log/v1alpha1";
@@ -10,6 +14,7 @@ export type LogRecord = {
   kind: "component";
   channel: string;
   scope: Record<string, string>;
+  scopeOmitted?: true;
   message: string;
   attributes: Record<string, Json>;
   redaction: { applied: boolean; categories: string[] };
@@ -41,6 +46,7 @@ export class RedactedBus {
     level: LogRecord["level"],
     message: string,
     attributes: Record<string, Json> = {},
+    scope: DiagnosticScope = {},
   ) {
     if (
       ![
@@ -54,6 +60,7 @@ export class RedactedBus {
     )
       throw Error("BLK-LOG-002");
     const clean = redact({ message, attributes });
+    const normalizedScope = normalizeDiagnosticScope(scope);
     const value = clean.value as {
       message: string;
       attributes: Record<string, Json>;
@@ -66,7 +73,8 @@ export class RedactedBus {
       level,
       kind: "component",
       channel,
-      scope: {},
+      scope: normalizedScope.scope,
+      ...(normalizedScope.scopeOmitted ? { scopeOmitted: true as const } : {}),
       ...value,
       redaction: clean.redaction,
       retentionClass: "session",

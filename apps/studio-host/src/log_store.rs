@@ -6,9 +6,12 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 const ERROR: &str = "BLK-LOG-004";
+static SCOPE_ID: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+    regex::Regex::new(r"^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$").expect("fixed scope ID pattern")
+});
 const SAFE_INTEGER: u64 = 9007199254740991;
 const MAX_RECORDS: usize = 100_000;
-const MAX_DOCUMENT_BYTES: u64 = MAX_RECORDS as u64 * 256 + 1024;
+const MAX_DOCUMENT_BYTES: u64 = MAX_RECORDS as u64 * 2048 + 1024;
 const CHANNELS: [&str; 6] = [
     "runtime", "compiler", "host", "terminal", "preview", "builder",
 ];
@@ -19,16 +22,70 @@ pub struct Record {
     sequence: u64,
     level: String,
     channel: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    scope: Option<Scope>,
+    #[serde(
+        default,
+        rename = "scopeOmitted",
+        skip_serializing_if = "Option::is_none"
+    )]
+    scope_omitted: Option<bool>,
+}
+#[derive(Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct Scope {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub project_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub module_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub block_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub correlation_id: Option<String>,
+}
+impl Scope {
+    fn values(&self) -> [&Option<String>; 5] {
+        [
+            &self.project_id,
+            &self.run_id,
+            &self.module_id,
+            &self.block_id,
+            &self.correlation_id,
+        ]
+    }
+    fn validate(&self) -> Result<(), String> {
+        if self.values().iter().enumerate().any(|(index, value)| {
+            value.as_ref().is_some_and(|v| {
+                v.len() > (if index == 4 { 512 } else { 200 }) || !SCOPE_ID.is_match(v)
+            })
+        }) {
+            return Err(ERROR.into());
+        }
+        Ok(())
+    }
+    fn matches(&self, other: Option<&Scope>) -> bool {
+        let empty = Scope::default();
+        self.values()
+            .iter()
+            .zip(other.unwrap_or(&empty).values())
+            .all(|(wanted, actual)| wanted.as_ref().is_none_or(|w| actual.as_ref() == Some(w)))
+    }
 }
 impl Record {
     fn validate(&self) -> Result<(), String> {
-        if self.sequence > SAFE_INTEGER
+        if self.scope_omitted == Some(false)
+            || self.sequence > SAFE_INTEGER
             || !["info", "warning", "error"].contains(&self.level.as_str())
             || !CHANNELS.contains(&self.channel.as_str())
         {
             return Err(ERROR.into());
         }
         timestamp_ms(&self.timestamp)?;
+        if let Some(scope) = &self.scope {
+            scope.validate()?;
+        }
         Ok(())
     }
 }
@@ -79,6 +136,7 @@ pub struct ExportFilter {
     pub channel: Option<String>,
     pub from_timestamp: Option<String>,
     pub to_timestamp: Option<String>,
+    pub scope: Option<Scope>,
 }
 #[derive(Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -407,6 +465,9 @@ impl LogStore {
         })
     }
     pub fn read_filtered(&self, filter: ExportFilter) -> Result<Diagnostics, String> {
+        if let Some(scope) = &filter.scope {
+            scope.validate()?;
+        }
         if filter
             .channel
             .as_ref()
@@ -432,6 +493,10 @@ impl LogStore {
         let mut data = state.data.clone();
         data.records.retain(|r| {
             filter.channel.as_ref().is_none_or(|c| c == &r.channel)
+                && filter
+                    .scope
+                    .as_ref()
+                    .is_none_or(|scope| scope.matches(r.scope.as_ref()))
                 && timestamp_ms(&r.timestamp)
                     .is_ok_and(|t| from.is_none_or(|v| t >= v) && to.is_none_or(|v| t <= v))
         });

@@ -105,6 +105,38 @@ export function BottomPanel({
               </label>
               <button onClick={logs.clearView}>清除视图</button>
               <label>
+                关联范围
+                <select
+                  aria-label="诊断关联字段"
+                  value={logs.scopeKey}
+                  onChange={(e) =>
+                    logs.setScopeKey(e.target.value as typeof logs.scopeKey)
+                  }
+                >
+                  <option value="projectId">项目</option>
+                  <option value="runId">运行</option>
+                  <option value="moduleId">模块</option>
+                  <option value="blockId">积木</option>
+                  <option value="correlationId">调用关联</option>
+                </select>
+                <input
+                  aria-label="诊断关联标识"
+                  value={logs.scopeValue}
+                  maxLength={logs.scopeKey === "correlationId" ? 512 : 200}
+                  onChange={(e) => logs.setScopeValue(e.target.value)}
+                  placeholder="全部"
+                />
+              </label>
+              <button
+                disabled={!s.events.length}
+                onClick={() => {
+                  logs.setScopeKey("runId");
+                  logs.setScopeValue(s.events[0].runId);
+                }}
+              >
+                当前运行
+              </button>
+              <label>
                 起始时间
                 <input
                   aria-label="诊断导出起始时间"
@@ -185,12 +217,15 @@ export function BottomPanel({
             ))}
           {s.session.view === "output" &&
             s.bus.records
-              .filter((r) => !logs?.channel || r.channel === logs.channel)
+              .filter((r) => !logs || logs.matches(r))
               .map((r) => (
                 <div className="log-row" key={r.logId}>
                   <time>{r.timestamp.slice(11, 19)}</time>
                   <code>{r.channel}</code>
-                  <span>{r.message}</span>
+                  <span>
+                    {r.message}
+                    {r.scopeOmitted && " · 部分关联标识已省略"}
+                  </span>
                 </div>
               ))}
           {s.session.view === "terminal" &&

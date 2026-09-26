@@ -50,3 +50,69 @@ it("exports only whitelisted diagnostic metadata and refuses overwriting an exis
     await rm(dir, { recursive: true, force: true });
   }
 });
+it("filters diagnostic exports by combined correlation metadata without retaining arbitrary payload", async () => {
+  const dir = await mkdtemp(resolve("try/diagnostics-scope-cli-"));
+  try {
+    const input = join(dir, "input.json"),
+      output = join(dir, "output.json");
+    const correlationId = `run-${"a".repeat(36)}-${"b".repeat(160)}-1`;
+    const base = {
+      timestamp: "2026-09-26T00:00:00.000Z",
+      sequence: 1,
+      level: "info",
+      channel: "runtime",
+    };
+    await writeFile(
+      input,
+      JSON.stringify({
+        records: [
+          {
+            ...base,
+            scope: {
+              runId: "run-a",
+              blockId: "step-1",
+              correlationId,
+              body: "PRIVATE_SCOPE_BODY",
+            },
+            message: "PRIVATE_MESSAGE",
+          },
+          { ...base, scope: { runId: "run-b", blockId: "step-1" } },
+          { ...base, scope: { runId: "run-a", blockId: "step-2" } },
+          base,
+        ],
+      }),
+    );
+    const child = spawnSync(
+      process.execPath,
+      [
+        resolve("tools/blocky-cli/dist/main.mjs"),
+        "diagnostics",
+        "export",
+        input,
+        "--output",
+        output,
+        "--run-id",
+        "run-a",
+        "--block-id",
+        "step-1",
+        "--correlation-id",
+        correlationId,
+        "--json",
+      ],
+      { encoding: "utf8", windowsHide: true, timeout: 20000 },
+    );
+    expect(child.status, child.stdout).toBe(0);
+    const raw = await readFile(output, "utf8"),
+      result = JSON.parse(raw);
+    expect(result.records).toHaveLength(1);
+    expect(result.records[0].scope).toEqual({
+      runId: "run-a",
+      blockId: "step-1",
+      correlationId,
+    });
+    expect(result.records[0].scopeOmitted).toBe(true);
+    expect(raw).not.toContain("PRIVATE");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

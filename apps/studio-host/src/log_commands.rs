@@ -1,4 +1,4 @@
-use blocky_studio::log_store::{Diagnostics, ExportFilter, LogStore, Record, Stats};
+use blocky_studio::log_store::{Diagnostics, ExportFilter, LogStore, Record, Scope, Stats};
 fn main_only(window: &tauri::WebviewWindow) -> Result<(), String> {
     if window.label() != "main" {
         return Err("BLK-LOG-004".into());
@@ -44,12 +44,14 @@ pub async fn export_diagnostics(
     channel: Option<String>,
     from_timestamp: Option<String>,
     to_timestamp: Option<String>,
+    scope: Option<Scope>,
 ) -> Result<bool, String> {
     main_only(&window)?;
     let value = store.read_filtered(ExportFilter {
         channel,
         from_timestamp,
         to_timestamp,
+        scope,
     })?;
     let Some(file) = rfd::AsyncFileDialog::new()
         .set_title("导出诊断摘要")

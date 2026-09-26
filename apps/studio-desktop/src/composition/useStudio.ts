@@ -70,11 +70,17 @@ export function useStudio() {
   const [selected, setSelected] = useState<string | null>(null),
     [focus, setFocus] = useState<SourceRef>();
   const [selectedRoots, setSelectedRoots] = useState<string[]>([]);
-  const [breakpoints, setBreakpoints] = useState<{ moduleId: string; blockId: string }[]>([]);
+  const [breakpoints, setBreakpoints] = useState<
+    { moduleId: string; blockId: string }[]
+  >([]);
   const toggleBreakpoint = (moduleId: string, blockId: string) =>
     setBreakpoints((current) =>
-      current.some((item) => item.moduleId === moduleId && item.blockId === blockId)
-        ? current.filter((item) => item.moduleId !== moduleId || item.blockId !== blockId)
+      current.some(
+        (item) => item.moduleId === moduleId && item.blockId === blockId,
+      )
+        ? current.filter(
+            (item) => item.moduleId !== moduleId || item.blockId !== blockId,
+          )
         : [...current, { moduleId, blockId }],
     );
   useEffect(() => {
@@ -179,13 +185,16 @@ export function useStudio() {
         : [...s.tabs, `surface:${id}`],
       active: `surface:${id}`,
     }));
-  const run = async (request?: {
-    question: string;
-    moduleId: string;
-    interactionId: string;
-    signal: AbortSignal;
-    onProgress?: (message: string) => void;
-  }, debug?: { startBlockId?: string }) => {
+  const run = async (
+    request?: {
+      question: string;
+      moduleId: string;
+      interactionId: string;
+      signal: AbortSignal;
+      onProgress?: (message: string) => void;
+    },
+    debug?: { startBlockId?: string },
+  ) => {
     if (
       closing.current ||
       runBusy.current ||
@@ -249,6 +258,13 @@ export function useStudio() {
               line.level as "info" | "warning" | "error",
               line.summary,
               { eventSequence: event.sequence },
+              {
+                projectId: event.projectId,
+                runId: event.runId,
+                moduleId: event.moduleId,
+                blockId: event.blockId,
+                correlationId: event.correlationId,
+              },
             );
           },
         },
@@ -340,7 +356,7 @@ export function useStudio() {
       const p =
         starterId === "agent-loop"
           ? createAgentExample()
-          : architectureStarters.some(s => s.id === starterId)
+          : architectureStarters.some((s) => s.id === starterId)
             ? createArchitectureStarter(starterId)
             : await createBlueprintProject(starterId);
       controller.replace(p);
@@ -356,8 +372,9 @@ export function useStudio() {
       setQuestion(
         starterId === "agent-loop"
           ? "Hello Blocky\n一起学习"
-          : ([...officialStarters, ...architectureStarters].find((s) => s.id === starterId)?.sampleInput ??
-              ""),
+          : ([...officialStarters, ...architectureStarters].find(
+              (s) => s.id === starterId,
+            )?.sampleInput ?? ""),
       );
     } catch {
       setMessage("蓝图无法创建，请检查公开插槽和本机配置。");
@@ -428,7 +445,13 @@ export function useStudio() {
   const copySelectionToModule = (targetModuleId: string) => {
     try {
       controller.edit((p) => {
-        copyAcrossModules(p, session.active, targetModuleId, selectedRoots, () => `block-${crypto.randomUUID()}`);
+        copyAcrossModules(
+          p,
+          session.active,
+          targetModuleId,
+          selectedRoots,
+          () => `block-${crypto.randomUUID()}`,
+        );
       });
       setMessage("已复制到目标画布，可撤销。");
     } catch {

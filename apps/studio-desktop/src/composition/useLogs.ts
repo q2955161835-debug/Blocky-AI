@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { diagnosticRecord, type DiagnosticRecord } from "@blocky/observability";
+import {
+  diagnosticRecord,
+  projectDiagnosticScope,
+  type DiagnosticRecord,
+  type DiagnosticScope,
+  type LogRecord,
+} from "@blocky/observability";
 import type { Studio } from "./useStudio";
 import { resolveSetting } from "@blocky/settings-core";
 type LogStats = {
@@ -22,6 +28,8 @@ export function useLogs(studio: Studio) {
   const [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [stats, setStats] = useState<LogStats>();
+  const [scopeKey, setScopeKey] = useState<keyof DiagnosticScope>("runId");
+  const [scopeValue, setScopeValue] = useState("");
   const policy = useRef(Promise.resolve()),
     policyReady = useRef(false);
   const days = resolveSetting(
@@ -150,12 +158,18 @@ export function useLogs(studio: Studio) {
   };
   const exportLogs = async () => {
     try {
+      const scope = scopeValue
+        ? projectDiagnosticScope({ [scopeKey]: scopeValue })
+        : {};
+      if (scopeValue && scope[scopeKey] !== scopeValue)
+        throw Error("BLK-LOG-004");
       await flush();
       if (
         await invoke("export_diagnostics", {
           channel: channel || null,
           fromTimestamp: from ? new Date(from).toISOString() : null,
           toTimestamp: to ? new Date(to).toISOString() : null,
+          scope: Object.keys(scope).length ? scope : null,
         })
       )
         studio.setMessage("已导出诊断摘要");
@@ -164,6 +178,13 @@ export function useLogs(studio: Studio) {
     }
   };
   return {
+    scopeKey,
+    setScopeKey,
+    scopeValue,
+    setScopeValue,
+    matches: (record: LogRecord) =>
+      (!channel || record.channel === channel) &&
+      (!scopeValue || record.scope?.[scopeKey] === scopeValue),
     revision,
     from,
     setFrom,
