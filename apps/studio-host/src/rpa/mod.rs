@@ -1,3 +1,4 @@
+pub(crate) mod browser;
 pub mod journal;
 #[cfg(test)]
 mod native_tests;

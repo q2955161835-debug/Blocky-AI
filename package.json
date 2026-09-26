@@ -17,6 +17,7 @@
     "blocky": "node tools/blocky-cli/dist/main.mjs",
     "build:cli": "pnpm build:builder && cargo build --manifest-path apps/studio-host/Cargo.toml --release --bin blocky-project-io && pnpm --dir tools/blocky-cli build",
     "build:builder": "node scripts/build-builder.mjs",
+    "build:browser": "node scripts/build-browser.mjs",
     "test:component": "vitest run tests/component",
     "test:host": "cargo test --manifest-path apps/studio-host/Cargo.toml --lib --bin blocky-project-io",
     "test:cli": "vitest run tests/cli",
