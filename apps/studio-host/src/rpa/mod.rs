@@ -20,6 +20,7 @@ mod tests;
 #[cfg(test)]
 mod cleanup_tests;
 mod worker;
+mod approval;
 pub use runner::main as runner_main;
 pub use module_session::main as module_session_main;
 pub use worker::main as worker_main;

@@ -102,12 +102,7 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
         if description.len() > 32768 || input.step.is_some() || input.input.is_some() {
             return Err("BLK-RPA-INPUT-001".into());
         }
-        let answer = rfd::MessageDialog::new()
-            .set_title("确认有人值守自动化")
-            .set_description(description)
-            .set_buttons(rfd::MessageButtons::YesNo)
-            .show();
-        return if answer == rfd::MessageDialogResult::Yes {
+        return if super::approval::show(description)? {
             Ok(json!({"approved":true}))
         } else {
             Err("BLK-RPA-PERM-001".into())
