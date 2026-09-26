@@ -41,6 +41,12 @@ it.skipIf(process.env.BLOCKY_RPA_CAPTURE_HEADLESS!=="1")("captures real content 
       await page.locator("input").first().evaluate(element=>{const style=(element as HTMLElement).style;style.setProperty("opacity","1","important");style.setProperty("opacity","0","important");});
       expect(await hidden.valid()).toBe(false);
     } finally {await hidden.restore();}
+    const editors=page.locator('[contenteditable="true"]');
+    const guarded=await concealCaptureInputs(page,editors);
+    try {
+      await editors.evaluateAll(elements=>{const old=elements[0] as HTMLElement;old.removeAttribute("contenteditable");old.removeAttribute("role");const replacement=document.createElement("div");replacement.contentEditable="true";replacement.textContent="PRIVATE_REPLACEMENT_CANARY";replacement.style.cssText="width:20px;height:10px;overflow:visible";old.after(replacement);});
+      expect(await editors.count()).toBe(1);expect(await guarded.valid()).toBe(false);
+    } finally {await guarded.restore();}
   }finally{
     await browser?.close();
     if(oldTemp===undefined)delete process.env.TEMP;else process.env.TEMP=oldTemp;

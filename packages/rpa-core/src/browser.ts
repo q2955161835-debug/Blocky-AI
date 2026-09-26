@@ -1,5 +1,5 @@
 import type { Page } from "playwright-core";
-import { concealCaptureInputs } from "./browser-capture-mask";
+import { CAPTURE_MASK_SELECTOR, concealCaptureInputs } from "./browser-capture-mask";
 import type { RpaAdapter, RpaGrant, RpaPlan, RpaReceipt, RpaStep } from "./index";
 
 export type BrowserRpaPorts = {
@@ -77,7 +77,7 @@ export class BrowserRpaAdapter implements RpaAdapter {
         if (!box || box.width < 1 || box.height < 1 || box.width > 2048 || box.height > 2048) throw Error("BLK-RPA-CAPTURE-003");
         // Mask all form/editable fields, including ordinary inputs, and whole
         // embedded documents whose private contents are not inspected here.
-        const mask = this.page.locator('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"],[role="searchbox"],[role="combobox"],[role="spinbutton"],iframe,frame,object,embed');
+        const mask = this.page.locator(CAPTURE_MASK_SELECTOR);
         const maskedRegions = await mask.count();
         if (maskedRegions > 2048) throw Error("BLK-RPA-CAPTURE-003");
         const hidden = await concealCaptureInputs(this.page, mask);

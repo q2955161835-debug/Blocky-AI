@@ -1,7 +1,7 @@
 import { expect, it, vi } from "vitest";
 import type { Page } from "playwright-core";
 import { AttendedRpaRun, BrowserRpaAdapter } from "../src";
-vi.mock("../src/browser-capture-mask", () => ({ concealCaptureInputs: async () => ({ valid: async () => true, restore: async () => {} }) }));
+vi.mock("../src/browser-capture-mask", () => ({ CAPTURE_MASK_SELECTOR: "input,textarea,iframe", concealCaptureInputs: async () => ({ valid: async () => true, restore: async () => {} }) }));
 
 it("masks form fields and embedded pages before capturing the approved element", async () => {
   const mask = { count: vi.fn(async () => 2) };
