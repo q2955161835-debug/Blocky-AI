@@ -31,6 +31,94 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it("uses strict bound reconciliation replies and never returns private checkpoint data", async () => {
+  const begun = transitionWorkflow(initial, { kind: "begin", revision: 1 }),
+    task = workflowSummary(begun);
+  const after = workflowSummary(
+    transitionWorkflow(begun, {
+      kind: "resolve",
+      revision: 2,
+      outcome: "not-executed",
+    }),
+  );
+  const preview = {
+    applied: false,
+    requestDigest: "b".repeat(64),
+    task,
+    after,
+  };
+  io.invoke.mockResolvedValue(preview);
+  await expect(
+    workflowNative.reconcile(task, { outcome: "not-executed" }),
+  ).resolves.toEqual(preview);
+  expect(io.invoke.mock.calls[0][0]).toBe("workflow_reconcile");
+  expect(io.invoke.mock.calls[0][1].request).toMatchObject({
+    revision: 2,
+    stepId: "effect",
+    direction: "forward",
+    outcome: "not-executed",
+  });
+  for (const corrupt of [
+    { ...preview, state: "private-canary" },
+    { ...preview, task: { ...task, state: "private-canary" } },
+    { ...preview, after: { ...after, projectId: "wrong" } },
+    { ...preview, after: { ...after, revision: 4 } },
+    {
+      ...preview,
+      after: {
+        ...after,
+        resolutions: [{ ...after.resolutions[0], direction: "rollback" }],
+      },
+    },
+    {
+      ...preview,
+      after: {
+        ...after,
+        resolutions: [{ ...after.resolutions[0], outcome: "completed" }],
+      },
+    },
+    { ...preview, after: { ...after, active: task.active } },
+  ]) {
+    io.invoke.mockResolvedValue(corrupt);
+    await expect(
+      workflowNative.reconcile(task, { outcome: "not-executed" }),
+    ).rejects.toThrow(/^BLK-WORKFLOW-(INVALID|BINDING)$/);
+  }
+  io.invoke.mockResolvedValue({
+    applied: true,
+    requestDigest: "b".repeat(64),
+    task: after,
+  });
+  await expect(
+    workflowNative.reconcile(task, { outcome: "not-executed" }, "c".repeat(64)),
+  ).rejects.toThrow("BLK-WORKFLOW-BINDING");
+});
+it("rejects oversized or deeply nested manual state before invoking the Host", async () => {
+  const task = workflowSummary(
+    transitionWorkflow(initial, { kind: "begin", revision: 1 }),
+  );
+  for (const state of [
+    "x".repeat(131073),
+    Array.from({ length: 40 }).reduce<any>((v) => ({ next: v }), null),
+  ]) {
+    await expect(
+      workflowNative.reconcile(task, { outcome: "completed", state }),
+    ).rejects.toThrow("BLK-WORKFLOW-LIMIT");
+  }
+  expect(io.invoke).not.toHaveBeenCalled();
+});
+it("rejects private fields and other projects in public task lists", async () => {
+  for (const task of [
+    { ...workflowSummary(initial), state: "private-canary" },
+    { ...workflowSummary(initial), projectId: "other" },
+  ]) {
+    io.invoke.mockResolvedValue([task]);
+    await expect(workflowNative.list("project-test")).rejects.toThrow(
+      "BLK-WORKFLOW-BINDING",
+    );
+  }
+});
+
 it("bounds an unresponsive open and closes its late native lease without handing it to Runtime", async () => {
   vi.useFakeTimers();
   let ready!: (value: unknown) => void;

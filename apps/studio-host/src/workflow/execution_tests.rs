@@ -15,6 +15,51 @@ fn definition() -> serde_json::Value {
 }
 
 #[test]
+fn desktop_reconciliation_reads_back_settled_outcomes_and_rejects_shutdown() {
+    for outcome in ["not-executed", "completed"] {
+        let dir = temp();
+        let store = Store::new(dir.path().to_owned()).unwrap();
+        let host = super::host::WorkflowHost::new(dir.path().to_owned());
+        store
+            .create("task-desktop-check", &definition(), json!(null))
+            .unwrap();
+        let mut lease = store
+            .acquire("task-desktop-check", &definition(), 1)
+            .unwrap();
+        let mut executor = worker();
+        lease.bind_execution(&mut executor).unwrap();
+        executor.resume().unwrap();
+        lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+        let mut request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-reconcile",
+            "projectId":"project-execution","taskId":"task-desktop-check","revision":2,"stepId":"effect","direction":"forward","outcome":outcome});
+        if outcome == "completed" {
+            request["state"] = json!({"value":"desktop-private-canary"});
+        }
+        assert_eq!(host.reconcile(&request).unwrap_err(), "BLK-WORKFLOW-OWNER");
+        lease.settle_execution(&executor.stop().unwrap()).unwrap();
+        drop(lease);
+        let preview = host.reconcile(&request).unwrap();
+        assert_eq!(store.read("task-desktop-check").unwrap()["revision"], 2);
+        request["approval"] = preview["requestDigest"].clone();
+        let applied = host.reconcile(&request).unwrap();
+        let readback = host
+            .query(
+                &json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-show",
+            "projectId":"project-execution","taskId":"task-desktop-check"}),
+            )
+            .unwrap();
+        assert_eq!(readback, applied["task"]);
+        assert_eq!(readback["resolutions"][0]["outcome"], outcome);
+        assert!(!readback.to_string().contains("desktop-private-canary"));
+        host.shutdown().unwrap();
+        assert_eq!(
+            host.reconcile(&request).unwrap_err(),
+            "BLK-WORKFLOW-CANCELLED"
+        );
+    }
+}
+
+#[test]
 fn native_reconciliation_requires_settlement_and_explicit_bound_approval() {
     for outcome in ["not-executed", "completed"] {
         let dir = temp();

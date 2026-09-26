@@ -3,7 +3,7 @@ import { readJsonArtifact } from "./artifacts";
 import { nativeUserOperation } from "./native-store";
 import { CliError, envelope } from "./protocol";
 import { workflowReconciliationSchema } from "./workflow-schema";
-import { workflowDecisionResult } from "./workflow-result";
+import { workflowReconciliationResult } from "./workflow-result";
 
 export async function workflowReconcile(args: Args, signal: AbortSignal) {
   allow(
@@ -46,27 +46,10 @@ export async function workflowReconcile(args: Args, signal: AbortSignal) {
     throw new CliError(3, "BLK-WORKFLOW-INVALID", "工作流核对参数无效。");
   const request = parsed.data;
   try {
-    const result = workflowDecisionResult(
+    const result = workflowReconciliationResult(
       await nativeUserOperation("workflow-reconcile", request, signal),
       request,
     );
-    const after = result.applied ? result.task : result.after;
-    const resolution = after.resolutions.at(-1);
-    if (
-      resolution?.revision !== request.revision ||
-      resolution.stepId !== request.stepId ||
-      resolution.direction !== request.direction ||
-      resolution.outcome !== request.outcome ||
-      after.active ||
-      (!result.applied &&
-        (result.task.active?.stepId !== request.stepId ||
-          result.task.active.direction !== request.direction))
-    )
-      throw new CliError(
-        6,
-        "BLK-WORKFLOW-BINDING",
-        "工作流核对响应与当前步骤不一致。",
-      );
     return {
       code: 0,
       result: envelope("workflow.reconcile", {

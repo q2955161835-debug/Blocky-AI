@@ -62,3 +62,16 @@ pub async fn workflow_decide(
     .await
     .map_err(|_| "BLK-WORKFLOW-CHANNEL")?
 }
+#[tauri::command]
+pub async fn workflow_reconcile(
+    window: tauri::WebviewWindow,
+    request: Value,
+) -> Result<Value, String> {
+    crate::window_lifecycle::visible(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        crate::window_lifecycle::visible(&window)?;
+        window.state::<WorkflowHost>().reconcile(&request)
+    })
+    .await
+    .map_err(|_| "BLK-WORKFLOW-CHANNEL")?
+}

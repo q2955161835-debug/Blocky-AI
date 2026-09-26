@@ -129,7 +129,7 @@ export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studi
         key={s.snapshot.project.manifest.projectId}
         projectId={s.snapshot.project.manifest.projectId}
         refreshKey={`${s.result?.workflow?.taskId ?? ""}:${s.result?.workflow?.revision ?? ""}:${s.running}`}
-        disabled={!s.canRun}
+        disabled={s.exiting || s.busy || s.running || s.compiling || !s.interactionId || !!s.compiled?.diagnostics.some(d=>d.severity === "error")}
         confirm={s.confirm}
         validateTask={s.validateWorkflow}
         onResume={task=>void s.resumeWorkflow(task)}

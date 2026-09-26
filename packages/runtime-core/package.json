@@ -5,12 +5,13 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
-    "@blocky/rpa-core": "workspace:*",
+    "@blocky/compiler": "workspace:*",
     "@blocky/knowledge-core": "workspace:*",
     "@blocky/language-schema": "workspace:*",
-    "@blocky/compiler": "workspace:*",
-    "@blocky/project-model": "workspace:*",
     "@blocky/observability": "workspace:*",
-    "@blocky/resource-registry": "workspace:*"
+    "@blocky/project-model": "workspace:*",
+    "@blocky/resource-registry": "workspace:*",
+    "@blocky/rpa-core": "workspace:*",
+    "zod": "4.4.3"
   }
 }

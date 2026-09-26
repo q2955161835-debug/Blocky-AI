@@ -105,6 +105,11 @@ impl WorkflowHost {
     pub fn decide(&self, request: &Value) -> Result<Value, String> {
         super::decision::dispatch(self.root.clone(), request)
     }
+    pub fn reconcile(&self, request: &Value) -> Result<Value, String> {
+        let state = self.state.lock().map_err(|_| "BLK-WORKFLOW-CHANNEL")?;
+        require(!state.shutting_down, "BLK-WORKFLOW-CANCELLED")?;
+        super::reconciliation::dispatch(self.root.clone(), request)
+    }
     pub fn shutdown(&self) -> Result<(), String> {
         let mut state = self.state.lock().map_err(|_| "BLK-WORKFLOW-CHANNEL")?;
         state.shutting_down = true;

@@ -108,6 +108,7 @@ fn main() {
             workflow_commands::workflow_request,
             workflow_commands::workflow_query,
             workflow_commands::workflow_decide,
+            workflow_commands::workflow_reconcile,
             rpa_commands::rpa_targets,
             rpa_capture_commands::rpa_captures,
             rpa_capture_commands::rpa_capture_read,

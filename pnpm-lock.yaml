@@ -394,6 +394,9 @@ importers:
       '@blocky/rpa-core':
         specifier: workspace:*
         version: link:../rpa-core
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
   packages/settings-core: {}
 

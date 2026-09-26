@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { WorkflowSummary } from "@blocky/runtime-core";
-import { workflowNative } from "../composition/workflow";
+import {
+  workflowNative,
+  type WorkflowReconciliation as Choice,
+} from "../composition/workflow";
+import { WorkflowReconciliation } from "./WorkflowReconciliation";
+import { useWorkflowReview } from "./useWorkflowReview";
 
 const labels: Record<WorkflowSummary["status"], string> = {
   ready: "可继续",
@@ -34,12 +39,10 @@ export function WorkflowTasks({
   approvalLabel,
 }: Props) {
   const [tasks, setTasks] = useState<WorkflowSummary[]>([]),
-    [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const mounted = useRef(false),
     scope = useRef(projectId),
-    requestVersion = useRef(0),
-    actionBusy = useRef(false);
+    requestVersion = useRef(0);
   scope.current = projectId;
   const refresh = async () => {
     const version = ++requestVersion.current;
@@ -73,45 +76,35 @@ export function WorkflowTasks({
       requestVersion.current++;
     };
   }, [projectId, refreshKey]);
-  const decide = async (
-    task: WorkflowSummary,
-    decision: "approve" | "reject",
-  ) => {
-    if (disabled || actionBusy.current) return;
-    actionBusy.current = true;
-    setBusy(true);
-    const current = () => mounted.current && scope.current === projectId;
-    let applicationRequested = false;
-    try {
-      await validateTask(task);
-      if (!current()) return;
-      const preview = await workflowNative.decide(task, decision);
-      if (!current()) return;
-      const text =
-        decision === "approve"
-          ? "批准后可继续任务。"
-          : "拒绝后可继续执行已声明的补偿。";
-      const accepted = await confirm(
-        `${approvalLabel?.(task) ?? task.stepId ?? "工作流审批"}\n任务 ${task.taskId} · 修订 ${task.revision}\n${text}`,
-      );
-      if (!accepted || !current()) return;
-      await validateTask(task);
-      if (!current()) return;
-      applicationRequested = true;
-      await workflowNative.decide(task, decision, preview.requestDigest);
-      if (current()) await refresh();
-    } catch {
-      if (current())
-        setMessage(
-          applicationRequested
-            ? "审批结果未确认，请刷新任务核对当前状态，不要直接重发决定。"
-            : "审批未应用：任务、项目或资源已改变，请恢复对应版本并刷新后重试。",
-        );
-    } finally {
-      actionBusy.current = false;
-      if (current()) setBusy(false);
-    }
-  };
+  const { busy, review } = useWorkflowReview({
+    projectId,
+    refreshKey,
+    disabled,
+    confirm,
+    validateTask,
+    refresh,
+    message: setMessage,
+  });
+  const decide = (task: WorkflowSummary, decision: "approve" | "reject") =>
+    review(
+      task,
+      "审批",
+      `${approvalLabel?.(task) ?? task.stepId ?? "工作流审批"}\n${decision === "approve" ? "批准后可继续任务。" : "拒绝后可继续执行已声明的补偿。"}`,
+      (approval) =>
+        approval
+          ? workflowNative.decide(task, decision, approval)
+          : workflowNative.decide(task, decision),
+    );
+  const reconcile = (task: WorkflowSummary, choice: Choice) =>
+    review(
+      task,
+      "核对",
+      `步骤 ${task.active?.stepId} · ${task.active?.direction === "rollback" ? "补偿" : "正向执行"}\n${choice.outcome === "completed" ? "确认已完成，并使用导入的检查点。" : "确认未执行，保留原检查点。"}保存后请自行选择是否继续任务。`,
+      (approval) =>
+        approval
+          ? workflowNative.reconcile(task, choice, approval)
+          : workflowNative.reconcile(task, choice),
+    );
   return (
     <section aria-label="工作流任务">
       <div className="section-label">
@@ -132,6 +125,18 @@ export function WorkflowTasks({
           <p className="muted">
             {task.taskId} · 修订 {task.revision}
           </p>
+          {!!task.resolutions.length && (
+            <p>
+              最近核对：{task.resolutions.at(-1)!.stepId} ·{" "}
+              {task.resolutions.at(-1)!.direction === "rollback"
+                ? "补偿"
+                : "正向执行"}{" "}
+              ·{" "}
+              {task.resolutions.at(-1)!.outcome === "completed"
+                ? "已完成"
+                : "未执行"}
+            </p>
+          )}
           {task.status === "awaiting-approval" && (
             <p>{approvalLabel?.(task) ?? task.stepId}</p>
           )}
@@ -165,7 +170,16 @@ export function WorkflowTasks({
             )}
           </div>
           {["executing", "undoing", "uncertain"].includes(task.status) && (
-            <p>需要人工核对，当前不能继续或重放此步骤。</p>
+            <>
+              <p>需要人工核对，当前不能继续或重放此步骤。</p>
+              {task.active && (
+                <WorkflowReconciliation
+                  key={`${projectId}:${refreshKey}:${task.taskId}:${task.revision}`}
+                  disabled={disabled || busy}
+                  onReview={(choice) => void reconcile(task, choice)}
+                />
+              )}
+            </>
           )}
         </article>
       ))}

@@ -13,3 +13,6 @@ export type { NativeAgentCall, PendingApproval } from './native-agent';
 export { createWorkflow, parseWorkflow, workflowSummary, transitionWorkflow, advanceWorkflow, assertWorkflowBinding } from './workflow';
 export type { WorkflowDefinition, WorkflowRecord, WorkflowTransition, WorkflowStore, WorkflowDriver } from './workflow';
 export type { WorkflowPorts,WorkflowSummary } from './workflow/runtime';
+export { workflowJson } from './workflow/protocol';
+export * from './workflow/schema';
+export * from './workflow/result';

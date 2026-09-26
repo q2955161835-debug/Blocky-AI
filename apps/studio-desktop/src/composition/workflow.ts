@@ -6,36 +6,40 @@ import {
 import {
   assertWorkflowBinding,
   parseWorkflow,
+  parseWorkflowDecisionResult,
+  parseWorkflowReconciliationResult,
+  workflowSummarySchema,
+  workflowReconciliationSchema,
+  workflowJson,
   type WorkflowPorts,
   type WorkflowSummary,
 } from "@blocky/runtime-core";
+import type { Json } from "@blocky/language-schema";
+export type WorkflowReconciliation =
+  | { outcome: "not-executed" }
+  | { outcome: "completed"; state: Json };
 
 export const workflowNative = {
   list: async (projectId: string) => {
-    const tasks = await call<WorkflowSummary[]>("workflow_query", {
+    const value = await call<unknown>("workflow_query", {
       schemaVersion: "blocky.project-io/v1alpha1",
       operation: "workflow-list",
       projectId,
     });
+    const parsed = workflowSummarySchema.array().max(128).safeParse(value);
     if (
-      !Array.isArray(tasks) ||
-      tasks.length > 128 ||
-      tasks.some((task) => task.projectId !== projectId)
+      !parsed.success ||
+      parsed.data.some((task) => task.projectId !== projectId)
     )
       throw error("BLK-WORKFLOW-BINDING");
-    return tasks;
+    return parsed.data;
   },
   decide: async (
     task: WorkflowSummary,
     decision: "approve" | "reject",
     approval?: string,
   ) => {
-    const result = await call<{
-      applied: boolean;
-      requestDigest: string;
-      task: WorkflowSummary;
-      after?: WorkflowSummary;
-    }>("workflow_decide", {
+    const result = await call<unknown>("workflow_decide", {
       schemaVersion: "blocky.project-io/v1alpha1",
       operation: "workflow-decide",
       projectId: task.projectId,
@@ -45,16 +49,33 @@ export const workflowNative = {
       decision,
       ...(approval ? { approval } : {}),
     });
-    if (
-      result.task.projectId !== task.projectId ||
-      result.task.taskId !== task.taskId ||
-      result.task.revision !== task.revision + (approval ? 1 : 0) ||
-      result.applied !== !!approval ||
-      !/^[a-f0-9]{64}$/.test(result.requestDigest) ||
-      (approval && result.requestDigest !== approval)
-    )
-      throw error("BLK-WORKFLOW-BINDING");
-    return result;
+    return parseWorkflowDecisionResult(result, { ...task, approval });
+  },
+  reconcile: async (
+    task: WorkflowSummary,
+    choice: WorkflowReconciliation,
+    approval?: string,
+  ) => {
+    if (!task.active) throw error("BLK-WORKFLOW-BINDING");
+    const parsed = workflowReconciliationSchema.safeParse({
+      projectId: task.projectId,
+      taskId: task.taskId,
+      revision: task.revision,
+      stepId: task.active.stepId,
+      direction: task.active.direction,
+      ...choice,
+      ...(approval ? { approval } : {}),
+    });
+    if (!parsed.success) throw error("BLK-WORKFLOW-INVALID");
+    const request = parsed.data;
+    if (request.outcome === "completed")
+      request.state = workflowJson(request.state);
+    const result = await call<unknown>("workflow_reconcile", {
+      schemaVersion: "blocky.project-io/v1alpha1",
+      operation: "workflow-reconcile",
+      ...request,
+    });
+    return parseWorkflowReconciliationResult(result, request);
   },
 };
 
