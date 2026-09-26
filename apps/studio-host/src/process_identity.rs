@@ -28,6 +28,16 @@ fn creation(handle: HANDLE) -> Result<u64, ()> {
     Ok((created.dwHighDateTime as u64) << 32 | created.dwLowDateTime as u64)
 }
 impl Identity {
+    pub(crate) fn from_handle(handle: HANDLE) -> Result<Self, ()> {
+        let process_id = unsafe { GetProcessId(handle) };
+        if process_id == 0 {
+            return Err(());
+        }
+        Ok(Self {
+            process_id,
+            created: creation(handle)?,
+        })
+    }
     pub fn current() -> Result<Self, ()> {
         Ok(Self {
             process_id: std::process::id(),

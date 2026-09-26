@@ -1,6 +1,7 @@
 //! Profile-bound encrypted records, short mutation locks and native execution leases.
 //! This module does not dispatch effects or accept client-supplied owner/settlement claims.
 use super::{
+    execution::{Binding, Execution, Stopped},
     protocol::{self, INVALID, LIMIT, RECORD_LIMIT, require},
     transition,
 };
@@ -27,6 +28,8 @@ struct Envelope {
     record: Value,
     owner: Option<Identity>,
     lease_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    execution: Option<Binding>,
 }
 #[derive(Clone)]
 pub struct Store {
@@ -140,6 +143,17 @@ impl Store {
                     IO,
                 )?;
             }
+            if let Some(execution) = &envelope.execution {
+                require(
+                    execution.valid(
+                        &self.profile,
+                        id,
+                        envelope.lease_id.as_deref(),
+                        envelope.owner.as_ref(),
+                    ),
+                    IO,
+                )?;
+            }
             // Any in-flight effect must retain an attributable execution owner.
             require(
                 envelope.record.get("active").is_none() || envelope.owner.is_some(),
@@ -235,6 +249,7 @@ impl Store {
             record: record.clone(),
             owner: None,
             lease_id: None,
+            execution: None,
         })?;
         Ok(record)
     }
@@ -242,6 +257,10 @@ impl Store {
     pub fn read(&self, id: &str) -> Result<Value, String> {
         let _lock = self.lock()?;
         Ok(self.read_unlocked(id)?.record)
+    }
+    pub(super) fn execution(&self, id: &str) -> Result<Option<Binding>, String> {
+        let _lock = self.lock()?;
+        Ok(self.read_unlocked(id)?.execution)
     }
     pub fn summaries(&self, project_id: &str) -> Result<Value, String> {
         require(protocol::stable(project_id), INVALID)?;
@@ -296,7 +315,8 @@ impl Store {
         }
         // Owner death alone cannot prove all spawned effects settled. No resolution API yet.
         require(
-            envelope.record.get("active").is_none(),
+            envelope.record.get("active").is_none()
+                && envelope.execution.as_ref().is_none_or(Binding::settled),
             "BLK-WORKFLOW-UNCERTAIN",
         )?;
         require(
@@ -307,6 +327,7 @@ impl Store {
         let lease_id = uuid::Uuid::new_v4().to_string();
         envelope.owner = Some(owner.clone());
         envelope.lease_id = Some(lease_id.clone());
+        envelope.execution = None;
         self.write_unlocked(&envelope)?;
         Ok(Lease {
             store: self.clone(),
@@ -318,6 +339,30 @@ impl Store {
     }
 }
 impl Lease {
+    pub(super) fn bind_execution(&mut self, execution: &mut Execution) -> Result<(), String> {
+        let _lock = self.store.lock()?;
+        let mut envelope = self.owned()?;
+        require(
+            envelope.record.get("active").is_none() && envelope.execution.is_none(),
+            OWNER,
+        )?;
+        let binding = execution.prepare_binding(
+            &self.store.profile,
+            &self.task_id,
+            &self.lease_id,
+            &self.owner,
+        )?;
+        envelope.execution = Some(binding.clone());
+        self.store.write_unlocked(&envelope)?;
+        execution.arm(binding);
+        Ok(())
+    }
+    pub(super) fn settle_execution(&mut self, proof: &Stopped) -> Result<(), String> {
+        let _lock = self.store.lock()?;
+        let mut envelope = self.owned()?;
+        envelope.execution.as_mut().ok_or(OWNER)?.settle(proof)?;
+        self.store.write_unlocked(&envelope)
+    }
     fn owned(&self) -> Result<Envelope, String> {
         let envelope = self.store.read_unlocked(&self.task_id)?;
         require(
@@ -334,6 +379,10 @@ impl Lease {
         require(action["kind"] != "resolve", "BLK-WORKFLOW-UNCERTAIN")?;
         let _lock = self.store.lock()?;
         let mut envelope = self.owned()?;
+        require(
+            action["kind"] != "begin" || envelope.execution.as_ref().is_none_or(|e| !e.settled()),
+            OWNER,
+        )?;
         envelope.record = transition(&envelope.record, action)?;
         self.store.write_unlocked(&envelope)?;
         Ok(envelope.record)
@@ -343,11 +392,13 @@ impl Lease {
         let _lock = self.store.lock()?;
         let mut envelope = self.owned()?;
         require(
-            envelope.record.get("active").is_none(),
+            envelope.record.get("active").is_none()
+                && envelope.execution.as_ref().is_none_or(Binding::settled),
             "BLK-WORKFLOW-UNCERTAIN",
         )?;
         envelope.owner = None;
         envelope.lease_id = None;
+        envelope.execution = None;
         self.store.write_unlocked(&envelope)
     }
 }

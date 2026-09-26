@@ -11,6 +11,8 @@ mod patch_links;
 pub(crate) mod process_job;
 #[cfg(windows)]
 pub(crate) mod process_identity;
+#[cfg(windows)]
+pub(crate) mod process_worker;
 pub mod project_store;
 pub mod profile;
 pub mod provider;

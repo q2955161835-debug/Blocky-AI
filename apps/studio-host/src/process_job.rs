@@ -75,6 +75,48 @@ pub(crate) fn settle_job(job: HANDLE, timeout: Duration) -> bool {
 pub(crate) struct Job(isize);
 #[cfg(windows)]
 impl Job {
+    pub(crate) fn named(name: &str) -> Result<Self, String> {
+        use windows_sys::Win32::{Foundation::*, System::JobObjects::*};
+        let mut name: Vec<u16> = name.encode_utf16().collect();
+        if name.contains(&0) || name.len() > 128 {
+            return Err("BLK-WORKFLOW-INVALID".into());
+        }
+        name.push(0);
+        unsafe {
+            SetLastError(0);
+            let handle = CreateJobObjectW(std::ptr::null(), name.as_ptr());
+            if handle.is_null() {
+                return Err("BLK-WORKFLOW-OWNER".into());
+            }
+            if GetLastError() == ERROR_ALREADY_EXISTS {
+                CloseHandle(handle);
+                return Err("BLK-WORKFLOW-OWNER".into());
+            }
+            let job = Job(handle as isize);
+            let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = std::mem::zeroed();
+            info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+            if SetInformationJobObject(
+                handle,
+                JobObjectExtendedLimitInformation,
+                &info as *const _ as _,
+                std::mem::size_of_val(&info) as u32,
+            ) == 0
+            {
+                return Err("BLK-WORKFLOW-OWNER".into());
+            }
+            Ok(job)
+        }
+    }
+    pub(crate) fn assign(&self, process: HANDLE) -> Result<(), String> {
+        if unsafe {
+            windows_sys::Win32::System::JobObjects::AssignProcessToJobObject(self.0 as _, process)
+        } == 0
+        {
+            Err("BLK-WORKFLOW-OWNER".into())
+        } else {
+            Ok(())
+        }
+    }
     pub(crate) fn settle(&self) -> bool {
         crate::process_job::settle_job(self.0 as _, Duration::from_secs(2))
     }

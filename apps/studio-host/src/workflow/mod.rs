@@ -3,6 +3,7 @@
 mod protocol;
 mod transitions;
 mod store;
+mod execution;
 mod staging;
 pub mod query;
 pub mod session;
@@ -13,3 +14,5 @@ pub use store::{Lease, Store};
 pub use transitions::transition;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod execution_tests;
