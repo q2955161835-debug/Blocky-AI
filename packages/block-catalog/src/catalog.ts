@@ -5,6 +5,7 @@ import eventPrimitives from "./event-primitives.json";
 import flowPrimitives from "./flow-primitives.json";
 import workflowPrimitives from "./workflow-primitives.json";
 import rpaPrimitives from "./rpa-primitives.json";
+import version from "./version.json";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -53,5 +54,5 @@ export const catalog: BlockDefinition[] = [
   ...rpaPrimitives,
   ...agentPrimitives,
 ];
-export const catalogVersion = "0.5.0";
+export const catalogVersion = version.catalogVersion;
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);

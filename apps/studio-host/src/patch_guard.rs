@@ -468,7 +468,12 @@ pub fn validate_with_registry(
     {
         return Err(INVALID.into());
     }
-    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != env!("CARGO_PKG_VERSION") {
+    // Catalog compatibility is shared with the editor/CLI and is independent
+    // of the application's release version.
+    let catalog_version: Value = serde_json::from_str(include_str!(
+        "../../../packages/block-catalog/src/version.json"
+    )).map_err(|_| INVALID)?;
+    if patch["schemaVersion"] != "blocky.patch/v1alpha1" || patch["catalogVersion"] != catalog_version["catalogVersion"] {
         return Err(INVALID.into());
     }
     if patch["projectId"] != original["manifest"]["projectId"]

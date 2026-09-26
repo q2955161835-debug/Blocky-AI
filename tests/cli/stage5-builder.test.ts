@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createStarter } from "../../packages/test-fixtures/src";
-import { createProject } from "../../tools/blocky-cli/src/native-store";
+import { createProject, validatePatch } from "../../tools/blocky-cli/src/native-store";
 import { dispatch } from "../../tools/blocky-cli/src/commands";
 import { parse } from "../../tools/blocky-cli/src/arguments";
 import fixture from "../contracts/fixtures/generated-surface.json";
@@ -41,6 +41,11 @@ it("CLI inspects and drafts through the shared builder and preserves the origina
     const result = JSON.parse(await readFile(candidate, "utf8"));
     expect(result.patch.operations.length).toBeGreaterThan(0);
     expect(result.modelApiCalled).toBe(false);
+    // The current catalog is accepted even when the app release version differs;
+    // a different catalog still fails at the native boundary.
+    await expect(validatePatch(createStarter(), {
+      ...result.patch, catalogVersion: "999.0.0",
+    }, [])).rejects.toMatchObject({ code: "BLK-PATCH-002" });
     const evidence = await run(["builder", "evidence", "--request-id", result.requestId, "--json"]);
     expect(evidence.result.data).toMatchObject({requestId:result.requestId,outcome:"completed",attempts:[]});
     const workInput = join(root, "work-input.json"),
