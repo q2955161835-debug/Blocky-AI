@@ -192,7 +192,7 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 .\blocky.cmd diagnostics explain BLK-RPA-LOCATOR-003 --json
 ```
 
-Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。坐标和截图仍明确报不支持。
+Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。截图已接入同一计划和权限，Windows 真实绘制及普通包仍待验；坐标仍明确报不支持。
 
 浏览器计划使用 `target.kind="browser"`，`target.identity` 为起始网址的来源（协议、域名及非默认端口，不含路径）。步骤定位器使用 `{kind:"browser",role:"button",name:"保存"}` 等可访问性角色及精确名称。运行方式：
 
@@ -248,3 +248,17 @@ Host 原生确认全部计划和网址后才启动已安装的 Microsoft Edge，
 积木列表返回稳定 ID、模块、父子/next/input/shadow 关系和字段，可按模块、类型或文本筛选。列表及项目差异使用 `nextCursor` 分页；传回 `--cursor`，不要把第一页当成全部结果。差异通过 JSON Pointer 定位项目事实，包含前后摘要；不同项目 ID 拒绝比较。
 
 检查点仍是普通 `.blocky` 文件。恢复要求检查点与当前项目 ID 相同、当前摘要匹配，只写新的输出路径，不覆盖当前文件、不运行作品、不重放副作用。它恢复项目事实，不回滚用户资源、安全存储、知识索引或运行日志。编辑中项目的诊断会明确返回，运行门禁保持不变。所有新输出都拒绝覆盖已有目标。
+
+### 自动化截图记录
+
+计划中的 `screenshot` 动作使用唯一 UIA/浏览器语义定位，需审阅目标和 `rpa.capture` 权限。浏览器输入及可编辑区域（含溢出正文）会临时隐藏并遮盖；其他可见文字仍可能进入图片。图片按本机用户加密，单边不超过 2048、PNG 不超过 4 MiB，有效期为 24 小时，查询/保存时清理过期记录。最多 32 张/128 MiB，暂存按最大图片体积计入上限。运行结果与普通积木只返回带检查点/计划/步骤的 `blocky.rpa-capture/v1` 引用。
+
+```powershell
+.\blocky.cmd rpa captures --json
+# 使用列表返回的 capture-id，选择新的输出文件
+.\blocky.cmd rpa capture-export <capture-id> --output .\try\capture.png --json
+.\blocky.cmd rpa capture-delete <capture-id> --json
+.\blocky.cmd schema show blocky.rpa-capture/v1 --json
+```
+
+导出先核对图片摘要，既有文件拒绝覆盖；导出的 PNG 由调用者保留，不受内部有效期控制。删除仅作用于当前资料目录对应的图片记录。`BLK-RPA-CAPTURE-003` 表示尺寸/容量超限，`004` 表示过期，`005` 表示目标变化或无法可靠遮盖。截图/保留局部复核与普通包状态以任务验收为准。
