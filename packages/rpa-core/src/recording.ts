@@ -47,6 +47,13 @@ export const rpaRecordingResultSchema = optionsSchema.extend({
     ctx.addIssue({ code: "custom", message: "BLK-RPA-RECORD-001" });
 });
 export type RpaRecordingResult = z.output<typeof rpaRecordingResultSchema>;
+export const rpaRecordingStopSchema = z.object({
+  sessionId: id, state: z.literal("stopped"), settled: z.literal(true),
+  recording: rpaRecordingResultSchema.nullable(),
+  code: z.string().regex(/^BLK-RPA-[A-Z0-9-]+$/).optional(),
+}).strict().refine(value => !(value.code && value.recording) && value.code !== "BLK-RPA-SETTLEMENT-001");
+export type RpaRecordingStop = z.output<typeof rpaRecordingStopSchema>;
+export const rpaRecordingControlSchema = z.object({ operation: z.enum(["status", "stop"]) }).strict();
 export type RpaRecordedAction = z.output<typeof rpaRecordedActionSchema>;
 export type RpaRecordingReason = z.output<typeof reason>;
 export type RpaRecordingOptions = z.output<typeof optionsSchema>;

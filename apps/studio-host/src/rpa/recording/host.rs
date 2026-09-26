@@ -90,6 +90,10 @@ mod tests {
             .unwrap_err(),
             "BLK-RPA-UIA-001"
         );
+        let receipt = host.stop("project-one", "recording-one").unwrap();
+        assert_eq!(receipt["settled"], true);
+        assert_eq!(receipt["code"], "BLK-RPA-UIA-001");
+        assert!(receipt["recording"].is_null());
         host.shutdown().unwrap();
         let failed = Host::default();
         failed
@@ -305,7 +309,9 @@ impl Host {
             slot
         };
         let Some(slot) = slot else {
-            return Ok(json!({"sessionId":session_id,"state":"stopped","recording":null}));
+            return Ok(
+                json!({"sessionId":session_id,"state":"stopped","settled":true,"recording":null}),
+            );
         };
         slot.cancel.store(true, Ordering::SeqCst);
         let deadline = Instant::now();
@@ -344,12 +350,15 @@ impl Host {
                     *unsettled = None;
                 }
                 match result {
-                    Ok(value) => {
-                        Ok(json!({"sessionId":session_id,"state":"stopped","recording":value}))
-                    }
-                    Err(code) if code == "BLK-RPA-CANCELLED" || code == "BLK-RPA-PERM-001" => {
-                        Ok(json!({"sessionId":session_id,"state":"stopped","recording":null}))
-                    }
+                    Ok(value) => Ok(
+                        json!({"sessionId":session_id,"state":"stopped","settled":true,"recording":value}),
+                    ),
+                    Err(code) if code == "BLK-RPA-CANCELLED" || code == "BLK-RPA-PERM-001" => Ok(
+                        json!({"sessionId":session_id,"state":"stopped","settled":true,"recording":null}),
+                    ),
+                    Err(code) if code != "BLK-RPA-SETTLEMENT-001" => Ok(
+                        json!({"sessionId":session_id,"state":"stopped","settled":true,"recording":null,"code":code}),
+                    ),
                     Err(code) => Err(code.clone()),
                 }
             }

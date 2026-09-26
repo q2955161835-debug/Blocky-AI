@@ -1,4 +1,6 @@
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-RPA-RECORD-001": { message: "录制请求或结果不符合契约。", hint: "查看 blocky.rpa-recording-start/v1 和 result/v1 Schema；同一录制必须保留 projectId/sessionId 和目标绑定，不得添加输入正文。" },
+  "BLK-RPA-RECORD-EMPTY": { message: "录制中没有可转换的步骤。", hint: "核对省略计数和目标；重新录制可唯一定位的点击或填写操作，或在面板手动添加步骤。" },
   "BLK-RPA-BROWSER-MISSING": { message: "未找到 Microsoft Edge 浏览器。", hint: "安装 Edge 后重新运行；WebView2 Runtime 不能替代完整浏览器。不会自动安装或使用现有个人浏览器会话。" },
   "BLK-RPA-RUNTIME-001": { message: "浏览器驱动缺失或不完整。", hint: "开发环境运行 pnpm build:browser 并重建 CLI/桌面；安装包请恢复随包 browser 目录。" },
   "BLK-RPA-RUNTIME-HASH": { message: "浏览器驱动未通过完整性校验。", hint: "恢复当前版本的完整 browser 目录；不会继续启动不匹配的驱动。" },

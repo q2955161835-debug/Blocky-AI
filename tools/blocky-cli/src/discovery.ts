@@ -7,7 +7,7 @@ import { surfaceSpecSchema } from "@blocky/app-surface";
 import { workspaceBlockShape } from "@blocky/block-catalog";
 import { editorOperationSchema } from "@blocky/project-model";
 import { rpaPlanSchema, rpaGrantSchema, rpaRecoverySchema, rpaBrowserStartSchema, rpaModuleInputsSchema, rpaCheckpointDeleteSchema } from "@blocky/rpa-core";
-import { rpaRecordingStartSchema, rpaRecordingResultSchema } from "@blocky/rpa-core/recording";
+import { rpaRecordingStartSchema, rpaRecordingResultSchema, rpaRecordingStopSchema, rpaRecordingControlSchema } from "@blocky/rpa-core/recording";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
@@ -26,6 +26,8 @@ const schemas = {
   "blocky.rpa-recovery/v1": rpaRecoverySchema,
   "blocky.rpa-recording-start/v1": rpaRecordingStartSchema,
   "blocky.rpa-recording-result/v1": rpaRecordingResultSchema,
+  "blocky.rpa-recording-stop/v1": rpaRecordingStopSchema,
+  "blocky.rpa-recording-control/v1": rpaRecordingControlSchema,
   "blocky.rpa-browser-start/v1": rpaBrowserStartSchema,
   "blocky.rpa-module-inputs/v1": rpaModuleInputsSchema,
   "blocky.rpa-checkpoint-delete/v1": rpaCheckpointDeleteSchema,

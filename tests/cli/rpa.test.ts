@@ -5,8 +5,49 @@ import { join, resolve } from "node:path";
 import { parse } from "../../tools/blocky-cli/src/arguments";
 import { createArchitectureStarter } from "../../packages/block-catalog/src";
 import { createProject } from "../../tools/blocky-cli/src/native-store";
+import { RecordingBuffer } from "../../packages/rpa-core/src/recording";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
+it("discovers recording controls and converts captured metadata to a reviewed patch for its own project only", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-recording-cli-"));
+  try {
+    const project = createArchitectureStarter("rule-engine"), path = join(dir, "original.blocky"), requestPath = join(dir, "request.json"), recordingPath = join(dir, "recording.json"), patchPath = join(dir, "patch.json");
+    await createProject(path, project);
+    const original = await readFile(path);
+    const request = { schemaVersion: "blocky.rpa-recording-start/v1", projectId: project.manifest.projectId, sessionId: "recording-owned", target: { kind: "browser", identity: "https://example.test" }, url: "https://example.test/form" };
+    const capture = new RecordingBuffer({ projectId: request.projectId, sessionId: request.sessionId, target: { kind: "browser", identity: "browser:11111111-1111-4111-8111-111111111111" } });
+    capture.append({ action: "fill", locator: { kind: "browser", role: "textbox", name: "Question" } });
+    await writeFile(requestPath, JSON.stringify(request)); await writeFile(recordingPath, JSON.stringify(capture.seal("stopped")));
+    const env = { ...process.env, BLOCKY_PROFILE_DIR: join(dir, "profile") };
+    const result = run(["rpa", "recording-draft", path, "--recording", recordingPath, "--request", requestPath, "--module", "main", "--output", patchPath, "--json"], env);
+    expect(result.code, JSON.stringify(result.result)).toBe(0);
+    expect(result.result.data.requiresReview).toBe(true); expect(result.result.data.modelApiCalled).toBe(false);
+    expect(await readFile(path)).toEqual(original);
+    const patch = JSON.parse(await readFile(patchPath, "utf8"));
+    expect(patch.permissionDelta).toContain("rpa.input");
+    expect(JSON.stringify(patch)).not.toContain("browser:11111111");
+    expect(JSON.stringify(patch)).toContain("https://example.test/form");
+    await writeFile(requestPath, JSON.stringify({ ...request, projectId: "another-project" }));
+    const rejected = run(["rpa", "recording-draft", path, "--recording", recordingPath, "--request", requestPath, "--module", "main", "--output", join(dir, "foreign.json"), "--json"], env);
+    expect(rejected.result.error.code).toBe("BLK-RPA-TARGET-001");
+    expect(run(["command", "list", "--query", "rpa record", "--json"], env).result.data.commands).toHaveLength(3);
+    for (const schema of ["start", "result", "stop"]) expect(run(["schema", "show", `blocky.rpa-recording-${schema}/v1`, "--json"], env).code).toBe(0);
+    expect(run(["rpa", "record", requestPath, "--output", join(dir, "unused.json"), "--jsonl"], env).result.error.code).toBe("BLK-CLI-002");
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+it("settles a real private recording Host without opening a prompt when its target is unavailable", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-recording-native-"));
+  try {
+    const requestPath = join(dir, "request.json");
+    await writeFile(requestPath, JSON.stringify({ schemaVersion: "blocky.rpa-recording-start/v1", sessionId: "recording-unavailable", projectId: "project-one", target: { kind: "windows", identity: `unavailable-${crypto.randomUUID()}` } }));
+    const child = spawnSync(process.execPath, [cli, "rpa", "record", requestPath, "--control-stdin", "--output", join(dir, "recording.json"), "--jsonl"], { input: "", encoding: "utf8", timeout: 15000, windowsHide: true, env: { ...process.env, BLOCKY_PROFILE_DIR: join(dir, "profile") } });
+    expect(child.error).toBeUndefined(); expect(child.status).toBe(7);
+    const messages = child.stdout.trim().split(/\r?\n/).map(line => JSON.parse(line));
+    expect(messages.some(message => message.type === "settled" && message.value.settled === true)).toBe(true);
+    expect(messages.at(-1).error.code).toBe("BLK-RPA-TARGET-001");
+    await expect(readFile(join(dir, "recording.json"))).rejects.toMatchObject({ code: "ENOENT" });
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 it("creates a reviewable RPA module patch, enforces native permission approval and keeps simulate inert",async()=>{
   const dir=await mkdtemp(resolve("try/stage7-rpa-module-"));
   try{

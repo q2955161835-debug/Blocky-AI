@@ -12,7 +12,7 @@ beforeEach(() => {
   io.recordStop.mockImplementation(async (_project: string, sessionId: string) => {
     const buffer = new RecordingBuffer({ projectId: capturedRequest.projectId, sessionId, target: { kind: "browser", identity: "browser:11111111-1111-4111-8111-111111111111" } });
     buffer.append({ action: "fill", locator: { kind: "browser", role: "textbox", name: "Question" } });
-    return { sessionId, state: "stopped", recording: buffer.seal("stopped") };
+    return { sessionId, state: "stopped", settled: true, recording: buffer.seal("stopped") };
   });
 });
 afterEach(() => { cleanup(); vi.resetAllMocks(); vi.useRealTimers(); });
@@ -38,7 +38,7 @@ it("locks the target, settles capture, then opens a ghost proposal without execu
 it("cancels a pending native prompt and ignores a late successful start", async () => {
   let late!: (value: unknown) => void;
   io.recordStart.mockImplementation((request: RpaRecordingStart) => { capturedRequest = request; return new Promise(resolve => { late = resolve; }); });
-  io.recordStop.mockImplementation(async (_project: string, sessionId: string) => ({ sessionId, state: "stopped", recording: null }));
+  io.recordStop.mockImplementation(async (_project: string, sessionId: string) => ({ sessionId, state: "stopped", settled: true, recording: null }));
   const { draft } = open();
   await screen.findByText("等待录制授权");
   fireEvent.click(screen.getByRole("button", { name: "停止录制" }));
@@ -63,7 +63,7 @@ it("stops its owned session when the panel is unmounted", async () => {
   await waitFor(() => expect(io.recordStop).toHaveBeenCalledWith("project-one", capturedRequest.sessionId));
 });
 it("rejects a different session's recording instead of showing a proposal", async () => {
-  io.recordStop.mockResolvedValue({ sessionId: "another-session", state: "stopped", recording: null });
+  io.recordStop.mockResolvedValue({ sessionId: "another-session", state: "stopped", settled: true, recording: null });
   open(); await screen.findByText(/录制中/);
   fireEvent.click(screen.getByRole("button", { name: "停止录制" }));
   await screen.findByText(/BLK-RPA-RECORD-001/);
@@ -75,4 +75,11 @@ it("polls the owned recording and settles an automatic capture limit before expo
   await screen.findByRole("button", { name: "审阅录制积木" }, { timeout: 2500 });
   expect(io.recordStatus).toHaveBeenCalledWith("project-one", capturedRequest.sessionId);
   expect(io.recordStop).toHaveBeenCalledOnce();
+});
+it("unlocks after a failed start when the Host explicitly confirms settled error state", async () => {
+  io.recordStart.mockImplementation(async (request: RpaRecordingStart) => { capturedRequest = request; throw Error("BLK-RPA-WORKER-001"); });
+  io.recordStop.mockImplementation(async (_project: string, sessionId: string) => ({ sessionId, state: "stopped", settled: true, recording: null, code: "BLK-RPA-WORKER-001" }));
+  open(); await screen.findByText("BLK-RPA-WORKER-001");
+  expect((screen.getByRole("button", { name: "开始录制" }) as HTMLButtonElement).disabled).toBe(false);
+  expect(screen.getByLabelText("起始网址").matches(":disabled")).toBe(false);
 });
