@@ -33,9 +33,9 @@ pub async fn rpa_record_stop(window:tauri::WebviewWindow,project_id:String,sessi
     tauri::async_runtime::spawn_blocking(move||window.state::<RpaHost>().recording.stop(&project_id,&session_id)).await.map_err(|_|"BLK-RPA-WORKER-001")?
 }
 #[tauri::command]
-pub fn rpa_targets(window: tauri::WebviewWindow) -> Result<Vec<rpa::target::Target>, String> {
+pub fn rpa_targets(window: tauri::WebviewWindow) -> Result<Vec<Value>, String> {
     visible(&window)?;
-    Ok(rpa::target::list())
+    Ok(rpa::target::list_details())
 }
 #[tauri::command]
 pub async fn rpa_checkpoints(window: tauri::WebviewWindow) -> Result<Vec<Value>, String> {

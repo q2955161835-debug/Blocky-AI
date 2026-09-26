@@ -47,7 +47,7 @@ fn execute_value(value: Value) -> Value {
     }
     if value["operation"]=="rpa-targets" {
         if value["schemaVersion"]!=SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) {return json!({"ok":false,"code":"BLK-CLI-002"});}
-        return json!({"ok":true,"value":blocky_studio::rpa::target::list()});
+        return json!({"ok":true,"value":blocky_studio::rpa::target::list_details()});
     }
     if value["operation"].as_str().is_some_and(|s|s.starts_with("builder-")) {
         let result=blocky_studio::profile::cli_root().and_then(|root|blocky_studio::builder::dispatch(root,&value));

@@ -164,7 +164,7 @@ pub(super) fn verify_with(
         let result = perform(
             &worker::Input {
                 target: prepared.target.clone(),
-                capture_path: None, root_id: Some(prepared.root_id.clone()),
+                coordinate_frame: None, capture_path: None, root_id: Some(prepared.root_id.clone()),
                 step: Some(check.probe()),
                 input: None,
                 approval: None,

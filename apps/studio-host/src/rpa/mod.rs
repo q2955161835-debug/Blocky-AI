@@ -22,6 +22,8 @@ mod cleanup_tests;
 mod worker;
 mod approval;
 mod input_policy;
+mod coordinate;
+mod coordinate_windows;
 mod capture_png;
 mod capture_windows;
 mod capture_staging;
@@ -62,6 +64,7 @@ pub struct Receipt {
     pub verified: bool,
 }
 struct Session {
+    coordinate_frame: Option<coordinate::Frame>,
     checkpoint_id: Option<String>,
     checkpoint_revision: u64,
     plan: Plan,
@@ -97,6 +100,7 @@ pub struct RpaHost {
     closing: AtomicBool,
 }
 pub struct Prepared {
+    coordinate_frame: Option<coordinate::Frame>,
     plan: Plan,
     target: Binding,
     root_id: Vec<i32>,
@@ -120,7 +124,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
         || plan
             .steps
             .iter()
-            .any(|s| !matches!(s.locator, Locator::Uia { .. }))
+            .any(|s| !matches!(s.locator, Locator::Uia { .. } | Locator::Coordinate { .. }))
     {
         return Err("BLK-RPA-UNSUPPORTED-001".into());
     }
@@ -131,7 +135,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
     let value = process::run(
         &worker::Input {
             target: target.clone().into(),
-            capture_path: None, root_id: None,
+            coordinate_frame: None, capture_path: None, root_id: None,
             step: None,
             input: None,
             approval: None,
@@ -144,12 +148,18 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
     if root_id.is_empty() || root_id.len() > 64 {
         return Err("BLK-RPA-TARGET-001".into());
     }
+    let coordinate_frame = if plan.steps.iter().any(|s|matches!(s.locator,Locator::Coordinate{..})) {
+        let frame=coordinate_windows::snapshot(&target)?;
+        if plan.steps.iter().any(|s|matches!(s.locator,Locator::Coordinate{x,y,..} if !frame.permits((x,y)))) {return Err(coordinate::ERROR.into());}
+        Some(frame)
+    } else {None};
     let digest = format!(
         "{:x}",
         Sha256::digest(serde_json::to_vec(&plan).map_err(|_| "BLK-RPA-PLAN-001")?)
     );
     let preview = json!({"planId":plan.plan_id,"target":target,"steps":plan.steps,"digest":digest,"expiresInMs":600000,"sensitiveInput":"explicit-manual-fill-only","scope":"same-user-non-elevated-window"});
     Ok(Prepared {
+        coordinate_frame,
         plan,
         target: target.into(),
         root_id,
@@ -258,6 +268,7 @@ impl RpaHost {
                 }
                 let preview = json!({"digest":crate::agent_data::digest(&plan)?,"target":target});
                 Prepared {
+                    coordinate_frame: None,
                     plan,
                     target: Binding::Browser(target),
                     root_id: vec![],
@@ -282,7 +293,7 @@ impl RpaHost {
                     .steps
                     .iter()
                     .enumerate()
-                    .map(|(i, s)| format!("{}. {}", i + 1, input_policy::describe(s)))
+                    .map(|(i, s)| format!("{}. {}", i + 1, input_policy::describe(s, &prepared.plan.target.kind)))
                     .collect::<Vec<_>>()
                     .join("\n"),
                 prepared.preview["digest"].as_str().unwrap_or(""),
@@ -296,7 +307,7 @@ impl RpaHost {
             );
             let request = worker::Input {
                 target: prepared.target.clone(),
-                capture_path: None, root_id: None,
+                coordinate_frame: prepared.coordinate_frame.clone(), capture_path: None, root_id: None,
                 step: None,
                 input: None,
                 approval: Some(format!(
@@ -434,6 +445,15 @@ impl RpaHost {
         prepared: Prepared,
         saved: Option<journal::Snapshot>,
     ) -> Result<Value, String> {
+        if matches!(prepared.target, Binding::Windows(_)) {
+            for step in &prepared.plan.steps {
+                if let Locator::Coordinate { x, y, .. } = step.locator {
+                    if !prepared.coordinate_frame.as_ref().is_some_and(|frame| frame.permits((x, y))) {
+                        return Err("BLK-RPA-COORDINATE-001".into());
+                    }
+                }
+            }
+        }
         self.retire_expired()?;
         let mut sessions = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?;
         if self.closing.load(Ordering::SeqCst) {
@@ -455,6 +475,7 @@ impl RpaHost {
             })
             .transpose()?;
         let mut session = Session {
+            coordinate_frame: prepared.coordinate_frame,
             checkpoint_id: saved.as_ref().map(|s| s.checkpoint_id.clone()).or_else(|| {
                 self.journal
                     .as_ref()
@@ -521,7 +542,8 @@ impl RpaHost {
         self.step_with(token, step_id, input, |request,timeout,cancel| {
             if request.input.is_some() || request.step.as_ref().is_some_and(|step| matches!(step.locator, Locator::Coordinate { .. })) {
                 let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
-                let confirm=worker::Input{target:request.target.clone(),capture_path:None,root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step))};
+                let kind=if matches!(request.target,Binding::Windows(_)){"windows"}else{"browser"};
+                let confirm=worker::Input{target:request.target.clone(),coordinate_frame:request.coordinate_frame.clone(),capture_path:None,root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step,kind))};
                 process::run(&confirm,300000,cancel.clone())?;
             }
             // A long human review must not extend the grant lifetime.
@@ -650,7 +672,7 @@ impl RpaHost {
             (
                 worker::Input {
                     target: s.target.clone(),
-                    capture_path: None, root_id: Some(s.root_id.clone()),
+                    coordinate_frame: if matches!(step.locator, Locator::Coordinate { .. }) { s.coordinate_frame.clone() } else { None }, capture_path: None, root_id: Some(s.root_id.clone()),
                     step: Some(step),
                     input,
                     approval: None,

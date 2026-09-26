@@ -165,6 +165,7 @@ fn real_browser_private_pipe_and_job_cancel() {
                 plan: plan.clone(),
                 target: crate::rpa::Binding::Browser(target),
                 root_id: vec![],
+                coordinate_frame: None,
                 preview: json!({}),
             })
             .unwrap();
@@ -204,6 +205,7 @@ fn real_browser_private_pipe_and_job_cancel() {
                 plan: expired_plan,
                 target: crate::rpa::Binding::Browser(expired_target.clone()),
                 root_id: vec![],
+                coordinate_frame: None,
                 preview: json!({}),
             })
             .unwrap();

@@ -36,8 +36,9 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-RECOVERY-003": { message: "恢复条件没有完整覆盖已完成的副作用。", hint: "为每个已完成回执提供唯一的 UIA 状态核对条件；用 schema show blocky.rpa-recovery/v1 查看格式。" },
   "BLK-RPA-RECOVERY-004": { message: "目标当前状态与恢复条件不一致。", hint: "核对目标应用的实际业务状态与已完成步骤；未执行剩余步骤，不要盲目重放。" },
   "BLK-RPA-SETTLEMENT-001": { message: "自动化进程尚未确认全部结算。", hint: "保留 uncertain 回执，检查剩余进程；不能将此状态视为已停止或重新运行。" },
-  "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "支持 UIA 和隔离浏览器的 find/read/click/fill/wait/screenshot；浏览器需 --browser-url/--project-id。坐标回退仅支持隔离浏览器点击，Windows 请使用 UIA。" },
-  "BLK-RPA-COORDINATE-001": { message: "坐标超出授权页面范围或视口已改变。", hint: "核对可见页面左上角的 CSS 像素位置、视口大小和本次坐标授权；优先改用语义定位。核对副作用回执后重新申请会话，勿盲目重放。" },
+  "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "支持 UIA 和隔离浏览器的 find/read/click/fill/wait/screenshot；浏览器需 --browser-url/--project-id。坐标回退仅支持显式批准的 click。" },
+  "BLK-RPA-COORDINATE-001": { message: "坐标范围、窗口几何或输入状态不符合本次授权。", hint: "Windows 使用屏幕物理像素，运行 rpa targets 核对客户区，松开按键并清除遮挡；浏览器使用页面左上角 CSS 像素。位置、DPI 或视口改变后需重新核对授权；先检查副作用回执，勿盲目重放。" },
+  "BLK-RPA-COORDINATE-003": { message: "系统未确认完整接收坐标点击。", hint: "该步骤结果不确定；检查目标和检查点回执，不得自动重试。部分输入只尝试释放本次按下的左键。" },
   "BLK-PATCH-001": {
     message: "项目基线已改变，候选或恢复请求已过期。",
     hint: "重新运行 project inspect 获取 digest，再生成或审查候选；不要重用旧批准。",

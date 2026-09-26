@@ -81,8 +81,8 @@ pub enum Locator {
         name: Option<String>,
     },
     Coordinate {
-        x: u32,
-        y: u32,
+        x: i32,
+        y: i32,
         #[serde(rename = "riskAccepted")]
         risk_accepted: bool,
     },
@@ -179,7 +179,8 @@ impl Plan {
                     y,
                     risk_accepted,
                 } => {
-                    if !risk_accepted || *x > 32767 || *y > 32767 || step.action != Action::Click {
+                    if !risk_accepted || !(-32768..=32767).contains(x) || !(-32768..=32767).contains(y) || step.action != Action::Click
+                        || self.target.kind == "browser" && (*x < 0 || *y < 0) {
                         return Err("BLK-RPA-LOCATOR-001".into());
                     }
                 }
@@ -216,6 +217,16 @@ impl Plan {
 mod tests {
     use super::*;
     use serde_json::json;
+    #[test]
+    fn windows_coordinates_support_negative_monitors_but_browser_coordinates_do_not() {
+        let mut raw = serde_json::to_value(fixture()).unwrap();
+        raw["steps"][0]["locator"] = json!({"kind":"coordinate","x":-100,"y":-20,"riskAccepted":true});
+        let result = serde_json::from_value::<Plan>(raw.clone());
+        assert!(result.is_ok(), "Windows physical screen coordinates can be negative");
+        result.unwrap().validate().unwrap();
+        raw["target"]["kind"] = json!("browser");
+        assert_eq!(serde_json::from_value::<Plan>(raw).unwrap().validate().unwrap_err(), "BLK-RPA-LOCATOR-001");
+    }
     #[test]
     fn coordinates_are_click_only_and_must_be_risk_accepted() {
         let mut p = fixture();

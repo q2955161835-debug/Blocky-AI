@@ -14,7 +14,6 @@ beforeEach(() => {
 });
 it("requires a renewed risk checkbox before each browser coordinate step and preserves the reviewed coordinates", async () => {
   render(<RpaPanel projectId="coordinate-project" close={vi.fn()} />);
-  expect(screen.queryByText("坐标回退（高风险）")).toBeNull();
   fireEvent.change(screen.getByLabelText("目标类型"), { target: { value: "browser" } });
   fireEvent.change(screen.getByLabelText("起始网址"), { target: { value: "https://example.test/" } });
   fireEvent.click(screen.getByText("坐标回退（高风险）"));
@@ -37,6 +36,28 @@ it("requires a renewed risk checkbox before each browser coordinate step and pre
   await waitFor(() => expect(io.authorize).toHaveBeenCalledOnce());
   expect(io.authorize.mock.calls[0][0].steps[0].locator).toEqual({ kind: "coordinate", x: 50, y: 60, riskAccepted: true });
   expect(io.authorize.mock.calls[0][0].steps[0].action).toBe("click");
+});
+it("uses physical Windows coordinates and resets risk confirmation when the target changes", async () => {
+  io.targets.mockResolvedValue([{ identity: "fixture", title: "Owned fixture", processId: 123 }, { identity: "second", title: "Other fixture", processId: 124 }]);
+  await setup();
+  fireEvent.click(screen.getByText("坐标回退（高风险）"));
+  expect(screen.getByText(/屏幕物理像素/)).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("坐标 X"), { target: { value: "-100" } });
+  fireEvent.change(screen.getByLabelText("坐标 Y"), { target: { value: "50" } });
+  let button = screen.getByRole("button", { name: "添加坐标点击" }) as HTMLButtonElement;
+  fireEvent.click(screen.getByRole("checkbox", { name: "我已核对坐标并接受误点风险" }));
+  expect(button.disabled).toBe(false);
+  fireEvent.change(screen.getByLabelText("RPA 目标窗口"), { target: { value: "second" } });
+  button = screen.getByRole("button", { name: "添加坐标点击" }) as HTMLButtonElement;
+  expect(button.disabled).toBe(true);
+  fireEvent.change(screen.getByLabelText("坐标 X"), { target: { value: "-100" } });
+  fireEvent.change(screen.getByLabelText("坐标 Y"), { target: { value: "50" } });
+  fireEvent.click(screen.getByRole("checkbox", { name: "我已核对坐标并接受误点风险" }));
+  fireEvent.click(button);
+  fireEvent.click(screen.getByRole("button", { name: "审阅并运行" }));
+  await waitFor(() => expect(io.authorize).toHaveBeenCalledOnce());
+  expect(io.authorize.mock.calls[0][0].target).toEqual({ kind: "windows", identity: "second" });
+  expect(io.authorize.mock.calls[0][0].steps[0].locator).toEqual({ kind: "coordinate", x: -100, y: 50, riskAccepted: true });
 });
 it("reads saved receipts without granting or replaying execution", async () => {
   io.checkpoints.mockResolvedValue([{ checkpointId: "checkpoint-test", planId: "saved-plan", status: "failed", completedSteps: 0, totalSteps: 1, updatedAtMs: 0, resumable: false, receipts: [{ stepId: "click-once", status: "uncertain" }] }]);

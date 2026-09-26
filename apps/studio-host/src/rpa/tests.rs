@@ -1,5 +1,15 @@
 use super::*;
 use serde_json::json;
+#[test]
+fn windows_coordinate_preflight_checks_target_instead_of_rejecting_supported_action() {
+    let plan = serde_json::from_value(json!({"schemaVersion":"blocky.rpa/v1","planId":"coordinates","target":{"kind":"windows","identity":"nonexistent-owned-coordinate-window"},"steps":[{"stepId":"click","action":"click","locator":{"kind":"coordinate","x":20,"y":30,"riskAccepted":true},"effectKey":"once"}]})).unwrap();
+    assert_eq!(preflight(plan).err().unwrap(), "BLK-RPA-TARGET-001");
+}
+#[test]
+fn windows_coordinate_grant_requires_the_host_geometry_binding() {
+    let mut p=prepared();p.plan.steps[0].locator=Locator::Coordinate{x:50,y:60,risk_accepted:true};
+    assert_eq!(RpaHost::default().insert(p).unwrap_err(),"BLK-RPA-COORDINATE-001");
+}
 pub(super) fn prepared() -> Prepared {
     let plan:Plan=serde_json::from_value(json!({"schemaVersion":"blocky.rpa/v1","planId":"test","target":{"kind":"windows","identity":"fixture"},"steps":[{"stepId":"first","action":"click","locator":{"kind":"uia","automationId":"ok"},"effectKey":"once"},{"stepId":"second","action":"find","locator":{"kind":"uia","automationId":"done"}}]})).unwrap();
     Prepared {
@@ -14,6 +24,7 @@ pub(super) fn prepared() -> Prepared {
         }
         .into(),
         root_id: vec![1, 2],
+        coordinate_frame: None,
         preview: json!({}),
     }
 }
@@ -542,7 +553,7 @@ fn hung_worker_is_terminated_before_timeout_returns() {
     let error = process::run(
         &worker::Input {
             target: p.target,
-            capture_path: None, root_id: None,
+            coordinate_frame: None, capture_path: None, root_id: None,
             step: None,
             input: None,
             approval: None,

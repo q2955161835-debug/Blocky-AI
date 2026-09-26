@@ -152,3 +152,15 @@ pub fn list() -> Vec<Target> {
     }
     result
 }
+
+/// Read-only physical geometry discovery; authorization takes a fresh snapshot.
+pub fn list_details() -> Vec<serde_json::Value> {
+    list().into_iter().map(|target| {
+        let mut value = serde_json::to_value(&target).expect("serializable target");
+        match super::coordinate_windows::snapshot(&target) {
+            Ok(frame) => value["coordinateFrame"] = serde_json::to_value(frame).expect("serializable frame"),
+            Err(code) => value["coordinateError"] = code.into(),
+        }
+        value
+    }).collect()
+}

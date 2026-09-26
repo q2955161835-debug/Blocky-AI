@@ -14,7 +14,7 @@ export type RpaCheckpointDelete = z.infer<typeof rpaCheckpointDeleteSchema>;
 const locator = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("browser"), role: z.string().min(1).max(80), name: z.string().max(200).optional() }).strict(),
   z.object({ kind: z.literal("uia"), automationId: z.string().min(1).max(200).optional(), name: z.string().min(1).max(200).optional(), controlType: z.string().min(1).max(80).optional() }).strict(),
-  z.object({ kind: z.literal("coordinate"), x: z.number().int().nonnegative().max(32767), y: z.number().int().nonnegative().max(32767), riskAccepted: z.literal(true) }).strict().describe("高风险坐标回退，仅 click；浏览器使用可见页面左上角的 CSS 像素，必须在授权视口内。布局变化可能误点，运行时逐步原生确认。Windows 屏幕坐标尚未接入执行。"),
+  z.object({ kind: z.literal("coordinate"), x: z.number().int().min(-32768).max(32767), y: z.number().int().min(-32768).max(32767), riskAccepted: z.literal(true) }).strict().describe("高风险坐标回退，仅 click；浏览器使用可见页面左上角的非负 CSS 像素。Windows 使用屏幕物理像素，负值表示主屏左方或上方显示器，必须在授权窗口客户区内。布局变化可能误点，运行时逐步原生确认，Windows 会聚焦目标并移动系统鼠标。"),
 ]);
 const action = z.enum(["find", "read", "click", "fill", "wait", "screenshot"]);
 export const rpaPlanSchema = z.object({
@@ -39,7 +39,7 @@ export const rpaPlanSchema = z.object({
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-002", path: ["steps", index, "locator"] });
     if (step.locator.kind === "uia" && !step.locator.automationId && !step.locator.name && !step.locator.controlType)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-001", path: ["steps", index, "locator"] });
-    if (step.locator.kind === "coordinate" && step.action !== "click")
+    if (step.locator.kind === "coordinate" && (step.action !== "click" || plan.target.kind === "browser" && (step.locator.x < 0 || step.locator.y < 0)))
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-001", path: ["steps", index, "action"] });
     if (step.action === "fill" && !step.value || step.action !== "fill" && step.value)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });

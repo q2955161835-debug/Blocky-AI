@@ -17,6 +17,8 @@ use uiautomation::{
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(super) struct Input {
+    #[serde(default)]
+    pub coordinate_frame: Option<super::coordinate::Frame>,
     pub target: super::binding::Binding,
     pub root_id: Option<Vec<i32>>,
     pub step: Option<Step>,
@@ -104,6 +106,7 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
             return Err("BLK-RPA-INPUT-001".into());
         }
         return if super::approval::show(description)? {
+            if let Some(frame)=&input.coordinate_frame {super::coordinate_windows::activate(input.target.windows()?,frame)?;}
             Ok(json!({"approved":true}))
         } else {
             Err("BLK-RPA-PERM-001".into())
@@ -125,6 +128,11 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
     let Some(step) = &input.step else {
         return Ok(json!({"rootId":root_id}));
     };
+    if let Locator::Coordinate{x,y,risk_accepted} = step.locator {
+        if step.action!=Action::Click || !risk_accepted || input.input.is_some(){return Err("BLK-RPA-LOCATOR-001".into());}
+        super::coordinate_windows::click(target,&automation,&root,&root_id,input.coordinate_frame.as_ref().ok_or(super::coordinate::ERROR)?,(x,y))?;
+        return Ok(json!({"clicked":true}));
+    }
     if !matches!(step.locator, Locator::Uia { .. }) {
         return Err("BLK-RPA-UNSUPPORTED-001".into());
     }

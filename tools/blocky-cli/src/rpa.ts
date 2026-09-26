@@ -113,9 +113,9 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
       steps: result.data.steps.length,
       coordinateFallback,
       ...(coordinateFallback ? {
-        coordinateSpace: result.data.target.kind === "browser" ? "browser-viewport-css-pixels" : "screen-pixels",
+        coordinateSpace: result.data.target.kind === "browser" ? "browser-viewport-css-pixels" : "screen-physical-pixels",
         warnings: [{ code: "BLK-RPA-COORDINATE-RISK", message: "高风险坐标回退：布局变化可能误点；优先语义定位，执行前需原生逐步确认。" },
-          ...(result.data.target.kind === "windows" ? [{ code: "BLK-RPA-UNSUPPORTED-001", message: "Windows 屏幕坐标尚未接入执行，请使用 UIA 定位。" }] : [])],
+          ...(result.data.target.kind === "windows" ? [{ code: "BLK-RPA-POINTER-RISK", message: "批准后会聚焦目标窗口并移动系统鼠标；先松开按键，使用 rpa targets 核对物理客户区。" }] : [])],
       } : {}),
       requiresAttendedApproval: true, modelApiCalled: false,
     }) };
