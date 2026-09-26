@@ -1,0 +1,164 @@
+{
+  "manifest": {
+    "schemaVersion": "blocky.project/v1",
+    "projectId": "project-72032e14-49c1-4578-aae7-74e37af21ae5",
+    "displayName": "审批工作流",
+    "modules": [
+      {
+        "moduleId": "main",
+        "displayName": "审批工作流",
+        "purpose": "automation",
+        "workspaceRef": "workspaces/main.workspace.json",
+        "exports": []
+      }
+    ],
+    "resources": [],
+    "appSurfaces": [],
+    "format": {
+      "createdWith": "blocky-desktop/0.5.0",
+      "minimumReaderVersion": "0.5.0"
+    }
+  },
+  "workspaces": {
+    "main": {
+      "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+          {
+            "type": "core.interaction.chat_entry",
+            "id": "on-event",
+            "x": 80,
+            "y": 70,
+            "fields": {
+              "NAME": "审批工作流"
+            },
+            "inputs": {
+              "CAPABILITIES": {
+                "block": {
+                  "type": "core.interaction.accept_text",
+                  "id": "accept-text"
+                }
+              },
+              "HANDLER": {
+                "block": {
+                  "id": "workflow",
+                  "type": "runtime.task.durable",
+                  "fields": {},
+                  "inputs": {
+                    "STEPS": {
+                      "block": {
+                        "id": "prepare",
+                        "type": "runtime.compensate",
+                        "fields": {},
+                        "inputs": {
+                          "DO": {
+                            "block": {
+                              "id": "remember",
+                              "type": "core.memory.write",
+                              "fields": {
+                                "SCOPE": "session",
+                                "KEY": "saved-input",
+                                "SOURCE": "input"
+                              },
+                              "inputs": {}
+                            }
+                          },
+                          "UNDO": {
+                            "block": {
+                              "id": "clear-prepared",
+                              "type": "core.memory.delete",
+                              "fields": {
+                                "SCOPE": "session",
+                                "KEY": "saved-input"
+                              },
+                              "inputs": {},
+                              "next": {
+                                "block": {
+                                  "id": "undo-value",
+                                  "type": "core.data.set",
+                                  "fields": {
+                                    "VALUE": "\"compensated\""
+                                  },
+                                  "inputs": {},
+                                  "next": {
+                                    "block": {
+                                      "id": "undo-output",
+                                      "type": "core.output.structured",
+                                      "fields": {
+                                        "SCHEMA": "schemas/result.json"
+                                      },
+                                      "inputs": {}
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "id": "approve",
+                            "type": "core.human.approve",
+                            "fields": {
+                              "LABEL": "是否交付本次保存的输入？"
+                            },
+                            "inputs": {},
+                            "next": {
+                              "block": {
+                                "id": "deliver",
+                                "type": "runtime.compensate",
+                                "fields": {},
+                                "inputs": {
+                                  "DO": {
+                                    "block": {
+                                      "id": "recall",
+                                      "type": "core.memory.read",
+                                      "fields": {
+                                        "SCOPE": "session",
+                                        "KEY": "saved-input"
+                                      },
+                                      "inputs": {},
+                                      "next": {
+                                        "block": {
+                                          "id": "deliver-output",
+                                          "type": "core.output.structured",
+                                          "fields": {
+                                            "SCHEMA": "schemas/result.json"
+                                          },
+                                          "inputs": {}
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "id": "checkpoint",
+                                    "type": "runtime.checkpoint.save",
+                                    "fields": {},
+                                    "inputs": {}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resources": {},
+  "schemas": {
+    "schemas/result.json": {
+      "type": "string"
+    }
+  },
+  "surfaces": {}
+}

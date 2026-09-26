@@ -152,6 +152,7 @@ pub fn finish_exit(
     if window.label() != "main" || !window.state::<Lifecycle>().closing.load(Ordering::SeqCst) {
         return Err("BLK-WINDOW-001".into());
     }
+    window.state::<blocky_studio::workflow::desktop::RuntimeHost>().shutdown()?;
     tasks.shutdown()?;
     window.state::<blocky_studio::workflow::host::WorkflowHost>().shutdown()?;
     window.state::<blocky_studio::rpa::RpaHost>().shutdown()?;

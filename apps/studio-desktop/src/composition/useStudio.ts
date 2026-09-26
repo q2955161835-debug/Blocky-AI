@@ -27,6 +27,7 @@ import { knowledgeNative } from "./knowledge";
 import { studioAgentServices } from "./agent";
 import { studioRpaModules } from "./rpaModules";
 import { studioWorkflowPorts } from "./workflow";
+import { DesktopRuntime } from "./desktop-runtime";
 import { workflowEntry } from "./workflow-entry";
 import { useRpaInput } from "./useRpaInput";
 import {
@@ -114,10 +115,14 @@ export function useStudio() {
     ioBusy = useRef(false);
   const [runtime] = useState(
       () =>
-        new Runtime({
-          delayMs: 160,
-          adapters: { ...hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)), workflow: studioWorkflowPorts() },
-        }),
+        isTauri()
+          ? new DesktopRuntime(() => hostAdapters(
+              knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request),
+            ))
+          : new Runtime({
+              delayMs: 160,
+              adapters: { ...hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)), workflow: studioWorkflowPorts() },
+            }),
     ),
     [bus] = useState(() => new RedactedBus());
   const [compiler] = useState(() => new IncrementalCompiler());
@@ -150,7 +155,17 @@ export function useStudio() {
       active = false;
     };
   }, [snapshot.project, bus, compiler, resources.map]);
-  useEffect(() => () => abort.current?.abort(), []);
+  const runtimeMount = useRef(0);
+  useEffect(() => {
+    const mount = ++runtimeMount.current;
+    return () => {
+      abort.current?.abort();
+      queueMicrotask(() => {
+        if (runtimeMount.current === mount && runtime instanceof DesktopRuntime)
+          void runtime.dispose().catch(() => {});
+      });
+    };
+  }, [runtime]);
   const navigate = (source: SourceRef, remember = true) => {
     if (
       source.projectId !== snapshot.project.manifest.projectId ||
@@ -284,7 +299,9 @@ export function useStudio() {
       setResult(value);
       return value;
     } catch {
-      setMessage("无法启动运行，请检查问题面板。");
+      setMessage(runtime instanceof DesktopRuntime && runtime.needsRestart
+        ? "运行连接已中断，请重新启动 Blocky。自动化的未确认结果请先查看执行记录。"
+        : controller.signal.aborted ? "已停止运行。" : "无法启动运行，请检查问题面板。");
     } finally {
       request?.signal.removeEventListener("abort", cancel);
       runBusy.current = false;
@@ -476,6 +493,7 @@ export function useStudio() {
     answerConfirmation(false);
     abort.current?.abort();
     runtime.resume();
+    if (runtime instanceof DesktopRuntime) await runtime.dispose();
     await settings.flush();
     await shortcuts.flush();
     await recovery.flush();

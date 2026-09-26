@@ -21,7 +21,7 @@ fn checked(path: &Path, bytes: u64, sha: &str) -> Result<PathBuf, String> {
 pub(super) fn assets() -> Result<(PathBuf, PathBuf), String> {
     let executable = std::env::current_exe().map_err(|_| ERROR)?;
     let parent = executable.parent().ok_or(ERROR)?;
-    let mut candidates = vec![parent.parent().ok_or(ERROR)?.to_path_buf()];
+    let mut candidates = vec![parent.parent().ok_or(ERROR)?.to_path_buf(), parent.join("cli")];
     #[cfg(debug_assertions)]
     candidates.push(
         Path::new(env!("CARGO_MANIFEST_DIR"))

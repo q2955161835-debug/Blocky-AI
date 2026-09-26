@@ -1,10 +1,9 @@
 //! Native CLI Runtime supervisor. The ledger and business worker have one custody boundary.
 use super::{
-    Lease, Store,
+    custody::Custody,
     execution::Execution,
     managed_wire::{self as wire, CHANNEL, Writer},
     protocol::{INVALID, keys, require},
-    session,
 };
 use serde_json::{Value, json};
 use std::{
@@ -12,11 +11,6 @@ use std::{
     sync::mpsc,
     time::{Duration, Instant},
 };
-struct Task {
-    lease: Option<Lease>,
-    execution: Execution,
-    record: Value,
-}
 fn cancel_worker(
     input: &Writer,
     cancelled: &mut bool,
@@ -32,67 +26,6 @@ fn cancel_worker(
         }
     }
     Ok(())
-}
-fn task_request(
-    tasks: &mut Vec<Task>,
-    current: &mut Option<usize>,
-    worker: &Execution,
-    root: &std::path::Path,
-    frame: &Value,
-    cancelled: bool,
-) -> Result<Value, String> {
-    let operation = frame["operation"].as_str().ok_or(INVALID)?;
-    keys(
-        frame,
-        &["kind", "id", "operation"],
-        match operation {
-            "open" => &["request"],
-            "commit" => &["action"],
-            _ => &[],
-        },
-    )?;
-    let settlement = operation == "close"
-        || (operation == "commit"
-            && matches!(
-                frame["action"]["kind"].as_str(),
-                Some("complete" | "uncertain" | "pause")
-            ));
-    require(!cancelled || settlement, "BLK-WORKFLOW-CANCELLED")?;
-    if operation == "open" {
-        require(current.is_none() && tasks.len() < 32, "BLK-WORKFLOW-OWNER")?;
-        let store = Store::new(root.to_path_buf())?;
-        let (mut lease, record) = session::open_task(&store, &frame["request"])?;
-        let mut execution = worker.task_view()?;
-        lease.bind_execution(&mut execution)?;
-        *current = Some(tasks.len());
-        tasks.push(Task {
-            lease: Some(lease),
-            execution,
-            record: record.clone(),
-        });
-        return Ok(record);
-    }
-    let task = tasks
-        .get_mut(current.ok_or("BLK-WORKFLOW-BINDING")?)
-        .ok_or(INVALID)?;
-    match operation {
-        "read" => Ok(task.record.clone()),
-        "commit" => {
-            session::runtime_action(&frame["action"])?;
-            task.record = task
-                .lease
-                .as_mut()
-                .ok_or(INVALID)?
-                .commit(&frame["action"])?;
-            Ok(task.record.clone())
-        }
-        // Retain every lease until the shared worker actually stops. This is only a channel close.
-        "close" => {
-            *current = None;
-            Ok(Value::Null)
-        }
-        _ => Err(INVALID.into()),
-    }
 }
 fn serve(output: &Writer) -> Result<(), String> {
     let (send, receive) = mpsc::sync_channel(8);
@@ -126,8 +59,7 @@ fn serve(output: &Writer) -> Result<(), String> {
     wire::reader(worker.take_stdout().ok_or(CHANNEL)?, true, send);
     worker.bootstrap()?;
     input.send(&first)?;
-    let mut tasks: Vec<Task> = Vec::new();
-    let mut current = None;
+    let mut custody = Custody::default();
     let mut serial = 0u64;
     let mut approval = None;
     let mut cancelled = false;
@@ -169,7 +101,7 @@ fn serve(output: &Writer) -> Result<(), String> {
                     keys(&message["value"], &["code", "result"], &[])?;
                     require(
                         message["value"]["code"].as_u64().is_some_and(|n| n <= 255)
-                            && current.is_none()
+                            && custody.closed()
                             && approval.is_none(),
                         INVALID,
                     )?;
@@ -186,9 +118,7 @@ fn serve(output: &Writer) -> Result<(), String> {
                         output
                             .send(&json!({"kind":"approval","id":id,"value":message["value"]}))?;
                     } else {
-                        let result = task_request(
-                            &mut tasks,
-                            &mut current,
+                        let result = custody.request(
                             &worker,
                             &root,
                             &message,
@@ -209,14 +139,7 @@ fn serve(output: &Writer) -> Result<(), String> {
     })();
     // Settlement is required on success, cancellation, malformed frames, EOF and timeout.
     worker.settle_process()?;
-    for mut task in tasks {
-        let proof = task.execution.stop()?;
-        let mut lease = task.lease.take().ok_or(INVALID)?;
-        lease.settle_execution(&proof)?;
-        if task.record.get("active").is_none() {
-            lease.release()?;
-        }
-    }
+    custody.settle(true)?;
     output.send(&outcome?)
 }
 pub fn main() -> i32 {

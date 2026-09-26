@@ -6,6 +6,9 @@ mod store;
 mod execution;
 mod managed_assets;
 mod managed_wire;
+mod custody;
+pub mod desktop;
+mod desktop_run;
 pub mod managed;
 mod staging;
 pub mod query;
@@ -19,3 +22,5 @@ pub use transitions::transition;
 mod tests;
 #[cfg(test)]
 mod execution_tests;
+#[cfg(test)]
+mod desktop_tests;

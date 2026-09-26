@@ -1,0 +1,218 @@
+{
+  "manifest": {
+    "schemaVersion": "blocky.project/v1",
+    "projectId": "project-829576b2-64aa-4134-8d5d-c887566df517",
+    "displayName": "有限状态机",
+    "modules": [
+      {
+        "moduleId": "main",
+        "displayName": "有限状态机",
+        "purpose": "state-machine",
+        "workspaceRef": "workspaces/main.workspace.json",
+        "exports": []
+      }
+    ],
+    "resources": [],
+    "appSurfaces": [],
+    "format": {
+      "createdWith": "blocky-desktop/0.5.0",
+      "minimumReaderVersion": "0.5.0"
+    }
+  },
+  "workspaces": {
+    "main": {
+      "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+          {
+            "type": "core.interaction.chat_entry",
+            "id": "on-event",
+            "x": 80,
+            "y": 70,
+            "fields": {
+              "NAME": "有限状态机"
+            },
+            "inputs": {
+              "CAPABILITIES": {
+                "block": {
+                  "type": "core.interaction.accept_text",
+                  "id": "accept-text"
+                }
+              },
+              "HANDLER": {
+                "block": {
+                  "type": "core.memory.read",
+                  "id": "step-1",
+                  "fields": {
+                    "SCOPE": "session",
+                    "KEY": "machine-state"
+                  },
+                  "next": {
+                    "block": {
+                      "type": "core.logic.condition",
+                      "id": "step-5",
+                      "fields": {
+                        "SOURCE": "memory",
+                        "OP": "truthy",
+                        "VALUE": ""
+                      },
+                      "inputs": {
+                        "THEN": {
+                          "block": {
+                            "type": "core.data.set",
+                            "id": "step-2",
+                            "fields": {
+                              "VALUE": "\"unchanged\""
+                            }
+                          }
+                        },
+                        "ELSE": {
+                          "block": {
+                            "type": "core.data.set",
+                            "id": "step-3",
+                            "fields": {
+                              "VALUE": "\"idle\""
+                            },
+                            "next": {
+                              "block": {
+                                "type": "core.memory.write",
+                                "id": "step-4",
+                                "fields": {
+                                  "SCOPE": "session",
+                                  "KEY": "machine-state",
+                                  "SOURCE": "result"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.logic.condition",
+                          "id": "step-9",
+                          "fields": {
+                            "SOURCE": "input",
+                            "OP": "equals",
+                            "VALUE": "start"
+                          },
+                          "inputs": {
+                            "THEN": {
+                              "block": {
+                                "type": "core.logic.condition",
+                                "id": "step-8",
+                                "fields": {
+                                  "SOURCE": "memory",
+                                  "OP": "equals",
+                                  "VALUE": "idle"
+                                },
+                                "inputs": {
+                                  "THEN": {
+                                    "block": {
+                                      "type": "core.data.set",
+                                      "id": "step-6",
+                                      "fields": {
+                                        "VALUE": "\"running\""
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "core.memory.write",
+                                          "id": "step-7",
+                                          "fields": {
+                                            "SCOPE": "session",
+                                            "KEY": "machine-state",
+                                            "SOURCE": "result"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.logic.condition",
+                              "id": "step-13",
+                              "fields": {
+                                "SOURCE": "input",
+                                "OP": "equals",
+                                "VALUE": "finish"
+                              },
+                              "inputs": {
+                                "THEN": {
+                                  "block": {
+                                    "type": "core.logic.condition",
+                                    "id": "step-12",
+                                    "fields": {
+                                      "SOURCE": "memory",
+                                      "OP": "equals",
+                                      "VALUE": "running"
+                                    },
+                                    "inputs": {
+                                      "THEN": {
+                                        "block": {
+                                          "type": "core.data.set",
+                                          "id": "step-10",
+                                          "fields": {
+                                            "VALUE": "\"done\""
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "core.memory.write",
+                                              "id": "step-11",
+                                              "fields": {
+                                                "SCOPE": "session",
+                                                "KEY": "machine-state",
+                                                "SOURCE": "result"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.memory.read",
+                                  "id": "step-14",
+                                  "fields": {
+                                    "SCOPE": "session",
+                                    "KEY": "machine-state"
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "core.output.structured",
+                                      "id": "step-15",
+                                      "fields": {
+                                        "SCHEMA": "schemas/result.json"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resources": {},
+  "schemas": {
+    "schemas/result.json": {
+      "type": "string"
+    }
+  },
+  "surfaces": {}
+}
