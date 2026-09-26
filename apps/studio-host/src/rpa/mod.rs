@@ -9,6 +9,7 @@ mod owner;
 mod process;
 pub mod protocol;
 pub mod recovery;
+pub mod recording;
 mod runner;
 mod module_session;
 pub(crate) mod language;

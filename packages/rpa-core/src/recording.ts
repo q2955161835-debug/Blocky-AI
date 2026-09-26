@@ -12,7 +12,7 @@ export const rpaRecordedActionSchema = z.object({
   action: z.enum(["click", "fill"]),
   locator: z.discriminatedUnion("kind", [
     z.object({ kind: z.literal("browser"), role: z.enum(["button", "link", "textbox", "searchbox", "checkbox", "radio", "combobox", "spinbutton", "switch", "menuitem", "tab"]), name: metadata }).strict(),
-    z.object({ kind: z.literal("uia"), automationId: metadata.optional(), name: metadata.optional(), controlType: metadata.optional() }).strict().refine(value => !!value.automationId || !!value.name),
+    z.object({ kind: z.literal("uia"), automationId: metadata.optional(), name: metadata.optional(), controlType: metadata.max(80).optional() }).strict().refine(value => !!value.automationId || !!value.name),
   ]),
   sensitive: z.boolean().optional(),
 }).strict();
