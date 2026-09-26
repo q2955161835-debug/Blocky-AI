@@ -1,4 +1,8 @@
-import { invoke } from "@tauri-apps/api/core";
+import {
+  workflowCall as call,
+  workflowError as error,
+  waitWorkflow,
+} from "./workflow-channel";
 import {
   assertWorkflowBinding,
   parseWorkflow,
@@ -6,18 +10,6 @@ import {
   type WorkflowSummary,
 } from "@blocky/runtime-core";
 
-const error = (value?: unknown) =>
-  Error(
-    String(value).match(/\bBLK-WORKFLOW-[A-Z-]+\b/)?.[0] ??
-      "BLK-WORKFLOW-CHANNEL",
-  );
-const call = async <T>(command: string, request: unknown): Promise<T> => {
-  try {
-    return await invoke<T>(command, { request });
-  } catch (e) {
-    throw error(e);
-  }
-};
 export const workflowNative = {
   list: async (projectId: string) => {
     const tasks = await call<WorkflowSummary[]>("workflow_query", {
@@ -76,7 +68,10 @@ export function studioWorkflowPorts(): WorkflowPorts {
         pending: Promise<unknown> | undefined;
       let cancelling: Promise<unknown> | undefined,
         cancelError: unknown,
+        channelError: Error | undefined,
         closing: Promise<void> | undefined;
+      const validToken = (value: unknown): value is string =>
+        typeof value === "string" && /^session-[a-f0-9-]{36}$/.test(value);
       const native = (operation: string, action?: unknown) =>
         call<unknown>("workflow_request", {
           sessionId: token,
@@ -106,6 +101,7 @@ export function studioWorkflowPorts(): WorkflowPorts {
                 throw error();
             }
             if (cancelError) throw cancelError;
+            if (channelError) throw channelError;
           } finally {
             signal.removeEventListener("abort", cancel);
           }
@@ -114,10 +110,26 @@ export function studioWorkflowPorts(): WorkflowPorts {
         const opened = await call<{ sessionId: string; record: unknown }>(
           "workflow_open",
           { schemaVersion: "blocky.workflow-session/v1", ...request },
+          {
+            signal,
+            onLate: async (opened) => {
+              if (!validToken(opened?.sessionId)) return;
+              const late = (operation: string) =>
+                call("workflow_request", {
+                  sessionId: opened.sessionId,
+                  projectId: request.definition.projectId,
+                  operation,
+                });
+              try {
+                await late("cancel");
+              } finally {
+                await late("close");
+              }
+            },
+          },
         );
+        if (!validToken(opened?.sessionId)) throw error();
         token = opened.sessionId;
-        if (typeof token !== "string" || !/^session-[a-f0-9-]{36}$/.test(token))
-          throw error();
         const record = parseWorkflow(opened.record);
         taskId = record.taskId;
         assertWorkflowBinding(
@@ -136,15 +148,29 @@ export function studioWorkflowPorts(): WorkflowPorts {
             ["complete", "uncertain", "pause"].includes(action?.kind ?? "");
           if (signal.aborted && !settlement)
             throw error("BLK-WORKFLOW-CANCELLED");
+          if (channelError) throw channelError;
           if (closing || pending) throw error("BLK-WORKFLOW-CHANNEL");
-          pending = native(operation, action);
-          try {
-            const saved = parseWorkflow(await pending);
+          const work = native(operation, action).then((reply) => {
+            const saved = parseWorkflow(reply);
             assertWorkflowBinding(saved, taskId, request.definition);
             return saved;
-          } finally {
-            pending = undefined;
-          }
+          });
+          const drained = work.then(
+            (saved) => {
+              pending = undefined;
+              return saved;
+            },
+            (failure) => {
+              pending = undefined;
+              channelError ??= error(failure);
+              cancel();
+              throw channelError;
+            },
+          );
+          pending = drained;
+          // Abort releases the caller immediately, but keeps the native request
+          // in the serial slot until its receipt or deadline has been observed.
+          return settlement ? drained : waitWorkflow(drained, { signal });
         };
         return {
           taskId,
