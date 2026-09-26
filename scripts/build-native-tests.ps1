@@ -11,6 +11,8 @@ try {
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/install-builder.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+    & node scripts/install-runtime-worker.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
+    if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/build-browser.mjs
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/install-browser.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
