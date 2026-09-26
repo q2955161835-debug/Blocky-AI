@@ -628,6 +628,46 @@ fn late_authorization_cancel_revokes_the_already_created_grant() {
     assert!(host.approvals.lock().unwrap().contains_key("request"));
 }
 #[test]
+fn retired_expired_grant_keeps_late_cancel_and_shutdown_settled() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let checkpoint = host.status(&token).unwrap()["checkpointId"].as_str().unwrap().to_owned();
+    host.approvals.lock().unwrap().insert(
+        "expired-request".into(),
+        Arc::new(Approval {
+            cancel: Arc::new(AtomicBool::new(false)),
+            active: AtomicBool::new(false),
+            unsettled: AtomicBool::new(false),
+            grant: Mutex::new(Some(token.clone())),
+            expires: now() + 300000,
+        }),
+    );
+    host.slot(&token).unwrap().state.lock().unwrap().expires = 0;
+    host.retire_expired().unwrap();
+    assert!(!host.sessions.lock().unwrap().contains_key(&token));
+    let saved = journal::Store::new(root.path().to_owned()).inspect(&checkpoint).unwrap();
+    assert_eq!(saved["status"], "stopped");
+    assert_eq!(saved["settled"], true);
+    host.cancel_authorization("expired-request").unwrap();
+    assert_eq!(host.authorize_attended("expired-request", prepared().plan).unwrap_err(), "BLK-RPA-CANCELLED");
+    host.shutdown().unwrap();
+}
+#[test]
+fn expired_unconfirmed_settlement_remains_reachable_and_blocks_exit() {
+    let host = RpaHost::default();
+    let token = grant(&host);
+    {
+        let slot = host.slot(&token).unwrap();
+        let mut session = slot.state.lock().unwrap();
+        session.expires = 0;
+        session.status = "settlement-failed";
+    }
+    assert_eq!(host.retire_expired().unwrap_err(), "BLK-RPA-SETTLEMENT-001");
+    assert!(host.sessions.lock().unwrap().contains_key(&token));
+    assert_eq!(host.shutdown().unwrap_err(), "BLK-RPA-SETTLEMENT-001");
+}
+#[test]
 fn shutdown_cancels_other_sessions_even_when_one_approval_cannot_settle() {
     let host = Arc::new(RpaHost::default());
     let token = grant(&host);

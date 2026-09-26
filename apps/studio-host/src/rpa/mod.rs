@@ -423,20 +423,25 @@ impl RpaHost {
         self.insert_checkpoint(prepared, None)
     }
     fn retire_expired(&self) -> Result<(), String> {
-        let mut sessions = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?;
-        let expired = sessions
+        let expired = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?
             .iter()
             .filter_map(|(token, slot)| {
                 let state = slot.state.lock().ok()?;
                 (!state.active && state.expires <= now())
-                    .then(|| (token.clone(), state.target.clone()))
+                    .then(|| token.clone())
             })
             .collect::<Vec<_>>();
-        for (token, target) in expired {
-            if let Binding::Browser(target) = target {
-                self.browsers.close(&target)?;
+        for token in expired {
+            // Retirement must prove settlement and persist it before dropping ownership.
+            // Keep failed sessions reachable by shutdown, including expired ones.
+            self.stop(&token)?;
+            for approval in self.approvals.lock().map_err(|_| "BLK-RPA-STATE-001")?.values() {
+                let mut grant = approval.grant.lock().map_err(|_| "BLK-RPA-STATE-001")?;
+                if grant.as_deref() == Some(token.as_str()) {
+                    *grant = None;
+                }
             }
-            sessions.remove(&token);
+            self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?.remove(&token);
         }
         Ok(())
     }
