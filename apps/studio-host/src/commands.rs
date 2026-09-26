@@ -75,7 +75,7 @@ pub async fn open_project(
     state: tauri::State<'_, Handles>,
 ) -> Result<Option<Opened>, String> {
     main_only(&window)?;
-    let Some(file) = rfd::AsyncFileDialog::new()
+    let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("打开 Blocky 项目")
         .add_filter("Blocky 项目", &["blocky"])
         .pick_file()
@@ -106,7 +106,7 @@ pub async fn open_project(
 pub async fn open_migration(window: tauri::WebviewWindow) -> Result<Option<ProjectFiles>, String> {
     main_only(&window)?;
     crate::window_lifecycle::visible(&window)?;
-    let Some(file) = rfd::AsyncFileDialog::new()
+    let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("选择要迁移的旧项目")
         .add_filter("Blocky 项目", &["blocky"])
         .pick_file()
@@ -123,7 +123,7 @@ pub async fn save_migration(
 ) -> Result<Option<Saved>, String> {
     main_only(&window)?;
     project_store::validate_files(&files)?;
-    let Some(file) = rfd::AsyncFileDialog::new()
+    let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("迁移为新项目（不覆盖原件）")
         .set_file_name("迁移后的项目.blocky")
         .add_filter("Blocky 项目", &["blocky"])
@@ -162,7 +162,7 @@ pub async fn save_project(
             .ok_or("BLK-PERM-001")?;
         (path, id)
     } else {
-        let Some(file) = rfd::AsyncFileDialog::new()
+        let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
             .set_title("保存 Blocky 项目")
             .set_file_name("我的项目.blocky")
             .add_filter("Blocky 项目", &["blocky"])

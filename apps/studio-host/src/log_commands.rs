@@ -53,7 +53,7 @@ pub async fn export_diagnostics(
         to_timestamp,
         scope,
     })?;
-    let Some(file) = rfd::AsyncFileDialog::new()
+    let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("导出诊断摘要")
         .set_file_name("blocky-diagnostics.json")
         .add_filter("诊断文件", &["json"])

@@ -15,7 +15,7 @@ pub async fn create_terminal(
     output_budget: usize,
 ) -> Result<Option<Snapshot>, String> {
     crate::window_lifecycle::visible(&window)?;
-    let Some(folder) = rfd::AsyncFileDialog::new()
+    let Some(folder) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("选择终端工作目录")
         .pick_folder()
         .await

@@ -22,7 +22,7 @@ pub async fn conversion_scan(
     subdir: Option<String>,
 ) -> Result<Option<Value>, String> {
     guard(&window)?;
-    let picked = rfd::AsyncFileDialog::new()
+    let picked = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("选择要转换的仓库")
         .pick_folder()
         .await;

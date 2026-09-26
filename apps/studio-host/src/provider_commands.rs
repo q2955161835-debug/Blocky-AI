@@ -42,7 +42,7 @@ pub async fn provider_call(
         roles,
         digest
     );
-    let answer = rfd::AsyncMessageDialog::new()
+    let answer = rfd::AsyncMessageDialog::new().set_parent(&window)
         .set_title("批准模型请求")
         .set_description(description)
         .set_buttons(rfd::MessageButtons::YesNo)

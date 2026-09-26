@@ -7,7 +7,7 @@ pub async fn import_secret(
     variable: String,
 ) -> Result<bool, String> {
     crate::window_lifecycle::visible(&window)?;
-    let Some(file) = rfd::AsyncFileDialog::new()
+    let Some(file) = rfd::AsyncFileDialog::new().set_parent(&window)
         .set_title("选择包含秘密配置的本地 .env 文件")
         .pick_file()
         .await

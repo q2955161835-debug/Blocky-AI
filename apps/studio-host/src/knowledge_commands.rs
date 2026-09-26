@@ -30,7 +30,7 @@ pub async fn knowledge_source_add(
         if url.is_some() {
             return Err("BLK-KNOW-INVALID".into());
         }
-        let dialog = rfd::AsyncFileDialog::new().set_title("选择知识来源");
+        let dialog = rfd::AsyncFileDialog::new().set_parent(&window).set_title("选择知识来源");
         let picked = match kind.as_str() {
             "file" => dialog.pick_file().await,
             "directory" | "repository" => dialog.pick_folder().await,

@@ -34,7 +34,7 @@ pub async fn builder_run(
             start.request.create_surface,
             digest
         );
-        if rfd::AsyncMessageDialog::new()
+        if rfd::AsyncMessageDialog::new().set_parent(&window)
             .set_title("批准构建模型请求")
             .set_description(description)
             .set_buttons(rfd::MessageButtons::YesNo)
