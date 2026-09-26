@@ -29,6 +29,73 @@ fn definition() -> Value {
 }
 
 #[test]
+fn desktop_workflow_owns_one_bound_lease_and_preserves_cancelled_receipts() {
+    let dir = temp();
+    let host = host::WorkflowHost::new(dir.path().to_owned());
+    let initial = json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":null});
+    let opened = host.open(&initial).unwrap();
+    assert_eq!(host.open(&initial).unwrap_err(), "BLK-WORKFLOW-OWNER");
+    let token = opened["sessionId"].clone();
+    let task = opened["record"]["taskId"].as_str().unwrap();
+    let request = |operation: &str| json!({"sessionId":token,"projectId":"project-one","operation":operation});
+    let mut wrong = request("read");
+    wrong["projectId"] = json!("other");
+    assert_eq!(host.request(&wrong).unwrap_err(), "BLK-WORKFLOW-BINDING");
+    let mut begin = request("commit");
+    begin["action"] = json!({"kind":"begin","revision":1});
+    assert_eq!(host.request(&begin).unwrap()["status"], "executing");
+    host.request(&request("cancel")).unwrap();
+    assert_eq!(
+        host.request(&request("read")).unwrap_err(),
+        "BLK-WORKFLOW-CANCELLED"
+    );
+    assert_eq!(host.request(&begin).unwrap_err(), "BLK-WORKFLOW-CANCELLED");
+    let mut complete = request("commit");
+    complete["action"] = json!({"kind":"complete","revision":2,"state":"saved"});
+    assert_eq!(host.request(&complete).unwrap()["state"], "saved");
+    assert_eq!(host.request(&request("close")).unwrap()["released"], true);
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    let record = store.read(task).unwrap();
+    assert_eq!(record["revision"], 3);
+    store
+        .acquire(task, &definition(), 3)
+        .unwrap()
+        .release()
+        .unwrap();
+    host.shutdown().unwrap();
+    assert_eq!(host.open(&initial).unwrap_err(), "BLK-WORKFLOW-CANCELLED");
+}
+
+#[test]
+fn desktop_workflow_unknown_intent_survives_close_and_runtime_cannot_decide() {
+    let dir = temp();
+    let host = host::WorkflowHost::new(dir.path().to_owned());
+    let opened = host.open(&json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":null})).unwrap();
+    let command = |action: Value| json!({"sessionId":opened["sessionId"],"projectId":"project-one","operation":"commit","action":action});
+    for kind in ["decide", "resolve", "resume", "rollback"] {
+        assert_eq!(
+            host.request(&command(json!({"kind":kind,"revision":1})))
+                .unwrap_err(),
+            "BLK-WORKFLOW-INVALID"
+        );
+    }
+    host.request(&command(json!({"kind":"begin","revision":1})))
+        .unwrap();
+    let closed = host
+        .request(
+            &json!({"sessionId":opened["sessionId"],"projectId":"project-one","operation":"close"}),
+        )
+        .unwrap();
+    assert_eq!(closed["released"], false);
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    let record = store
+        .read(opened["record"]["taskId"].as_str().unwrap())
+        .unwrap();
+    assert_eq!(record["status"], "executing");
+    assert!(record.get("active").is_some());
+}
+
+#[test]
 fn workflow_session_persists_steps_and_cannot_forge_business_approval() {
     use std::io::Cursor;
     let dir = temp();

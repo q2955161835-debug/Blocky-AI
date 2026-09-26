@@ -153,6 +153,7 @@ pub fn finish_exit(
         return Err("BLK-WINDOW-001".into());
     }
     tasks.shutdown()?;
+    window.state::<blocky_studio::workflow::host::WorkflowHost>().shutdown()?;
     window.state::<blocky_studio::rpa::RpaHost>().shutdown()?;
     window.state::<blocky_studio::builder::BuilderHost>().shutdown()?;
     window

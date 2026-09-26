@@ -11,6 +11,7 @@ import {
   configureBlock,
   editSelection,
   copyAcrossModules,
+  findBlock,
   type SelectionEdit,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
@@ -22,17 +23,19 @@ import {
   createArchitectureStarter,
 } from "@blocky/block-catalog";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
-import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
+import { Runtime, hostAdapters, type RunResult, type WorkflowSummary } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
 import { studioAgentServices } from "./agent";
 import { studioRpaModules } from "./rpaModules";
+import { studioWorkflowPorts } from "./workflow";
 import { useRpaInput } from "./useRpaInput";
 import {
   RedactedBus,
   projectLog,
   type RuntimeEvent,
 } from "@blocky/observability";
-import { interactionKey, type SourceRef } from "@blocky/language-schema";
+import { digest, interactionKey, type SourceRef } from "@blocky/language-schema";
+import { resolveResource } from "@blocky/resource-registry";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
@@ -63,6 +66,8 @@ export function useStudio() {
   const settings = useSettings(snapshot.project, controller, setMessage);
   const shortcuts = useShortcuts(setMessage);
   const resources = useResources(setMessage);
+  const workflowRegistry = useRef(resources.map);
+  workflowRegistry.current = resources.map;
   const recovery = useRecovery(
     snapshot.project,
     snapshot.dirty,
@@ -111,7 +116,7 @@ export function useStudio() {
       () =>
         new Runtime({
           delayMs: 160,
-          adapters: hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)),
+          adapters: { ...hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)), workflow: studioWorkflowPorts() },
         }),
     ),
     [bus] = useState(() => new RedactedBus());
@@ -197,6 +202,7 @@ export function useStudio() {
       onProgress?: (message: string) => void;
     },
     debug?: { startBlockId?: string },
+    workflow?: WorkflowSummary,
   ) => {
     if (
       closing.current ||
@@ -213,9 +219,14 @@ export function useStudio() {
             e.moduleId === request.moduleId &&
             e.interactionId === request.interactionId,
         )
-      : activeEntry;
+      : workflow
+        ? compiled.interaction.entries.find(e =>
+            workflow.projectId === snapshot.project.manifest.projectId &&
+            e.moduleId === workflow.moduleId &&
+            findBlock(snapshot.project.workspaces[e.moduleId]?.blocks.blocks ?? [], e.interactionId)?.inputs?.HANDLER?.block?.id === workflow.blockId)
+        : activeEntry;
     if (!entry) {
-      setMessage("请先添加收到问题积木。");
+      setMessage(workflow ? "工作流原入口已不存在，无法继续任务。" : "请先添加收到问题积木。");
       return;
     }
     runBusy.current = true;
@@ -241,11 +252,12 @@ export function useStudio() {
         request?.question ?? question,
         {
           moduleId: entry.moduleId,
+          ...(workflow ? { workflowTaskId: workflow.taskId } : {}),
           debug: { breakpoints, ...debug },
           signal: abort.current.signal,
           userRegistry: resources.map,
           onEvent(event) {
-            if (event.type === "run.paused") setPaused(true);
+            if (event.type === "run.paused" && event.data?.reason !== "workflow-waiting") setPaused(true);
             if (event.type === "run.resumed") setPaused(false);
             eventBuffer.current.push(event);
             if (eventBuffer.current.length > 500) {
@@ -555,6 +567,16 @@ export function useStudio() {
     setQuestion,
     bus,
     run,
+    resumeWorkflow: (task: WorkflowSummary) => run(undefined, undefined, task),
+    validateWorkflow: async (task: WorkflowSummary) => {
+      const current = controller.getSnapshot(), registry = workflowRegistry.current;
+      const project = current.project;
+      const resolved = project.manifest.resources.map(reference => resolveResource(project, reference.resourceId, reference.kind, registry));
+      const planDigest = await digest({project, resources:resolved});
+      if (project.manifest.projectId !== task.projectId || planDigest !== task.planDigest ||
+        controller.getSnapshot().revision !== current.revision || workflowRegistry.current !== registry)
+        throw Error("BLK-WORKFLOW-BINDING");
+    },
     stop: () => abort.current?.abort(),
     save,
     open,

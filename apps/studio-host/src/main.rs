@@ -16,6 +16,7 @@ mod terminal_commands;
 mod user_commands;
 mod window_lifecycle;
 mod window_state;
+mod workflow_commands;
 use blocky_studio::project_store;
 use tauri::Manager;
 fn main() {
@@ -61,6 +62,7 @@ fn main() {
         .setup(move |app| {
             let root = match selected { Some(root) => root, None => app.path().app_local_data_dir()? };
             app.manage(blocky_studio::profile::DataRoot(root.clone()));
+            app.manage(blocky_studio::workflow::host::WorkflowHost::new(root.join("workflow")));
             app.manage(blocky_studio::rpa::RpaHost::with_journal(
                 root.join("rpa/checkpoints"),
             ));
@@ -96,6 +98,10 @@ fn main() {
         })
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
+            workflow_commands::workflow_open,
+            workflow_commands::workflow_request,
+            workflow_commands::workflow_query,
+            workflow_commands::workflow_decide,
             rpa_commands::rpa_targets,
             rpa_capture_commands::rpa_captures,
             rpa_capture_commands::rpa_capture_read,

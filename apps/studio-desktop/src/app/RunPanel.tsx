@@ -7,6 +7,8 @@ import { RunOutputs } from './RunOutputs';
 import { RunModelChoice } from './RunModelChoice';
 import { RunBudgetSummary } from './RunBudgetSummary';
 import { TracePanel } from './TracePanel';
+import { WorkflowTasks } from './WorkflowTasks';
+import { findBlock } from '@blocky/project-model';
 export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studio; execute(id: string): void; onTraceContext?(x: number, y: number): void }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
@@ -18,7 +20,7 @@ export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studi
             ? "运行中"
             : s.result?.status === "completed"
               ? "已完成"
-              : "就绪"}
+              : s.result?.status === "waiting" ? "等待处理" : "就绪"}
         </span>
       </div>
       {!entries.length ? (
@@ -91,7 +93,7 @@ export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studi
                   ? "已停止"
                   : s.result.status === "failed"
                     ? "运行失败"
-                    : "回答"}
+                    : s.result.status === "waiting" ? "等待工作流处理" : "回答"}
               </span>
               <p>{s.result.answer || "请在运行日志中查看详情。"}</p>
               <RunOutputs key={s.result.events[0]?.runId} result={s.result}/>
@@ -123,6 +125,20 @@ export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studi
           <TracePanel studio={s} onContext={onTraceContext} />
         </>
       )}
+      <WorkflowTasks
+        key={s.snapshot.project.manifest.projectId}
+        projectId={s.snapshot.project.manifest.projectId}
+        refreshKey={`${s.result?.workflow?.taskId ?? ""}:${s.result?.workflow?.revision ?? ""}:${s.running}`}
+        disabled={!s.canRun}
+        confirm={s.confirm}
+        validateTask={s.validateWorkflow}
+        onResume={task=>void s.resumeWorkflow(task)}
+        onLocate={task=>s.navigate({projectId:task.projectId,moduleId:task.moduleId,blockId:task.stepId ?? task.blockId})}
+        approvalLabel={task=>{
+          const label=findBlock(s.snapshot.project.workspaces[task.moduleId]?.blocks.blocks ?? [],task.stepId ?? "")?.fields?.LABEL;
+          return typeof label === "string" ? label : task.stepId ?? "工作流审批";
+        }}
+      />
     </section>
   );
 }

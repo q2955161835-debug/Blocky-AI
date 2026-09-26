@@ -7,6 +7,7 @@ mod staging;
 pub mod query;
 pub mod session;
 pub mod decision;
+pub mod host;
 pub use protocol::{create, parse, summary};
 pub use store::{Lease, Store};
 pub use transitions::transition;

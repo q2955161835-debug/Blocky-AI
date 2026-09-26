@@ -28,14 +28,15 @@ struct Envelope {
     owner: Option<Identity>,
     lease_id: Option<String>,
 }
+#[derive(Clone)]
 pub struct Store {
     root: PathBuf,
     profile: String,
 }
 /// Held by the actual native execution process, never a per-write helper process.
 /// Dropping it releases the OS lock but preserves the owner evidence on disk.
-pub struct Lease<'a> {
-    store: &'a Store,
+pub struct Lease {
+    store: Store,
     task_id: String,
     owner: Identity,
     lease_id: String,
@@ -277,12 +278,7 @@ impl Store {
         )?;
         protocol::summary(&record)
     }
-    pub fn acquire(
-        &self,
-        id: &str,
-        definition: &Value,
-        revision: u64,
-    ) -> Result<Lease<'_>, String> {
+    pub fn acquire(&self, id: &str, definition: &Value, revision: u64) -> Result<Lease, String> {
         protocol::definition(definition)?;
         self.path(id)?;
         self.check_root()?;
@@ -313,7 +309,7 @@ impl Store {
         envelope.lease_id = Some(lease_id.clone());
         self.write_unlocked(&envelope)?;
         Ok(Lease {
-            store: self,
+            store: self.clone(),
             task_id: id.into(),
             owner,
             lease_id,
@@ -321,7 +317,7 @@ impl Store {
         })
     }
 }
-impl Lease<'_> {
+impl Lease {
     fn owned(&self) -> Result<Envelope, String> {
         let envelope = self.store.read_unlocked(&self.task_id)?;
         require(
