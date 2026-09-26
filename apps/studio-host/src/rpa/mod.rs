@@ -2,6 +2,7 @@ pub mod binding;
 pub(crate) mod browser;
 pub use browser::BrowserStart;
 pub mod journal;
+pub mod cleanup;
 #[cfg(test)]
 mod native_tests;
 mod owner;
@@ -14,6 +15,8 @@ pub(crate) mod language;
 pub mod target;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod cleanup_tests;
 mod worker;
 pub use runner::main as runner_main;
 pub use module_session::main as module_session_main;
@@ -58,6 +61,7 @@ struct Session {
     status: &'static str,
     next: usize,
     active: bool,
+    settlement_confirmed: bool,
     receipts: Vec<Receipt>,
     cancel: Arc<AtomicBool>,
 }
@@ -165,6 +169,7 @@ impl RpaHost {
             root_id: session.root_id.clone(),
             next: session.next,
             status: session.status.into(),
+            settled: session.settlement_confirmed,
             receipts: session.receipts.clone(),
             updated_at_ms: now(),
         };
@@ -457,6 +462,7 @@ impl RpaHost {
             status: "ready",
             next: saved.as_ref().map(|s| s.next).unwrap_or(0),
             active: false,
+            settlement_confirmed: false,
             receipts: saved
                 .as_ref()
                 .map(|s| s.receipts.clone())
@@ -700,6 +706,7 @@ impl RpaHost {
             return Err("BLK-RPA-SETTLEMENT-001".into());
         }
         if !s.active && ["completed", "stopped"].contains(&s.status) {
+            if s.settlement_confirmed { return Ok(()); }
             if let Binding::Browser(target) = &s.target {
                 if let Err(code) = self.browsers.close(target) {
                     s.status = "settlement-failed";
@@ -707,7 +714,11 @@ impl RpaHost {
                     return Err(code);
                 }
             }
-            return Ok(());
+            s.settlement_confirmed = true;
+            return self.persist(&mut s).inspect_err(|_| {
+                s.settlement_confirmed = false;
+                s.status = "persistence-failed";
+            });
         }
         s.cancel.store(true, Ordering::SeqCst);
         s.status = "stopping";
@@ -730,7 +741,9 @@ impl RpaHost {
             }
         }
         s.status = "stopped";
+        s.settlement_confirmed = true;
         self.persist(&mut s).inspect_err(|_| {
+            s.settlement_confirmed = false;
             s.status = "persistence-failed";
         })
     }

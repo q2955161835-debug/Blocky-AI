@@ -82,6 +82,20 @@ it("discovers real native targets and exposes attended execution commands", () =
   const commands = run(["command", "list", "--query", "rpa run", "--json"]);
   expect(commands.result.data.commands[0].usage).toContain("--control-stdin");
 });
+it("discovers explicit checkpoint deletion and rejects stale or malformed references", async () => {
+  const commands = run(["command", "list", "--query", "checkpoint-delete", "--json"]);
+  expect(commands.result.data.commands[0].usage).toContain("--revision");
+  expect(run(["schema", "show", "blocky.rpa-checkpoint-delete/v1", "--json"]).code).toBe(0);
+  const malformed = run(["rpa", "checkpoint-delete", "checkpoint-../outside", "--revision", "1", "--json"]);
+  expect(malformed.code).toBe(3);
+  expect(malformed.result.error.code).toBe("BLK-RPA-JOURNAL-002");
+  const dir = await mkdtemp(resolve("try/stage7-rpa-delete-"));
+  try {
+    const missing = run(["rpa", "checkpoint-delete", `checkpoint-${crypto.randomUUID()}`, "--revision", "1", "--json"], { ...process.env, LOCALAPPDATA: dir });
+    expect(missing.code).not.toBe(0);
+    expect(missing.result.error.code).toBe("BLK-RPA-JOURNAL-001");
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 it("rejects unsupported native execution before opening an approval dialog", async () => {
   const dir = await mkdtemp(resolve("try/stage7-rpa-native-"));
   try {

@@ -71,6 +71,7 @@ fn main() {
             rpa_commands::rpa_targets,
             rpa_commands::rpa_checkpoints,
             rpa_commands::rpa_checkpoint,
+            rpa_commands::rpa_checkpoint_delete,
             rpa_commands::rpa_recovery_preview,
             rpa_commands::rpa_recover,
             rpa_commands::rpa_authorize,

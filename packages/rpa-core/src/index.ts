@@ -4,6 +4,12 @@ export { compileRpaSession, planToRpaBlocks, isRpaSession, isRpaStep, rpaNodePer
 export { type RpaModuleHandle, type RpaModulePorts, readRpaResult } from "./module-ports";
 
 const id = z.string().max(200).regex(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/);
+export const rpaCheckpointDeleteSchema = z.object({
+  schemaVersion: z.literal("blocky.rpa-checkpoint-delete/v1"),
+  checkpointId: id.max(80).startsWith("checkpoint-"),
+  revision: z.number().int().min(1).max(2048),
+}).strict();
+export type RpaCheckpointDelete = z.infer<typeof rpaCheckpointDeleteSchema>;
 const locator = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("browser"), role: z.string().min(1).max(80), name: z.string().max(200).optional() }).strict(),
   z.object({ kind: z.literal("uia"), automationId: z.string().min(1).max(200).optional(), name: z.string().min(1).max(200).optional(), controlType: z.string().min(1).max(80).optional() }).strict(),

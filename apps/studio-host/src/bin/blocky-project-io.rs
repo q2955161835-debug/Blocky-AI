@@ -28,7 +28,7 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
-    if matches!(value["operation"].as_str(), Some("rpa-checkpoints" | "rpa-checkpoint" | "rpa-recovery-preview")) {
+    if matches!(value["operation"].as_str(), Some("rpa-checkpoints" | "rpa-checkpoint" | "rpa-recovery-preview" | "rpa-checkpoint-delete")) {
         let result = blocky_studio::rpa::journal::local_root()
             .and_then(|root| blocky_studio::rpa::journal::dispatch(root, value));
         return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };

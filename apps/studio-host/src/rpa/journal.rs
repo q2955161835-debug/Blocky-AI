@@ -29,6 +29,8 @@ pub(super) struct Snapshot {
     pub root_id: Vec<i32>,
     pub next: usize,
     pub status: String,
+    #[serde(default)]
+    pub settled: bool,
     pub receipts: Vec<Receipt>,
     pub updated_at_ms: u64,
 }
@@ -48,6 +50,8 @@ impl Snapshot {
             || self.next > self.plan.steps.len()
             || self.receipts.len() > self.plan.steps.len()
             || self.updated_at_ms > 9007199254740991
+            || self.settled && (!["completed", "stopped", "failed"].contains(&self.status.as_str())
+                || self.status == "completed" && self.next != self.plan.steps.len())
             || self
                 .owner
                 .as_ref()
@@ -104,10 +108,12 @@ impl Snapshot {
         Ok(())
     }
     pub fn summary(&self) -> Value {
+        let cleanup = super::cleanup::eligible(self);
         json!({"schemaVersion":self.schema_version,"checkpointId":self.checkpoint_id,"revision":self.revision,
             "planId":self.plan.plan_id,"planDigest":self.plan_digest,"targetIdentity":self.target.identity(),
             "status":self.status,"completedSteps":self.next,"totalSteps":self.plan.steps.len(),"receipts":self.receipts,
-            "updatedAtMs":self.updated_at_ms,"resumable":super::recovery::eligible(self).is_ok(),"requiresRecoveryApproval":true})
+            "updatedAtMs":self.updated_at_ms,"resumable":super::recovery::eligible(self).is_ok(),"requiresRecoveryApproval":true,
+            "settled":self.settled,"deletable":cleanup.is_ok(),"deleteBlockedCode":cleanup.err()})
     }
 }
 pub struct Store {
@@ -125,6 +131,7 @@ struct InspectRequest {
     operation: String,
     checkpoint_id: Option<String>,
     plan: Option<Plan>,
+    deletion: Option<super::cleanup::Request>,
 }
 pub fn dispatch(root: PathBuf, value: Value) -> Result<Value, String> {
     let request: InspectRequest = serde_json::from_value(value).map_err(|_| BINDING)?;
@@ -132,6 +139,11 @@ pub fn dispatch(root: PathBuf, value: Value) -> Result<Value, String> {
         return Err(BINDING.into());
     }
     let store = Store::new(root);
+    if request.operation == "rpa-checkpoint-delete" {
+        if request.checkpoint_id.is_some() || request.plan.is_some() { return Err(BINDING.into()); }
+        return store.delete(&request.deletion.ok_or(BINDING)?);
+    }
+    if request.deletion.is_some() { return Err(BINDING.into()); }
     match request.operation.as_str() {
         "rpa-checkpoints" if request.checkpoint_id.is_none() && request.plan.is_none() => {
             Ok(json!(store.summaries()?))
@@ -258,6 +270,15 @@ impl Store {
         super::recovery::eligible(&saved)?;
         Ok(json!({"checkpoint":saved.summary(),"plan":saved.plan}))
     }
+    pub fn delete(&self, request: &super::cleanup::Request) -> Result<Value, String> {
+        request.validate()?;
+        let _lock = self.lock()?;
+        let saved = self.read_unlocked(&request.checkpoint_id)?;
+        if saved.revision != request.revision { return Err(CONFLICT.into()); }
+        super::cleanup::eligible(&saved)?;
+        std::fs::remove_file(self.path(&request.checkpoint_id)?).map_err(|_| IO)?;
+        Ok(json!({"checkpointId":request.checkpoint_id,"revision":request.revision,"deleted":true}))
+    }
     pub fn summaries(&self) -> Result<Vec<Value>, String> {
         let _lock = self.lock()?;
         self.files()?
@@ -304,6 +325,7 @@ impl Store {
         super::recovery::eligible(&current)?;
         current.owner = Some(super::recovery::new_owner()?);
         current.status = "ready".into();
+        current.settled = false;
         current.revision = self.write_locked(
             current.clone(),
             current.revision,

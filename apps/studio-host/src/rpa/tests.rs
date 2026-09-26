@@ -1,6 +1,6 @@
 use super::*;
 use serde_json::json;
-fn prepared() -> Prepared {
+pub(super) fn prepared() -> Prepared {
     let plan:Plan=serde_json::from_value(json!({"schemaVersion":"blocky.rpa/v1","planId":"test","target":{"kind":"windows","identity":"fixture"},"steps":[{"stepId":"first","action":"click","locator":{"kind":"uia","automationId":"ok"},"effectKey":"once"},{"stepId":"second","action":"find","locator":{"kind":"uia","automationId":"done"}}]})).unwrap();
     Prepared {
         plan,

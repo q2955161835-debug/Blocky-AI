@@ -1,4 +1,4 @@
-import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, rpaBrowserStartSchema, planToRpaBlocks, type RecordedAction } from "@blocky/rpa-core";
+import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, rpaBrowserStartSchema, rpaCheckpointDeleteSchema, planToRpaBlocks, type RecordedAction } from "@blocky/rpa-core";
 import { z } from "zod";
 import { allow, required, type Args } from "./arguments";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
@@ -15,6 +15,7 @@ export const rpaHelp = [
   "rpa recovery-preview <checkpoint-id> --json",
   "rpa recover <plan.json> --recovery <recovery.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa checkpoint <checkpoint-id> [--plan <plan.json>] --json",
+  "rpa checkpoint-delete <checkpoint-id> --revision <number> --json",
   "rpa run <plan.json> [--browser-url <url> --project-id <id>] [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa validate <plan.json> --json",
   "rpa recording-import <recording.json> --target-kind <browser|windows> --target-identity <identity> --plan-id <id> --output <draft.json> --json",
@@ -35,6 +36,12 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
   if (command === "rpa.recovery-preview") {
     allow(args, ["json"], 3);
     return { code: 0, result: envelope(command, { preview: await nativeUserOperation("rpa-recovery-preview", { checkpointId: args.words[2] }, signal), modelApiCalled: false }) };
+  }
+  if (command === "rpa.checkpoint-delete") {
+    allow(args, ["revision", "json"], 3);
+    const deletion = rpaCheckpointDeleteSchema.safeParse({ schemaVersion: "blocky.rpa-checkpoint-delete/v1", checkpointId: args.words[2], revision: Number(required(args, "revision")) });
+    if (!deletion.success) throw new CliError(3, "BLK-RPA-JOURNAL-002", "执行记录删除请求无效。", "先运行 rpa checkpoint，使用当前记录的 ID 和 revision。");
+    return { code: 0, result: envelope(command, { deletion: await nativeUserOperation("rpa-checkpoint-delete", { deletion: deletion.data }, signal), modelApiCalled: false }) };
   }
   if (command === "rpa.checkpoints") {
     allow(args, ["json"], 2);

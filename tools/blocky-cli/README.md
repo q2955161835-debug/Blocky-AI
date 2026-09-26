@@ -203,6 +203,8 @@ Host 原生确认全部计划和网址后才启动已安装的 Microsoft Edge，
 
 `rpa checkpoints` 查询加密执行记录，`rpa recovery-preview <id>` 显式读取恢复草案。Windows UIA 可使用 `rpa recover <原计划> --recovery <条件文件> --jsonl` 重新授权并核对完成副作用的目标状态，跳过已完成步骤；Schema 为 `blocky.rpa-recovery/v1`。未知结果、活跃旧进程、状态不符和浏览器临时会话均不能直接恢复。
 
+查询返回 `settled`、`deletable` 和 `deleteBlockedCode`。选中可删除记录后，用 `rpa checkpoint-delete <id> --revision <当前修订号> --json` 显式删除；删除不可撤销，只移除执行回执，不改变目标应用。Host 重新核对全部条件，修订变化即拒绝。原执行进程必须已退出，且记录已结算、无未知副作用、不可申请恢复；旧格式没有结算证明时保留。不会自动清理记录。若请求中断或回执无法确认，请重新查询列表核对结果。
+
 完整支持范围见[契约 15](../../doc/技术设计/正式契约/15-阶段6-7调试与有人值守自动化.md)。真实大模型 API 调用：否。
 
 ## Agent 生产力闭环

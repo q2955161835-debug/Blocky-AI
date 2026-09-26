@@ -51,6 +51,20 @@ pub async fn rpa_checkpoint(
     .map_err(|_| "BLK-RPA-WORKER-001")?
 }
 #[tauri::command]
+pub async fn rpa_checkpoint_delete(
+    window: tauri::WebviewWindow,
+    deletion: rpa::cleanup::Request,
+) -> Result<Value, String> {
+    visible(&window)?;
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        visible(&window)?;
+        let root = window.app_handle().path().app_local_data_dir()
+            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        rpa::journal::Store::new(root.join("rpa/checkpoints")).delete(&deletion)
+    }).await.map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
 pub async fn rpa_authorize(
     window: tauri::WebviewWindow,
     request_id: String,

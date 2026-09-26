@@ -1,11 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { RpaGrant, RpaPlan, RpaReceipt, RpaRecovery, RpaBrowserStart } from "@blocky/rpa-core";
+import type { RpaGrant, RpaPlan, RpaReceipt, RpaRecovery, RpaBrowserStart, RpaCheckpointDelete } from "@blocky/rpa-core";
 export type RpaTarget = { identity: string; title: string; className: string; processId: number };
 export type RpaStatus = { status: string; nextStep: string | null; active: boolean; receipts: RpaReceipt[]; expiresAt: number; checkpointId?: string | null };
-export type RpaCheckpoint = { checkpointId: string; revision: number; planId: string; planDigest: string; targetIdentity: string; status: string; completedSteps: number; totalSteps: number; receipts: RpaReceipt[]; updatedAtMs: number; resumable: boolean };
+export type RpaCheckpoint = { checkpointId: string; revision: number; planId: string; planDigest: string; targetIdentity: string; status: string; completedSteps: number; totalSteps: number; receipts: RpaReceipt[]; updatedAtMs: number; resumable: boolean; settled?: boolean; deletable?: boolean; deleteBlockedCode?: string | null };
 export type RpaRecoveryPreview = { checkpoint: RpaCheckpoint; plan: RpaPlan };
 export type RpaRecoveryRun = { plan: RpaPlan; recovery: RpaRecovery; inputs: Record<string, string> };
 export const rpaNative = {
+  deleteCheckpoint: (deletion: RpaCheckpointDelete) => invoke<{checkpointId: string; revision: number; deleted: true}>("rpa_checkpoint_delete", { deletion }),
   recoveryPreview: (checkpointId: string) => invoke<RpaRecoveryPreview>("rpa_recovery_preview", { checkpointId }),
   recover: (plan: RpaPlan, recovery: RpaRecovery, requestId: string) => invoke<RpaGrant>("rpa_recover", { plan, recovery, requestId }),
   checkpoints: () => invoke<RpaCheckpoint[]>("rpa_checkpoints"),
