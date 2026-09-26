@@ -6,6 +6,7 @@ it("binds browser operations to one Host-selected origin and semantic locator", 
   const target = {
     waitFor: vi.fn(async () => {}), count: vi.fn(async () => 1), click: vi.fn(async () => {}),
     fill: vi.fn(async () => {}), innerText: vi.fn(async () => "private content"), screenshot: vi.fn(async () => new Uint8Array([1, 2])),
+    evaluate: vi.fn(async () => ({ form: false, sensitive: false })),
   };
   let url = "https://example.test/flow";
   const page = { isClosed: () => false, url: () => url, getByRole: vi.fn(() => target), mouse: { click: vi.fn(async () => {}) } } as unknown as Page;
