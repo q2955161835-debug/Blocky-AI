@@ -272,10 +272,86 @@ fn workflow_host_process_probe() {
             let mut lease = store.acquire("task-one", &definition(), 3).unwrap();
             lease.commit(&json!({"kind":"begin","revision":3})).unwrap();
         }
+        mode @ ("orphan-partial" | "orphan-encrypted") => {
+            let mut lease = store.acquire("task-one", &definition(), 1).unwrap();
+            lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+            let root =
+                std::path::PathBuf::from(std::env::var_os("BLOCKY_WORKFLOW_TEST_ROOT").unwrap());
+            let identity = crate::process_identity::Identity::current().unwrap();
+            let name = format!(
+                ".workflow-{}-{}-{}-test00.tmp",
+                identity.process_id,
+                identity.created,
+                uuid::Uuid::new_v4()
+            );
+            let bytes = if mode == "orphan-partial" {
+                b"BLKWF1partial".to_vec()
+            } else {
+                std::fs::read(root.join("task-task-one.bin")).unwrap()
+            };
+            std::fs::write(root.join(name), bytes).unwrap();
+            // Exit without Drop, as in a process interruption between stage write and rename.
+            std::process::exit(0);
+        }
         _ => panic!("unexpected fixture mode"),
     }
 }
 
+#[test]
+fn workflow_host_recovers_dead_owner_staging_but_retains_unknown_intent() {
+    use std::os::windows::process::CommandExt;
+    for mode in ["orphan-partial", "orphan-encrypted"] {
+        let dir = temp();
+        let store = Store::new(dir.path().to_owned()).unwrap();
+        store
+            .create("task-one", &definition(), Value::Null)
+            .unwrap();
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "workflow::tests::workflow_host_process_probe",
+                "--ignored",
+                "--nocapture",
+            ])
+            .env("BLOCKY_WORKFLOW_TEST_ROOT", dir.path())
+            .env("BLOCKY_WORKFLOW_TEST_MODE", mode)
+            .creation_flags(0x08000000)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        store
+            .create("task-two", &definition(), Value::Null)
+            .expect("exited writer staging must not block all workflows");
+        assert_eq!(store.read("task-one").unwrap()["status"], "executing");
+        assert_eq!(
+            store.acquire("task-one", &definition(), 2).err().unwrap(),
+            "BLK-WORKFLOW-UNCERTAIN"
+        );
+        assert!(!std::fs::read_dir(dir.path()).unwrap().any(|e| {
+            e.unwrap()
+                .file_name()
+                .to_string_lossy()
+                .starts_with(".workflow-")
+        }));
+    }
+}
+#[test]
+fn workflow_host_staging_retains_live_owner_and_unknown_files() {
+    let dir = temp();
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    store
+        .create("task-one", &definition(), Value::Null)
+        .unwrap();
+    let staged = super::staging::create(dir.path()).unwrap();
+    assert_eq!(store.read("task-one").unwrap_err(), "BLK-WORKFLOW-OWNER");
+    assert!(staged.path().exists());
+    drop(staged);
+    assert!(store.read("task-one").is_ok());
+    let unknown = dir.path().join(".workflow-unrecognized");
+    std::fs::write(&unknown, b"private-test-bytes").unwrap();
+    assert_eq!(store.read("task-one").unwrap_err(), "BLK-WORKFLOW-STORE");
+    assert_eq!(std::fs::read(unknown).unwrap(), b"private-test-bytes");
+}
 #[test]
 fn workflow_host_limits_never_evict_an_existing_checkpoint() {
     let dir = temp();

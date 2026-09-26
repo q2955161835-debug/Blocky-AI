@@ -97,7 +97,9 @@ impl Store {
     }
     fn lock(&self) -> Result<File, String> {
         self.check_root()?;
-        lock(&self.root.join("workflow.lock"))
+        let lock = lock(&self.root.join("workflow.lock"))?;
+        super::staging::sweep(&self.root, MAX_FILE)?;
+        Ok(lock)
     }
     fn path(&self, id: &str) -> Result<PathBuf, String> {
         require(protocol::stable(id), INVALID)?;
@@ -189,10 +191,7 @@ impl Store {
         let encrypted = encrypted?;
         require(encrypted.len() + MAGIC.len() <= MAX_FILE, LIMIT)?;
         self.capacity(id, encrypted.len() + MAGIC.len())?;
-        let mut temp = tempfile::Builder::new()
-            .prefix(".workflow-")
-            .tempfile_in(&self.root)
-            .map_err(|_| IO)?;
+        let mut temp = super::staging::create(&self.root)?;
         temp.write_all(MAGIC)
             .and_then(|_| temp.write_all(&encrypted))
             .and_then(|_| temp.as_file().sync_all())
