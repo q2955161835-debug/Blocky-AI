@@ -151,6 +151,27 @@ export function install(get: () => Studio) {
       .slice(0, 30);
   };
   const api = {
+    async loadCodeStateProject() {
+      const project = createStarter();
+      project.manifest.modules = project.manifest.modules.slice(0, 1);
+      const program = { schemaVersion: "blocky.expression/v1", parameters: ["x"], expression: { parameter: "x" } };
+      project.workspaces = { "research-agent": { blocks: { languageVersion: 0, blocks: [
+        { type: "core.data.transform", id: "code-official", x: 60, y: 30, fields: { NAME: "默认计算", PROGRAM: program } },
+        { type: "core.data.transform", id: "code-custom", x: 60, y: 165, fields: { NAME: "自定义计算", PROGRAM: program }, data: '{"schemaVersion":"blocky.editor/v1","codeEdited":true}' },
+        { type: "core.data.transform", id: "code-warning", x: 60, y: 300, fields: { NAME: "附带源码说明", PROGRAM: program, SOURCE: "legacy source" } },
+        { type: "core.data.transform", id: "code-invalid", x: 60, y: 435, fields: { NAME: "无效表达式", PROGRAM: { schemaVersion: "invalid" } } },
+      ] } } };
+      get().controller.replace(project);
+      get().setSession(restoreSession(project, null));
+      get().setStarted(true);
+      await paint();
+      await wait(() => !get().compiling && workspace().getAllBlocks(false).length === 4);
+      workspace().setScale(0.65);
+      workspace().scroll(0, 0);
+      await paint();
+      return { digest: await digest(get().controller.getSnapshot().project), canRun: get().canRun,
+        invalid: get().compiled?.diagnostics.some(item => item.code === "BLK-EXPR-001") };
+    },
     async overviewState() {
       const ws = workspace();
       return { digest: await digest(get().controller.getSnapshot().project), viewport: ws.getMetricsManager().getViewMetrics(true) };

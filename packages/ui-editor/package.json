@@ -8,6 +8,7 @@
     "@blocky/language-schema": "workspace:*",
     "@blocky/block-catalog": "workspace:*",
     "@blocky/observability": "workspace:*",
+    "@blocky/project-model": "workspace:*",
     "react": "19.2.8",
     "blockly": "13.2.1"
   }

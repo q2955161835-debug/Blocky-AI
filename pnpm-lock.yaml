@@ -411,6 +411,9 @@ importers:
       '@blocky/observability':
         specifier: workspace:*
         version: link:../observability
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
       blockly:
         specifier: 13.2.1
         version: 13.2.1(jsdom@29.1.1)

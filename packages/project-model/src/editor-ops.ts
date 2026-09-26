@@ -45,8 +45,12 @@ export function codeState(block: WorkspaceBlock): CodeState {
   if (block.type !== "core.data.transform") throw Error("BLK-EDIT-005");
   try { parseExpressionProgram(block.fields?.PROGRAM); }
   catch { return "invalid"; }
-  if (block.fields?.SOURCE !== undefined) return "warning";
-  try { return metadata(block).codeEdited ? "custom-valid" : "official-default"; }
+  if (block.fields?.SOURCE != null) return "warning";
+  try {
+    const value = metadata(block).codeEdited;
+    if (value !== undefined && typeof value !== "boolean") return "warning";
+    return value ? "custom-valid" : "official-default";
+  }
   catch { return "warning"; }
 }
 

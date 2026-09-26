@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { WorkspaceBlock } from "@blocky/language-schema";
 import { Blockly, registerBlocks, theme } from "../blocks";
+import { applyCodeVisuals } from "./code-visuals";
 /** Separate read-only Blockly workspace: never connected to project edits or selection. */
 export function BlockPreview({ block }: { block: WorkspaceBlock }) {
   const root = useRef<HTMLDivElement>(null),
@@ -33,6 +34,7 @@ export function BlockPreview({ block }: { block: WorkspaceBlock }) {
         { blocks: { languageVersion: 0, blocks: [value] } },
         ws,
       );
+      applyCodeVisuals(ws, { blocks: { languageVersion: 0, blocks: [value] } });
       if (typeof ResizeObserver !== "undefined") {
         observer = new ResizeObserver(() => Blockly.svgResize(ws));
         observer.observe(root.current!);

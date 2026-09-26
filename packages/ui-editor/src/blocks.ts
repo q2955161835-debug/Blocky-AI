@@ -59,6 +59,8 @@ export function registerBlocks() {
       },
       init(this: Blockly.Block) {
         this.appendDummyInput().appendField(def.label);
+        if (def.type === "core.data.transform")
+          this.appendDummyInput().appendField(new Blockly.FieldLabel("✖ 代码无效", "blocky-code-badge"), "BLOCKY_CODE_STATE");
         const input = this.appendDummyInput();
         for (const field of def.fields) {
           if (def.jsonFields?.includes(field)) {

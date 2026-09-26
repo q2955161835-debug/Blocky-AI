@@ -6,6 +6,7 @@ import { Blockly, registerBlocks, theme } from "../blocks";
 import { installSelection } from "../selection/gestures";
 import { CanvasOverview } from "./CanvasOverview";
 import { overviewLabels, type Overview } from "./overview";
+import { applyCodeVisuals } from "./code-visuals";
 export type CanvasHandle = {
   add(type: string): void;
   focus(id: string): void;
@@ -110,6 +111,7 @@ export function Canvas(props: Props) {
       const value = Blockly.serialization.workspaces.save(ws) as Workspace;
       if (!value.blocks) value.blocks = { languageVersion: 0, blocks: [] };
       if (!value.blocks.blocks) value.blocks.blocks = [];
+      applyCodeVisuals(ws, value);
       serialized.current = canonicalJson(value);
       latest.current.onChange(value, event.group || undefined);
     };
@@ -288,6 +290,9 @@ export function Canvas(props: Props) {
     }
     selection.current?.refresh();
     refreshOverview.current();
+  }, [props.workspace, props.moduleId]);
+  useEffect(() => {
+    if (editor.current) applyCodeVisuals(editor.current, props.workspace);
   }, [props.workspace, props.moduleId]);
   useEffect(() => {
     const ws = editor.current;

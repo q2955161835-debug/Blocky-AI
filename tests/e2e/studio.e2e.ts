@@ -470,4 +470,20 @@ describe("Blocky native editor", () => {
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/state-machine.png" });
   });
+  it("renders four code badges and persistent markers without modifying the project", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    const before = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadCodeStateProject());
+    for (const [state, label] of [["official-default", "✓ 官方默认"], ["custom-valid", "✓ 已自定义"], ["warning", "⚠ 代码警告"], ["invalid", "✖ 代码无效"]]) {
+      const block = page.locator(`.blocklyDraggable[data-code-state="${state}"]`);
+      expect(await block.count()).toBe(1);
+      expect((await block.locator(".blocky-code-badge").textContent())?.replace(/\s/g, " ")).toBe(label);
+      expect(await block.locator(":scope > .blocky-code-marker").count()).toBe(1);
+    }
+    const after = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.overviewState());
+    expect(after.digest).toBe(before.digest);
+    expect(before.canRun).toBe(false);
+    expect(before.invalid).toBe(true);
+    await mkdir("try/stage7/native", { recursive: true });
+    await page.screenshot({ path: "try/stage7/native/code-states.png" });
+  });
 });

@@ -19,3 +19,10 @@ it("shows four code states and prevents an invalid program from compiling", asyn
   const { compileProject } = await import("../../compiler/src/index");
   expect((await compileProject(project)).diagnostics.some((item) => item.code === "BLK-EXPR-001")).toBe(true);
 });
+it("warns on malformed code metadata instead of treating arbitrary values as a boolean", () => {
+  const program = { schemaVersion: "blocky.expression/v1", parameters: ["x"], expression: { parameter: "x" } };
+  for (const codeEdited of ["false", 0, null, {}]) {
+    expect(codeState({ type: "core.data.transform", id: "code", fields: { PROGRAM: program },
+      data: JSON.stringify({ schemaVersion: "blocky.editor/v1", codeEdited }) })).toBe("warning");
+  }
+});

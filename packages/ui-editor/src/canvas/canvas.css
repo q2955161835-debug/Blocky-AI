@@ -72,6 +72,11 @@
 .blocklyText {
   font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif !important;
 }
+.blocky-code-marker { pointer-events: none; fill: #c9d7e7; }
+[data-code-state="custom-valid"] > .blocky-code-marker { fill: #7fe6aa; }
+[data-code-state="warning"] > .blocky-code-marker { fill: #ffd17d; }
+[data-code-state="invalid"] > .blocky-code-marker { fill: #ff9790; }
+.blocky-code-badge { font-size: 11px; font-weight: 600; }
 .blocklyHtmlInput {
   color: #1c2430 !important;
 }
