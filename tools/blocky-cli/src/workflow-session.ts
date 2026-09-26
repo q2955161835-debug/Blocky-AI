@@ -22,6 +22,7 @@ const codes = new Set(
     "STATE",
     "NOT-FOUND",
     "CHANNEL",
+    "CANCELLED",
   ].map((code) => `BLK-WORKFLOW-${code}`),
 );
 const failure = (code?: unknown) =>
@@ -54,10 +55,13 @@ export function cliWorkflowPorts(): WorkflowPorts {
         | {
             id: number;
             operation: string;
+            settlement: boolean;
+            drained: () => void;
             resolve: (v: unknown) => void;
             reject: (e: Error) => void;
           }
         | undefined;
+      let drained = Promise.resolve();
       let readyResolve!: () => void,
         readyReject!: (e: Error) => void,
         exitResolve!: () => void;
@@ -74,12 +78,16 @@ export function cliWorkflowPorts(): WorkflowPorts {
         clearTimeout(timer);
         readyReject(fault);
         pending?.reject(fault);
+        pending?.drained();
         pending = undefined;
         if (!ended) child.kill();
       };
-      const deadline = () => {
+      const deadline = (milliseconds = 10000) => {
         clearTimeout(timer);
-        timer = setTimeout(() => fail(failure("BLK-WORKFLOW-CHANNEL")), 10000);
+        timer = setTimeout(
+          () => fail(failure("BLK-WORKFLOW-CHANNEL")),
+          milliseconds,
+        );
       };
       const send = (value: unknown) => {
         const bytes = JSON.stringify(value) + "\n";
@@ -158,6 +166,7 @@ export function cliWorkflowPorts(): WorkflowPorts {
               clearTimeout(timer);
               pending = undefined;
               current.resolve(frame.value);
+              current.drained();
             }
           } catch {
             fail(failure("BLK-WORKFLOW-CHANNEL"));
@@ -173,17 +182,46 @@ export function cliWorkflowPorts(): WorkflowPorts {
           fault ??= failure("BLK-WORKFLOW-CHANNEL");
         readyReject(fault ?? failure());
         pending?.reject(fault ?? failure());
+        pending?.drained();
         pending = undefined;
+        signal.removeEventListener("abort", abort);
         exitResolve();
       });
       const call = (
         operation: string,
         fields: Record<string, unknown> = {},
       ) => {
-        if (fault || ended || terminal || pending || ++serial > 1024)
+        const action = fields.action as { kind?: string } | undefined;
+        // Cancellation stops new work, but an already dispatched effect must retain
+        // its completion/uncertainty receipt. Closing the ledger is not effect settlement.
+        const settlement =
+          operation === "close" ||
+          (operation === "commit" &&
+            ["complete", "uncertain", "pause"].includes(action?.kind ?? ""));
+        if (signal.aborted && !settlement)
+          return Promise.reject(failure("BLK-WORKFLOW-CANCELLED"));
+        if (
+          fault ||
+          ended ||
+          terminal ||
+          pending ||
+          (closing && operation !== "close") ||
+          ++serial > 1024
+        )
           return Promise.reject(fault ?? failure());
+        let drain!: () => void;
+        drained = new Promise<void>((resolve) => {
+          drain = resolve;
+        });
         return new Promise<unknown>((resolve, reject) => {
-          pending = { id: serial, operation, resolve, reject };
+          pending = {
+            id: serial,
+            operation,
+            settlement,
+            drained: drain,
+            resolve,
+            reject,
+          };
           deadline();
           send({ operation, requestId: serial, ...fields });
         });
@@ -212,13 +250,29 @@ export function cliWorkflowPorts(): WorkflowPorts {
       const close = () =>
         (closing ??= (async () => {
           try {
+            // A cancelled caller can return before its private acknowledgement.
+            // Drain and validate that frame before sending the next serial request.
+            await drained;
             if (!ended && !terminal && !fault) await call("close");
           } finally {
-            await waitExit();
+            try {
+              await waitExit();
+            } finally {
+              signal.removeEventListener("abort", abort);
+            }
           }
           if (fault || exitCode !== 0) throw fault ?? failure();
         })());
-      const abort = () => fail(failure("BLK-WORKFLOW-CHANNEL"));
+      const abort = () => {
+        if (!readyReceived) {
+          fail(failure("BLK-WORKFLOW-CANCELLED"));
+        } else if (pending && !pending.settlement) {
+          pending.reject(failure("BLK-WORKFLOW-CANCELLED"));
+          // Retain the pending slot to verify a late frame. If the coordinator
+          // fails to answer, terminate it without clearing the durable intent/owner.
+          deadline(1000);
+        }
+      };
       signal.addEventListener("abort", abort, { once: true });
       deadline();
       child.stdin.write(initial);
@@ -243,8 +297,6 @@ export function cliWorkflowPorts(): WorkflowPorts {
       } catch (error) {
         await close();
         throw error;
-      } finally {
-        signal.removeEventListener("abort", abort);
       }
     },
   };

@@ -1,9 +1,95 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
 import { mkdtemp, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
+import { cliWorkflowPorts } from "../../tools/blocky-cli/src/workflow-session";
+
+it.each(["none", "complete", "uncertain"] as const)(
+  "rejects new work after cancellation and durably preserves %s settlement",
+  async (settlement) => {
+    const directory = await mkdtemp(resolve("try/stage7-workflow-cancel-"));
+    vi.stubEnv("BLOCKY_PROFILE_DIR", join(directory, "profile"));
+    const controller = new AbortController();
+    const handle = await cliWorkflowPorts().open(
+      {
+        definition: {
+          projectId: "project-one",
+          moduleId: "main",
+          blockId: "flow",
+          planDigest: "a".repeat(64),
+          runtimeVersion: 1,
+          steps: [{ stepId: "effect", kind: "action", compensate: false }],
+        },
+        initial: null,
+      },
+      controller.signal,
+    );
+    try {
+      if (settlement !== "none")
+        await handle.store.commit(handle.taskId, {
+          kind: "begin",
+          revision: 1,
+        });
+      controller.abort();
+      await expect(
+        handle.store.commit(handle.taskId, { kind: "begin", revision: 1 }),
+      ).rejects.toThrow("BLK-WORKFLOW-CANCELLED");
+      await expect(handle.store.read(handle.taskId)).rejects.toThrow(
+        "BLK-WORKFLOW-CANCELLED",
+      );
+      if (settlement === "complete") {
+        const record = await handle.store.commit(handle.taskId, {
+          kind: "complete",
+          revision: 2,
+          state: { result: "saved" },
+        });
+        expect(record.revision).toBe(3);
+        await handle.store.commit(handle.taskId, {
+          kind: "pause",
+          revision: 3,
+        });
+      } else if (settlement === "uncertain") {
+        await handle.store.commit(handle.taskId, {
+          kind: "uncertain",
+          revision: 2,
+          code: "BLK-WORKFLOW-CANCELLED",
+        });
+      }
+      await handle.close();
+      const query = spawnSync(
+        resolve("tools/blocky-cli/dist/bin/blocky-project-io.exe"),
+        [],
+        {
+          input: JSON.stringify({
+            schemaVersion: "blocky.project-io/v1alpha1",
+            operation: "workflow-show",
+            projectId: "project-one",
+            taskId: handle.taskId,
+          }),
+          encoding: "utf8",
+          timeout: 5000,
+          windowsHide: true,
+        },
+      );
+      expect(query.status).toBe(0);
+      expect(JSON.parse(query.stdout).value).toMatchObject({
+        revision: settlement === "none" ? 1 : settlement === "complete" ? 4 : 3,
+        status:
+          settlement === "none"
+            ? "ready"
+            : settlement === "complete"
+              ? "paused"
+              : "uncertain",
+      });
+    } finally {
+      await handle.close();
+      vi.unstubAllEnvs();
+      await rm(directory, { recursive: true, force: true });
+    }
+  },
+);
 
 it("keeps a crashed native intent uncertain and refuses a competing or replacement session", async () => {
   const directory = await mkdtemp(resolve("try/stage7-workflow-channel-"));
