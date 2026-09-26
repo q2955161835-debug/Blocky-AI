@@ -181,6 +181,21 @@ fn fixture() -> Fixture {
             std::ptr::null_mut(),
             std::ptr::null(),
         );
+        let name_only = CreateWindowExW(
+            0,
+            wide("BUTTON").as_ptr(),
+            wide("Invoke fixture").as_ptr(),
+            WS_CHILD | WS_VISIBLE,
+            20,
+            160,
+            180,
+            25,
+            root,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
+            std::ptr::null(),
+        );
+        assert!(!name_only.is_null());
         assert!(
             !edit.is_null() && !button.is_null() && !password.is_null() && !duplicate.is_null()
         );
@@ -196,6 +211,73 @@ fn fixture() -> Fixture {
         join: Some(join),
     }
 }
+#[test]
+#[ignore = "opens a short-lived owned native fixture; run explicitly"]
+fn recording_worker_captures_then_settles_and_detects_target_loss() {
+    use recording::{process::RecordingProcess, protocol::Options};
+    let exe =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("target/debug/blocky-project-io.exe");
+    assert!(
+        exe.is_file(),
+        "build blocky-project-io from this source first"
+    );
+    let fixture = fixture();
+    let target = target::inspect(fixture.window).unwrap();
+    let options = Options {
+        session_id: "recording-worker".into(),
+        project_id: "owned-fixture".into(),
+        target: protocol::TargetRef {
+            kind: "windows".into(),
+            identity: target.identity.clone(),
+        },
+    };
+    let cancel = Arc::new(AtomicBool::new(false));
+    let mut process =
+        RecordingProcess::start_at(&exe, target.clone(), options.clone(), cancel.clone()).unwrap();
+    let input = worker::Input {
+        target: target.clone().into(),
+        root_id: None,
+        step: Some(protocol::Step {
+            step_id: "fill".into(),
+            action: Action::Fill,
+            locator: Locator::Uia {
+                automation_id: Some("101".into()),
+                name: None,
+                control_type: Some("Edit".into()),
+            },
+            value: Some(protocol::InputRef {
+                kind: "manual-input".into(),
+                reference: None,
+            }),
+            timeout_ms: 1000,
+            effect_key: Some("fill".into()),
+        }),
+        input: Some("PRIVATE_WORKER_RECORDING_INPUT".into()),
+        approval: None,
+    };
+    worker::execute(&input).unwrap();
+    let deadline = std::time::Instant::now();
+    while process.status(cancel.clone()).unwrap()["count"] == 0
+        && deadline.elapsed() < Duration::from_secs(3)
+    {
+        std::thread::sleep(Duration::from_millis(30));
+    }
+    let result = process.stop().unwrap();
+    assert_eq!(result["actions"].as_array().unwrap().len(), 1);
+    assert!(
+        !result
+            .to_string()
+            .contains("PRIVATE_WORKER_RECORDING_INPUT")
+    );
+    assert!(process.child_exited());
+    let mut lost =
+        RecordingProcess::start_at(&exe, target.clone(), options.clone(), cancel.clone()).unwrap();
+    drop(fixture);
+    assert_eq!(lost.status(cancel).unwrap()["reason"], "target-lost");
+    assert_eq!(lost.stop().unwrap()["reason"], "target-lost");
+    assert!(lost.child_exited());
+}
+
 #[test]
 #[ignore = "opens a short-lived owned native fixture; run explicitly"]
 fn uia_records_owned_actions_without_typed_content() {
@@ -255,7 +337,24 @@ fn uia_records_owned_actions_without_typed_content() {
     {
         std::thread::sleep(Duration::from_millis(20));
     }
+    // The name-only control shares a label with ID-bearing controls. Its event
+    // must be omitted, even though each generated locator JSON differs.
+    unsafe {
+        SendMessageW(
+            GetDlgItem(fixture.window as HWND, 0),
+            0x00f5, /* BM_CLICK */
+            0,
+            0,
+        );
+    }
+    let omission_deadline = std::time::Instant::now();
+    while capture.status().unwrap()["omitted"] == 0
+        && omission_deadline.elapsed() < Duration::from_secs(3)
+    {
+        std::thread::sleep(Duration::from_millis(20));
+    }
     let result = capture.stop("stopped").unwrap();
+    assert_eq!(result["omitted"], 1);
     assert_eq!(
         result["actions"].as_array().unwrap().len(),
         2,

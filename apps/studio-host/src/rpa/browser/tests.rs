@@ -97,7 +97,7 @@ fn real_browser_private_pipe_and_job_cancel() {
     });
     let result = std::panic::catch_unwind(|| {
         let cancel = Arc::new(AtomicBool::new(false));
-        let mut process = BrowserProcess::start(&root, cancel.clone()).unwrap();
+        let mut process = process::start(&root, cancel.clone()).unwrap();
         let page = process
             .request(
                 json!({"kind":"open","projectId":"pipe-project","url":url}),
@@ -135,7 +135,7 @@ fn real_browser_private_pipe_and_job_cancel() {
                 .is_err()
         );
         process.shutdown().unwrap();
-        let mut fresh = BrowserProcess::start(&root, Arc::new(AtomicBool::new(false))).unwrap();
+        let mut fresh = process::start(&root, Arc::new(AtomicBool::new(false))).unwrap();
         fresh
             .request(
                 json!({"kind":"open","projectId":"pipe-project","url":url}),

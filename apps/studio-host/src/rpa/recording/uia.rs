@@ -16,7 +16,7 @@ use std::{
 use uiautomation::{
     UIAutomation, UIElement,
     events::{CustomEventHandlerFn, UIEventHandler, UIEventType},
-    types::{Handle, TreeScope},
+    types::{Handle, TreeScope, UIProperty},
 };
 
 pub struct Capture {
@@ -33,6 +33,25 @@ pub struct Capture {
     stopped: Option<Value>,
 }
 const EVENTS: [UIEventType; 2] = [UIEventType::Invoke_Invoked, UIEventType::Text_TextChanged];
+fn unique_catalog(
+    mut catalog: HashMap<Vec<i32>, CapturedAction>,
+) -> HashMap<Vec<i32>, CapturedAction> {
+    let mut counts = HashMap::<String, usize>::new();
+    for action in catalog.values() {
+        if let Ok(key) = serde_json::to_string(&action.locator) {
+            *counts.entry(key).or_default() += 1;
+        }
+    }
+    catalog.retain(|_, action| {
+        serde_json::to_string(&action.locator)
+            .ok()
+            .is_some_and(|key| counts.get(&key) == Some(&1))
+    });
+    catalog
+}
+fn bounded_events(events: &Receiver<(Vec<i32>, Action)>) -> Vec<(Vec<i32>, Action)> {
+    events.try_iter().take(32).collect()
+}
 fn catalog(
     automation: &UIAutomation,
     root: &UIElement,
@@ -86,6 +105,51 @@ fn catalog(
         }
         pending.extend(children.into_iter().map(|child| (child, depth + 1)));
     }
+    let mut result = unique_catalog(result);
+    let mut ambiguous = Vec::new();
+    for (runtime, action) in &result {
+        let Locator::Uia {
+            automation_id,
+            name,
+            control_type,
+        } = &action.locator
+        else {
+            continue;
+        };
+        let (property, value) = match (automation_id, name) {
+            (Some(value), _) => (UIProperty::AutomationId, value),
+            (None, Some(value)) => (UIProperty::Name, value),
+            _ => return Err("BLK-RPA-RECORD-001".into()),
+        };
+        // Query the full target tree. A Name-only locator also matches controls
+        // with IDs; comparing generated locator JSON cannot establish uniqueness.
+        let condition = automation
+            .create_property_condition(property, value.as_str().into(), None)
+            .map_err(|_| "BLK-RPA-UIA-001")?;
+        let matches = root
+            .find_all(TreeScope::Subtree, &condition)
+            .map_err(|_| "BLK-RPA-UIA-001")?;
+        if matches.len() > 2048 {
+            return Err("BLK-RPA-LIMIT-001".into());
+        }
+        let mut matching_ids = Vec::new();
+        for element in matches {
+            if element.get_process_id().map_err(|_| "BLK-RPA-UIA-001")? == target.process_id
+                && Some(format!(
+                    "{:?}",
+                    element.get_control_type().map_err(|_| "BLK-RPA-UIA-001")?
+                )) == *control_type
+            {
+                matching_ids.push(element.get_runtime_id().map_err(|_| "BLK-RPA-UIA-001")?);
+            }
+        }
+        if matching_ids.len() != 1 || matching_ids[0] != *runtime {
+            ambiguous.push(runtime.clone());
+        }
+    }
+    for runtime in ambiguous {
+        result.remove(&runtime);
+    }
     Ok(result)
 }
 impl Capture {
@@ -100,6 +164,9 @@ impl Capture {
             .element_from_handle(Handle::from(target.window as isize))
             .map_err(|_| "BLK-RPA-TARGET-001")?;
         let root_id = root.get_runtime_id().map_err(|_| "BLK-RPA-TARGET-001")?;
+        if root_id.is_empty() || root_id.len() > 64 {
+            return Err("BLK-RPA-TARGET-001".into());
+        }
         let catalog = catalog(&automation, &root, &target)?;
         let buffer = RecordingBuffer::new(
             serde_json::to_value(options).map_err(|_| "BLK-RPA-RECORD-001")?,
@@ -185,7 +252,7 @@ impl Capture {
         for _ in 0..self.overflow.swap(0, Ordering::SeqCst).min(10000) {
             self.buffer.omit();
         }
-        for (identity, action) in self.events.try_iter() {
+        for (identity, action) in bounded_events(&self.events) {
             let Some(mut metadata) = self.catalog.get(&identity).cloned() else {
                 self.buffer.omit();
                 continue;
@@ -250,5 +317,39 @@ impl Drop for Capture {
                 );
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn drain_leaves_work_for_the_next_bounded_turn() {
+        let (send, receive) = sync_channel(100);
+        for n in 0..100 {
+            send.send((vec![n], Action::Fill)).unwrap();
+        }
+        assert_eq!(bounded_events(&receive).len(), 32);
+        assert_eq!(receive.try_iter().count(), 68);
+    }
+    #[test]
+    fn ambiguous_locators_are_removed_even_when_runtime_ids_differ() {
+        let action = |id: &str| CapturedAction {
+            action: Action::Click,
+            locator: Locator::Uia {
+                automation_id: Some(id.into()),
+                name: None,
+                control_type: Some("Button".into()),
+            },
+            sensitive: None,
+        };
+        let catalog = HashMap::from([
+            (vec![1], action("duplicate")),
+            (vec![2], action("duplicate")),
+            (vec![3], action("unique")),
+        ]);
+        let unique = unique_catalog(catalog);
+        assert_eq!(unique.len(), 1);
+        assert!(unique.contains_key(&vec![3]));
     }
 }

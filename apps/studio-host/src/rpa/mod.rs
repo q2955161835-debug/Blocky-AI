@@ -7,6 +7,7 @@ pub mod cleanup;
 mod native_tests;
 mod owner;
 mod process;
+mod ipc;
 pub mod protocol;
 pub mod recovery;
 pub mod recording;

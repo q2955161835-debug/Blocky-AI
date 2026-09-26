@@ -73,7 +73,7 @@ impl Manager {
             *pending += 1;
         }
         let result = (|| {
-            let mut process = BrowserProcess::start(
+            let mut process = super::process::start(
                 self.root.as_ref().ok_or("BLK-RPA-RUNTIME-001")?,
                 cancel.clone(),
             )?;

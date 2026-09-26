@@ -19,7 +19,7 @@ export class BrowserHost {
     const browser = await chromium.launch({
       executablePath, headless: false, chromiumSandbox: true,
       downloadsPath: artifactsPath, tracesDir: artifactsPath,
-      args: ["--dns-prefetch-disable", "--force-webrtc-ip-handling-policy=disable_non_proxied_udp"],
+      args: ["--dns-prefetch-disable", "--force-webrtc-ip-handling-policy=disable_non_proxied_udp", "--window-position=0,0", "--window-size=1160,840"],
     });
     return new BrowserHost(browser);
   }
