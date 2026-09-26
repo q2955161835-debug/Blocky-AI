@@ -9,7 +9,7 @@ import { CliError } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { KnowledgeTransport } from "./knowledge-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-export const helper = import.meta.url.endsWith("/main.mjs")
+export const helper = /\/(?:main|runtime-worker)\.mjs$/.test(import.meta.url)
   ? resolve(
       dirname(fileURLToPath(import.meta.url)),
       "bin/blocky-project-io.exe",

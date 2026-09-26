@@ -11,7 +11,7 @@ import {
   createBlueprintProject,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
-import { runAgent } from "./run-agent";
+import { runAgent, type RunAgentContext } from "./run-agent";
 import { projectDigest } from "@blocky/project-model";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
@@ -89,6 +89,7 @@ export async function dispatch(
   args: Args,
   write: (value: unknown) => void,
   signal: AbortSignal,
+  context?: RunAgentContext,
 ) {
   const command = args.words.slice(0, 2).join(".");
   if (command === "profile.show") {
@@ -419,5 +420,6 @@ export async function dispatch(
     userRegistry,
     write,
     signal,
+    context,
   );
 }

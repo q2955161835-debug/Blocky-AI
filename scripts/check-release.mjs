@@ -9,6 +9,7 @@ const files = [
   "try/release-native-target/release/blocky-studio.exe",
   "tools/blocky-cli/dist/bin/blocky-project-io.exe",
   "tools/blocky-cli/dist/main.mjs",
+  "tools/blocky-cli/dist/runtime-worker.mjs",
   "tools/blocky-cli/dist/blocky.cmd",
   "try/release-native-target/release/DirectML.dll",
   "tools/blocky-cli/dist/bin/DirectML.dll",

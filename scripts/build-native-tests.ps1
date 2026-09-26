@@ -5,6 +5,8 @@ try {
   $env:CARGO_TARGET_DIR = Join-Path $taskRoot 'try/native-e2e-target'
   Push-Location $taskRoot
   try {
+    & node scripts/build-runtime-worker.mjs
+    if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/build-builder.mjs
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/install-builder.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')

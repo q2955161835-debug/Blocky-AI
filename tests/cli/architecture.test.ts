@@ -144,4 +144,4 @@ it("discovers architecture projects and executes a stateful input sequence in on
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
-});
+}, 30000); // Multiple fresh native worker launches; each CLI invocation retains its own deadline.

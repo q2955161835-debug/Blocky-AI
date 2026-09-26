@@ -248,6 +248,43 @@ fn native_execution_cannot_bind_after_effect_begin_or_accept_json_claims() {
 }
 
 #[test]
+fn native_runtime_bootstrap_shares_custody_but_keeps_each_task_receipt_bound() {
+    let dir = temp();
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    let mut root = worker();
+    root.bootstrap().unwrap();
+    let mut views = Vec::new();
+    for id in ["task-one", "task-two"] {
+        store.create(id, &definition(), json!(null)).unwrap();
+        let mut lease = store.acquire(id, &definition(), 1).unwrap();
+        let mut view = root.task_view().unwrap();
+        lease.bind_execution(&mut view).unwrap();
+        views.push((lease, view));
+    }
+    let mut late = root.task_view().unwrap();
+    root.settle_process().unwrap();
+    store
+        .create("task-late", &definition(), json!(null))
+        .unwrap();
+    let mut late_lease = store.acquire("task-late", &definition(), 1).unwrap();
+    assert_eq!(
+        late_lease.bind_execution(&mut late).unwrap_err(),
+        "BLK-WORKFLOW-OWNER"
+    );
+    late_lease.release().unwrap();
+    let proof = views[0].1.stop().unwrap();
+    assert_eq!(
+        views[1].0.settle_execution(&proof).unwrap_err(),
+        "BLK-WORKFLOW-OWNER"
+    );
+    for (mut lease, mut view) in views {
+        lease.settle_execution(&view.stop().unwrap()).unwrap();
+        lease.release().unwrap();
+    }
+    assert!(root.task_view().is_err());
+}
+
+#[test]
 fn native_execution_owner_exit_without_receipt_does_not_unlock_boundary() {
     let dir = temp();
     let output = Command::new(std::env::current_exe().unwrap())

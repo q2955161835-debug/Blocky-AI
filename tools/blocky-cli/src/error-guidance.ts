@@ -1,5 +1,6 @@
 const captureHint = "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-WORKFLOW-RUNTIME": { message: "受控运行组件缺失或未通过完整性校验。", hint: "开发环境从仓库根运行 pnpm build:cli；安装包请恢复同版本完整 cli 与 builder 目录，保留工作流记录。" },
   "BLK-WORKFLOW-APPROVAL": { message: "审批摘要与当前任务不一致。", hint: "不带 --approve 重新预检 workflow decide，核对任务、步骤、修订和决定后使用新的 requestDigest。" },
   "BLK-WORKFLOW-CONFLICT": { message: "工作流修订已改变。", hint: "用 workflow show 读取最新修订，重新核对操作；不要重用旧审批摘要。" },
   "BLK-WORKFLOW-STATE": { message: "当前工作流状态不接受此操作。", hint: "运行 workflow show 查看待审批步骤及状态；仅批准正在等待的步骤。" },

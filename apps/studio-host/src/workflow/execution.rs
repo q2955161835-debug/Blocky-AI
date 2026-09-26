@@ -2,7 +2,12 @@
 use super::protocol::require;
 use crate::{process_identity::Identity, process_worker::Worker};
 use serde::{Deserialize, Serialize};
-use std::{ffi::OsString, fs::File, path::Path};
+use std::{
+    ffi::OsString,
+    fs::File,
+    path::Path,
+    sync::{Arc, Mutex},
+};
 const OWNER: &str = "BLK-WORKFLOW-OWNER";
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -48,7 +53,7 @@ impl Binding {
 pub(super) struct Stopped(Binding);
 
 pub(super) struct Execution {
-    worker: Worker,
+    worker: Arc<Mutex<Worker>>,
     owner: Identity,
     job_id: String,
     binding: Option<Binding>,
@@ -65,7 +70,7 @@ impl Execution {
             &format!("Local\\Blocky-Workflow-{job_id}"),
         )?;
         Ok(Self {
-            worker,
+            worker: Arc::new(Mutex::new(worker)),
             owner,
             job_id,
             binding: None,
@@ -81,6 +86,7 @@ impl Execution {
     ) -> Result<Binding, String> {
         require(
             !self.stopped
+                && !self.worker.lock().map_err(|_| OWNER)?.is_stopped()
                 && self.binding.is_none()
                 && *owner == self.owner
                 && Identity::current().map_err(|_| OWNER)? == self.owner,
@@ -91,7 +97,7 @@ impl Execution {
             task_id: task.into(),
             lease_id: lease.into(),
             owner: self.owner.clone(),
-            worker: self.worker.identity().clone(),
+            worker: self.worker.lock().map_err(|_| OWNER)?.identity().clone(),
             job_id: self.job_id.clone(),
             settled: false,
         })
@@ -100,6 +106,7 @@ impl Execution {
     pub(super) fn arm(&mut self, binding: Binding) {
         self.binding = Some(binding);
     }
+    #[cfg(test)]
     pub(super) fn resume(&mut self) -> Result<(), String> {
         require(
             !self.stopped
@@ -107,17 +114,47 @@ impl Execution {
                 && Identity::current().map_err(|_| OWNER)? == self.owner,
             OWNER,
         )?;
-        self.worker.resume()
+        self.worker.lock().map_err(|_| OWNER)?.resume()
     }
-    pub(super) fn stdin(&mut self) -> Option<&mut File> {
-        self.worker.input()
+    /// Fixed trusted Runtime bootstrap only. Business effects await native open acknowledgement.
+    pub(super) fn bootstrap(&mut self) -> Result<(), String> {
+        require(
+            self.binding.is_none()
+                && !self.stopped
+                && Identity::current().map_err(|_| OWNER)? == self.owner,
+            OWNER,
+        )?;
+        self.worker.lock().map_err(|_| OWNER)?.resume()
+    }
+    pub(super) fn task_view(&self) -> Result<Self, String> {
+        require(
+            self.binding.is_none()
+                && !self.stopped
+                && Identity::current().map_err(|_| OWNER)? == self.owner
+                && !self.worker.lock().map_err(|_| OWNER)?.is_stopped(),
+            OWNER,
+        )?;
+        Ok(Self {
+            worker: self.worker.clone(),
+            owner: self.owner.clone(),
+            job_id: self.job_id.clone(),
+            binding: None,
+            stopped: false,
+        })
+    }
+    pub(super) fn stdin(&mut self) -> Option<File> {
+        self.worker.lock().ok()?.input()?.try_clone().ok()
     }
     pub(super) fn take_stdout(&mut self) -> Option<File> {
-        self.worker.take_output()
+        self.worker.lock().ok()?.take_output()
+    }
+    pub(super) fn settle_process(&mut self) -> Result<(), String> {
+        self.worker.lock().map_err(|_| OWNER)?.stop()?;
+        self.stopped = true;
+        Ok(())
     }
     pub(super) fn stop(&mut self) -> Result<Stopped, String> {
-        self.worker.stop()?;
-        self.stopped = true;
+        self.settle_process()?;
         require(Identity::current().map_err(|_| OWNER)? == self.owner, OWNER)?;
         Ok(Stopped(self.binding.clone().ok_or(OWNER)?))
     }

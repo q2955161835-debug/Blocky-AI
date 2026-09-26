@@ -36,6 +36,7 @@ const copies = [
   ["try/release-native-target/release/blocky-studio.exe", "Blocky Studio.exe"],
   ["try/release-native-target/release/DirectML.dll", "DirectML.dll"],
   ["tools/blocky-cli/dist/main.mjs", "cli/main.mjs"],
+  ["tools/blocky-cli/dist/runtime-worker.mjs", "cli/runtime-worker.mjs"],
   ["tools/blocky-cli/dist/blocky.cmd", "cli/blocky.cmd"],
   [
     "tools/blocky-cli/dist/bin/blocky-project-io.exe",

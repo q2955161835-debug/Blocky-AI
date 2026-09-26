@@ -258,6 +258,7 @@ impl Store {
         let _lock = self.lock()?;
         Ok(self.read_unlocked(id)?.record)
     }
+    #[cfg(test)]
     pub(super) fn execution(&self, id: &str) -> Result<Option<Binding>, String> {
         let _lock = self.lock()?;
         Ok(self.read_unlocked(id)?.execution)

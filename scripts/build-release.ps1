@@ -20,6 +20,8 @@ try {
  $env:CC_SHELL_ESCAPED_FLAGS='1'
  Push-Location $taskRoot
  try {
+  & node scripts/build-runtime-worker.mjs
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & node scripts/build-builder.mjs
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & node scripts/install-builder.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')

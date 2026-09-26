@@ -81,6 +81,42 @@ fn argument(value: &OsStr) -> Result<Vec<u16>, String> {
     out.push(b'"' as u16);
     Ok(out)
 }
+fn environment() -> Vec<u16> {
+    // Preserve only OS/profile locations needed by existing native adapters. Never inherit
+    // Node preloads, search paths, credentials, or executable startup configuration.
+    let allowed = [
+        "SYSTEMROOT",
+        "SYSTEMDRIVE",
+        "COMSPEC",
+        "PATH",
+        "PATHEXT",
+        "LOCALAPPDATA",
+        "APPDATA",
+        "USERPROFILE",
+        "TEMP",
+        "TMP",
+        "BLOCKY_PROFILE_DIR",
+    ];
+    let mut values: Vec<_> = std::env::vars_os()
+        .filter(|(name, _)| {
+            name.to_str()
+                .is_some_and(|s| allowed.contains(&s.to_ascii_uppercase().as_str()))
+        })
+        .collect();
+    values.sort_by_key(|(name, _)| name.to_string_lossy().to_uppercase());
+    let mut block = Vec::new();
+    for (name, value) in values {
+        block.extend(name.encode_wide());
+        block.push(b'=' as u16);
+        block.extend(value.encode_wide());
+        block.push(0);
+    }
+    block.push(0);
+    if block.len() == 1 {
+        block.push(0);
+    }
+    block
+}
 
 pub(crate) struct Worker {
     process: OwnedHandle,
@@ -171,6 +207,7 @@ impl Worker {
         startup.StartupInfo.hStdError = inherited[1];
         startup.lpAttributeList = attributes.ptr;
         let mut info: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
+        let environment = environment();
         if unsafe {
             CreateProcessW(
                 application.as_ptr(),
@@ -178,8 +215,11 @@ impl Worker {
                 null(),
                 null(),
                 1,
-                CREATE_SUSPENDED | CREATE_NO_WINDOW | EXTENDED_STARTUPINFO_PRESENT,
-                null(),
+                CREATE_SUSPENDED
+                    | CREATE_NO_WINDOW
+                    | EXTENDED_STARTUPINFO_PRESENT
+                    | CREATE_UNICODE_ENVIRONMENT,
+                environment.as_ptr() as _,
                 null(),
                 &startup.StartupInfo,
                 &mut info,
@@ -220,6 +260,9 @@ impl Worker {
     }
     pub(crate) fn identity(&self) -> &Identity {
         &self.identity
+    }
+    pub(crate) fn is_stopped(&self) -> bool {
+        self.stopped
     }
     pub(crate) fn resume(&mut self) -> Result<(), String> {
         if self.started || self.stopped {

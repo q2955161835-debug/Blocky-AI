@@ -291,6 +291,7 @@ fn execute_value(value: Value) -> Value {
 fn main() {
     match std::env::args().nth(1).as_deref() {
         Some("--blocky-workflow-session") => std::process::exit(blocky_studio::workflow::session::main()),
+        Some("--blocky-runtime-session") => std::process::exit(blocky_studio::workflow::managed::main()),
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
         Some("--blocky-rpa-recording-worker") => std::process::exit(blocky_studio::rpa::recording::worker_main()),
         Some("--blocky-rpa-record") => std::process::exit(blocky_studio::rpa::recording::session_main()),

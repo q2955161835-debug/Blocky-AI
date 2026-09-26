@@ -7,6 +7,7 @@ import {
   nativeAgentServices,
   type PendingApproval,
   type RunResult,
+  type WorkflowPorts,
 } from "@blocky/runtime-core";
 import {
   stableId,
@@ -24,6 +25,7 @@ import { cliRpaModules } from "./rpa-module";
 import { rpaModuleInputsSchema } from "@blocky/rpa-core";
 import { cliWorkflowPorts } from "./workflow-session";
 import { workflowIdSchema } from "./workflow-schema";
+export type RunAgentContext = { workflow: WorkflowPorts; approve(value: PendingApproval, signal: AbortSignal): Promise<boolean> };
 export async function runAgent(
   args: Args,
   project: Project,
@@ -31,6 +33,7 @@ export async function runAgent(
   userRegistry: Map<string, Resource> | undefined,
   write: (value: unknown) => void,
   signal: AbortSignal,
+  context?: RunAgentContext,
 ) {
   const workflowTaskId = args.options.has("workflow-task") ? required(args, "workflow-task") : undefined;
   if (workflowTaskId !== undefined && (!workflowIdSchema.safeParse(workflowTaskId).success || args.options.has("inputs-file") || args.options.has("from-block")))
@@ -192,6 +195,7 @@ export async function runAgent(
       ...(args.options.has("interactive")
         ? {
             approve: async (value: PendingApproval, s: AbortSignal) => {
+              if (context) return context.approve(value, s);
               write(envelope("run.approval-required", value));
               const lines = createInterface({
                 input: process.stdin,
@@ -215,7 +219,7 @@ export async function runAgent(
     const runtime = new Runtime({
       newId: () => (questions.length === 1 ? runId : `${runId}-r${++ordinal}`),
       sessionId: `session-${runId}`,
-      adapters: { ...hostAdapters(call, services, args.options.has("live") ? cliRpaModules(rpaInputs) : undefined), workflow: cliWorkflowPorts() },
+      adapters: { ...hostAdapters(call, services, args.options.has("live") ? cliRpaModules(rpaInputs) : undefined), workflow: context?.workflow ?? cliWorkflowPorts() },
     });
     let trace = new TraceSession();
     const results: RunResult[] = [];
