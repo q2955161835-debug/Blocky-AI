@@ -5,9 +5,32 @@ import {
   chromium,
   type Browser as CdpBrowser,
   type Page,
+  type Locator,
 } from "playwright-core";
 describe("Blocky native editor", () => {
   let cdp: CdpBrowser, page: Page;
+  async function clickPreviewControl(iframe: Locator, control: Locator) {
+    await control.waitFor({ state: "visible" });
+    await browser.waitUntil(() => control.isEnabled(), { timeout: 15000 });
+    await control.scrollIntoViewIfNeeded();
+    const outer = await iframe.evaluate(el => {
+      const rect = el.getBoundingClientRect(), frame = el as HTMLElement;
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+        layoutWidth: frame.offsetWidth, layoutHeight: frame.offsetHeight, borderX: frame.clientLeft, borderY: frame.clientTop };
+    });
+    const inner = await control.evaluate(el => {
+      const rect = el.getBoundingClientRect(), x = rect.x + rect.width / 2, y = rect.y + rect.height / 2;
+      if (!el.contains(document.elementFromPoint(x, y))) throw Error("Preview control is obscured");
+      return { x, y };
+    });
+    // This Edge/CDP version returns unscaled locator coordinates inside transformed iframes.
+    // Use both observed DOM rects, then send a real pointer event; never invoke a DOM click.
+    const point = { x: outer.x + (outer.borderX + inner.x) * outer.width / outer.layoutWidth,
+      y: outer.y + (outer.borderY + inner.y) * outer.height / outer.layoutHeight };
+    expect(await iframe.evaluate((el, point) => document.elementFromPoint(point.x, point.y) === el, point)).toBe(true);
+    expect(point.x >= 0 && point.x < 1280).toBe(true);
+    await page.mouse.click(point.x, point.y);
+  }
   before(async () => {
     cdp = await chromium.connectOverCDP(
       `http://127.0.0.1:${process.env.BLOCKY_TEST_CDP_PORT}`,
@@ -149,6 +172,7 @@ describe("Blocky native editor", () => {
     await page.screenshot({ path: "try/stage7/native/canvas-overview.png" });
   });
   it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
+    await page.getByRole("button", { name: "返回开始页", exact: true }).click();
     await page
       .locator(".welcome")
       .getByRole("button", { name: /资料问答伙伴/ })
@@ -382,7 +406,7 @@ describe("Blocky native editor", () => {
     });
     expect(preserved).toBe(true);
     await frame.locator("#question").fill("水循环如何形成？");
-    await frame.locator("#submit").click({ timeout: 15000 });
+    await clickPreviewControl(page.locator("iframe[title='资料问答']"), frame.locator("#submit"));
     try {
       await browser.waitUntil(
         async () =>
@@ -435,7 +459,7 @@ describe("Blocky native editor", () => {
       mimeType: "text/plain",
       buffer: Buffer.from("课堂笔记：观察蒸发与降水。"),
     });
-    await frame.getByRole("button", { name: "查询资料", exact: true }).click();
+    await clickPreviewControl(page.locator('iframe[title="学习资料查询"]'), frame.getByRole("button", { name: "查询资料", exact: true }));
     await page
       .getByRole("dialog", { name: "运行应用页面" })
       .getByRole("button", { name: "取消", exact: true })
@@ -444,7 +468,7 @@ describe("Blocky native editor", () => {
     await browser.waitUntil(async () =>
       (await frame.locator("#status").innerText()).includes("未能完成"),
     );
-    await frame.getByRole("button", { name: "查询资料", exact: true }).click();
+    await clickPreviewControl(page.locator('iframe[title="学习资料查询"]'), frame.getByRole("button", { name: "查询资料", exact: true }));
     await page
       .getByRole("button", { name: "允许本次运行", exact: true })
       .click();
