@@ -1,0 +1,4251 @@
+[
+  {
+    "name": "success-and-compensation",
+    "initial": {
+      "schemaVersion": "blocky.workflow/v1",
+      "taskId": "task-parity",
+      "definition": {
+        "projectId": "project-parity",
+        "moduleId": "module-parity",
+        "blockId": "workflow-parity",
+        "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "runtimeVersion": 1,
+        "steps": [
+          {
+            "stepId": "first",
+            "kind": "action",
+            "compensate": true
+          },
+          {
+            "stepId": "approval",
+            "kind": "approval",
+            "label": "Confirm"
+          },
+          {
+            "stepId": "second",
+            "kind": "action",
+            "compensate": false
+          },
+          {
+            "stepId": "saved",
+            "kind": "checkpoint"
+          }
+        ]
+      },
+      "revision": 1,
+      "cursor": 0,
+      "forwardCursor": 0,
+      "phase": "forward",
+      "status": "ready",
+      "state": null,
+      "receipts": [
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        }
+      ],
+      "resolutions": []
+    },
+    "steps": [
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 1
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 2,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "executing",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 2,
+          "status": "executing",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "complete",
+          "state": {
+            "counter": 1
+          },
+          "revision": 2
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 3,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 3,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "await-approval",
+          "revision": 3
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 4,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "awaiting-approval",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 4,
+          "status": "awaiting-approval",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "decide",
+          "stepId": "approval",
+          "decision": "approve",
+          "revision": 4
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 5,
+          "cursor": 2,
+          "forwardCursor": 2,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 5,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 2,
+          "forwardCursor": 2,
+          "totalSteps": 4,
+          "stepId": "second",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 5
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 6,
+          "cursor": 2,
+          "forwardCursor": 2,
+          "phase": "forward",
+          "status": "executing",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "second",
+            "direction": "forward",
+            "effectKey": "task-parity:second:forward"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 6,
+          "status": "executing",
+          "phase": "forward",
+          "cursor": 2,
+          "forwardCursor": 2,
+          "totalSteps": 4,
+          "stepId": "second",
+          "active": {
+            "stepId": "second",
+            "direction": "forward",
+            "effectKey": "task-parity:second:forward"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "complete",
+          "state": {
+            "counter": 2
+          },
+          "revision": 6
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 7,
+          "cursor": 3,
+          "forwardCursor": 3,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "completed",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 7,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 3,
+          "forwardCursor": 3,
+          "totalSteps": 4,
+          "stepId": "saved",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "completed"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "checkpoint",
+          "revision": 7
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 8,
+          "cursor": 4,
+          "forwardCursor": 4,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "completed",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 8,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 4,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "completed"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "finish",
+          "revision": 8
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 9,
+          "cursor": 4,
+          "forwardCursor": 4,
+          "phase": "forward",
+          "status": "completed",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "completed",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 9,
+          "status": "completed",
+          "phase": "forward",
+          "cursor": 4,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "completed"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "rollback",
+          "revision": 9
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 10,
+          "cursor": 3,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "completed",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 10,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 3,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "stepId": "saved",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "completed"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "skip",
+          "revision": 10
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 11,
+          "cursor": 2,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "completed",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 11,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 2,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "stepId": "second",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "completed"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "skip",
+          "revision": 11
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 12,
+          "cursor": 1,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "skipped",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 12,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 1,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "skipped"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "skip",
+          "revision": 12
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 13,
+          "cursor": 0,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "skipped",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 13,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "stepId": "first",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "skipped"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 13
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 14,
+          "cursor": 0,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "undoing",
+          "state": {
+            "counter": 2
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "skipped",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 14,
+          "status": "undoing",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "skipped"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "complete",
+          "state": null,
+          "revision": 14
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 15,
+          "cursor": -1,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "skipped",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 15,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "skipped"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "finish",
+          "revision": 15
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 16,
+          "cursor": -1,
+          "forwardCursor": 4,
+          "phase": "rollback",
+          "status": "compensated",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "approved"
+            },
+            {
+              "status": "skipped",
+              "before": {
+                "counter": 1
+              },
+              "after": {
+                "counter": 2
+              }
+            },
+            {
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 16,
+          "status": "compensated",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 4,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "approved"
+            },
+            {
+              "stepId": "second",
+              "status": "skipped"
+            },
+            {
+              "stepId": "saved",
+              "status": "completed"
+            }
+          ],
+          "resolutions": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "rejection",
+    "initial": {
+      "schemaVersion": "blocky.workflow/v1",
+      "taskId": "task-parity",
+      "definition": {
+        "projectId": "project-parity",
+        "moduleId": "module-parity",
+        "blockId": "workflow-parity",
+        "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "runtimeVersion": 1,
+        "steps": [
+          {
+            "stepId": "first",
+            "kind": "action",
+            "compensate": true
+          },
+          {
+            "stepId": "approval",
+            "kind": "approval",
+            "label": "Confirm"
+          },
+          {
+            "stepId": "second",
+            "kind": "action",
+            "compensate": false
+          },
+          {
+            "stepId": "saved",
+            "kind": "checkpoint"
+          }
+        ]
+      },
+      "revision": 1,
+      "cursor": 0,
+      "forwardCursor": 0,
+      "phase": "forward",
+      "status": "ready",
+      "state": null,
+      "receipts": [
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        }
+      ],
+      "resolutions": []
+    },
+    "steps": [
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 1
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 2,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "executing",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 2,
+          "status": "executing",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "complete",
+          "state": {
+            "counter": 1
+          },
+          "revision": 2
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 3,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 3,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "await-approval",
+          "revision": 3
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 4,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "awaiting-approval",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 4,
+          "status": "awaiting-approval",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "decide",
+          "stepId": "approval",
+          "decision": "reject",
+          "revision": 4
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 5,
+          "cursor": 0,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "rejected"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 5,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "first",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "rejected"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 5
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 6,
+          "cursor": 0,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "undoing",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "rejected"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 6,
+          "status": "undoing",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "rejected"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "complete",
+          "state": null,
+          "revision": 6
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 7,
+          "cursor": -1,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "rejected"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 7,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "rejected"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "finish",
+          "revision": 7
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 8,
+          "cursor": -1,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensated",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "rejected"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 8,
+          "status": "compensated",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "rejected"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "uncertain-and-manual-resolution",
+    "initial": {
+      "schemaVersion": "blocky.workflow/v1",
+      "taskId": "task-parity",
+      "definition": {
+        "projectId": "project-parity",
+        "moduleId": "module-parity",
+        "blockId": "workflow-parity",
+        "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "runtimeVersion": 1,
+        "steps": [
+          {
+            "stepId": "first",
+            "kind": "action",
+            "compensate": true
+          },
+          {
+            "stepId": "approval",
+            "kind": "approval",
+            "label": "Confirm"
+          },
+          {
+            "stepId": "second",
+            "kind": "action",
+            "compensate": false
+          },
+          {
+            "stepId": "saved",
+            "kind": "checkpoint"
+          }
+        ]
+      },
+      "revision": 1,
+      "cursor": 0,
+      "forwardCursor": 0,
+      "phase": "forward",
+      "status": "ready",
+      "state": null,
+      "receipts": [
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        }
+      ],
+      "resolutions": []
+    },
+    "steps": [
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 1
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 2,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "executing",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 2,
+          "status": "executing",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "uncertain",
+          "code": "BLK-WORKFLOW-CANCELLED",
+          "revision": 2
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 3,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "uncertain",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "code": "BLK-WORKFLOW-CANCELLED"
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 3,
+          "status": "uncertain",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "code": "BLK-WORKFLOW-CANCELLED",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "resolve",
+          "outcome": "not-executed",
+          "revision": 3
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 4,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "ready",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 4,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 4
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 5,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "executing",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 5,
+          "status": "executing",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "uncertain",
+          "code": "BLK-WORKFLOW-EFFECT",
+          "revision": 5
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 6,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "uncertain",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ],
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "code": "BLK-WORKFLOW-EFFECT"
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 6,
+          "status": "uncertain",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "forward",
+            "effectKey": "task-parity:first:forward"
+          },
+          "code": "BLK-WORKFLOW-EFFECT",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "resolve",
+          "outcome": "completed",
+          "state": {
+            "counter": 1
+          },
+          "revision": 6
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 7,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 7,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "pause",
+          "revision": 7
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 8,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "paused",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 8,
+          "status": "paused",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "resume",
+          "revision": 8
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 9,
+          "cursor": 1,
+          "forwardCursor": 1,
+          "phase": "forward",
+          "status": "ready",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 9,
+          "status": "ready",
+          "phase": "forward",
+          "cursor": 1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "approval",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "rollback",
+          "revision": 9
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 10,
+          "cursor": 0,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 10,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "first",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "begin",
+          "revision": 10
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 11,
+          "cursor": 0,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "undoing",
+          "state": {
+            "counter": 1
+          },
+          "receipts": [
+            {
+              "status": "completed",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ],
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          }
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 11,
+          "status": "undoing",
+          "phase": "rollback",
+          "cursor": 0,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "stepId": "first",
+          "active": {
+            "stepId": "first",
+            "direction": "rollback",
+            "effectKey": "task-parity:first:rollback"
+          },
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "completed"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "resolve",
+          "outcome": "completed",
+          "state": null,
+          "revision": 11
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 12,
+          "cursor": -1,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            },
+            {
+              "revision": 11,
+              "stepId": "first",
+              "direction": "rollback",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 12,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            },
+            {
+              "revision": 11,
+              "stepId": "first",
+              "direction": "rollback",
+              "outcome": "completed"
+            }
+          ]
+        }
+      },
+      {
+        "action": {
+          "kind": "finish",
+          "revision": 12
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 13,
+          "cursor": -1,
+          "forwardCursor": 1,
+          "phase": "rollback",
+          "status": "compensated",
+          "state": null,
+          "receipts": [
+            {
+              "status": "compensated",
+              "before": null,
+              "after": {
+                "counter": 1
+              }
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            },
+            {
+              "revision": 11,
+              "stepId": "first",
+              "direction": "rollback",
+              "outcome": "completed"
+            }
+          ]
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 13,
+          "status": "compensated",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 1,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "compensated"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": [
+            {
+              "revision": 3,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "not-executed"
+            },
+            {
+              "revision": 6,
+              "stepId": "first",
+              "direction": "forward",
+              "outcome": "completed"
+            },
+            {
+              "revision": 11,
+              "stepId": "first",
+              "direction": "rollback",
+              "outcome": "completed"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "rollback-empty",
+    "initial": {
+      "schemaVersion": "blocky.workflow/v1",
+      "taskId": "task-parity",
+      "definition": {
+        "projectId": "project-parity",
+        "moduleId": "module-parity",
+        "blockId": "workflow-parity",
+        "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "runtimeVersion": 1,
+        "steps": [
+          {
+            "stepId": "first",
+            "kind": "action",
+            "compensate": true
+          },
+          {
+            "stepId": "approval",
+            "kind": "approval",
+            "label": "Confirm"
+          },
+          {
+            "stepId": "second",
+            "kind": "action",
+            "compensate": false
+          },
+          {
+            "stepId": "saved",
+            "kind": "checkpoint"
+          }
+        ]
+      },
+      "revision": 1,
+      "cursor": 0,
+      "forwardCursor": 0,
+      "phase": "forward",
+      "status": "ready",
+      "state": null,
+      "receipts": [
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        },
+        {
+          "status": "pending"
+        }
+      ],
+      "resolutions": []
+    },
+    "steps": [
+      {
+        "action": {
+          "kind": "pause",
+          "revision": 1
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 2,
+          "cursor": 0,
+          "forwardCursor": 0,
+          "phase": "forward",
+          "status": "paused",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 2,
+          "status": "paused",
+          "phase": "forward",
+          "cursor": 0,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "stepId": "first",
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "rollback",
+          "revision": 2
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 3,
+          "cursor": -1,
+          "forwardCursor": 0,
+          "phase": "rollback",
+          "status": "compensating",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 3,
+          "status": "compensating",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      },
+      {
+        "action": {
+          "kind": "finish",
+          "revision": 3
+        },
+        "after": {
+          "schemaVersion": "blocky.workflow/v1",
+          "taskId": "task-parity",
+          "definition": {
+            "projectId": "project-parity",
+            "moduleId": "module-parity",
+            "blockId": "workflow-parity",
+            "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "runtimeVersion": 1,
+            "steps": [
+              {
+                "stepId": "first",
+                "kind": "action",
+                "compensate": true
+              },
+              {
+                "stepId": "approval",
+                "kind": "approval",
+                "label": "Confirm"
+              },
+              {
+                "stepId": "second",
+                "kind": "action",
+                "compensate": false
+              },
+              {
+                "stepId": "saved",
+                "kind": "checkpoint"
+              }
+            ]
+          },
+          "revision": 4,
+          "cursor": -1,
+          "forwardCursor": 0,
+          "phase": "rollback",
+          "status": "compensated",
+          "state": null,
+          "receipts": [
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            },
+            {
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        },
+        "summary": {
+          "schemaVersion": "blocky.workflow-summary/v1",
+          "taskId": "task-parity",
+          "projectId": "project-parity",
+          "moduleId": "module-parity",
+          "blockId": "workflow-parity",
+          "planDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "revision": 4,
+          "status": "compensated",
+          "phase": "rollback",
+          "cursor": -1,
+          "forwardCursor": 0,
+          "totalSteps": 4,
+          "receipts": [
+            {
+              "stepId": "first",
+              "status": "pending"
+            },
+            {
+              "stepId": "approval",
+              "status": "pending"
+            },
+            {
+              "stepId": "second",
+              "status": "pending"
+            },
+            {
+              "stepId": "saved",
+              "status": "pending"
+            }
+          ],
+          "resolutions": []
+        }
+      }
+    ]
+  }
+]
