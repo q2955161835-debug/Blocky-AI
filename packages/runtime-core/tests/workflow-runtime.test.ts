@@ -148,6 +148,33 @@ function fixture() {
     },
   };
 }
+it("rejecting the official workflow clears its prepared input and never delivers it", async () => {
+  const p = createArchitectureStarter("durable-workflow"),
+    f = fixture();
+  const adapters = { ...localAdapters(), workflow: f.ports };
+  const waiting = await new Runtime({ adapters }).run(
+    p,
+    "on-event",
+    "private-prepared-input",
+  );
+  expect(waiting.status).toBe("waiting");
+  expect(f.record.state).toMatchObject({
+    agent: {
+      sessionMemory: [{ key: "saved-input", value: "private-prepared-input" }],
+    },
+  });
+  f.decide("reject");
+  const result = await new Runtime({ adapters }).run(
+    p,
+    "on-event",
+    "replacement-input",
+    { workflowTaskId: "task-owned" },
+  );
+  expect(result.workflow?.status).toBe("compensated");
+  expect(result.structured).toBe("compensated");
+  expect(f.record.state).toMatchObject({ agent: { sessionMemory: [] } });
+  expect(result.events.some((e) => e.blockId === "deliver")).toBe(false);
+});
 it("runs existing child stacks to a durable approval and resumes a new Runtime with complete private context", async () => {
   const p = project(),
     f = fixture();

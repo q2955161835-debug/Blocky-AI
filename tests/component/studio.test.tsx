@@ -13,6 +13,7 @@ import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useSession } from "../../apps/studio-desktop/src/composition/useSession";
 import { Inspector } from "../../apps/studio-desktop/src/app/Inspector";
 import { BottomPanel } from "../../apps/studio-desktop/src/app/BottomPanel";
+import { Welcome } from "../../apps/studio-desktop/src/app/Welcome";
 import { createStarter } from "../../packages/test-fixtures/src";
 it("revalidates session targets when reopening the same project ID", async () => {
   const hook = renderHook(() => useStudio());
@@ -37,6 +38,34 @@ it("revalidates session targets when reopening the same project ID", async () =>
   ).toBe(true);
 });
 const io = vi.hoisted(() => ({ open: vi.fn(), save: vi.fn() }));
+it("creates the official approval workflow from the welcome page with an editable handler", async () => {
+  const hook = renderHook(() => useStudio());
+  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
+  render(<Welcome studio={hook.result.current} />);
+  fireEvent.click(screen.getByRole("button", { name: /审批工作流/ }));
+  await waitFor(() =>
+    expect(hook.result.current.snapshot.project.manifest.displayName).toBe(
+      "审批工作流",
+    ),
+  );
+  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
+  const p = hook.result.current.snapshot.project;
+  expect(p.manifest.modules).toHaveLength(1);
+  expect(p.manifest.modules[0].purpose).toBe("automation");
+  expect(p.manifest.resources).toEqual([]);
+  expect(p.manifest.appSurfaces).toEqual([]);
+  expect(p.workspaces.main.blocks.blocks[0].inputs?.HANDLER?.block?.type).toBe(
+    "runtime.task.durable",
+  );
+  expect(hook.result.current.question).toBe("请审阅这份交付内容。");
+  expect(hook.result.current.started).toBe(true);
+  expect(hook.result.current.result).toBeUndefined();
+  expect(
+    hook.result.current.compiled?.diagnostics.filter(
+      (d) => d.severity === "error",
+    ),
+  ).toEqual([]);
+});
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: io.open,
   saveProject: io.save,

@@ -2,81 +2,6 @@ import { expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
-import { createArchitectureStarter } from "../../packages/block-catalog/src";
-import { createProject } from "../../tools/blocky-cli/src/native-store";
-import type { WorkspaceBlock } from "../../packages/language-schema/src";
-
-function project() {
-  const p = createArchitectureStarter("event-mailbox", "project-workflow-cli");
-  const b = (
-    id: string,
-    type: string,
-    fields: Record<string, string> = {},
-    inputs: Record<string, { block: WorkspaceBlock }> = {},
-  ): WorkspaceBlock => ({ id, type, fields, inputs });
-  const stack = (...items: WorkspaceBlock[]) => {
-    items.forEach((item, i) => {
-      if (items[i + 1]) item.next = { block: items[i + 1] };
-    });
-    return items[0];
-  };
-  const output = (id: string) =>
-    b(id, "core.output.structured", { SCHEMA: "schemas/result.json" });
-  p.workspaces.main.blocks.blocks[0].inputs!.HANDLER = {
-    block: b(
-      "workflow",
-      "runtime.task.durable",
-      {},
-      {
-        STEPS: {
-          block: stack(
-            b(
-              "prepare",
-              "runtime.compensate",
-              {},
-              {
-                DO: {
-                  block: b("remember", "core.memory.write", {
-                    SCOPE: "session",
-                    KEY: "saved-input",
-                    SOURCE: "input",
-                  }),
-                },
-                UNDO: {
-                  block: stack(
-                    b("undo-value", "core.data.set", {
-                      VALUE: '"compensated"',
-                    }),
-                    output("undo-output"),
-                  ),
-                },
-              },
-            ),
-            b("approve", "core.human.approve", { LABEL: "Review saved input" }),
-            b(
-              "deliver",
-              "runtime.compensate",
-              {},
-              {
-                DO: {
-                  block: stack(
-                    b("recall", "core.memory.read", {
-                      SCOPE: "session",
-                      KEY: "saved-input",
-                    }),
-                    output("deliver-output"),
-                  ),
-                },
-              },
-            ),
-            b("checkpoint", "runtime.checkpoint.save"),
-          ),
-        },
-      },
-    ),
-  };
-  return p;
-}
 it.each(["approve", "reject"])(
   "persists a workflow across CLI processes and follows %s without replaying the first step",
   async (decision) => {
@@ -102,7 +27,27 @@ it.each(["approve", "reject"])(
     };
     try {
       const file = join(directory, "workflow.blocky");
-      await createProject(file, project());
+      const listed = call(["template", "list", "--json"]);
+      expect(listed.code).toBe(0);
+      expect(listed.result.data.templates).toContainEqual(
+        expect.objectContaining({
+          templateId: "durable-workflow",
+          kind: "project",
+        }),
+      );
+      const shown = call(["template", "show", "durable-workflow", "--json"]);
+      expect(shown.code).toBe(0);
+      expect(shown.result.data.sampleInput).toBeTruthy();
+      const created = call([
+        "project",
+        "create",
+        "--template",
+        "durable-workflow",
+        "--output",
+        file,
+        "--json",
+      ]);
+      expect(created.code, JSON.stringify(created.result)).toBe(0);
       const start = call([
         "run",
         "start",
