@@ -166,6 +166,32 @@
     ]
   },
   {
+    "name": "uiautomation",
+    "version": "0.25.1",
+    "files": [
+      "uiautomation-0.25.1/LICENSE"
+    ],
+    "sources": [
+      "https://raw.githubusercontent.com/leexgone/uiautomation-rs/bcabe14f9750d85e5ce98be3b3d344f7c8c03ca8/LICENSE"
+    ],
+    "sha256": [
+      "e0b0d94311c9b52be1389c4826991c8e644a8fca59efd93383c275d5dd611fba"
+    ]
+  },
+  {
+    "name": "uiautomation_derive",
+    "version": "0.7.9",
+    "files": [
+      "uiautomation_derive-0.7.9/LICENSE"
+    ],
+    "sources": [
+      "https://raw.githubusercontent.com/leexgone/uiautomation-rs/bcabe14f9750d85e5ce98be3b3d344f7c8c03ca8/LICENSE"
+    ],
+    "sha256": [
+      "e0b0d94311c9b52be1389c4826991c8e644a8fca59efd93383c275d5dd611fba"
+    ]
+  },
+  {
     "name": "webview2-com",
     "version": "0.38.2",
     "files": [
