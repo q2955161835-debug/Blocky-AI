@@ -7,7 +7,7 @@ import {
   type RpaModulePlan,
   type RpaStep,
 } from "@blocky/rpa-core";
-import { stableId } from "@blocky/language-schema";
+import { canonicalJson, stableId } from "@blocky/language-schema";
 import { workflowJson, workflowKeys } from "./workflow/protocol";
 const invalid = () => Error("BLK-RUN-SERVICE");
 const sourceId = (value: unknown): value is string =>
@@ -256,7 +256,7 @@ export class RuntimeServiceHost {
         const step = handle.request.plan.steps.find(
           (step) => step.stepId === (v.step as RpaStep | undefined)?.stepId,
         );
-        if (!step || JSON.stringify(v.step) !== JSON.stringify(step))
+        if (!step || canonicalJson(v.step) !== canonicalJson(step))
           throw invalid();
         if (
           step.action === "fill"

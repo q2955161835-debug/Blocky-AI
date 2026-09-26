@@ -377,6 +377,43 @@ it("rejects malformed RPA plans and altered steps before invoking native ports",
   await host.close();
 });
 
+it.each(["read", "fill"] as const)("preserves reviewed RPA %s steps when native JSON transport reorders object keys", async (action) => {
+  // Rust serde_json maps do not preserve JavaScript insertion order. Reorder both
+  // the envelope and nested locator without changing the authorized operation.
+  const nativeWire = (value: unknown) => JSON.parse(JSON.stringify(value, (_key, item) =>
+    item && typeof item === "object" && !Array.isArray(item)
+      ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item));
+  const adapters = localAdapters(), perform = vi.fn(async () => ({}));
+  adapters.rpa = { open: async () => ({ checkpointId: "checkpoint-owned", close: async () => {}, perform }) };
+  const host = new RuntimeServiceHost("project-one", adapters), signal = new AbortController().signal;
+  try {
+    const request = rpaRequest();
+    const step = { ...request.plan.steps[0], action,
+      ...(action === "fill" ? { value: { kind: "manual-input", sensitive: true }, effectKey: "fill-effect" } : {}),
+    };
+    const planRequest = { ...request, plan: { ...request.plan, steps: [step] },
+      inputSources: action === "fill" ? { read: "manual" } : {},
+    };
+    const opened = await host.request(nativeWire({ service: "rpa.open", input: planRequest }), signal) as { handle: string };
+    const input = action === "fill" ? { input: "SYNTHETIC_MANUAL_INPUT" } : {};
+    await host.request(nativeWire({ service: "rpa.perform", handle: opened.handle, step, ...input }), signal);
+    expect(perform).toHaveBeenCalledExactlyOnceWith(step, input.input, expect.any(AbortSignal));
+    for (const altered of [
+      { ...step, timeoutMs: 2000 },
+      { ...step, locator: { ...step.locator, automationId: "another-control" } },
+      { ...step, extra: "undeclared" },
+      { ...step, locator: { ...step.locator, extra: "undeclared" } },
+      ...(action === "fill" ? [
+        { ...step, value: { kind: "manual-input", sensitive: false } },
+        { ...step, value: { kind: "secret-ref", ref: "foreign-secret" } },
+        { ...step, effectKey: "another-effect" },
+      ] : []),
+    ]) await expect(host.request(nativeWire({ service: "rpa.perform", handle: opened.handle, step: altered, ...input }), signal))
+      .rejects.toThrow("BLK-RUN-SERVICE");
+    expect(perform).toHaveBeenCalledTimes(1);
+  } finally { await host.close(); }
+});
+
 it("closes an RPA handle arriving after close timed out and rejects its former caller", async () => {
   vi.useFakeTimers();
   try {
