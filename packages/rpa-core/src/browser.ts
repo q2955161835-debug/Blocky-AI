@@ -1,4 +1,5 @@
 import type { Page } from "playwright-core";
+import { concealCaptureInputs } from "./browser-capture-mask";
 import type { RpaAdapter, RpaGrant, RpaPlan, RpaReceipt, RpaStep } from "./index";
 
 export type BrowserRpaPorts = {
@@ -79,7 +80,13 @@ export class BrowserRpaAdapter implements RpaAdapter {
         const mask = this.page.locator('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"],[role="searchbox"],[role="combobox"],[role="spinbutton"],iframe,frame,object,embed');
         const maskedRegions = await mask.count();
         if (maskedRegions > 2048) throw Error("BLK-RPA-CAPTURE-003");
-        const bytes = await target.screenshot({ timeout: step.timeoutMs, mask: [mask], maskColor: "#000000", animations: "disabled", caret: "hide", scale: "css" });
+        const hidden = await concealCaptureInputs(this.page, mask);
+        let bytes: Uint8Array;
+        try {
+          if (!await hidden.valid()) throw Error("BLK-RPA-CAPTURE-005");
+          bytes = await target.screenshot({ timeout: step.timeoutMs, mask: [mask], maskColor: "#000000", animations: "disabled", caret: "hide", scale: "css" });
+          if (!await hidden.valid()) { bytes.fill(0); throw Error("BLK-RPA-CAPTURE-005"); }
+        } finally { await hidden.restore(); }
         if (bytes.byteLength > 4 * 1024 * 1024 || !await this.verifyTarget(signal)) throw Error("BLK-RPA-CAPTURE-003");
         this.ports.receiveScreenshot(step.stepId, bytes, maskedRegions);
         break;

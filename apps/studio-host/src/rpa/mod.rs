@@ -24,6 +24,7 @@ mod approval;
 mod input_policy;
 mod capture_png;
 mod capture_windows;
+mod capture_staging;
 #[cfg(test)]
 mod capture_cli_tests;
 pub mod captures;
@@ -553,6 +554,7 @@ impl RpaHost {
                 let result=process::run(&request,timeout,cancel.clone())?;
                 let masked=result["maskedRegions"].as_u64().filter(|v|*v<=2048).ok_or("BLK-RPA-CAPTURE-002")?as u32;
                 let encrypted=captures::read_bounded(&path,capture_png::LIMIT+8192)?;
+                temporary.close()?;
                 (crate::secret_store::crypt(&encrypted,false)?,masked)
             }
             Binding::Browser(target)=>self.browsers.capture(target,json!({"kind":"perform","identity":target.identity,"token":token,"stepId":step.step_id}),timeout,cancel.clone())?,

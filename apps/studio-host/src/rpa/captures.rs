@@ -71,6 +71,7 @@ impl Store {
         crate::secret_store::wipe(&mut plain); result
     }
     fn scan(&self, now: u64) -> Result<Vec<Capture>, String> {
+        super::capture_staging::sweep(&self.staging_root()?)?;
         let mut results = vec![]; let mut total = 0u64;
         for (index, entry) in std::fs::read_dir(&self.root).map_err(|_| IO)?.enumerate() {
             if index >= 64 { return Err(LIMIT.into()); }
@@ -101,7 +102,8 @@ impl Store {
             if !meta.valid() { return Err(INVALID.into()); }
             let _lock = self.lock()?;
             let existing = self.scan(now)?;
-            if existing.len() >= 32 || existing.iter().map(|v| v.bytes + 8192).sum::<usize>() + png.len() + 8192 > 128 * 1024 * 1024 { return Err(LIMIT.into()); }
+            let pending=super::capture_staging::sweep(&self.staging_root()?)?;
+            if existing.len()+pending >= 32 || existing.iter().map(|v| v.bytes + 8192).sum::<usize>() + pending*super::capture_staging::RESERVED + png.len() + 8192 > 128 * 1024 * 1024 { return Err(LIMIT.into()); }
             let header = serde_json::to_vec(&meta).map_err(|_| IO)?;
             let mut plain = Vec::with_capacity(header.len() + png.len() + 4);
             plain.extend_from_slice(&(header.len() as u32).to_le_bytes()); plain.extend_from_slice(&header); plain.extend_from_slice(&png);
@@ -132,10 +134,12 @@ impl Store {
         let path = self.path(id)?; let _lock = self.lock()?; regular(&path, MAX_FILE)?;
         std::fs::remove_file(path).map_err(|_| IO)?; Ok(json!({"captureId":id,"deleted":true}))
     }
-    pub(super) fn staging(&self) -> Result<tempfile::TempDir, String> {
-        let root = self.root.parent().ok_or(IO)?.join("capture-staging");
-        crate::profile::prepare(&root).map_err(|_| IO)?;
-        tempfile::tempdir_in(root).map_err(|_| IO.into())
+    fn staging_root(&self)->Result<PathBuf,String>{Ok(self.root.parent().ok_or(IO)?.join("capture-staging"))}
+    pub(super) fn staging(&self) -> Result<super::capture_staging::Pending, String> {
+        let _lock=self.lock()?;let existing=self.scan(super::now())?;let root=self.staging_root()?;
+        let active=super::capture_staging::sweep(&root)?;
+        if active>=16||existing.len()+active>=32||existing.iter().map(|v|v.bytes+8192).sum::<usize>()+(active+1)*super::capture_staging::RESERVED>128*1024*1024{return Err(LIMIT.into());}
+        super::capture_staging::create(&root)
     }
 }
 pub(super) fn read_bounded(path: &Path, max: usize) -> Result<Vec<u8>, String> {
@@ -148,7 +152,7 @@ pub(super) fn read_bounded(path: &Path, max: usize) -> Result<Vec<u8>, String> {
     let mut bytes = vec![]; file.take(max as u64 + 1).read_to_end(&mut bytes).map_err(|_| IO)?;
     if bytes.len() > max { return Err(LIMIT.into()); } Ok(bytes)
 }
-fn regular(path: &Path, max: usize) -> Result<u64, String> {
+pub(super) fn regular(path: &Path, max: usize) -> Result<u64, String> {
     use std::os::windows::fs::MetadataExt;
     let meta = std::fs::symlink_metadata(path).map_err(|_| IO)?;
     if !meta.is_file() || meta.file_attributes() & 0x400 != 0 || meta.len() > max as u64 { return Err(IO.into()); } Ok(meta.len())
