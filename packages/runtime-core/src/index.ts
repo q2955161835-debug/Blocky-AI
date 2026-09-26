@@ -1,4 +1,6 @@
 export { Runtime } from "./runtime";
+export { RemoteRuntime } from "./remote-runtime";
+export { RuntimeServiceHost } from "./runtime-service-host";
 export type { RuntimeSessionState } from "./session-state";
 export { resolveRunEntry } from "./entry";
 export { localAdapters } from "./adapters";

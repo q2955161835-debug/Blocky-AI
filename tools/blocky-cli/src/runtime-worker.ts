@@ -9,12 +9,15 @@ import {
   assertWorkflowBinding,
   type WorkflowPorts,
   type WorkflowRecord,
+  RemoteRuntime,
 } from "@blocky/runtime-core";
 const MAX = 20 * 1024 * 1024;
 const abort = new AbortController();
 let buffer = "",
   started = false,
   serial = 0;
+let desktop: RemoteRuntime | undefined;
+let inputClosed = false;
 const pending = new Map<
   number,
   {
@@ -29,6 +32,7 @@ const send = (frame: unknown) => {
   process.stdout.write(line);
 };
 function call(operation: string, fields: Record<string, unknown> = {}) {
+  if (inputClosed) return Promise.reject(Error("BLK-WORKFLOW-CHANNEL"));
   const id = ++serial;
   return new Promise<any>((resolve, reject) => {
     const timer = setTimeout(
@@ -37,7 +41,11 @@ function call(operation: string, fields: Record<string, unknown> = {}) {
         reject(Error("BLK-WORKFLOW-CHANNEL"));
         abort.abort();
       },
-      operation === "approval" ? 310000 : 10000,
+      operation === "approval"
+        ? 310000
+        : operation === "service"
+          ? 180000
+          : 10000,
     );
     pending.set(id, { resolve, reject, timer });
     try {
@@ -89,6 +97,41 @@ const workflow: WorkflowPorts = {
     };
   },
 };
+function finish() {
+  inputClosed = true;
+  process.stdin.destroy();
+  for (const p of pending.values()) {
+    clearTimeout(p.timer);
+    p.reject(Error("BLK-WORKFLOW-CHANNEL"));
+  }
+  pending.clear();
+}
+async function startDesktop(request: unknown) {
+  desktop = new RemoteRuntime(
+    async (request, signal) => {
+      const cancel = () => send({ kind: "cancel" });
+      signal.addEventListener("abort", cancel, { once: true });
+      try {
+        return await call("service", { request });
+      } finally {
+        signal.removeEventListener("abort", cancel);
+      }
+    },
+    workflow,
+    160,
+  );
+  try {
+    const value = await desktop.run(request, abort.signal, (value) =>
+      send({ kind: "event", value }),
+    );
+    send({ kind: "desktop-done", value });
+  } catch {
+    process.exitCode = 3;
+    send({ kind: "error", code: "BLK-RUN-STATE" });
+  } finally {
+    finish();
+  }
+}
 async function start(argv: unknown) {
   if (
     !Array.isArray(argv) ||
@@ -128,12 +171,7 @@ async function start(argv: unknown) {
       value: { code: result.exitCode, result: result.result },
     });
   } finally {
-    process.stdin.destroy();
-    for (const p of pending.values()) {
-      clearTimeout(p.timer);
-      p.reject(Error("BLK-WORKFLOW-CHANNEL"));
-    }
-    pending.clear();
+    finish();
   }
 }
 process.stdin.setEncoding("utf8");
@@ -157,6 +195,21 @@ process.stdin.on("data", (chunk: string) => {
           process.stdin.destroy();
         });
       } else if (
+        frame.kind === "start" &&
+        !started &&
+        frame.schemaVersion === "blocky.desktop-session/v1" &&
+        Object.keys(frame).sort().join() === "kind,request,schemaVersion"
+      ) {
+        started = true;
+        void startDesktop(frame.request);
+      } else if (
+        frame.kind === "control" &&
+        desktop &&
+        Object.keys(frame).sort().join() === "action,kind" &&
+        ["pause", "resume", "step"].includes(frame.action)
+      ) {
+        desktop.control(frame.action);
+      } else if (
         frame.kind === "cancel" &&
         Object.keys(frame).join() === "kind"
       )
@@ -170,13 +223,24 @@ process.stdin.on("data", (chunk: string) => {
         pending.delete(frame.id);
         clearTimeout(p.timer);
         if (frame.ok) p.resolve(frame.value);
-        else p.reject(Error(workflowErrorCode(frame.value?.code)));
+        else
+          p.reject(
+            Error(
+              desktop && frame.value?.code === "BLK-RUN-SERVICE"
+                ? "BLK-RUN-SERVICE"
+                : workflowErrorCode(frame.value?.code),
+            ),
+          );
       } else throw Error();
     }
   } catch {
     abort.abort();
     process.exitCode = 3;
-    process.stdin.destroy();
+    finish();
   }
 });
-process.stdin.on("end", () => abort.abort());
+process.stdin.on("end", () => {
+  inputClosed = true;
+  abort.abort();
+  finish();
+});
