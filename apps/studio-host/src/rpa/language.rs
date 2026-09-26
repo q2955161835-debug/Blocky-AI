@@ -76,6 +76,14 @@ fn compile(block: &Value) -> Result<(), String> {
         if action == Action::Fill && !["manual", "input", "result"].contains(&text(&f["SOURCE"])?) {
             return Err("BLK-RPA-INPUT-001".into());
         }
+        let input_kind = f.get("INPUT_KIND").map(text).transpose()?.unwrap_or("ordinary");
+        if !["ordinary", "sensitive"].contains(&input_kind) {
+            return Err("BLK-RPA-INPUT-001".into());
+        }
+        let sensitive = input_kind == "sensitive";
+        if sensitive && (action != Action::Fill || f["SOURCE"] != "manual") {
+            return Err("BLK-RPA-SENSITIVE-001".into());
+        }
         let timeout = text(&f["TIMEOUT_MS"])?;
         if !timeout.bytes().all(|c| c.is_ascii_digit()) {
             return Err("BLK-RPA-PLAN-001".into());
@@ -91,6 +99,7 @@ fn compile(block: &Value) -> Result<(), String> {
                 Some(InputRef {
                     kind: "manual-input".into(),
                     reference: None,
+                    sensitive: sensitive.then_some(true),
                 })
             } else {
                 None
@@ -144,6 +153,9 @@ pub(crate) fn permissions(kind: &str, fields: &Value) -> Vec<String> {
     }
     if fields["ACTION"] == "fill" {
         values.push("rpa.input".into());
+        if fields["INPUT_KIND"] == "sensitive" {
+            values.push("rpa.sensitive-input".into());
+        }
     }
     if kind == "core.computer.capture" || fields["ACTION"] == "screenshot" {
         values.push("rpa.capture".into());
@@ -174,5 +186,15 @@ mod tests {
         root["inputs"]["STEPS"]["block"]["fields"]["LOCATOR"] =
             json!({"kind":"uia","automationId":"answer"});
         assert!(validate(&root, false).is_err());
+    }
+    #[test]
+    fn sensitive_input_cannot_come_from_runtime_data() {
+        let mut root = json!({"type":"core.computer.attach","id":"session","fields":{"TARGET":"fixture"},"inputs":{"STEPS":{"block":{"type":"core.computer.act","id":"fill","fields":{"ACTION":"fill","SOURCE":"manual","INPUT_KIND":"sensitive","TIMEOUT_MS":"1000","LOCATOR":{"kind":"uia","automationId":"password"}}}}}});
+        validate(&root, false).unwrap();
+        assert!(permissions("core.computer.act", &root["inputs"]["STEPS"]["block"]["fields"]).contains(&"rpa.sensitive-input".into()));
+        for source in ["input", "result"] {
+            root["inputs"]["STEPS"]["block"]["fields"]["SOURCE"] = json!(source);
+            assert_eq!(validate(&root, false).unwrap_err(), "BLK-RPA-SENSITIVE-001");
+        }
     }
 }

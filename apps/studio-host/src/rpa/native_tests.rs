@@ -248,6 +248,7 @@ fn recording_worker_captures_then_settles_and_detects_target_loss() {
             value: Some(protocol::InputRef {
                 kind: "manual-input".into(),
                 reference: None,
+                sensitive: None,
             }),
             timeout_ms: 1000,
             effect_key: Some("fill".into()),
@@ -310,6 +311,7 @@ fn uia_records_owned_actions_without_typed_content() {
         value: Some(protocol::InputRef {
             kind: "manual-input".into(),
             reference: None,
+            sensitive: None,
         }),
         timeout_ms: 1000,
         effect_key: Some("fill".into()),
@@ -403,6 +405,7 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
     step.value = Some(protocol::InputRef {
         kind: "manual-input".into(),
         reference: None,
+        sensitive: None,
     });
     step.effect_key = Some("fill-once".into());
     input.step = Some(step.clone());

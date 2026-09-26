@@ -23,6 +23,30 @@ fn grant(host: &RpaHost) -> String {
         .unwrap()
         .to_owned()
 }
+#[test]
+fn sensitive_input_does_not_enter_checkpoint_or_status() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let mut proposal = prepared();
+    proposal.plan.steps[0].action = Action::Fill;
+    proposal.plan.steps[0].value = Some(protocol::InputRef { kind: "manual-input".into(), reference: None, sensitive: Some(true) });
+    let token = host.insert(proposal).unwrap()["sessionId"].as_str().unwrap().to_owned();
+    let body = "SENSITIVE_INPUT_BODY_CANARY";
+    host.step_with(&token, "first", Some(body.into()), |request, _, _| {
+        assert_eq!(request.input.as_deref(), Some(body));
+        assert!(input_policy::sensitive_fill(request.step.as_ref().unwrap()));
+        Ok(json!({"filled":true}))
+    }).unwrap();
+    let status = host.status(&token).unwrap();
+    assert!(!status.to_string().contains(body));
+    let checkpoint = journal::Store::new(root.path().to_owned()).inspect(status["checkpointId"].as_str().unwrap()).unwrap();
+    assert!(!checkpoint.to_string().contains(body));
+    for file in std::fs::read_dir(root.path()).unwrap().flatten() {
+        if file.path().is_file() {
+            assert!(!std::fs::read(file.path()).unwrap().windows(body.len()).any(|part| part == body.as_bytes()));
+        }
+    }
+}
 pub(super) fn journal_directory() -> tempfile::TempDir {
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../try/stage7/rpa-journal-tests");
@@ -490,6 +514,7 @@ fn rpa_cannot_resolve_provider_secret_references() {
     p.steps[0].value = Some(protocol::InputRef {
         kind: "secret-ref".into(),
         reference: Some("provider-key".into()),
+        sensitive: None,
     });
     assert!(matches!(preflight(p),Err(code) if code=="BLK-RPA-SENSITIVE-001"));
 }

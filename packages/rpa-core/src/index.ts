@@ -24,7 +24,7 @@ export const rpaPlanSchema = z.object({
     stepId: id,
     action,
     locator,
-    value: z.object({ kind: z.enum(["secret-ref", "manual-input"]), ref: id.optional() }).strict().optional(),
+    value: z.object({ kind: z.enum(["secret-ref", "manual-input"]), ref: id.optional(), sensitive: z.boolean().optional() }).strict().optional(),
     timeoutMs: z.number().int().min(100).max(30000).default(5000),
     effectKey: id.optional(),
   }).strict()).min(1).max(100),
@@ -42,6 +42,8 @@ export const rpaPlanSchema = z.object({
       ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });
     if (step.value && (step.value.kind === "secret-ref" && !step.value.ref || step.value.kind === "manual-input" && step.value.ref))
       ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });
+    if (step.value?.sensitive && step.value.kind !== "manual-input")
+      ctx.addIssue({ code: "custom", message: "BLK-RPA-SENSITIVE-001", path: ["steps", index, "value"] });
     if (["click", "fill"].includes(step.action) && !step.effectKey)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-EFFECT-001", path: ["steps", index, "effectKey"] });
     if (step.effectKey) {
@@ -194,12 +196,12 @@ async function boundedPerform(adapter: RpaAdapter, step: RpaStep, signal: AbortS
 
 export type RecordedAction = { action: RpaAction; locator: RpaStep["locator"]; sensitive?: boolean; value?: string };
 /** Recording produces a proposal; it never stores typed content, even for ordinary fields. */
-export function recordingToDraft(actions: RecordedAction[]): { steps: RpaStep[]; requiresReview: true } {
+export function recordingToDraft(actions: RecordedAction[], options: { includeSensitivePurpose?: boolean } = {}): { steps: RpaStep[]; requiresReview: true } {
   if (actions.length > 100) throw Error("BLK-RPA-RECORD-001");
   return { requiresReview: true, steps: actions.map((item, index) => ({
     stepId: `recorded-${index + 1}`, action: item.action, locator: item.locator,
     timeoutMs: 5000,
-    ...(item.action === "fill" ? { value: { kind: "manual-input" as const } } : {}),
+    ...(item.action === "fill" ? { value: { kind: "manual-input" as const, ...(options.includeSensitivePurpose && item.sensitive ? { sensitive: true } : {}) } } : {}),
     ...(["click", "fill"].includes(item.action) ? { effectKey: `effect-${index + 1}` } : {}),
   })) };
 }

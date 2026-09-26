@@ -28,7 +28,7 @@ export function RpaRecoveryDraft({ preview, disabled, run, close }: { preview: R
       {condition.kind === "text" && <input aria-label={`预期文本 ${receipt.stepId}`} maxLength={1024} autoComplete="off" value={condition.text} onChange={(e) => update(receipt.stepId, { text: e.target.value })} />}
     </fieldset>; })}
     <ol>{preview.plan.steps.slice(preview.checkpoint.completedSteps).map((step) => <li key={step.stepId}>{step.stepId}
-      {step.action === "fill" && <label>重新提供填写内容<input aria-label={`恢复填写 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label>}
+      {step.action === "fill" && <label>{step.value?.sensitive ? "重新提供敏感输入" : "重新提供填写内容"}<input type="password" aria-label={`恢复填写 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label>}
     </li>)}</ol>
     <p aria-live="polite">{message}</p>
     <button onClick={() => void submit()}>核对并申请恢复</button><button onClick={close}>取消恢复</button>

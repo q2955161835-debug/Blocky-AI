@@ -60,10 +60,12 @@ export class BrowserRpaAdapter implements RpaAdapter {
       case "click": await target.click({ timeout: step.timeoutMs }); break;
       case "fill": {
         if (!this.ports.resolveInput || !step.value) throw Error("BLK-RPA-PORT-001");
+        const sensitive = step.value.kind === "manual-input" && step.value.sensitive === true;
+        await inspectInput(target, sensitive);
         const value = await this.ports.resolveInput(step, signal);
         signal.throwIfAborted();
         if (!await this.verifyTarget(signal)) throw Error("BLK-RPA-TARGET-001");
-        await inspectInput(target);
+        await inspectInput(target, sensitive);
         if (new TextEncoder().encode(value).byteLength > 16384 || value.includes("\0")) throw Error("BLK-RPA-INPUT-001");
         await target.fill(value, { timeout: step.timeoutMs });
         break;
@@ -77,13 +79,13 @@ export class BrowserRpaAdapter implements RpaAdapter {
     signal.throwIfAborted();
   }
 }
-async function inspectInput(target: ReturnType<Page["getByRole"]>) {
+async function inspectInput(target: ReturnType<Page["getByRole"]>, allowSensitiveFill = false) {
   const metadata = await target.evaluate((element) => {
     const type = element.getAttribute("type")?.toLowerCase();
     const hints = ["autocomplete", "name", "id", "aria-label", "placeholder"].map((name) => element.getAttribute(name) ?? "").join(" ");
     const form = ["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName);
     return { form, sensitive: type === "password" || (form || (element as HTMLElement).isContentEditable) && /password|secret|api[-_ ]?key|token|one-time-code|cc-number|密码|密钥|验证码/i.test(hints) };
   });
-  if (metadata.sensitive) throw Error("BLK-RPA-SENSITIVE-001");
+  if (metadata.sensitive && !allowSensitiveFill) throw Error("BLK-RPA-SENSITIVE-001");
   return metadata.form;
 }

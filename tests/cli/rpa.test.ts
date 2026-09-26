@@ -4,10 +4,28 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parse } from "../../tools/blocky-cli/src/arguments";
 import { createArchitectureStarter } from "../../packages/block-catalog/src";
-import { createProject } from "../../tools/blocky-cli/src/native-store";
+import { createProject, readProject } from "../../tools/blocky-cli/src/native-store";
 import { RecordingBuffer } from "../../packages/rpa-core/src/recording";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
+it("exposes sensitive purpose in schema and preserves it through the same native patch guard", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-sensitive-cli-"));
+  try {
+    const project = createArchitectureStarter("rule-engine"), path = join(dir, "original.blocky"), plan = join(dir, "plan.json"), patch = join(dir, "patch.json"), output = join(dir, "sensitive.blocky");
+    await createProject(path, project);
+    await writeFile(plan, JSON.stringify({ schemaVersion: "blocky.rpa/v1", planId: "sensitive", target: { kind: "browser", identity: "https://example.test" }, steps: [{ stepId: "fill", action: "fill", locator: { kind: "browser", role: "textbox", name: "Password" }, value: { kind: "manual-input", sensitive: true }, effectKey: "once" }] }));
+    const env = { ...process.env, BLOCKY_PROFILE_DIR: join(dir, "profile") };
+    const schema = run(["schema", "show", "blocky.rpa/v1", "--json"], env);
+    expect(schema.code).toBe(0); expect(JSON.stringify(schema.result)).toContain("sensitive");
+    const drafted = run(["rpa", "draft", path, "--plan", plan, "--module", "main", "--browser-url", "https://example.test/form", "--output", patch, "--json"], env);
+    expect(drafted.code, JSON.stringify(drafted.result)).toBe(0);
+    const candidate = JSON.parse(await readFile(patch, "utf8"));
+    expect(candidate.permissionDelta).toContain("rpa.sensitive-input");
+    const applied = run(["patch", "apply", path, "--patch", patch, "--approve-permissions", candidate.permissionDelta.join(","), "--output", output, "--json"], env);
+    expect(applied.code, JSON.stringify(applied.result)).toBe(0);
+    expect(JSON.stringify(await readProject(output))).toContain('"INPUT_KIND":"sensitive"');
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 it("discovers recording controls and converts captured metadata to a reviewed patch for its own project only", async () => {
   const dir = await mkdtemp(resolve("try/stage7-recording-cli-"));
   try {
@@ -107,6 +125,7 @@ it("imports a recording as a pending review draft without typed values", async (
     const draft = await readFile(output, "utf8");
     expect(draft).not.toContain("SECRET_TEXT");
     expect(JSON.parse(draft).requiresReview).toBe(true);
+    expect(JSON.parse(draft).plan.steps[0].value).toEqual({ kind: "manual-input", sensitive: true });
     const pending = run(["rpa", "validate", output, "--json"]);
     expect(pending.code).toBe(3); // pending draft is not an executable plan
     const plan = join(dir, "reviewed.json");

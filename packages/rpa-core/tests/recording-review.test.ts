@@ -27,3 +27,12 @@ it("rejects cross-session, cross-project, foreign windows and changed recorded p
   buffer.append({ action: "click", locator: { kind: "uia", automationId: "save" } });
   expect(() => recordingReview(buffer.seal("stopped"), windows)).toThrow();
 });
+it("adds sensitive purpose only to the reviewed proposal while retaining the v1 capture receipt", () => {
+  const buffer = new RecordingBuffer({ sessionId: request.sessionId, projectId: request.projectId, target: { kind: "browser", identity: "browser:11111111-1111-4111-8111-111111111111" } });
+  buffer.append({ action: "fill", locator: { kind: "browser", role: "textbox", name: "Password" }, sensitive: true });
+  const receipt = buffer.seal("stopped"), original = structuredClone(receipt);
+  const reviewed = recordingReview(receipt, request);
+  expect(reviewed.plan.steps[0].value).toEqual({ kind: "manual-input", sensitive: true });
+  expect(receipt).toEqual(original);
+  expect(receipt.plan!.steps[0].value).toEqual({ kind: "manual-input" });
+});

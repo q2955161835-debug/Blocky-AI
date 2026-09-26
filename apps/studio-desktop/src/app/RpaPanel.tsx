@@ -104,7 +104,8 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
       <input aria-label="RPA 控件定位值" maxLength={200} value={value} onChange={(e) => setValue(e.target.value)} />
       <button disabled={!value.trim() || steps.length >= 100} onClick={add}>添加步骤</button>
       <ol>{steps.map((step) => <li key={step.stepId}>{labels[step.action]} · {step.locator.kind === "uia" ? step.locator.automationId ?? step.locator.name : step.locator.kind==="browser" ? `${step.locator.role} ${step.locator.name??""}` : step.locator.kind}
-        {step.action === "fill" && <label>填写内容<input aria-label={`填写内容 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label>}
+        {step.action === "fill" && <><label>敏感输入<input type="checkbox" aria-label={`敏感输入 ${step.stepId}`} checked={step.value?.sensitive === true} onChange={(e) => setSteps((current) => current.map((item) => item.stepId === step.stepId ? { ...item, value: { kind: "manual-input", ...(e.target.checked ? { sensitive: true } : {}) } } : item))} /></label>
+          <label>填写内容<input type="password" aria-label={`填写内容 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label></>}
         <button aria-label={`删除步骤 ${step.stepId}`} onClick={() => setSteps((current) => current.filter((s) => s.stepId !== step.stepId))}>删除</button>
       </li>)}</ol>
     </fieldset>

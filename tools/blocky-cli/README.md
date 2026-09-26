@@ -203,7 +203,7 @@ Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求
 
 Host 原生确认全部计划和网址后才启动已安装的 Microsoft Edge，全新隔离会话不沿用个人 Cookie。仅允许初始来源，跨来源资源和 HTTP 重定向均拒绝；结束时回收会话。缺少 Edge 返回 BLK-RPA-BROWSER-MISSING，不自动安装。浏览器记录可以查询，但临时页面和登录状态不支持跨重启恢复。
 
-填写步骤使用 `manual-input`，可增加 `--inputs <JSON文件>` 提供按 stepId 索引的普通填写值；每步仍需原生确认实际内容。不要在此文件保存密码或密钥；Host 不允许读取通用 SecretStore 引用或操作密码控件。输入不会进入项目、日志和 checkpoint。
+填写步骤使用 `manual-input`，可增加 `--inputs <JSON文件>` 提供按 stepId 索引的临时填写值。敏感填写另声明 `value.sensitive:true`；每步原生确认目标、控件和用途，不展示正文。普通积木对应 `INPUT_KIND=sensitive`、`SOURCE=manual`，候选显示 `rpa.sensitive-input` 权限增量；默认普通用途，敏感读取与通用 SecretStore 引用仍拒绝。输入不会进入项目、日志和 checkpoint；调用者自己提供的输入文件由调用者妥善保管、用后移除，不应提交到 Git。
 
 `--control-stdin` 启用逐行 JSON 控制，如 `{"operation":"pause"}`，其余操作为 `resume`、`stop`、`status`。SIGINT/SIGTERM 也请求停止并等待 Host 结算。`step.result` 是显式读取结果，`step.completed` 是无正文事件；最终响应包含读取结果与 checkpoint。`settled=false` 或 `uncertain` 不能当成已停止/已完成，禁止自动重放。
 

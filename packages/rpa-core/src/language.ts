@@ -83,6 +83,11 @@ export function compileRpaSession(
     )
       throw Error("BLK-RPA-PLAN-001");
     const locator = fields.LOCATOR;
+    if (fields.INPUT_KIND !== undefined && !["ordinary", "sensitive"].includes(String(fields.INPUT_KIND)))
+      throw Error("BLK-RPA-INPUT-001");
+    const sensitive = fields.INPUT_KIND === "sensitive";
+    if (sensitive && (action !== "fill" || fields.SOURCE !== "manual"))
+      throw Error("BLK-RPA-SENSITIVE-001");
     if (action === "fill") {
       if (!["manual", "input", "result"].includes(String(fields.SOURCE)))
         throw Error("BLK-RPA-INPUT-001");
@@ -93,7 +98,7 @@ export function compileRpaSession(
       action,
       locator,
       timeoutMs: Number(fields.TIMEOUT_MS),
-      ...(action === "fill" ? { value: { kind: "manual-input" } } : {}),
+      ...(action === "fill" ? { value: { kind: "manual-input", ...(sensitive ? { sensitive: true } : {}) } } : {}),
       ...(action === "fill" || action === "click"
         ? { effectKey: current.nodeId }
         : {}),
@@ -148,7 +153,7 @@ export function planToRpaBlocks(
       TIMEOUT_MS: String(step.timeoutMs),
       ...((plan.target.kind === "browser" && step.action !== "read") ||
       ["click", "fill"].includes(step.action)
-        ? { ACTION: step.action, SOURCE: "manual" }
+        ? { ACTION: step.action, SOURCE: "manual", INPUT_KIND: step.value?.sensitive ? "sensitive" : "ordinary" }
         : {}),
     },
   }));
@@ -194,6 +199,7 @@ export function rpaNodePermissions(
   if (["click", "fill"].includes(String(fields.ACTION)))
     result.push("rpa.write");
   if (fields.ACTION === "fill") result.push("rpa.input");
+  if (fields.ACTION === "fill" && fields.INPUT_KIND === "sensitive") result.push("rpa.sensitive-input");
   if (type === "core.computer.capture" || fields.ACTION === "screenshot")
     result.push("rpa.capture");
   if (

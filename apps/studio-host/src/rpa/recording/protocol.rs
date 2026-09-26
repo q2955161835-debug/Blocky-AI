@@ -99,6 +99,7 @@ fn steps(actions: &[CapturedAction]) -> Vec<Step> {
             value: (action.action == Action::Fill).then(|| InputRef {
                 kind: "manual-input".into(),
                 reference: None,
+                sensitive: None,
             }),
             timeout_ms: 5000,
             effect_key: Some(format!("effect-{}", i + 1)),

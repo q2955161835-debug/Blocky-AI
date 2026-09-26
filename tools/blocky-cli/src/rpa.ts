@@ -122,7 +122,7 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
     value: z.string().optional(),
   }).strict()).min(1).max(100).safeParse(await readJsonArtifact(args.words[2], 65536));
   if (!recorded.success) throw new CliError(3, "BLK-RPA-RECORD-001", "录制内容无效。");
-  const draft = recordingToDraft(recorded.data as RecordedAction[]);
+  const draft = recordingToDraft(recorded.data as RecordedAction[], { includeSensitivePurpose: true });
   const plan = rpaPlanSchema.safeParse({
     schemaVersion: "blocky.rpa/v1", planId: required(args, "plan-id"),
     target: { kind: required(args, "target-kind"), identity: required(args, "target-identity") },

@@ -148,9 +148,7 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
         return Err("BLK-RPA-TARGET-001".into());
     }
     let password = element.is_password().map_err(|_| "BLK-RPA-SENSITIVE-001")?;
-    if password {
-        return Err("BLK-RPA-SENSITIVE-001".into());
-    }
+    super::input_policy::verify_control(step, password)?;
     if !element.is_enabled().unwrap_or(false) || element.is_offscreen().unwrap_or(true) {
         return Err("BLK-RPA-TARGET-002".into());
     }

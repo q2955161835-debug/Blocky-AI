@@ -114,6 +114,8 @@ pub struct InputRef {
     pub kind: String,
     #[serde(rename = "ref", default, skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sensitive: Option<bool>,
 }
 fn id(value: &str) -> bool {
     value.len() <= 200
@@ -186,6 +188,9 @@ impl Plan {
                 return Err("BLK-RPA-INPUT-001".into());
             }
             if let Some(input) = &step.value {
+                if input.sensitive == Some(true) && input.kind != "manual-input" {
+                    return Err("BLK-RPA-SENSITIVE-001".into());
+                }
                 if !["manual-input", "secret-ref"].contains(&input.kind.as_str())
                     || input.reference.as_ref().is_some_and(|v| !id(v))
                     || input.kind == "secret-ref" && input.reference.is_none()
@@ -211,6 +216,18 @@ impl Plan {
 mod tests {
     use super::*;
     use serde_json::json;
+    #[test]
+    fn sensitive_purpose_is_manual_only_and_survives_plan_roundtrip() {
+        let mut raw = serde_json::to_value(fixture()).unwrap();
+        raw["steps"][0]["action"] = json!("fill");
+        raw["steps"][0]["value"] = json!({"kind":"manual-input","sensitive":true});
+        let parsed = serde_json::from_value::<Plan>(raw.clone());
+        assert!(parsed.is_ok(), "sensitive purpose must be a valid input declaration");
+        let parsed = parsed.unwrap(); parsed.validate().unwrap();
+        assert_eq!(serde_json::to_value(parsed).unwrap()["steps"][0]["value"]["sensitive"], true);
+        raw["steps"][0]["value"] = json!({"kind":"secret-ref","ref":"provider-key","sensitive":true});
+        assert_eq!(serde_json::from_value::<Plan>(raw).unwrap().validate().unwrap_err(), "BLK-RPA-SENSITIVE-001");
+    }
     pub fn fixture() -> Plan {
         serde_json::from_value(json!({"schemaVersion":"blocky.rpa/v1","planId":"test", "target":{"kind":"windows","identity":"window"},"steps":[{"stepId":"click","action":"click","locator":{"kind":"uia","automationId":"submit"},"effectKey":"submit-once"}]})).unwrap()
     }
@@ -240,6 +257,7 @@ mod tests {
         p.steps[0].value = Some(InputRef {
             kind: "secret-ref".into(),
             reference: None,
+            sensitive: None,
         });
         assert_eq!(p.validate().unwrap_err(), "BLK-RPA-INPUT-001");
         p.steps[0].value.as_mut().unwrap().reference = Some("secret".into());

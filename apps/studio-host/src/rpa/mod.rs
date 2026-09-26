@@ -21,6 +21,7 @@ mod tests;
 mod cleanup_tests;
 mod worker;
 mod approval;
+mod input_policy;
 pub use runner::main as runner_main;
 pub use module_session::main as module_session_main;
 pub use worker::main as worker_main;
@@ -140,7 +141,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
         "{:x}",
         Sha256::digest(serde_json::to_vec(&plan).map_err(|_| "BLK-RPA-PLAN-001")?)
     );
-    let preview = json!({"planId":plan.plan_id,"target":target,"steps":plan.steps,"digest":digest,"expiresInMs":600000,"sensitiveInput":"password-controls-denied","scope":"same-user-non-elevated-window"});
+    let preview = json!({"planId":plan.plan_id,"target":target,"steps":plan.steps,"digest":digest,"expiresInMs":600000,"sensitiveInput":"explicit-manual-fill-only","scope":"same-user-non-elevated-window"});
     Ok(Prepared {
         plan,
         target: target.into(),
@@ -274,12 +275,7 @@ impl RpaHost {
                     .steps
                     .iter()
                     .enumerate()
-                    .map(|(i, s)| format!(
-                        "{}. {}：{}",
-                        i + 1,
-                        s.action.label(),
-                        s.locator.description()
-                    ))
+                    .map(|(i, s)| format!("{}. {}", i + 1, input_policy::describe(s)))
                     .collect::<Vec<_>>()
                     .join("\n"),
                 prepared.preview["digest"].as_str().unwrap_or(""),
@@ -515,9 +511,9 @@ impl RpaHost {
             }
         }
         self.step_with(token, step_id, input, |request,timeout,cancel| {
-            if let Some(text)=&request.input {
-                let destination=request.step.as_ref().map(|s|s.locator.description()).unwrap_or_default();
-                let confirm=worker::Input{target:request.target.clone(),root_id:None,step:None,input:None,approval:Some(format!("{}\n控件：{destination}\n以下内容将填入该控件。请核对后继续；请勿输入密码或密钥。\n\n{text}",request.target.label()))};
+            if request.input.is_some() {
+                let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
+                let confirm=worker::Input{target:request.target.clone(),root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step))};
                 process::run(&confirm,300000,cancel.clone())?;
             }
             // A long human review must not extend the grant lifetime.

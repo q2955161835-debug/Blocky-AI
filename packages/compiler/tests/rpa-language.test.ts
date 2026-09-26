@@ -13,6 +13,14 @@ const plan: RpaPlan = {
 function compile(root: WorkspaceBlock) {
   return compileWorkspace("owned-project", { moduleId: "main", displayName: "Owned", purpose: "automation", workspaceRef: "workspaces/main.workspace.json", exports: [] }, { blocks: { languageVersion: 0, blocks: [root] } });
 }
+it("loads earlier RPA projects without the new optional input-purpose field", () => {
+  const root = planToRpaBlocks(plan, "https://example.test/form");
+  const fill = root.inputs!.HANDLER.block!.inputs!.STEPS.block!;
+  delete fill.fields!.INPUT_KIND;
+  const result = compile(root);
+  expect(result.diagnostics).toEqual([]);
+  expect(compileRpaSession(result.ir.roots[0].inputs.HANDLER as IrNode, "owned-project").plan.steps[0].value).toEqual({ kind: "manual-input" });
+});
 it("converts a plan into ordinary typed blocks with fresh IDs and ephemeral manual inputs", () => {
   const a = planToRpaBlocks(plan, "https://example.test/form"), b = planToRpaBlocks(plan, "https://example.test/form");
   expect(a.id).not.toBe(b.id);

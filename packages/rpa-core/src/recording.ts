@@ -68,7 +68,9 @@ export function recordingReview(input: unknown, start: RpaRecordingStart) {
   // The capture process is already gone. A later reviewed execution will open a new
   // isolated browser at the original URL and request its own permission.
   return {
-    plan: rpaPlanSchema.parse({ ...result.plan, target: request.target }),
+    // Keep the frozen v1 capture derivation unchanged; the user reviews any new
+    // sensitive-purpose declarations with the rest of the proposal permissions.
+    plan: rpaPlanSchema.parse({ ...result.plan, target: request.target, steps: recordingToDraft(result.actions, { includeSensitivePurpose: true }).steps }),
     ...(request.target.kind === "browser" ? { browserUrl: request.url! } : {}),
   };
 }

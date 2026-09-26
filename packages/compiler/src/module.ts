@@ -34,7 +34,7 @@ export function compileWorkspace(
       fields = b.fields ?? {};
     if (def && Object.keys(fields).some(field=>!def.fields.includes(field))) diagnostics.push(diagnostic('BLK-TYPE-007','积木包含未知字段',source));
     for (const [field, options] of Object.entries(def?.fieldOptions ?? {}))
-      if (options && !options.includes(String(fields[field]))) diagnostics.push(diagnostic('BLK-TYPE-009',`${field} 的选项无效`,source));
+      if (options && !(fields[field] === undefined && def?.optionalFields?.includes(field)) && !options.includes(String(fields[field]))) diagnostics.push(diagnostic('BLK-TYPE-009',`${field} 的选项无效`,source));
     if (b.type === 'core.data.set') {
       try { if (typeof fields.VALUE !== 'string' || new TextEncoder().encode(fields.VALUE).length>32768) throw Error(); JSON.parse(fields.VALUE); }
       catch { diagnostics.push(diagnostic('BLK-TYPE-009','结果必须是有效且有界的 JSON',source)); }

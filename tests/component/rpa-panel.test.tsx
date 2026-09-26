@@ -49,6 +49,19 @@ it("requires recovery conditions and starts after the completed effect", async (
   expect(io.step.mock.calls.map((args) => args[1])).toEqual(["pending"]);
 });
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
+it("masks sensitive manual input and keeps its value outside the reviewed plan", async () => {
+  await setup(); add("fill", "Password");
+  const input = screen.getByLabelText(/^填写内容 /) as HTMLInputElement;
+  expect(input.type).toBe("password");
+  fireEvent.click(screen.getByRole("checkbox", { name: /敏感输入/ }));
+  fireEvent.change(input, { target: { value: "PRIVATE_SENSITIVE_CANARY" } });
+  fireEvent.click(screen.getByRole("button", { name: "审阅并运行" }));
+  await waitFor(() => expect(io.step).toHaveBeenCalledOnce());
+  const reviewed = io.authorize.mock.calls[0][0];
+  expect(reviewed.steps[0].value).toEqual({ kind: "manual-input", sensitive: true });
+  expect(JSON.stringify(reviewed)).not.toContain("PRIVATE_SENSITIVE_CANARY");
+  expect(io.step.mock.calls[0][2]).toBe("PRIVATE_SENSITIVE_CANARY");
+});
 it("binds browser runs to this project and origin and closes the preceding session", async () => {
   render(<RpaPanel projectId="project-browser" close={vi.fn()} />);
   fireEvent.change(screen.getByLabelText("目标类型"),{target:{value:"browser"}});

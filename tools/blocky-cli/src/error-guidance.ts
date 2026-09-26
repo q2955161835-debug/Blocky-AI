@@ -14,7 +14,7 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-LOCATOR-003": { message: "定位器匹配多个控件。", hint: "补充 automationId、name 或 controlType，使目标唯一；不会自动选择第一个。" },
   "BLK-RPA-LOCATOR-004": { message: "目标窗口内未找到控件。", hint: "检查控件标识、窗口状态和权限；需要等待出现时使用 wait 步骤。" },
   "BLK-RPA-TARGET-001": { message: "目标窗口已失效或身份发生变化。", hint: "重新运行 rpa targets，核对目标后生成新的授权；不要沿用旧窗口句柄。" },
-  "BLK-RPA-SENSITIVE-001": { message: "当前桌面自动化不允许此敏感输入操作。", hint: "密码控件和通用 SecretStore 引用尚未开放给 RPA；由用户在目标应用中直接完成敏感步骤。" },
+  "BLK-RPA-SENSITIVE-001": { message: "此操作缺少敏感填写声明，或尝试读取敏感内容。", hint: "敏感填写使用 manual-input 与 sensitive:true；普通积木选择 INPUT_KIND=sensitive、SOURCE=manual，并逐步原生确认。读取敏感控件和通用 SecretStore 引用仍拒绝。" },
   "BLK-RPA-PORT-001": { message: "当前运行没有可用的自动化 Host。", hint: "CLI 模块自动化必须显式使用 run start --live；simulate 不执行真实桌面操作。原生批准仍按次请求。" },
   "BLK-RPA-SCOPE-001": { message: "自动化步骤不在有效会话中。", hint: "把操作放入连接窗口或打开浏览器的步骤插槽；不要混入另一目标或嵌套控制流。" },
   "BLK-RPA-INPUT-002": { message: "本次运行缺少手动填写内容。", hint: "桌面在运行时输入；CLI 使用 --rpa-inputs，键为 moduleId/blockId。内容不写入项目或轨迹。" },
