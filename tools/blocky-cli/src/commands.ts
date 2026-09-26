@@ -48,7 +48,7 @@ import {
   userRegistryMap,
 } from "./user-config";
 export const help = {
-  version: "0.5.0",
+  version: "0.7.0",
   commands: [
     "profile show --json",
     ...discoveryHelp,
@@ -128,8 +128,8 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope("version", {
-        cli: "0.5.0",
-        core: "0.5.0",
+        cli: "0.7.0",
+        core: "0.7.0",
         projectSchema: "blocky.project/v1",
         skills: null,
       }),
@@ -147,7 +147,7 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        cli: "0.5.0",
+        cli: "0.7.0",
         nativeStore: await doctor(),
         runtime: "deterministic",
         modelApiCalled: false,

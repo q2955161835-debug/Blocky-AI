@@ -403,7 +403,7 @@ dependencies = [
 
 [[package]]
 name = "blocky-studio"
-version = "0.5.0"
+version = "0.7.0"
 dependencies = [
  "base64 0.22.1",
  "dirs",
