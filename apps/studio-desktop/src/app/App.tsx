@@ -648,7 +648,7 @@ export function App() {
           answer={s.answerConfirmation}
         />
       )}
-      {popup?.kind === "rpa" && !s.confirmation && <RpaPanel close={() => setPopup(null)} />}
+      {popup?.kind === "rpa" && !s.confirmation && <RpaPanel projectId={s.snapshot.project.manifest.projectId} close={() => setPopup(null)} />}
       {lifecycle.requested && (
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}

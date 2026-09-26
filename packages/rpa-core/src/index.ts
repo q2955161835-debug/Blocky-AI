@@ -45,6 +45,11 @@ export const rpaPlanSchema = z.object({
 export type RpaPlan = z.output<typeof rpaPlanSchema>;
 export type RpaStep = RpaPlan["steps"][number];
 export type RpaAction = z.output<typeof action>;
+export const rpaBrowserStartSchema = z.object({ projectId: id, url: z.string().max(4096) }).strict().superRefine((value,ctx)=>{
+  try {const url=new URL(value.url);if (!["http:","https:"].includes(url.protocol)||url.username||url.password) throw Error();}
+  catch {ctx.addIssue({code:"custom",message:"BLK-RPA-TARGET-001",path:["url"]});}
+});
+export type RpaBrowserStart = z.output<typeof rpaBrowserStartSchema>;
 
 export const rpaRecoverySchema = z.object({
   schemaVersion: z.literal("blocky.rpa-recovery/v1"),

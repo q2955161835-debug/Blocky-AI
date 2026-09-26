@@ -67,13 +67,23 @@ fn real_browser_private_pipe_and_job_cancel() {
     let server = std::thread::spawn(move || {
         while !server_stop.load(Ordering::SeqCst) {
             if let Ok((mut socket, _)) = listener.accept() {
+                socket.set_nonblocking(false).unwrap();
                 socket
                     .set_read_timeout(Some(Duration::from_secs(1)))
                     .unwrap();
-                let mut bytes = [0u8; 4096];
-                let _ = socket.read(&mut bytes);
+                let mut request = Vec::new();
+                let mut bytes = [0u8; 1024];
+                while request.len() < 4096 && !request.windows(4).any(|part| part == b"\r\n\r\n") {
+                    match socket.read(&mut bytes) {
+                        Ok(0) | Err(_) => break,
+                        Ok(count) => request.extend_from_slice(&bytes[..count]),
+                    }
+                }
+                if !request.windows(4).any(|part| part == b"\r\n\r\n") {
+                    continue;
+                }
                 let body =
-                    b"<!doctype html><title>Blocky owned pipe fixture</title><h1>Owned page</h1>";
+                    b"<!doctype html><title>Blocky owned pipe fixture</title><h1>Owned page</h1><button onclick=\"document.querySelector('[role=status]').textContent=Number(document.querySelector('[role=status]').textContent)+1\">Save</button><div role=status aria-label=Count>0</div>";
                 let headers = format!(
                     "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
                     body.len()
@@ -135,6 +145,79 @@ fn real_browser_private_pipe_and_job_cancel() {
             .unwrap();
         fresh.shutdown().unwrap();
         assert!(fresh.child_exited());
+        // Trusted test setup bypasses only the native approval dialog. It exercises
+        // the production RpaHost ledger/step/control path against the real browser.
+        let journal = tempfile::tempdir_in(&root).unwrap();
+        let host = Arc::new(crate::rpa::RpaHost::with_journal(
+            journal.path().join("checkpoints"),
+        ));
+        let start = BrowserStart {
+            project_id: "owned-project".into(),
+            url: url.clone(),
+        };
+        let mut plan:crate::rpa::protocol::Plan=serde_json::from_value(json!({"schemaVersion":"blocky.rpa/v1","planId":"owned-browser","target":{"kind":"browser","identity":url.trim_end_matches('/')},"steps":[{"stepId":"click","action":"click","locator":{"kind":"browser","role":"button","name":"Save"},"effectKey":"click-once"},{"stepId":"read","action":"read","locator":{"kind":"browser","role":"status","name":"Count"}},{"stepId":"wait","action":"wait","locator":{"kind":"browser","role":"button","name":"Absent"},"timeoutMs":30000}]})).unwrap();
+        let target = start.prepare(&mut plan).unwrap();
+        host.browsers
+            .open(&target, &url, Arc::new(AtomicBool::new(false)))
+            .unwrap();
+        let grant = host
+            .authorize(crate::rpa::Prepared {
+                plan: plan.clone(),
+                target: crate::rpa::Binding::Browser(target),
+                root_id: vec![],
+                preview: json!({}),
+            })
+            .unwrap();
+        let token = grant["sessionId"].as_str().unwrap().to_owned();
+        host.step(&token, "click", None).unwrap();
+        assert_eq!(host.step(&token, "read", None).unwrap()["text"], "1");
+        assert!(host.step(&token, "click", None).is_err());
+        let state = host.status(&token).unwrap();
+        let store = crate::rpa::journal::Store::new(journal.path().join("checkpoints"));
+        let saved = store
+            .read_bound(state["checkpointId"].as_str().unwrap(), &plan)
+            .unwrap();
+        assert_eq!(saved.next, 2);
+        assert_eq!(saved.receipts[0].status, "completed");
+        assert_eq!(saved.summary()["resumable"], false);
+        host.pause(&token).unwrap();
+        host.resume(&token).unwrap();
+        let waiting = host.clone();
+        let waiting_token = token.clone();
+        let waiter = std::thread::spawn(move || waiting.step(&waiting_token, "wait", None));
+        let started = std::time::Instant::now();
+        while host.status(&token).unwrap()["active"] != true {
+            assert!(started.elapsed() < Duration::from_secs(2));
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        host.stop(&token).unwrap();
+        assert_eq!(waiter.join().unwrap().unwrap_err(), "BLK-RPA-CANCELLED");
+        assert_eq!(host.status(&token).unwrap()["status"], "stopped");
+        let mut expired_plan = plan.clone();
+        expired_plan.target.identity = url.trim_end_matches('/').into();
+        let expired_target = start.prepare(&mut expired_plan).unwrap();
+        host.browsers
+            .open(&expired_target, &url, Arc::new(AtomicBool::new(false)))
+            .unwrap();
+        let expired = host
+            .authorize(crate::rpa::Prepared {
+                plan: expired_plan,
+                target: crate::rpa::Binding::Browser(expired_target.clone()),
+                root_id: vec![],
+                preview: json!({}),
+            })
+            .unwrap();
+        let expired_token = expired["sessionId"].as_str().unwrap();
+        host.slot(expired_token)
+            .unwrap()
+            .state
+            .lock()
+            .unwrap()
+            .expires = 0;
+        host.retire_expired().unwrap();
+        assert!(host.slot(expired_token).is_err());
+        assert!(host.browsers.verify(&expired_target).is_err());
+        host.shutdown().unwrap();
     });
     stop.store(true, Ordering::SeqCst);
     server.join().unwrap();

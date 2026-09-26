@@ -27,7 +27,7 @@ $LASTEXITCODE
 
 本节命令位于开发分支，尚未完成阶段交付。`run start` 可使用 `--breakpoint <module:block>`、`--debug-actions <actions.json>`（`step`、`continue`、`stop` 数组）、`--from-block <id>` 和 `--trace-output <trace.json>`；轨迹文件只保存受限元数据，`trace inspect/replay` 只读，不重发模型或工具调用。从所选积木运行若会跳过前置步骤，返回 `BLK-RUN-010`。
 
-`project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。真实浏览器和 Windows UIA Host 执行、普通包操作及相关权限门禁仍未完成。
+`project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。Windows UIA 与隔离浏览器 Host 已有开发实现；普通包操作、录制和完整阶段门禁仍未完成。
 
 阶段 4 已提供受控 `run start --live`；官方 Skills 安装和六个原生兼容模板尚未提供。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生，兼容草案不能运行。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
 
@@ -178,11 +178,22 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 .\blocky.cmd diagnostics explain BLK-RPA-LOCATOR-003 --json
 ```
 
-目标 identity 必须来自当前 `rpa targets`；原生对话框会要求核对计划与窗口。当前执行支持 Windows UIA 的查找、读取、点击、填写与等待。浏览器、坐标和截图会明确报不支持，不降级成模拟结果。
+Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。坐标和截图仍明确报不支持。
+
+浏览器计划使用 `target.kind="browser"`，`target.identity` 为起始网址的来源（协议、域名及非默认端口，不含路径）。步骤定位器使用 `{kind:"browser",role:"button",name:"保存"}` 等可访问性角色及精确名称。运行方式：
+
+```powershell
+.\blocky.cmd rpa run .\try\browser-plan.json --browser-url https://example.test/form --project-id my-project --jsonl
+.\blocky.cmd schema show blocky.rpa-browser-start/v1 --json
+```
+
+Host 原生确认全部计划和网址后才启动已安装的 Microsoft Edge，全新隔离会话不沿用个人 Cookie。仅允许初始来源，跨来源资源和 HTTP 重定向均拒绝；结束时回收会话。缺少 Edge 返回 BLK-RPA-BROWSER-MISSING，不自动安装。浏览器记录可以查询，但临时页面和登录状态不支持跨重启恢复。
 
 填写步骤使用 `manual-input`，可增加 `--inputs <JSON文件>` 提供按 stepId 索引的普通填写值；每步仍需原生确认实际内容。不要在此文件保存密码或密钥；Host 不允许读取通用 SecretStore 引用或操作密码控件。输入不会进入项目、日志和 checkpoint。
 
-`--control-stdin` 启用逐行 JSON 控制，如 `{"operation":"pause"}`，其余操作为 `resume`、`stop`、`status`。SIGINT/SIGTERM 也请求停止并等待 Host 结算。`step.result` 是显式读取结果，`step.completed` 是无正文事件；最终响应包含读取结果与 checkpoint。`settled=false` 或 `uncertain` 不能当成已停止/已完成，禁止自动重放。当前尚不支持持久检查点恢复。
+`--control-stdin` 启用逐行 JSON 控制，如 `{"operation":"pause"}`，其余操作为 `resume`、`stop`、`status`。SIGINT/SIGTERM 也请求停止并等待 Host 结算。`step.result` 是显式读取结果，`step.completed` 是无正文事件；最终响应包含读取结果与 checkpoint。`settled=false` 或 `uncertain` 不能当成已停止/已完成，禁止自动重放。
+
+`rpa checkpoints` 查询加密执行记录，`rpa recovery-preview <id>` 显式读取恢复草案。Windows UIA 可使用 `rpa recover <原计划> --recovery <条件文件> --jsonl` 重新授权并核对完成副作用的目标状态，跳过已完成步骤；Schema 为 `blocky.rpa-recovery/v1`。未知结果、活跃旧进程、状态不符和浏览器临时会话均不能直接恢复。
 
 完整支持范围见[契约 15](../../doc/技术设计/正式契约/15-阶段6-7调试与有人值守自动化.md)。真实大模型 API 调用：否。
 

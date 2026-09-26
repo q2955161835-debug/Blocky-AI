@@ -7,6 +7,7 @@ struct Request {
     schema_version: String,
     plan: Plan,
     recovery: Option<recovery::Request>,
+    browser: Option<BrowserStart>,
     #[serde(default)]
     inputs: HashMap<String, String>,
 }
@@ -49,6 +50,9 @@ pub fn main() -> i32 {
             return Err("BLK-RPA-PLAN-001".into());
         }
         request.plan.validate()?;
+        if request.recovery.is_some() && request.browser.is_some() {
+            return Err("BLK-RPA-RECOVERY-002".into());
+        }
         let host = Arc::new(RpaHost::with_journal(journal::local_root()?));
         let start = request
             .recovery
@@ -142,7 +146,10 @@ pub fn main() -> i32 {
         }
         let grant = match request.recovery {
             Some(recovery) => host.recover_attended("cli-approval", request.plan, recovery)?,
-            None => host.authorize_attended("cli-approval", request.plan)?,
+            None => match request.browser {
+                Some(browser) => host.authorize_browser("cli-approval", request.plan, browser)?,
+                None => host.authorize_attended("cli-approval", request.plan)?,
+            },
         };
         let token = grant["sessionId"]
             .as_str()

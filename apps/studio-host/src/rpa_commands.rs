@@ -55,13 +55,13 @@ pub async fn rpa_authorize(
     window: tauri::WebviewWindow,
     request_id: String,
     plan: Plan,
+    browser: Option<rpa::BrowserStart>,
 ) -> Result<Value, String> {
     visible(&window)?;
     tauri::async_runtime::spawn_blocking(move || {
         visible(&window)?;
-        let grant = window
-            .state::<RpaHost>()
-            .authorize_attended(&request_id, plan)?;
+        let host=window.state::<RpaHost>();
+        let grant = match browser{Some(browser)=>host.authorize_browser(&request_id,plan,browser)?,None=>host.authorize_attended(&request_id, plan)?};
         if let Err(code) = visible(&window) {
             if let Some(token) = grant["sessionId"].as_str() {
                 window.state::<RpaHost>().stop(token)?;

@@ -142,7 +142,7 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
     let fixture = fixture();
     let target = target::inspect(fixture.window).unwrap();
     let mut input = worker::Input {
-        target,
+        target: target.into(),
         root_id: None,
         step: None,
         input: None,
@@ -197,7 +197,7 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
         plan_id: "owned-native-journal".into(),
         target: protocol::TargetRef {
             kind: "windows".into(),
-            identity: input.target.identity.clone(),
+            identity: input.target.identity().to_owned(),
         },
         steps: vec![step],
     };
@@ -240,7 +240,7 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
             plan_id: "owned-state-check".into(),
             target: protocol::TargetRef {
                 kind: "windows".into(),
-                identity: input.target.identity.clone(),
+                identity: input.target.identity().to_owned(),
             },
             steps: vec![input.step.clone().unwrap()],
         },
@@ -307,7 +307,9 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
         worker::execute(&input).unwrap_err(),
         "BLK-RPA-SENSITIVE-001"
     );
-    input.target.identity = "replaced-target".into();
+    if let Binding::Windows(target) = &mut input.target {
+        target.identity = "replaced-target".into();
+    }
     assert_eq!(worker::execute(&input).unwrap_err(), "BLK-RPA-TARGET-001");
 }
 #[test]
@@ -317,7 +319,7 @@ fn native_approval_worker_is_cancelled_without_a_user_decision() {
     let cancel = Arc::new(AtomicBool::new(false));
     let stop = cancel.clone();
     let input = worker::Input {
-        target: target::inspect(fixture.window).unwrap(),
+        target: target::inspect(fixture.window).unwrap().into(),
         root_id: None,
         step: None,
         input: None,

@@ -1,5 +1,5 @@
 //! Encrypted effect receipts. A journal is evidence, never an execution grant.
-use super::{Receipt, now, protocol::Plan, target::Target};
+use super::{Receipt, binding::Binding, now, protocol::Plan};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{
@@ -25,7 +25,7 @@ pub(super) struct Snapshot {
     pub revision: u64,
     pub plan_digest: String,
     pub plan: Plan,
-    pub target: Target,
+    pub target: Binding,
     pub root_id: Vec<i32>,
     pub next: usize,
     pub status: String,
@@ -38,15 +38,13 @@ fn valid_id(id: &str) -> bool {
 impl Snapshot {
     fn validate(&self) -> Result<(), String> {
         self.plan.validate()?;
+        self.target
+            .validate_snapshot(&self.plan.target.kind, &self.root_id)?;
         if self.schema_version != "blocky.rpa-journal/v1"
             || !valid_id(&self.checkpoint_id)
             || !(1..=2048).contains(&self.revision)
             || self.plan_digest != crate::agent_data::digest(&self.plan)?
-            || self.target.identity != self.plan.target.identity
-            || self.root_id.is_empty()
-            || self.root_id.len() > 64
-            || self.target.title.len() > 4096
-            || self.target.class_name.len() > 1024
+            || self.target.identity() != self.plan.target.identity
             || self.next > self.plan.steps.len()
             || self.receipts.len() > self.plan.steps.len()
             || self.updated_at_ms > 9007199254740991
@@ -79,7 +77,7 @@ impl Snapshot {
                 .ok_or(IO)?;
             if !seen.insert(&receipt.step_id)
                 || self.plan.steps[index].effect_key.as_deref() != Some(receipt.effect_key.as_str())
-                || receipt.target_identity != self.target.identity
+                || receipt.target_identity != self.target.identity()
                 || receipt.verified
                 || !["uncertain", "completed"].contains(&receipt.status.as_str())
                 || (receipt.status == "completed" && index >= self.next)
@@ -107,7 +105,7 @@ impl Snapshot {
     }
     pub fn summary(&self) -> Value {
         json!({"schemaVersion":self.schema_version,"checkpointId":self.checkpoint_id,"revision":self.revision,
-            "planId":self.plan.plan_id,"planDigest":self.plan_digest,"targetIdentity":self.target.identity,
+            "planId":self.plan.plan_id,"planDigest":self.plan_digest,"targetIdentity":self.target.identity(),
             "status":self.status,"completedSteps":self.next,"totalSteps":self.plan.steps.len(),"receipts":self.receipts,
             "updatedAtMs":self.updated_at_ms,"resumable":super::recovery::eligible(self).is_ok(),"requiresRecoveryApproval":true})
     }

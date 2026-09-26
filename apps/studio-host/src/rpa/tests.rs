@@ -11,7 +11,8 @@ fn prepared() -> Prepared {
             created: 0,
             class_name: "fixture".into(),
             title: "fixture".into(),
-        },
+        }
+        .into(),
         root_id: vec![1, 2],
         preview: json!({}),
     }
@@ -33,7 +34,9 @@ fn journal_records_uncertainty_before_effect_and_survives_host_restart() {
     let root = journal_directory();
     let host = RpaHost::with_journal(root.path().to_owned());
     let mut proposal = prepared();
-    proposal.target.title = "PRIVATE_WINDOW_TITLE_CANARY".into();
+    if let Binding::Windows(target) = &mut proposal.target {
+        target.title = "PRIVATE_WINDOW_TITLE_CANARY".into();
+    }
     let plan = proposal.plan.clone();
     let token = host.insert(proposal).unwrap()["sessionId"]
         .as_str()

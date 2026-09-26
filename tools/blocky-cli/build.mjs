@@ -1,4 +1,5 @@
 import { build } from "esbuild";
+import {installBrowser} from "../../scripts/browser-runtime.mjs";
 import { mkdir, copyFile, writeFile } from "node:fs/promises";
 import {
   installDirectML,
@@ -15,6 +16,7 @@ await build({
   banner: { js: "#!/usr/bin/env node" },
 });
 await mkdir("dist/bin", { recursive: true });
+await installBrowser("dist/bin");
 await mkdir("dist/bin/builder", { recursive: true });
 for (const name of ["builder.mjs", "node.exe", "manifest.json"])
   await copyFile(

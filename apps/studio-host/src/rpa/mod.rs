@@ -1,4 +1,6 @@
+pub mod binding;
 pub(crate) mod browser;
+pub use browser::BrowserStart;
 pub mod journal;
 #[cfg(test)]
 mod native_tests;
@@ -14,6 +16,7 @@ mod worker;
 pub use runner::main as runner_main;
 pub use worker::main as worker_main;
 
+use binding::Binding;
 use protocol::{Action, Locator, Plan};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -46,7 +49,7 @@ struct Session {
     checkpoint_id: Option<String>,
     checkpoint_revision: u64,
     plan: Plan,
-    target: target::Target,
+    target: Binding,
     root_id: Vec<i32>,
     expires: u64,
     status: &'static str,
@@ -69,13 +72,14 @@ struct Approval {
 #[derive(Default)]
 pub struct RpaHost {
     journal: Option<journal::Store>,
+    browsers: browser::Manager,
     sessions: Mutex<HashMap<String, Arc<Slot>>>,
     approvals: Mutex<HashMap<String, Arc<Approval>>>,
     closing: AtomicBool,
 }
 pub struct Prepared {
     plan: Plan,
-    target: target::Target,
+    target: Binding,
     root_id: Vec<i32>,
     pub preview: Value,
 }
@@ -107,7 +111,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
         .ok_or("BLK-RPA-TARGET-001")?;
     let value = process::run(
         &worker::Input {
-            target: target.clone(),
+            target: target.clone().into(),
             root_id: None,
             step: None,
             input: None,
@@ -128,7 +132,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
     let preview = json!({"planId":plan.plan_id,"target":target,"steps":plan.steps,"digest":digest,"expiresInMs":600000,"sensitiveInput":"password-controls-denied","scope":"same-user-non-elevated-window"});
     Ok(Prepared {
         plan,
-        target,
+        target: target.into(),
         root_id,
         preview,
     })
@@ -136,6 +140,9 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
 impl RpaHost {
     pub fn with_journal(root: std::path::PathBuf) -> Self {
         Self {
+            browsers: browser::Manager::new(
+                root.parent().unwrap_or(&root).join("browser-sessions"),
+            ),
             journal: Some(journal::Store::new(root)),
             ..Self::default()
         }
@@ -162,13 +169,22 @@ impl RpaHost {
         Ok(())
     }
     pub fn authorize_attended(&self, request_id: &str, plan: Plan) -> Result<Value, String> {
-        self.authorize_request(request_id, plan, None)
+        self.authorize_request(request_id, plan, None, None)
+    }
+    pub fn authorize_browser(
+        &self,
+        request_id: &str,
+        plan: Plan,
+        browser: BrowserStart,
+    ) -> Result<Value, String> {
+        self.authorize_request(request_id, plan, None, Some(browser))
     }
     fn authorize_request(
         &self,
         request_id: &str,
         plan: Plan,
         recovery: Option<recovery::Request>,
+        browser: Option<BrowserStart>,
     ) -> Result<Value, String> {
         if !crate::project_store::stable(request_id) || request_id.len() > 200 {
             return Err("BLK-RPA-PLAN-001".into());
@@ -202,12 +218,33 @@ impl RpaHost {
             pending.insert(request_id.into(), value.clone());
             value
         };
+        let mut opened = None;
         let result = (|| {
+            self.retire_expired()?;
             let saved = recovery
                 .as_ref()
                 .map(|request| self.recovery_snapshot(&plan, request))
                 .transpose()?;
-            let prepared = preflight_with_cancel(plan, approval.cancel.clone())?;
+            let prepared = if let Some(start) = &browser {
+                let mut plan = plan;
+                let target = start.prepare(&mut plan)?;
+                if plan.steps.iter().any(|s| {
+                    !matches!(s.locator, Locator::Browser { .. })
+                        || s.action == Action::Screenshot
+                        || s.value.as_ref().is_some_and(|v| v.kind == "secret-ref")
+                }) {
+                    return Err("BLK-RPA-UNSUPPORTED-001".into());
+                }
+                let preview = json!({"digest":crate::agent_data::digest(&plan)?,"target":target});
+                Prepared {
+                    plan,
+                    target: Binding::Browser(target),
+                    root_id: vec![],
+                    preview,
+                }
+            } else {
+                preflight_with_cancel(plan, approval.cancel.clone())?
+            };
             if let Some(saved) = &saved {
                 recovery::bind_target(saved, &prepared)?;
             }
@@ -217,9 +254,8 @@ impl RpaHost {
                 .map(|(request, saved)| request.describe(saved))
                 .unwrap_or_default();
             let description = format!(
-                "目标窗口：{}\n进程：{}\n\n{}\n\n流程摘要：{}",
-                prepared.target.title,
-                prepared.target.process_id,
+                "{}\n\n{}\n\n流程摘要：{}\n{}",
+                prepared.target.label(),
                 prepared
                     .plan
                     .steps
@@ -233,7 +269,14 @@ impl RpaHost {
                     ))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                prepared.preview["digest"].as_str().unwrap_or("")
+                prepared.preview["digest"].as_str().unwrap_or(""),
+                browser
+                    .as_ref()
+                    .map(|start| format!(
+                        "将打开全新隔离浏览器：{}\n仅允许该来源；Cookie 不沿用现有浏览器。",
+                        start.url
+                    ))
+                    .unwrap_or_default()
             );
             let request = worker::Input {
                 target: prepared.target.clone(),
@@ -247,6 +290,11 @@ impl RpaHost {
             process::run(&request, 300000, approval.cancel.clone())?;
             if approval.cancel.load(Ordering::SeqCst) {
                 return Err("BLK-RPA-CANCELLED".into());
+            }
+            if let (Some(start), Binding::Browser(target)) = (&browser, &prepared.target) {
+                self.browsers
+                    .open(target, &start.url, approval.cancel.clone())?;
+                opened = Some(target.clone());
             }
             let grant = if let Some(request) = &recovery {
                 recovery::verify_checks(request, &prepared, approval.cancel.clone())?;
@@ -264,6 +312,15 @@ impl RpaHost {
             }
             Ok(grant)
         })();
+        let result = if result.is_err() {
+            if let Some(target) = opened {
+                self.browsers.close(&target).and(result)
+            } else {
+                result
+            }
+        } else {
+            result
+        };
         approval.unsettled.store(
             result
                 .as_ref()
@@ -326,33 +383,52 @@ impl RpaHost {
     }
     /// Call only after trusted native confirmation of Prepared.preview.
     pub fn authorize(&self, prepared: Prepared) -> Result<Value, String> {
-        target::verify(&prepared.target)?;
+        self.verify_target(&prepared.target)?;
         self.insert(prepared)
+    }
+    fn verify_target(&self, target: &Binding) -> Result<(), String> {
+        match target {
+            Binding::Windows(t) => target::verify(t),
+            Binding::Browser(t) => self.browsers.verify(t),
+        }
     }
     fn insert(&self, prepared: Prepared) -> Result<Value, String> {
         self.insert_checkpoint(prepared, None)
+    }
+    fn retire_expired(&self) -> Result<(), String> {
+        let mut sessions = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?;
+        let expired = sessions
+            .iter()
+            .filter_map(|(token, slot)| {
+                let state = slot.state.lock().ok()?;
+                (!state.active && state.expires <= now())
+                    .then(|| (token.clone(), state.target.clone()))
+            })
+            .collect::<Vec<_>>();
+        for (token, target) in expired {
+            if let Binding::Browser(target) = target {
+                self.browsers.close(&target)?;
+            }
+            sessions.remove(&token);
+        }
+        Ok(())
     }
     fn insert_checkpoint(
         &self,
         prepared: Prepared,
         saved: Option<journal::Snapshot>,
     ) -> Result<Value, String> {
+        self.retire_expired()?;
         let mut sessions = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?;
         if self.closing.load(Ordering::SeqCst) {
             return Err("BLK-RPA-STATE-001".into());
         }
-        sessions.retain(|_, slot| {
-            slot.state
-                .lock()
-                .map(|s| s.active || s.expires > now())
-                .unwrap_or(true)
-        });
         if sessions.len() >= 16 {
             return Err("BLK-RPA-LIMIT-001".into());
         }
         let token = format!("rpa-{}", uuid::Uuid::new_v4());
         let expires = now() + 600000;
-        let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity,"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":false});
+        let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity(),"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":false});
         let saved = saved
             .map(|saved| {
                 self.journal
@@ -386,6 +462,9 @@ impl RpaHost {
         };
         if saved.is_none() {
             self.persist(&mut session)?;
+        }
+        if let Binding::Browser(target) = &session.target {
+            self.browsers.request(target,json!({"kind":"authorize","identity":target.identity,"projectId":target.project_id,"plan":session.plan,"grant":grant}),2000,session.cancel.clone())?;
         }
         sessions.insert(
             token,
@@ -424,13 +503,22 @@ impl RpaHost {
         self.step_with(token, step_id, input, |request,timeout,cancel| {
             if let Some(text)=&request.input {
                 let destination=request.step.as_ref().map(|s|s.locator.description()).unwrap_or_default();
-                let confirm=worker::Input{target:request.target.clone(),root_id:None,step:None,input:None,approval:Some(format!("目标窗口：{}\n控件：{destination}\n以下内容将填入该控件。请核对后继续；请勿输入密码或密钥。\n\n{text}",request.target.title))};
+                let confirm=worker::Input{target:request.target.clone(),root_id:None,step:None,input:None,approval:Some(format!("{}\n控件：{destination}\n以下内容将填入该控件。请核对后继续；请勿输入密码或密钥。\n\n{text}",request.target.label()))};
                 process::run(&confirm,300000,cancel.clone())?;
             }
             // A long human review must not extend the grant lifetime.
             let slot=self.slot(token)?; let expires=slot.state.lock().map_err(|_|"BLK-RPA-STATE-001")?.expires;
             if expires<=now() {return Err("BLK-RPA-PERM-001".into());}
-            process::run(request,timeout.min(expires.saturating_sub(now())),cancel)
+            let timeout=timeout.min(expires.saturating_sub(now()));
+            match &request.target {
+                Binding::Windows(_)=>process::run(request,timeout,cancel),
+                Binding::Browser(target)=>{
+                    let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
+                    let mut value=json!({"kind":"perform","identity":target.identity,"token":token,"stepId":step.step_id});
+                    if let Some(input)=&request.input{value["input"]=json!(input);}
+                    self.browsers.request(target,value,timeout,cancel)
+                }
+            }
         })
     }
     pub fn input_reference(
@@ -496,7 +584,7 @@ impl RpaHost {
                 return Err("BLK-RPA-RECEIPT-002".into());
             }
             if let Some(key) = &step.effect_key {
-                let identity = s.target.identity.clone();
+                let identity = s.target.identity().to_owned();
                 s.receipts.push(Receipt {
                     step_id: step.step_id.clone(),
                     effect_key: key.clone(),
@@ -589,7 +677,9 @@ impl RpaHost {
         if s.status != "paused" || s.expires <= now() {
             return Err("BLK-RPA-STATE-001".into());
         }
-        target::verify(&s.target)?;
+        if !s.active {
+            self.verify_target(&s.target)?;
+        }
         s.status = if s.active { "running" } else { "ready" };
         if let Err(code) = self.persist(&mut s) {
             s.status = "persistence-failed";
@@ -607,6 +697,13 @@ impl RpaHost {
             return Err("BLK-RPA-SETTLEMENT-001".into());
         }
         if !s.active && ["completed", "stopped"].contains(&s.status) {
+            if let Binding::Browser(target) = &s.target {
+                if let Err(code) = self.browsers.close(target) {
+                    s.status = "settlement-failed";
+                    let _ = self.persist(&mut s);
+                    return Err(code);
+                }
+            }
             return Ok(());
         }
         s.cancel.store(true, Ordering::SeqCst);
@@ -621,6 +718,13 @@ impl RpaHost {
         s = state;
         if s.status == "settlement-failed" || timed.timed_out() && s.active {
             return Err("BLK-RPA-SETTLEMENT-001".into());
+        }
+        if let Binding::Browser(target) = &s.target {
+            if let Err(code) = self.browsers.close(target) {
+                s.status = "settlement-failed";
+                let _ = self.persist(&mut s);
+                return Err(code);
+            }
         }
         s.status = "stopped";
         self.persist(&mut s).inspect_err(|_| {
@@ -671,6 +775,9 @@ impl RpaHost {
             if let Err(error) = self.stop(token) {
                 failure.get_or_insert(error);
             }
+        }
+        if let Err(error) = self.browsers.shutdown() {
+            failure.get_or_insert(error);
         }
         if let Some(error) = failure {
             return Err(error);

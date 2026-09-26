@@ -22,8 +22,9 @@ export class BrowserHost {
     });
     return new BrowserHost(browser);
   }
-  async open(projectId: string, inputUrl: string): Promise<BrowserTarget> {
+  async open(projectId: string, inputUrl: string, requestedIdentity?: string): Promise<BrowserTarget> {
     if (!stableId.test(projectId) || projectId.length > 200 || inputUrl.length > 4096) throw Error("BLK-RPA-PLAN-001");
+    if (requestedIdentity !== undefined && (!/^browser:[0-9a-f-]{36}$/.test(requestedIdentity) || this.sessions.has(requestedIdentity))) throw Error("BLK-RPA-TARGET-001");
     let url: URL;
     try { url = new URL(inputUrl); } catch { throw Error("BLK-RPA-TARGET-001"); }
     if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) throw Error("BLK-RPA-TARGET-001");
@@ -53,7 +54,7 @@ export class BrowserHost {
       page.on("dialog", (dialog) => { void dialog.dismiss().catch(() => {}); });
       await page.goto(url.href, { waitUntil: "domcontentloaded", timeout: 15000 });
       if (new URL(page.url()).origin !== origin || this.closing) throw Error("BLK-RPA-TARGET-001");
-      const target = { identity: `browser:${randomUUID()}`, projectId, origin };
+      const target = { identity: requestedIdentity ?? `browser:${randomUUID()}`, projectId, origin };
       this.sessions.set(target.identity, { target, context, page, next: 0, failed: false });
       page.on("close", () => { void this.close(target.identity).catch(() => {}); });
       return { ...target };

@@ -52,6 +52,17 @@ for (const item of builderLock.files) {
   if (item.name !== "node.exe") files.push(path);
 }
 files.push("try/stage5/builder-runtime/manifest.json");
+const browserLock=JSON.parse(await readFile("packages/rpa-core/runtime-lock.json","utf8"));
+if(JSON.stringify(JSON.parse(await readFile("try/stage7/browser-runtime/manifest.json","utf8")))!==JSON.stringify(browserLock))throw Error("Browser manifest mismatch");
+for(const item of browserLock.files){
+  const path=`try/stage7/browser-runtime/${item.name}`;
+  if(item.name==="browser.mjs"){
+    const bytes=await readFile(path);
+    if(bytes.length!==item.bytes||createHash("sha256").update(bytes).digest("hex")!==item.sha256)throw Error("Browser worker mismatch");
+    files.push(path);
+  } else vendorFiles.push({path,asset:item});
+}
+files.push("try/stage7/browser-runtime/manifest.json");
 for (const { path, asset } of vendorFiles) {
   const bytes = await readFile(path);
   if (
@@ -87,8 +98,8 @@ for (const path of files) {
   const failures = [];
   if (privatePrefixes.some((p) => includes(bytes, p)))
     failures.push("local-build-path");
-  // An upstream tokenizer vocabulary legitimately includes webdriver. Vendor
-  // blobs are pinned above; application artifacts retain all marker checks.
+  // Tokenizer vocabulary and the upstream Playwright driver legitimately contain
+  // webdriver. Vendor files are pinned above; our worker retains all marker checks.
   if (
     !vendorFiles.some((v) => v.path === path) &&
     testMarkers.some((p) => includes(bytes, p))

@@ -49,6 +49,21 @@ it("requires recovery conditions and starts after the completed effect", async (
   expect(io.step.mock.calls.map((args) => args[1])).toEqual(["pending"]);
 });
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
+it("binds browser runs to this project and origin and closes the preceding session", async () => {
+  render(<RpaPanel projectId="project-browser" close={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("目标类型"),{target:{value:"browser"}});
+  fireEvent.change(screen.getByLabelText("起始网址"),{target:{value:"https://example.test/form"}});
+  fireEvent.change(screen.getByLabelText("控件角色"),{target:{value:"textbox"}});
+  add("read","Answer");
+  fireEvent.click(screen.getByRole("button",{name:"审阅并运行"}));
+  await waitFor(()=>expect(screen.getByRole("status").textContent).toBe("已完成"));
+  expect(io.authorize.mock.calls[0][0].target).toEqual({kind:"browser",identity:"https://example.test"});
+  expect(io.authorize.mock.calls[0][0].steps[0].locator).toEqual({kind:"browser",role:"textbox",name:"Answer"});
+  expect(io.authorize.mock.calls[0][2]).toEqual({projectId:"project-browser",url:"https://example.test/form"});
+  fireEvent.click(screen.getByRole("button",{name:"审阅并运行"}));
+  await waitFor(()=>expect(io.authorize).toHaveBeenCalledTimes(2));
+  expect(io.stop).toHaveBeenCalledWith("session");
+});
 async function setup() {
   render(<RpaPanel close={vi.fn()} />);
   fireEvent.click(screen.getByRole("button", { name: "刷新窗口列表" }));

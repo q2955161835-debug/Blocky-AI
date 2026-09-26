@@ -131,9 +131,17 @@ impl BrowserProcess {
             json!({"kind":"init","executablePath":edge,"artifactsPath":process._temporary.as_ref().ok_or(WIRE)?.path()}),
             20000,
             cancel,
-        )?;
-        if response != json!({"ready":true}) {
-            return Err(WIRE.into());
+        );
+        match response {
+            Ok(value) if value == json!({"ready":true}) => {}
+            Ok(_) => {
+                process.terminate()?;
+                return Err(WIRE.into());
+            }
+            Err(code) => {
+                process.terminate()?;
+                return Err(code);
+            }
         }
         Ok(process)
     }

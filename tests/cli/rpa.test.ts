@@ -69,5 +69,10 @@ it("rejects unsupported native execution before opening an approval dialog", asy
     expect(outcome.result.error.code).toBe("BLK-RPA-UNSUPPORTED-001");
     expect(outcome.result.data.completed).toBe(false);
     expect(outcome.result.data.modelApiCalled).toBe(false);
+    const mismatch=run(["rpa","run",plan,"--browser-url","https://different.test/form","--project-id","browser-project","--jsonl"]);
+    expect(mismatch.code).toBe(3);expect(mismatch.result.error.code).toBe("BLK-RPA-TARGET-001");
+    const secretUrl=run(["rpa","run",plan,"--browser-url","https://user:password@example.test/","--project-id","browser-project","--jsonl"]);
+    expect(secretUrl.code).toBe(3);expect(secretUrl.result.error.code).toBe("BLK-RPA-TARGET-001");
+    expect(run(["schema","show","blocky.rpa-browser-start/v1","--json"]).code).toBe(0);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });

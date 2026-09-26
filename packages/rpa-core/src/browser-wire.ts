@@ -8,7 +8,7 @@ const identity = z.string().regex(/^browser:[0-9a-f-]{36}$/);
 const stableId = z.string().max(200).regex(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/);
 const frameSchema = z.discriminatedUnion("kind", [
   z.object({ ...base, kind: z.literal("init"), executablePath: z.string().min(1).max(4096), artifactsPath: z.string().min(1).max(4096) }).strict(),
-  z.object({ ...base, kind: z.literal("open"), projectId: stableId, url: z.string().min(1).max(4096) }).strict(),
+  z.object({ ...base, kind: z.literal("open"), projectId: stableId, url: z.string().min(1).max(4096), identity: identity.optional() }).strict(),
   z.object({ ...base, kind: z.literal("inspect"), identity }).strict(),
   z.object({ ...base, kind: z.literal("authorize"), identity, projectId: stableId, plan: rpaPlanSchema, grant: rpaGrantSchema }).strict(),
   z.object({ ...base, kind: z.literal("perform"), identity, token: stableId, stepId: stableId, input: z.string().max(16384).optional() }).strict(),
@@ -36,7 +36,7 @@ export class BrowserPipe {
       } else {
         if (!this.host) throw Error("BLK-RPA-WIRE-001");
         switch (frame.kind) {
-          case "open": value = await this.host.open(frame.projectId, frame.url); break;
+          case "open": value = await this.host.open(frame.projectId, frame.url, frame.identity); break;
           case "inspect": value = this.host.inspect(frame.identity); break;
           case "authorize": this.host.authorize(frame.identity, frame.projectId, frame.plan, frame.grant); value = { authorized: true }; break;
           case "perform": value = await this.host.perform(frame.identity, frame.token, frame.stepId, frame.input, new AbortController().signal); break;

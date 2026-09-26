@@ -41,7 +41,7 @@ it.skipIf(process.env.BLOCKY_RPA_BROWSER_INTEGRATION !== "1")("isolates real bro
   const plan = (identity: string, steps: unknown[]) => ({ schemaVersion: "blocky.rpa/v1", planId: "owned-browser-plan", target: { kind: "browser", identity }, steps });
   const read = (stepId: string, role: string, name: string) => ({ stepId, action: "read", locator: { kind: "browser", role, name } });
   try {
-    host = await BrowserHost.launch(process.env.BLOCKY_RPA_BROWSER_EXE ?? resolve("try/stage7/browser-assets/playwright-browsers/chromium-1243/chrome-win64/chrome.exe"), temp);
+    host = await BrowserHost.launch(process.env.BLOCKY_RPA_BROWSER_EXE ?? resolve(process.env["ProgramFiles(x86)"] ?? "C:/Program Files (x86)", "Microsoft/Edge/Application/msedge.exe"), temp);
     const first = await host.open("project-one", `${origin}/?first`), second = await host.open("project-two", origin);
     expect(first.identity).not.toBe(second.identity);
     const firstPlan = plan(first.identity, [

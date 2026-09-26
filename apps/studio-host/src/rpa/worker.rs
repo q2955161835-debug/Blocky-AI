@@ -17,7 +17,7 @@ use uiautomation::{
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(super) struct Input {
-    pub target: Target,
+    pub target: super::binding::Binding,
     pub root_id: Option<Vec<i32>>,
     pub step: Option<Step>,
     // Private pipe only; never a plan, result, log or CLI argument.
@@ -94,7 +94,10 @@ fn locate(
     found.ok_or_else(|| "BLK-RPA-LOCATOR-004".into())
 }
 pub(super) fn execute(input: &Input) -> Result<Value, String> {
-    target::verify(&input.target)?;
+    match &input.target {
+        super::binding::Binding::Windows(target) => target::verify(target)?,
+        super::binding::Binding::Browser(target) => target.validate()?,
+    }
     if let Some(description) = &input.approval {
         if description.len() > 32768 || input.step.is_some() || input.input.is_some() {
             return Err("BLK-RPA-INPUT-001".into());
@@ -110,9 +113,10 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
             Err("BLK-RPA-PERM-001".into())
         };
     }
+    let target = input.target.windows()?;
     let automation = UIAutomation::new().map_err(|_| "BLK-RPA-UIA-001")?;
     let root = automation
-        .element_from_handle(Handle::from(input.target.window as isize))
+        .element_from_handle(Handle::from(target.window as isize))
         .map_err(|_| "BLK-RPA-TARGET-001")?;
     let root_id = root.get_runtime_id().map_err(|_| "BLK-RPA-TARGET-001")?;
     if input
@@ -130,7 +134,7 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
     }
     let start = Instant::now();
     let element = loop {
-        match locate(&automation, &root, &input.target, &step.locator) {
+        match locate(&automation, &root, target, &step.locator) {
             Ok(element) => break element,
             Err(code)
                 if code == "BLK-RPA-LOCATOR-004"
@@ -142,9 +146,9 @@ pub(super) fn execute(input: &Input) -> Result<Value, String> {
             Err(code) => return Err(code),
         }
     };
-    target::verify(&input.target)?;
+    target::verify(target)?;
     if root.get_runtime_id().map_err(|_| "BLK-RPA-TARGET-001")? != root_id
-        || element.get_process_id().map_err(|_| "BLK-RPA-TARGET-001")? != input.target.process_id
+        || element.get_process_id().map_err(|_| "BLK-RPA-TARGET-001")? != target.process_id
     {
         return Err("BLK-RPA-TARGET-001".into());
     }

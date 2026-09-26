@@ -1,4 +1,4 @@
-import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, type RecordedAction } from "@blocky/rpa-core";
+import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, rpaBrowserStartSchema, type RecordedAction } from "@blocky/rpa-core";
 import { z } from "zod";
 import { allow, required, type Args } from "./arguments";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
@@ -12,7 +12,7 @@ export const rpaHelp = [
   "rpa recovery-preview <checkpoint-id> --json",
   "rpa recover <plan.json> --recovery <recovery.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa checkpoint <checkpoint-id> [--plan <plan.json>] --json",
-  "rpa run <plan.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
+  "rpa run <plan.json> [--browser-url <url> --project-id <id>] [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa validate <plan.json> --json",
   "rpa recording-import <recording.json> --target-kind <browser|windows> --target-identity <identity> --plan-id <id> --output <draft.json> --json",
 ];
@@ -37,15 +37,18 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
     return { code: 0, result: envelope(command, { targets: await nativeUserOperation("rpa-targets", {}, signal), modelApiCalled: false }) };
   }
   if (command === "rpa.run" || command === "rpa.recover") {
-    allow(args, ["inputs", "control-stdin", "jsonl", ...(command === "rpa.recover" ? ["recovery"] : [])], 3);
+    allow(args, ["inputs", "control-stdin", "jsonl", ...(command === "rpa.recover" ? ["recovery"] : ["browser-url","project-id"])], 3);
     const recovery = command === "rpa.recover" ? rpaRecoverySchema.safeParse(await readJsonArtifact(required(args, "recovery"), 32768)) : undefined;
     if (recovery && !recovery.success) throw new CliError(3, "BLK-RPA-RECOVERY-003", "恢复条件无效。");
     const parsed = rpaPlanSchema.safeParse(await readJsonArtifact(args.words[2], 65536));
     if (!parsed.success) throw new CliError(3, "BLK-RPA-PLAN-001", "RPA 计划无效。");
+    const browser = args.options.has("browser-url") || args.options.has("project-id") ? rpaBrowserStartSchema.safeParse({url:required(args,"browser-url"),projectId:required(args,"project-id")}) : undefined;
+    if (browser && (!browser.success || parsed.data.target.kind!=="browser" || parsed.data.target.identity!==new URL(browser.data.url).origin)) throw new CliError(3,"BLK-RPA-TARGET-001","浏览器起点与计划来源不一致。","target.identity 应为网址的 origin；同时提供 --browser-url 和 --project-id。");
     const inputs = args.options.has("inputs") ? z.record(z.string(), z.string().max(16384)).parse(await readJsonArtifact(required(args, "inputs"), 65536)) : {};
     const outcome = await runNativeRpa(parsed.data, inputs, {
       signal, controlStdin: args.options.has("control-stdin"),
       recovery: recovery?.success ? recovery.data : undefined,
+      browser: browser?.success ? browser.data : undefined,
       onEvent: (message) => { if (args.options.has("jsonl")) write(message); },
     });
     const result = envelope(command, { ...outcome, modelApiCalled: false });

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { rpaPlanSchema, type RpaAction, type RpaStep } from "@blocky/rpa-core";
+import { rpaPlanSchema, rpaBrowserStartSchema, type RpaAction, type RpaStep } from "@blocky/rpa-core";
 import { rpaNative, type RpaTarget, type RpaStatus, type RpaRecoveryRun } from "../composition/rpa";
 import { RpaCheckpoints } from "./RpaCheckpoints";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
-export function RpaPanel({ close }: { close(): void }) {
+export function RpaPanel({ close, projectId = "rpa-session" }: { close(): void; projectId?: string }) {
+  const [kind,setKind]=useState<"windows"|"browser">("windows"),[url,setUrl]=useState(""),[role,setRole]=useState("button");
   const [targets, setTargets] = useState<RpaTarget[]>([]), [identity, setIdentity] = useState("");
   const [steps, setSteps] = useState<RpaStep[]>([]), [inputs, setInputs] = useState<Record<string, string>>({});
   const [action, setAction] = useState<RpaAction>("find"), [selector, setSelector] = useState("automationId"), [value, setValue] = useState("");
@@ -26,7 +27,7 @@ export function RpaPanel({ close }: { close(): void }) {
     const stepId = `step-${crypto.randomUUID()}`;
     setSteps((current) => [...current, {
       stepId, action, timeoutMs: 5000,
-      locator: { kind: "uia", ...(selector === "automationId" ? { automationId: value.trim() } : { name: value.trim() }) },
+      locator: kind==="browser" ? {kind:"browser",role,name:value.trim()} : { kind: "uia", ...(selector === "automationId" ? { automationId: value.trim() } : { name: value.trim() }) },
       ...(action === "fill" ? { value: { kind: "manual-input" as const } } : {}),
       ...(["click", "fill"].includes(action) ? { effectKey: `effect-${crypto.randomUUID()}` } : {}),
     }]);
@@ -34,11 +35,13 @@ export function RpaPanel({ close }: { close(): void }) {
   };
   const run = async (recoveryRun?: RpaRecoveryRun) => {
     if (busy) return;
-    setBusy(true); setEvents([]); setReadResults([]); setSnapshot(undefined); setMessage("等待授权"); session.current = undefined; stopped.current = false; pause.current = false; setPaused(false);
+    setBusy(true); setEvents([]); setReadResults([]); setSnapshot(undefined); setMessage("等待授权"); stopped.current = false; pause.current = false; setPaused(false);
     try {
-      const plan = recoveryRun?.plan ?? rpaPlanSchema.parse({ schemaVersion: "blocky.rpa/v1", planId: `plan-${crypto.randomUUID()}`, target: { kind: "windows", identity }, steps });
+      if(session.current){await rpaNative.stop(session.current);session.current=undefined;}
+      const browser=!recoveryRun&&kind==="browser" ? rpaBrowserStartSchema.parse({projectId,url}) : undefined;
+      const plan = recoveryRun?.plan ?? rpaPlanSchema.parse({ schemaVersion: "blocky.rpa/v1", planId: `plan-${crypto.randomUUID()}`, target: { kind, identity: browser ? new URL(browser.url).origin : identity }, steps });
       authorization.current = `approval-${crypto.randomUUID()}`;
-      const grant = recoveryRun ? await rpaNative.recover(plan, recoveryRun.recovery, authorization.current) : await rpaNative.authorize(plan, authorization.current);
+      const grant = recoveryRun ? await rpaNative.recover(plan, recoveryRun.recovery, authorization.current) : await rpaNative.authorize(plan, authorization.current,browser);
       authorization.current = undefined;
       session.current = grant.sessionId;
       if (!mounted.current || stopped.current) { await rpaNative.stop(grant.sessionId); if (mounted.current) setMessage("已停止"); return; }
@@ -82,21 +85,22 @@ export function RpaPanel({ close }: { close(): void }) {
   };
   return <div className="popup-backdrop"><section className="popup rpa-panel" role="dialog" aria-modal="true" aria-label="桌面自动化">
     <header><strong>桌面自动化</strong><button aria-label="关闭桌面自动化" disabled={busy} onClick={close}>×</button></header>
-    <p>选择窗口并核对操作。运行时请保持在电脑旁；填写内容需逐步确认。</p>
+    <p>选择目标并核对操作。运行时请保持在电脑旁；填写内容需逐步确认。</p>
     <fieldset disabled={busy}>
       <legend>目标与步骤</legend>
-      <button onClick={() => void refresh()}>刷新窗口列表</button>
-      <label>目标窗口<select aria-label="RPA 目标窗口" value={identity} onChange={(e) => setIdentity(e.target.value)}><option value="">请选择窗口</option>{targets.map((target) => <option key={target.identity} value={target.identity}>{target.title} · {target.processId}</option>)}</select></label>
+      <label>目标类型<select disabled={steps.length>0} value={kind} onChange={(e)=>setKind(e.target.value as "windows"|"browser")}><option value="windows">Windows 窗口</option><option value="browser">隔离浏览器</option></select></label>
+      {kind==="windows" ? <><button onClick={() => void refresh()}>刷新窗口列表</button>
+      <label>目标窗口<select aria-label="RPA 目标窗口" value={identity} onChange={(e) => setIdentity(e.target.value)}><option value="">请选择窗口</option>{targets.map((target) => <option key={target.identity} value={target.identity}>{target.title} · {target.processId}</option>)}</select></label></> : <><label>起始网址<input type="url" maxLength={4096} value={url} onChange={(e)=>setUrl(e.target.value)} /></label><p>使用新的 Edge 会话，仅访问起始来源；不沿用已有登录状态。关闭面板后回收会话。</p></>}
       <label>动作<select value={action} onChange={(e) => setAction(e.target.value as RpaAction)}>{(["find", "read", "click", "fill", "wait"] as const).map((key) => <option key={key} value={key}>{labels[key]}</option>)}</select></label>
-      <label>查找方式<select value={selector} onChange={(e) => setSelector(e.target.value)}><option value="automationId">控件标识</option><option value="name">控件名称</option></select></label>
+      {kind==="browser" ? <label>控件角色<select value={role} onChange={(e)=>setRole(e.target.value)}>{["button","textbox","link","heading","status","checkbox","combobox","listitem"].map((name)=><option key={name}>{name}</option>)}</select></label> : <label>查找方式<select value={selector} onChange={(e) => setSelector(e.target.value)}><option value="automationId">控件标识</option><option value="name">控件名称</option></select></label>}
       <input aria-label="RPA 控件定位值" maxLength={200} value={value} onChange={(e) => setValue(e.target.value)} />
       <button disabled={!value.trim() || steps.length >= 100} onClick={add}>添加步骤</button>
-      <ol>{steps.map((step) => <li key={step.stepId}>{labels[step.action]} · {step.locator.kind === "uia" ? step.locator.automationId ?? step.locator.name : step.locator.kind}
+      <ol>{steps.map((step) => <li key={step.stepId}>{labels[step.action]} · {step.locator.kind === "uia" ? step.locator.automationId ?? step.locator.name : step.locator.kind==="browser" ? `${step.locator.role} ${step.locator.name??""}` : step.locator.kind}
         {step.action === "fill" && <label>填写内容<input aria-label={`填写内容 ${step.stepId}`} maxLength={16384} autoComplete="off" value={inputs[step.stepId] ?? ""} onChange={(e) => setInputs((current) => ({ ...current, [step.stepId]: e.target.value }))} /></label>}
         <button aria-label={`删除步骤 ${step.stepId}`} onClick={() => setSteps((current) => current.filter((s) => s.stepId !== step.stepId))}>删除</button>
       </li>)}</ol>
     </fieldset>
-    <div className="rpa-controls"><button disabled={busy || !identity || !steps.length || snapshot?.active || snapshot?.receipts.some((r) => r.status === "uncertain")} onClick={() => void run()}>审阅并运行</button>
+    <div className="rpa-controls"><button disabled={busy || !(kind==="browser"?url:identity) || !steps.length || snapshot?.active || snapshot?.receipts.some((r) => r.status === "uncertain")} onClick={() => void run()}>审阅并运行</button>
       <button disabled={!busy || !session.current} onClick={() => void control(paused ? "resume" : "pause")}>{paused ? "继续" : "暂停"}</button>
       <button disabled={!busy} onClick={() => void control("stop")}>停止</button></div>
     <p role="status">{message}</p>

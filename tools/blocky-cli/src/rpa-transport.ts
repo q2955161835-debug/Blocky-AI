@@ -1,17 +1,18 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { helper } from "./native-store";
-import type { RpaPlan, RpaRecovery } from "@blocky/rpa-core";
+import type { RpaPlan, RpaRecovery, RpaBrowserStart } from "@blocky/rpa-core";
 import { CliError } from "./protocol";
 export type RpaMessage = { schemaVersion: "blocky.rpa-session/v1"; type: string; value: Record<string, unknown> };
 /** One private Host process owns this attended run and all of its worker Jobs. */
 export function runNativeRpa(plan: RpaPlan, inputs: Record<string, string>, options: {
   signal: AbortSignal; onEvent(message: RpaMessage): void; controlStdin: boolean;
   recovery?: RpaRecovery;
+  browser?: RpaBrowserStart;
 }): Promise<{ completed: boolean; code?: string; checkpoint?: unknown; readResults: unknown[] }> {
   options.signal.throwIfAborted();
   if (!existsSync(helper)) throw new CliError(6, "BLK-CLI-006", "原生组件未构建。", "运行 pnpm build:cli。");
-  const initial = JSON.stringify({ schemaVersion: "blocky.rpa-session/v1", plan, inputs, ...(options.recovery ? { recovery: options.recovery } : {}) }) + "\n";
+  const initial = JSON.stringify({ schemaVersion: "blocky.rpa-session/v1", plan, inputs, ...(options.recovery ? { recovery: options.recovery } : {}), ...(options.browser ? { browser: options.browser } : {}) }) + "\n";
   if (Buffer.byteLength(initial) > 65536) throw new CliError(3, "BLK-RPA-LIMIT-001", "RPA 请求超出大小上限。");
   return new Promise((resolve, reject) => {
     const child = spawn(helper, ["--blocky-rpa-run"], { stdio: ["pipe", "pipe", "pipe"], windowsHide: true });

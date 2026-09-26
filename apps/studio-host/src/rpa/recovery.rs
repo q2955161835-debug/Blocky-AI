@@ -31,6 +31,7 @@ pub struct Request {
     pub checks: Vec<Check>,
 }
 pub(super) fn eligible(saved: &Snapshot) -> Result<(), String> {
+    saved.target.windows().map_err(|_| "BLK-RPA-RECOVERY-002")?;
     if saved
         .owner
         .as_ref()
@@ -128,8 +129,8 @@ pub(super) fn new_owner() -> Result<Owner, String> {
     Owner::current()
 }
 pub(super) fn bind_target(saved: &Snapshot, prepared: &Prepared) -> Result<(), String> {
-    if saved.target.identity != prepared.target.identity
-        || saved.target.class_name != prepared.target.class_name
+    if saved.target.identity() != prepared.target.identity()
+        || saved.target.windows()?.class_name != prepared.target.windows()?.class_name
         || saved.root_id != prepared.root_id
     {
         return Err("BLK-RPA-TARGET-001".into());
@@ -181,7 +182,7 @@ pub(super) fn verify_with(
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-RPA-CANCELLED".into());
     }
-    super::target::verify(&prepared.target)
+    super::target::verify(prepared.target.windows()?)
 }
 impl RpaHost {
     pub fn recover_attended(
@@ -190,7 +191,7 @@ impl RpaHost {
         plan: Plan,
         recovery: Request,
     ) -> Result<Value, String> {
-        self.authorize_request(request_id, plan, Some(recovery))
+        self.authorize_request(request_id, plan, Some(recovery), None)
     }
     pub(super) fn recovery_snapshot(
         &self,

@@ -1,4 +1,8 @@
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-RPA-BROWSER-MISSING": { message: "未找到 Microsoft Edge 浏览器。", hint: "安装 Edge 后重新运行；WebView2 Runtime 不能替代完整浏览器。不会自动安装或使用现有个人浏览器会话。" },
+  "BLK-RPA-RUNTIME-001": { message: "浏览器驱动缺失或不完整。", hint: "开发环境运行 pnpm build:browser 并重建 CLI/桌面；安装包请恢复随包 browser 目录。" },
+  "BLK-RPA-RUNTIME-HASH": { message: "浏览器驱动未通过完整性校验。", hint: "恢复当前版本的完整 browser 目录；不会继续启动不匹配的驱动。" },
+  "BLK-RPA-BROWSER-001": { message: "浏览器操作未完成。", hint: "检查网址、唯一定位器和页面状态；当前只允许初始来源，拒绝跨来源资源和所有 HTTP 重定向。核对回执后再安排后续操作。" },
   "BLK-FLOW-001": { message: "并行分支包含不支持的操作。", hint: "分支只允许结果、条件、等待、失败和并行积木；共享状态和外部副作用应放在汇合后的顺序步骤。" },
   "BLK-FLOW-002": { message: "流程超出并行或等待上限。", hint: "嵌套并行最多 4 层，等待为 0–30000 毫秒，汇合结果最多 32768 UTF-8 字节；缩减流程后重新编译。" },
   "BLK-FLOW-003": { message: "流程主动报告失败。", hint: "通过运行轨迹定位报告失败的积木；其余并行分支结束后运行才会失败，后续步骤不会执行。" },
@@ -18,7 +22,7 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-RECOVERY-003": { message: "恢复条件没有完整覆盖已完成的副作用。", hint: "为每个已完成回执提供唯一的 UIA 状态核对条件；用 schema show blocky.rpa-recovery/v1 查看格式。" },
   "BLK-RPA-RECOVERY-004": { message: "目标当前状态与恢复条件不一致。", hint: "核对目标应用的实际业务状态与已完成步骤；未执行剩余步骤，不要盲目重放。" },
   "BLK-RPA-SETTLEMENT-001": { message: "自动化进程尚未确认全部结算。", hint: "保留 uncertain 回执，检查剩余进程；不能将此状态视为已停止或重新运行。" },
-  "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "当前原生执行支持 Windows UIA 的 find/read/click/fill/wait；浏览器、坐标回退和截图仍在开发。" },
+  "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "支持 UIA 和隔离浏览器的 find/read/click/fill/wait；浏览器需 --browser-url/--project-id。坐标回退和截图仍在开发。" },
   "BLK-PATCH-001": {
     message: "项目基线已改变，候选或恢复请求已过期。",
     hint: "重新运行 project inspect 获取 digest，再生成或审查候选；不要重用旧批准。",
