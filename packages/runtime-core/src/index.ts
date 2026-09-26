@@ -1,4 +1,5 @@
 export { Runtime } from "./runtime";
+export type { RuntimeSessionState } from "./session-state";
 export { resolveRunEntry } from "./entry";
 export { localAdapters } from "./adapters";
 export { hostAdapters } from "./host-adapters";

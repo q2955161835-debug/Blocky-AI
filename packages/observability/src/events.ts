@@ -46,7 +46,12 @@ export class EventFactory {
   constructor(
     private now = () => new Date().toISOString(),
     private nextSequence = () => ++processSequence,
-  ) {}
+    sequenceFloor = 0,
+  ) {
+    if (!Number.isSafeInteger(sequenceFloor) || sequenceFloor < 0)
+      throw Error("BLK-TYPE-001");
+    processSequence = Math.max(processSequence, sequenceFloor);
+  }
   create(input: EventInput): RuntimeEvent {
     for (const id of [
       input.projectId,

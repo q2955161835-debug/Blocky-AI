@@ -1,6 +1,7 @@
 import { canonicalJson, stableId, type Json } from "@blocky/language-schema";
 import { utf8 } from "./budget";
 import { parseMailboxCheckpoint, type MailboxCheckpoint } from "./workflow/context";
+import { parseRuntimeMailbox, type RuntimeMailboxState } from "./session-state";
 
 type Message = { payload: Json };
 type Pending = { key: string; wake(): void };
@@ -10,6 +11,23 @@ export class EventMailbox {
   private messages: { key: string; message: Message; bytes: number }[] = [];
   private pending = new Set<Pending>();
   private bytes = 0;
+
+  captureSession(): RuntimeMailboxState {
+    if (this.pending.size) throw Error("BLK-RUN-STATE");
+    return parseRuntimeMailbox(this.messages.map(({ key, message }) => {
+      const [projectId, channel] = JSON.parse(key);
+      return { projectId, channel, payload: message.payload };
+    }));
+  }
+  restoreSession(input: unknown): void {
+    if (this.messages.length || this.pending.size) throw Error("BLK-RUN-STATE");
+    const state = parseRuntimeMailbox(input);
+    const messages = state.map(({projectId, channel, payload}) => ({
+      key: this.key(projectId, channel), message: { payload }, bytes: utf8(JSON.stringify(payload)),
+    }));
+    this.messages = messages;
+    this.bytes = messages.reduce((sum, message) => sum + message.bytes, 0);
+  }
 
   checkpoint(projectId:string):MailboxCheckpoint {
     this.key(projectId,"checkpoint");

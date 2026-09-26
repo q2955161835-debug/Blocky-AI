@@ -27,7 +27,9 @@ import { isRpaSession, isRpaStep } from "@blocky/rpa-core";
 import type { Generation, OutputFile } from "./agent-context";
 import { WorkflowExecution,WorkflowWaiting,type WorkflowSummary } from "./workflow/runtime";
 import { resolveRunEntry } from "./entry";
+import { parseRuntimeSession, type RuntimeSessionState } from "./session-state";
 type Options = {
+  sessionState?: unknown;
   sessionId?: string;
   adapters?: Adapters;
   capabilities?: string[];
@@ -56,6 +58,7 @@ export class Runtime {
   private options: Options;
   private monotonicNow: () => number;
   private running = false;
+  private sequence = 0;
   private paused = false;
   private stepNext = false;
   private breakpoints = new Set<string>();
@@ -75,10 +78,31 @@ export class Runtime {
     }
   }
   constructor(options: Options = {}) {
+    const state = options.sessionState === undefined ? undefined : parseRuntimeSession(options.sessionState);
+    if (state && (options.nextSequence || (options.sessionId !== undefined && options.sessionId !== state.sessionId)))
+      throw Error("BLK-RUN-STATE");
     this.options = options;
     this.monotonicNow = options.monotonicNow ?? (() => performance.now());
-    this.sessionId = options.sessionId ?? `session-${crypto.randomUUID()}`;
-    this.factory = new EventFactory(options.now, options.nextSequence);
+    this.sessionId = state?.sessionId ?? options.sessionId ?? `session-${crypto.randomUUID()}`;
+    this.sequence = state?.sequence ?? 0;
+    if (state) {
+      for (const item of state.memory)
+        this.sessionMemory.set(JSON.stringify([item.projectId, this.sessionId, item.key]), item.value);
+      this.mailbox.restoreSession(state.mailbox);
+    }
+    this.factory = new EventFactory(options.now, options.nextSequence, this.sequence);
+  }
+  captureSession(): RuntimeSessionState {
+    if (this.running) throw Error("BLK-RUN-STATE");
+    return parseRuntimeSession({
+      schemaVersion: "blocky.runtime-state/v1", sessionId: this.sessionId, sequence: this.sequence,
+      memory: [...this.sessionMemory].map(([encoded, value]) => {
+        const [projectId, sessionId, key] = JSON.parse(encoded);
+        if (sessionId !== this.sessionId) throw Error("BLK-RUN-STATE");
+        return { projectId, key, value };
+      }),
+      mailbox: this.mailbox.captureSession(),
+    });
   }
   async run(
     input: Project,
@@ -147,6 +171,7 @@ export class Runtime {
         data,
       });
       events.push(e);
+      this.sequence = e.sequence;
       options.onEvent?.(e);
     };
     const workflow=new WorkflowExecution(adapters.workflow,project,options.userRegistry,agent,runBudget,

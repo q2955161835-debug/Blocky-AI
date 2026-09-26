@@ -89,11 +89,11 @@ export function workflowKeys(
   );
 }
 /** No toJSON/accessor/prototype behavior, cycles, non-finite numbers or unbounded trees. */
-export function workflowJson(value: unknown, limit = 131072): Json {
+export function workflowJson(value: unknown, limit = 131072, maxNodes = 50000, maxDepth = 32): Json {
   const seen = new Set<object>();
   let nodes = 0;
   const visit = (item: unknown, depth: number): void => {
-    requireWorkflow(++nodes <= 50000 && depth <= 32, "BLK-WORKFLOW-LIMIT");
+    requireWorkflow(++nodes <= maxNodes && depth <= maxDepth, "BLK-WORKFLOW-LIMIT");
     if (item === null || typeof item === "boolean" || typeof item === "string")
       return;
     if (typeof item === "number") {
