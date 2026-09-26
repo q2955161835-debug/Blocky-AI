@@ -70,10 +70,14 @@ it("keeps generated changes as a proposal and discards them when cancelled", asy
 it("rejects a candidate arriving after the project changed", async () => {
   const s = studio();
   let release: () => void = () => {};
+  let ready: () => void = () => {};
+  const candidateReady = new Promise<void>((resolve) => (ready = resolve));
   native.mockImplementation(async (name, args) => {
     if (name !== "builder_run") return;
     const candidate = await result(s, args.start.request);
-    await new Promise<void>((r) => (release = r));
+    const held = new Promise<void>((r) => (release = r));
+    ready();
+    await held;
     return candidate;
   });
   const hook = renderHook(() => useBuilder(s));
@@ -86,7 +90,7 @@ it("rejects a candidate arriving after the project changed", async () => {
       mode: "deterministic",
       resourceId: "",
     });
-    await new Promise((r) => setTimeout(r, 20));
+    await candidateReady;
   });
   s.controller.edit((p) => {
     p.manifest.displayName = "new edit";
