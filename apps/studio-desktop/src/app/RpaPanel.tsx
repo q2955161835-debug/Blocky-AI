@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { rpaPlanSchema, rpaBrowserStartSchema, type RpaPlan, type RpaAction, type RpaStep } from "@blocky/rpa-core";
 import { rpaNative, type RpaTarget, type RpaStatus, type RpaRecoveryRun } from "../composition/rpa";
 import { RpaCheckpoints } from "./RpaCheckpoints";
+import { RpaRecorder } from "./RpaRecorder";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
 export function RpaPanel({ close, projectId = "rpa-session", draft }: { close(): void; projectId?: string; draft?(plan:RpaPlan,browserUrl?:string):Promise<void> }) {
@@ -10,6 +11,8 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
   const [steps, setSteps] = useState<RpaStep[]>([]), [inputs, setInputs] = useState<Record<string, string>>({});
   const [action, setAction] = useState<RpaAction>("find"), [selector, setSelector] = useState("automationId"), [value, setValue] = useState("");
   const [busy, setBusy] = useState(false), [paused, setPaused] = useState(false), [message, setMessage] = useState("");
+  const [recordingBusy, setRecordingBusy] = useState(false);
+  const locked = busy || recordingBusy;
   const [events, setEvents] = useState<string[]>([]), [snapshot, setSnapshot] = useState<RpaStatus>();
   const [readResults, setReadResults] = useState<{ stepId: string; text: string }[]>([]);
   const session = useRef<string | undefined>(undefined), stopped = useRef(false), pause = useRef(false), mounted = useRef(true);
@@ -34,7 +37,7 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
     setValue("");
   };
   const run = async (recoveryRun?: RpaRecoveryRun) => {
-    if (busy) return;
+    if (locked) return;
     setBusy(true); setEvents([]); setReadResults([]); setSnapshot(undefined); setMessage("等待授权"); stopped.current = false; pause.current = false; setPaused(false);
     try {
       if(session.current){await rpaNative.stop(session.current);session.current=undefined;}
@@ -91,7 +94,7 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
   return <div className="popup-backdrop"><section className="popup rpa-panel" role="dialog" aria-modal="true" aria-label="桌面自动化">
     <header><strong>桌面自动化</strong><button aria-label="关闭桌面自动化" disabled={busy} onClick={close}>×</button></header>
     <p>选择目标并核对操作。运行时请保持在电脑旁；填写内容需逐步确认。</p>
-    <fieldset disabled={busy}>
+    <fieldset disabled={locked}>
       <legend>目标与步骤</legend>
       <label>目标类型<select disabled={steps.length>0} value={kind} onChange={(e)=>setKind(e.target.value as "windows"|"browser")}><option value="windows">Windows 窗口</option><option value="browser">隔离浏览器</option></select></label>
       {kind==="windows" ? <><button onClick={() => void refresh()}>刷新窗口列表</button>
@@ -105,14 +108,15 @@ export function RpaPanel({ close, projectId = "rpa-session", draft }: { close():
         <button aria-label={`删除步骤 ${step.stepId}`} onClick={() => setSteps((current) => current.filter((s) => s.stepId !== step.stepId))}>删除</button>
       </li>)}</ol>
     </fieldset>
-    <div className="rpa-controls"><button disabled={busy || !(kind==="browser"?url:identity) || !steps.length || snapshot?.active || snapshot?.receipts.some((r) => r.status === "uncertain")} onClick={() => void run()}>审阅并运行</button>
-      {draft&&<button disabled={busy||!steps.length||!(kind==="browser"?url:identity)} onClick={()=>void preview()}>转为积木草案</button>}
+    <RpaRecorder projectId={projectId} kind={kind} identity={identity} url={url} disabled={busy || !!snapshot?.active} busyChanged={setRecordingBusy} draft={draft} />
+    <div className="rpa-controls"><button disabled={locked || !(kind==="browser"?url:identity) || !steps.length || snapshot?.active || snapshot?.receipts.some((r) => r.status === "uncertain")} onClick={() => void run()}>审阅并运行</button>
+      {draft&&<button disabled={locked||!steps.length||!(kind==="browser"?url:identity)} onClick={()=>void preview()}>转为积木草案</button>}
       <button disabled={!busy || !session.current} onClick={() => void control(paused ? "resume" : "pause")}>{paused ? "继续" : "暂停"}</button>
       <button disabled={!busy} onClick={() => void control("stop")}>停止</button></div>
     <p role="status">{message}</p>
     <ol aria-label="自动化执行记录">{events.map((event, i) => <li key={i}>{event}</li>)}</ol>
     {readResults.length > 0 && <details><summary>读取结果</summary>{readResults.map((result) => <label key={result.stepId}>{result.stepId}<textarea readOnly value={result.text} /></label>)}</details>}
     {snapshot?.receipts.length ? <details><summary>操作回执</summary>{snapshot.receipts.map((receipt) => <p key={receipt.stepId}>{receipt.stepId}：{receipt.status === "completed" ? "调用已完成" : "结果待核对，请勿重复执行"}</p>)}</details> : null}
-    <RpaCheckpoints disabled={busy} recover={run} />
+    <RpaCheckpoints disabled={locked} recover={run} />
   </section></div>;
 }

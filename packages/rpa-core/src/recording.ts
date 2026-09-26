@@ -51,6 +51,21 @@ export type RpaRecordedAction = z.output<typeof rpaRecordedActionSchema>;
 export type RpaRecordingReason = z.output<typeof reason>;
 export type RpaRecordingOptions = z.output<typeof optionsSchema>;
 
+/** Converts a Host-validated capture receipt into a proposal, never an execution grant. */
+export function recordingReview(input: unknown, start: RpaRecordingStart) {
+  const request = rpaRecordingStartSchema.parse(start), result = rpaRecordingResultSchema.parse(input);
+  if (result.sessionId !== request.sessionId || result.projectId !== request.projectId || result.target.kind !== request.target.kind ||
+      (request.target.kind === "windows" ? result.target.identity !== request.target.identity : !/^browser:[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/.test(result.target.identity)))
+    throw Error("BLK-RPA-TARGET-001");
+  if (!result.plan) throw Error("BLK-RPA-RECORD-EMPTY");
+  // The capture process is already gone. A later reviewed execution will open a new
+  // isolated browser at the original URL and request its own permission.
+  return {
+    plan: rpaPlanSchema.parse({ ...result.plan, target: request.target }),
+    ...(request.target.kind === "browser" ? { browserUrl: request.url! } : {}),
+  };
+}
+
 /** Metadata buffer only. A native recording approval and a bounded collector own its lifetime. */
 export class RecordingBuffer {
   private readonly options: RpaRecordingOptions;
