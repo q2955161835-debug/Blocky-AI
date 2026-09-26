@@ -1,4 +1,4 @@
-import { redact } from "@blocky/observability";
+import { isPublicTokenCounter, redact } from "@blocky/observability";
 /** Sanitize display text at the transport boundary; keep schema keys and safe references intact. */
 export function output(value: unknown): string {
   let changed = false;
@@ -22,8 +22,7 @@ export function output(value: unknown): string {
             "secretRefs",
             "secretBindings",
           ].includes(k);
-          const isUsageCounter = ['inputTokens','outputTokens','totalTokens','maxOutputTokens'].includes(k) &&
-            typeof item==='number' && Number.isSafeInteger(item) && item>=0 && item<=10000000;
+          const isUsageCounter = isPublicTokenCounter(k, item);
           if (
             !isReference && !isUsageCounter &&
             /authorization|cookie|password|api[_-]?key|token|secret/i.test(k)

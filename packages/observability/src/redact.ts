@@ -2,6 +2,11 @@ import type { Json } from "@blocky/language-schema";
 const sensitiveKey =
   /authorization|cookie|password|api[_-]?key|token|secret|^(?:prompt|body|stdout|stderr|environment)$/i;
 const tokenCounters = new Set(["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens"]);
+/** Only known, bounded numeric counters are safe under otherwise sensitive token keys. */
+export function isPublicTokenCounter(key: string, value: unknown): value is number {
+  return tokenCounters.has(key) && typeof value === "number" &&
+    Number.isSafeInteger(value) && value >= 0 && value <= 10_000_000;
+}
 export function redact(input: unknown): {
   value: Json;
   redaction: { applied: boolean; categories: string[] };
@@ -51,7 +56,7 @@ export function redact(input: unknown): {
         Object.entries(v)
           .slice(0, 1000)
           .map(([k, x]) => {
-            if (tokenCounters.has(k) && typeof x === "number" && Number.isSafeInteger(x) && x >= 0)
+            if (isPublicTokenCounter(k, x))
               return [k, x];
             if (sensitiveKey.test(k)) {
               categories.add("credential");

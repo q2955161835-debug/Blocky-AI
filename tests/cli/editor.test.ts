@@ -48,14 +48,24 @@ it("uses the shared edit transaction and produces a read-only trace without mode
     const exported = JSON.parse(await readFile(trace, "utf8"));
     expect(exported.schemaVersion).toBe("blocky.trace/v1");
     expect(JSON.stringify(exported)).not.toContain("水循环");
+    const budgets = exported.frames.filter((frame: { budget?: unknown }) => frame.budget);
+    expect(budgets.length).toBeGreaterThan(0);
+    for (const frame of budgets) {
+      expect(execution.lines.find((event) => event.sequence === frame.sequence)?.data.budget)
+        .toEqual(frame.budget);
+    }
     const inspected = run(["trace", "inspect", trace, "--json"]);
     expect(inspected.code).toBe(0);
     expect(inspected.lines[0].data.frames.length).toBeGreaterThan(0);
+    expect(inspected.lines[0].data.frames.filter((frame: { budget?: unknown }) => frame.budget))
+      .toEqual(budgets);
     expect(inspected.lines[0].data.frames.find((frame: { type: string }) => frame.type === "model.completed").details)
       .toMatchObject({ model: { maxOutputTokens: 1024 }, context: { evidenceCount: 1 }, guard: { decision: "passed" } });
     const replayed = run(["trace", "replay", trace, "--json"]);
     expect(replayed.code).toBe(0);
     expect(replayed.lines[0].data.externalCalls).toBe(0);
+    expect(replayed.lines[0].data.frames.filter((frame: { budget?: unknown }) => frame.budget))
+      .toEqual(budgets);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
