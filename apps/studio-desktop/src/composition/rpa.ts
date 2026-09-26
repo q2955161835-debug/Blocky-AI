@@ -1,8 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { RpaGrant, RpaPlan, RpaReceipt } from "@blocky/rpa-core";
 export type RpaTarget = { identity: string; title: string; className: string; processId: number };
-export type RpaStatus = { status: string; nextStep: string | null; active: boolean; receipts: RpaReceipt[]; expiresAt: number };
+export type RpaStatus = { status: string; nextStep: string | null; active: boolean; receipts: RpaReceipt[]; expiresAt: number; checkpointId?: string | null };
+export type RpaCheckpoint = { checkpointId: string; revision: number; planId: string; planDigest: string; targetIdentity: string; status: string; completedSteps: number; totalSteps: number; receipts: RpaReceipt[]; updatedAtMs: number; resumable: false };
 export const rpaNative = {
+  checkpoints: () => invoke<RpaCheckpoint[]>("rpa_checkpoints"),
+  checkpoint: (checkpointId: string, plan?: RpaPlan) => invoke<RpaCheckpoint>("rpa_checkpoint", { checkpointId, plan: plan ?? null }),
   targets: () => invoke<RpaTarget[]>("rpa_targets"),
   authorize: (plan: RpaPlan, requestId: string) => invoke<RpaGrant>("rpa_authorize", { plan, requestId }),
   cancelAuthorization: (requestId: string) => invoke<void>("rpa_cancel_authorization", { requestId }),

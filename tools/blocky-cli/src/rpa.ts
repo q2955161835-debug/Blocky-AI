@@ -8,12 +8,24 @@ import { runNativeRpa } from "./rpa-transport";
 
 export const rpaHelp = [
   "rpa targets --json",
+  "rpa checkpoints --json",
+  "rpa checkpoint <checkpoint-id> [--plan <plan.json>] --json",
   "rpa run <plan.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa validate <plan.json> --json",
   "rpa recording-import <recording.json> --target-kind <browser|windows> --target-identity <identity> --plan-id <id> --output <draft.json> --json",
 ];
 export async function rpaCommand(args: Args, write: (value: unknown) => void, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "rpa.checkpoints") {
+    allow(args, ["json"], 2);
+    return { code: 0, result: envelope(command, { checkpoints: await nativeUserOperation("rpa-checkpoints", {}, signal), modelApiCalled: false }) };
+  }
+  if (command === "rpa.checkpoint") {
+    allow(args, ["plan", "json"], 3);
+    const plan = args.options.has("plan") ? rpaPlanSchema.safeParse(await readJsonArtifact(required(args, "plan"), 65536)) : undefined;
+    if (plan && !plan.success) throw new CliError(3, "BLK-RPA-PLAN-001", "RPA 计划无效。");
+    return { code: 0, result: envelope(command, { checkpoint: await nativeUserOperation("rpa-checkpoint", { checkpointId: args.words[2], ...(plan?.success ? { plan: plan.data } : {}) }, signal), modelApiCalled: false }) };
+  }
   if (command === "rpa.targets") {
     allow(args, ["json"], 2);
     return { code: 0, result: envelope(command, { targets: await nativeUserOperation("rpa-targets", {}, signal), modelApiCalled: false }) };

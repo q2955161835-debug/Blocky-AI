@@ -9,6 +9,10 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-TARGET-001": { message: "目标窗口已失效或身份发生变化。", hint: "重新运行 rpa targets，核对目标后生成新的授权；不要沿用旧窗口句柄。" },
   "BLK-RPA-SENSITIVE-001": { message: "当前桌面自动化不允许此敏感输入操作。", hint: "密码控件和通用 SecretStore 引用尚未开放给 RPA；由用户在目标应用中直接完成敏感步骤。" },
   "BLK-RPA-RECEIPT-002": { message: "副作用结果尚未核对，禁止重放。", hint: "查看 checkpoint 与目标应用，核对实际结果后再安排新的流程。" },
+  "BLK-RPA-JOURNAL-001": { message: "执行记录无法保存或读取。", hint: "保留记录并检查磁盘和当前 Windows 用户权限；使用 rpa checkpoint 查看回执并核对目标应用，不能盲目重放。" },
+  "BLK-RPA-JOURNAL-002": { message: "执行记录与计划不匹配。", hint: "使用原计划和正确的 checkpoint-id 查询；修改后的计划不能沿用原执行记录。" },
+  "BLK-RPA-JOURNAL-003": { message: "执行记录正被使用或修订已变化。", hint: "结束其他查询后重新读取记录；先核对实际操作结果，不要重新运行未确认的步骤。" },
+  "BLK-RPA-JOURNAL-004": { message: "执行记录达到存储上限。", hint: "保留未核对的回执并检查记录数量和磁盘占用；本版本不会自动删除执行记录。" },
   "BLK-RPA-SETTLEMENT-001": { message: "自动化进程尚未确认全部结算。", hint: "保留 uncertain 回执，检查剩余进程；不能将此状态视为已停止或重新运行。" },
   "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "当前原生执行支持 Windows UIA 的 find/read/click/fill/wait；浏览器、坐标回退和截图仍在开发。" },
   "BLK-PATCH-001": {

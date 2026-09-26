@@ -28,6 +28,11 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
+    if matches!(value["operation"].as_str(), Some("rpa-checkpoints" | "rpa-checkpoint")) {
+        let result = blocky_studio::rpa::journal::local_root()
+            .and_then(|root| blocky_studio::rpa::journal::dispatch(root, value));
+        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+    }
     if value["operation"]=="rpa-targets" {
         if value["schemaVersion"]!=SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) {return json!({"ok":false,"code":"BLK-CLI-002"});}
         return json!({"ok":true,"value":blocky_studio::rpa::target::list()});

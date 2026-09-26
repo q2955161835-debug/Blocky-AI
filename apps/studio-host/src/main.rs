@@ -37,10 +37,12 @@ fn main() {
         .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
-        .manage(blocky_studio::rpa::RpaHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(|app| {
+            app.manage(blocky_studio::rpa::RpaHost::with_journal(
+                app.path().app_local_data_dir()?.join("rpa/checkpoints"),
+            ));
             app.manage(blocky_studio::agent_data::AgentData::new(
                 app.path().app_local_data_dir()?.join("user/agent-memory"),
             ));
@@ -67,6 +69,8 @@ fn main() {
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
             rpa_commands::rpa_targets,
+            rpa_commands::rpa_checkpoints,
+            rpa_commands::rpa_checkpoint,
             rpa_commands::rpa_authorize,
             rpa_commands::rpa_cancel_authorization,
             rpa_commands::rpa_step,

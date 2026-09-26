@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { rpaPlanSchema, type RpaAction, type RpaStep } from "@blocky/rpa-core";
 import { rpaNative, type RpaTarget, type RpaStatus } from "../composition/rpa";
+import { RpaCheckpoints } from "./RpaCheckpoints";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
 export function RpaPanel({ close }: { close(): void }) {
@@ -99,5 +100,6 @@ export function RpaPanel({ close }: { close(): void }) {
     <ol aria-label="自动化执行记录">{events.map((event, i) => <li key={i}>{event}</li>)}</ol>
     {readResults.length > 0 && <details><summary>读取结果</summary>{readResults.map((result) => <label key={result.stepId}>{result.stepId}<textarea readOnly value={result.text} /></label>)}</details>}
     {snapshot?.receipts.length ? <details><summary>操作回执</summary>{snapshot.receipts.map((receipt) => <p key={receipt.stepId}>{receipt.stepId}：{receipt.status === "completed" ? "调用已完成" : "结果待核对，请勿重复执行"}</p>)}</details> : null}
+    <RpaCheckpoints disabled={busy} />
   </section></div>;
 }

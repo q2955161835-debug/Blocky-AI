@@ -22,6 +22,173 @@ fn grant(host: &RpaHost) -> String {
         .unwrap()
         .to_owned()
 }
+pub(super) fn journal_directory() -> tempfile::TempDir {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../try/stage7/rpa-journal-tests");
+    std::fs::create_dir_all(&root).unwrap();
+    tempfile::tempdir_in(root).unwrap()
+}
+#[test]
+fn journal_records_uncertainty_before_effect_and_survives_host_restart() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let mut proposal = prepared();
+    proposal.target.title = "PRIVATE_WINDOW_TITLE_CANARY".into();
+    let plan = proposal.plan.clone();
+    let token = host.insert(proposal).unwrap()["sessionId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let store = journal::Store::new(root.path().to_owned());
+    host.step_with(&token, "first", None, |_, _, _| {
+        let saved = store.read_bound(&id, &plan).unwrap();
+        assert_eq!(saved.next, 0);
+        assert_eq!(saved.receipts[0].status, "uncertain");
+        Ok(json!({"invoked":true,"privateRead":"PRIVATE_OUTPUT_CANARY"}))
+    })
+    .unwrap();
+    drop(host);
+    let reopened = journal::Store::new(root.path().to_owned());
+    let saved = reopened.read_bound(&id, &plan).unwrap();
+    assert_eq!(saved.next, 1);
+    assert_eq!(saved.receipts[0].status, "completed");
+    assert!(!saved.receipts[0].verified);
+    assert!(reopened.save(saved.clone(), 0).is_err());
+    assert_eq!(reopened.save(saved.clone(), 1).unwrap_err(), "BLK-RPA-JOURNAL-003");
+    let mut changed = plan.clone();
+    changed.plan_id = "changed-plan".into();
+    assert!(reopened.read_bound(&id, &changed).is_err());
+    let bytes = std::fs::read(root.path().join(format!("{id}.bin"))).unwrap();
+    for canary in [
+        "PRIVATE_WINDOW_TITLE_CANARY",
+        "PRIVATE_OUTPUT_CANARY",
+        token.as_str(),
+    ] {
+        assert!(
+            !bytes
+                .windows(canary.len())
+                .any(|part| part == canary.as_bytes())
+        );
+    }
+    let summary = serde_json::to_string(&reopened.summaries().unwrap()).unwrap();
+    assert!(!summary.contains("PRIVATE"));
+    assert!(!summary.contains(&token));
+}
+#[test]
+fn journal_persistence_failure_prevents_effect_and_rejects_corruption() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let lock = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(root.path().join("journal.lock"))
+        .unwrap();
+    lock.try_lock().unwrap();
+    assert!(
+        host.step_with(&token, "first", None, |_, _, _| panic!(
+            "effect before durable receipt"
+        ))
+        .is_err()
+    );
+    drop(lock);
+    assert_eq!(host.status(&token).unwrap()["status"], "persistence-failed");
+    assert!(
+        host.step_with(&token, "first", None, |_, _, _| panic!(
+            "retry after journal failure"
+        ))
+        .is_err()
+    );
+    let path = root.path().join(format!("{id}.bin"));
+    let mut bytes = std::fs::read(&path).unwrap();
+    *bytes.last_mut().unwrap() ^= 1;
+    std::fs::write(&path, bytes).unwrap();
+    assert!(
+        journal::Store::new(root.path().to_owned())
+            .read_bound(&id, &prepared().plan)
+            .is_err()
+    );
+}
+#[test]
+fn journal_failed_completion_write_keeps_uncertain_disk_receipt_and_blocks_next_step() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let mut held_lock = None;
+    let result = host.step_with(&token, "first", None, |_, _, _| {
+        let lock = std::fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(root.path().join("journal.lock"))
+            .unwrap();
+        lock.try_lock().unwrap();
+        held_lock = Some(lock);
+        Ok(json!({"invoked":true}))
+    });
+    assert_eq!(result.unwrap_err(), "BLK-RPA-JOURNAL-003");
+    drop(held_lock);
+    let saved = journal::Store::new(root.path().to_owned())
+        .inspect(&id)
+        .unwrap();
+    assert_eq!(saved["completedSteps"], 0);
+    assert_eq!(saved["receipts"][0]["status"], "uncertain");
+    assert_eq!(saved["resumable"], false);
+    assert_eq!(host.status(&token).unwrap()["status"], "persistence-failed");
+    assert!(
+        host.step_with(&token, "second", None, |_, _, _| panic!(
+            "continued after failed commit"
+        ))
+        .is_err()
+    );
+}
+#[test]
+fn journal_records_pause_and_stop_and_rejects_dispatch_path_injection() {
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let store = journal::Store::new(root.path().to_owned());
+    host.pause(&token).unwrap();
+    assert_eq!(store.inspect(&id).unwrap()["status"], "paused");
+    host.stop(&token).unwrap();
+    assert_eq!(store.inspect(&id).unwrap()["status"], "stopped");
+    let request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"rpa-checkpoint","checkpointId":id,"plan":prepared().plan});
+    assert!(journal::dispatch(root.path().to_owned(), request.clone()).is_ok());
+    let mut injection = request.clone();
+    injection["path"] = json!("../other");
+    assert!(journal::dispatch(root.path().to_owned(), injection).is_err());
+    let mut changed = request;
+    changed["plan"]["steps"][0]["effectKey"] = json!("changed");
+    assert_eq!(
+        journal::dispatch(root.path().to_owned(), changed).unwrap_err(),
+        "BLK-RPA-JOURNAL-002"
+    );
+    assert!(store.inspect("checkpoint-../../other").is_err());
+}
+#[test]
+fn journal_capacity_prevents_new_grant_without_removing_receipts() {
+    let root = journal_directory();
+    for i in 0..100 { std::fs::write(root.path().join(format!("checkpoint-{i}.bin")), b"preserved").unwrap(); }
+    let host = RpaHost::with_journal(root.path().to_owned());
+    assert_eq!(host.insert(prepared()).unwrap_err(), "BLK-RPA-JOURNAL-004");
+    assert!(host.sessions.lock().unwrap().is_empty());
+    assert_eq!(std::fs::read(root.path().join("checkpoint-0.bin")).unwrap(), b"preserved");
+}
 #[test]
 fn rejects_forged_grant_out_of_order_and_duplicate_effect() {
     let host = RpaHost::default();

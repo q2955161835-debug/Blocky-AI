@@ -1,3 +1,4 @@
+pub mod journal;
 #[cfg(test)]
 mod native_tests;
 mod process;
@@ -11,7 +12,7 @@ pub use runner::main as runner_main;
 pub use worker::main as worker_main;
 
 use protocol::{Action, Locator, Plan};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
@@ -29,8 +30,8 @@ fn now() -> u64 {
         .unwrap_or_default()
         .as_millis() as u64
 }
-#[derive(Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Receipt {
     pub step_id: String,
     pub effect_key: String,
@@ -39,6 +40,8 @@ pub struct Receipt {
     pub verified: bool,
 }
 struct Session {
+    checkpoint_id: Option<String>,
+    checkpoint_revision: u64,
     plan: Plan,
     target: target::Target,
     root_id: Vec<i32>,
@@ -62,6 +65,7 @@ struct Approval {
 }
 #[derive(Default)]
 pub struct RpaHost {
+    journal: Option<journal::Store>,
     sessions: Mutex<HashMap<String, Arc<Slot>>>,
     approvals: Mutex<HashMap<String, Arc<Approval>>>,
     closing: AtomicBool,
@@ -127,6 +131,32 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
     })
 }
 impl RpaHost {
+    pub fn with_journal(root: std::path::PathBuf) -> Self {
+        Self {
+            journal: Some(journal::Store::new(root)),
+            ..Self::default()
+        }
+    }
+    fn persist(&self, session: &mut Session) -> Result<(), String> {
+        let (Some(store), Some(id)) = (&self.journal, &session.checkpoint_id) else {
+            return Ok(());
+        };
+        let snapshot = journal::Snapshot {
+            schema_version: "blocky.rpa-journal/v1".into(),
+            checkpoint_id: id.clone(),
+            revision: session.checkpoint_revision,
+            plan_digest: crate::agent_data::digest(&session.plan)?,
+            plan: session.plan.clone(),
+            target: session.target.clone(),
+            root_id: session.root_id.clone(),
+            next: session.next,
+            status: session.status.into(),
+            receipts: session.receipts.clone(),
+            updated_at_ms: now(),
+        };
+        session.checkpoint_revision = store.save(snapshot, session.checkpoint_revision)?;
+        Ok(())
+    }
     pub fn authorize_attended(&self, request_id: &str, plan: Plan) -> Result<Value, String> {
         if !crate::project_store::stable(request_id) || request_id.len() > 200 {
             return Err("BLK-RPA-PLAN-001".into());
@@ -287,20 +317,27 @@ impl RpaHost {
         let token = format!("rpa-{}", uuid::Uuid::new_v4());
         let expires = now() + 600000;
         let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity,"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":false});
+        let mut session = Session {
+            checkpoint_id: self
+                .journal
+                .as_ref()
+                .map(|_| format!("checkpoint-{}", uuid::Uuid::new_v4())),
+            checkpoint_revision: 0,
+            plan: prepared.plan,
+            target: prepared.target,
+            root_id: prepared.root_id,
+            expires,
+            status: "ready",
+            next: 0,
+            active: false,
+            receipts: vec![],
+            cancel: Arc::new(AtomicBool::new(false)),
+        };
+        self.persist(&mut session)?;
         sessions.insert(
             token,
             Arc::new(Slot {
-                state: Mutex::new(Session {
-                    plan: prepared.plan,
-                    target: prepared.target,
-                    root_id: prepared.root_id,
-                    expires,
-                    status: "ready",
-                    next: 0,
-                    active: false,
-                    receipts: vec![],
-                    cancel: Arc::new(AtomicBool::new(false)),
-                }),
+                state: Mutex::new(session),
                 settled: Condvar::new(),
             }),
         );
@@ -318,7 +355,7 @@ impl RpaHost {
         let slot = self.slot(token)?;
         let s = slot.state.lock().map_err(|_| "BLK-RPA-STATE-001")?;
         Ok(
-            json!({"status":s.status,"nextStep":s.plan.steps.get(s.next).map(|s|&s.step_id),"active":s.active,"receipts":s.receipts,"expiresAt":s.expires}),
+            json!({"status":s.status,"nextStep":s.plan.steps.get(s.next).map(|s|&s.step_id),"active":s.active,"receipts":s.receipts,"expiresAt":s.expires,"checkpointId":s.checkpoint_id}),
         )
     }
     pub fn step(&self, token: &str, step_id: &str, input: Option<String>) -> Result<Value, String> {
@@ -417,6 +454,12 @@ impl RpaHost {
             }
             s.active = true;
             s.status = "running";
+            if let Err(code) = self.persist(&mut s) {
+                s.active = false;
+                s.status = "persistence-failed";
+                slot.settled.notify_all();
+                return Err(code);
+            }
             let timeout = step.timeout_ms.min(s.expires.saturating_sub(now()));
             (
                 worker::Input {
@@ -437,6 +480,7 @@ impl RpaHost {
             .is_err_and(|code| code == "BLK-RPA-SETTLEMENT-001")
         {
             s.status = "settlement-failed";
+            let _ = self.persist(&mut s);
             slot.settled.notify_all();
             return result;
         }
@@ -463,7 +507,12 @@ impl RpaHost {
                 "failed"
             };
         }
+        let saved = self.persist(&mut s);
+        if saved.is_err() {
+            s.status = "persistence-failed";
+        }
         slot.settled.notify_all();
+        saved?;
         result
     }
     pub fn pause(&self, token: &str) -> Result<(), String> {
@@ -473,6 +522,12 @@ impl RpaHost {
             return Err("BLK-RPA-STATE-001".into());
         }
         s.status = "paused";
+        if let Err(code) = self.persist(&mut s) {
+            s.status = "persistence-failed";
+            s.cancel.store(true, Ordering::SeqCst);
+            slot.settled.notify_all();
+            return Err(code);
+        }
         Ok(())
     }
     pub fn resume(&self, token: &str) -> Result<(), String> {
@@ -483,6 +538,12 @@ impl RpaHost {
         }
         target::verify(&s.target)?;
         s.status = if s.active { "running" } else { "ready" };
+        if let Err(code) = self.persist(&mut s) {
+            s.status = "persistence-failed";
+            s.cancel.store(true, Ordering::SeqCst);
+            slot.settled.notify_all();
+            return Err(code);
+        }
         slot.settled.notify_all();
         Ok(())
     }
@@ -491,6 +552,9 @@ impl RpaHost {
         let mut s = slot.state.lock().map_err(|_| "BLK-RPA-STATE-001")?;
         if s.status == "settlement-failed" {
             return Err("BLK-RPA-SETTLEMENT-001".into());
+        }
+        if !s.active && ["completed", "stopped"].contains(&s.status) {
+            return Ok(());
         }
         s.cancel.store(true, Ordering::SeqCst);
         s.status = "stopping";
@@ -506,7 +570,9 @@ impl RpaHost {
             return Err("BLK-RPA-SETTLEMENT-001".into());
         }
         s.status = "stopped";
-        Ok(())
+        self.persist(&mut s).inspect_err(|_| {
+            s.status = "persistence-failed";
+        })
     }
     pub fn shutdown(&self) -> Result<(), String> {
         self.closing.store(true, Ordering::SeqCst);

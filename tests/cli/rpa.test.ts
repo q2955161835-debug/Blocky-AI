@@ -5,10 +5,25 @@ import { join, resolve } from "node:path";
 import { parse } from "../../tools/blocky-cli/src/arguments";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
-function run(args: string[]) {
-  const child = spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", timeout: 30000, windowsHide: true });
+function run(args: string[], env = process.env) {
+  const child = spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", timeout: 30000, windowsHide: true, env });
   return { code: child.status, result: JSON.parse(child.stdout.trim().split(/\r?\n/).at(-1) ?? "{}") };
 }
+it("discovers persisted receipt queries and refuses invalid checkpoint identities", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-rpa-query-"));
+  try {
+    const env = { ...process.env, LOCALAPPDATA: dir };
+    const list = run(["rpa", "checkpoints", "--json"], env);
+    expect(list.code).toBe(0);
+    expect(list.result.data.checkpoints).toEqual([]);
+    expect(list.result.data.modelApiCalled).toBe(false);
+    const invalid = run(["rpa", "checkpoint", "checkpoint-../other", "--json"], env);
+    expect(invalid.code).not.toBe(0);
+    expect(invalid.result.error.code).toBe("BLK-RPA-JOURNAL-002");
+    const commands = run(["command", "list", "--query", "rpa checkpoint", "--json"], env);
+    expect(commands.result.data.commands.some((c: { usage: string }) => c.usage.includes("--plan"))).toBe(true);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 it("imports a recording as a pending review draft without typed values", async () => {
   const dir = await mkdtemp(resolve("try/stage7-rpa-"));
   try {

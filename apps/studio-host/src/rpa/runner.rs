@@ -65,7 +65,7 @@ pub fn main() -> i32 {
             return Err("BLK-RPA-INPUT-002".into());
         }
         let steps = request.plan.steps.clone();
-        let host = Arc::new(RpaHost::default());
+        let host = Arc::new(RpaHost::with_journal(journal::local_root()?));
         let token_slot = Arc::new(Mutex::new(None::<String>));
         let stopped = Arc::new(AtomicBool::new(false));
         let control_host = host.clone();
@@ -137,6 +137,9 @@ pub fn main() -> i32 {
             .to_owned();
         *token_slot.lock().map_err(|_| "BLK-RPA-STATE-001")? = Some(token.clone());
         let execution = (|| {
+            if !emit("checkpoint.created", host.status(&token)?) {
+                return Err("BLK-RPA-CANCELLED".into());
+            }
             for step in &steps {
                 while host.status(&token)?["status"] == "paused" && !stopped.load(Ordering::SeqCst)
                 {

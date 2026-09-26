@@ -32,6 +32,18 @@ describe("Blocky native editor", () => {
   after(async () => {
     await cdp?.close().catch(() => {});
   });
+  it("queries durable RPA receipts through the native desktop entry", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject());
+    await page.getByRole("button", { name: /搜索命令/ }).click();
+    await page.getByLabel("命令搜索词").fill("桌面自动化");
+    await page.locator(".popup-list").getByRole("button", { name: /桌面自动化/ }).click();
+    const panel = page.getByRole("dialog", { name: "桌面自动化", exact: true });
+    await panel.getByRole("button", { name: "刷新执行记录" }).click();
+    await panel.getByText("暂无保存的执行记录").waitFor();
+    expect(await panel.getByRole("button", { name: "审阅并运行" }).isDisabled()).toBe(true);
+    await panel.getByRole("button", { name: "关闭桌面自动化" }).click();
+  });
   it("navigates the real canvas with outline and overview without editing the project", async () => {
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
     await page.evaluate(() =>

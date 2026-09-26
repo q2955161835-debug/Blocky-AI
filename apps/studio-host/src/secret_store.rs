@@ -119,7 +119,7 @@ impl SecretStore {
         Ok(value)
     }
 }
-fn wipe(bytes: &mut [u8]) {
+pub(crate) fn wipe(bytes: &mut [u8]) {
     for byte in bytes {
         unsafe {
             std::ptr::write_volatile(byte, 0);
@@ -128,7 +128,7 @@ fn wipe(bytes: &mut [u8]) {
     std::sync::atomic::compiler_fence(std::sync::atomic::Ordering::SeqCst);
 }
 #[cfg(windows)]
-fn crypt(bytes: &[u8], protect: bool) -> Result<Vec<u8>, String> {
+pub(crate) fn crypt(bytes: &[u8], protect: bool) -> Result<Vec<u8>, String> {
     use windows_sys::Win32::{
         Foundation::LocalFree,
         Security::Cryptography::{
@@ -181,7 +181,7 @@ fn crypt(bytes: &[u8], protect: bool) -> Result<Vec<u8>, String> {
     Ok(result)
 }
 #[cfg(not(windows))]
-fn crypt(_: &[u8], _: bool) -> Result<Vec<u8>, String> {
+pub(crate) fn crypt(_: &[u8], _: bool) -> Result<Vec<u8>, String> {
     Err(ERROR.into())
 }
 #[cfg(all(test, windows))]

@@ -16,6 +16,41 @@ pub fn rpa_targets(window: tauri::WebviewWindow) -> Result<Vec<rpa::target::Targ
     Ok(rpa::target::list())
 }
 #[tauri::command]
+pub async fn rpa_checkpoints(window: tauri::WebviewWindow) -> Result<Vec<Value>, String> {
+    visible(&window)?;
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        let root = window
+            .app_handle()
+            .path()
+            .app_local_data_dir()
+            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        rpa::journal::Store::new(root.join("rpa/checkpoints")).summaries()
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_checkpoint(
+    window: tauri::WebviewWindow,
+    checkpoint_id: String,
+    plan: Option<Plan>,
+) -> Result<Value, String> {
+    visible(&window)?;
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        let root = window
+            .app_handle()
+            .path()
+            .app_local_data_dir()
+            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        rpa::journal::Store::new(root.join("rpa/checkpoints"))
+            .inspect_plan(&checkpoint_id, plan.as_ref())
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
 pub async fn rpa_authorize(
     window: tauri::WebviewWindow,
     request_id: String,

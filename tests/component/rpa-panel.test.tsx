@@ -2,14 +2,28 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { RpaPanel } from "../../apps/studio-desktop/src/app/RpaPanel";
-const io = vi.hoisted(() => ({ targets: vi.fn(), authorize: vi.fn(), cancelAuthorization: vi.fn(), step: vi.fn(), status: vi.fn(), pause: vi.fn(), resume: vi.fn(), stop: vi.fn() }));
+const io = vi.hoisted(() => ({ checkpoints: vi.fn(), targets: vi.fn(), authorize: vi.fn(), cancelAuthorization: vi.fn(), step: vi.fn(), status: vi.fn(), pause: vi.fn(), resume: vi.fn(), stop: vi.fn() }));
 vi.mock("../../apps/studio-desktop/src/composition/rpa", () => ({ rpaNative: io }));
 beforeEach(() => {
+  io.checkpoints.mockResolvedValue([]);
   io.targets.mockResolvedValue([{ identity: "fixture", title: "Owned fixture", processId: 123 }]);
   io.authorize.mockResolvedValue({ sessionId: "session", targetIdentity: "fixture" });
   io.cancelAuthorization.mockResolvedValue(undefined);
   io.step.mockResolvedValue({ found: true }); io.pause.mockResolvedValue(undefined); io.resume.mockResolvedValue(undefined); io.stop.mockResolvedValue(undefined);
   io.status.mockResolvedValue({ status: "completed", active: false, receipts: [] });
+});
+it("reads saved receipts without granting or replaying execution", async () => {
+  io.checkpoints.mockResolvedValue([{ checkpointId: "checkpoint-test", planId: "saved-plan", status: "failed", completedSteps: 0, totalSteps: 1, updatedAtMs: 0, resumable: false, receipts: [{ stepId: "click-once", status: "uncertain" }] }]);
+  render(<RpaPanel close={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "刷新执行记录" }));
+  await screen.findByText(/saved-plan/);
+  expect(screen.getByText(/结果待核对，请勿重复执行/)).toBeTruthy();
+  expect(io.authorize).not.toHaveBeenCalled();
+  expect(io.step).not.toHaveBeenCalled();
+  io.checkpoints.mockRejectedValueOnce("BLK-RPA-JOURNAL-001");
+  fireEvent.click(screen.getByRole("button", { name: "刷新执行记录" }));
+  await screen.findByText("BLK-RPA-JOURNAL-001");
+  expect(screen.queryByText(/saved-plan/)).toBeNull();
 });
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 async function setup() {

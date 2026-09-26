@@ -189,8 +189,43 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
         control_type: None,
     };
     step.effect_key = Some("click-once".into());
-    input.step = Some(step);
-    worker::execute(&input).unwrap();
+    input.step = Some(step.clone());
+    let directory = super::tests::journal_directory();
+    let host = RpaHost::with_journal(directory.path().to_owned());
+    let plan = Plan {
+        schema_version: "blocky.rpa/v1".into(),
+        plan_id: "owned-native-journal".into(),
+        target: protocol::TargetRef {
+            kind: "windows".into(),
+            identity: input.target.identity.clone(),
+        },
+        steps: vec![step],
+    };
+    plan.validate().unwrap();
+    // Test-owned target only. The separate approval/cancellation integration test
+    // covers native dialogs; this test verifies real invocation + durable receipts.
+    let grant = host
+        .authorize(Prepared {
+            plan,
+            target: input.target.clone(),
+            root_id: input.root_id.clone().unwrap(),
+            preview: json!({}),
+        })
+        .unwrap();
+    let token = grant["sessionId"].as_str().unwrap();
+    host.step_with(token, "edit", None, |request, _, _| worker::execute(request)).unwrap();
+    let id = host.status(token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    host.shutdown().unwrap();
+    drop(host);
+    let receipt = journal::Store::new(directory.path().to_owned())
+        .inspect(&id)
+        .unwrap();
+    assert_eq!(receipt["status"], "completed");
+    assert_eq!(receipt["receipts"][0]["status"], "completed");
+    assert_eq!(receipt["receipts"][0]["verified"], false);
     let started = std::time::Instant::now();
     while CLICKS.load(Ordering::SeqCst) == 0 && started.elapsed() < Duration::from_secs(2) {
         std::thread::sleep(Duration::from_millis(10));
