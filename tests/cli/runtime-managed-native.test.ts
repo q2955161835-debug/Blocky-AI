@@ -145,6 +145,7 @@ it("runs the actual Runtime in a native child, strips Node startup injection, an
     child.stdin.write(
       JSON.stringify({
         kind: "start",
+        schemaVersion: "blocky.runtime-session/v1",
         argv: [
           "run",
           "start",
@@ -170,3 +171,29 @@ it("runs the actual Runtime in a native child, strips Node startup injection, an
     await rm(dir, { recursive: true, force: true });
   }
 }, 45000);
+
+it.each([undefined, "blocky.runtime-session/v999"])(
+  "rejects unknown native Runtime handshake version %s before dispatch",
+  (version) => {
+    const result = spawnSync(
+      resolve("tools/blocky-cli/dist/bin/blocky-project-io.exe"),
+      ["--blocky-runtime-session"],
+      {
+        windowsHide: true,
+        encoding: "utf8",
+        timeout: 10000,
+        input:
+          JSON.stringify({
+            kind: "start",
+            ...(version ? { schemaVersion: version } : {}),
+            argv: ["run", "start"],
+          }) + "\n",
+      },
+    );
+    expect(result.status).toBe(3);
+    expect(JSON.parse(result.stdout)).toEqual({
+      kind: "error",
+      code: "BLK-WORKFLOW-INVALID",
+    });
+  },
+);

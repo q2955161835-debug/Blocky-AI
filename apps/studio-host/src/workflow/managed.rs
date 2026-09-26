@@ -101,8 +101,8 @@ fn serve(output: &Writer) -> Result<(), String> {
         .recv_timeout(Duration::from_secs(10))
         .map_err(|_| CHANNEL)?;
     let first = first?.ok_or(CHANNEL)?;
-    keys(&first, &["kind", "argv"], &[])?;
-    require(!source && first["kind"] == "start", INVALID)?;
+    keys(&first, &["kind", "argv", "schemaVersion"], &[])?;
+    require(!source && first["kind"] == "start" && first["schemaVersion"] == "blocky.runtime-session/v1", INVALID)?;
     let argv = first["argv"].as_array().ok_or(INVALID)?;
     require(
         argv.len() <= 256

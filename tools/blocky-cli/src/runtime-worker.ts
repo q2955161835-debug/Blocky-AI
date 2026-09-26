@@ -148,7 +148,8 @@ process.stdin.on("data", (chunk: string) => {
       if (
         frame.kind === "start" &&
         !started &&
-        Object.keys(frame).sort().join() === "argv,kind"
+        frame.schemaVersion === "blocky.runtime-session/v1" &&
+        Object.keys(frame).sort().join() === "argv,kind,schemaVersion"
       ) {
         started = true;
         void start(frame.argv).catch(() => {

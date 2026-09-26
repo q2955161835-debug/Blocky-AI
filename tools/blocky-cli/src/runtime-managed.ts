@@ -158,7 +158,7 @@ export async function managedRun(
           reject(problem ?? failure());
         else resolve();
       });
-      send({ kind: "start", argv });
+      send({ kind: "start", schemaVersion: "blocky.runtime-session/v1", argv });
     });
     return result;
   } finally {
