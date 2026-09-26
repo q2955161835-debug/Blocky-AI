@@ -90,48 +90,49 @@ export function workflowKeys(
 }
 /** No toJSON/accessor/prototype behavior, cycles, non-finite numbers or unbounded trees. */
 export function workflowJson(value: unknown, limit = 131072, maxNodes = 50000, maxDepth = 32): Json {
-  const seen = new Set<object>();
-  let nodes = 0;
-  const visit = (item: unknown, depth: number): void => {
+  type Frame = { value: unknown; depth: number } | { text: string } | { leave: object };
+  const stack: Frame[] = [{ value, depth: 0 }], seen = new Set<object>(), chunks: string[] = [];
+  const encoder = new TextEncoder();
+  let nodes = 0, bytes = 0;
+  const emit = (text: string) => {
+    bytes += encoder.encode(text).length;
+    requireWorkflow(bytes <= limit, "BLK-WORKFLOW-LIMIT");
+    chunks.push(text);
+  };
+  while (stack.length) {
+    const frame = stack.pop()!;
+    if ("leave" in frame) { seen.delete(frame.leave); continue; }
+    if ("text" in frame) { emit(frame.text); continue; }
+    const item = frame.value, depth = frame.depth;
     requireWorkflow(++nodes <= maxNodes && depth <= maxDepth, "BLK-WORKFLOW-LIMIT");
-    if (item === null || typeof item === "boolean" || typeof item === "string")
-      return;
+    if (item === null || typeof item === "boolean" || typeof item === "string") {
+      emit(JSON.stringify(item)); continue;
+    }
     if (typeof item === "number") {
       requireWorkflow(Number.isFinite(item));
-      return;
+      emit(JSON.stringify(item)); continue;
     }
-    requireWorkflow(
-      typeof item === "object" && item !== null && !seen.has(item),
-    );
-    seen.add(item);
-    requireWorkflow(
-      Array.isArray(item) ||
-        Object.getPrototypeOf(item) === Object.prototype ||
-        Object.getPrototypeOf(item) === null,
-    );
+    requireWorkflow(typeof item === "object" && item !== null && !seen.has(item));
+    const array = Array.isArray(item), prototype = Object.getPrototypeOf(item);
+    requireWorkflow(array ? prototype === Array.prototype : prototype === Object.prototype || prototype === null);
     requireWorkflow(Object.getOwnPropertySymbols(item).length === 0);
-    for (const [key, descriptor] of Object.entries(
-      Object.getOwnPropertyDescriptors(item),
-    )) {
-      if (Array.isArray(item) && key === "length") continue;
-      requireWorkflow("value" in descriptor && descriptor.enumerable);
-      visit(descriptor.value, depth + 1);
+    const entries = Object.entries(Object.getOwnPropertyDescriptors(item)).filter(([key]) => !(array && key === "length"));
+    for (const [, descriptor] of entries) requireWorkflow("value" in descriptor && descriptor.enumerable);
+    if (array) requireWorkflow(entries.length === item.length && entries.every(([key], index) => key === String(index)));
+    seen.add(item);
+    emit(array ? "[" : "{");
+    stack.push({ leave: item }, { text: array ? "]" : "}" });
+    for (let index = entries.length - 1; index >= 0; index--) {
+      const [key, descriptor] = entries[index];
+      stack.push({ value: descriptor.value, depth: depth + 1 });
+      if (!array) stack.push({ text: JSON.stringify(key) + ":" });
+      if (index) stack.push({ text: "," });
     }
-    if (Array.isArray(item))
-      requireWorkflow(
-        Object.keys(item).length === item.length &&
-          Object.keys(item).every((key, index) => key === String(index)),
-      );
-    seen.delete(item);
-  };
-  visit(value, 0);
-  const text = JSON.stringify(value);
-  requireWorkflow(
-    new TextEncoder().encode(text).length <= limit,
-    "BLK-WORKFLOW-LIMIT",
-  );
-  return JSON.parse(text) as Json;
+  }
+  // Stringify only primitives above: inherited toJSON/accessors can never run.
+  return JSON.parse(chunks.join("")) as Json;
 }
+
 export function parseWorkflowDefinition(value: unknown): WorkflowDefinition {
   const input = workflowJson(value, 32768);
   workflowKeys(input, [

@@ -22,13 +22,13 @@ const bytes = (value: unknown) =>
 
 export function parseRuntimeMailbox(input: unknown): RuntimeMailboxState {
   try {
-    const value = workflowJson(input, 310000, 160000, 36);
+    const value = workflowJson(input, 310000, 160000, 160000);
     if (!Array.isArray(value) || value.length > 128) throw invalid();
     let total = 0;
     for (const message of value) {
       workflowKeys(message, ["projectId", "channel", "payload"]);
       if (!id(message.projectId) || !id(message.channel)) throw invalid();
-      workflowJson(message.payload, 16000);
+      workflowJson(message.payload, 16000, 50000, 50000);
       total += bytes(message.payload);
     }
     if (total > 262144) throw invalid();
@@ -40,7 +40,7 @@ export function parseRuntimeMailbox(input: unknown): RuntimeMailboxState {
 
 export function parseRuntimeSession(input: unknown): RuntimeSessionState {
   try {
-    const value = workflowJson(input, 2 * 1024 * 1024, 1048576, 36);
+    const value = workflowJson(input, 2 * 1024 * 1024, 1048576, 1048576);
     workflowKeys(value, [
       "schemaVersion",
       "sessionId",
@@ -66,7 +66,7 @@ export function parseRuntimeSession(input: unknown): RuntimeSessionState {
       const key = JSON.stringify([item.projectId, value.sessionId, item.key]);
       if (seen.has(key)) throw invalid();
       seen.add(key);
-      workflowJson(item.value, 32768);
+      workflowJson(item.value, 32768, 50000, 50000);
       encoded.push([key, item.value]);
     }
     // Match the live Runtime memory budget, including its encoded keys.

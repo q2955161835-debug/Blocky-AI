@@ -205,8 +205,54 @@ it("accounts for envelope depth separately from the payload limit", () => {
   state.mailbox = [{ projectId: "p", channel: "c", payload: value }];
   expect(new Runtime({ sessionState: state }).captureSession()).toEqual(state);
   state.memory[0].value = [value];
-  expect(() => new Runtime({ sessionState: state })).toThrow("BLK-RUN-STATE");
+  expect(new Runtime({ sessionState: state }).captureSession()).toEqual(state);
 });
+
+it("never invokes inherited Array serialization behavior", () => {
+  let invoked = 0;
+  class CustomArray extends Array {
+    get toJSON() {
+      invoked++;
+      return () => [];
+    }
+  }
+  const state = new Runtime().captureSession();
+  state.memory = new CustomArray();
+  expect(() => parseRuntimeSession(state)).toThrow("BLK-RUN-STATE");
+  expect(invoked).toBe(0);
+});
+
+it.each([33, 128])(
+  "transfers depth %s actually accepted by normal memory writes",
+  async (depth) => {
+    let value: import("@blocky/language-schema").Json = 1;
+    for (let index = 0; index < depth; index++) value = [value];
+    const project = createArchitectureStarter("state-machine");
+    project.workspaces.main.blocks.blocks[0].inputs!.HANDLER = {
+      block: {
+        id: "set-deep",
+        type: "core.data.set",
+        fields: { VALUE: JSON.stringify(value) },
+        next: {
+          block: {
+            id: "save-deep",
+            type: "core.memory.write",
+            fields: { SCOPE: "session", KEY: "deep", SOURCE: "result" },
+          },
+        },
+      },
+    };
+    const runtime = new Runtime();
+    const result = await runtime.run(project, "on-event", "synthetic");
+    expect(result.status).toBe("completed");
+    expect(result.modelApiCalled).toBe(false);
+    const state = runtime.captureSession();
+    expect(JSON.stringify(state.memory[0].value)).toBe(JSON.stringify(value));
+    expect(new Runtime({ sessionState: state }).captureSession()).toEqual(
+      state,
+    );
+  },
+);
 
 it("rejects mailbox replacement and pending receivers, and validates the whole queue before mutation", async () => {
   const mailbox = new EventMailbox(),
