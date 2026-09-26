@@ -9,11 +9,14 @@ mod process;
 pub mod protocol;
 pub mod recovery;
 mod runner;
+mod module_session;
+pub(crate) mod language;
 pub mod target;
 #[cfg(test)]
 mod tests;
 mod worker;
 pub use runner::main as runner_main;
+pub use module_session::main as module_session_main;
 pub use worker::main as worker_main;
 
 use binding::Binding;

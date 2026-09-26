@@ -13,6 +13,7 @@ import {
   type SourceRef,
 } from "@blocky/language-schema";
 import { getBlock } from "@blocky/block-catalog";
+import { isRpaSession, isRpaStep, compileRpaSession } from "@blocky/rpa-core";
 export function compileWorkspace(
   projectId: string,
   module: ModuleDescriptor,
@@ -21,9 +22,10 @@ export function compileWorkspace(
   const diagnostics: Diagnostic[] = [],
     sourceMap: Record<string, SourceRef> = {},
     ids = new Set<string>();
-  const compile = (b: WorkspaceBlock): IrNode | null => {
-    if (b.disabled) return b.next ? compile(b.next.block) : null;
+  const compile = (b: WorkspaceBlock, rpaScope = false): IrNode | null => {
+    if (b.disabled) return b.next ? compile(b.next.block, rpaScope) : null;
     const source = { projectId, moduleId: module.moduleId, blockId: b.id };
+    if (isRpaStep(b.type) && !rpaScope) diagnostics.push(diagnostic("BLK-RPA-SCOPE-001", "自动化操作必须放在已连接的窗口或浏览器中", source));
     if (ids.has(b.id))
       diagnostics.push(diagnostic("BLK-TYPE-002", "积木 ID 重复", source));
     ids.add(b.id);
@@ -67,7 +69,7 @@ export function compileWorkspace(
       for (const field of def.fields)
         if (
           !def.optionalFields?.includes(field) &&
-          (typeof fields[field] !== "string" || !fields[field])
+          (def.jsonFields?.includes(field) ? fields[field] === undefined : typeof fields[field] !== "string" || !fields[field])
         )
           diagnostics.push(
             diagnostic("BLK-TYPE-005", `请填写 ${field}`, source),
@@ -103,7 +105,7 @@ export function compileWorkspace(
         diagnostics.push(
           diagnostic("BLK-TYPE-009", `插槽 ${name} 需要 ${expected}`, source),
         );
-      inputs[name] = child ? compile(child) : null;
+      inputs[name] = child ? compile(child, isRpaSession(b.type) && name === "STEPS") : null;
     }
     for (const name of def?.requiredInputs ?? [])
       if (!inputs[name])
@@ -118,7 +120,7 @@ export function compileWorkspace(
       diagnostics.push(
         diagnostic("BLK-TYPE-009", "后续连接类型不兼容", source),
       );
-    const next = b.next ? compile(b.next.block) : null;
+    const next = b.next ? compile(b.next.block, rpaScope) : null;
     const node: IrNode = {
       nodeId: b.id,
       blockType: b.type,
@@ -130,10 +132,14 @@ export function compileWorkspace(
       try { validateParallelNode(node); }
       catch (error) { diagnostics.push(diagnostic(error instanceof Error ? error.message : "BLK-FLOW-001", "并行分支仅支持结果、条件、等待和受限嵌套；不能执行共享状态或外部副作用", source)); }
     }
+    if (isRpaSession(b.type)) {
+      try { compileRpaSession(node, projectId); }
+      catch (error) { diagnostics.push(diagnostic(error instanceof Error && /^BLK-RPA-/.test(error.message) ? error.message : "BLK-RPA-PLAN-001", "请检查自动化目标、定位器、步骤和输入来源", source)); }
+    }
     return node;
   };
   const roots = workspace.blocks.blocks
-    .map(compile)
+    .map(block => compile(block))
     .filter((n): n is IrNode => n !== null);
   return {
     ir: {

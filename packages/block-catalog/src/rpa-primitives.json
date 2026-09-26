@@ -1,0 +1,11 @@
+[
+  {"type":"core.computer.attach","label":"连接 Windows 窗口","category":6,"color":"#4b8faa","fields":["TARGET"],"inputs":["STEPS"],"requiredInputs":["STEPS"],"inputChecks":{"STEPS":"rpa-step"},"statement":true},
+  {"type":"core.browser.navigate","label":"打开隔离浏览器","category":6,"color":"#4b8faa","fields":["URL"],"inputs":["STEPS"],"requiredInputs":["STEPS"],"inputChecks":{"STEPS":"rpa-step"},"statement":true},
+  {"type":"core.computer.find","label":"查找窗口控件","category":6,"color":"#4b8faa","fields":["LOCATOR","TIMEOUT_MS"],"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.computer.read","label":"读取窗口控件","category":6,"color":"#4b8faa","fields":["LOCATOR","TIMEOUT_MS"],"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.computer.act","label":"操作窗口控件","category":6,"color":"#4b8faa","fields":["ACTION","LOCATOR","TIMEOUT_MS","SOURCE"],"fieldOptions":{"ACTION":["click","fill"],"SOURCE":["manual","input","result"]},"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.computer.wait","label":"等待窗口控件","category":6,"color":"#4b8faa","fields":["LOCATOR","TIMEOUT_MS"],"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.computer.capture","label":"捕获窗口区域","category":6,"color":"#4b8faa","fields":["LOCATOR","TIMEOUT_MS"],"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.browser.interact","label":"操作网页控件","category":6,"color":"#4b8faa","fields":["ACTION","LOCATOR","TIMEOUT_MS","SOURCE"],"fieldOptions":{"ACTION":["find","click","fill","wait","screenshot"],"SOURCE":["manual","input","result"]},"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"},
+  {"type":"core.browser.extract","label":"读取网页控件","category":6,"color":"#4b8faa","fields":["LOCATOR","TIMEOUT_MS"],"jsonFields":["LOCATOR"],"inputs":[],"statement":true,"statementCheck":"rpa-step"}
+]

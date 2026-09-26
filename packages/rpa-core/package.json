@@ -4,5 +4,5 @@
   "private": true,
   "type": "module",
   "exports": "./src/index.ts",
-  "dependencies": { "zod": "4.4.3", "playwright-core": "1.63.0" }
+  "dependencies": { "@blocky/language-schema": "workspace:*", "zod": "4.4.3", "playwright-core": "1.63.0" }
 }

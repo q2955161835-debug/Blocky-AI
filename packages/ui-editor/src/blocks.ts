@@ -30,6 +30,7 @@ const labels: Record<string, string> = {
   OUTPUT: "输出类型",
   RESOURCE: "资源",
   CHANNEL: "通道",
+  TARGET: "目标窗口", URL: "网址", ACTION: "动作", LOCATOR: "定位器",
   MILLISECONDS: "毫秒",
   STYLE: "方式",
   TEXT: '内容', STEPS: '最多步数', CALLS: '最多调用', OUTPUT_TOKENS: '输出 Token 预算', TIMEOUT_MS: '总时限毫秒',
@@ -65,7 +66,7 @@ export function registerBlocks() {
         const input = this.appendDummyInput();
         for (const field of def.fields) {
           if (def.jsonFields?.includes(field)) {
-            input.appendField("值").appendField(new JsonField(), field);
+            input.appendField(labels[field] ?? "值").appendField(new JsonField(), field);
             continue;
           }
           if (field === "INPUT" || field === "OUTPUT") {
@@ -102,6 +103,7 @@ export function registerBlocks() {
             const statement = this.appendStatementInput(input).setCheck(check);
             if (def.type === "core.event.receive") statement.appendField(input === "RECEIVED" ? "收到消息" : "队列为空或等待超时");
             if (def.type === "core.flow.parallel") statement.appendField(input === "LEFT" ? "分支一" : "分支二");
+            if (["core.computer.attach","core.browser.navigate"].includes(def.type)) statement.appendField("自动化步骤");
           }
         }
         if (def.output) this.setOutput(true, def.output);

@@ -25,6 +25,8 @@ import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
 import { studioAgentServices } from "./agent";
+import { studioRpaModules } from "./rpaModules";
+import { useRpaInput } from "./useRpaInput";
 import {
   RedactedBus,
   projectLog,
@@ -39,6 +41,7 @@ import {
   saveMigration,
 } from "./host";
 export function useStudio() {
+  const rpaInput = useRpaInput();
   const { confirmation, confirmationLabels, answerConfirmation, confirm } =
     useConfirmation();
   const [controller] = useState(() => new ProjectController(createStarter()));
@@ -108,7 +111,7 @@ export function useStudio() {
       () =>
         new Runtime({
           delayMs: 160,
-          adapters: hostAdapters(knowledgeNative, studioAgentServices()),
+          adapters: hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)),
         }),
     ),
     [bus] = useState(() => new RedactedBus());
@@ -486,6 +489,7 @@ export function useStudio() {
     }
   };
   return {
+    rpaInput,
     controller,
     migrate,
     confirm,

@@ -21,6 +21,7 @@ import { useBlueprintUpdate } from "./useBlueprintUpdate";
 import { draftSurface as draftSurfaceDomain } from "@blocky/app-surface";
 import { digest } from "@blocky/language-schema";
 import type { Studio } from "./useStudio";
+import { planToRpaBlocks, type RpaPlan } from "@blocky/rpa-core";
 import { validatePatch as validatePatchHost } from "./host";
 type Review = Awaited<ReturnType<typeof previewPatchDomain>>;
 type Candidate = Awaited<ReturnType<typeof realConversionCandidate>>;
@@ -257,6 +258,12 @@ export function useConstruction(studio: Studio) {
       );
       setCandidate(undefined);
     });
+  const previewRpa = (plan: RpaPlan, browserUrl?: string) => perform(async()=>{
+    const project=studio.controller.getSnapshot().project;
+    const root=planToRpaBlocks(plan,browserUrl),moduleId=studio.session.active;
+    const patch=await makePatch(project,[{op:"block.add",moduleId,blockId:root.id,payload:root}]);
+    setReview(await previewPatch(project,patch));setCandidate(undefined);
+  });
   const storeBlueprint = (value: Blueprint) => {
     if (legacy.length || libraryUnavailable) throw Error("BLK-BLUEPRINT-001");
     const next = [
@@ -399,6 +406,7 @@ export function useConstruction(studio: Studio) {
     setBindings,
     review,
     reviewBuilder,
+    previewRpa,
     candidate,
     busy: busy || conversion.busy || blueprintUpdate.busy,
     clipboard,

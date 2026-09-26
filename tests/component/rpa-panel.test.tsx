@@ -104,3 +104,16 @@ it("retains an uncertain effect and blocks automatic rerun", async () => {
   expect((screen.getByRole("button", { name: "审阅并运行" }) as HTMLButtonElement).disabled).toBe(true);
   expect(io.step).toHaveBeenCalledTimes(1);
 });
+it("passes only the reviewed plan to ghost-block creation, without the typed runtime input",async()=>{
+  const draft=vi.fn(async()=>{});
+  render(<RpaPanel draft={draft} close={vi.fn()} />);
+  fireEvent.change(screen.getByLabelText("目标类型"),{target:{value:"browser"}});
+  fireEvent.change(screen.getByLabelText("起始网址"),{target:{value:"https://example.test/form"}});
+  fireEvent.change(screen.getByLabelText("控件角色"),{target:{value:"textbox"}});
+  add("fill","Answer");
+  fireEvent.change(screen.getByLabelText(/^填写内容 /),{target:{value:"PRIVATE_TYPED_VALUE"}});
+  fireEvent.click(screen.getByRole("button",{name:"转为积木草案"}));
+  await waitFor(()=>expect(draft).toHaveBeenCalledOnce());
+  expect(JSON.stringify(draft.mock.calls)).not.toContain("PRIVATE_TYPED_VALUE");
+  expect(io.authorize).not.toHaveBeenCalled();
+});

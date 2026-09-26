@@ -20,6 +20,8 @@ import { envelope, CliError } from "./protocol";
 import { TraceSession } from "@blocky/observability";
 import { readJsonArtifact } from "./artifacts";
 import { runInputsSchema } from "./run-inputs";
+import { cliRpaModules } from "./rpa-module";
+import { rpaModuleInputsSchema } from "@blocky/rpa-core";
 export async function runAgent(
   args: Args,
   project: Project,
@@ -28,6 +30,7 @@ export async function runAgent(
   write: (value: unknown) => void,
   signal: AbortSignal,
 ) {
+  const rpaInputs=args.options.has("rpa-inputs") ? rpaModuleInputsSchema.parse(await readJsonArtifact(required(args,"rpa-inputs"),65536)) : {};
   if (args.options.has("input") === args.options.has("inputs-file"))
     throw new CliError(
       2,
@@ -207,7 +210,7 @@ export async function runAgent(
     const runtime = new Runtime({
       newId: () => (questions.length === 1 ? runId : `${runId}-r${++ordinal}`),
       sessionId: `session-${runId}`,
-      adapters: hostAdapters(call, services),
+      adapters: hostAdapters(call, services, args.options.has("live") ? cliRpaModules(rpaInputs) : undefined),
     });
     let trace = new TraceSession();
     const results: RunResult[] = [];
@@ -296,6 +299,7 @@ export async function runAgent(
       result: response,
     };
   } finally {
+    for(const key of Object.keys(rpaInputs)) delete rpaInputs[key];
     clearTimeout(timer);
     signal.removeEventListener("abort", cancel);
   }

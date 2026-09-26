@@ -285,6 +285,7 @@ fn main() {
     match std::env::args().nth(1).as_deref() {
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
         Some("--blocky-rpa-run") => std::process::exit(blocky_studio::rpa::runner_main()),
+        Some("--blocky-rpa-module") => std::process::exit(blocky_studio::rpa::module_session_main()),
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         Some("--blocky-knowledge-session") => std::process::exit(knowledge_session()),

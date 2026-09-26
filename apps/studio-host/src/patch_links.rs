@@ -55,6 +55,8 @@ pub fn validate(project: &Value) -> Result<(), String> {
             if (block["type"] == "core.interaction.chat"
                 || block["type"] == "core.interaction.chat_entry")
                 && !owner
+                && !(block["type"] == "core.interaction.chat_entry"
+                    && roots.iter().filter_map(root).any(|candidate| std::ptr::eq(candidate, block)))
             {
                 return Err(INVALID.into());
             }
@@ -132,4 +134,18 @@ pub fn validate(project: &Value) -> Result<(), String> {
         visit(id, &graph, &mut done, &mut BTreeSet::new())?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    #[test]
+    fn standalone_entry_is_allowed_only_at_a_module_root() {
+        let entry=json!({"type":"core.interaction.chat_entry","id":"entry","inputs":{}});
+        let mut project=json!({"manifest":{"modules":[{"moduleId":"main","exports":[]}]},"workspaces":{"main":{"blocks":{"blocks":[entry.clone()]}}}});
+        validate(&project).unwrap();
+        project["workspaces"]["main"]["blocks"]["blocks"]=json!([{"type":"core.logic.condition","id":"condition","inputs":{"THEN":{"block":entry}}}]);
+        assert_eq!(validate(&project).unwrap_err(),INVALID);
+    }
 }

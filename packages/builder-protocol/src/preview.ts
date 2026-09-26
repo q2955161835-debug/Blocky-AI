@@ -10,6 +10,7 @@ import { catalogVersion } from "@blocky/block-catalog";
 import { parsePatch, type PatchOperation } from "./validate";
 import { projectWithOperations } from "./operations";
 import { surfaceFromProject } from "@blocky/app-surface";
+import { rpaNodePermissions } from "@blocky/rpa-core";
 const same = (a: string[], b: string[]) =>
   canonicalJson([...new Set(a)].sort()) ===
   canonicalJson([...new Set(b)].sort());
@@ -26,6 +27,7 @@ async function permissions(
     );
   for (const module of compiled.modules)
     for (const { node } of walkNodes(module.roots)) {
+      rpaNodePermissions(node.blockType, node.fields).forEach(permission => values.add(permission));
       if (node.blockType === "core.model.compose") {
         // A broken old reference cannot grant capabilities. The resulting
         // project is still compiled and resolved strictly before acceptance.

@@ -170,6 +170,14 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 ## 有人值守 Windows 自动化
 
+### 将计划加入普通模块
+
+`rpa draft <项目> --plan <计划文件> --module <模块ID> --output <补丁文件> --json` 将计划转换为待审阅的普通积木；浏览器计划另传 `--browser-url`。随后用 `patch preview` 审阅、`patch apply` 接受权限变更并保存新项目。草案不运行自动化、不包含填充值，生成的新块 ID 可在补丁中查询。
+
+模块用 `run start <项目> --live` 运行，并在每个步骤产生来源关联事件，支持已有断点、单步和停止。手动填写值用 `--rpa-inputs <JSON文件>` 传入，键为 `moduleId/blockId`；实际结构由 `schema show blocky.rpa-module-inputs/v1 --json` 发现。每项最多 16 KiB，文件仅保存本次需要的普通填写内容，不要保存密码或密钥；Host 仍逐次原生确认。`--simulate` 不启动真实 RPA。模块集成尚无普通包验收结论。
+
+### 独立计划运行
+
 ```powershell
 .\blocky.cmd rpa targets --json
 .\blocky.cmd schema show blocky.rpa/v1 --json

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { rpaPlanSchema, rpaBrowserStartSchema, type RpaAction, type RpaStep } from "@blocky/rpa-core";
+import { rpaPlanSchema, rpaBrowserStartSchema, type RpaPlan, type RpaAction, type RpaStep } from "@blocky/rpa-core";
 import { rpaNative, type RpaTarget, type RpaStatus, type RpaRecoveryRun } from "../composition/rpa";
 import { RpaCheckpoints } from "./RpaCheckpoints";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
-export function RpaPanel({ close, projectId = "rpa-session" }: { close(): void; projectId?: string }) {
+export function RpaPanel({ close, projectId = "rpa-session", draft }: { close(): void; projectId?: string; draft?(plan:RpaPlan,browserUrl?:string):Promise<void> }) {
   const [kind,setKind]=useState<"windows"|"browser">("windows"),[url,setUrl]=useState(""),[role,setRole]=useState("button");
   const [targets, setTargets] = useState<RpaTarget[]>([]), [identity, setIdentity] = useState("");
   const [steps, setSteps] = useState<RpaStep[]>([]), [inputs, setInputs] = useState<Record<string, string>>({});
@@ -83,6 +83,11 @@ export function RpaPanel({ close, projectId = "rpa-session" }: { close(): void; 
       setSnapshot(await rpaNative.status(session.current));
     } catch (error) { if (kind === "pause") { pause.current = false; setPaused(false); } setMessage(errorCode(error)); }
   };
+  const preview = async()=>{
+    try {const plan=rpaPlanSchema.parse({schemaVersion:"blocky.rpa/v1",planId:`plan-${crypto.randomUUID()}`,target:{kind,identity:kind==="browser"?new URL(rpaBrowserStartSchema.parse({projectId,url}).url).origin:identity},steps});
+      await draft?.(plan,kind==="browser"?url:undefined);
+    }catch(error){setMessage(errorCode(error));}
+  };
   return <div className="popup-backdrop"><section className="popup rpa-panel" role="dialog" aria-modal="true" aria-label="桌面自动化">
     <header><strong>桌面自动化</strong><button aria-label="关闭桌面自动化" disabled={busy} onClick={close}>×</button></header>
     <p>选择目标并核对操作。运行时请保持在电脑旁；填写内容需逐步确认。</p>
@@ -101,6 +106,7 @@ export function RpaPanel({ close, projectId = "rpa-session" }: { close(): void; 
       </li>)}</ol>
     </fieldset>
     <div className="rpa-controls"><button disabled={busy || !(kind==="browser"?url:identity) || !steps.length || snapshot?.active || snapshot?.receipts.some((r) => r.status === "uncertain")} onClick={() => void run()}>审阅并运行</button>
+      {draft&&<button disabled={busy||!steps.length||!(kind==="browser"?url:identity)} onClick={()=>void preview()}>转为积木草案</button>}
       <button disabled={!busy || !session.current} onClick={() => void control(paused ? "resume" : "pause")}>{paused ? "继续" : "暂停"}</button>
       <button disabled={!busy} onClick={() => void control("stop")}>停止</button></div>
     <p role="status">{message}</p>

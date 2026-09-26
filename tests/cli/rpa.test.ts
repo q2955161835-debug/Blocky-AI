@@ -3,8 +3,31 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parse } from "../../tools/blocky-cli/src/arguments";
+import { createArchitectureStarter } from "../../packages/block-catalog/src";
+import { createProject } from "../../tools/blocky-cli/src/native-store";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
+it("creates a reviewable RPA module patch, enforces native permission approval and keeps simulate inert",async()=>{
+  const dir=await mkdtemp(resolve("try/stage7-rpa-module-"));
+  try{
+    const env={...process.env,LOCALAPPDATA:dir},projectPath=join(dir,"original.blocky"),planPath=join(dir,"plan.json"),patchPath=join(dir,"patch.json"),output=join(dir,"changed.blocky");
+    await createProject(projectPath,createArchitectureStarter("rule-engine"));
+    await writeFile(planPath,JSON.stringify({schemaVersion:"blocky.rpa/v1",planId:"owned",target:{kind:"browser",identity:"https://example.test"},steps:[{stepId:"read",action:"read",timeoutMs:1000,locator:{kind:"browser",role:"status",name:"Saved"}}]}));
+    const original=await readFile(projectPath);
+    const draft=run(["rpa","draft",projectPath,"--plan",planPath,"--module","main","--browser-url","https://example.test/form","--output",patchPath,"--json"],env);
+    expect(draft.code).toBe(0);expect(draft.result.data.requiresReview).toBe(true);
+    expect(await readFile(projectPath)).toEqual(original);
+    const patch=JSON.parse(await readFile(patchPath,"utf8"));
+    expect(patch.permissionDelta).toEqual(["rpa.browser","rpa.read"]);
+    const denied=run(["patch","apply",projectPath,"--patch",patchPath,"--output",output,"--json"],env);
+    expect(denied.result.error.code).toBe("BLK-PATCH-003");
+    const applied=run(["patch","apply",projectPath,"--patch",patchPath,"--approve-permissions",patch.permissionDelta.join(","),"--output",output,"--json"],env);
+    expect(applied.code,JSON.stringify(applied.result)).toBe(0);
+    const simulated=run(["run","start",output,"--simulate","--input","ignored","--entry",patch.operations[0].blockId,"--module","main","--jsonl"],env);
+    expect(simulated.code).toBe(3);expect(simulated.result.data.status).toBe("failed");expect(simulated.result.data.modelApiCalled).toBe(false);
+    expect(run(["schema","show","blocky.rpa-module-inputs/v1","--json"],env).code).toBe(0);
+  }finally{await rm(dir,{recursive:true,force:true});}
+});
 function run(args: string[], env = process.env) {
   const child = spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", timeout: 30000, windowsHide: true, env });
   return { code: child.status, result: JSON.parse(child.stdout.trim().split(/\r?\n/).at(-1) ?? "{}") };

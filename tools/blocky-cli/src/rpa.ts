@@ -1,12 +1,15 @@
-import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, rpaBrowserStartSchema, type RecordedAction } from "@blocky/rpa-core";
+import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, rpaBrowserStartSchema, planToRpaBlocks, type RecordedAction } from "@blocky/rpa-core";
 import { z } from "zod";
 import { allow, required, type Args } from "./arguments";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 import { CliError, envelope } from "./protocol";
-import { nativeUserOperation } from "./native-store";
+import { nativeUserOperation, readProject } from "./native-store";
+import { makePatch, previewPatch } from "@blocky/builder-protocol";
+import { userRegistryMap } from "./user-config";
 import { runNativeRpa } from "./rpa-transport";
 
 export const rpaHelp = [
+  "rpa draft <project.blocky> --plan <plan.json> --module <id> [--browser-url <url>] --output <patch.json> --json",
   "rpa targets --json",
   "rpa checkpoints --json",
   "rpa recovery-preview <checkpoint-id> --json",
@@ -18,6 +21,17 @@ export const rpaHelp = [
 ];
 export async function rpaCommand(args: Args, write: (value: unknown) => void, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "rpa.draft") {
+    allow(args,["plan","module","browser-url","output","json"],3);
+    const project=await readProject(args.words[2]), registry=await userRegistryMap();
+    const plan=rpaPlanSchema.parse(await readJsonArtifact(required(args,"plan"),65536));
+    const root=planToRpaBlocks(plan,args.options.has("browser-url")?required(args,"browser-url"):undefined);
+    const patch=await makePatch(project,[{op:"block.add",moduleId:required(args,"module"),blockId:root.id,payload:root}],registry);
+    const review=await previewPatch(project,patch,registry);
+    const artifact=await writeJsonArtifact(required(args,"output"),patch);
+    const result=envelope(command,{requiresReview:true,permissionDelta:review.permissionDelta,modelApiCalled:false});result.artifacts=[artifact];
+    return {code:0,result};
+  }
   if (command === "rpa.recovery-preview") {
     allow(args, ["json"], 3);
     return { code: 0, result: envelope(command, { preview: await nativeUserOperation("rpa-recovery-preview", { checkpointId: args.words[2] }, signal), modelApiCalled: false }) };

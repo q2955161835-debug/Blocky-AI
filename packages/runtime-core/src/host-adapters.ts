@@ -7,9 +7,10 @@ import { localAdapters } from "./adapters";
 import type { AgentServices } from './agent-context';
 import type { EvidenceCitation } from '@blocky/knowledge-core';
 /** Composition only: the supplied callback owns Host transport, never credentials. */
-export function hostAdapters(call: KnowledgeCall, agent?: AgentServices) {
+export function hostAdapters(call: KnowledgeCall, agent?: AgentServices, rpa?: import('@blocky/rpa-core').RpaModulePorts) {
   const adapters = localAdapters(),
     searches = new Map<string, KnowledgeSearch>();
+  adapters.rpa = rpa;
   adapters.knowledge.set(
     "adapter://knowledge-local-v1",
     async (question, collection, signal, context) => {

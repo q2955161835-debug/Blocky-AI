@@ -1,5 +1,6 @@
 /** Content-free diagnostic fields. Every imported object is rebuilt, never spread. */
 export type TraceDetails = {
+  rpa?: { targetKind: "windows" | "browser"; phase: "authorized" | "performing" | "completed"; action?: "find" | "read" | "click" | "fill" | "wait" | "screenshot"; locatorKind?: "uia" | "browser" | "coordinate"; checkpointId?: string };
   context?: { roleBytes: number; instructionBytes: number; userBytes: number; memoryBytes: number; resultBytes: number; evidenceCount: number; evidenceBytes: number };
   model?: { maxOutputTokens: number };
   memory?: { action: "read" | "write" | "delete"; scope: "session" | "project" };
@@ -11,6 +12,12 @@ const count = (x: unknown): x is number => typeof x === "number" && Number.isSaf
 const valueType = (x: unknown): x is string => typeof x === "string" && ["null", "array", "object", "string", "number", "boolean"].includes(x);
 export function projectTraceDetails(input: unknown): TraceDetails {
   const raw = record(input), result: TraceDetails = {};
+  const r = record(raw.rpa);
+  if ((r.targetKind === "windows" || r.targetKind === "browser") && (r.phase === "authorized" || r.phase === "performing" || r.phase === "completed"))
+    result.rpa = { targetKind: r.targetKind, phase: r.phase,
+      ...(typeof r.action === "string" && ["find", "read", "click", "fill", "wait", "screenshot"].includes(r.action) ? { action: r.action as NonNullable<TraceDetails["rpa"]>["action"] } : {}),
+      ...(r.locatorKind === "uia" || r.locatorKind === "browser" || r.locatorKind === "coordinate" ? { locatorKind: r.locatorKind } : {}),
+      ...(typeof r.checkpointId === "string" && r.checkpointId.length <= 80 && /^checkpoint-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(r.checkpointId) ? { checkpointId: r.checkpointId } : {}) };
   const c = record(raw.context);
   if (["roleBytes", "instructionBytes", "userBytes", "memoryBytes", "resultBytes", "evidenceCount", "evidenceBytes"].every(k => count(c[k])))
     result.context = { roleBytes: Number(c.roleBytes), instructionBytes: Number(c.instructionBytes), userBytes: Number(c.userBytes), memoryBytes: Number(c.memoryBytes), resultBytes: Number(c.resultBytes), evidenceCount: Number(c.evidenceCount), evidenceBytes: Number(c.evidenceBytes) };

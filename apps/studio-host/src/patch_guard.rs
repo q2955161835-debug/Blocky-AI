@@ -81,9 +81,13 @@ fn definition(kind: &str) -> Result<Value, String> {
     ))
     .map_err(|_| INVALID)?;
     let agent_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/agent-primitives.json")).map_err(|_| INVALID)?;
+    let event_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/event-primitives.json")).map_err(|_| INVALID)?;
+    let flow_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/flow-primitives.json")).map_err(|_| INVALID)?;
+    let rpa_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/rpa-primitives.json")).map_err(|_| INVALID)?;
     array(&catalog)?
         .iter()
         .chain(array(&text_catalog)?.iter()).chain(array(&agent_catalog)?.iter())
+        .chain(array(&event_catalog)?.iter()).chain(array(&flow_catalog)?.iter()).chain(array(&rpa_catalog)?.iter())
         .find(|v| v["type"] == kind)
         .cloned()
         .ok_or_else(|| INVALID.into())
@@ -308,6 +312,7 @@ fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Res
     ) -> Result<(), String> {
         if b["disabled"] != true {
             let kind = text(&b["type"])?;
+            out.extend(crate::rpa::language::permissions(kind, &b["fields"]));
             if ["core.knowledge.retrieve", "core.model.compose", "core.tool.invoke"].contains(&kind) {
                 let resource_id = text(&b["fields"]["RESOURCE"])?;
                 let expected = if kind == "core.knowledge.retrieve" {
@@ -532,6 +537,7 @@ pub fn validate_with_registry(
         let mut ids = BTreeSet::new();
         for b in array(&workspace["blocks"]["blocks"])? {
             block_shape(b, &mut ids, false, 0)?;
+            crate::rpa::language::validate(b, false)?;
         }
     }
     fn stage4(v: &Value) -> bool {

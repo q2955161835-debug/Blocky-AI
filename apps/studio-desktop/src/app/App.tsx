@@ -35,6 +35,7 @@ import { ExitDialog } from "./ExitDialog";
 import { MenuBar } from "./MenuBar";
 import { useModalFocus } from "../composition/useModalFocus";
 import { RpaPanel } from "./RpaPanel";
+import { RpaInputDialog } from "./RpaInputDialog";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -65,7 +66,7 @@ export function App() {
     ? popup.blockId
     : s.selected;
   useModalFocus(
-    s.confirmation
+    s.rpaInput.source ? "rpa-input" : s.confirmation
       ? "confirmation"
       : lifecycle.requested
         ? "exit"
@@ -166,6 +167,7 @@ export function App() {
     !s.exiting &&
     !lifecycle.requested &&
     !s.confirmation &&
+    !s.rpaInput.source &&
     !construction.busy &&
     (!popup ||
       ![
@@ -648,7 +650,8 @@ export function App() {
           answer={s.answerConfirmation}
         />
       )}
-      {popup?.kind === "rpa" && !s.confirmation && <RpaPanel projectId={s.snapshot.project.manifest.projectId} close={() => setPopup(null)} />}
+      {s.rpaInput.source && <RpaInputDialog key={`${s.rpaInput.source.moduleId}/${s.rpaInput.source.blockId}`} accept={s.rpaInput.answer} stop={()=>{s.stop();s.rpaInput.answer(null);}} />}
+      {popup?.kind === "rpa" && !s.confirmation && <RpaPanel projectId={s.snapshot.project.manifest.projectId} close={() => setPopup(null)} draft={async(plan,url)=>{if(await construction.previewRpa(plan,url))show("patch-review");}} />}
       {lifecycle.requested && (
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}

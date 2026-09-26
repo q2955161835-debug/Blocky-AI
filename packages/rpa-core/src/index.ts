@@ -1,5 +1,7 @@
 import { z } from "zod";
 export { BrowserRpaAdapter, type BrowserRpaPorts } from "./browser";
+export { compileRpaSession, planToRpaBlocks, isRpaSession, isRpaStep, rpaNodePermissions, type RpaInputSource, type RpaModulePlan } from "./language";
+export { type RpaModuleHandle, type RpaModulePorts, readRpaResult } from "./module-ports";
 
 const id = z.string().max(200).regex(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/);
 const locator = z.discriminatedUnion("kind", [
@@ -50,6 +52,9 @@ export const rpaBrowserStartSchema = z.object({ projectId: id, url: z.string().m
   catch {ctx.addIssue({code:"custom",message:"BLK-RPA-TARGET-001",path:["url"]});}
 });
 export type RpaBrowserStart = z.output<typeof rpaBrowserStartSchema>;
+export const rpaModuleInputsSchema = z.record(z.string().max(401).regex(/^[a-z][a-z0-9._-]*\/[a-z][a-z0-9._-]*$/), z.string().max(16384)).superRefine((value,ctx)=>{
+  if(Object.keys(value).length>100 || Object.values(value).some(input=>new TextEncoder().encode(input).length>16384||input.includes("\0"))) ctx.addIssue({code:"custom",message:"BLK-RPA-INPUT-001"});
+});
 
 export const rpaRecoverySchema = z.object({
   schemaVersion: z.literal("blocky.rpa-recovery/v1"),

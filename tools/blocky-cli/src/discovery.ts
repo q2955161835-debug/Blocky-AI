@@ -6,7 +6,7 @@ import {
 import { surfaceSpecSchema } from "@blocky/app-surface";
 import { workspaceBlockShape } from "@blocky/block-catalog";
 import { editorOperationSchema } from "@blocky/project-model";
-import { rpaPlanSchema, rpaGrantSchema, rpaRecoverySchema, rpaBrowserStartSchema } from "@blocky/rpa-core";
+import { rpaPlanSchema, rpaGrantSchema, rpaRecoverySchema, rpaBrowserStartSchema, rpaModuleInputsSchema } from "@blocky/rpa-core";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
@@ -24,6 +24,7 @@ const schemas = {
   "blocky.rpa-grant/v1": rpaGrantSchema,
   "blocky.rpa-recovery/v1": rpaRecoverySchema,
   "blocky.rpa-browser-start/v1": rpaBrowserStartSchema,
+  "blocky.rpa-module-inputs/v1": rpaModuleInputsSchema,
 };
 export const discoveryHelp = [
   "command list [--query <text>] --json",

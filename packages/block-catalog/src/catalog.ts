@@ -3,6 +3,7 @@ import textPrimitives from "./text-primitives.json";
 import agentPrimitives from "./agent-primitives.json";
 import eventPrimitives from "./event-primitives.json";
 import flowPrimitives from "./flow-primitives.json";
+import rpaPrimitives from "./rpa-primitives.json";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -47,6 +48,7 @@ export const catalog: BlockDefinition[] = [
   ...textPrimitives,
   ...eventPrimitives,
   ...flowPrimitives,
+  ...rpaPrimitives,
   ...agentPrimitives,
 ];
 export const catalogVersion = "0.5.0";

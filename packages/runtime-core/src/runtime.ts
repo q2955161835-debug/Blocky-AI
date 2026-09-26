@@ -22,6 +22,8 @@ import {
 import { RunBudget, abortable, utf8, wait } from "./budget";
 import { AgentExecution } from "./agent-execution";
 import { EventMailbox } from "./event-mailbox";
+import { RpaExecution } from "./rpa-execution";
+import { isRpaSession, isRpaStep } from "@blocky/rpa-core";
 import type { Generation, OutputFile } from "./agent-context";
 type Options = {
   sessionId?: string;
@@ -107,6 +109,7 @@ export class Runtime {
     const runBudget = new RunBudget(options.signal);
     const signal = runBudget.signal;
     const adapters = this.options.adapters ?? localAdapters();
+    const rpa = new RpaExecution(adapters.rpa, project.manifest.projectId, signal);
     const agent = new AgentExecution(
       project,
       question,
@@ -215,13 +218,17 @@ export class Runtime {
           inputPorts: Object.keys(node.inputs).sort(),
         });
         let details: TraceDetails | undefined;
-        const reportDetails = (value: TraceDetails) => { details = structuredClone(value); };
+        const reportDetails = (value: TraceDetails) => {
+          details = structuredClone(value);
+          if (value.rpa?.phase === "authorized") emit("checkpoint.created", moduleId, node.nodeId, { summary: "自动化会话已授权，检查点已建立", checkpointId: value.rpa.checkpointId! });
+        };
         try {
           await wait(this.options.delayMs ?? 0, signal);
           signal.throwIfAborted();
           if (!stepped) stepped = await pauseBoundary();
           let handled: boolean;
-          const toolCall = node.blockType === "core.tool.invoke";
+          const toolCall = node.blockType === "core.tool.invoke" || isRpaStep(node.blockType);
+          if (isRpaSession(node.blockType)) emit("tool.permission-requested", moduleId, node.nodeId, { summary: "等待审阅自动化目标与操作" });
           const toolCorrelation = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
           if (toolCall)
             emit(
@@ -232,7 +239,9 @@ export class Runtime {
               toolCorrelation,
             );
           try {
-            handled = await state.execute(node, (child, branch = state) => execute(child, moduleId, branch), reportDetails);
+            if (isRpaSession(node.blockType) || isRpaStep(node.blockType)) runBudget.call();
+            handled = await rpa.execute(node, moduleId, state, child => execute(child, moduleId, state), reportDetails);
+            if (!handled) handled = await state.execute(node, (child, branch = state) => execute(child, moduleId, branch), reportDetails);
             if (toolCall)
               emit(
                 "tool.completed",
@@ -554,14 +563,15 @@ export class Runtime {
       signal.throwIfAborted();
       emit("run.completed", undefined, undefined, { summary: "运行完成" });
     } catch (error) {
-      status = signal.aborted && !runBudget.timeout ? "cancelled" : "failed";
+      const settlementFailed = safeCode(error) === "BLK-RPA-SETTLEMENT-001";
+      status = signal.aborted && !runBudget.timeout && !settlementFailed ? "cancelled" : "failed";
       emit(
         status === "cancelled" ? "run.cancelled" : "run.failed",
         undefined,
         undefined,
         {
           code:
-            status === "cancelled"
+            settlementFailed ? "BLK-RPA-SETTLEMENT-001" : status === "cancelled"
               ? "BLK-RUN-005"
               : runBudget.timeout
                 ? "BLK-RUN-007"

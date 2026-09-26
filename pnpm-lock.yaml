@@ -243,6 +243,9 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry
+      '@blocky/rpa-core':
+        specifier: workspace:*
+        version: link:../rpa-core
       zod:
         specifier: 4.4.3
         version: 4.4.3
@@ -263,6 +266,9 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry
+      '@blocky/rpa-core':
+        specifier: workspace:*
+        version: link:../rpa-core
 
   packages/conversion-core:
     dependencies:
@@ -355,6 +361,9 @@ importers:
 
   packages/rpa-core:
     dependencies:
+      '@blocky/language-schema':
+        specifier: workspace:*
+        version: link:../language-schema
       playwright-core:
         specifier: 1.63.0
         version: 1.63.0
@@ -382,6 +391,9 @@ importers:
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry
+      '@blocky/rpa-core':
+        specifier: workspace:*
+        version: link:../rpa-core
 
   packages/settings-core: {}
 

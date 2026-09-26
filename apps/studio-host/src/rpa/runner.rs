@@ -26,7 +26,7 @@ fn emit(kind: &str, value: Value) -> bool {
     .is_ok()
         && output.flush().is_ok()
 }
-fn read_frame(input: &mut impl BufRead) -> Result<Option<Value>, String> {
+pub(super) fn read_frame(input: &mut impl BufRead) -> Result<Option<Value>, String> {
     let mut bytes = Vec::new();
     let count = Read::by_ref(input)
         .take(65537)
