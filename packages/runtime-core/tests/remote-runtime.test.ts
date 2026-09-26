@@ -344,3 +344,81 @@ it("rejects malformed RPA plans and altered steps before invoking native ports",
   expect(perform).toHaveBeenCalledOnce();
   await host.close();
 });
+
+it("closes an RPA handle arriving after close timed out and rejects its former caller", async () => {
+  vi.useFakeTimers();
+  try {
+    let release!: (handle: {
+      checkpointId: string;
+      close: () => Promise<void>;
+      perform: () => Promise<{}>;
+    }) => void;
+    const adapters = localAdapters();
+    adapters.rpa = {
+      open: async () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    };
+    const host = new RuntimeServiceHost("project-one", adapters);
+    const opened = host.request(
+      { service: "rpa.open", input: rpaRequest() },
+      new AbortController().signal,
+    );
+    const openingResult = opened.then(
+      (value) => ({ value }),
+      (error) => ({ error }),
+    );
+    const closingResult = host.close().then(
+      () => "resolved",
+      (error) => error.message,
+    );
+    await vi.advanceTimersByTimeAsync(10001);
+    expect(await closingResult).toBe("BLK-RUN-SERVICE");
+    const close = vi.fn(async () => {});
+    release({
+      checkpointId: "checkpoint-late",
+      close,
+      perform: async () => ({}),
+    });
+    expect(await openingResult).toEqual({ error: Error("BLK-RUN-SERVICE") });
+    expect(close).toHaveBeenCalledOnce();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it("retains failed late-handle settlement without issuing duplicate closes", async () => {
+  const adapters = localAdapters();
+  let release!: (handle: {
+    checkpointId: string;
+    close: () => Promise<void>;
+    perform: () => Promise<{}>;
+  }) => void;
+  adapters.rpa = {
+    open: async () =>
+      new Promise((resolve) => {
+        release = resolve;
+      }),
+  };
+  const host = new RuntimeServiceHost("project-one", adapters),
+    abort = new AbortController();
+  const opened = host.request(
+    { service: "rpa.open", input: rpaRequest() },
+    abort.signal,
+  );
+  const rejected = expect(opened).rejects.toThrow("BLK-RPA-UNSETTLED");
+  abort.abort();
+  const close = vi.fn(async () => {
+    throw Error("BLK-RPA-UNSETTLED");
+  });
+  release({
+    checkpointId: "checkpoint-late",
+    close,
+    perform: async () => ({}),
+  });
+  await rejected;
+  await expect(host.close()).rejects.toThrow("BLK-RPA-UNSETTLED");
+  await expect(host.close()).rejects.toThrow("BLK-RPA-UNSETTLED");
+  expect(close).toHaveBeenCalledOnce();
+});

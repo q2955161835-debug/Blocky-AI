@@ -82,7 +82,7 @@ export class RuntimeServiceHost {
   private abort = new AbortController();
   private handles = new Map<
     string,
-    { port: RpaModuleHandle; request: RpaModulePlan }
+    { port: RpaModuleHandle; request: RpaModulePlan; closing?: Promise<void> }
   >();
   private pending = new Set<Promise<unknown>>();
   private closing?: Promise<void>;
@@ -95,6 +95,13 @@ export class RuntimeServiceHost {
   ) {}
   cancel() {
     this.abort.abort();
+  }
+  private async closeHandle(id: string): Promise<void> {
+    const handle = this.handles.get(id);
+    if (!handle) throw invalid();
+    handle.closing ??= Promise.resolve().then(() => handle.port.close());
+    await bounded(handle.closing);
+    this.handles.delete(id);
   }
   async request(input: unknown, signal: AbortSignal): Promise<unknown> {
     if (this.closed) throw invalid();
@@ -227,6 +234,10 @@ export class RuntimeServiceHost {
           const handle = await this.adapters.rpa.open(input, signal),
             id = `rpa-${crypto.randomUUID()}`;
           this.handles.set(id, { port: handle, request: input });
+          if (this.closed || signal.aborted) {
+            await this.closeHandle(id);
+            throw invalid();
+          }
           return { handle: id, checkpointId: handle.checkpointId };
         } finally {
           this.openingRpa = false;
@@ -238,10 +249,10 @@ export class RuntimeServiceHost {
           typeof v.handle === "string" ? this.handles.get(v.handle) : undefined;
         if (!handle) throw invalid();
         if (v.service === "rpa.close") {
-          await handle.port.close();
-          this.handles.delete(v.handle as string);
+          await this.closeHandle(v.handle as string);
           return;
         }
+        if (handle.closing) throw invalid();
         const step = handle.request.plan.steps.find(
           (step) => step.stepId === (v.step as RpaStep | undefined)?.stepId,
         );
@@ -266,10 +277,7 @@ export class RuntimeServiceHost {
       this.closed = true;
       this.cancel();
       await bounded(Promise.allSettled([...this.pending]));
-      for (const [id, handle] of this.handles) {
-        await bounded(handle.port.close());
-        this.handles.delete(id);
-      }
+      for (const id of this.handles.keys()) await this.closeHandle(id);
       if (!this.agentClosed) {
         await bounded(
           Promise.resolve(this.adapters.agent?.close?.(this.abort.signal)),
