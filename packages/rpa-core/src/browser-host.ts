@@ -2,11 +2,12 @@
 import { randomUUID } from "node:crypto";
 import { chromium, type Browser, type BrowserContext, type Page } from "playwright-core";
 import { BrowserRpaAdapter } from "./browser";
+import { BrowserRecording } from "./browser-recording";
 import { rpaGrantSchema, rpaPlanSchema, type RpaGrant, type RpaPlan } from "./index";
 
 const stableId = /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/;
 export type BrowserTarget = { identity: string; projectId: string; origin: string };
-type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void> };
+type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void>; recording?: BrowserRecording };
 
 /** Private pipe service owned by the native Host. Native approval must precede authorize(). */
 export class BrowserHost {
@@ -56,7 +57,12 @@ export class BrowserHost {
       if (new URL(page.url()).origin !== origin || this.closing) throw Error("BLK-RPA-TARGET-001");
       const target = { identity: requestedIdentity ?? `browser:${randomUUID()}`, projectId, origin };
       this.sessions.set(target.identity, { target, context, page, next: 0, failed: false });
-      page.on("close", () => { void this.close(target.identity).catch(() => {}); });
+      page.on("close", () => {
+        // Preserve a stopped recording until its caller retrieves the proposal.
+        const recording = this.sessions.get(target.identity)?.recording;
+        if (recording) void recording.stop("target-lost").catch(() => {});
+        else void this.close(target.identity).catch(() => {});
+      });
       return { ...target };
     } catch {
       await context?.close().catch(() => {});
@@ -76,11 +82,30 @@ export class BrowserHost {
   authorize(identity: string, projectId: string, planInput: unknown, grantInput: unknown) {
     const session = this.session(identity);
     const plan = rpaPlanSchema.parse(planInput), grant = rpaGrantSchema.parse(grantInput);
-    if (session.active || session.plan && session.next < session.plan.steps.length || session.target.projectId !== projectId
+    if (session.recording || session.active || session.plan && session.next < session.plan.steps.length || session.target.projectId !== projectId
         || plan.target.kind !== "browser" || plan.target.identity !== identity || grant.targetIdentity !== identity || grant.expiresAt <= Date.now()
         || plan.steps.some((step) => step.locator.kind !== "browser" || !grant.actions.includes(step.action) || step.action === "screenshot" || step.value?.kind === "secret-ref"))
       throw Error("BLK-RPA-PERM-001");
     session.plan = structuredClone(plan); session.grant = structuredClone(grant); session.next = 0; session.failed = false;
+  }
+  async startRecording(identity: string, projectId: string, sessionId: string) {
+    const session = this.session(identity);
+    if (session.target.projectId !== projectId || session.plan || session.active || [...this.sessions.values()].some(value => value.recording))
+      throw Error("BLK-RPA-PERM-001");
+    session.recording = await BrowserRecording.start(session.page, session.target.origin, {
+      sessionId, projectId, target: { kind: "browser", identity },
+    });
+    return session.recording.status();
+  }
+  recordingStatus(identity: string, sessionId: string) {
+    const recording = this.sessions.get(identity)?.recording;
+    if (!recording || recording.status().sessionId !== sessionId) throw Error("BLK-RPA-PERM-001");
+    return recording.status();
+  }
+  async stopRecording(identity: string, sessionId: string) {
+    const recording = this.sessions.get(identity)?.recording;
+    if (!recording || recording.status().sessionId !== sessionId) throw Error("BLK-RPA-PERM-001");
+    return recording.stop("stopped");
   }
   async perform(identity: string, token: string, stepId: string, input: string | undefined, signal: AbortSignal): Promise<{ text?: string }> {
     signal.throwIfAborted();
@@ -122,7 +147,8 @@ export class BrowserHost {
     const session = this.sessions.get(identity);
     if (!session) return;
     session.closing ??= (async () => {
-      await session.context.close({ reason: "Blocky session closed" });
+      try { await session.recording?.stop("target-lost"); }
+      finally { await session.context.close({ reason: "Blocky session closed" }); }
       await session.active?.catch(() => {});
       this.sessions.delete(identity);
     })();
