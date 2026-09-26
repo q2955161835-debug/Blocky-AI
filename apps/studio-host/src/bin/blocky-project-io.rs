@@ -29,6 +29,10 @@ fn execute(bytes: &[u8]) -> Value {
 }
 fn execute_value(value: Value) -> Value {
     if let Err(code) = blocky_studio::profile::from_environment() { return json!({"ok":false,"code":code}); }
+    if matches!(value["operation"].as_str(), Some("workflow-list" | "workflow-show")) {
+        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::query::dispatch(root.join("workflow"), &value));
+        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+    }
     if matches!(value["operation"].as_str(),Some("rpa-captures"|"rpa-capture-read"|"rpa-capture-delete")) {
         let result=blocky_studio::profile::cli_root().and_then(|root|blocky_studio::rpa::captures::dispatch(root.join("rpa/captures"),value));
         return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};

@@ -34,6 +34,7 @@ import { blockQueryCommand, blockQueryHelp } from "./block-query";
 import { productivityCommand, productivityHelp } from "./productivity";
 import { editorCommand, editorHelp } from "./editor";
 import { rpaCommand, rpaHelp } from "./rpa";
+import { workflowCommand, workflowHelp } from "./workflow";
 import { traceCommand, traceHelp } from "./trace";
 import { conversion, conversionHelp } from "./conversion";
 import { taskCommand, taskHelp } from "./tasks";
@@ -55,6 +56,7 @@ export const help = {
     ...productivityHelp,
     ...editorHelp,
     ...rpaHelp,
+    ...workflowHelp,
     ...traceHelp,
     ...knowledgeHelp,
     ...foundationsHelp,
@@ -103,6 +105,8 @@ export async function dispatch(
   if (editor) return editor;
   const rpa = await rpaCommand(args, write, signal);
   if (rpa) return rpa;
+  const workflow = await workflowCommand(args, signal);
+  if (workflow) return workflow;
   const trace = await traceCommand(args);
   if (trace) return trace;
   const workResult = await builderWorkCommand(args, signal);

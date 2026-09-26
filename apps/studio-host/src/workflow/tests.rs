@@ -36,6 +36,115 @@ fn temp() -> tempfile::TempDir {
     std::fs::create_dir_all(&base).unwrap();
     tempfile::tempdir_in(base).unwrap()
 }
+
+#[test]
+fn workflow_query_is_project_scoped_and_never_returns_private_context() {
+    let dir = temp();
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    store
+        .create(
+            "task-one",
+            &definition(),
+            json!({"private":"query-private-canary"}),
+        )
+        .unwrap();
+    let mut other = definition();
+    other["projectId"] = json!("project-other");
+    store.create("task-other", &other, Value::Null).unwrap();
+    let request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-list","projectId":"project-one"});
+    let list = super::query::dispatch(dir.path().to_owned(), &request).unwrap();
+    assert_eq!(list.as_array().unwrap().len(), 1);
+    assert_eq!(list[0]["taskId"], "task-one");
+    assert!(!list.to_string().contains("query-private-canary"));
+    assert!(!list.to_string().contains("Confirm"));
+    let mut show = request.clone();
+    show["operation"] = json!("workflow-show");
+    show["taskId"] = json!("task-other");
+    assert_eq!(
+        super::query::dispatch(dir.path().to_owned(), &show).unwrap_err(),
+        "BLK-WORKFLOW-BINDING"
+    );
+    show["taskId"] = json!("task-missing");
+    assert_eq!(
+        super::query::dispatch(dir.path().to_owned(), &show).unwrap_err(),
+        "BLK-WORKFLOW-NOT-FOUND"
+    );
+    show["taskId"] = json!("../outside");
+    assert!(super::query::dispatch(dir.path().to_owned(), &show).is_err());
+    let mut injected = request.clone();
+    injected["path"] = json!("other");
+    assert!(super::query::dispatch(dir.path().to_owned(), &injected).is_err());
+    std::fs::write(dir.path().join("task-one.bin"), b"broken").unwrap();
+    assert!(super::query::dispatch(dir.path().to_owned(), &request).is_err());
+}
+
+#[test]
+#[ignore = "requires freshly built CLI and native helper; no visible windows or input"]
+fn workflow_cli_reads_approval_from_encrypted_ledger_in_new_processes() {
+    use std::os::windows::process::CommandExt;
+    use std::{path::Path, process::Command};
+    let dir = temp();
+    let profile = dir.path().join("profile");
+    let root = profile.join("workflow");
+    let store = Store::new(root.clone()).unwrap();
+    store
+        .create(
+            "task-cli",
+            &definition(),
+            json!({"private":"workflow-cli-private-canary"}),
+        )
+        .unwrap();
+    let mut lease = store.acquire("task-cli", &definition(), 1).unwrap();
+    lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+    lease.commit(&json!({"kind":"complete","revision":2,"state":{"private":"workflow-cli-private-canary"}})).unwrap();
+    lease
+        .commit(&json!({"kind":"await-approval","revision":3}))
+        .unwrap();
+    lease.release().unwrap();
+    let disk = std::fs::read(root.join("task-task-cli.bin")).unwrap();
+    let cli = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tools/blocky-cli/dist/main.mjs");
+    let run = |args: &[&str]| {
+        let result = Command::new("node")
+            .arg(&cli)
+            .args(args)
+            .env(crate::profile::VARIABLE, &profile)
+            .creation_flags(0x08000000)
+            .output()
+            .unwrap();
+        let text = String::from_utf8(result.stdout).unwrap();
+        assert!(!text.contains("workflow-cli-private-canary") && !text.contains("Confirm"));
+        (
+            result.status.success(),
+            serde_json::from_str::<Value>(text.lines().last().unwrap()).unwrap(),
+        )
+    };
+    let (ok, list) = run(&["workflow", "list", "--project-id", "project-one", "--json"]);
+    assert!(ok, "{list}");
+    assert_eq!(list["data"]["tasks"][0]["status"], "awaiting-approval");
+    let (ok, show) = run(&[
+        "workflow",
+        "show",
+        "task-cli",
+        "--project-id",
+        "project-one",
+        "--json",
+    ]);
+    assert!(ok, "{show}");
+    assert_eq!(show["data"]["task"]["revision"], 4);
+    assert_eq!(show["data"]["task"]["stepId"], "review");
+    assert!(show["data"]["task"].get("state").is_none());
+    let (ok, wrong) = run(&[
+        "workflow",
+        "show",
+        "task-cli",
+        "--project-id",
+        "project-other",
+        "--json",
+    ]);
+    assert!(!ok);
+    assert_eq!(wrong["error"]["code"], "BLK-WORKFLOW-BINDING");
+    assert_eq!(std::fs::read(root.join("task-task-cli.bin")).unwrap(), disk);
+}
 fn next(record: &Value, mut action: Value) -> Value {
     action["revision"] = record["revision"].clone();
     transition(record, &action).unwrap()

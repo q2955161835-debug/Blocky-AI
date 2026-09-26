@@ -1,5 +1,12 @@
 const captureHint = "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-WORKFLOW-NOT-FOUND": { message: "当前资料目录中没有此工作流任务。", hint: "运行 profile show 核对资料目录，再用 workflow list --project-id 查询任务标识。" },
+  "BLK-WORKFLOW-BINDING": { message: "任务与项目或执行定义不一致。", hint: "核对项目标识、模块、积木与计划摘要；不要用已修改的项目重放旧任务。" },
+  "BLK-WORKFLOW-INVALID": { message: "工作流请求或摘要格式无效。", hint: "运行 command list --query workflow 和 schema show blocky.workflow-summary/v1 核对命令与结构。" },
+  "BLK-WORKFLOW-STORE": { message: "工作流账本不可读取或未通过完整性校验。", hint: "保留现有记录，检查当前资料目录的文件访问及磁盘状态；不要删除记录后重跑副作用。" },
+  "BLK-WORKFLOW-LIMIT": { message: "工作流状态或账本超出容量上限。", hint: "缩小步骤上下文；保留现有检查点，检查任务数量和磁盘占用。" },
+  "BLK-WORKFLOW-OWNER": { message: "工作流仍由其他执行会话占用，或无法确认其已退出。", hint: "在原会话停止并核对实际进程状态；不可并发接管。" },
+  "BLK-WORKFLOW-UNCERTAIN": { message: "步骤的实际执行结果尚不确定。", hint: "先核对原执行者、子任务及实际副作用；保留回执，不得自动重放。" },
   "BLK-RPA-RECORD-001": { message: "录制请求或结果不符合契约。", hint: "查看 blocky.rpa-recording-start/v1 和 result/v1 Schema；同一录制必须保留 projectId/sessionId 和目标绑定，不得添加输入正文。" },
   "BLK-RPA-RECORD-EMPTY": { message: "录制中没有可转换的步骤。", hint: "核对省略计数和目标；重新录制可唯一定位的点击或填写操作，或在面板手动添加步骤。" },
   "BLK-RPA-BROWSER-MISSING": { message: "未找到 Microsoft Edge 浏览器。", hint: "安装 Edge 后重新运行；WebView2 Runtime 不能替代完整浏览器。不会自动安装或使用现有个人浏览器会话。" },

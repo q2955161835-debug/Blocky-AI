@@ -3,6 +3,7 @@ mod protocol;
 mod transitions;
 mod store;
 mod staging;
+pub mod query;
 pub use protocol::{create, parse, summary};
 pub use store::{Lease, Store};
 pub use transitions::transition;

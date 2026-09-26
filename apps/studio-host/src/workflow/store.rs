@@ -149,9 +149,8 @@ impl Store {
         crate::secret_store::wipe(&mut plain);
         result
     }
-    fn capacity(&self, replacing: &str, next_len: usize) -> Result<(), String> {
-        let mut count = 0;
-        let mut bytes = next_len as u64;
+    fn inventory(&self) -> Result<Vec<(String, u64)>, String> {
+        let mut records = Vec::new();
         for (index, entry) in std::fs::read_dir(&self.root).map_err(|_| IO)?.enumerate() {
             require(index <= MAX_RECORDS * 2 + 2, LIMIT)?;
             let entry = entry.map_err(|_| IO)?;
@@ -170,12 +169,22 @@ impl Store {
             let id = rest.strip_suffix(".bin").ok_or(IO)?;
             require(protocol::stable(id), IO)?;
             let len = regular(&entry.path(), MAX_FILE)?;
-            if id != replacing {
-                count += 1;
-                bytes = bytes.checked_add(len).ok_or(LIMIT)?;
-            }
+            records.push((id.to_owned(), len));
         }
-        require(count < MAX_RECORDS && bytes <= 128 * 1024 * 1024, LIMIT)
+        require(records.len() <= MAX_RECORDS, LIMIT)?;
+        records.sort_by(|a, b| a.0.cmp(&b.0));
+        Ok(records)
+    }
+    fn capacity(&self, replacing: &str, next_len: usize) -> Result<(), String> {
+        let records = self.inventory()?;
+        let others: Vec<_> = records.iter().filter(|(id, _)| id != replacing).collect();
+        let bytes = others.iter().try_fold(next_len as u64, |sum, (_, len)| {
+            sum.checked_add(*len).ok_or(LIMIT)
+        })?;
+        require(
+            others.len() < MAX_RECORDS && bytes <= 128 * 1024 * 1024,
+            LIMIT,
+        )
     }
     fn write_unlocked(&self, envelope: &Envelope) -> Result<(), String> {
         protocol::parse(&envelope.record)?;
@@ -232,6 +241,41 @@ impl Store {
     pub fn read(&self, id: &str) -> Result<Value, String> {
         let _lock = self.lock()?;
         Ok(self.read_unlocked(id)?.record)
+    }
+    pub fn summaries(&self, project_id: &str) -> Result<Value, String> {
+        require(protocol::stable(project_id), INVALID)?;
+        let _lock = self.lock()?;
+        let records = self.inventory()?;
+        require(
+            records.iter().map(|(_, len)| *len).sum::<u64>() <= 128 * 1024 * 1024,
+            LIMIT,
+        )?;
+        let mut summaries = Vec::new();
+        for (id, _) in records {
+            let record = self.read_unlocked(&id)?.record;
+            if record["definition"]["projectId"] == project_id {
+                summaries.push(protocol::summary(&record)?);
+            }
+        }
+        Ok(Value::Array(summaries))
+    }
+    pub fn task_summary(&self, project_id: &str, id: &str) -> Result<Value, String> {
+        require(protocol::stable(project_id), INVALID)?;
+        let path = self.path(id)?;
+        let _lock = self.lock()?;
+        match std::fs::symlink_metadata(path) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                return Err("BLK-WORKFLOW-NOT-FOUND".into());
+            }
+            Err(_) => return Err(IO.into()),
+            Ok(_) => {}
+        }
+        let record = self.read_unlocked(id)?.record;
+        require(
+            record["definition"]["projectId"] == project_id,
+            "BLK-WORKFLOW-BINDING",
+        )?;
+        protocol::summary(&record)
     }
     pub fn acquire(
         &self,
