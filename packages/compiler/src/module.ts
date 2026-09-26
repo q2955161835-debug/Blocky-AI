@@ -36,6 +36,12 @@ export function compileWorkspace(
       try { if (typeof fields.VALUE !== 'string' || new TextEncoder().encode(fields.VALUE).length>32768) throw Error(); JSON.parse(fields.VALUE); }
       catch { diagnostics.push(diagnostic('BLK-TYPE-009','结果必须是有效且有界的 JSON',source)); }
     }
+    if (b.type === "core.event.send" || b.type === "core.event.receive") {
+      if (typeof fields.CHANNEL !== "string" || fields.CHANNEL.length > 128 || !stableId.test(fields.CHANNEL))
+        diagnostics.push(diagnostic("BLK-EVENT-001", "事件通道标识无效", source));
+      if (b.type === "core.event.receive" && (typeof fields.TIMEOUT_MS !== "string" || !/^\d+$/.test(fields.TIMEOUT_MS) || Number(fields.TIMEOUT_MS) > 30000))
+        diagnostics.push(diagnostic("BLK-EVENT-001", "事件等待须在 0–30000 毫秒内", source));
+    }
     if (b.type === 'core.run.budget') for (const [field,max] of [['STEPS',2000],['CALLS',16],['OUTPUT_TOKENS',4096],['TIMEOUT_MS',120000]] as const) {
       const value=fields[field]; if (typeof value!=='string' || !/^\d+$/.test(value) || Number(value)<1 || Number(value)>max) diagnostics.push(diagnostic('BLK-RUN-006','运行预算必须在支持范围内',source));
     }

@@ -1,0 +1,4 @@
+[
+  {"type":"core.event.send","label":"发送事件","category":8,"color":"#9971b5","fields":["CHANNEL","SOURCE"],"fieldOptions":{"SOURCE":["input","result"]},"inputs":[],"statement":true},
+  {"type":"core.event.receive","label":"接收事件","category":8,"color":"#9971b5","fields":["CHANNEL","TIMEOUT_MS"],"inputs":["RECEIVED","EMPTY"],"statement":true}
+]

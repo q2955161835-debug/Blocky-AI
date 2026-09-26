@@ -29,6 +29,7 @@ const labels: Record<string, string> = {
   INPUT: "输入类型",
   OUTPUT: "输出类型",
   RESOURCE: "资源",
+  CHANNEL: "通道",
   STYLE: "方式",
   TEXT: '内容', STEPS: '最多步数', CALLS: '最多调用', OUTPUT_TOKENS: '输出 Token 预算', TIMEOUT_MS: '总时限毫秒',
   SOURCE: '取值', OP: '判断', VALUE: '值', SCOPE: '范围', KEY: '键', POLICY: '策略', SCHEMA: '输出结构', FORMAT: '格式',
@@ -70,7 +71,7 @@ export function registerBlocks() {
             hidden.setVisible(false);
             continue;
           }
-          input.appendField(labels[field] ?? field);
+          input.appendField(def.type === "core.event.receive" && field === "TIMEOUT_MS" ? "等待毫秒" : labels[field] ?? field);
           if (def.fieldOptions?.[field])
             input.appendField(
               new Blockly.FieldDropdown(
@@ -94,7 +95,10 @@ export function registerBlocks() {
           const check = def.inputChecks?.[input] ?? "step";
           if (typeof check === "string" && ["json", "message"].includes(check))
             this.appendValueInput(input).setCheck(check);
-          else this.appendStatementInput(input).setCheck(check);
+          else {
+            const statement = this.appendStatementInput(input).setCheck(check);
+            if (def.type === "core.event.receive") statement.appendField(input === "RECEIVED" ? "收到消息" : "队列为空或等待超时");
+          }
         }
         if (def.output) this.setOutput(true, def.output);
         if (def.statement) {

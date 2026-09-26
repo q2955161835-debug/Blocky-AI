@@ -1,6 +1,7 @@
 import definitions from "./definitions.json";
 import textPrimitives from "./text-primitives.json";
 import agentPrimitives from "./agent-primitives.json";
+import eventPrimitives from "./event-primitives.json";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -43,6 +44,7 @@ export const beginnerCategories = [
 export const catalog: BlockDefinition[] = [
   ...definitions,
   ...textPrimitives,
+  ...eventPrimitives,
   ...agentPrimitives,
 ];
 export const catalogVersion = "0.5.0";

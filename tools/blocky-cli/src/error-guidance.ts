@@ -1,4 +1,6 @@
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-EVENT-001": { message: "事件通道或等待参数无效。", hint: "通道使用稳定标识，等待时间为 0–30000 毫秒；通过 project compile 定位积木。" },
+  "BLK-EVENT-002": { message: "事件队列达到容量上限。", hint: "先接收已有消息或减少负载。会话最多 128 条、总计 256 KiB，每条最多 16000 UTF-8 字节；重启会丢弃未处理消息。" },
   "BLK-RPA-LOCATOR-003": { message: "定位器匹配多个控件。", hint: "补充 automationId、name 或 controlType，使目标唯一；不会自动选择第一个。" },
   "BLK-RPA-LOCATOR-004": { message: "目标窗口内未找到控件。", hint: "检查控件标识、窗口状态和权限；需要等待出现时使用 wait 步骤。" },
   "BLK-RPA-TARGET-001": { message: "目标窗口已失效或身份发生变化。", hint: "重新运行 rpa targets，核对目标后生成新的授权；不要沿用旧窗口句柄。" },

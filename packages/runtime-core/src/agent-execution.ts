@@ -20,6 +20,7 @@ import {
 } from "./agent-context";
 import { validateOutput } from "./output-schema";
 import type { TraceDetails } from "@blocky/observability";
+import { EventMailbox } from "./event-mailbox";
 
 const valueType = (value: Json) => value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 
@@ -42,6 +43,7 @@ export class AgentExecution {
     readonly services: AgentServices = {},
     readonly registry?: Map<string, Resource>,
     private sessionMemory = new Map<string, Json>(),
+    private mailbox = new EventMailbox(),
   ) {}
   async compose(
     resource: Resource,
@@ -155,6 +157,19 @@ export class AgentExecution {
   ): Promise<boolean> {
     const f = node.fields;
     switch (node.blockType) {
+      case "core.event.send": {
+        if (!["input", "result"].includes(String(f.SOURCE))) throw Error("BLK-EVENT-001");
+        this.mailbox.send(this.project.manifest.projectId, String(f.CHANNEL), f.SOURCE === "input" ? this.question : this.value, this.budget.signal);
+        break;
+      }
+      case "core.event.receive": {
+        const message = await this.mailbox.receive(this.project.manifest.projectId, String(f.CHANNEL), integer(f.TIMEOUT_MS, 0, 30000), this.budget.signal);
+        this.value = message?.payload ?? null;
+        const child = node.inputs[message ? "RECEIVED" : "EMPTY"];
+        if (Array.isArray(child)) throw Error("BLK-TYPE-009");
+        if (child) await execute(child);
+        break;
+      }
       case "core.run.budget":
         this.budget.configure(f);
         break;

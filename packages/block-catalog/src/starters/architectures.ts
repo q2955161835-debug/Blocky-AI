@@ -8,6 +8,10 @@ import type { OfficialStarter } from "./index";
 
 export const architectureStarters: OfficialStarter[] = [
   {
+    id: "event-mailbox", displayName: "事件收件箱", description: "发送输入到当前会话的事件队列，再按顺序接收并处理。", sampleInput: "hello",
+    steps: ["输入普通文本将其发送到 inbox。", "输入 next 接收最早一条消息，空队列返回 empty。", "发送与接收可放在不同模块中，共享同一项目的会话通道。"], version: 1,
+  },
+  {
     id: "state-machine",
     displayName: "有限状态机",
     description:
@@ -70,7 +74,7 @@ export function createArchitectureStarter(
   project.manifest.format.minimumReaderVersion = "0.5.0";
   const moduleId = "main";
   const purpose =
-    id === "rule-engine" ? "rule" : id === "hybrid-router" ? "general" : id;
+    id === "rule-engine" ? "rule" : ["hybrid-router", "event-mailbox"].includes(id) ? "general" : id;
   project.manifest.modules = [
     {
       moduleId,
@@ -188,6 +192,10 @@ export function createArchitectureStarter(
       ),
       output(),
     );
+  } else if (id === "event-mailbox") {
+    body = stack(condition("input", "equals", "next",
+      block("core.event.receive", { CHANNEL: "inbox", TIMEOUT_MS: "0" }, { EMPTY: { block: value("empty") } }),
+      stack(block("core.event.send", { CHANNEL: "inbox", SOURCE: "input" }), value("queued"))), output());
   } else {
     const resourceId = "router-model";
     project.resources[resourceId] = {

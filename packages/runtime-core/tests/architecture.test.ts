@@ -7,6 +7,31 @@ import {
   architectureStarters,
 } from "../../block-catalog/src";
 
+it("runs an event mailbox across inputs without leaking payloads to trace events", async () => {
+  const runtime = new Runtime(), project = createArchitectureStarter("event-mailbox");
+  for (const [input, expected] of [["private-message-abc", "queued"], ["second", "queued"], ["next", "private-message-abc"], ["next", "second"], ["next", "empty"]]) {
+    const result = await runtime.run(project, "on-event", input);
+    expect(result.status).toBe("completed");
+    expect(result.structured).toBe(expected);
+    expect(JSON.stringify(result.events)).not.toContain("private-message-abc");
+  }
+  expect((await new Runtime().run(project, "on-event", "next")).structured).toBe("empty");
+});
+
+it("shares a project mailbox across modules and rejects invalid wait parameters before running", async () => {
+  const project = createArchitectureStarter("event-mailbox"), runtime = new Runtime();
+  project.manifest.modules.push({ ...project.manifest.modules[0], moduleId: "consumer", workspaceRef: "workspaces/consumer.workspace.json" });
+  project.workspaces.consumer = structuredClone(project.workspaces.main);
+  expect((await runtime.run(project, "on-event", "message", { moduleId: "main" })).structured).toBe("queued");
+  expect((await runtime.run(project, "on-event", "next", { moduleId: "consumer" })).structured).toBe("message");
+  const handler = project.workspaces.main.blocks.blocks[0].inputs!.HANDLER!.block!;
+  handler.inputs!.THEN!.block!.fields!.TIMEOUT_MS = "30001";
+  expect((await compileProject(project)).diagnostics.some(d => d.code === "BLK-EVENT-001")).toBe(true);
+  const failed = await runtime.run(project, "on-event", "next", { moduleId: "main" });
+  expect(failed.status).toBe("failed");
+  expect(failed.events.some(e => e.type === "block.started")).toBe(false);
+});
+
 it.each(architectureStarters)(
   "compiles $id as an independent module",
   async (starter) => {

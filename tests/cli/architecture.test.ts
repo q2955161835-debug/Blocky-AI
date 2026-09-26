@@ -21,6 +21,20 @@ function run(args: string[]) {
       .at(-1),
   };
 }
+it("creates and runs the event mailbox with FIFO results in one CLI session", async () => {
+  const directory = await mkdtemp(resolve("try/stage7-mailbox-"));
+  try {
+    const project = join(directory, "mailbox.blocky"), inputs = join(directory, "inputs.json");
+    const created = run(["project", "create", "--template", "event-mailbox", "--output", project, "--json"]);
+    expect(created.code, JSON.stringify(created.result)).toBe(0);
+    await writeFile(inputs, JSON.stringify(["first", "second", "next", "next", "next"]));
+    const result = run(["run", "start", project, "--simulate", "--inputs-file", inputs, "--jsonl"]);
+    expect(result.code, JSON.stringify(result.result)).toBe(0);
+    expect(result.result.data.runs.map((r: { structured: unknown }) => r.structured)).toEqual(["queued", "queued", "first", "second", "empty"]);
+    expect(result.result.data.modelApiCalled).toBe(false);
+    expect(run(["catalog", "show", "core.event.receive", "--json"]).code).toBe(0);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
 it("discovers architecture projects and executes a stateful input sequence in one CLI session", async () => {
   const directory = await mkdtemp(resolve("try/stage7-architectures-"));
   try {

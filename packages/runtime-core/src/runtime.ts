@@ -21,6 +21,7 @@ import {
 } from "./adapters";
 import { RunBudget, abortable, utf8 } from "./budget";
 import { AgentExecution } from "./agent-execution";
+import { EventMailbox } from "./event-mailbox";
 import type { Generation, OutputFile } from "./agent-context";
 type Options = {
   sessionId?: string;
@@ -45,6 +46,7 @@ export type RunResult = {
 export class Runtime {
   private readonly sessionId: string;
   private readonly sessionMemory = new Map<string, Json>();
+  private readonly mailbox = new EventMailbox();
   private factory: EventFactory;
   private options: Options;
   private monotonicNow: () => number;
@@ -112,6 +114,7 @@ export class Runtime {
       adapters.agent,
       options.userRegistry,
       this.sessionMemory,
+      this.mailbox,
     );
     let answer = "",
       citations: Citation[] = [],
