@@ -1,5 +1,5 @@
 //! Native workflow ledger, private CLI coordinator and explicit business decisions.
-//! Unknown-effect reconciliation remains closed until worker settlement is integrated.
+//! Runtime cannot reconcile unknown effects; the explicit operator path requires settlement.
 mod protocol;
 mod transitions;
 mod store;

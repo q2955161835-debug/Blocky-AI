@@ -314,7 +314,8 @@ impl Store {
         if let Some(owner) = &envelope.owner {
             require(!owner.is_alive().map_err(|_| OWNER)?, OWNER)?;
         }
-        // Owner death alone cannot prove all spawned effects settled. No resolution API yet.
+        // Owner death alone cannot prove settlement. Uncertain records require the
+        // separate operator reconciliation path before an execution lease is acquired.
         require(
             envelope.record.get("active").is_none()
                 && envelope.execution.as_ref().is_none_or(Binding::settled),
