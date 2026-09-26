@@ -1,7 +1,7 @@
 import { Channel, invoke } from "@tauri-apps/api/core";
 import type { RunResult } from "@blocky/runtime-core";
 export type RuntimeFrame =
-  | { kind: "ready" | "settle" }
+  | { kind: "ready" | "settle" | "cancel" }
   | { kind: "service"; id: number; request: Record<string, unknown> }
   | { kind: "event"; value: RunResult["events"][number] };
 export interface RuntimePort {

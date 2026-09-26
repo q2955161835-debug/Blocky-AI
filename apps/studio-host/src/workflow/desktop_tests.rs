@@ -277,3 +277,53 @@ fn desktop_missing_service_settlement_does_not_publish_a_reusable_execution_proo
     assert!(!store.execution(id).unwrap().unwrap().settled());
     host.close(&token).unwrap();
 }
+
+#[test]
+fn desktop_budget_cancellation_reaches_service_owner_before_worker_settlement() {
+    let dir = directory();
+    let host = RuntimeHost::new(dir.path().join("workflow"));
+    let token = host.open().unwrap();
+    let pending = AtomicUsize::new(0);
+    let cancelled = AtomicUsize::new(0);
+    let project: Value = serde_json::from_str(include_str!("../../../../tests/host/fixtures/desktop-rpa-budget-project.json")).unwrap();
+    let initial = json!({"schemaVersion":"blocky.desktop-run/v1","interactionId":"on-rpa-budget","project":project,"question":"owned","options":{}});
+    let result = host.run(&token, "budget-run", initial, |frame| {
+        match frame["kind"].as_str().unwrap() {
+            "ready" | "event" => {},
+            "service" => {
+                let id = frame["id"].as_u64().unwrap();
+                match frame["request"]["service"].as_str().unwrap() {
+                    "rpa.perform" => { pending.store(id as usize, Ordering::SeqCst); },
+                    service => {
+                        let value = if service == "rpa.open" { json!({"handle":"rpa-owned","checkpointId":"checkpoint-owned"}) }
+                            else { assert!(matches!(service,"rpa.close"|"agent.close")); Value::Null };
+                        host.request(&token,"budget-run",json!({"kind":"reply","id":id,"ok":true,"value":value}))?;
+                    }
+                }
+            },
+            "cancel" => {
+                cancelled.fetch_add(1, Ordering::SeqCst);
+                let id = pending.swap(0, Ordering::SeqCst);
+                assert!(id > 0);
+                host.request(&token,"budget-run",json!({"kind":"reply","id":id,"ok":false,"value":{"code":"BLK-RUN-SERVICE"}}))?;
+            },
+            "settle" => host.request(&token,"budget-run",json!({"kind":"settled","ok":true}))?,
+            _ => panic!("unexpected frame"),
+        }
+        Ok(())
+    }).unwrap();
+    assert_eq!(cancelled.load(Ordering::SeqCst),1);
+    assert_eq!(result["status"],"failed");
+    assert_eq!(result["events"].as_array().unwrap().last().unwrap()["data"]["code"],"BLK-RUN-007");
+    // A settled budget failure retains a usable native connection.
+    assert!(host.run(&token,"next-run",request("start"),|frame| {
+        match frame["kind"].as_str().unwrap() {
+            "ready" | "event" => {},
+            "service" => host.request(&token,"next-run",json!({"kind":"reply","id":frame["id"],"ok":true,"value":null}))?,
+            "settle" => host.request(&token,"next-run",json!({"kind":"settled","ok":true}))?,
+            _=>panic!("unexpected frame"),
+        }
+        Ok(())
+    }).is_ok());
+    host.close(&token).unwrap();
+}

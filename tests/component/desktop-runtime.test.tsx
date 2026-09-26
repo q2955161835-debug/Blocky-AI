@@ -124,3 +124,36 @@ it("does not poison the session when cancelled before native launch", async () =
   ).toEqual(result);
   await runtime.dispose();
 });
+
+it("cancels renderer services on a native budget cancellation without poisoning the connection", async () => {
+  const project = createStarter(), adapters = localAdapters();
+  let serviceSignal: AbortSignal | undefined;
+  adapters.knowledge.set("adapter://knowledge-local-v1", async (_q, _c, signal) => {
+    serviceSignal = signal;
+    return new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(Error("cancelled")), {once:true}));
+  });
+  let receive!: Parameters<RuntimePort["run"]>[3], finish!: (value: RunResult) => void;
+  const port: RuntimePort = {
+    open: async () => "runtime-owned",
+    close: vi.fn(async () => {}),
+    send: vi.fn(async () => {}),
+    run: async (_s, _r, _q, callback) => {
+      receive = callback;
+      return new Promise(resolve => { finish = resolve; });
+    },
+  };
+  const runtime = new DesktopRuntime(() => adapters, port);
+  const run = runtime.run(project, "on-question", "input").then(value => ({value}), error => ({error}));
+  await vi.waitFor(() => expect(receive).toBeTypeOf("function"));
+  receive({kind:"ready"});
+  receive({kind:"service",id:1,request:{service:"knowledge.query",question:"input",collection:"owned",context:{projectId:project.manifest.projectId}}});
+  await vi.waitFor(() => expect(serviceSignal).toBeDefined());
+  // Native worker budget expiry must cancel the owner of an in-flight service.
+  receive({kind:"cancel"});
+  await vi.waitFor(() => expect(serviceSignal!.aborted).toBe(true));
+  receive({kind:"settle"});
+  finish({...result,status:"failed"});
+  expect(await run).toEqual({value:{...result,status:"failed"}});
+  expect(runtime.needsRestart).toBe(false);
+  await runtime.dispose();
+});

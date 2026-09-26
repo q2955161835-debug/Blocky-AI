@@ -154,6 +154,9 @@ export class DesktopRuntime {
                 throw failure();
               options.onEvent?.(frame.value);
               break;
+            case "cancel":
+              gateway!.cancel();
+              break;
             case "service": {
               if (
                 settling ||

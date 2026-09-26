@@ -99,6 +99,9 @@ pub(super) fn run(
                 Some("cancel") => {
                     keys(&message, &["kind"], &[])?;
                     cancellation.store(true, Ordering::SeqCst);
+                    // Runtime budgets can expire inside the worker while a renderer-owned
+                    // service awaits native consent. Cancel that owner before settlement.
+                    emit(json!({"kind":"cancel"}))?;
                 }
                 Some("workflow") => {
                     let id = message["id"].as_u64().ok_or(ERROR)?;

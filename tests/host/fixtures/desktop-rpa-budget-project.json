@@ -1,0 +1,91 @@
+{
+  "manifest": {
+    "schemaVersion": "blocky.project/v1",
+    "projectId": "desktop-rpa-budget",
+    "displayName": "优先级规则",
+    "modules": [
+      {
+        "moduleId": "main",
+        "displayName": "优先级规则",
+        "purpose": "rule",
+        "workspaceRef": "workspaces/main.workspace.json",
+        "exports": []
+      }
+    ],
+    "resources": [],
+    "appSurfaces": [],
+    "format": {
+      "createdWith": "blocky-desktop/0.7.0",
+      "minimumReaderVersion": "0.5.0"
+    }
+  },
+  "workspaces": {
+    "main": {
+      "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+          {
+            "type": "core.interaction.chat_entry",
+            "id": "on-rpa-budget",
+            "x": 80,
+            "y": 80,
+            "fields": {
+              "NAME": "有人值守自动化"
+            },
+            "inputs": {
+              "CAPABILITIES": {
+                "block": {
+                  "type": "core.interaction.accept_text",
+                  "id": "rpa-436dd4fa-2f7a-4ddb-9310-00779740cd4f"
+                }
+              },
+              "HANDLER": {
+                "block": {
+                  "type": "core.run.budget",
+                  "id": "budget",
+                  "fields": {
+                    "STEPS": "100",
+                    "CALLS": "10",
+                    "OUTPUT_TOKENS": "1024",
+                    "TIMEOUT_MS": "2000"
+                  },
+                  "next": {
+                    "block": {
+                      "id": "rpa-b0227d4d-da3b-4cff-9707-3b9ab13100d4",
+                      "type": "core.computer.attach",
+                      "fields": {
+                        "TARGET": "owned-fixture"
+                      },
+                      "inputs": {
+                        "STEPS": {
+                          "block": {
+                            "id": "rpa-a675f560-7d24-478e-8520-3aecf3649489",
+                            "type": "core.computer.read",
+                            "fields": {
+                              "LOCATOR": {
+                                "kind": "uia",
+                                "automationId": "owned"
+                              },
+                              "TIMEOUT_MS": "5000"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resources": {},
+  "schemas": {
+    "schemas/result.json": {
+      "type": "string"
+    }
+  },
+  "surfaces": {}
+}
