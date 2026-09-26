@@ -22,6 +22,8 @@ import { readJsonArtifact } from "./artifacts";
 import { runInputsSchema } from "./run-inputs";
 import { cliRpaModules } from "./rpa-module";
 import { rpaModuleInputsSchema } from "@blocky/rpa-core";
+import { cliWorkflowPorts } from "./workflow-session";
+import { workflowIdSchema } from "./workflow-schema";
 export async function runAgent(
   args: Args,
   project: Project,
@@ -30,6 +32,9 @@ export async function runAgent(
   write: (value: unknown) => void,
   signal: AbortSignal,
 ) {
+  const workflowTaskId = args.options.has("workflow-task") ? required(args, "workflow-task") : undefined;
+  if (workflowTaskId !== undefined && (!workflowIdSchema.safeParse(workflowTaskId).success || args.options.has("inputs-file") || args.options.has("from-block")))
+    throw new CliError(2, "BLK-CLI-002", "工作流恢复需要一个有效任务标识和单次输入，不能从中间积木启动。");
   const rpaInputs=args.options.has("rpa-inputs") ? rpaModuleInputsSchema.parse(await readJsonArtifact(required(args,"rpa-inputs"),65536)) : {};
   if (args.options.has("input") === args.options.has("inputs-file"))
     throw new CliError(
@@ -210,7 +215,7 @@ export async function runAgent(
     const runtime = new Runtime({
       newId: () => (questions.length === 1 ? runId : `${runId}-r${++ordinal}`),
       sessionId: `session-${runId}`,
-      adapters: hostAdapters(call, services, args.options.has("live") ? cliRpaModules(rpaInputs) : undefined),
+      adapters: { ...hostAdapters(call, services, args.options.has("live") ? cliRpaModules(rpaInputs) : undefined), workflow: cliWorkflowPorts() },
     });
     let trace = new TraceSession();
     const results: RunResult[] = [];
@@ -224,6 +229,7 @@ export async function runAgent(
           moduleId: matches[0].moduleId,
           userRegistry,
           signal: abort.signal,
+          ...(workflowTaskId ? { workflowTaskId } : {}),
           debug: {
             breakpoints,
             ...(fromBlock ? { startBlockId: fromBlock } : {}),
@@ -231,7 +237,7 @@ export async function runAgent(
           onEvent(event) {
             trace.add(event);
             write(event);
-            if (event.type === "run.paused") {
+            if (event.type === "run.paused" && event.data.reason !== "workflow-waiting") {
               const action = debugActions.shift() ?? "stop";
               if (action === "step") runtime.step();
               else if (action === "continue") runtime.resume();
@@ -289,7 +295,7 @@ export async function runAgent(
     });
     response.ok = result.status === "completed";
     return {
-      code: pending.length
+      code: pending.length || result.status === "waiting"
         ? 4
         : result.status === "completed"
           ? 0

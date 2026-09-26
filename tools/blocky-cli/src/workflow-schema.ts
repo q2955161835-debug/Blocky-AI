@@ -70,3 +70,21 @@ export const workflowSummarySchema = z
       .max(128),
   })
   .strict() satisfies z.ZodType<WorkflowSummary>;
+
+export const workflowDecisionResultSchema = z.discriminatedUnion("applied", [
+  z
+    .object({
+      applied: z.literal(false),
+      requestDigest: z.string().regex(/^[a-f0-9]{64}$/),
+      task: workflowSummarySchema,
+      after: workflowSummarySchema,
+    })
+    .strict(),
+  z
+    .object({
+      applied: z.literal(true),
+      requestDigest: z.string().regex(/^[a-f0-9]{64}$/),
+      task: workflowSummarySchema,
+    })
+    .strict(),
+]);

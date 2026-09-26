@@ -1,5 +1,9 @@
 const captureHint = "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-WORKFLOW-APPROVAL": { message: "审批摘要与当前任务不一致。", hint: "不带 --approve 重新预检 workflow decide，核对任务、步骤、修订和决定后使用新的 requestDigest。" },
+  "BLK-WORKFLOW-CONFLICT": { message: "工作流修订已改变。", hint: "用 workflow show 读取最新修订，重新核对操作；不要重用旧审批摘要。" },
+  "BLK-WORKFLOW-STATE": { message: "当前工作流状态不接受此操作。", hint: "运行 workflow show 查看待审批步骤及状态；仅批准正在等待的步骤。" },
+  "BLK-WORKFLOW-CHANNEL": { message: "原生工作流会话未正常结束。", hint: "检查 workflow show 的持久状态；没有完成回执的步骤不可自动重放。" },
   "BLK-WORKFLOW-NOT-FOUND": { message: "当前资料目录中没有此工作流任务。", hint: "运行 profile show 核对资料目录，再用 workflow list --project-id 查询任务标识。" },
   "BLK-WORKFLOW-BINDING": { message: "任务与项目或执行定义不一致。", hint: "核对项目标识、模块、积木与计划摘要；不要用已修改的项目重放旧任务。" },
   "BLK-WORKFLOW-INVALID": { message: "工作流请求或摘要格式无效。", hint: "运行 command list --query workflow 和 schema show blocky.workflow-summary/v1 核对命令与结构。" },

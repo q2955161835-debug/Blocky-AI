@@ -1,14 +1,84 @@
-import { allow, required, type Args } from "./arguments";
+import { allow, required, integer, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { nativeUserOperation } from "./native-store";
-import { workflowIdSchema, workflowSummarySchema } from "./workflow-schema";
+import {
+  workflowIdSchema,
+  workflowSummarySchema,
+  workflowDecisionResultSchema,
+} from "./workflow-schema";
 
 export const workflowHelp = [
   "workflow list --project-id <id> --json",
   "workflow show <task-id> --project-id <id> --json",
+  "workflow decide <task-id> --project-id <id> --revision <number> --step <id> --decision <approve|reject> [--approve <request-digest>] --json",
 ];
 export async function workflowCommand(args: Args, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "workflow.decide") {
+    allow(
+      args,
+      ["project-id", "revision", "step", "decision", "approve", "json"],
+      3,
+    );
+    const projectId = required(args, "project-id"),
+      taskId = args.words[2],
+      stepId = required(args, "step"),
+      decision = required(args, "decision");
+    required(args, "revision");
+    const revision = integer(args, "revision", 1, 65535),
+      approval = args.options.has("approve")
+        ? required(args, "approve")
+        : undefined;
+    if (
+      ![projectId, taskId, stepId].every(
+        (id) => workflowIdSchema.safeParse(id).success,
+      ) ||
+      !["approve", "reject"].includes(decision) ||
+      (approval !== undefined && !/^[a-f0-9]{64}$/.test(approval))
+    )
+      throw new CliError(3, "BLK-WORKFLOW-INVALID", "工作流审批参数无效。");
+    const parsed = workflowDecisionResultSchema.safeParse(
+      await nativeUserOperation(
+        "workflow-decide",
+        {
+          projectId,
+          taskId,
+          stepId,
+          decision,
+          revision,
+          ...(approval ? { approval } : {}),
+        },
+        signal,
+      ),
+    );
+    if (!parsed.success)
+      throw new CliError(
+        6,
+        "BLK-WORKFLOW-INVALID",
+        "工作流审批响应未通过校验。",
+      );
+    const result = parsed.data;
+    if (
+      result.task.projectId !== projectId ||
+      result.task.taskId !== taskId ||
+      result.applied !== !!approval ||
+      result.task.revision !== revision + (approval ? 1 : 0) ||
+      (approval && result.requestDigest !== approval) ||
+      (!result.applied &&
+        (result.after.projectId !== projectId ||
+          result.after.taskId !== taskId ||
+          result.after.revision !== revision + 1))
+    )
+      throw new CliError(
+        6,
+        "BLK-WORKFLOW-BINDING",
+        "工作流审批响应与请求不一致。",
+      );
+    return {
+      code: 0,
+      result: envelope(command, { ...result, modelApiCalled: false }),
+    };
+  }
   if (!["workflow.list", "workflow.show"].includes(command)) return;
   allow(args, ["project-id", "json"], command === "workflow.list" ? 2 : 3);
   const project = workflowIdSchema.safeParse(required(args, "project-id"));

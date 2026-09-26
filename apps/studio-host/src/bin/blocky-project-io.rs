@@ -29,6 +29,10 @@ fn execute(bytes: &[u8]) -> Value {
 }
 fn execute_value(value: Value) -> Value {
     if let Err(code) = blocky_studio::profile::from_environment() { return json!({"ok":false,"code":code}); }
+    if value["operation"] == "workflow-decide" {
+        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::decision::dispatch(root.join("workflow"), &value));
+        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+    }
     if matches!(value["operation"].as_str(), Some("workflow-list" | "workflow-show")) {
         let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::query::dispatch(root.join("workflow"), &value));
         return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
@@ -286,6 +290,7 @@ fn execute_value(value: Value) -> Value {
 }
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("--blocky-workflow-session") => std::process::exit(blocky_studio::workflow::session::main()),
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
         Some("--blocky-rpa-recording-worker") => std::process::exit(blocky_studio::rpa::recording::worker_main()),
         Some("--blocky-rpa-record") => std::process::exit(blocky_studio::rpa::recording::session_main()),

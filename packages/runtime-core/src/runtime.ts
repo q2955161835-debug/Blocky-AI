@@ -577,7 +577,7 @@ export class Runtime {
       emit("run.completed", undefined, undefined, { summary: "运行完成" });
     } catch (error) {
       if(error instanceof WorkflowWaiting&&!signal.aborted){
-        status="waiting";emit("run.paused",workflow.result?.moduleId,workflow.result?.blockId,{summary:workflow.result?.status==="awaiting-approval"?"工作流等待业务审批":"工作流已保存并暂停"});
+        status="waiting";emit("run.paused",workflow.result?.moduleId,workflow.result?.blockId,{reason:"workflow-waiting",summary:workflow.result?.status==="awaiting-approval"?"工作流等待业务审批":"工作流已保存并暂停"});
       }else{
       const settlementFailed = safeCode(error) === "BLK-RPA-SETTLEMENT-001";
       status = signal.aborted && !runBudget.timeout && !settlementFailed ? "cancelled" : "failed";

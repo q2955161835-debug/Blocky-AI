@@ -27,6 +27,121 @@ fn definition() -> Value {
         {"stepId":"review","kind":"approval","label":"Confirm"},
         {"stepId":"save","kind":"checkpoint"}]})
 }
+
+#[test]
+fn workflow_session_persists_steps_and_cannot_forge_business_approval() {
+    use std::io::Cursor;
+    let dir = temp();
+    let request = json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":{"private":"session-canary"}});
+    let frames = [
+        request,
+        json!({"operation":"commit","requestId":1,"action":{"kind":"begin","revision":1}}),
+        json!({"operation":"commit","requestId":2,"action":{"kind":"complete","revision":2,"state":{"private":"after-canary"}}}),
+        json!({"operation":"commit","requestId":3,"action":{"kind":"await-approval","revision":3}}),
+        json!({"operation":"commit","requestId":4,"action":{"kind":"decide","revision":4,"stepId":"review","decision":"approve"}}),
+    ];
+    let input = frames.iter().map(|v| format!("{v}\n")).collect::<String>();
+    let mut output = Vec::new();
+    assert_eq!(
+        super::session::serve(
+            dir.path().to_owned(),
+            Cursor::new(input.into_bytes()),
+            &mut output
+        ),
+        3
+    );
+    let replies: Vec<Value> = String::from_utf8(output)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    assert_eq!(replies[0]["type"], "ready");
+    assert_eq!(replies[3]["value"]["status"], "awaiting-approval");
+    assert_eq!(replies[4]["value"]["code"], "BLK-WORKFLOW-INVALID");
+    let id = replies[0]["value"]["taskId"].as_str().unwrap();
+    assert_eq!(
+        Store::new(dir.path().to_owned()).unwrap().read(id).unwrap()["status"],
+        "awaiting-approval"
+    );
+}
+
+#[test]
+fn workflow_decision_requires_exact_digest_revision_and_project_binding() {
+    let dir = temp();
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    let mut plan = definition();
+    plan["steps"] = json!([{"stepId":"review","kind":"approval","label":"Private approval"}]);
+    store
+        .create("task-review", &plan, json!({"private":"decision-canary"}))
+        .unwrap();
+    let mut lease = store.acquire("task-review", &plan, 1).unwrap();
+    lease
+        .commit(&json!({"kind":"await-approval","revision":1}))
+        .unwrap();
+    lease.release().unwrap();
+    let mut request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-decide","projectId":"project-one","taskId":"task-review","revision":2,"stepId":"review","decision":"approve"});
+    let preview = super::decision::dispatch(dir.path().to_owned(), &request).unwrap();
+    assert_eq!(preview["applied"], false);
+    assert!(!preview.to_string().contains("decision-canary"));
+    assert_eq!(
+        store.read("task-review").unwrap()["status"],
+        "awaiting-approval"
+    );
+    request["approval"] = json!("b".repeat(64));
+    assert_eq!(
+        super::decision::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+        "BLK-WORKFLOW-APPROVAL"
+    );
+    request["approval"] = preview["requestDigest"].clone();
+    assert_eq!(
+        super::decision::dispatch(dir.path().to_owned(), &request).unwrap()["applied"],
+        true
+    );
+    assert_eq!(
+        super::decision::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+        "BLK-WORKFLOW-CONFLICT"
+    );
+    request["projectId"] = json!("foreign-project");
+    assert_eq!(
+        super::decision::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+        "BLK-WORKFLOW-BINDING"
+    );
+}
+
+#[test]
+fn workflow_session_explicit_close_releases_and_explicit_reopen_resumes_pause() {
+    use std::io::Cursor;
+    let dir = temp();
+    let initial = json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":null});
+    let serve = |frames: Vec<Value>| {
+        let input = frames.iter().map(|v| format!("{v}\n")).collect::<String>();
+        let mut out = Vec::new();
+        assert_eq!(
+            super::session::serve(
+                dir.path().to_owned(),
+                Cursor::new(input.into_bytes()),
+                &mut out
+            ),
+            0
+        );
+        String::from_utf8(out)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str::<Value>(line).unwrap())
+            .collect::<Vec<_>>()
+    };
+    let replies = serve(vec![
+        initial.clone(),
+        json!({"operation":"commit","requestId":1,"action":{"kind":"pause","revision":1}}),
+        json!({"operation":"close","requestId":2}),
+    ]);
+    assert_eq!(replies[2]["value"]["released"], true);
+    let mut resume = initial;
+    resume["taskId"] = replies[0]["value"]["taskId"].clone();
+    let replies = serve(vec![resume, json!({"operation":"close","requestId":1})]);
+    assert_eq!(replies[0]["value"]["status"], "ready");
+    assert_eq!(replies[0]["value"]["revision"], 3);
+}
 fn temp() -> tempfile::TempDir {
     let base = std::path::absolute(
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))

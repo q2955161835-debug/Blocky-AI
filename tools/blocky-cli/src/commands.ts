@@ -81,7 +81,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> (--simulate | --live) (--input <question> | --inputs-file <strings.json>) [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <last-run.json>] [--rpa-inputs <module-inputs.json>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
+    "run start <file.blocky> (--simulate | --live) (--input <question> | --inputs-file <strings.json>) [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <last-run.json>] [--rpa-inputs <module-inputs.json>] [--workflow-task <task-id>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -316,6 +316,7 @@ export async function dispatch(
           "trace-output",
           "inputs-file",
           "rpa-inputs",
+          "workflow-task",
         ]
       : ["json"],
     moduleList ? 4 : 3,

@@ -56,7 +56,18 @@ it("discovers workflow queries and schemas and reports scoped missing tasks", as
       "workflow",
       "--json",
     ]);
-    expect(discovery.value.data.commands).toHaveLength(2);
+    expect(
+      discovery.value.data.commands.map(
+        (item: { usage: string }) => item.usage,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^workflow list /),
+        expect.stringMatching(/^workflow show /),
+        expect.stringMatching(/^workflow decide /),
+        expect.stringMatching(/^run start .*--workflow-task/),
+      ]),
+    );
     const schema = call([
       "schema",
       "show",

@@ -12,10 +12,11 @@ import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { runInputsSchema } from "./run-inputs";
-import { workflowSummarySchema } from "./workflow-schema";
+import { workflowSummarySchema, workflowDecisionResultSchema } from "./workflow-schema";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
   "blocky.workflow-summary/v1": workflowSummarySchema,
+  "blocky.workflow-decision-result/v1": workflowDecisionResultSchema,
   "blocky.run-inputs/v1": runInputsSchema,
   "blocky.cli-operations/v1": operationsInput,
   "blocky.builder-request/v1": builderRequestSchema,
