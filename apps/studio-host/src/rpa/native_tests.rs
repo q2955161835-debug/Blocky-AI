@@ -213,7 +213,10 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
         })
         .unwrap();
     let token = grant["sessionId"].as_str().unwrap();
-    host.step_with(token, "edit", None, |request, _, _| worker::execute(request)).unwrap();
+    host.step_with(token, "edit", None, |request, _, _| {
+        worker::execute(request)
+    })
+    .unwrap();
     let id = host.status(token).unwrap()["checkpointId"]
         .as_str()
         .unwrap()
@@ -230,6 +233,63 @@ fn uia_reads_fills_invokes_and_rejects_wrong_process_identity() {
     while CLICKS.load(Ordering::SeqCst) == 0 && started.elapsed() < Duration::from_secs(2) {
         std::thread::sleep(Duration::from_millis(10));
     }
+    assert_eq!(CLICKS.load(Ordering::SeqCst), 1);
+    let check_target = Prepared {
+        plan: Plan {
+            schema_version: "blocky.rpa/v1".into(),
+            plan_id: "owned-state-check".into(),
+            target: protocol::TargetRef {
+                kind: "windows".into(),
+                identity: input.target.identity.clone(),
+            },
+            steps: vec![input.step.clone().unwrap()],
+        },
+        target: input.target.clone(),
+        root_id: input.root_id.clone().unwrap(),
+        preview: json!({}),
+    };
+    let mut recovery = recovery::Request {
+        schema_version: "blocky.rpa-recovery/v1".into(),
+        checkpoint_id: id,
+        revision: 1,
+        checks: vec![recovery::Check {
+            step_id: "edit".into(),
+            locator: Locator::Uia {
+                automation_id: Some("101".into()),
+                name: None,
+                control_type: None,
+            },
+            expected_text: Some("changed by owned fixture test".into()),
+        }],
+    };
+    recovery::verify_with(
+        &recovery,
+        &check_target,
+        Arc::new(AtomicBool::new(false)),
+        |request, _, _| worker::execute(request),
+    )
+    .unwrap();
+    recovery.checks[0].expected_text = Some("state no longer matches".into());
+    assert_eq!(
+        recovery::verify_with(
+            &recovery,
+            &check_target,
+            Arc::new(AtomicBool::new(false)),
+            |request, _, _| worker::execute(request)
+        )
+        .unwrap_err(),
+        "BLK-RPA-RECOVERY-004"
+    );
+    assert_eq!(
+        recovery::verify_with(
+            &recovery,
+            &check_target,
+            Arc::new(AtomicBool::new(true)),
+            |_, _, _| panic!("probe after cancellation")
+        )
+        .unwrap_err(),
+        "BLK-RPA-CANCELLED"
+    );
     assert_eq!(CLICKS.load(Ordering::SeqCst), 1);
     input.step.as_mut().unwrap().locator = Locator::Uia {
         automation_id: None,

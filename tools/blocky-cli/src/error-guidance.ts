@@ -13,6 +13,10 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-RPA-JOURNAL-002": { message: "执行记录与计划不匹配。", hint: "使用原计划和正确的 checkpoint-id 查询；修改后的计划不能沿用原执行记录。" },
   "BLK-RPA-JOURNAL-003": { message: "执行记录正被使用或修订已变化。", hint: "结束其他查询后重新读取记录；先核对实际操作结果，不要重新运行未确认的步骤。" },
   "BLK-RPA-JOURNAL-004": { message: "执行记录达到存储上限。", hint: "保留未核对的回执并检查记录数量和磁盘占用；本版本不会自动删除执行记录。" },
+  "BLK-RPA-RECOVERY-001": { message: "原执行进程仍在运行，或无法确认其已退出。", hint: "在原会话继续或停止；完全退出原 Host 后再请求恢复。旧格式缺少进程身份的记录仅供查看。" },
+  "BLK-RPA-RECOVERY-002": { message: "此执行记录无法继续。", hint: "已完成流程无需恢复；存在进程结算失败时先处理结算问题，不能重新发送副作用。" },
+  "BLK-RPA-RECOVERY-003": { message: "恢复条件没有完整覆盖已完成的副作用。", hint: "为每个已完成回执提供唯一的 UIA 状态核对条件；用 schema show blocky.rpa-recovery/v1 查看格式。" },
+  "BLK-RPA-RECOVERY-004": { message: "目标当前状态与恢复条件不一致。", hint: "核对目标应用的实际业务状态与已完成步骤；未执行剩余步骤，不要盲目重放。" },
   "BLK-RPA-SETTLEMENT-001": { message: "自动化进程尚未确认全部结算。", hint: "保留 uncertain 回执，检查剩余进程；不能将此状态视为已停止或重新运行。" },
   "BLK-RPA-UNSUPPORTED-001": { message: "本机 Host 尚不支持该 RPA 操作。", hint: "当前原生执行支持 Windows UIA 的 find/read/click/fill/wait；浏览器、坐标回退和截图仍在开发。" },
   "BLK-PATCH-001": {

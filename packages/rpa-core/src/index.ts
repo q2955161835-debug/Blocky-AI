@@ -46,6 +46,24 @@ export type RpaPlan = z.output<typeof rpaPlanSchema>;
 export type RpaStep = RpaPlan["steps"][number];
 export type RpaAction = z.output<typeof action>;
 
+export const rpaRecoverySchema = z.object({
+  schemaVersion: z.literal("blocky.rpa-recovery/v1"),
+  checkpointId: z.string().max(80).regex(/^checkpoint-[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  revision: z.number().int().min(1).max(2048),
+  checks: z.array(z.object({ stepId: id, locator, expectedText: z.string().max(1024).optional() }).strict()).max(100),
+}).strict().superRefine((request, ctx) => {
+  const ids = new Set<string>();
+  request.checks.forEach((check, index) => {
+    if (ids.has(check.stepId) || check.locator.kind !== "uia" || !check.locator.automationId && !check.locator.name && !check.locator.controlType)
+      ctx.addIssue({ code: "custom", message: "BLK-RPA-RECOVERY-003", path: ["checks", index] });
+    ids.add(check.stepId);
+    if (check.expectedText !== undefined && (new TextEncoder().encode(check.expectedText).byteLength > 1024 || check.expectedText.includes("\0")))
+      ctx.addIssue({ code: "custom", message: "BLK-RPA-RECOVERY-003", path: ["checks", index, "expectedText"] });
+  });
+  if (new TextEncoder().encode(JSON.stringify(request)).byteLength > 32768) ctx.addIssue({ code: "custom", message: "BLK-RPA-LIMIT-001" });
+});
+export type RpaRecovery = z.output<typeof rpaRecoverySchema>;
+
 export const rpaGrantSchema = z.object({
   schemaVersion: z.literal("blocky.rpa-grant/v1"),
   sessionId: id,

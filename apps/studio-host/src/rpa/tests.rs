@@ -58,7 +58,10 @@ fn journal_records_uncertainty_before_effect_and_survives_host_restart() {
     assert_eq!(saved.receipts[0].status, "completed");
     assert!(!saved.receipts[0].verified);
     assert!(reopened.save(saved.clone(), 0).is_err());
-    assert_eq!(reopened.save(saved.clone(), 1).unwrap_err(), "BLK-RPA-JOURNAL-003");
+    assert_eq!(
+        reopened.save(saved.clone(), 1).unwrap_err(),
+        "BLK-RPA-JOURNAL-003"
+    );
     let mut changed = plan.clone();
     changed.plan_id = "changed-plan".into();
     assert!(reopened.read_bound(&id, &changed).is_err());
@@ -183,11 +186,135 @@ fn journal_records_pause_and_stop_and_rejects_dispatch_path_injection() {
 #[test]
 fn journal_capacity_prevents_new_grant_without_removing_receipts() {
     let root = journal_directory();
-    for i in 0..100 { std::fs::write(root.path().join(format!("checkpoint-{i}.bin")), b"preserved").unwrap(); }
+    for i in 0..100 {
+        std::fs::write(
+            root.path().join(format!("checkpoint-{i}.bin")),
+            b"preserved",
+        )
+        .unwrap();
+    }
     let host = RpaHost::with_journal(root.path().to_owned());
     assert_eq!(host.insert(prepared()).unwrap_err(), "BLK-RPA-JOURNAL-004");
     assert!(host.sessions.lock().unwrap().is_empty());
-    assert_eq!(std::fs::read(root.path().join("checkpoint-0.bin")).unwrap(), b"preserved");
+    assert_eq!(
+        std::fs::read(root.path().join("checkpoint-0.bin")).unwrap(),
+        b"preserved"
+    );
+}
+#[test]
+fn recovery_fixture() {
+    let Some(root) = std::env::var_os("BLOCKY_RPA_JOURNAL_FIXTURE") else {
+        return;
+    };
+    let host = RpaHost::with_journal(root.into());
+    let token = grant(&host);
+    host.step_with(&token, "first", None, |_, _, _| Ok(json!({"invoked":true})))
+        .unwrap();
+    // Exit the owning process at a clean step boundary, without a saved grant.
+    std::process::exit(0);
+}
+fn exited_owner_snapshot(root: &std::path::Path) -> journal::Snapshot {
+    use std::os::windows::process::CommandExt;
+    let status = std::process::Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "rpa::tests::recovery_fixture", "--nocapture"])
+        .env("BLOCKY_RPA_JOURNAL_FIXTURE", root)
+        .creation_flags(0x08000000)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .unwrap();
+    assert!(status.success());
+    let store = journal::Store::new(root.to_owned());
+    let summary = store.summaries().unwrap().remove(0);
+    store
+        .read_bound(summary["checkpointId"].as_str().unwrap(), &prepared().plan)
+        .unwrap()
+}
+#[test]
+fn recovery_transfers_exited_owner_once_and_never_replays_completed_effect() {
+    let root = journal_directory();
+    let saved = exited_owner_snapshot(root.path());
+    assert!(!saved.owner.as_ref().unwrap().is_alive().unwrap());
+    let request = recovery::Request {
+        schema_version: "blocky.rpa-recovery/v1".into(),
+        checkpoint_id: saved.checkpoint_id.clone(),
+        revision: saved.revision,
+        checks: vec![recovery::Check {
+            step_id: "first".into(),
+            locator: prepared().plan.steps[1].locator.clone(),
+            expected_text: None,
+        }],
+    };
+    let host = RpaHost::with_journal(root.path().to_owned());
+    assert!(host.recovery_snapshot(&prepared().plan, &request).is_ok());
+    let grant = host
+        .insert_checkpoint(prepared(), Some(saved.clone()))
+        .unwrap();
+    let token = grant["sessionId"].as_str().unwrap();
+    assert_eq!(host.status(token).unwrap()["nextStep"], "second");
+    assert!(
+        host.step_with(token, "first", None, |_, _, _| panic!(
+            "replayed completed effect"
+        ))
+        .is_err()
+    );
+    assert_eq!(
+        journal::Store::new(root.path().to_owned())
+            .claim(&saved)
+            .err()
+            .unwrap(),
+        "BLK-RPA-JOURNAL-003"
+    );
+    host.step_with(token, "second", None, |_, _, _| Ok(json!({"found":true})))
+        .unwrap();
+    assert_eq!(host.status(token).unwrap()["status"], "completed");
+    assert_eq!(
+        host.status(token).unwrap()["receipts"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+}
+#[test]
+fn recovery_requires_all_effect_checks_and_rejects_uncertain_or_live_owner() {
+    let root = journal_directory();
+    let mut saved = exited_owner_snapshot(root.path());
+    let mut request = recovery::Request {
+        schema_version: "blocky.rpa-recovery/v1".into(),
+        checkpoint_id: saved.checkpoint_id.clone(),
+        revision: saved.revision,
+        checks: vec![],
+    };
+    assert_eq!(
+        request.validate(&saved).unwrap_err(),
+        "BLK-RPA-RECOVERY-003"
+    );
+    request.checks.push(recovery::Check {
+        step_id: "first".into(),
+        locator: prepared().plan.steps[1].locator.clone(),
+        expected_text: None,
+    });
+    request.validate(&saved).unwrap();
+    request.checks.push(request.checks[0].clone());
+    assert!(request.validate(&saved).is_err());
+    saved.receipts[0].status = "uncertain".into();
+    assert_eq!(
+        recovery::eligible(&saved).unwrap_err(),
+        "BLK-RPA-RECEIPT-002"
+    );
+    saved.receipts[0].status = "completed".into();
+    saved.owner = Some(owner::Owner::current().unwrap());
+    assert_eq!(
+        recovery::eligible(&saved).unwrap_err(),
+        "BLK-RPA-RECOVERY-001"
+    );
+    saved.owner = None;
+    assert_eq!(
+        recovery::eligible(&saved).unwrap_err(),
+        "BLK-RPA-RECOVERY-001"
+    );
 }
 #[test]
 fn rejects_forged_grant_out_of_order_and_duplicate_effect() {

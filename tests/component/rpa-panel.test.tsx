@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { RpaPanel } from "../../apps/studio-desktop/src/app/RpaPanel";
-const io = vi.hoisted(() => ({ checkpoints: vi.fn(), targets: vi.fn(), authorize: vi.fn(), cancelAuthorization: vi.fn(), step: vi.fn(), status: vi.fn(), pause: vi.fn(), resume: vi.fn(), stop: vi.fn() }));
+const io = vi.hoisted(() => ({ recoveryPreview: vi.fn(), recover: vi.fn(), checkpoints: vi.fn(), targets: vi.fn(), authorize: vi.fn(), cancelAuthorization: vi.fn(), step: vi.fn(), status: vi.fn(), pause: vi.fn(), resume: vi.fn(), stop: vi.fn() }));
 vi.mock("../../apps/studio-desktop/src/composition/rpa", () => ({ rpaNative: io }));
 beforeEach(() => {
   io.checkpoints.mockResolvedValue([]);
@@ -24,6 +24,29 @@ it("reads saved receipts without granting or replaying execution", async () => {
   fireEvent.click(screen.getByRole("button", { name: "刷新执行记录" }));
   await screen.findByText("BLK-RPA-JOURNAL-001");
   expect(screen.queryByText(/saved-plan/)).toBeNull();
+});
+it("requires recovery conditions and starts after the completed effect", async () => {
+  const record = { checkpointId: "checkpoint-test", revision: 3, planId: "saved-plan", status: "stopped", completedSteps: 1, totalSteps: 2, updatedAtMs: 0, resumable: true, receipts: [{ stepId: "done", status: "completed" }] };
+  const plan = { schemaVersion: "blocky.rpa/v1", planId: "saved-plan", target: { kind: "windows", identity: "fixture" }, steps: [
+    { stepId: "done", action: "click", locator: { kind: "uia", automationId: "button" }, effectKey: "once", timeoutMs: 5000 },
+    { stepId: "pending", action: "read", locator: { kind: "uia", automationId: "result" }, timeoutMs: 5000 },
+  ] };
+  io.checkpoints.mockResolvedValue([record]); io.recoveryPreview.mockResolvedValue({ checkpoint: record, plan });
+  io.recover.mockResolvedValue({ sessionId: "new-grant" });
+  io.status.mockResolvedValueOnce({ status: "ready", nextStep: "pending", active: false, receipts: record.receipts }).mockResolvedValue({ status: "completed", active: false, receipts: record.receipts });
+  render(<RpaPanel close={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "刷新执行记录" }));
+  fireEvent.click(await screen.findByRole("button", { name: "准备恢复" }));
+  fireEvent.click(await screen.findByRole("button", { name: "核对并申请恢复" }));
+  await screen.findByText("请为每个已完成操作填写有效的状态核对条件。");
+  expect(io.recover).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("恢复控件 done"), { target: { value: "confirmed-result" } });
+  fireEvent.click(screen.getByRole("button", { name: "核对并申请恢复" }));
+  await waitFor(() => expect(screen.getByRole("status").textContent).toBe("已完成"));
+  expect(io.recover.mock.calls[0][0]).toEqual(plan);
+  expect(io.recover.mock.calls[0][1].checks[0].locator).toEqual({ kind: "uia", automationId: "confirmed-result" });
+  expect(io.authorize).not.toHaveBeenCalled();
+  expect(io.step.mock.calls.map((args) => args[1])).toEqual(["pending"]);
 });
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 async function setup() {

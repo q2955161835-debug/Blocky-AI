@@ -1,8 +1,10 @@
 pub mod journal;
 #[cfg(test)]
 mod native_tests;
+mod owner;
 mod process;
 pub mod protocol;
+pub mod recovery;
 mod runner;
 pub mod target;
 #[cfg(test)]
@@ -143,6 +145,7 @@ impl RpaHost {
         };
         let snapshot = journal::Snapshot {
             schema_version: "blocky.rpa-journal/v1".into(),
+            owner: Some(owner::Owner::current()?),
             checkpoint_id: id.clone(),
             revision: session.checkpoint_revision,
             plan_digest: crate::agent_data::digest(&session.plan)?,
@@ -158,6 +161,14 @@ impl RpaHost {
         Ok(())
     }
     pub fn authorize_attended(&self, request_id: &str, plan: Plan) -> Result<Value, String> {
+        self.authorize_request(request_id, plan, None)
+    }
+    fn authorize_request(
+        &self,
+        request_id: &str,
+        plan: Plan,
+        recovery: Option<recovery::Request>,
+    ) -> Result<Value, String> {
         if !crate::project_store::stable(request_id) || request_id.len() > 200 {
             return Err("BLK-RPA-PLAN-001".into());
         }
@@ -191,7 +202,19 @@ impl RpaHost {
             value
         };
         let result = (|| {
+            let saved = recovery
+                .as_ref()
+                .map(|request| self.recovery_snapshot(&plan, request))
+                .transpose()?;
             let prepared = preflight_with_cancel(plan, approval.cancel.clone())?;
+            if let Some(saved) = &saved {
+                recovery::bind_target(saved, &prepared)?;
+            }
+            let recovery_description = recovery
+                .as_ref()
+                .zip(saved.as_ref())
+                .map(|(request, saved)| request.describe(saved))
+                .unwrap_or_default();
             let description = format!(
                 "目标窗口：{}\n进程：{}\n\n{}\n\n流程摘要：{}",
                 prepared.target.title,
@@ -217,14 +240,19 @@ impl RpaHost {
                 step: None,
                 input: None,
                 approval: Some(format!(
-                    "请核对目标和全部步骤。授权仅用于本次流程，10 分钟后失效。填写内容会逐步确认。\n\n{description}"
+                    "请核对目标和全部步骤。授权仅用于本次流程，10 分钟后失效。填写内容会逐步确认。\n\n{description}\n\n{recovery_description}"
                 )),
             };
             process::run(&request, 300000, approval.cancel.clone())?;
             if approval.cancel.load(Ordering::SeqCst) {
                 return Err("BLK-RPA-CANCELLED".into());
             }
-            let grant = self.authorize(prepared)?;
+            let grant = if let Some(request) = &recovery {
+                recovery::verify_checks(request, &prepared, approval.cancel.clone())?;
+                self.insert_checkpoint(prepared, saved)?
+            } else {
+                self.authorize(prepared)?
+            };
             *approval.grant.lock().map_err(|_| "BLK-RPA-STATE-001")? =
                 grant["sessionId"].as_str().map(str::to_owned);
             if approval.cancel.load(Ordering::SeqCst) {
@@ -301,6 +329,13 @@ impl RpaHost {
         self.insert(prepared)
     }
     fn insert(&self, prepared: Prepared) -> Result<Value, String> {
+        self.insert_checkpoint(prepared, None)
+    }
+    fn insert_checkpoint(
+        &self,
+        prepared: Prepared,
+        saved: Option<journal::Snapshot>,
+    ) -> Result<Value, String> {
         let mut sessions = self.sessions.lock().map_err(|_| "BLK-RPA-STATE-001")?;
         if self.closing.load(Ordering::SeqCst) {
             return Err("BLK-RPA-STATE-001".into());
@@ -317,23 +352,40 @@ impl RpaHost {
         let token = format!("rpa-{}", uuid::Uuid::new_v4());
         let expires = now() + 600000;
         let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity,"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":false});
+        let saved = saved
+            .map(|saved| {
+                self.journal
+                    .as_ref()
+                    .ok_or("BLK-RPA-JOURNAL-001")?
+                    .claim(&saved)
+            })
+            .transpose()?;
         let mut session = Session {
-            checkpoint_id: self
-                .journal
-                .as_ref()
-                .map(|_| format!("checkpoint-{}", uuid::Uuid::new_v4())),
-            checkpoint_revision: 0,
+            checkpoint_id: saved.as_ref().map(|s| s.checkpoint_id.clone()).or_else(|| {
+                self.journal
+                    .as_ref()
+                    .map(|_| format!("checkpoint-{}", uuid::Uuid::new_v4()))
+            }),
+            checkpoint_revision: saved.as_ref().map(|s| s.revision).unwrap_or(0),
             plan: prepared.plan,
-            target: prepared.target,
+            target: saved
+                .as_ref()
+                .map(|s| s.target.clone())
+                .unwrap_or(prepared.target),
             root_id: prepared.root_id,
             expires,
             status: "ready",
-            next: 0,
+            next: saved.as_ref().map(|s| s.next).unwrap_or(0),
             active: false,
-            receipts: vec![],
+            receipts: saved
+                .as_ref()
+                .map(|s| s.receipts.clone())
+                .unwrap_or_default(),
             cancel: Arc::new(AtomicBool::new(false)),
         };
-        self.persist(&mut session)?;
+        if saved.is_none() {
+            self.persist(&mut session)?;
+        }
         sessions.insert(
             token,
             Arc::new(Slot {

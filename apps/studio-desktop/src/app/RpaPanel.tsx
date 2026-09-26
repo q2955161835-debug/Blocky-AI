@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { rpaPlanSchema, type RpaAction, type RpaStep } from "@blocky/rpa-core";
-import { rpaNative, type RpaTarget, type RpaStatus } from "../composition/rpa";
+import { rpaNative, type RpaTarget, type RpaStatus, type RpaRecoveryRun } from "../composition/rpa";
 import { RpaCheckpoints } from "./RpaCheckpoints";
 const labels = { find: "查找", read: "读取", click: "点击", fill: "填写", wait: "等待", screenshot: "截图" };
 const errorCode = (error: unknown) => String(error).match(/BLK-RPA-[A-Z0-9-]+/)?.[0] ?? "BLK-RPA-PLAN-001";
@@ -32,21 +32,24 @@ export function RpaPanel({ close }: { close(): void }) {
     }]);
     setValue("");
   };
-  const run = async () => {
+  const run = async (recoveryRun?: RpaRecoveryRun) => {
     if (busy) return;
     setBusy(true); setEvents([]); setReadResults([]); setSnapshot(undefined); setMessage("等待授权"); session.current = undefined; stopped.current = false; pause.current = false; setPaused(false);
     try {
-      const plan = rpaPlanSchema.parse({ schemaVersion: "blocky.rpa/v1", planId: `plan-${crypto.randomUUID()}`, target: { kind: "windows", identity }, steps });
+      const plan = recoveryRun?.plan ?? rpaPlanSchema.parse({ schemaVersion: "blocky.rpa/v1", planId: `plan-${crypto.randomUUID()}`, target: { kind: "windows", identity }, steps });
       authorization.current = `approval-${crypto.randomUUID()}`;
-      const grant = await rpaNative.authorize(plan, authorization.current);
+      const grant = recoveryRun ? await rpaNative.recover(plan, recoveryRun.recovery, authorization.current) : await rpaNative.authorize(plan, authorization.current);
       authorization.current = undefined;
       session.current = grant.sessionId;
       if (!mounted.current || stopped.current) { await rpaNative.stop(grant.sessionId); if (mounted.current) setMessage("已停止"); return; }
       setMessage("运行中");
-      for (const step of plan.steps) {
+      const nextStep = recoveryRun ? (await rpaNative.status(grant.sessionId)).nextStep : plan.steps[0].stepId;
+      const start = plan.steps.findIndex((step) => step.stepId === nextStep);
+      if (start < 0) throw Error("BLK-RPA-STATE-001");
+      for (const step of plan.steps.slice(start)) {
         while (pause.current && !stopped.current) await new Promise((resolve) => setTimeout(resolve, 30));
         if (stopped.current) break;
-        const result = await rpaNative.step(grant.sessionId, step.stepId, step.action === "fill" ? inputs[step.stepId] ?? "" : undefined);
+        const result = await rpaNative.step(grant.sessionId, step.stepId, step.action === "fill" ? (recoveryRun?.inputs ?? inputs)[step.stepId] ?? "" : undefined);
         if (!mounted.current) break;
         setEvents((current) => [...current, `${labels[step.action]} · ${step.stepId} · 完成`].slice(-100));
         if (typeof result.text === "string") setReadResults((current) => [...current, { stepId: step.stepId, text: result.text as string }].slice(-100));
@@ -100,6 +103,6 @@ export function RpaPanel({ close }: { close(): void }) {
     <ol aria-label="自动化执行记录">{events.map((event, i) => <li key={i}>{event}</li>)}</ol>
     {readResults.length > 0 && <details><summary>读取结果</summary>{readResults.map((result) => <label key={result.stepId}>{result.stepId}<textarea readOnly value={result.text} /></label>)}</details>}
     {snapshot?.receipts.length ? <details><summary>操作回执</summary>{snapshot.receipts.map((receipt) => <p key={receipt.stepId}>{receipt.stepId}：{receipt.status === "completed" ? "调用已完成" : "结果待核对，请勿重复执行"}</p>)}</details> : null}
-    <RpaCheckpoints disabled={busy} />
+    <RpaCheckpoints disabled={busy} recover={run} />
   </section></div>;
 }

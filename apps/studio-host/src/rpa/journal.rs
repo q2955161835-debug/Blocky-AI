@@ -19,6 +19,8 @@ const MAGIC: &[u8] = b"BLKRJ1";
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(super) struct Snapshot {
     pub schema_version: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub owner: Option<super::owner::Owner>,
     pub checkpoint_id: String,
     pub revision: u64,
     pub plan_digest: String,
@@ -48,6 +50,10 @@ impl Snapshot {
             || self.next > self.plan.steps.len()
             || self.receipts.len() > self.plan.steps.len()
             || self.updated_at_ms > 9007199254740991
+            || self
+                .owner
+                .as_ref()
+                .is_some_and(|o| o.process_id == 0 || o.created == 0)
             || ![
                 "ready",
                 "running",
@@ -103,7 +109,7 @@ impl Snapshot {
         json!({"schemaVersion":self.schema_version,"checkpointId":self.checkpoint_id,"revision":self.revision,
             "planId":self.plan.plan_id,"planDigest":self.plan_digest,"targetIdentity":self.target.identity,
             "status":self.status,"completedSteps":self.next,"totalSteps":self.plan.steps.len(),"receipts":self.receipts,
-            "updatedAtMs":self.updated_at_ms,"resumable":false})
+            "updatedAtMs":self.updated_at_ms,"resumable":super::recovery::eligible(self).is_ok(),"requiresRecoveryApproval":true})
     }
 }
 pub struct Store {
@@ -136,6 +142,9 @@ pub fn dispatch(root: PathBuf, value: Value) -> Result<Value, String> {
             request.checkpoint_id.as_deref().ok_or(BINDING)?,
             request.plan.as_ref(),
         ),
+        "rpa-recovery-preview" if request.plan.is_none() => {
+            store.recovery_preview(request.checkpoint_id.as_deref().ok_or(BINDING)?)
+        }
         _ => Err(BINDING.into()),
     }
 }
@@ -245,6 +254,12 @@ impl Store {
             None => self.inspect(id),
         }
     }
+    pub fn recovery_preview(&self, id: &str) -> Result<Value, String> {
+        let _lock = self.lock()?;
+        let saved = self.read_unlocked(id)?;
+        super::recovery::eligible(&saved)?;
+        Ok(json!({"checkpoint":saved.summary(),"plan":saved.plan}))
+    }
     pub fn summaries(&self) -> Result<Vec<Value>, String> {
         let _lock = self.lock()?;
         self.files()?
@@ -255,11 +270,7 @@ impl Store {
             })
             .collect()
     }
-    pub(super) fn save(
-        &self,
-        mut snapshot: Snapshot,
-        expected_revision: u64,
-    ) -> Result<u64, String> {
+    pub(super) fn save(&self, snapshot: Snapshot, expected_revision: u64) -> Result<u64, String> {
         let _lock = self.lock()?;
         let path = self.path(&snapshot.checkpoint_id)?;
         let files = self.files()?;
@@ -278,10 +289,36 @@ impl Store {
             if previous.plan_digest != snapshot.plan_digest
                 || previous.target != snapshot.target
                 || previous.root_id != snapshot.root_id
+                || previous.owner != snapshot.owner
             {
                 return Err(BINDING.into());
             }
         }
+        self.write_locked(snapshot, expected_revision, path)
+    }
+    pub(super) fn claim(&self, saved: &Snapshot) -> Result<Snapshot, String> {
+        let _lock = self.lock()?;
+        self.files()?;
+        let mut current = self.read_unlocked(&saved.checkpoint_id)?;
+        if current.revision != saved.revision || current.plan_digest != saved.plan_digest {
+            return Err(CONFLICT.into());
+        }
+        super::recovery::eligible(&current)?;
+        current.owner = Some(super::recovery::new_owner()?);
+        current.status = "ready".into();
+        current.revision = self.write_locked(
+            current.clone(),
+            current.revision,
+            self.path(&current.checkpoint_id)?,
+        )?;
+        Ok(current)
+    }
+    fn write_locked(
+        &self,
+        mut snapshot: Snapshot,
+        expected_revision: u64,
+        path: PathBuf,
+    ) -> Result<u64, String> {
         snapshot.revision = expected_revision.checked_add(1).ok_or(LIMIT)?;
         snapshot.updated_at_ms = now();
         snapshot.validate()?;

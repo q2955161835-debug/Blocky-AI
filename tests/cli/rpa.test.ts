@@ -22,6 +22,15 @@ it("discovers persisted receipt queries and refuses invalid checkpoint identitie
     expect(invalid.result.error.code).toBe("BLK-RPA-JOURNAL-002");
     const commands = run(["command", "list", "--query", "rpa checkpoint", "--json"], env);
     expect(commands.result.data.commands.some((c: { usage: string }) => c.usage.includes("--plan"))).toBe(true);
+    expect(run(["schema", "show", "blocky.rpa-recovery/v1", "--json"], env).code).toBe(0);
+    const preview = run(["rpa", "recovery-preview", "checkpoint-../other", "--json"], env);
+    expect(preview.result.error.code).toBe("BLK-RPA-JOURNAL-002");
+    const planPath = join(dir, "plan.json"), recoveryPath = join(dir, "recovery.json");
+    await writeFile(planPath, JSON.stringify({ schemaVersion: "blocky.rpa/v1", planId: "recover", target: { kind: "windows", identity: "unavailable" }, steps: [{ stepId: "read", action: "read", locator: { kind: "uia", automationId: "field" } }] }));
+    await writeFile(recoveryPath, JSON.stringify({ schemaVersion: "blocky.rpa-recovery/v1", checkpointId: "checkpoint-missing", revision: 1, checks: [] }));
+    const recovery = run(["rpa", "recover", planPath, "--recovery", recoveryPath, "--jsonl"], env);
+    expect(recovery.code).toBe(7);
+    expect(recovery.result.error.code).toBe("BLK-RPA-JOURNAL-001");
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
 it("imports a recording as a pending review draft without typed values", async () => {

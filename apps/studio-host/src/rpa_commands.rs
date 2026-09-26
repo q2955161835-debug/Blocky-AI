@@ -74,6 +74,48 @@ pub async fn rpa_authorize(
     .map_err(|_| "BLK-RPA-WORKER-001")?
 }
 #[tauri::command]
+pub async fn rpa_recovery_preview(
+    window: tauri::WebviewWindow,
+    checkpoint_id: String,
+) -> Result<Value, String> {
+    visible(&window)?;
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        let root = window
+            .app_handle()
+            .path()
+            .app_local_data_dir()
+            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        rpa::journal::Store::new(root.join("rpa/checkpoints")).recovery_preview(&checkpoint_id)
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_recover(
+    window: tauri::WebviewWindow,
+    request_id: String,
+    plan: Plan,
+    recovery: rpa::recovery::Request,
+) -> Result<Value, String> {
+    visible(&window)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        visible(&window)?;
+        let grant = window
+            .state::<RpaHost>()
+            .recover_attended(&request_id, plan, recovery)?;
+        if let Err(code) = visible(&window) {
+            if let Some(token) = grant["sessionId"].as_str() {
+                window.state::<RpaHost>().stop(token)?;
+            }
+            return Err(code);
+        }
+        Ok(grant)
+    })
+    .await
+    .map_err(|_| "BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
 pub async fn rpa_cancel_authorization(
     window: tauri::WebviewWindow,
     request_id: String,

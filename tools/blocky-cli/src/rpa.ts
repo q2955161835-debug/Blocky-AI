@@ -1,4 +1,4 @@
-import { recordingToDraft, rpaPlanSchema, type RecordedAction } from "@blocky/rpa-core";
+import { recordingToDraft, rpaPlanSchema, rpaRecoverySchema, type RecordedAction } from "@blocky/rpa-core";
 import { z } from "zod";
 import { allow, required, type Args } from "./arguments";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
@@ -9,6 +9,8 @@ import { runNativeRpa } from "./rpa-transport";
 export const rpaHelp = [
   "rpa targets --json",
   "rpa checkpoints --json",
+  "rpa recovery-preview <checkpoint-id> --json",
+  "rpa recover <plan.json> --recovery <recovery.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa checkpoint <checkpoint-id> [--plan <plan.json>] --json",
   "rpa run <plan.json> [--inputs <step-inputs.json>] [--control-stdin] --jsonl",
   "rpa validate <plan.json> --json",
@@ -16,6 +18,10 @@ export const rpaHelp = [
 ];
 export async function rpaCommand(args: Args, write: (value: unknown) => void, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "rpa.recovery-preview") {
+    allow(args, ["json"], 3);
+    return { code: 0, result: envelope(command, { preview: await nativeUserOperation("rpa-recovery-preview", { checkpointId: args.words[2] }, signal), modelApiCalled: false }) };
+  }
   if (command === "rpa.checkpoints") {
     allow(args, ["json"], 2);
     return { code: 0, result: envelope(command, { checkpoints: await nativeUserOperation("rpa-checkpoints", {}, signal), modelApiCalled: false }) };
@@ -30,13 +36,16 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
     allow(args, ["json"], 2);
     return { code: 0, result: envelope(command, { targets: await nativeUserOperation("rpa-targets", {}, signal), modelApiCalled: false }) };
   }
-  if (command === "rpa.run") {
-    allow(args, ["inputs", "control-stdin", "jsonl"], 3);
+  if (command === "rpa.run" || command === "rpa.recover") {
+    allow(args, ["inputs", "control-stdin", "jsonl", ...(command === "rpa.recover" ? ["recovery"] : [])], 3);
+    const recovery = command === "rpa.recover" ? rpaRecoverySchema.safeParse(await readJsonArtifact(required(args, "recovery"), 32768)) : undefined;
+    if (recovery && !recovery.success) throw new CliError(3, "BLK-RPA-RECOVERY-003", "恢复条件无效。");
     const parsed = rpaPlanSchema.safeParse(await readJsonArtifact(args.words[2], 65536));
     if (!parsed.success) throw new CliError(3, "BLK-RPA-PLAN-001", "RPA 计划无效。");
     const inputs = args.options.has("inputs") ? z.record(z.string(), z.string().max(16384)).parse(await readJsonArtifact(required(args, "inputs"), 65536)) : {};
     const outcome = await runNativeRpa(parsed.data, inputs, {
       signal, controlStdin: args.options.has("control-stdin"),
+      recovery: recovery?.success ? recovery.data : undefined,
       onEvent: (message) => { if (args.options.has("jsonl")) write(message); },
     });
     const result = envelope(command, { ...outcome, modelApiCalled: false });

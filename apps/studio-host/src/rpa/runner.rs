@@ -6,6 +6,7 @@ use std::io::{BufRead, Read, Write};
 struct Request {
     schema_version: String,
     plan: Plan,
+    recovery: Option<recovery::Request>,
     #[serde(default)]
     inputs: HashMap<String, String>,
 }
@@ -48,6 +49,16 @@ pub fn main() -> i32 {
             return Err("BLK-RPA-PLAN-001".into());
         }
         request.plan.validate()?;
+        let host = Arc::new(RpaHost::with_journal(journal::local_root()?));
+        let start = request
+            .recovery
+            .as_ref()
+            .map(|recovery| {
+                host.recovery_snapshot(&request.plan, recovery)
+                    .map(|saved| saved.next)
+            })
+            .transpose()?
+            .unwrap_or(0);
         for (id, value) in &request.inputs {
             if value.len() > 16384
                 || value.contains('\0')
@@ -58,14 +69,13 @@ pub fn main() -> i32 {
                 return Err("BLK-RPA-INPUT-001".into());
             }
         }
-        if request.plan.steps.iter().any(|s| {
+        if request.plan.steps.iter().skip(start).any(|s| {
             s.value.as_ref().is_some_and(|v| v.kind == "manual-input")
                 && !request.inputs.contains_key(&s.step_id)
         }) {
             return Err("BLK-RPA-INPUT-002".into());
         }
         let steps = request.plan.steps.clone();
-        let host = Arc::new(RpaHost::with_journal(journal::local_root()?));
         let token_slot = Arc::new(Mutex::new(None::<String>));
         let stopped = Arc::new(AtomicBool::new(false));
         let control_host = host.clone();
@@ -130,7 +140,10 @@ pub fn main() -> i32 {
         if stopped.load(Ordering::SeqCst) {
             return Err("BLK-RPA-CANCELLED".into());
         }
-        let grant = host.authorize_attended("cli-approval", request.plan)?;
+        let grant = match request.recovery {
+            Some(recovery) => host.recover_attended("cli-approval", request.plan, recovery)?,
+            None => host.authorize_attended("cli-approval", request.plan)?,
+        };
         let token = grant["sessionId"]
             .as_str()
             .ok_or("BLK-RPA-STATE-001")?
@@ -140,7 +153,7 @@ pub fn main() -> i32 {
             if !emit("checkpoint.created", host.status(&token)?) {
                 return Err("BLK-RPA-CANCELLED".into());
             }
-            for step in &steps {
+            for step in steps.iter().skip(start) {
                 while host.status(&token)?["status"] == "paused" && !stopped.load(Ordering::SeqCst)
                 {
                     std::thread::sleep(Duration::from_millis(20));
