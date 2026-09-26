@@ -7,6 +7,7 @@ import { ShortcutsPanel } from "./ShortcutsPanel";
 import { ResourcePanel } from "./ResourcePanel";
 import type { ConstructionKind } from "./ConstructionDialog";
 import type { MenuCategory } from "./MenuBar";
+import type { SourceRef } from "@blocky/language-schema";
 export type Popup =
   | {
       kind:
@@ -23,7 +24,7 @@ export type Popup =
       x?: number;
       y?: number;
     }
-  | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string; blockId?: string }
+  | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string; blockId?: string; source?: SourceRef }
   | { kind: "menu"; category: MenuCategory }
   | null;
 export function StudioDialog({

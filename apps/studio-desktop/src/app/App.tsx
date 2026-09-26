@@ -7,7 +7,7 @@ import {
   shortcut,
   createCommandDispatcher,
 } from "@blocky/command-system";
-import { activateTab, closeTab, renameModule } from "@blocky/project-model";
+import { activateTab, closeTab, renameModule, findBlock } from "@blocky/project-model";
 import { projectCommands } from "../composition/projectCommands";
 import { Canvas, type CanvasHandle } from "@blocky/ui-editor";
 import { useStudio } from "../composition/useStudio";
@@ -62,9 +62,15 @@ export function App() {
     lifecycle = useLifecycle(s, logs, task);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
-  const commandBlockId = popup?.kind === "context" && popup.blockId
-    ? popup.blockId
-    : s.selected;
+  const eventContext = popup?.kind === "context" && popup.scope === "event";
+  const eventSource = eventContext ? popup.source : undefined;
+  const eventWorkspace = eventSource?.projectId === s.snapshot.project.manifest.projectId && eventSource.moduleId
+    ? s.snapshot.project.workspaces[eventSource.moduleId] : undefined;
+  const eventBlockId = eventWorkspace && eventSource?.blockId && findBlock(eventWorkspace.blocks.blocks, eventSource.blockId)
+    ? eventSource.blockId : undefined;
+  const commandBlockId = eventContext ? eventBlockId
+    : popup?.kind === "context" && popup.blockId ? popup.blockId : s.selected;
+  const commandModuleId = eventContext ? eventSource?.moduleId : s.session.active;
   useModalFocus(
     s.rpaInput.source ? "rpa-input" : s.confirmation
       ? "confirmation"
@@ -145,7 +151,7 @@ export function App() {
     "run.step": s.step,
     "run.from-selection": () => void s.runFromSelected(commandBlockId ?? undefined),
     "run.toggle-breakpoint": () => {
-      if (commandBlockId && s.session.active) s.toggleBreakpoint(s.session.active, commandBlockId);
+      if (commandBlockId && commandModuleId) s.toggleBreakpoint(commandModuleId, commandBlockId);
     },
     "edit.insert-block": () => {
       if (popup?.kind === "context" && popup.scope === "library" && popup.blockType)
@@ -620,7 +626,7 @@ export function App() {
                 resources={() => void execute("settings.resources")}
               />
               <RunPanel studio={s} execute={execute}
-                onTraceContext={(x, y) => setPopup({ kind: "context", scope: "event", x, y })} />
+                onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })} />
               <ProjectMap studio={s} />
               <EditorTools studio={s} execute={execute} enabled={enabled} />
               <Inspector

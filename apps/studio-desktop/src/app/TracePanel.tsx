@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { TraceSession } from "@blocky/observability";
+import type { SourceRef } from "@blocky/language-schema";
 import type { Studio } from "../composition/useStudio";
 import { TraceDetails } from "./TraceDetails";
 
-export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext?(x: number, y: number): void }) {
+export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext?(x: number, y: number, source: SourceRef): void }) {
   const [selectedSequence, setSelectedSequence] = useState<number>();
   const frames = useMemo(() => {
     const session = new TraceSession();
@@ -38,7 +39,9 @@ export function TracePanel({ studio: s, onContext }: { studio: Studio; onContext
               onContextMenu={(event) => {
                 event.preventDefault();
                 choose(index);
-                onContext?.(event.clientX, event.clientY);
+                onContext?.(event.clientX, event.clientY, {
+                  projectId: frame.projectId, moduleId: frame.moduleId, blockId: frame.blockId,
+                });
               }}
             >
               #{frame.sequence} {frame.type} <small>{frame.blockId ?? "项目"}</small>

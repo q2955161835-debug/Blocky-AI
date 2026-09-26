@@ -1,5 +1,5 @@
 import type { Studio } from "../composition/useStudio";
-import { interactionKey } from "@blocky/language-schema";
+import { interactionKey, type SourceRef } from "@blocky/language-schema";
 import { KnowledgeCitations } from "./KnowledgeCitations";
 import { knowledgeNative } from "../composition/knowledge";
 import type { EvidenceCitation } from "@blocky/knowledge-core";
@@ -9,7 +9,7 @@ import { RunBudgetSummary } from './RunBudgetSummary';
 import { TracePanel } from './TracePanel';
 import { WorkflowTasks } from './WorkflowTasks';
 import { findBlock } from '@blocky/project-model';
-export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studio; execute(id: string): void; onTraceContext?(x: number, y: number): void }) {
+export function RunPanel({ studio: s, execute, onTraceContext }: { studio: Studio; execute(id: string): void; onTraceContext?(x: number, y: number, source: SourceRef): void }) {
   const entries = s.compiled?.interaction.entries ?? [];
   return (
     <section className="run-panel">
