@@ -8,7 +8,7 @@ import {
 } from "@blocky/language-schema";
 import { resolveResource } from "@blocky/resource-registry";
 import type { AgentExecution } from "../agent-execution";
-import type { RunBudget } from "../budget";
+import { abortable, type RunBudget } from "../budget";
 import type { Citation } from "../adapters";
 import {
   parseAgentCheckpoint,
@@ -193,15 +193,22 @@ export class WorkflowExecution {
           this.agent.services.validateCitations,
           "BLK-WORKFLOW-PORT",
         );
-        await this.agent.services.validateCitations(
-          this.project.manifest.projectId,
-          restored.presentation.citations,
+        await abortable(
+          this.agent.services.validateCitations(
+            this.project.manifest.projectId,
+            restored.presentation.citations,
+            signal,
+          ),
           signal,
         );
       }
       signal.throwIfAborted();
-      if (!["completed", "compensated"].includes(saved.status))
-        this.budget.restoreCheckpoint(restored.budget);
+      if (["completed", "compensated"].includes(saved.status)) {
+        this.agent.restoreCompletedOutput(restored.agent);
+        this.restorePresentation(restored.presentation);
+        return;
+      }
+      this.budget.restoreCheckpoint(restored.budget);
       this.agent.restoreCheckpoint(restored.agent);
       this.restorePresentation(restored.presentation);
       const result = await advanceWorkflow(

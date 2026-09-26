@@ -157,3 +157,69 @@ it("preserves consumed budget and deadline instead of minting fresh limits on re
     next.dispose();
   }
 });
+
+it("projects completed output while preserving current input, values, memory and event consumption", () => {
+  const project = createArchitectureStarter("event-mailbox"),
+    budget = new RunBudget();
+  const memory = new Map([
+    [
+      JSON.stringify([project.manifest.projectId, "current", "progress"]),
+      "current-memory",
+    ],
+  ]);
+  const agent = new AgentExecution(
+    project,
+    "current-input",
+    "run-current",
+    "current",
+    budget,
+    {},
+    undefined,
+    memory,
+  );
+  try {
+    agent.value = "current-value";
+    agent.memory = "current-context";
+    agent.instruction = "current-instruction";
+    const snapshot = {
+      ...agent.checkpoint(),
+      question: "old-input",
+      value: "old-value",
+      memory: "old-context",
+      instruction: "old-instruction",
+      requireEvidence: true,
+      generated: "saved answer",
+      structured: { saved: true },
+      files: [
+        {
+          name: "saved.json",
+          format: "json" as const,
+          content: '{"saved":true}',
+        },
+      ],
+      sessionMemory: [{ key: "progress", value: "old-memory" }],
+      events: [{ channel: "jobs", payload: "consumed" }],
+    };
+    agent.restoreCompletedOutput(snapshot);
+    expect(agent.checkpoint()).toMatchObject({
+      question: "current-input",
+      value: "current-value",
+      memory: "current-context",
+      instruction: "current-instruction",
+      requireEvidence: false,
+      sessionMemory: [{ key: "progress", value: "current-memory" }],
+      events: [],
+      generated: "saved answer",
+      structured: { saved: true },
+      files: [
+        { name: "saved.json", format: "json", content: '{"saved":true}' },
+      ],
+    });
+    expect(() =>
+      agent.restoreCompletedOutput({ ...snapshot, projectId: "foreign" }),
+    ).toThrow("BLK-WORKFLOW-BINDING");
+    expect(agent.generations).toEqual([]);
+  } finally {
+    budget.dispose();
+  }
+});

@@ -297,3 +297,140 @@ it("does not publish or execute a Host acknowledgement with a different workflow
   ).toBe(false);
   expect(result.workflow?.moduleId).toBe("main");
 });
+
+it("reopens a completed task without replaying events consumed by the same Runtime", async () => {
+  const p = project(),
+    f = fixture();
+  const root = p.workspaces.main.blocks.blocks[0].inputs!.HANDLER!.block!;
+  const second = root.inputs!.STEPS!.block!.next!.block!.next!.block!;
+  second.inputs!.DO = { block: second.inputs!.DO!.block!.next!.block! };
+  p.workspaces.main.blocks.blocks.push(
+    block(
+      "consume-entry",
+      "core.interaction.chat_entry",
+      { NAME: "Consume" },
+      {
+        CAPABILITIES: {
+          block: block("consume-text", "core.interaction.accept_text"),
+        },
+        HANDLER: {
+          block: stack(
+            block("consume-event", "core.event.receive", {
+              CHANNEL: "jobs",
+              TIMEOUT_MS: "0",
+            }),
+            block("event-file", "core.output.file", {
+              NAME: "event.json",
+              FORMAT: "json",
+            }),
+          ),
+        },
+      },
+    ),
+  );
+  const runtime = new Runtime({
+    adapters: { ...localAdapters(), workflow: f.ports },
+  });
+  expect((await runtime.run(p, "on-event", "input")).status).toBe("waiting");
+  f.decide("approve");
+  expect(
+    (
+      await runtime.run(p, "on-event", "input", {
+        workflowTaskId: "task-owned",
+      })
+    ).status,
+  ).toBe("completed");
+  const consumed = await runtime.run(p, "consume-entry", "input");
+  expect(consumed.status).toBe("completed");
+  expect(JSON.parse(consumed.files![0].content)).toEqual({ saved: true });
+  const revision = f.record.revision;
+  const reopened = await runtime.run(p, "on-event", "input", {
+    workflowTaskId: "task-owned",
+  });
+  expect(reopened.status).toBe("completed");
+  expect(reopened.structured).toEqual({ saved: true });
+  expect(f.record.revision).toBe(revision);
+  const empty = await runtime.run(p, "consume-entry", "input");
+  expect(empty.status).toBe("completed");
+  expect(JSON.parse(empty.files![0].content)).toBeNull();
+});
+
+it("cancels recovery while citation validation is pending and closes without restoring or advancing", async () => {
+  const p = project(),
+    f = fixture();
+  await new Runtime({
+    adapters: { ...localAdapters(), workflow: f.ports },
+  }).run(p, "on-event", "input");
+  const state = f.record.state as { presentation: { citations: unknown[] } };
+  state.presentation.citations = [
+    {
+      id: "cite",
+      title: "Synthetic",
+      text: "Synthetic",
+      collectionId: "owned-collection",
+    },
+  ];
+  f.decide("approve");
+  const before = canonicalJson(f.record),
+    controller = new AbortController();
+  let enter!: () => void,
+    release!: () => void,
+    closed = false;
+  const entered = new Promise<void>((resolve) => {
+    enter = resolve;
+  });
+  const validation = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const open = f.ports.open;
+  f.ports.open = async (request, signal) => {
+    const handle = await open(request, signal);
+    return {
+      ...handle,
+      close: async () => {
+        await handle.close();
+        closed = true;
+      },
+    };
+  };
+  const run = new Runtime({
+    adapters: {
+      ...localAdapters(),
+      workflow: f.ports,
+      agent: {
+        validateCitations: async () => {
+          enter();
+          await validation;
+        },
+      },
+    },
+  }).run(p, "on-event", "different-input", {
+    workflowTaskId: "task-owned",
+    signal: controller.signal,
+  });
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await entered;
+    controller.abort();
+    const status = await Promise.race([
+      run.then((result) => result.status),
+      new Promise<string>((resolve) => {
+        timer = setTimeout(() => resolve("still-pending"), 250);
+      }),
+    ]);
+    expect(status).toBe("cancelled");
+    expect(closed).toBe(true);
+    expect(canonicalJson(f.record)).toBe(before);
+    const result = await run;
+    expect(
+      result.events.some(
+        (event) =>
+          event.type === "checkpoint.created" || event.blockId === "second",
+      ),
+    ).toBe(false);
+  } finally {
+    clearTimeout(timer);
+    release();
+    await run;
+  }
+});

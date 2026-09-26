@@ -59,6 +59,12 @@ export class AgentExecution {
       ...(this.generated!==undefined?{generated:this.generated}:{}),...(this.structured!==undefined?{structured:this.structured}:{}),files:this.files,
       sessionMemory:memory,events:this.mailbox.checkpoint(this.project.manifest.projectId)});
   }
+  /** Completed tasks expose saved outputs without reintroducing consumed state. */
+  restoreCompletedOutput(input:unknown):void {
+    const value=parseAgentCheckpoint(input);
+    if(value.projectId!==this.project.manifest.projectId)throw Error("BLK-WORKFLOW-BINDING");
+    this.generated=value.generated;this.structured=value.structured;this.files=value.files;
+  }
   restoreCheckpoint(input:unknown):void {
     const value=parseAgentCheckpoint(input);
     if(value.projectId!==this.project.manifest.projectId)throw Error("BLK-WORKFLOW-BINDING");
