@@ -1,7 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { RemoteRuntime } from "../src/remote-runtime";
 import { RuntimeServiceHost } from "../src/runtime-service-host";
-import { localAdapters } from "../src";
+import { localAdapters, Runtime } from "../src";
 import { createArchitectureStarter } from "../../block-catalog/src";
 import { createStarter } from "../../test-fixtures/src";
 import { planToRpaBlocks } from "@blocky/rpa-core";
@@ -28,6 +28,38 @@ const rpaRequest = () => ({
     ],
   },
   inputSources: {},
+});
+it("accepts existing project identifiers and debug selections without narrower transport limits", async () => {
+  const interactionId = `entry-${"a".repeat(150)}`;
+  const project = JSON.parse(
+    JSON.stringify(createStarter()).replaceAll(
+      '"on-question"',
+      JSON.stringify(interactionId),
+    ),
+  );
+  const debug = {
+    breakpoints: Array.from({ length: 1001 }, (_, i) => ({
+      moduleId: "research-agent",
+      blockId: `unused-${i}`,
+    })),
+  };
+  const expected = await new Runtime().run(project, interactionId, "水循环", {
+    debug,
+  });
+  expect(expected.status).toBe("completed");
+  const host = new RuntimeServiceHost(
+    project.manifest.projectId,
+    localAdapters(),
+  );
+  const runtime = new RemoteRuntime((v, s) => host.request(v, s));
+  const output = await runtime.run(
+    { ...request(project), interactionId, options: { debug } },
+    new AbortController().signal,
+    () => {},
+  );
+  expect(output.result.status).toBe(expected.status);
+  expect(output.result.answer).toBe(expected.answer);
+  await host.close();
 });
 it("runs the same Runtime through a serializable request and retains private state across runs", async () => {
   const project = createArchitectureStarter("state-machine");

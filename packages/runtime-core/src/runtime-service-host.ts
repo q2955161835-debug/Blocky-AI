@@ -11,7 +11,7 @@ import { stableId } from "@blocky/language-schema";
 import { workflowJson, workflowKeys } from "./workflow/protocol";
 const invalid = () => Error("BLK-RUN-SERVICE");
 const sourceId = (value: unknown): value is string =>
-  typeof value === "string" && value.length <= 200 && stableId.test(value);
+  typeof value === "string" && stableId.test(value);
 function rpaInput(value: unknown, projectId: string): RpaModulePlan {
   try {
     workflowKeys(value, ["plan", "inputSources"], ["browser"]);

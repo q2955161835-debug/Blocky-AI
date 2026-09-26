@@ -14,7 +14,7 @@ export type RuntimeServiceCall = (
 ) => Promise<unknown>;
 const invalid = () => Error("BLK-RUN-STATE");
 const id = (v: unknown): v is string =>
-  typeof v === "string" && v.length <= 128 && stableId.test(v);
+  typeof v === "string" && stableId.test(v);
 function parse(input: unknown) {
   try {
     // The private state is a JSON string so native framing does not impose a lower payload depth.
@@ -40,6 +40,11 @@ function parse(input: unknown) {
     const options = value.options;
     for (const key of ["moduleId", "workflowTaskId"])
       if (options[key] !== undefined && !id(options[key])) throw invalid();
+    if (
+      typeof options.workflowTaskId === "string" &&
+      options.workflowTaskId.length > 128
+    )
+      throw invalid();
     let debug:
       | {
           breakpoints?: { moduleId: string; blockId: string }[];
@@ -52,8 +57,7 @@ function parse(input: unknown) {
       if (raw.startBlockId !== undefined && !id(raw.startBlockId))
         throw invalid();
       if (raw.breakpoints !== undefined) {
-        if (!Array.isArray(raw.breakpoints) || raw.breakpoints.length > 1000)
-          throw invalid();
+        if (!Array.isArray(raw.breakpoints)) throw invalid();
         for (const point of raw.breakpoints) {
           workflowKeys(point, ["moduleId", "blockId"]);
           if (!id(point.moduleId) || !id(point.blockId)) throw invalid();
