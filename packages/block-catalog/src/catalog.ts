@@ -3,6 +3,7 @@ import textPrimitives from "./text-primitives.json";
 import agentPrimitives from "./agent-primitives.json";
 import eventPrimitives from "./event-primitives.json";
 import flowPrimitives from "./flow-primitives.json";
+import workflowPrimitives from "./workflow-primitives.json";
 import rpaPrimitives from "./rpa-primitives.json";
 export type BlockDefinition = {
   type: string;
@@ -48,6 +49,7 @@ export const catalog: BlockDefinition[] = [
   ...textPrimitives,
   ...eventPrimitives,
   ...flowPrimitives,
+  ...workflowPrimitives,
   ...rpaPrimitives,
   ...agentPrimitives,
 ];

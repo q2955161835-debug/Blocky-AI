@@ -22,6 +22,7 @@ import {
 import { validateOutput } from "./output-schema";
 import type { TraceDetails } from "@blocky/observability";
 import { EventMailbox } from "./event-mailbox";
+import { parseAgentCheckpoint, type AgentCheckpoint } from "./workflow/context";
 
 const valueType = (value: Json) => value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 
@@ -37,7 +38,7 @@ export class AgentExecution {
   generations: Generation[] = [];
   constructor(
     readonly project: Project,
-    readonly question: string,
+    public question: string,
     readonly runId: string,
     readonly sessionId: string,
     readonly budget: RunBudget,
@@ -46,6 +47,33 @@ export class AgentExecution {
     private sessionMemory = new Map<string, Json>(),
     private mailbox = new EventMailbox(),
   ) {}
+  checkpoint():AgentCheckpoint {
+    const memory=[];
+    for(const [encoded,value] of this.sessionMemory){
+      const [project,session,key]=JSON.parse(encoded) as string[];
+      if(project===this.project.manifest.projectId&&session===this.sessionId)memory.push({key,value});
+    }
+    memory.sort((a,b)=>a.key.localeCompare(b.key));
+    return parseAgentCheckpoint({schemaVersion:"blocky.workflow-agent/v1",projectId:this.project.manifest.projectId,question:this.question,
+      value:this.value,memory:this.memory,instruction:this.instruction,requireEvidence:this.requireEvidence,
+      ...(this.generated!==undefined?{generated:this.generated}:{}),...(this.structured!==undefined?{structured:this.structured}:{}),files:this.files,
+      sessionMemory:memory,events:this.mailbox.checkpoint(this.project.manifest.projectId)});
+  }
+  restoreCheckpoint(input:unknown):void {
+    const value=parseAgentCheckpoint(input);
+    if(value.projectId!==this.project.manifest.projectId)throw Error("BLK-WORKFLOW-BINDING");
+    const current=this.checkpoint();
+    if(current.sessionMemory.length&&canonicalJson(current.sessionMemory)!==canonicalJson(value.sessionMemory))throw Error("BLK-WORKFLOW-CONTEXT");
+    const candidate=new Map(this.sessionMemory);
+    for(const entry of value.sessionMemory)candidate.set(JSON.stringify([value.projectId,this.sessionId,entry.key]),entry.value);
+    if(utf8(JSON.stringify([...candidate]))>1048576)throw Error("BLK-MEMORY-001");
+    // Last fallible operation before mutation: active waiters, queue conflicts and total capacity.
+    this.mailbox.restoreCheckpoint(value.projectId,value.events);
+    this.sessionMemory.clear();for(const [key,item] of candidate)this.sessionMemory.set(key,item);
+    this.question=value.question;this.value=value.value;this.memory=value.memory;this.instruction=value.instruction;
+    this.requireEvidence=value.requireEvidence;this.generated=value.generated;this.structured=value.structured;this.files=value.files;
+    // generations are facts from this run, never restored as if a new API call happened.
+  }
   private forkPure(): AgentExecution {
     const branch = new AgentExecution(this.project, this.question, this.runId, this.sessionId, this.budget);
     branch.value = structuredClone(this.value);

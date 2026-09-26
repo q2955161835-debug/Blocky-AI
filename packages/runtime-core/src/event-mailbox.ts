@@ -1,5 +1,6 @@
-import { stableId, type Json } from "@blocky/language-schema";
+import { canonicalJson, stableId, type Json } from "@blocky/language-schema";
 import { utf8 } from "./budget";
+import { parseMailboxCheckpoint, type MailboxCheckpoint } from "./workflow/context";
 
 type Message = { payload: Json };
 type Pending = { key: string; wake(): void };
@@ -9,6 +10,22 @@ export class EventMailbox {
   private messages: { key: string; message: Message; bytes: number }[] = [];
   private pending = new Set<Pending>();
   private bytes = 0;
+
+  checkpoint(projectId:string):MailboxCheckpoint {
+    this.key(projectId,"checkpoint");
+    if([...this.pending].some(p=>JSON.parse(p.key)[0]===projectId))throw Error("BLK-WORKFLOW-CONTEXT");
+    return parseMailboxCheckpoint(this.messages.filter(m=>JSON.parse(m.key)[0]===projectId).map(m=>({channel:JSON.parse(m.key)[1] as string,payload:m.message.payload})));
+  }
+  restoreCheckpoint(projectId:string,input:unknown):void {
+    const snapshot=parseMailboxCheckpoint(input),current=this.checkpoint(projectId);
+    if(current.length&&canonicalJson(current)!==canonicalJson(snapshot))throw Error("BLK-WORKFLOW-CONTEXT");
+    if(canonicalJson(current)===canonicalJson(snapshot))return;
+    const others=this.messages.filter(m=>JSON.parse(m.key)[0]!==projectId);
+    const restored=snapshot.map(m=>({key:this.key(projectId,m.channel),message:{payload:m.payload},bytes:utf8(JSON.stringify(m.payload))}));
+    const bytes=[...others,...restored].reduce((n,m)=>n+m.bytes,0);
+    if(others.length+restored.length>128||bytes>262144)throw Error("BLK-EVENT-002");
+    this.messages=[...others,...restored];this.bytes=bytes;
+  }
 
   private key(projectId: string, channel: string) {
     if (![projectId, channel].every(id => typeof id === "string" && id.length <= 128 && stableId.test(id)))

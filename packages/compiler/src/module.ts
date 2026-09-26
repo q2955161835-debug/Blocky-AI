@@ -1,6 +1,8 @@
 import {
   diagnostic,
   validateParallelNode,
+  workflowLayout,
+  isWorkflowMarker,
   stableId,
   parseExpressionProgram,
   validRef,
@@ -22,9 +24,11 @@ export function compileWorkspace(
   const diagnostics: Diagnostic[] = [],
     sourceMap: Record<string, SourceRef> = {},
     ids = new Set<string>();
-  const compile = (b: WorkspaceBlock, rpaScope = false): IrNode | null => {
-    if (b.disabled) return b.next ? compile(b.next.block, rpaScope) : null;
+  const compile = (b: WorkspaceBlock, rpaScope = false, workflowScope=false, workflowActive=false,workflowRootAllowed=false): IrNode | null => {
+    if (b.disabled) return b.next ? compile(b.next.block, rpaScope,workflowScope,workflowActive,workflowRootAllowed) : null;
     const source = { projectId, moduleId: module.moduleId, blockId: b.id };
+    if((isWorkflowMarker(b.type)&&!workflowScope)||(b.type==="runtime.task.durable"&&workflowActive))diagnostics.push(diagnostic("BLK-WORKFLOW-SCOPE","工作流步骤须直接放在工作流中，不能嵌套工作流",source));
+    if(b.type==="runtime.task.durable"&&!workflowRootAllowed)diagnostics.push(diagnostic("BLK-WORKFLOW-SCOPE","持久工作流须作为输入入口的完整处理流程",source));
     if (isRpaStep(b.type) && !rpaScope) diagnostics.push(diagnostic("BLK-RPA-SCOPE-001", "自动化操作必须放在已连接的窗口或浏览器中", source));
     if (ids.has(b.id))
       diagnostics.push(diagnostic("BLK-TYPE-002", "积木 ID 重复", source));
@@ -105,7 +109,7 @@ export function compileWorkspace(
         diagnostics.push(
           diagnostic("BLK-TYPE-009", `插槽 ${name} 需要 ${expected}`, source),
         );
-      inputs[name] = child ? compile(child, isRpaSession(b.type) && name === "STEPS") : null;
+      inputs[name] = child ? compile(child, isRpaSession(b.type) && name === "STEPS",b.type==="runtime.task.durable"&&name==="STEPS",workflowActive||b.type==="runtime.task.durable",b.type==="core.interaction.chat_entry"&&name==="HANDLER") : null;
     }
     for (const name of def?.requiredInputs ?? [])
       if (!inputs[name])
@@ -120,7 +124,7 @@ export function compileWorkspace(
       diagnostics.push(
         diagnostic("BLK-TYPE-009", "后续连接类型不兼容", source),
       );
-    const next = b.next ? compile(b.next.block, rpaScope) : null;
+    const next = b.next ? compile(b.next.block, rpaScope,workflowScope,workflowActive,b.type==="core.interaction.chat") : null;
     const node: IrNode = {
       nodeId: b.id,
       blockType: b.type,
@@ -131,6 +135,9 @@ export function compileWorkspace(
     if (b.type === "core.flow.parallel") {
       try { validateParallelNode(node); }
       catch (error) { diagnostics.push(diagnostic(error instanceof Error ? error.message : "BLK-FLOW-001", "并行分支仅支持结果、条件、等待和受限嵌套；不能执行共享状态或外部副作用", source)); }
+    }
+    if(b.type==="runtime.task.durable"){
+      try{workflowLayout(node);}catch{diagnostics.push(diagnostic("BLK-WORKFLOW-SCOPE","工作流须包含声明的执行步骤、审批或检查点；后续操作请放入步骤内",source));}
     }
     if (isRpaSession(b.type)) {
       try { compileRpaSession(node, projectId); }

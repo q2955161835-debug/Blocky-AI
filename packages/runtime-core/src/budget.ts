@@ -1,3 +1,4 @@
+import { parseBudgetCheckpoint, type BudgetCheckpoint } from "./workflow/context";
 export const utf8 = (text: string) => new TextEncoder().encode(text).length;
 export function integer(value: unknown, min: number, max: number): number {
   const n =
@@ -56,6 +57,20 @@ export class RunBudget {
   }
   get timeout() {
     return this.timedOut;
+  }
+  checkpoint():BudgetCheckpoint {
+    return parseBudgetCheckpoint({steps:this.steps,calls:this.calls,usedOutput:this.usedOutput,maxSteps:this.maxSteps,maxCalls:this.maxCalls,maxOutput:this.maxOutput,remainingMs:Math.max(0,this.maxDuration-(Date.now()-this.started))});
+  }
+  restoreCheckpoint(input:unknown):void {
+    const value=parseBudgetCheckpoint(input);
+    this.signal.throwIfAborted();
+    const elapsed=Date.now()-this.started,remaining=Math.min(this.maxDuration-elapsed,value.remainingMs);
+    if(remaining<=0)throw Error("BLK-RUN-007");
+    const steps=Math.max(this.steps,value.steps),calls=Math.max(this.calls,value.calls),output=Math.max(this.usedOutput,value.usedOutput);
+    const maxSteps=Math.min(this.maxSteps,value.maxSteps),maxCalls=Math.min(this.maxCalls,value.maxCalls),maxOutput=Math.min(this.maxOutput,value.maxOutput);
+    if(steps>maxSteps||calls>maxCalls||output>maxOutput)throw Error("BLK-RUN-004");
+    this.steps=steps;this.calls=calls;this.usedOutput=output;this.maxSteps=maxSteps;this.maxCalls=maxCalls;this.maxOutput=maxOutput;this.maxDuration=elapsed+remaining;
+    clearTimeout(this.timer);this.timer=setTimeout(()=>this.expire(),remaining);
   }
   private expire() {
     this.timedOut = true;

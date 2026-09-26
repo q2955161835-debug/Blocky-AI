@@ -9,6 +9,7 @@ export type CompositionInput = {
   citations: Citation[];
 };
 export type Adapters = {
+  workflow?: import('./workflow/runtime').WorkflowPorts;
   rpa?: import('@blocky/rpa-core').RpaModulePorts;
   agent?: import('./agent-context').AgentServices;
   knowledge: Map<

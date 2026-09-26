@@ -30,6 +30,7 @@ const labels: Record<string, string> = {
   OUTPUT: "输出类型",
   RESOURCE: "资源",
   CHANNEL: "通道",
+  LABEL: "审批事项",
   TARGET: "目标窗口", URL: "网址", ACTION: "动作", LOCATOR: "定位器",
   MILLISECONDS: "毫秒",
   STYLE: "方式",
@@ -103,6 +104,8 @@ export function registerBlocks() {
             const statement = this.appendStatementInput(input).setCheck(check);
             if (def.type === "core.event.receive") statement.appendField(input === "RECEIVED" ? "收到消息" : "队列为空或等待超时");
             if (def.type === "core.flow.parallel") statement.appendField(input === "LEFT" ? "分支一" : "分支二");
+            if (def.type === "runtime.task.durable") statement.appendField("工作流步骤");
+            if (def.type === "runtime.compensate") statement.appendField(input === "DO" ? "执行" : "补偿（可选）");
             if (["core.computer.attach","core.browser.navigate"].includes(def.type)) statement.appendField("自动化步骤");
           }
         }
@@ -112,7 +115,7 @@ export function registerBlocks() {
           this.setNextStatement(true, def.statementCheck ?? "step");
         }
         this.setColour(def.color);
-        this.setTooltip(def.label);
+        this.setTooltip(def.type==="runtime.compensate"?"补偿开始时，结果包含 before（步骤前）、after（步骤后）和 current（当前值）。":def.label);
         this.setHelpUrl("");
         this.contextMenu = false;
       },

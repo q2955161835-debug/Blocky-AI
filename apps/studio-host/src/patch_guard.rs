@@ -83,11 +83,12 @@ fn definition(kind: &str) -> Result<Value, String> {
     let agent_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/agent-primitives.json")).map_err(|_| INVALID)?;
     let event_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/event-primitives.json")).map_err(|_| INVALID)?;
     let flow_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/flow-primitives.json")).map_err(|_| INVALID)?;
+    let workflow_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/workflow-primitives.json")).map_err(|_| INVALID)?;
     let rpa_catalog: Value = serde_json::from_str(include_str!("../../../packages/block-catalog/src/rpa-primitives.json")).map_err(|_| INVALID)?;
     array(&catalog)?
         .iter()
         .chain(array(&text_catalog)?.iter()).chain(array(&agent_catalog)?.iter())
-        .chain(array(&event_catalog)?.iter()).chain(array(&flow_catalog)?.iter()).chain(array(&rpa_catalog)?.iter())
+        .chain(array(&event_catalog)?.iter()).chain(array(&flow_catalog)?.iter()).chain(array(&workflow_catalog)?.iter()).chain(array(&rpa_catalog)?.iter())
         .find(|v| v["type"] == kind)
         .cloned()
         .ok_or_else(|| INVALID.into())
@@ -562,4 +563,20 @@ pub fn validate_with_registry(
         return Err("BLK-PATCH-003".into());
     }
     Ok(next)
+}
+
+#[cfg(test)]
+mod workflow_catalog_tests {
+    use super::*;
+    use serde_json::json;
+    #[test]
+    fn workflow_declarations_use_the_shared_patch_catalog_without_accepting_runtime_state() {
+        let mut root=json!({"type":"runtime.task.durable","id":"workflow","inputs":{"STEPS":{"block":{
+            "type":"runtime.compensate","id":"step","inputs":{"DO":{"block":{"type":"core.data.set","id":"value","fields":{"VALUE":"1"}}}},
+            "next":{"block":{"type":"core.human.approve","id":"approve","fields":{"LABEL":"Review"},"next":{"block":{"type":"runtime.checkpoint.save","id":"checkpoint"}}}}
+        }}}});
+        assert!(block_shape(&root,&mut BTreeSet::new(),true,0).is_ok());
+        root["owner"]=json!({"processId":1,"settled":true});
+        assert!(block_shape(&root,&mut BTreeSet::new(),true,0).is_err());
+    }
 }

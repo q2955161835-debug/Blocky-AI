@@ -48,6 +48,7 @@ export async function advanceWorkflow(
   definition: WorkflowDefinition,
   driver: WorkflowDriver,
   signal: AbortSignal,
+  onCheckpoint?: (record: WorkflowRecord) => void,
 ): Promise<WorkflowRecord> {
   let record = parseWorkflow(await store.read(taskId));
   assertWorkflowBinding(record, taskId, definition);
@@ -66,6 +67,7 @@ export async function advanceWorkflow(
       "BLK-WORKFLOW-CONFLICT",
     );
     record = saved;
+    onCheckpoint?.(structuredClone(record));
   };
   while (true) {
     if (["executing", "undoing", "uncertain"].includes(record.status))

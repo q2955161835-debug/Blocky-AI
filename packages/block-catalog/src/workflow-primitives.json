@@ -1,0 +1,44 @@
+[
+  {
+    "type": "runtime.task.durable",
+    "label": "持久工作流",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": ["STEPS"],
+    "requiredInputs": ["STEPS"],
+    "inputChecks": { "STEPS": "workflow-step" },
+    "statement": true
+  },
+  {
+    "type": "runtime.compensate",
+    "label": "执行步骤与补偿",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": ["DO", "UNDO"],
+    "requiredInputs": ["DO"],
+    "statement": true,
+    "statementCheck": "workflow-step"
+  },
+  {
+    "type": "core.human.approve",
+    "label": "等待业务审批",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["LABEL"],
+    "inputs": [],
+    "statement": true,
+    "statementCheck": "workflow-step"
+  },
+  {
+    "type": "runtime.checkpoint.save",
+    "label": "保存工作流检查点",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": [],
+    "statement": true,
+    "statementCheck": "workflow-step"
+  }
+]

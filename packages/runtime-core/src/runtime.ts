@@ -25,6 +25,7 @@ import { EventMailbox } from "./event-mailbox";
 import { RpaExecution } from "./rpa-execution";
 import { isRpaSession, isRpaStep } from "@blocky/rpa-core";
 import type { Generation, OutputFile } from "./agent-context";
+import { WorkflowExecution,WorkflowWaiting,type WorkflowSummary } from "./workflow/runtime";
 type Options = {
   sessionId?: string;
   adapters?: Adapters;
@@ -36,7 +37,7 @@ type Options = {
   nextSequence?: () => number;
 };
 export type RunResult = {
-  status: "completed" | "failed" | "cancelled";
+  status: "completed" | "failed" | "cancelled" | "waiting";
   answer: string;
   citations: Citation[];
   events: RuntimeEvent[];
@@ -44,6 +45,7 @@ export type RunResult = {
   files?: OutputFile[];
   generations?: Generation[];
   modelApiCalled?: boolean;
+  workflow?: WorkflowSummary;
 };
 export class Runtime {
   private readonly sessionId: string;
@@ -90,6 +92,7 @@ export class Runtime {
         startBlockId?: string;
       };
       userRegistry?: Map<string, import("@blocky/language-schema").Resource>;
+      workflowTaskId?:string;
     } = {},
   ): Promise<RunResult> {
     if (this.running) throw Error("BLK-RUN-003: 已有运行");
@@ -145,6 +148,9 @@ export class Runtime {
       events.push(e);
       options.onEvent?.(e);
     };
+    const workflow=new WorkflowExecution(adapters.workflow,project,options.userRegistry,agent,runBudget,
+      ()=>({answer,citations,role,style}),value=>{answer=value.answer;citations=value.citations;role=value.role;style=value.style;question=agent.question;},
+      value=>emit("checkpoint.created",value.moduleId,value.stepId??value.blockId,{summary:"工作流检查点已保存",checkpointId:value.taskId}));
     try {
       emit("run.started", undefined, undefined, { summary: "开始运行" });
       if (utf8(question) > 16000) throw Error("BLK-CONTEXT-001");
@@ -171,6 +177,10 @@ export class Runtime {
         ? selectedEntry.inputs.HANDLER
         : undefined;
       const handlerHead = handler && !Array.isArray(handler) ? handler : undefined;
+      if(options.workflowTaskId!==undefined){
+        const workflowRoot=handlerHead??selectedEntry.next;
+        if(typeof options.workflowTaskId!=="string"||options.workflowTaskId.length>128||!/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(options.workflowTaskId)||workflowRoot?.blockType!=="runtime.task.durable")throw Error("BLK-WORKFLOW-BINDING");
+      }
       const startNode = options.debug?.startBlockId
         ? options.debug.startBlockId === handlerHead?.nodeId
           ? handlerHead
@@ -240,7 +250,10 @@ export class Runtime {
             );
           try {
             if (isRpaSession(node.blockType) || isRpaStep(node.blockType)) runBudget.call();
-            handled = await rpa.execute(node, moduleId, state, child => execute(child, moduleId, state), reportDetails);
+            if(node.blockType==="runtime.task.durable"){
+              if(state!==agent)throw Error("BLK-WORKFLOW-SCOPE");
+              await workflow.execute(node,moduleId,child=>execute(child,moduleId,state),options.workflowTaskId);handled=true;
+            }else handled = await rpa.execute(node, moduleId, state, child => execute(child, moduleId, state), reportDetails);
             if (!handled) handled = await state.execute(node, (child, branch = state) => execute(child, moduleId, branch), reportDetails);
             if (toolCall)
               emit(
@@ -547,7 +560,7 @@ export class Runtime {
             },
           });
         } catch (error) {
-          if (!signal.aborted)
+          if (!signal.aborted && !(error instanceof WorkflowWaiting))
             emit("block.failed", moduleId, node.nodeId, {
               code: safeCode(error),
               summary: "积木运行失败",
@@ -563,6 +576,9 @@ export class Runtime {
       signal.throwIfAborted();
       emit("run.completed", undefined, undefined, { summary: "运行完成" });
     } catch (error) {
+      if(error instanceof WorkflowWaiting&&!signal.aborted){
+        status="waiting";emit("run.paused",workflow.result?.moduleId,workflow.result?.blockId,{summary:workflow.result?.status==="awaiting-approval"?"工作流等待业务审批":"工作流已保存并暂停"});
+      }else{
       const settlementFailed = safeCode(error) === "BLK-RPA-SETTLEMENT-001";
       status = signal.aborted && !runBudget.timeout && !settlementFailed ? "cancelled" : "failed";
       emit(
@@ -582,6 +598,7 @@ export class Runtime {
               : "运行失败，请查看问题与运行日志",
         },
       );
+      }
     } finally {
       runBudget.dispose();
       await adapters.agent?.close?.(signal);
@@ -600,6 +617,7 @@ export class Runtime {
         : {}),
       generations: agent.generations,
       modelApiCalled: agent.generations.some((g) => g.transport === "remote"),
+      ...(workflow.result?{workflow:workflow.result}:{}),
     };
   }
 }
