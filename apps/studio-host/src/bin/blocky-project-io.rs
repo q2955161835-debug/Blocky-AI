@@ -28,6 +28,14 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
+    if let Err(code) = blocky_studio::profile::from_environment() { return json!({"ok":false,"code":code}); }
+    if value["operation"] == "profile-info" {
+        if value["schemaVersion"] != SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) { return json!({"ok":false,"code":"BLK-CLI-002"}); }
+        return match blocky_studio::profile::cli_root() {
+            Ok(root) => json!({"ok":true,"value":{"profileId":blocky_studio::profile::identity(&root),"custom":std::env::var_os(blocky_studio::profile::VARIABLE).is_some()}}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
     if matches!(value["operation"].as_str(), Some("rpa-checkpoints" | "rpa-checkpoint" | "rpa-recovery-preview" | "rpa-checkpoint-delete")) {
         let result = blocky_studio::rpa::journal::local_root()
             .and_then(|root| blocky_studio::rpa::journal::dispatch(root, value));
@@ -38,19 +46,17 @@ fn execute_value(value: Value) -> Value {
         return json!({"ok":true,"value":blocky_studio::rpa::target::list()});
     }
     if value["operation"].as_str().is_some_and(|s|s.starts_with("builder-")) {
-        let result=std::env::var_os("LOCALAPPDATA").map(std::path::PathBuf::from).ok_or_else(||"BLK-BUILDER-STATE".to_owned()).and_then(|root|blocky_studio::builder::dispatch(root.join("ai.blocky.studio"),&value));
+        let result=blocky_studio::profile::cli_root().and_then(|root|blocky_studio::builder::dispatch(root,&value));
         return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};
     }
     if value["operation"]
         .as_str()
         .is_some_and(|s| s.starts_with("agent-"))
     {
-        let result = std::env::var_os("LOCALAPPDATA")
-            .map(std::path::PathBuf::from)
-            .ok_or_else(|| "BLK-AGENT-IO".to_owned())
+        let result = blocky_studio::profile::cli_root()
             .and_then(|root| {
                 blocky_studio::agent_data::dispatch(
-                    root.join("ai.blocky.studio/user/agent-memory"),
+                    root.join("user/agent-memory"),
                     &value,
                 )
             });
@@ -63,11 +69,9 @@ fn execute_value(value: Value) -> Value {
         .as_str()
         .is_some_and(|s| s.starts_with("provider-"))
     {
-        let result = std::env::var_os("LOCALAPPDATA")
-            .map(std::path::PathBuf::from)
-            .ok_or_else(|| "BLK-PROVIDER-CONFIG".to_owned())
+        let result = blocky_studio::profile::cli_root()
             .and_then(|root| {
-                blocky_studio::provider::dispatch(root.join("ai.blocky.studio"), &value)
+                blocky_studio::provider::dispatch(root, &value)
             });
         return match result {
             Ok(value) => json!({"ok":true,"value":value}),
@@ -81,12 +85,10 @@ fn execute_value(value: Value) -> Value {
         if value["schemaVersion"] != SCHEMA {
             return json!({"ok":false,"code":"BLK-MIG-001"});
         }
-        let result = std::env::var_os("LOCALAPPDATA")
-            .map(std::path::PathBuf::from)
-            .ok_or_else(|| "BLK-SET-001".to_owned())
+        let result = blocky_studio::profile::cli_root()
             .and_then(|root| {
                 let store = blocky_studio::conversion::ConversionStore::new(
-                    root.join("ai.blocky.studio/conversion"),
+                    root.join("conversion"),
                 );
                 blocky_studio::conversion::dispatch(&store, &value)
             });
@@ -106,12 +108,10 @@ fn execute_value(value: Value) -> Value {
         if value["schemaVersion"] != SCHEMA {
             return json!({"ok":false,"code":"BLK-MIG-001"});
         }
-        let result = std::env::var_os("LOCALAPPDATA")
-            .map(std::path::PathBuf::from)
-            .ok_or_else(|| "BLK-SET-001".to_owned())
+        let result = blocky_studio::profile::cli_root()
             .and_then(|root| {
                 let store = blocky_studio::knowledge::KnowledgeStore::new(
-                    root.join("ai.blocky.studio/knowledge"),
+                    root.join("knowledge"),
                 );
                 blocky_studio::knowledge::dispatch(&store, &value)
             });
@@ -141,10 +141,7 @@ fn execute_value(value: Value) -> Value {
             {
                 return Err("BLK-CLI-002".into());
             }
-            let root = std::env::var_os("LOCALAPPDATA")
-                .map(std::path::PathBuf::from)
-                .ok_or("BLK-SET-001")?
-                .join("ai.blocky.studio");
+            let root = blocky_studio::profile::cli_root()?;
             let id = r.state_id.as_deref().ok_or("BLK-CLI-002")?;
             if r.operation.starts_with("user-") {
                 if r.path.is_some() || r.variable.is_some() {
@@ -204,11 +201,9 @@ fn execute_value(value: Value) -> Value {
                 return Err("BLK-CLI-002".into());
             }
             let original = r.original_json.as_deref().ok_or("BLK-CLI-002")?;
-            let root = std::env::var_os("LOCALAPPDATA")
-                .map(std::path::PathBuf::from)
-                .ok_or("BLK-SET-001")?;
+            let root = blocky_studio::profile::cli_root()?;
             let store =
-                blocky_studio::user_store::UserStore::new(root.join("ai.blocky.studio/user"));
+                blocky_studio::user_store::UserStore::new(root.join("user"));
             let registry = store.read("resources", "app")?.unwrap_or(Value::Null);
             let next = blocky_studio::patch_guard::validate_with_registry(
                 original,

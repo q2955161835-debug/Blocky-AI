@@ -4,11 +4,7 @@ use tauri::Manager;
 #[tauri::command]
 pub fn builder_evidence(window: tauri::WebviewWindow, request_id: String) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
-    let root = window
-        .app_handle()
-        .path()
-        .app_local_data_dir()
-        .map_err(|_| "BLK-BUILDER-STATE")?;
+    let root = blocky_studio::profile::for_app(window.app_handle())?;
     blocky_studio::builder::dispatch(
         root,
         &serde_json::json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"builder-evidence","requestId":request_id}),
@@ -21,11 +17,7 @@ pub async fn builder_run(
     start: BuilderStart,
 ) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
-    let root = window
-        .app_handle()
-        .path()
-        .app_local_data_dir()
-        .map_err(|_| "BLK-BUILDER-STATE")?;
+    let root = blocky_studio::profile::for_app(window.app_handle())?;
     let preview = host.preflight(&root, &start)?;
     let digest = preview["requestDigest"]
         .as_str()

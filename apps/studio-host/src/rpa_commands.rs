@@ -20,11 +20,7 @@ pub async fn rpa_checkpoints(window: tauri::WebviewWindow) -> Result<Vec<Value>,
     visible(&window)?;
     main_window(&window)?;
     tauri::async_runtime::spawn_blocking(move || {
-        let root = window
-            .app_handle()
-            .path()
-            .app_local_data_dir()
-            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        let root = blocky_studio::profile::for_app(window.app_handle())?;
         rpa::journal::Store::new(root.join("rpa/checkpoints")).summaries()
     })
     .await
@@ -39,11 +35,7 @@ pub async fn rpa_checkpoint(
     visible(&window)?;
     main_window(&window)?;
     tauri::async_runtime::spawn_blocking(move || {
-        let root = window
-            .app_handle()
-            .path()
-            .app_local_data_dir()
-            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        let root = blocky_studio::profile::for_app(window.app_handle())?;
         rpa::journal::Store::new(root.join("rpa/checkpoints"))
             .inspect_plan(&checkpoint_id, plan.as_ref())
     })
@@ -59,8 +51,7 @@ pub async fn rpa_checkpoint_delete(
     main_window(&window)?;
     tauri::async_runtime::spawn_blocking(move || {
         visible(&window)?;
-        let root = window.app_handle().path().app_local_data_dir()
-            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        let root = blocky_studio::profile::for_app(window.app_handle())?;
         rpa::journal::Store::new(root.join("rpa/checkpoints")).delete(&deletion)
     }).await.map_err(|_| "BLK-RPA-WORKER-001")?
 }
@@ -95,11 +86,7 @@ pub async fn rpa_recovery_preview(
     visible(&window)?;
     main_window(&window)?;
     tauri::async_runtime::spawn_blocking(move || {
-        let root = window
-            .app_handle()
-            .path()
-            .app_local_data_dir()
-            .map_err(|_| "BLK-RPA-JOURNAL-001")?;
+        let root = blocky_studio::profile::for_app(window.app_handle())?;
         rpa::journal::Store::new(root.join("rpa/checkpoints")).recovery_preview(&checkpoint_id)
     })
     .await

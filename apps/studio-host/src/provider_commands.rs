@@ -9,11 +9,7 @@ pub fn provider_preflight(
 ) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
     host.preflight(
-        &window
-            .app_handle()
-            .path()
-            .app_local_data_dir()
-            .map_err(|_| "BLK-PROVIDER-CONFIG")?,
+        &blocky_studio::profile::for_app(window.app_handle())?,
         &request,
     )
 }
@@ -24,11 +20,7 @@ pub async fn provider_call(
     request: ProviderRequest,
 ) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
-    let root = window
-        .app_handle()
-        .path()
-        .app_local_data_dir()
-        .map_err(|_| "BLK-PROVIDER-CONFIG")?;
+    let root = blocky_studio::profile::for_app(window.app_handle())?;
     let preview = host.preflight(&root, &request)?;
     let digest = request.digest()?;
     let roles = request

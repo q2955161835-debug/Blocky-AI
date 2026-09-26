@@ -9,12 +9,7 @@ pub fn acceptance_round_trip(
     if window.label() != "main" {
         return Err("BLK-PERM-001".into());
     }
-    let folder = window
-        .app_handle()
-        .path()
-        .app_local_data_dir()
-        .map_err(|_| "BLK-HOST-001")?
-        .join("acceptance");
+    let folder = blocky_studio::profile::for_app(window.app_handle())?.join("acceptance");
     std::fs::create_dir_all(&folder).map_err(|_| "BLK-HOST-001")?;
     let path = folder.join("full.blocky");
     project_store::save_archive(&path, &files)?;

@@ -405,6 +405,7 @@ dependencies = [
 name = "blocky-studio"
 version = "0.5.0"
 dependencies = [
+ "dirs",
  "fastembed",
  "regex",
  "reqwest",

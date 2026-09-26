@@ -120,9 +120,7 @@ pub struct Store {
     root: PathBuf,
 }
 pub fn local_root() -> Result<PathBuf, String> {
-    std::env::var_os("LOCALAPPDATA")
-        .map(|root| PathBuf::from(root).join("ai.blocky.studio/rpa/checkpoints"))
-        .ok_or_else(|| IO.into())
+    crate::profile::cli_root().map(|root| root.join("rpa/checkpoints"))
 }
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]

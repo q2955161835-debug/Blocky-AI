@@ -24,6 +24,21 @@ fn main() {
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         _ => {}
     }
+    let mut selected = blocky_studio::profile::from_options(std::env::args_os().skip(1), std::env::var_os(blocky_studio::profile::VARIABLE))
+        .unwrap_or_else(|code| { eprintln!("{code}"); std::process::exit(2); });
+    let mut context = tauri::generate_context!();
+    // Naming the default root explicitly must not create a second instance on it.
+    if selected.as_ref().is_some_and(|root| blocky_studio::profile::is_default(root, &context.config().identifier)) { selected = None; }
+    if let Some(root) = &selected {
+        context.config_mut().identifier = blocky_studio::profile::instance_identifier(&context.config().identifier, root);
+        for window in &mut context.config_mut().app.windows {
+            window.data_directory = Some(root.join("webview2").join(&window.label));
+        }
+    }
+    // Restore saved physical bounds before the first visible frame.
+    for window in &mut context.config_mut().app.windows {
+        if window.label == "main" { window.visible = false; }
+    }
     let builder =
         tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             window_lifecycle::restore(app);
@@ -39,32 +54,34 @@ fn main() {
         .manage(blocky_studio::task_host::TaskHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
-        .setup(|app| {
+        .setup(move |app| {
+            let root = match selected { Some(root) => root, None => app.path().app_local_data_dir()? };
+            app.manage(blocky_studio::profile::DataRoot(root.clone()));
             app.manage(blocky_studio::rpa::RpaHost::with_journal(
-                app.path().app_local_data_dir()?.join("rpa/checkpoints"),
+                root.join("rpa/checkpoints"),
             ));
             app.manage(blocky_studio::agent_data::AgentData::new(
-                app.path().app_local_data_dir()?.join("user/agent-memory"),
+                root.join("user/agent-memory"),
             ));
             app.manage(blocky_studio::conversion::ConversionStore::new(
-                app.path().app_local_data_dir()?.join("conversion"),
+                root.join("conversion"),
             ));
             app.manage(blocky_studio::knowledge::KnowledgeStore::new(
-                app.path().app_local_data_dir()?.join("knowledge"),
+                root.join("knowledge"),
             ));
             app.manage(blocky_studio::user_store::UserStore::new(
-                app.path().app_local_data_dir()?.join("user"),
+                root.join("user"),
             ));
             window_state::restore(app);
             app.manage(blocky_studio::secret_store::SecretStore::new(
-                app.path().app_local_data_dir()?.join("secrets"),
+                root.join("secrets"),
             ));
             app.manage(blocky_studio::log_store::LogStore::open(
-                app.path()
-                    .app_local_data_dir()?
-                    .join("logs/diagnostics.json"),
+                root.join("logs/diagnostics.json"),
             ));
-            window_lifecycle::setup(app)
+            window_lifecycle::setup(app)?;
+            if let Some(window) = app.get_webview_window("main") { window.show()?; }
+            Ok(())
         })
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
@@ -148,7 +165,7 @@ fn main() {
             log_commands::clear_diagnostics,
             log_commands::export_diagnostics
         ])
-        .build(tauri::generate_context!())
+        .build(context)
         .expect("Blocky Studio could not start")
         .run(|app, event| {
             if let tauri::RunEvent::ExitRequested { api, .. } = event {

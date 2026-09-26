@@ -266,6 +266,8 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 
 ## 10. 当前命令与验证
 
+独立资料目录由原生启动环境 `BLOCKY_PROFILE_DIR` 或桌面 `--profile-dir <绝对本地目录>` 选定；桌面参数优先。CLI `profile show --json` 读回稳定目录标识和显式选择状态，不输出本机路径。桌面数据和 WebView2、CLI 各存储共用所选根；路径错误明确停止，不回落默认资料。同根保持单实例。无配置时保留既有默认行为。仅覆盖 `LOCALAPPDATA` 不能隔离桌面 Tauri Known Folder，不得用它进行普通包验收。窗口在恢复保存位置后显示。
+
 当前可用命令从仓库根执行：
 
 ```powershell

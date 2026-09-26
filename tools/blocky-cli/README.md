@@ -21,6 +21,12 @@ $LASTEXITCODE
 
 ## 阶段 6–7 开发命令
 
+### 独立资料目录
+
+启动环境中的 `BLOCKY_PROFILE_DIR` 可指定绝对本地资料目录；桌面另支持 `Blocky Studio.exe --profile-dir <目录>`，参数优先于环境变量。用 `profile show --json` 读回 CLI 资料目录的稳定 `profileId` 和是否显式指定（`custom`）；输出不披露本机路径。路径无效、包含上级跳转、网络路径或目录链接时明确失败，不回落默认目录；`.env` 不自动加载此变量。
+
+选定目录直接保存本资料集的设置、资源、秘密、日志、知识、转换缓存、记忆、恢复记录与自动化回执；桌面 WebView2 数据也进入其 `webview2/`。不同目录使用不同桌面实例标识，同目录保持单实例。项目文件与模型/驱动只读安装资产不迁移；新资料集不会自动复制原密钥或未保存作品。不设置时保留原默认行为。不要用覆盖 `LOCALAPPDATA` 代替桌面此入口：Windows Known Folder 不跟随该子进程变量。
+
 `template list/show` 与欢迎页提供 `state-machine`、`behavior-tree`、`rule-engine`、`hybrid-router` 和 `event-mailbox` 架构起点。它们是可编辑的普通模块积木组合，不要求 Agent 根。状态机记忆和事件队列只保留在当前会话；退出程序或另开 CLI 运行不会保留。事件收件箱用普通输入入队，输入 next 按顺序取出消息。取出后业务失败不自动重投；持久工作流仍在开发。
 
 `run start --inputs-file <inputs.json>` 可替代 `--input`，在同一会话按顺序执行 1–32 个字符串；每项最多 16000 UTF-8 字节，文件最多 128 KiB。用 `schema show blocky.run-inputs/v1 --json` 获取输入结构。失败、拒绝授权或取消后不继续剩余输入，整批共享命令超时；每次模型/工具请求仍遵守原有批准要求。JSONL 输出所有运行事件，最终 `runs` 分别返回结果和运行 ID，`completedInputs/requestedInputs` 表示进度。`--trace-output` 只导出最后一次尝试的运行，响应注明 `traceScope:last-run`；多次输入不能使用单个 `--output` 文件路径。

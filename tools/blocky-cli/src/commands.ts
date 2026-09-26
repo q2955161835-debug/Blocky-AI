@@ -49,6 +49,7 @@ import {
 export const help = {
   version: "0.5.0",
   commands: [
+    "profile show --json",
     ...discoveryHelp,
     ...blockQueryHelp,
     ...productivityHelp,
@@ -88,6 +89,10 @@ export async function dispatch(
   signal: AbortSignal,
 ) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "profile.show") {
+    allow(args, ["json"], 2);
+    return { code: 0, result: envelope(command, { profile: await nativeUserOperation("profile-info", {}, signal) }) };
+  }
   const discovered = discoveryCommand(args, help.commands);
   if (discovered) return discovered;
   const blocks = await blockQueryCommand(args);

@@ -10,6 +10,7 @@ mod patch_links;
 #[cfg(windows)]
 pub(crate) mod process_job;
 pub mod project_store;
+pub mod profile;
 pub mod provider;
 pub mod rpa;
 pub mod secret_store;
