@@ -1,19 +1,19 @@
 import { allow, required, integer, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { nativeUserOperation } from "./native-store";
-import {
-  workflowIdSchema,
-  workflowSummarySchema,
-  workflowDecisionResultSchema,
-} from "./workflow-schema";
+import { workflowReconcile } from "./workflow-reconcile";
+import { workflowDecisionResult } from "./workflow-result";
+import { workflowIdSchema, workflowSummarySchema } from "./workflow-schema";
 
 export const workflowHelp = [
   "workflow list --project-id <id> --json",
   "workflow show <task-id> --project-id <id> --json",
   "workflow decide <task-id> --project-id <id> --revision <number> --step <id> --decision <approve|reject> [--approve <request-digest>] --json",
+  "workflow reconcile <task-id> --project-id <id> --revision <number> --step <id> --direction <forward|rollback> --outcome <completed|not-executed> [--state <checked-state.json>] [--approve <request-digest>] --json",
 ];
 export async function workflowCommand(args: Args, signal: AbortSignal) {
   const command = args.words.slice(0, 2).join(".");
+  if (command === "workflow.reconcile") return workflowReconcile(args, signal);
   if (command === "workflow.decide") {
     allow(
       args,
@@ -37,7 +37,7 @@ export async function workflowCommand(args: Args, signal: AbortSignal) {
       (approval !== undefined && !/^[a-f0-9]{64}$/.test(approval))
     )
       throw new CliError(3, "BLK-WORKFLOW-INVALID", "工作流审批参数无效。");
-    const parsed = workflowDecisionResultSchema.safeParse(
+    const result = workflowDecisionResult(
       await nativeUserOperation(
         "workflow-decide",
         {
@@ -50,30 +50,8 @@ export async function workflowCommand(args: Args, signal: AbortSignal) {
         },
         signal,
       ),
+      { projectId, taskId, revision, approval },
     );
-    if (!parsed.success)
-      throw new CliError(
-        6,
-        "BLK-WORKFLOW-INVALID",
-        "工作流审批响应未通过校验。",
-      );
-    const result = parsed.data;
-    if (
-      result.task.projectId !== projectId ||
-      result.task.taskId !== taskId ||
-      result.applied !== !!approval ||
-      result.task.revision !== revision + (approval ? 1 : 0) ||
-      (approval && result.requestDigest !== approval) ||
-      (!result.applied &&
-        (result.after.projectId !== projectId ||
-          result.after.taskId !== taskId ||
-          result.after.revision !== revision + 1))
-    )
-      throw new CliError(
-        6,
-        "BLK-WORKFLOW-BINDING",
-        "工作流审批响应与请求不一致。",
-      );
     return {
       code: 0,
       result: envelope(command, { ...result, modelApiCalled: false }),

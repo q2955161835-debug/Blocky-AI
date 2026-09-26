@@ -13,6 +13,255 @@ fn definition() -> serde_json::Value {
     json!({"projectId":"project-execution","moduleId":"main","blockId":"flow","planDigest":"a".repeat(64),"runtimeVersion":1,
         "steps":[{"stepId":"effect","kind":"action","compensate":false}]})
 }
+
+#[test]
+fn native_reconciliation_requires_settlement_and_explicit_bound_approval() {
+    for outcome in ["not-executed", "completed"] {
+        let dir = temp();
+        let store = Store::new(dir.path().to_owned()).unwrap();
+        let secret = "reconcile-private-state-canary";
+        store
+            .create("task-reconcile", &definition(), json!({"value":secret}))
+            .unwrap();
+        let mut lease = store.acquire("task-reconcile", &definition(), 1).unwrap();
+        let mut executor = worker();
+        lease.bind_execution(&mut executor).unwrap();
+        executor.resume().unwrap();
+        lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+        let mut request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-reconcile",
+            "projectId":"project-execution","taskId":"task-reconcile","revision":2,"stepId":"effect","direction":"forward","outcome":outcome});
+        if outcome == "completed" {
+            request["state"] = json!({"value":secret,"checked":true});
+        }
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+            "BLK-WORKFLOW-OWNER"
+        );
+        let proof = executor.stop().unwrap();
+        lease.settle_execution(&proof).unwrap();
+        drop(lease);
+        let preview = super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap();
+        assert_eq!(preview["applied"], false);
+        assert_eq!(store.read("task-reconcile").unwrap()["revision"], 2);
+        assert!(!preview.to_string().contains(secret));
+        let mut wrong = request.clone();
+        wrong["approval"] = json!("f".repeat(64));
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &wrong).unwrap_err(),
+            "BLK-WORKFLOW-APPROVAL"
+        );
+        wrong["approval"] = preview["requestDigest"].clone();
+        wrong["direction"] = json!("rollback");
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &wrong).unwrap_err(),
+            "BLK-WORKFLOW-BINDING"
+        );
+        request["approval"] = preview["requestDigest"].clone();
+        let mut changed = request.clone();
+        changed["projectId"] = json!("project-other");
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &changed).unwrap_err(),
+            "BLK-WORKFLOW-BINDING"
+        );
+        if outcome == "completed" {
+            changed = request.clone();
+            changed["state"] = json!({"changed":true});
+            assert_eq!(
+                super::reconciliation::dispatch(dir.path().to_owned(), &changed).unwrap_err(),
+                "BLK-WORKFLOW-APPROVAL"
+            );
+        }
+        let result = super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap();
+        assert_eq!(result["applied"], true);
+        assert_eq!(result["task"]["revision"], 3);
+        assert!(!result.to_string().contains(secret));
+        assert_eq!(result["task"]["resolutions"][0]["outcome"], outcome);
+        assert_eq!(
+            result["task"]["cursor"],
+            if outcome == "completed" { 1 } else { 0 }
+        );
+        assert!(store.execution("task-reconcile").unwrap().is_none());
+        assert_eq!(
+            store.read("task-reconcile").unwrap()["state"]["value"],
+            secret
+        );
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+            "BLK-WORKFLOW-CONFLICT"
+        );
+        store
+            .acquire("task-reconcile", &definition(), 3)
+            .unwrap()
+            .release()
+            .unwrap();
+        let bytes = std::fs::read(dir.path().join("task-task-reconcile.bin")).unwrap();
+        assert!(!bytes.windows(secret.len()).any(|b| b == secret.as_bytes()));
+    }
+}
+
+#[test]
+fn native_reconciliation_accepts_a_settled_compensation_without_replaying_it() {
+    let dir = temp();
+    let store = Store::new(dir.path().to_owned()).unwrap();
+    let mut plan = definition();
+    plan["steps"][0]["compensate"] = json!(true);
+    store
+        .create("task-undo", &plan, json!({"count":0}))
+        .unwrap();
+    let mut lease = store.acquire("task-undo", &plan, 1).unwrap();
+    let mut executor = worker();
+    lease.bind_execution(&mut executor).unwrap();
+    executor.resume().unwrap();
+    lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+    lease
+        .commit(&json!({"kind":"complete","revision":2,"state":{"count":1}}))
+        .unwrap();
+    lease
+        .commit(&json!({"kind":"rollback","revision":3}))
+        .unwrap();
+    lease.commit(&json!({"kind":"begin","revision":4})).unwrap();
+    lease.settle_execution(&executor.stop().unwrap()).unwrap();
+    drop(lease);
+    let mut request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-reconcile",
+        "projectId":"project-execution","taskId":"task-undo","revision":5,"stepId":"effect","direction":"rollback","outcome":"completed","state":{"count":0}});
+    let preview = super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap();
+    request["approval"] = preview["requestDigest"].clone();
+    let result = super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap();
+    assert_eq!(result["task"]["cursor"], -1);
+    assert_eq!(result["task"]["receipts"][0]["status"], "compensated");
+    let mut lease = store.acquire("task-undo", &plan, 6).unwrap();
+    assert_eq!(
+        lease
+            .commit(&json!({"kind":"finish","revision":6}))
+            .unwrap()["status"],
+        "compensated"
+    );
+    lease.release().unwrap();
+}
+
+#[test]
+fn native_reconciliation_rejects_missing_or_unsettled_execution_and_hidden_fields() {
+    for bound in [false, true] {
+        let dir = temp();
+        let store = Store::new(dir.path().to_owned()).unwrap();
+        store
+            .create("task-reconcile", &definition(), json!(null))
+            .unwrap();
+        let mut lease = store.acquire("task-reconcile", &definition(), 1).unwrap();
+        let mut executor = worker();
+        if bound {
+            lease.bind_execution(&mut executor).unwrap();
+            executor.resume().unwrap();
+        }
+        lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+        if bound {
+            let _ = executor.stop().unwrap();
+        }
+        drop(lease);
+        let request = json!({"schemaVersion":"blocky.project-io/v1alpha1","operation":"workflow-reconcile",
+            "projectId":"project-execution","taskId":"task-reconcile","revision":2,"stepId":"effect","direction":"forward","outcome":"not-executed"});
+        assert_eq!(
+            super::reconciliation::dispatch(dir.path().to_owned(), &request).unwrap_err(),
+            "BLK-WORKFLOW-UNCERTAIN"
+        );
+        for field in ["settled", "owner", "state"] {
+            let mut hidden = request.clone();
+            hidden[field] = json!(true);
+            assert_eq!(
+                super::reconciliation::dispatch(dir.path().to_owned(), &hidden).unwrap_err(),
+                "BLK-WORKFLOW-INVALID"
+            );
+        }
+    }
+}
+
+#[test]
+fn native_reconciliation_cli_uses_private_state_file_and_public_summary_only() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap();
+    let dir = temp();
+    let profile = dir.path().join("profile");
+    let store = Store::new(profile.join("workflow")).unwrap();
+    for outcome in ["not-executed", "completed"] {
+        let task = format!("task-{outcome}");
+        store
+            .create(
+                &task,
+                &definition(),
+                json!({"private":"reconcile-cli-canary"}),
+            )
+            .unwrap();
+        let mut lease = store.acquire(&task, &definition(), 1).unwrap();
+        let mut executor = worker();
+        lease.bind_execution(&mut executor).unwrap();
+        executor.resume().unwrap();
+        lease.commit(&json!({"kind":"begin","revision":1})).unwrap();
+        lease.settle_execution(&executor.stop().unwrap()).unwrap();
+        drop(lease);
+        let state = dir.path().join("checked-state.json");
+        std::fs::write(
+            &state,
+            br#"{"private":"reconcile-cli-canary","confirmed":true}"#,
+        )
+        .unwrap();
+        let mut args = vec![
+            "workflow".to_string(),
+            "reconcile".into(),
+            task.clone(),
+            "--project-id".into(),
+            "project-execution".into(),
+            "--revision".into(),
+            "2".into(),
+            "--step".into(),
+            "effect".into(),
+            "--direction".into(),
+            "forward".into(),
+            "--outcome".into(),
+            outcome.into(),
+            "--json".into(),
+        ];
+        if outcome == "completed" {
+            args.extend(["--state".into(), state.to_string_lossy().into_owned()]);
+        }
+        let call = |args: &[String]| {
+            let result = Command::new(root.join("try/stage5/builder-runtime/node.exe"))
+                .arg(root.join("tools/blocky-cli/dist/main.mjs"))
+                .args(args)
+                .env("BLOCKY_PROFILE_DIR", &profile)
+                .creation_flags(0x08000000)
+                .output()
+                .unwrap();
+            let text = String::from_utf8(result.stdout).unwrap();
+            assert!(!text.contains("reconcile-cli-canary"));
+            let value: serde_json::Value =
+                serde_json::from_str(text.lines().last().unwrap()).unwrap();
+            assert!(result.status.success(), "{value}");
+            value["data"].clone()
+        };
+        let preview = call(&args);
+        assert_eq!(preview["applied"], false);
+        args.extend([
+            "--approve".into(),
+            preview["requestDigest"].as_str().unwrap().into(),
+        ]);
+        let applied = call(&args);
+        assert_eq!(applied["applied"], true);
+        assert_eq!(applied["task"]["revision"], 3);
+        assert_eq!(
+            store.read(&task).unwrap()["state"]["private"],
+            "reconcile-cli-canary"
+        );
+        assert_eq!(
+            store.read(&task).unwrap()["state"]
+                .get("confirmed")
+                .is_some(),
+            outcome == "completed"
+        );
+    }
+}
 fn worker() -> Execution {
     Execution::spawn(
         &std::env::current_exe().unwrap(),

@@ -1,7 +1,7 @@
 const captureHint = "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-WORKFLOW-RUNTIME": { message: "受控运行组件缺失或未通过完整性校验。", hint: "开发环境从仓库根运行 pnpm build:cli；安装包请恢复同版本完整 cli 与 builder 目录，保留工作流记录。" },
-  "BLK-WORKFLOW-APPROVAL": { message: "审批摘要与当前任务不一致。", hint: "不带 --approve 重新预检 workflow decide，核对任务、步骤、修订和决定后使用新的 requestDigest。" },
+  "BLK-WORKFLOW-APPROVAL": { message: "审批摘要与当前任务不一致。", hint: "不带 --approve 重新预检原 workflow decide 或 reconcile 命令，核对任务、步骤、修订和决定后使用新的 requestDigest。" },
   "BLK-WORKFLOW-CONFLICT": { message: "工作流修订已改变。", hint: "用 workflow show 读取最新修订，重新核对操作；不要重用旧审批摘要。" },
   "BLK-WORKFLOW-STATE": { message: "当前工作流状态不接受此操作。", hint: "运行 workflow show 查看待审批步骤及状态；仅批准正在等待的步骤。" },
   "BLK-WORKFLOW-CHANNEL": { message: "原生工作流会话未正常结束。", hint: "检查 workflow show 的持久状态；没有完成回执的步骤不可自动重放。" },
@@ -11,7 +11,7 @@ const guidance: Record<string, { message: string; hint: string }> = {
   "BLK-WORKFLOW-STORE": { message: "工作流账本不可读取或未通过完整性校验。", hint: "保留现有记录，检查当前资料目录的文件访问及磁盘状态；不要删除记录后重跑副作用。" },
   "BLK-WORKFLOW-LIMIT": { message: "工作流状态或账本超出容量上限。", hint: "缩小步骤上下文；保留现有检查点，检查任务数量和磁盘占用。" },
   "BLK-WORKFLOW-OWNER": { message: "工作流仍由其他执行会话占用，或无法确认其已退出。", hint: "在原会话停止并核对实际进程状态；不可并发接管。" },
-  "BLK-WORKFLOW-UNCERTAIN": { message: "步骤的实际执行结果尚不确定。", hint: "先核对原执行者、子任务及实际副作用；保留回执，不得自动重放。" },
+  "BLK-WORKFLOW-UNCERTAIN": { message: "步骤的实际执行结果尚不确定。", hint: "先核对原执行者、子任务及实际副作用；有停止凭证时使用 workflow reconcile 预检。缺少凭证仍不可恢复，不得自动重放。" },
   "BLK-RPA-RECORD-001": { message: "录制请求或结果不符合契约。", hint: "查看 blocky.rpa-recording-start/v1 和 result/v1 Schema；同一录制必须保留 projectId/sessionId 和目标绑定，不得添加输入正文。" },
   "BLK-RPA-RECORD-EMPTY": { message: "录制中没有可转换的步骤。", hint: "核对省略计数和目标；重新录制可唯一定位的点击或填写操作，或在面板手动添加步骤。" },
   "BLK-RPA-BROWSER-MISSING": { message: "未找到 Microsoft Edge 浏览器。", hint: "安装 Edge 后重新运行；WebView2 Runtime 不能替代完整浏览器。不会自动安装或使用现有个人浏览器会话。" },

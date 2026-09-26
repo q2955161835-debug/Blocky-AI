@@ -33,6 +33,10 @@ fn execute_value(value: Value) -> Value {
         let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::decision::dispatch(root.join("workflow"), &value));
         return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
     }
+    if value["operation"] == "workflow-reconcile" {
+        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::reconciliation::dispatch(root.join("workflow"), &value));
+        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+    }
     if matches!(value["operation"].as_str(), Some("workflow-list" | "workflow-show")) {
         let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::query::dispatch(root.join("workflow"), &value));
         return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };

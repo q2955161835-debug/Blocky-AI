@@ -65,6 +65,7 @@ it("discovers workflow queries and schemas and reports scoped missing tasks", as
         expect.stringMatching(/^workflow list /),
         expect.stringMatching(/^workflow show /),
         expect.stringMatching(/^workflow decide /),
+        expect.stringMatching(/^workflow reconcile /),
         expect.stringMatching(/^run start .*--workflow-task/),
       ]),
     );
@@ -76,6 +77,30 @@ it("discovers workflow queries and schemas and reports scoped missing tasks", as
     ]);
     expect(schema.value.data.schema.additionalProperties).toBe(false);
     expect(schema.value.data.schema.properties).not.toHaveProperty("state");
+    const reconciliation = call([
+      "schema",
+      "show",
+      "blocky.workflow-reconciliation/v1",
+      "--json",
+    ]);
+    expect(reconciliation.code).toBe(0);
+    const requiredState = call([
+      "workflow",
+      "reconcile",
+      "task-one",
+      "--project-id",
+      "project-one",
+      "--revision",
+      "2",
+      "--step",
+      "step-one",
+      "--direction",
+      "forward",
+      "--outcome",
+      "completed",
+      "--json",
+    ]);
+    expect(requiredState.value.error.code).toBe("BLK-WORKFLOW-INVALID");
     const guidance = call([
       "diagnostics",
       "explain",

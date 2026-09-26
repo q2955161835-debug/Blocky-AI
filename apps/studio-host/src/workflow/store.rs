@@ -338,6 +338,57 @@ impl Store {
             _lock: lease_lock,
         })
     }
+    pub(super) fn reconcile(
+        &self,
+        request: &super::reconciliation::Request<'_>,
+    ) -> Result<Value, String> {
+        use serde_json::json;
+        use sha2::{Digest, Sha256};
+        self.check_root()?;
+        regular(&self.path(request.task)?, MAX_FILE)?;
+        let _lease_lock = lock(&self.root.join(format!("task-{}.lock", request.task)))?;
+        let _lock = self.lock()?;
+        let mut envelope = self.read_unlocked(request.task)?;
+        require(
+            envelope.record["definition"]["projectId"] == request.project,
+            "BLK-WORKFLOW-BINDING",
+        )?;
+        require(
+            envelope.record["revision"] == request.revision,
+            "BLK-WORKFLOW-CONFLICT",
+        )?;
+        require(
+            envelope.record["active"]["stepId"] == request.step
+                && envelope.record["active"]["direction"] == request.direction,
+            "BLK-WORKFLOW-BINDING",
+        )?;
+        // A free task lock and persisted trusted settlement are both required. A dead
+        // owner or a stopped worker without completed service settlement is insufficient.
+        require(
+            envelope.execution.as_ref().is_some_and(Binding::settled),
+            "BLK-WORKFLOW-UNCERTAIN",
+        )?;
+        let after = transition(&envelope.record, &request.action)?;
+        let binding = json!({"schemaVersion":"blocky.workflow-reconciliation/v1","envelope":&envelope,"action":request.action});
+        let mut bytes = serde_json::to_vec(&binding).map_err(|_| INVALID)?;
+        let digest = format!("{:x}", Sha256::digest(&bytes));
+        crate::secret_store::wipe(&mut bytes);
+        if let Some(approval) = request.approval {
+            require(approval == digest, "BLK-WORKFLOW-APPROVAL")?;
+            envelope.record = after;
+            envelope.owner = None;
+            envelope.lease_id = None;
+            envelope.execution = None;
+            self.write_unlocked(&envelope)?;
+            Ok(
+                json!({"applied":true,"requestDigest":digest,"task":protocol::summary(&envelope.record)?}),
+            )
+        } else {
+            Ok(
+                json!({"applied":false,"requestDigest":digest,"task":protocol::summary(&envelope.record)?,"after":protocol::summary(&after)?}),
+            )
+        }
+    }
 }
 impl Lease {
     pub(super) fn bind_execution(&mut self, execution: &mut Execution) -> Result<(), String> {

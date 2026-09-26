@@ -88,3 +88,27 @@ export const workflowDecisionResultSchema = z.discriminatedUnion("applied", [
     })
     .strict(),
 ]);
+
+const reconciliationFields = {
+  projectId: workflowIdSchema,
+  taskId: workflowIdSchema,
+  stepId: workflowIdSchema,
+  revision: z.number().int().min(1).max(65535),
+  direction,
+  approval: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
+};
+export const workflowReconciliationSchema = z.discriminatedUnion("outcome", [
+  z
+    .object({ ...reconciliationFields, outcome: z.literal("not-executed") })
+    .strict(),
+  z
+    .object({
+      ...reconciliationFields,
+      outcome: z.literal("completed"),
+      state: z.json(),
+    })
+    .strict(),
+]);
