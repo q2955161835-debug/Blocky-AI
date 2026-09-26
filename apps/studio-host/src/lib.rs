@@ -5,6 +5,7 @@ mod approval_ledger;
 pub mod conversion;
 pub mod knowledge;
 pub mod log_store;
+pub mod native_confirmation;
 pub mod patch_guard;
 mod patch_links;
 #[cfg(windows)]

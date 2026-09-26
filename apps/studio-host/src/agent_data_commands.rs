@@ -14,8 +14,7 @@ pub async fn agent_memory_authorize(
 ) -> Result<Value, String> {
     guard(&window)?;
     blocky_studio::agent_data::validate_context(&project_id, &session_id)?;
-    let answer=rfd::AsyncMessageDialog::new().set_parent(&window).set_title("批准项目记忆访问").set_description(format!("本次运行将读取、写入和删除此项目在本机保存的记忆。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).set_buttons(rfd::MessageButtons::YesNo).show().await;
-    if answer != rfd::MessageDialogResult::Yes {
+    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目记忆访问", format!("本次运行将读取、写入和删除此项目在本机保存的记忆。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
         return Err("BLK-PERM-001".into());
     }
     guard(&window)?;
@@ -59,16 +58,16 @@ pub async fn agent_tool_call(
     guard(&window)?;
     let preview = request.preflight()?;
     let digest = blocky_studio::agent_data::digest(&request)?;
-    let answer = rfd::AsyncMessageDialog::new().set_parent(&window)
-        .set_title("批准文本分析工具")
-        .set_description(format!(
+    if !blocky_studio::native_confirmation::yes_no(
+        &window,
+        "批准文本分析工具",
+        format!(
             "本机统计文字数量、行数和词数。\n项目：{}\n运行：{}\n输入：{} bytes\n完整请求摘要：{}",
             request.project_id, request.run_id, preview["inputBytes"], digest
-        ))
-        .set_buttons(rfd::MessageButtons::YesNo)
-        .show()
-        .await;
-    if answer != rfd::MessageDialogResult::Yes {
+        ),
+    )
+    .await
+    {
         return Err("BLK-PERM-001".into());
     }
     guard(&window)?;
@@ -118,7 +117,8 @@ pub async fn agent_output_save(
     } else {
         "txt"
     };
-    let picked = rfd::AsyncFileDialog::new().set_parent(&window)
+    let picked = rfd::AsyncFileDialog::new()
+        .set_parent(&window)
         .set_title("导出运行结果")
         .set_file_name(&request.name)
         .add_filter("运行结果", &[extension])
@@ -131,13 +131,13 @@ pub async fn agent_output_save(
     let path = picked.path();
     let exists = path.exists();
     if exists {
-        let answer = rfd::AsyncMessageDialog::new().set_parent(&window)
-            .set_title("确认覆盖文件")
-            .set_description("所选文件已经存在。覆盖将替换文件全部内容。")
-            .set_buttons(rfd::MessageButtons::YesNo)
-            .show()
-            .await;
-        if answer != rfd::MessageDialogResult::Yes {
+        if !blocky_studio::native_confirmation::yes_no(
+            &window,
+            "确认覆盖文件",
+            "所选文件已经存在。覆盖将替换文件全部内容。",
+        )
+        .await
+        {
             return Ok(json!({"saved":false}));
         }
         guard(&window)?;
