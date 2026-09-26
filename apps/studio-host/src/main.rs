@@ -31,13 +31,15 @@ fn main() {
     if selected.as_ref().is_some_and(|root| blocky_studio::profile::is_default(root, &context.config().identifier)) { selected = None; }
     if let Some(root) = &selected {
         context.config_mut().identifier = blocky_studio::profile::instance_identifier(&context.config().identifier, root);
-        for window in &mut context.config_mut().app.windows {
-            window.data_directory = Some(root.join("webview2").join(&window.label));
-        }
     }
     // Restore saved physical bounds before the first visible frame.
+    let mut profile_windows = Vec::new();
     for window in &mut context.config_mut().app.windows {
         if window.label == "main" { window.visible = false; }
+        if selected.is_some() && window.create {
+            profile_windows.push(window.clone());
+            window.create = false;
+        }
     }
     let builder =
         tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
@@ -72,13 +74,20 @@ fn main() {
             app.manage(blocky_studio::user_store::UserStore::new(
                 root.join("user"),
             ));
-            window_state::restore(app);
             app.manage(blocky_studio::secret_store::SecretStore::new(
                 root.join("secrets"),
             ));
             app.manage(blocky_studio::log_store::LogStore::open(
                 root.join("logs/diagnostics.json"),
             ));
+            // Tauri's config conversion does not carry an absolute data directory
+            // into WebviewAttributes. Set it on the native builder after conversion.
+            for config in profile_windows {
+                tauri::WebviewWindowBuilder::from_config(app, &config)?
+                    .data_directory(root.join("webview2").join(&config.label))
+                    .build()?;
+            }
+            window_state::restore(app);
             window_lifecycle::setup(app)?;
             if let Some(window) = app.get_webview_window("main") { window.show()?; }
             Ok(())
