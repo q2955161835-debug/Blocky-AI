@@ -8,6 +8,24 @@ import { createProject, readProject } from "../../tools/blocky-cli/src/native-st
 import { RecordingBuffer } from "../../packages/rpa-core/src/recording";
 
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
+it("reports coordinate risk and applies the same explicit coordinate permission to ordinary blocks", async () => {
+  const dir = await mkdtemp(resolve("try/stage7-coordinate-cli-"));
+  try {
+    const project = createArchitectureStarter("rule-engine"), path = join(dir, "original.blocky"), planPath = join(dir, "plan.json"), patchPath = join(dir, "patch.json"), output = join(dir, "coordinate.blocky");
+    const plan = { schemaVersion: "blocky.rpa/v1", planId: "coordinate", target: { kind: "browser", identity: "https://example.test" }, steps: [{ stepId: "click", action: "click", locator: { kind: "coordinate", x: 50, y: 60, riskAccepted: true }, effectKey: "once" }] };
+    await createProject(path, project); await writeFile(planPath, JSON.stringify(plan));
+    const env = { ...process.env, BLOCKY_PROFILE_DIR: join(dir, "profile") };
+    const validated = run(["rpa", "validate", planPath, "--json"], env);
+    expect(validated.code).toBe(0); expect(validated.result.data.coordinateSpace).toBe("browser-viewport-css-pixels");
+    expect(validated.result.data.warnings[0].code).toBe("BLK-RPA-COORDINATE-RISK");
+    expect(JSON.stringify(run(["schema", "show", "blocky.rpa/v1", "--json"], env).result)).toContain("CSS");
+    expect(run(["rpa", "draft", path, "--plan", planPath, "--module", "main", "--browser-url", "https://example.test/", "--output", patchPath, "--json"], env).code).toBe(0);
+    const patch = JSON.parse(await readFile(patchPath, "utf8")); expect(patch.permissionDelta).toContain("rpa.coordinate");
+    expect(run(["patch", "apply", path, "--patch", patchPath, "--approve-permissions", patch.permissionDelta.filter((p: string) => p !== "rpa.coordinate").join(","), "--output", output, "--json"], env).result.error.code).toBe("BLK-PATCH-003");
+    expect(run(["patch", "apply", path, "--patch", patchPath, "--approve-permissions", patch.permissionDelta.join(","), "--output", output, "--json"], env).code).toBe(0);
+    expect(JSON.stringify(await readProject(output))).toContain('"riskAccepted":true');
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 it("exposes sensitive purpose in schema and preserves it through the same native patch guard", async () => {
   const dir = await mkdtemp(resolve("try/stage7-sensitive-cli-"));
   try {

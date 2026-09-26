@@ -179,7 +179,7 @@ impl Plan {
                     y,
                     risk_accepted,
                 } => {
-                    if !risk_accepted || *x > 32767 || *y > 32767 {
+                    if !risk_accepted || *x > 32767 || *y > 32767 || step.action != Action::Click {
                         return Err("BLK-RPA-LOCATOR-001".into());
                     }
                 }
@@ -216,6 +216,16 @@ impl Plan {
 mod tests {
     use super::*;
     use serde_json::json;
+    #[test]
+    fn coordinates_are_click_only_and_must_be_risk_accepted() {
+        let mut p = fixture();
+        p.steps[0].locator = Locator::Coordinate { x: 10, y: 20, risk_accepted: true };
+        p.validate().unwrap();
+        for action in [Action::Find, Action::Read, Action::Wait, Action::Screenshot] {
+            p.steps[0].action = action;
+            assert_eq!(p.validate().unwrap_err(), "BLK-RPA-LOCATOR-001");
+        }
+    }
     #[test]
     fn sensitive_purpose_is_manual_only_and_survives_plan_roundtrip() {
         let mut raw = serde_json::to_value(fixture()).unwrap();

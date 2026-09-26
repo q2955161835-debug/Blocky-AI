@@ -1,8 +1,10 @@
 import type { Page } from "playwright-core";
 import { CAPTURE_MASK_SELECTOR, concealCaptureInputs } from "./browser-capture-mask";
+import { performBrowserCoordinate, type CoordinateViewport } from "./browser-coordinate";
 import type { RpaAdapter, RpaGrant, RpaPlan, RpaReceipt, RpaStep } from "./index";
 
 export type BrowserRpaPorts = {
+  coordinateViewport?: CoordinateViewport;
   verifyGrant(grant: RpaGrant, plan: RpaPlan, signal: AbortSignal): Promise<boolean>;
   resolveInput?(step: RpaStep, signal: AbortSignal): Promise<string>;
   receiveRead?(stepId: string, text: string): void;
@@ -36,10 +38,7 @@ export class BrowserRpaAdapter implements RpaAdapter {
     if (!await this.verifyTarget(signal)) throw Error("BLK-RPA-TARGET-001");
     if (step.locator.kind === "uia") throw Error("BLK-RPA-LOCATOR-002");
     if (step.locator.kind === "coordinate") {
-      if (step.action !== "click" || !step.locator.riskAccepted) throw Error("BLK-RPA-LOCATOR-003");
-      await this.page.mouse.click(step.locator.x, step.locator.y);
-      signal.throwIfAborted();
-      return;
+      return performBrowserCoordinate(this.page, step, signal, this.ports.coordinateViewport);
     }
     const role = step.locator.role as Parameters<Page["getByRole"]>[0];
     const target = this.page.getByRole(role, { ...(step.locator.name !== undefined ? { name: step.locator.name, exact: true } : {}) });

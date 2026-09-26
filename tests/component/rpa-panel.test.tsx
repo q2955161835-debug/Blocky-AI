@@ -12,6 +12,32 @@ beforeEach(() => {
   io.step.mockResolvedValue({ found: true }); io.pause.mockResolvedValue(undefined); io.resume.mockResolvedValue(undefined); io.stop.mockResolvedValue(undefined);
   io.status.mockResolvedValue({ status: "completed", active: false, receipts: [] });
 });
+it("requires a renewed risk checkbox before each browser coordinate step and preserves the reviewed coordinates", async () => {
+  render(<RpaPanel projectId="coordinate-project" close={vi.fn()} />);
+  expect(screen.queryByText("坐标回退（高风险）")).toBeNull();
+  fireEvent.change(screen.getByLabelText("目标类型"), { target: { value: "browser" } });
+  fireEvent.change(screen.getByLabelText("起始网址"), { target: { value: "https://example.test/" } });
+  fireEvent.click(screen.getByText("坐标回退（高风险）"));
+  const addCoordinate = screen.getByRole("button", { name: "添加坐标点击" }) as HTMLButtonElement;
+  fireEvent.change(screen.getByLabelText("坐标 X"), { target: { value: "50" } });
+  fireEvent.change(screen.getByLabelText("坐标 Y"), { target: { value: "60" } });
+  expect(addCoordinate.disabled).toBe(true);
+  fireEvent.click(screen.getByRole("checkbox", { name: "我已核对坐标并接受误点风险" }));
+  expect(addCoordinate.disabled).toBe(false);
+  fireEvent.change(screen.getByLabelText("坐标 X"), { target: { value: "1100" } });
+  expect(addCoordinate.disabled).toBe(true);
+  fireEvent.click(screen.getByRole("checkbox", { name: "我已核对坐标并接受误点风险" }));
+  expect(addCoordinate.disabled).toBe(true);
+  fireEvent.change(screen.getByLabelText("坐标 X"), { target: { value: "50" } });
+  expect(addCoordinate.disabled).toBe(true);
+  fireEvent.click(screen.getByRole("checkbox", { name: "我已核对坐标并接受误点风险" }));
+  fireEvent.click(addCoordinate);
+  expect(addCoordinate.disabled).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "审阅并运行" }));
+  await waitFor(() => expect(io.authorize).toHaveBeenCalledOnce());
+  expect(io.authorize.mock.calls[0][0].steps[0].locator).toEqual({ kind: "coordinate", x: 50, y: 60, riskAccepted: true });
+  expect(io.authorize.mock.calls[0][0].steps[0].action).toBe("click");
+});
 it("reads saved receipts without granting or replaying execution", async () => {
   io.checkpoints.mockResolvedValue([{ checkpointId: "checkpoint-test", planId: "saved-plan", status: "failed", completedSteps: 0, totalSteps: 1, updatedAtMs: 0, resumable: false, receipts: [{ stepId: "click-once", status: "uncertain" }] }]);
   render(<RpaPanel close={vi.fn()} />);

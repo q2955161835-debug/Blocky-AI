@@ -1,5 +1,6 @@
 import { z } from "zod";
 export { BrowserRpaAdapter, type BrowserRpaPorts } from "./browser";
+export { BROWSER_RPA_VIEWPORT } from "./browser-coordinate";
 export { compileRpaSession, planToRpaBlocks, isRpaSession, isRpaStep, rpaNodePermissions, type RpaInputSource, type RpaModulePlan } from "./language";
 export { type RpaModuleHandle, type RpaModulePorts, readRpaResult } from "./module-ports";
 
@@ -13,7 +14,7 @@ export type RpaCheckpointDelete = z.infer<typeof rpaCheckpointDeleteSchema>;
 const locator = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("browser"), role: z.string().min(1).max(80), name: z.string().max(200).optional() }).strict(),
   z.object({ kind: z.literal("uia"), automationId: z.string().min(1).max(200).optional(), name: z.string().min(1).max(200).optional(), controlType: z.string().min(1).max(80).optional() }).strict(),
-  z.object({ kind: z.literal("coordinate"), x: z.number().int().nonnegative().max(32767), y: z.number().int().nonnegative().max(32767), riskAccepted: z.literal(true) }).strict(),
+  z.object({ kind: z.literal("coordinate"), x: z.number().int().nonnegative().max(32767), y: z.number().int().nonnegative().max(32767), riskAccepted: z.literal(true) }).strict().describe("高风险坐标回退，仅 click；浏览器使用可见页面左上角的 CSS 像素，必须在授权视口内。布局变化可能误点，运行时逐步原生确认。Windows 屏幕坐标尚未接入执行。"),
 ]);
 const action = z.enum(["find", "read", "click", "fill", "wait", "screenshot"]);
 export const rpaPlanSchema = z.object({
@@ -38,6 +39,8 @@ export const rpaPlanSchema = z.object({
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-002", path: ["steps", index, "locator"] });
     if (step.locator.kind === "uia" && !step.locator.automationId && !step.locator.name && !step.locator.controlType)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-001", path: ["steps", index, "locator"] });
+    if (step.locator.kind === "coordinate" && step.action !== "click")
+      ctx.addIssue({ code: "custom", message: "BLK-RPA-LOCATOR-001", path: ["steps", index, "action"] });
     if (step.action === "fill" && !step.value || step.action !== "fill" && step.value)
       ctx.addIssue({ code: "custom", message: "BLK-RPA-INPUT-001", path: ["steps", index, "value"] });
     if (step.value && (step.value.kind === "secret-ref" && !step.value.ref || step.value.kind === "manual-input" && step.value.ref))

@@ -4,11 +4,12 @@ import { chromium, type Browser, type BrowserContext, type Page } from "playwrig
 import { BrowserRpaAdapter } from "./browser";
 import { BrowserRecording } from "./browser-recording";
 import { BrowserCapture } from "./browser-capture";
+import { BROWSER_RPA_VIEWPORT, type CoordinateViewport } from "./browser-coordinate";
 import { rpaGrantSchema, rpaPlanSchema, type RpaGrant, type RpaPlan } from "./index";
 
 const stableId = /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/;
 export type BrowserTarget = { identity: string; projectId: string; origin: string };
-type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void>; recording?: BrowserRecording; capture?: BrowserCapture };
+type Session = { target: BrowserTarget; context: BrowserContext; page: Page; plan?: RpaPlan; grant?: RpaGrant; next: number; failed: boolean; active?: Promise<unknown>; closing?: Promise<void>; recording?: BrowserRecording; capture?: BrowserCapture; coordinateViewport?: CoordinateViewport };
 function clearCapture(session: Session) { session.capture?.clear(); session.capture = undefined; }
 
 /** Private pipe service owned by the native Host. Native approval must precede authorize(). */
@@ -35,7 +36,7 @@ export class BrowserHost {
     this.opening++;
     let context: BrowserContext | undefined;
     try {
-      context = await this.browser.newContext({ acceptDownloads: false, serviceWorkers: "block", permissions: [], viewport: { width: 1100, height: 760 } });
+      context = await this.browser.newContext({ acceptDownloads: false, serviceWorkers: "block", permissions: [], viewport: { ...BROWSER_RPA_VIEWPORT } });
       const origin = url.origin;
       await context.route("**/*", async (route) => {
         let allowed = false;
@@ -86,9 +87,12 @@ export class BrowserHost {
     const plan = rpaPlanSchema.parse(planInput), grant = rpaGrantSchema.parse(grantInput);
     if (session.recording || session.active || session.plan && session.next < session.plan.steps.length || session.target.projectId !== projectId
         || plan.target.kind !== "browser" || plan.target.identity !== identity || grant.targetIdentity !== identity || grant.expiresAt <= Date.now()
-        || plan.steps.some((step) => step.locator.kind !== "browser" || !grant.actions.includes(step.action) || step.value?.kind === "secret-ref"))
+        || plan.steps.some((step) => step.locator.kind === "uia" || step.locator.kind === "coordinate" && !grant.coordinateFallback || !grant.actions.includes(step.action) || step.value?.kind === "secret-ref"))
       throw Error("BLK-RPA-PERM-001");
+    const viewport = session.page.viewportSize();
+    if (plan.steps.some(step => step.locator.kind === "coordinate") && !viewport) throw Error("BLK-RPA-COORDINATE-001");
     clearCapture(session);
+    session.coordinateViewport = grant.coordinateFallback && viewport ? { ...viewport } : undefined;
     session.plan = structuredClone(plan); session.grant = structuredClone(grant); session.next = 0; session.failed = false;
   }
   async startRecording(identity: string, projectId: string, sessionId: string) {
@@ -125,8 +129,10 @@ export class BrowserHost {
     clearCapture(session);
     const result: { text?: string; capture?: ReturnType<BrowserCapture["metadata"]> } = {};
     const adapter = new BrowserRpaAdapter(session.page, session.target.origin, {
+      coordinateViewport: session.coordinateViewport,
       verifyGrant: async (candidate, plan) => candidate.sessionId === session.grant?.sessionId && candidate.targetIdentity === identity
         && candidate.expiresAt === session.grant.expiresAt && Date.now() < candidate.expiresAt && plan.target.identity === identity
+        && candidate.coordinateFallback === session.grant.coordinateFallback
         && JSON.stringify(candidate.actions) === JSON.stringify(session.grant.actions) && JSON.stringify(plan) === JSON.stringify(session.plan),
       resolveInput: async () => input!, receiveRead: (_stepId, text) => { result.text = text; },
       receiveScreenshot: (id, bytes, masked) => { session.capture = new BrowserCapture(id, bytes, masked); result.capture = session.capture.metadata(); },

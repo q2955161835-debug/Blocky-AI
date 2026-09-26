@@ -106,11 +106,17 @@ export async function rpaCommand(args: Args, write: (value: unknown) => void, si
     allow(args, ["json"], 3);
     const result = rpaPlanSchema.safeParse(await readJsonArtifact(args.words[2], 65536));
     if (!result.success) throw new CliError(3, "BLK-RPA-PLAN-001", "RPA 计划无效。", "运行 schema show blocky.rpa/v1 核对字段。") ;
+    const coordinateFallback = result.data.steps.some(step => step.locator.kind === "coordinate");
     return { code: 0, result: envelope(command, {
       planId: result.data.planId, targetKind: result.data.target.kind,
       actions: [...new Set(result.data.steps.map((step) => step.action))],
       steps: result.data.steps.length,
-      coordinateFallback: result.data.steps.some((step) => step.locator.kind === "coordinate"),
+      coordinateFallback,
+      ...(coordinateFallback ? {
+        coordinateSpace: result.data.target.kind === "browser" ? "browser-viewport-css-pixels" : "screen-pixels",
+        warnings: [{ code: "BLK-RPA-COORDINATE-RISK", message: "高风险坐标回退：布局变化可能误点；优先语义定位，执行前需原生逐步确认。" },
+          ...(result.data.target.kind === "windows" ? [{ code: "BLK-RPA-UNSUPPORTED-001", message: "Windows 屏幕坐标尚未接入执行，请使用 UIA 定位。" }] : [])],
+      } : {}),
       requiresAttendedApproval: true, modelApiCalled: false,
     }) };
   }

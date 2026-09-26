@@ -192,7 +192,9 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 .\blocky.cmd diagnostics explain BLK-RPA-LOCATOR-003 --json
 ```
 
-Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。截图已接入同一计划和权限，Windows 真实绘制及普通包仍待验；坐标仍明确报不支持。
+Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。截图已接入同一计划和权限，Windows 真实绘制及普通包仍待验。
+
+浏览器高风险坐标回退仅允许 click：`locator:{"kind":"coordinate","x":50,"y":60,"riskAccepted":true}`。坐标从隔离浏览器可见页面左上角开始，使用 CSS 像素，当前视口 1100×760；不是桌面屏幕坐标。`rpa validate` 返回 `coordinateSpace` 和 `BLK-RPA-COORDINATE-RISK` 警告。运行时完整计划及每步均需原生确认；超界或视口变化拒绝，布局变化仍可能误点，应优先语义定位。转为普通积木时单独审阅 `rpa.coordinate` 权限。Windows 屏幕坐标目前拒绝执行。以上新增路径尚无普通包验收证明。
 
 浏览器计划使用 `target.kind="browser"`，`target.identity` 为起始网址的来源（协议、域名及非默认端口，不含路径）。步骤定位器使用 `{kind:"browser",role:"button",name:"保存"}` 等可访问性角色及精确名称。运行方式：
 

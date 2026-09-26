@@ -251,7 +251,7 @@ impl RpaHost {
                 let mut plan = plan;
                 let target = start.prepare(&mut plan)?;
                 if plan.steps.iter().any(|s| {
-                    !matches!(s.locator, Locator::Browser { .. })
+                    !matches!(s.locator, Locator::Browser { .. } | Locator::Coordinate { .. })
                         || s.value.as_ref().is_some_and(|v| v.kind == "secret-ref")
                 }) {
                     return Err("BLK-RPA-UNSUPPORTED-001".into());
@@ -444,7 +444,8 @@ impl RpaHost {
         }
         let token = format!("rpa-{}", uuid::Uuid::new_v4());
         let expires = now() + 600000;
-        let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity(),"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":false});
+        let coordinate_fallback = prepared.plan.steps.iter().any(|s| matches!(s.locator, Locator::Coordinate { .. }));
+        let grant = json!({"schemaVersion":"blocky.rpa-grant/v1","sessionId":token,"targetIdentity":prepared.target.identity(),"actions":prepared.plan.steps.iter().map(|s|s.action).collect::<Vec<_>>(),"expiresAt":expires,"coordinateFallback":coordinate_fallback});
         let saved = saved
             .map(|saved| {
                 self.journal
@@ -518,7 +519,7 @@ impl RpaHost {
             }
         }
         self.step_with(token, step_id, input, |request,timeout,cancel| {
-            if request.input.is_some() {
+            if request.input.is_some() || request.step.as_ref().is_some_and(|step| matches!(step.locator, Locator::Coordinate { .. })) {
                 let step=request.step.as_ref().ok_or("BLK-RPA-STEP-001")?;
                 let confirm=worker::Input{target:request.target.clone(),capture_path:None,root_id:None,step:None,input:None,approval:Some(input_policy::confirmation(&request.target.label(), step))};
                 process::run(&confirm,300000,cancel.clone())?;
