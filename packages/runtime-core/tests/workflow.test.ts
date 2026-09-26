@@ -66,6 +66,28 @@ const driver = (effects: string[], store: Store): WorkflowDriver => ({
 });
 
 describe("durable workflow boundaries", () => {
+  it("does not treat exception text shaped like an error code as trusted public metadata", async () => {
+    const store = new Store();
+    const failed = await advanceWorkflow(
+      store,
+      "task-owned",
+      definition,
+      {
+        ...driver([], store),
+        async execute() {
+          throw Error("BLK-SYNTHETIC-SECRET-123456");
+        },
+      },
+      idle(),
+    );
+    expect(failed.code).toBe("BLK-WORKFLOW-EFFECT");
+    expect(JSON.stringify(workflowSummary(failed))).not.toContain(
+      "SYNTHETIC-SECRET",
+    );
+    expect(() =>
+      parseWorkflow({ ...failed, code: "BLK-SYNTHETIC-SECRET-123456" }),
+    ).toThrow();
+  });
   it("does not dispatch when the intent cannot be saved or its acknowledgement changes", async () => {
     const effects: string[] = [],
       store = new Store();

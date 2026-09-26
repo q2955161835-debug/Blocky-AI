@@ -124,11 +124,11 @@ export async function advanceWorkflow(
               before: structuredClone(receipt.before!),
               after: structuredClone(receipt.after!),
             });
-    } catch (error) {
-      const code =
-        error instanceof Error && /^BLK-[A-Z0-9-]{3,64}$/.test(error.message)
-          ? error.message
-          : "BLK-WORKFLOW-EFFECT";
+    } catch {
+      // Exception messages are untrusted data even when shaped like stable error codes.
+      const code = signal.aborted
+        ? "BLK-WORKFLOW-CANCELLED"
+        : "BLK-WORKFLOW-EFFECT";
       await persist({ kind: "uncertain", code });
       return record;
     }

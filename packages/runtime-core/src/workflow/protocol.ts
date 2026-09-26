@@ -329,8 +329,8 @@ export function parseWorkflow(value: unknown): WorkflowRecord {
   );
   if (input.code !== undefined)
     requireWorkflow(
-      typeof input.code === "string" &&
-        /^BLK-[A-Z0-9-]{3,64}$/.test(input.code),
+      input.code === "BLK-WORKFLOW-EFFECT" ||
+        input.code === "BLK-WORKFLOW-CANCELLED",
     );
   requireWorkflow(
     Array.isArray(input.resolutions) && input.resolutions.length <= 128,
