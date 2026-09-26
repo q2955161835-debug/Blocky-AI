@@ -158,3 +158,4 @@ export function createStarter(): Project {
     surfaces: {},
   };
 }
+export { createParallelProject } from "./parallel-project";

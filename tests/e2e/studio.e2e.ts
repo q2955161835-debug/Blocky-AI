@@ -587,6 +587,15 @@ describe("Blocky native editor", () => {
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/code-states.png" });
   });
+  it("renders and runs parallel branches in the native editor", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    const state = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadParallelProject());
+    expect(state.canRun).toBe(true);
+    expect(await page.locator(".blocklyDraggable").filter({ hasText: "分支一" }).count()).toBeGreaterThan(0);
+    await page.locator(".run-panel").getByRole("button", { name: "▶ 运行", exact: true }).click();
+    await page.waitForFunction(() => document.querySelector(".answer pre")?.textContent?.includes('"right"'));
+    expect(JSON.parse(await page.locator(".answer pre").innerText())).toEqual(["left", "right"]);
+  });
   it("persists runtime correlation metadata and filters the output view", async () => {
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
     await page.evaluate(() =>

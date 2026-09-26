@@ -109,3 +109,23 @@ export class RunBudget {
     this.parent?.removeEventListener("abort", this.cancel);
   }
 }
+
+export function wait(ms: number, signal: AbortSignal) {
+  if (signal.aborted) return Promise.reject(signal.reason);
+  if (ms <= 0) return Promise.resolve();
+  return new Promise<void>((resolve, reject) => {
+    const end = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", abort);
+    };
+    const abort = () => {
+      end();
+      reject(signal.reason);
+    };
+    const timer = setTimeout(() => {
+      end();
+      resolve();
+    }, ms);
+    signal.addEventListener("abort", abort, { once: true });
+  });
+}

@@ -1,0 +1,5 @@
+[
+  {"type":"core.flow.parallel","label":"并行计算后汇合","category":8,"color":"#9971b5","fields":[],"inputs":["LEFT","RIGHT"],"requiredInputs":["LEFT","RIGHT"],"statement":true},
+  {"type":"core.flow.delay","label":"等待一段时间","category":8,"color":"#9971b5","fields":["MILLISECONDS"],"inputs":[],"statement":true},
+  {"type":"core.flow.fail","label":"报告流程失败","category":8,"color":"#9971b5","fields":[],"inputs":[],"statement":true}
+]

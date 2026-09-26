@@ -19,7 +19,7 @@ import {
   type Adapters,
   type Citation,
 } from "./adapters";
-import { RunBudget, abortable, utf8 } from "./budget";
+import { RunBudget, abortable, utf8, wait } from "./budget";
 import { AgentExecution } from "./agent-execution";
 import { EventMailbox } from "./event-mailbox";
 import type { Generation, OutputFile } from "./agent-context";
@@ -55,7 +55,10 @@ export class Runtime {
   private stepNext = false;
   private breakpoints = new Set<string>();
   pause() {
-    if (this.running) this.paused = true;
+    if (this.running) {
+      this.paused = true;
+      this.stepNext = false;
+    }
   }
   resume() {
     this.paused = false;
@@ -64,7 +67,6 @@ export class Runtime {
   step() {
     if (this.running && this.paused) {
       this.stepNext = true;
-      this.paused = false;
     }
   }
   constructor(options: Options = {}) {
@@ -176,22 +178,25 @@ export class Runtime {
           (selectedEntry === root ? startNode !== handlerHead : selectedEntry.next !== startNode))
         throw Error("BLK-RUN-010");
       const pauseBoundary = async (moduleId?: string, blockId?: string) => {
-        if (blockId && (this.stepNext || this.breakpoints.has(JSON.stringify([moduleId, blockId])))) {
+        if (blockId && this.breakpoints.has(JSON.stringify([moduleId, blockId]))) {
           this.paused = true;
-          this.stepNext = false;
         }
-        if (!this.paused) return;
+        if (!this.paused) return false;
         emit("run.paused", moduleId, blockId, {
           summary: "运行已暂停",
           ...(blockId ? { blockId } : {}),
         });
-        while (this.paused) {
+        while (this.paused && !this.stepNext) {
           await wait(20, signal);
         }
         signal.throwIfAborted();
+        // One permit is consumed synchronously; other parallel waiters stay paused.
+        const stepped = this.paused && this.stepNext;
+        if (stepped) this.stepNext = false;
         emit("run.resumed", moduleId, blockId, { summary: "运行已继续" });
+        return stepped;
       };
-      const execute = async (node: IrNode, moduleId: string): Promise<void> => {
+      const execute = async (node: IrNode, moduleId: string, state: AgentExecution = agent): Promise<void> => {
         signal.throwIfAborted();
         const startedAt = this.monotonicNow();
         // Each chat block starts its own stack. A different entry is a boundary.
@@ -202,7 +207,7 @@ export class Runtime {
           node.nodeId !== entry.interactionId
         )
           return;
-        await pauseBoundary(moduleId, node.nodeId);
+        let stepped = await pauseBoundary(moduleId, node.nodeId);
         runBudget.step();
         emit("block.started", moduleId, node.nodeId, {
           summary: "正在运行",
@@ -214,7 +219,7 @@ export class Runtime {
         try {
           await wait(this.options.delayMs ?? 0, signal);
           signal.throwIfAborted();
-          await pauseBoundary();
+          if (!stepped) stepped = await pauseBoundary();
           let handled: boolean;
           const toolCall = node.blockType === "core.tool.invoke";
           const toolCorrelation = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
@@ -227,7 +232,7 @@ export class Runtime {
               toolCorrelation,
             );
           try {
-            handled = await agent.execute(node, (child) => execute(child, moduleId), reportDetails);
+            handled = await state.execute(node, (child, branch = state) => execute(child, moduleId, branch), reportDetails);
             if (toolCall)
               emit(
                 "tool.completed",
@@ -315,7 +320,7 @@ export class Runtime {
                     n.fields.EXPORT === node.fields.EXPORT,
                 );
                 if (!target || !root) throw Error("BLK-LINK-002");
-                await execute(root, target.moduleId);
+                await execute(root, target.moduleId, state);
                 break;
               }
               case "core.knowledge.retrieve": {
@@ -429,9 +434,9 @@ export class Runtime {
                   correlationId,
                 );
                 try {
-                  const generationCount = agent.generations.length;
+                  const generationCount = state.generations.length;
                   if (
-                    await agent.compose(
+                    await state.compose(
                       resource,
                       role,
                       citations,
@@ -439,7 +444,7 @@ export class Runtime {
                       reportDetails,
                     )
                   ) {
-                    const generation = agent.generations.length > generationCount ? agent.generations.at(-1) : undefined;
+                    const generation = state.generations.length > generationCount ? state.generations.at(-1) : undefined;
                     emit(
                       "model.completed",
                       moduleId,
@@ -507,12 +512,12 @@ export class Runtime {
               case "core.output.answer":
                 style = String(node.fields.STYLE);
                 answer =
-                  agent.generated ?? renderAnswer(citations, style, role);
+                  state.generated ?? renderAnswer(citations, style, role);
                 break;
             }
-          if (node === root && node !== selectedEntry) await execute(startNode, moduleId);
+          if (node === root && node !== selectedEntry) await execute(startNode, moduleId, state);
           else if (node === selectedEntry && startNode === handlerHead && startNode !== selectedEntry)
-            await execute(startNode, moduleId);
+            await execute(startNode, moduleId, state);
           else if (!handled && node.blockType !== "core.message.reply")
             for (const value of Object.values(node.inputs))
               for (const child of value
@@ -520,12 +525,12 @@ export class Runtime {
                   ? value
                   : [value]
                 : [])
-                await execute(child, moduleId);
+                await execute(child, moduleId, state);
           emit("block.completed", moduleId, node.nodeId, {
             summary: "已完成",
             elapsedMs: Math.max(0, Math.floor(this.monotonicNow() - startedAt)),
             ...(details ? { details } : {}),
-            outputType: agent.value === null ? "null" : Array.isArray(agent.value) ? "array" : typeof agent.value,
+            outputType: state.value === null ? "null" : Array.isArray(state.value) ? "array" : typeof state.value,
             budget: {
               steps: runBudget.steps,
               calls: runBudget.calls,
@@ -541,7 +546,9 @@ export class Runtime {
             });
           throw error;
         }
-        if (node.next) await execute(node.next, moduleId);
+        if (stepped && this.paused)
+          emit("run.paused", moduleId, node.nodeId, { summary: "单步已完成", blockId: node.nodeId });
+        if (node.next) await execute(node.next, moduleId, state);
       };
       await execute(root, module.moduleId);
       signal.throwIfAborted();
@@ -605,23 +612,4 @@ function safeCode(error: unknown) {
   return error instanceof Error && /^BLK-[A-Z0-9-]{3,64}$/.test(error.message)
     ? error.message
     : "BLK-RUN-201";
-}
-function wait(ms: number, signal: AbortSignal) {
-  if (signal.aborted) return Promise.reject(signal.reason);
-  if (ms <= 0) return Promise.resolve();
-  return new Promise<void>((resolve, reject) => {
-    const end = () => {
-      clearTimeout(timer);
-      signal.removeEventListener("abort", abort);
-    };
-    const abort = () => {
-      end();
-      reject(signal.reason);
-    };
-    const timer = setTimeout(() => {
-      end();
-      resolve();
-    }, ms);
-    signal.addEventListener("abort", abort, { once: true });
-  });
 }

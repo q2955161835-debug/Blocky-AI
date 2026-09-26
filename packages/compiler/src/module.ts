@@ -1,5 +1,6 @@
 import {
   diagnostic,
+  validateParallelNode,
   stableId,
   parseExpressionProgram,
   validRef,
@@ -36,6 +37,8 @@ export function compileWorkspace(
       try { if (typeof fields.VALUE !== 'string' || new TextEncoder().encode(fields.VALUE).length>32768) throw Error(); JSON.parse(fields.VALUE); }
       catch { diagnostics.push(diagnostic('BLK-TYPE-009','结果必须是有效且有界的 JSON',source)); }
     }
+    if (b.type === "core.flow.delay" && (typeof fields.MILLISECONDS !== "string" || !/^\d+$/.test(fields.MILLISECONDS) || Number(fields.MILLISECONDS) > 30000))
+      diagnostics.push(diagnostic("BLK-FLOW-002", "等待须在 0–30000 毫秒内", source));
     if (b.type === "core.event.send" || b.type === "core.event.receive") {
       if (typeof fields.CHANNEL !== "string" || fields.CHANNEL.length > 128 || !stableId.test(fields.CHANNEL))
         diagnostics.push(diagnostic("BLK-EVENT-001", "事件通道标识无效", source));
@@ -116,13 +119,18 @@ export function compileWorkspace(
         diagnostic("BLK-TYPE-009", "后续连接类型不兼容", source),
       );
     const next = b.next ? compile(b.next.block) : null;
-    return {
+    const node: IrNode = {
       nodeId: b.id,
       blockType: b.type,
       fields,
       inputs,
       ...(next ? { next } : {}),
     };
+    if (b.type === "core.flow.parallel") {
+      try { validateParallelNode(node); }
+      catch (error) { diagnostics.push(diagnostic(error instanceof Error ? error.message : "BLK-FLOW-001", "并行分支仅支持结果、条件、等待和受限嵌套；不能执行共享状态或外部副作用", source)); }
+    }
+    return node;
   };
   const roots = workspace.blocks.blocks
     .map(compile)

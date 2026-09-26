@@ -235,3 +235,4 @@ export type ToolContract = {
   approval: "never" | "on-risk" | "always";
   implementationRef: string;
 };
+export { validateParallelNode } from "./parallel";

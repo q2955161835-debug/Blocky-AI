@@ -1,5 +1,5 @@
 import { createAgentExample } from "@blocky/block-catalog";
-import { createStarter } from "@blocky/test-fixtures";
+import { createStarter, createParallelProject } from "@blocky/test-fixtures";
 import { restoreSession } from "@blocky/project-model";
 import {
   canonicalJson,
@@ -151,6 +151,13 @@ export function install(get: () => Studio) {
       .slice(0, 30);
   };
   const api = {
+    async loadParallelProject() {
+      get().controller.replace(createParallelProject());
+      get().setSession(restoreSession(get().controller.getSnapshot().project, null));
+      get().setStarted(true);
+      await wait(() => !!get().compiled?.interaction.entries.some(e => e.interactionId === "on-parallel") && !!workspace().getBlockById("parallel"));
+      return { canRun: get().compiled?.diagnostics.every(d => d.severity !== "error") };
+    },
     async diagnosticScopeState() {
       const stored = await invoke<{
         records: { scope?: { runId?: string; blockId?: string } }[];

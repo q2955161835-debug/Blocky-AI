@@ -1,4 +1,7 @@
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-FLOW-001": { message: "并行分支包含不支持的操作。", hint: "分支只允许结果、条件、等待、失败和并行积木；共享状态和外部副作用应放在汇合后的顺序步骤。" },
+  "BLK-FLOW-002": { message: "流程超出并行或等待上限。", hint: "嵌套并行最多 4 层，等待为 0–30000 毫秒，汇合结果最多 32768 UTF-8 字节；缩减流程后重新编译。" },
+  "BLK-FLOW-003": { message: "流程主动报告失败。", hint: "通过运行轨迹定位报告失败的积木；其余并行分支结束后运行才会失败，后续步骤不会执行。" },
   "BLK-EVENT-001": { message: "事件通道或等待参数无效。", hint: "通道使用稳定标识，等待时间为 0–30000 毫秒；通过 project compile 定位积木。" },
   "BLK-EVENT-002": { message: "事件队列达到容量上限。", hint: "先接收已有消息或减少负载。会话最多 128 条、总计 256 KiB，每条最多 16000 UTF-8 字节；重启会丢弃未处理消息。" },
   "BLK-RPA-LOCATOR-003": { message: "定位器匹配多个控件。", hint: "补充 automationId、name 或 controlType，使目标唯一；不会自动选择第一个。" },

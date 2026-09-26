@@ -1,6 +1,7 @@
 import {
   stableId,
   canonicalJson,
+  validateParallelNode,
   type IrNode,
   type Json,
   type Project,
@@ -8,7 +9,7 @@ import {
 } from "@blocky/language-schema";
 import { resolveResource, implementationKey } from "@blocky/resource-registry";
 import type { Citation } from "./adapters";
-import { abortable, integer, RunBudget, utf8 } from "./budget";
+import { abortable, integer, RunBudget, utf8, wait } from "./budget";
 import {
   checkGeneration,
   checkGenerationMetadata,
@@ -45,6 +46,12 @@ export class AgentExecution {
     private sessionMemory = new Map<string, Json>(),
     private mailbox = new EventMailbox(),
   ) {}
+  private forkPure(): AgentExecution {
+    const branch = new AgentExecution(this.project, this.question, this.runId, this.sessionId, this.budget);
+    branch.value = structuredClone(this.value);
+    branch.memory = structuredClone(this.memory);
+    return branch;
+  }
   async compose(
     resource: Resource,
     role: string,
@@ -152,11 +159,27 @@ export class AgentExecution {
   }
   async execute(
     node: IrNode,
-    execute: (node: IrNode) => Promise<void>,
+    execute: (node: IrNode, state?: AgentExecution) => Promise<void>,
     report: (details: TraceDetails) => void = () => {},
   ): Promise<boolean> {
     const f = node.fields;
     switch (node.blockType) {
+      case "core.flow.parallel": {
+        validateParallelNode(node);
+        const branches = ["LEFT", "RIGHT"].map(port => ({ node: node.inputs[port] as IrNode, state: this.forkPure() }));
+        const outcomes = await Promise.allSettled(branches.map(branch => execute(branch.node, branch.state)));
+        this.budget.check();
+        const failed = outcomes.find(outcome => outcome.status === "rejected");
+        if (failed?.status === "rejected") throw failed.reason;
+        this.value = branches.map(branch => branch.state.value);
+        if (utf8(JSON.stringify(this.value)) > 32768) throw Error("BLK-FLOW-002");
+        break;
+      }
+      case "core.flow.delay":
+        await wait(integer(f.MILLISECONDS, 0, 30000), this.budget.signal);
+        break;
+      case "core.flow.fail":
+        throw Error("BLK-FLOW-003");
       case "core.event.send": {
         if (!["input", "result"].includes(String(f.SOURCE))) throw Error("BLK-EVENT-001");
         this.mailbox.send(this.project.manifest.projectId, String(f.CHANNEL), f.SOURCE === "input" ? this.question : this.value, this.budget.signal);

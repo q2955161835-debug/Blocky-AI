@@ -4,6 +4,7 @@ import { mkdtemp, writeFile, readFile, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createArchitectureStarter } from "../../packages/block-catalog/src";
 import { createProject } from "../../tools/blocky-cli/src/native-store";
+import { createParallelProject } from "../../packages/test-fixtures/src/parallel-project";
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
 function run(args: string[]) {
   const child = spawnSync(process.execPath, [cli, ...args], {
@@ -21,6 +22,18 @@ function run(args: string[]) {
       .at(-1),
   };
 }
+it("discovers and runs parallel branches through the shared CLI runtime", async () => {
+  const directory = await mkdtemp(resolve("try/stage7-parallel-"));
+  try {
+    const project = join(directory, "parallel.blocky");
+    await createProject(project, createParallelProject());
+    expect(run(["catalog", "show", "core.flow.parallel", "--json"]).code).toBe(0);
+    const result = run(["run", "start", project, "--simulate", "--input", "start", "--jsonl"]);
+    expect(result.code, JSON.stringify(result.result)).toBe(0);
+    expect(result.result.data.structured).toEqual(["left", "right"]);
+    expect(result.result.data.modelApiCalled).toBe(false);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
 it("creates and runs the event mailbox with FIFO results in one CLI session", async () => {
   const directory = await mkdtemp(resolve("try/stage7-mailbox-"));
   try {
