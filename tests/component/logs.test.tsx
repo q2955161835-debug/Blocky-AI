@@ -8,6 +8,54 @@ afterEach(() => {
   vi.useRealTimers();
   delete (window as any).__TAURI_INTERNALS__;
 });
+it("shows corrupt storage health after policy failure and recovers only on explicit clear", async () => {
+  vi.useFakeTimers();
+  let corrupt = true;
+  const calls: string[] = [];
+  (window as any).__TAURI_INTERNALS__ = {
+    invoke: async (name: string) => {
+      calls.push(name);
+      if (name === "clear_diagnostics") corrupt = false;
+      if (name === "configure_diagnostics" && corrupt)
+        throw Error("BLK-LOG-004");
+      return {
+        effectiveMaxBytes: 10485760,
+        storedBytes: 0,
+        records: 0,
+        maxRecords: 100000,
+        health: {
+          corruptStore: corrupt,
+          quarantinePresent: true,
+          quarantinedRecords: 0,
+        },
+      };
+    },
+  };
+  const studio = {
+    session: { outputChannel: "" },
+    setSession: vi.fn(),
+    settings: { ready: true, layers: {} },
+    bus: { subscribe: () => () => {} },
+    setMessage: vi.fn(),
+  } as unknown as Studio;
+  const hook = renderHook(() => useLogs(studio));
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(500);
+  });
+  expect(hook.result.current.stats?.health.corruptStore).toBe(true);
+  expect(studio.setMessage).toHaveBeenLastCalledWith(
+    "诊断存储损坏，请清除本机诊断存储后重试。",
+  );
+  expect(calls).not.toContain("clear_diagnostics");
+  expect(calls).not.toContain("append_diagnostics");
+  await act(async () => {
+    await hook.result.current.clearStorage();
+  });
+  expect(hook.result.current.stats?.health.corruptStore).toBe(false);
+  expect(studio.setMessage).toHaveBeenLastCalledWith(
+    "已清除本机诊断存储，当前视图保留。",
+  );
+});
 it("persists overflow counts after a failed write without exceeding the queue bound", async () => {
   vi.useFakeTimers();
   let receive: (record: any) => void = () => {};
@@ -66,7 +114,19 @@ it("uses the same run filter for the current view and native diagnostic export",
   (window as any).__TAURI_INTERNALS__ = {
     invoke: async (name: string, args: any) => {
       sent.push({ name, args });
-      return name === "export_diagnostics" ? true : {};
+      return name === "export_diagnostics"
+        ? true
+        : {
+            effectiveMaxBytes: 10485760,
+            storedBytes: 0,
+            records: 0,
+            maxRecords: 100000,
+            health: {
+              corruptStore: false,
+              quarantinePresent: false,
+              quarantinedRecords: 0,
+            },
+          };
     },
   };
   const studio = {

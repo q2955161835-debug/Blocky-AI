@@ -417,12 +417,20 @@ impl LogStore {
     }
     pub fn stats(&self) -> Result<Stats, String> {
         let mut state = self.state.lock().map_err(|_| ERROR)?;
-        self.refresh(&mut state)?;
+        // Health must remain observable when reads/writes are blocked until an
+        // explicit clear. Never parse or return quarantined document contents.
+        if !state.health.corrupt_store {
+            self.refresh(&mut state)?;
+        }
         Ok(Stats {
             retention: state.retention,
             max_records: MAX_RECORDS,
             effective_max_bytes: state.retention.max_bytes.min(MAX_DOCUMENT_BYTES),
-            stored_bytes: serde_json::to_vec(&state.data).map_err(|_| ERROR)?.len() as u64,
+            stored_bytes: if state.health.corrupt_store {
+                0
+            } else {
+                serde_json::to_vec(&state.data).map_err(|_| ERROR)?.len() as u64
+            },
             records: state.data.records.len(),
             health: state.health.clone(),
         })

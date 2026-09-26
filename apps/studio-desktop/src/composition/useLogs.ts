@@ -28,6 +28,17 @@ export function useLogs(studio: Studio) {
   const [from, setFrom] = useState(""),
     [to, setTo] = useState(""),
     [stats, setStats] = useState<LogStats>();
+  const corruptStore = useRef(false);
+  const updateStats = (value: LogStats) => {
+    corruptStore.current = value.health.corruptStore;
+    setStats(value);
+  };
+  const reportStorageError = (fallback: string) =>
+    studio.setMessage(
+      corruptStore.current
+        ? "诊断存储损坏，请清除本机诊断存储后重试。"
+        : fallback,
+    );
   const [scopeKey, setScopeKey] = useState<keyof DiagnosticScope>("runId");
   const [scopeValue, setScopeValue] = useState("");
   const policy = useRef(Promise.resolve()),
@@ -49,12 +60,15 @@ export function useLogs(studio: Studio) {
           days,
           maxBytes,
         });
-        setStats(value);
+        updateStats(value);
         policyReady.current = true;
       });
-    void policy.current.catch(() =>
-      studio.setMessage("诊断保留策略未能生效，请检查存储。"),
-    );
+    void policy.current.catch(async () => {
+      await invoke<LogStats>("diagnostic_stats")
+        .then(updateStats)
+        .catch(() => {});
+      reportStorageError("诊断保留策略未能生效，请检查存储。");
+    });
   }, [studio.settings.ready, days, maxBytes]);
   const queue = useRef<DiagnosticRecord[]>([]),
     writing = useRef<Promise<void> | null>(null),
@@ -116,13 +130,13 @@ export function useLogs(studio: Studio) {
     const timer = setInterval(
       () =>
         void flush().catch(() =>
-          studio.setMessage("诊断摘要尚未保存，请检查本机空间。"),
+          reportStorageError("诊断摘要尚未保存，请检查本机空间。"),
         ),
       500,
     );
     const maintenance = setInterval(() => {
       void invoke<LogStats>("diagnostic_stats")
-        .then(setStats)
+        .then(updateStats)
         .catch(() => {});
     }, 10000);
     return () => {
@@ -145,7 +159,7 @@ export function useLogs(studio: Studio) {
         days,
         maxBytes,
       }).then((value) => {
-        setStats(value);
+        updateStats(value);
         policyReady.current = true;
       });
       await policy.current;

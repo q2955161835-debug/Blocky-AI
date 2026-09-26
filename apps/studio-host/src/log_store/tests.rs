@@ -126,8 +126,16 @@ fn broken_document_blocks_until_explicit_clear_and_preserves_evidence() {
     assert!(s.read(None).is_err());
     assert!(s.append(vec![]).is_err());
     assert_eq!(std::fs::read(quarantine_path(&p)).unwrap(), b"{broken");
+    let stats = s.stats().expect("damaged storage must still expose safe health metadata");
+    assert!(stats.health.corrupt_store);
+    assert!(stats.health.quarantine_present);
+    assert_eq!(stats.records, 0);
+    assert_eq!(stats.stored_bytes, 0);
+    assert!(!serde_json::to_string(&stats).unwrap().contains("{broken"));
+    assert!(s.configure(30, 1024).is_err());
     s.clear().unwrap();
     assert!(s.read(None).unwrap().records.is_empty());
+    assert!(!s.stats().unwrap().health.corrupt_store);
     assert_eq!(std::fs::read(quarantine_path(&p)).unwrap(), b"{broken");
 }
 #[test]
