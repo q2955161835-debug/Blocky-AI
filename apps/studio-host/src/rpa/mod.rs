@@ -80,6 +80,7 @@ struct Approval {
 }
 #[derive(Default)]
 pub struct RpaHost {
+    pub recording: recording::Host,
     journal: Option<journal::Store>,
     browsers: browser::Manager,
     sessions: Mutex<HashMap<String, Arc<Slot>>>,
@@ -149,6 +150,7 @@ fn preflight_with_cancel(plan: Plan, cancel: Arc<AtomicBool>) -> Result<Prepared
 impl RpaHost {
     pub fn with_journal(root: std::path::PathBuf) -> Self {
         Self {
+            recording: recording::Host::new(root.parent().unwrap_or(&root).join("recordings")),
             browsers: browser::Manager::new(
                 root.parent().unwrap_or(&root).join("browser-sessions"),
             ),
@@ -784,6 +786,7 @@ impl RpaHost {
             approval.cancel.store(true, Ordering::SeqCst);
         }
         let mut failure = None;
+        if let Err(error)=self.recording.shutdown() { failure.get_or_insert(error); }
         for id in pending {
             if let Err(error) = self.cancel_authorization(&id) {
                 failure.get_or_insert(error);

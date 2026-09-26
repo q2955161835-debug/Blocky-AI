@@ -216,18 +216,86 @@ fn recovery_fixture() {
     // Exit the owning process at a clean step boundary, without a saved grant.
     std::process::exit(0);
 }
+#[test]
+fn journal_retries_brief_replace_denial_without_repeating_effect() {
+    use std::os::windows::fs::OpenOptionsExt;
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let reader = std::fs::OpenOptions::new()
+        .read(true)
+        .share_mode(3)
+        .open(root.path().join(format!("{id}.bin")))
+        .unwrap();
+    let release = std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(80));
+        drop(reader);
+    });
+    let calls = std::sync::atomic::AtomicUsize::new(0);
+    let result = host.step_with(&token, "first", None, |_, _, _| {
+        calls.fetch_add(1, Ordering::SeqCst);
+        Ok(json!({"invoked":true}))
+    });
+    release.join().unwrap();
+    result.unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    assert_eq!(
+        journal::Store::new(root.path().to_owned())
+            .inspect(&id)
+            .unwrap()["completedSteps"],
+        1
+    );
+}
+#[test]
+fn journal_persistent_replace_denial_preserves_receipt_and_prevents_effect() {
+    use std::os::windows::fs::OpenOptionsExt;
+    let root = journal_directory();
+    let host = RpaHost::with_journal(root.path().to_owned());
+    let token = grant(&host);
+    let id = host.status(&token).unwrap()["checkpointId"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let path = root.path().join(format!("{id}.bin"));
+    let before = std::fs::read(&path).unwrap();
+    let reader = std::fs::OpenOptions::new()
+        .read(true)
+        .share_mode(3)
+        .open(&path)
+        .unwrap();
+    let start = std::time::Instant::now();
+    assert_eq!(
+        host.step_with(&token, "first", None, |_, _, _| panic!(
+            "unpersisted intent must never execute"
+        ))
+        .unwrap_err(),
+        "BLK-RPA-JOURNAL-001"
+    );
+    assert!(start.elapsed() < Duration::from_secs(2));
+    assert_eq!(std::fs::read(path).unwrap(), before);
+    drop(reader);
+}
 fn exited_owner_snapshot(root: &std::path::Path) -> journal::Snapshot {
     use std::os::windows::process::CommandExt;
-    let status = std::process::Command::new(std::env::current_exe().unwrap())
+    let output = std::process::Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "rpa::tests::recovery_fixture", "--nocapture"])
         .env("BLOCKY_RPA_JOURNAL_FIXTURE", root)
         .creation_flags(0x08000000)
         .stdin(std::process::Stdio::null())
-        .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::null())
-        .status()
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .output()
         .unwrap();
-    assert!(status.success());
+    assert!(
+        output.status.success(),
+        "owned recovery fixture failed: {} {}",
+        output.status,
+        String::from_utf8_lossy(&output.stderr[..output.stderr.len().min(4096)])
+    );
     let store = journal::Store::new(root.to_owned());
     let summary = store.summaries().unwrap().remove(0);
     store

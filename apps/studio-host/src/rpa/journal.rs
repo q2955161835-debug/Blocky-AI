@@ -50,8 +50,9 @@ impl Snapshot {
             || self.next > self.plan.steps.len()
             || self.receipts.len() > self.plan.steps.len()
             || self.updated_at_ms > 9007199254740991
-            || self.settled && (!["completed", "stopped", "failed"].contains(&self.status.as_str())
-                || self.status == "completed" && self.next != self.plan.steps.len())
+            || self.settled
+                && (!["completed", "stopped", "failed"].contains(&self.status.as_str())
+                    || self.status == "completed" && self.next != self.plan.steps.len())
             || self
                 .owner
                 .as_ref()
@@ -138,10 +139,14 @@ pub fn dispatch(root: PathBuf, value: Value) -> Result<Value, String> {
     }
     let store = Store::new(root);
     if request.operation == "rpa-checkpoint-delete" {
-        if request.checkpoint_id.is_some() || request.plan.is_some() { return Err(BINDING.into()); }
+        if request.checkpoint_id.is_some() || request.plan.is_some() {
+            return Err(BINDING.into());
+        }
         return store.delete(&request.deletion.ok_or(BINDING)?);
     }
-    if request.deletion.is_some() { return Err(BINDING.into()); }
+    if request.deletion.is_some() {
+        return Err(BINDING.into());
+    }
     match request.operation.as_str() {
         "rpa-checkpoints" if request.checkpoint_id.is_none() && request.plan.is_none() => {
             Ok(json!(store.summaries()?))
@@ -272,7 +277,9 @@ impl Store {
         request.validate()?;
         let _lock = self.lock()?;
         let saved = self.read_unlocked(&request.checkpoint_id)?;
-        if saved.revision != request.revision { return Err(CONFLICT.into()); }
+        if saved.revision != request.revision {
+            return Err(CONFLICT.into());
+        }
         super::cleanup::eligible(&saved)?;
         std::fs::remove_file(self.path(&request.checkpoint_id)?).map_err(|_| IO)?;
         Ok(json!({"checkpointId":request.checkpoint_id,"revision":request.revision,"deleted":true}))
@@ -356,7 +363,23 @@ impl Store {
             .and_then(|_| temp.write_all(&encrypted))
             .and_then(|_| temp.as_file().sync_all())
             .map_err(|_| IO)?;
-        temp.persist(path).map_err(|_| IO)?;
+        // Windows can briefly refuse replacement while a reader holds the old
+        // file without delete sharing. Retry only this atomic rename, retaining
+        // the same encrypted bytes and journal lock; never rerun an effect.
+        let deadline = std::time::Instant::now();
+        loop {
+            match temp.persist(&path) {
+                Ok(_) => break,
+                Err(failure)
+                    if matches!(failure.error.raw_os_error(), Some(5 | 32 | 33))
+                        && deadline.elapsed() < std::time::Duration::from_millis(250) =>
+                {
+                    temp = failure.file;
+                    std::thread::sleep(std::time::Duration::from_millis(10));
+                }
+                Err(_) => return Err(IO.into()),
+            }
+        }
         Ok(snapshot.revision)
     }
 }

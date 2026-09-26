@@ -3,6 +3,6 @@
   "version": "0.5.0",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts",
+  "exports": { ".": "./src/index.ts", "./recording": "./src/recording.ts" },
   "dependencies": { "@blocky/language-schema": "workspace:*", "zod": "4.4.3", "playwright-core": "1.63.0" }
 }

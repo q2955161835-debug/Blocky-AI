@@ -11,6 +11,28 @@ fn main_window(window: &tauri::WebviewWindow) -> Result<(), String> {
     Ok(())
 }
 #[tauri::command]
+pub async fn rpa_record_start(window:tauri::WebviewWindow,request:rpa::recording::Request)->Result<Value,String> {
+    visible(&window)?;main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move||{
+        visible(&window)?;
+        let host=window.state::<RpaHost>();
+        let project_id=request.project_id.clone();let session_id=request.session_id.clone();
+        let status=host.recording.start(request)?;
+        if let Err(code)=visible(&window) {host.recording.stop(&project_id,&session_id)?;return Err(code);}
+        Ok(status)
+    }).await.map_err(|_|"BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_record_status(window:tauri::WebviewWindow,project_id:String,session_id:String)->Result<Value,String> {
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move||window.state::<RpaHost>().recording.status(&project_id,&session_id)).await.map_err(|_|"BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
+pub async fn rpa_record_stop(window:tauri::WebviewWindow,project_id:String,session_id:String)->Result<Value,String> {
+    main_window(&window)?;
+    tauri::async_runtime::spawn_blocking(move||window.state::<RpaHost>().recording.stop(&project_id,&session_id)).await.map_err(|_|"BLK-RPA-WORKER-001")?
+}
+#[tauri::command]
 pub fn rpa_targets(window: tauri::WebviewWindow) -> Result<Vec<rpa::target::Target>, String> {
     visible(&window)?;
     Ok(rpa::target::list())

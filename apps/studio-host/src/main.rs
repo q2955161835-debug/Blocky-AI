@@ -96,6 +96,9 @@ fn main() {
         .on_window_event(window_lifecycle::window_event)
         .invoke_handler(tauri::generate_handler![
             rpa_commands::rpa_targets,
+            rpa_commands::rpa_record_start,
+            rpa_commands::rpa_record_status,
+            rpa_commands::rpa_record_stop,
             rpa_commands::rpa_checkpoints,
             rpa_commands::rpa_checkpoint,
             rpa_commands::rpa_checkpoint_delete,

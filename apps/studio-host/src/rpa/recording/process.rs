@@ -41,12 +41,14 @@ impl RecordingProcess {
             .arg("--blocky-rpa-recording-worker")
             .current_dir(exe.parent().ok_or("BLK-RPA-WORKER-001")?);
         let mut process = PipeProcess::spawn(command, None, SCHEMA, cancel.clone())?;
-        let status = process.request(
-            json!({"kind":"start","target":target,"options":options}),
-            5000,
-            cancel,
-        )?;
-        validate_status(&status, &options)?;
+        let initialized = process
+            .request(
+                json!({"kind":"start","target":target,"options":options}),
+                5000,
+                cancel,
+            )
+            .and_then(|status| validate_status(&status, &options));
+        settle_initialization(initialized, || process.terminate())?;
         Ok(Self { process, options })
     }
     pub fn status(&mut self, cancel: Arc<AtomicBool>) -> Result<Value, String> {
@@ -79,7 +81,38 @@ impl RecordingProcess {
         self.process.child_exited()
     }
 }
-fn validate_status(value: &Value, options: &Options) -> Result<(), String> {
+fn settle_initialization(
+    result: Result<(), String>,
+    settle: impl FnOnce() -> Result<(), String>,
+) -> Result<(), String> {
+    if let Err(code) = result {
+        settle()?;
+        return Err(code);
+    }
+    Ok(())
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn initialization_failure_preserves_unconfirmed_settlement() {
+        for failure in ["BLK-RPA-UIA-001", "BLK-RPA-WIRE-001"] {
+            assert_eq!(
+                settle_initialization(Err(failure.into()), || Err("BLK-RPA-SETTLEMENT-001".into()))
+                    .unwrap_err(),
+                "BLK-RPA-SETTLEMENT-001"
+            );
+            assert_eq!(
+                settle_initialization(Err(failure.into()), || Ok(())).unwrap_err(),
+                failure
+            );
+        }
+        assert!(
+            settle_initialization(Ok(()), || panic!("live worker must remain running")).is_ok()
+        );
+    }
+}
+pub(super) fn validate_status(value: &Value, options: &Options) -> Result<(), String> {
     let valid = value.as_object().is_some_and(|o| {
         o.keys().all(|k| {
             [
@@ -94,13 +127,16 @@ fn validate_status(value: &Value, options: &Options) -> Result<(), String> {
             .contains(&k.as_str())
         })
     }) && value["sessionId"] == options.session_id
-        && matches!(value["state"].as_str(), Some("recording" | "stopped"))
+        && matches!(
+            value["state"].as_str(),
+            Some("recording" | "stopping" | "stopped")
+        )
         && value["count"].as_u64().is_some_and(|n| n <= 100)
         && value["omitted"].as_u64().is_some_and(|n| n <= 10000)
         && value["startedAt"].as_u64().is_some_and(|n| {
             n <= 9007199254140991 && value["expiresAt"].as_u64() == Some(n + 600000)
         })
-        && if value["state"] == "stopped" {
+        && if value["state"] == "stopped" || value.get("reason").is_some() {
             matches!(
                 value["reason"].as_str(),
                 Some("stopped" | "expired" | "limit" | "target-lost" | "capture-failed")

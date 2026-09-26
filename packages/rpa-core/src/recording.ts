@@ -19,6 +19,17 @@ export const rpaRecordedActionSchema = z.object({
 const optionsSchema = z.object({
   sessionId: id, projectId: id, target: rpaPlanSchema.shape.target,
 }).strict();
+export const rpaRecordingStartSchema = optionsSchema.extend({
+  schemaVersion: z.literal("blocky.rpa-recording-start/v1"),
+  url: z.string().max(4096).optional(),
+}).strict().superRefine((request, ctx) => {
+  let valid = request.target.kind === "windows" && request.url === undefined;
+  if (request.target.kind === "browser" && request.url) {
+    try { const url = new URL(request.url); valid = ["http:", "https:"].includes(url.protocol) && !url.username && !url.password && url.origin === request.target.identity; } catch { /* reject */ }
+  }
+  if (!valid) ctx.addIssue({ code: "custom", message: "BLK-RPA-TARGET-001" });
+});
+export type RpaRecordingStart = z.output<typeof rpaRecordingStartSchema>;
 export const rpaRecordingResultSchema = optionsSchema.extend({
   schemaVersion: z.literal("blocky.rpa-recording-result/v1"),
   requiresReview: z.literal(true),

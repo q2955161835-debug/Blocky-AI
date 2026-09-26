@@ -12,7 +12,7 @@ use std::{
     },
 };
 const WIRE: &str = "BLK-RPA-WIRE-001";
-pub(super) fn start(root: &Path, cancel: Arc<AtomicBool>) -> Result<PipeProcess, String> {
+pub(in crate::rpa) fn start(root: &Path, cancel: Arc<AtomicBool>) -> Result<PipeProcess, String> {
     if cancel.load(Ordering::SeqCst) {
         return Err("BLK-RPA-CANCELLED".into());
     }

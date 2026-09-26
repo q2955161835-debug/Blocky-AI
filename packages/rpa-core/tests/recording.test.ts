@@ -1,5 +1,13 @@
 import { expect, it } from "vitest";
-import { RecordingBuffer, rpaRecordingResultSchema } from "../src/recording";
+import { RecordingBuffer, rpaRecordingResultSchema, rpaRecordingStartSchema } from "../src/recording";
+
+it("binds recording consent to one project and origin without accepting input fields", () => {
+  const start = { schemaVersion:"blocky.rpa-recording-start/v1",sessionId:"recording-one",projectId:"project-one",target:{kind:"browser",identity:"https://example.invalid"},url:"https://example.invalid/form" };
+  expect(rpaRecordingStartSchema.safeParse(start).success).toBe(true);
+  for (const request of [{...start,url:"https://other.invalid/form"},{...start,url:"https://user:password@example.invalid/form"},{...start,input:"PRIVATE"},{...start,target:{kind:"windows",identity:"window-one"}}]) {
+    expect(rpaRecordingStartSchema.safeParse(request).success).toBe(false);
+  }
+});
 
 const options = {
   sessionId: "recording-one", projectId: "project-one",
