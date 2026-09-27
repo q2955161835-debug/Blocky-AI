@@ -1,9 +1,10 @@
 import {it,expect} from 'vitest';
-import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {mkdir,mkdtemp,readFile,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 it('installs the pinned desktop worker beside release binaries and rejects destinations outside the workspace',async()=>{
+ await mkdir(resolve('try'),{recursive:true});
  const directory=await mkdtemp(resolve('try/desktop-assets-'));
  try {
   const installed=spawnSync(process.execPath,['scripts/install-runtime-worker.mjs',directory],{encoding:'utf8',windowsHide:true});
