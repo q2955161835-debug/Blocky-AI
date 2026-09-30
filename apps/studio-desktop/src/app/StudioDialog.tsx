@@ -18,7 +18,6 @@ export type Popup =
         | "resources"
         | "annotation"
         | "about"
-        | "builder"
         | "rpa"
         | ConstructionKind;
       x?: number;

@@ -8,6 +8,15 @@ import {
   cycleTab,
   moveTab,
 } from "../src/tabs";
+it("defaults to a closed bottom panel and round-trips sidebar visibility, size and active tool without changing the project", () => {
+  const project = createStarter(), before = JSON.stringify(project);
+  const session = restoreSession(project, null);
+  expect(session).toMatchObject({ panel: false, leftVisible: true, rightVisible: true, rightView: "agent" });
+  const saved = serializeSession(project, { ...session, leftVisible: false, rightVisible: false, rightView: "builder", leftWidth: 650, rightWidth: 700, height: 610, panel: true });
+  expect(restoreSession(project, saved)).toMatchObject({ panel: true, height: 610, leftVisible: false, rightVisible: false, rightView: "builder", leftWidth: 650, rightWidth: 700 });
+  expect(restoreSession(project, { ...session, rightView: "invalid", leftWidth: Infinity }).rightView).toBe("agent");
+  expect(JSON.stringify(project)).toBe(before);
+});
 it("restores closed tabs, MRU and panel layout as session-only data", () => {
   const p = createStarter(),
     before = JSON.stringify(p);

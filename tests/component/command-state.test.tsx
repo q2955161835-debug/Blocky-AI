@@ -67,12 +67,14 @@ it("opens an anchored file menu, switches menus, and keeps the command center se
 });
 it("executes menu commands through the same project actions", async () => {
   render(<App />);
+  await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("menuitem", { name: "文件" }));
   const menu = screen.getByRole("menu", { name: "文件" });
   fireEvent.keyDown(menu, { key: "ArrowDown" });
   expect(document.activeElement).toBe(
     within(menu).getByRole("menuitem", { name: /打开项目/ }),
   );
+  await waitFor(() => expect((within(menu).getByRole("menuitem", { name: /新建项目/ }) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(within(menu).getByRole("menuitem", { name: /新建项目/ }));
   expect(screen.queryByRole("menu")).toBeNull();
   expect(await screen.findByLabelText("画布名称")).toBeTruthy();
@@ -85,18 +87,19 @@ it("disables both runtime controls while saving and restores them after cancella
     }),
   );
   render(<App />);
+  await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
   await waitFor(() =>
     expect(
       screen
-        .getAllByRole("button", { name: "▶ 运行" })
+        .getAllByRole("button", { name: /^(▶ )?运行$/ })
         .every((b) => !(b as HTMLButtonElement).disabled),
     ).toBe(true),
   );
-  fireEvent.click(screen.getByRole("button", { name: "保存" }));
+  fireEvent.click(screen.getByRole("button", { name: "保存项目" }));
   expect(
     screen
-      .getAllByRole("button", { name: "▶ 运行" })
+      .getAllByRole("button", { name: /^(▶ )?运行$/ })
       .every((b) => (b as HTMLButtonElement).disabled),
   ).toBe(true);
   await act(async () => {
@@ -104,15 +107,16 @@ it("disables both runtime controls while saving and restores them after cancella
   });
   expect(
     screen
-      .getAllByRole("button", { name: "▶ 运行" })
+      .getAllByRole("button", { name: /^(▶ )?运行$/ })
       .every((b) => !(b as HTMLButtonElement).disabled),
   ).toBe(true);
 });
 
 it("keeps the context block target when opening the menu clears canvas focus", async () => {
   render(<App />);
+  await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
-  await waitFor(() => expect((screen.getAllByRole("button", { name: "▶ 运行" })[0] as HTMLButtonElement).disabled).toBe(false));
+  await waitFor(() => expect((screen.getAllByRole("button", { name: /^(▶ )?运行$/ })[0] as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("button", { name: "测试积木右键" }));
   const dialog = screen.getByRole("dialog", { name: "上下文菜单" });
   await waitFor(() => expect((within(dialog).getByRole("button", { name: /从所选积木运行/ }) as HTMLButtonElement).disabled).toBe(false));

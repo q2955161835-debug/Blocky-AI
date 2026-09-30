@@ -1,58 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { resolveSetting } from "@blocky/settings-core";
 import { isUserOnlineModel } from "@blocky/resource-registry";
 import type { Studio } from "../composition/useStudio";
 import type { Builder, BuilderInput } from "../composition/useBuilder";
-export function BuilderDialog({
+export function BuilderPanel({
   studio,
   builder,
   createSurface,
+  setCreateSurface,
   review,
-  close,
 }: {
   studio: Studio;
   builder: Builder;
   createSurface: boolean;
+  setCreateSurface(value: boolean): void;
   review(): void;
-  close(): void;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const [intent, setIntent] = useState<BuilderInput["intent"]>("build"),
     [prompt, setPrompt] = useState(""),
-    [surface, setSurface] = useState(createSurface),
     [modeOverride, setMode] = useState<BuilderInput["mode"]>(),
     [resourceOverride, setResourceId] = useState<string>();
-  const defaultResourceId = resolveSetting("models.defaultResourceId", studio.settings.layers).value;
+  const defaultResourceId = resolveSetting(
+    "models.defaultResourceId",
+    studio.settings.layers,
+  ).value;
   const mode = modeOverride ?? (defaultResourceId ? "live" : "deterministic");
   const resourceId = resourceOverride ?? defaultResourceId;
-  useEffect(() => {
-    dialog.current?.showModal();
-  }, []);
   const models = [...studio.resources.map.values()].filter(isUserOnlineModel);
   const ready = studio.settings.ready && studio.resources.ready;
-  const availableModel = models.some(model => model.resourceId === resourceId);
-  const missingDefault = ready && mode === "live" && resourceId === defaultResourceId && !!resourceId && !availableModel;
-  const dismiss = () => {
-    builder.clear();
-    close();
-  };
+  const availableModel = models.some(
+    (model) => model.resourceId === resourceId,
+  );
+  const missingDefault =
+    ready &&
+    mode === "live" &&
+    resourceId === defaultResourceId &&
+    !!resourceId &&
+    !availableModel;
   const result = builder.result;
   return (
-    <dialog
-      ref={dialog}
-      className="popup construction-dialog builder-dialog"
-      aria-label="Blocky 构建助手"
-      onCancel={(e) => {
-        e.preventDefault();
-        dismiss();
-      }}
-    >
-      <header>
-        <strong>Blocky 构建助手</strong>
-        <button aria-label="关闭构建助手" onClick={dismiss}>
-          ×
-        </button>
-      </header>
+    <section className="builder-panel" aria-label="Blocky 构建助手">
       <div className="settings">
         <label>
           操作
@@ -113,7 +100,11 @@ export function BuilderDialog({
               }}
             >
               <option value="">选择已配置模型</option>
-              {resourceId && !availableModel && <option value={resourceId} disabled>默认模型不可用</option>}
+              {resourceId && !availableModel && (
+                <option value={resourceId} disabled>
+                  默认模型不可用
+                </option>
+              )}
               {models.map((r) => (
                 <option key={r.resourceId} value={r.resourceId}>
                   {r.displayName}
@@ -122,7 +113,11 @@ export function BuilderDialog({
             </select>
           </label>
         )}
-        {missingDefault && <p role="alert">默认模型不可用，请在设置中重新选择，或为本次构建选择其他模型。</p>}
+        {missingDefault && (
+          <p role="alert">
+            默认模型不可用，请在设置中重新选择，或为本次构建选择其他模型。
+          </p>
+        )}
         {mode === "deterministic" && (
           <p className="muted">
             本地模拟支持角色调整和选择解释，不调用外部模型。
@@ -132,11 +127,11 @@ export function BuilderDialog({
           <label>
             <input
               type="checkbox"
-              checked={surface}
+              checked={createSurface}
               disabled={builder.busy}
               onChange={(e) => {
                 builder.clear();
-                setSurface(e.target.checked);
+                setCreateSurface(e.target.checked);
               }}
             />
             为这个 Agent 创建应用界面，仅本地预览
@@ -145,13 +140,20 @@ export function BuilderDialog({
         <div className="actions">
           <button
             disabled={
-              builder.busy || !ready || !prompt.trim() || (mode === "live" && !availableModel)
+              builder.busy ||
+              studio.busy ||
+              studio.running ||
+              studio.exiting ||
+              !studio.snapshot.project.workspaces[studio.session.active] ||
+              !ready ||
+              !prompt.trim() ||
+              (mode === "live" && !availableModel)
             }
             onClick={() =>
               void builder.generate({
                 intent,
                 prompt,
-                createSurface: surface,
+                createSurface,
                 mode,
                 resourceId,
               })
@@ -225,6 +227,6 @@ export function BuilderDialog({
           </section>
         )}
       </div>
-    </dialog>
+    </section>
   );
 }

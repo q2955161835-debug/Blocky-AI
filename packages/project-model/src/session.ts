@@ -20,6 +20,9 @@ export type Session = {
   width: number;
   leftWidth: number;
   rightWidth: number;
+  leftVisible: boolean;
+  rightVisible: boolean;
+  rightView: "agent" | "builder";
   outputChannel: string;
   terminalDirection: "single" | "horizontal" | "vertical";
   recentTabs: string[];
@@ -91,6 +94,9 @@ export function restoreSession(project: Project, input: unknown): Session {
         width: panel.widthPx,
         leftWidth: object(raw.sidebars).leftWidth,
         rightWidth: object(raw.sidebars).rightWidth,
+        leftVisible: object(raw.sidebars).leftVisible,
+        rightVisible: object(raw.sidebars).rightVisible,
+        rightView: object(raw.sidebars).rightView,
         outputChannel: object(panel.filters).channel,
         terminalDirection: object(raw.terminalLayout).direction,
         recentTabs: raw.recentTabs,
@@ -134,8 +140,11 @@ export function restoreSession(project: Project, input: unknown): Session {
     maximized: raw.maximized === true,
     dock: raw.dock === "right" ? "right" : "bottom",
     width: bounded(raw.width, 360, 240, 700),
-    leftWidth: bounded(raw.leftWidth, 240, 180, 400),
-    rightWidth: bounded(raw.rightWidth, 340, 240, 520),
+    leftWidth: bounded(raw.leftWidth, 240, 180, 1200),
+    rightWidth: bounded(raw.rightWidth, 340, 240, 1200),
+    leftVisible: raw.leftVisible !== false,
+    rightVisible: raw.rightVisible !== false,
+    rightView: raw.rightView === "builder" ? "builder" : "agent",
     outputChannel: [
       "runtime",
       "compiler",
@@ -159,14 +168,14 @@ export function restoreSession(project: Project, input: unknown): Session {
       typeof raw.active === "string" && tabs.includes(raw.active)
         ? raw.active
         : (tabs[0] ?? ""),
-    panel: raw.panel !== false,
+    panel: raw.panel === true,
     view: ["problems", "logs", "terminal", "output"].includes(String(raw.view))
       ? (raw.view as Session["view"])
       : "problems",
     height: Math.max(
       120,
       Math.min(
-        480,
+        1200,
         typeof raw.height === "number" && Number.isFinite(raw.height)
           ? raw.height
           : 210,
@@ -212,7 +221,7 @@ export function serializeSession(project: Project, session: Session) {
     browserViews: [],
     recentTabs: s.recentTabs,
     closedTabs: s.closedTabs,
-    sidebars: { leftWidth: s.leftWidth, rightWidth: s.rightWidth },
+    sidebars: { leftWidth: s.leftWidth, rightWidth: s.rightWidth, leftVisible: s.leftVisible, rightVisible: s.rightVisible, rightView: s.rightView },
     terminalLayout: { direction: s.terminalDirection, sessionIds: [] },
   };
 }

@@ -60,6 +60,8 @@ const specs: [string, CommandDefinition["category"], string, string][] = [
   ["view.move-tab-left", "view", "标签左移", ""],
   ["view.move-tab-right", "view", "标签右移", ""],
   ["view.toggle-bottom-panel", "view", "切换底部面板", "Ctrl+J"],
+  ["view.toggle-left-sidebar", "view", "切换左侧积木库", "Ctrl+B"],
+  ["view.toggle-right-sidebar", "view", "切换右侧面板", "Ctrl+Alt+B"],
   ["view.show-problems", "view", "问题", ""],
   ["view.show-run-log", "view", "运行日志", ""],
   ["view.back", "view", "返回上一位置", "Alt+ArrowLeft"],

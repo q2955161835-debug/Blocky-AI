@@ -1,6 +1,7 @@
 import type { Studio } from "../composition/useStudio";
 import { officialStarters, architectureStarters } from "@blocky/block-catalog";
 export function Welcome({ studio: s }: { studio: Studio }) {
+  const creatingDisabled = s.busy || !s.settings.ready || !s.resources.ready;
   return (
     <section className="welcome">
       {(s.recovery.candidate || s.recovery.error) && (
@@ -36,12 +37,12 @@ export function Welcome({ studio: s }: { studio: Studio }) {
         </h1>
         <p>用积木组合角色、资料和工具，构建你的 AI 项目。</p>
         <div className="welcome-actions">
-          <button className="primary" onClick={s.fresh}>
+          <button className="primary" disabled={creatingDisabled} onClick={s.fresh}>
             ＋ 新建项目
           </button>
           <button onClick={() => void s.open()}>打开本机项目</button>
           <button
-            disabled={s.busy}
+            disabled={creatingDisabled}
             onClick={() => void s.startBlueprint("agent-loop")}
           >
             文本分析 Agent
@@ -53,7 +54,7 @@ export function Welcome({ studio: s }: { studio: Studio }) {
           <button
             key={starter.id}
             className="starter-card"
-            disabled={s.busy}
+            disabled={creatingDisabled}
             onClick={() => void s.startBlueprint(starter.id)}
           >
             <small>蓝图 {String(index + 1).padStart(2, "0")}</small>
@@ -74,7 +75,7 @@ export function Welcome({ studio: s }: { studio: Studio }) {
           <button
             key={starter.id}
             className="starter-card"
-            disabled={s.busy}
+            disabled={creatingDisabled}
             onClick={() => void s.startBlueprint(starter.id)}
           >
             <small>架构起点</small>

@@ -144,7 +144,7 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
             <input
               type="range"
               min="180"
-              max="400"
+              max="1200"
               value={s.session.leftWidth}
               onChange={(e) =>
                 s.setSession((v) => ({
@@ -159,7 +159,7 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
             <input
               type="range"
               min="240"
-              max="520"
+              max="1200"
               value={s.session.rightWidth}
               onChange={(e) =>
                 s.setSession((v) => ({

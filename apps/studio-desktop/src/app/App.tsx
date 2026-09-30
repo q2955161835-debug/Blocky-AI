@@ -11,11 +11,6 @@ import { activateTab, closeTab, renameModule, findBlock } from "@blocky/project-
 import { projectCommands } from "../composition/projectCommands";
 import { Canvas, type CanvasHandle } from "@blocky/ui-editor";
 import { useStudio } from "../composition/useStudio";
-import { Inspector } from "./Inspector";
-import { RunPanel } from "./RunPanel";
-import { ProjectMap } from "./ProjectMap";
-import { EditorTools } from "./EditorTools";
-import { StarterGuide } from "./StarterGuide";
 import { BottomPanel } from "./BottomPanel";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import {
@@ -24,7 +19,6 @@ import {
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
 import { useBuilder } from "../composition/useBuilder";
-import { BuilderDialog } from "./BuilderDialog";
 import { useTask } from "../composition/useTask";
 import { useTerminals } from "../composition/useTerminals";
 import { SurfacePreview } from "./SurfacePreview";
@@ -36,6 +30,9 @@ import { MenuBar } from "./MenuBar";
 import { useModalFocus } from "../composition/useModalFocus";
 import { RpaPanel } from "./RpaPanel";
 import { RpaInputDialog } from "./RpaInputDialog";
+import { WorkbenchLayout } from "./WorkbenchLayout";
+import { StudioSidebar } from "./StudioSidebar";
+import { ToolbarActions } from "./ToolbarActions";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -132,17 +129,14 @@ export function App() {
     "edit.disable": () => s.applySelectionEdit({ kind: "enable", value: false }),
     "build.convert": () => show("conversion"),
     "build.assistant": () => {
-      builder.clear();
-      setBuilderSurface(false);
-      show("builder");
+      s.setSession(v => ({ ...v, rightVisible: true, rightView: "builder" }));
     },
     "terminal.create": () => void terminals.create(),
     "terminal.run-task": task.start,
     "terminal.stop-task": task.cancel,
     "build.surface": () => {
-      builder.clear();
       setBuilderSurface(true);
-      show("builder");
+      s.setSession(v => ({ ...v, rightVisible: true, rightView: "builder" }));
     },
     "terminal.stop": () => void terminals.close(),
     "window.exit": lifecycle.request,
@@ -157,6 +151,8 @@ export function App() {
       if (popup?.kind === "context" && popup.scope === "library" && popup.blockType)
         api.current?.add(popup.blockType);
     },
+    "view.toggle-left-sidebar": () => s.setSession(v => ({ ...v, leftVisible: !v.leftVisible })),
+    "view.toggle-right-sidebar": () => s.setSession(v => ({ ...v, rightVisible: !v.rightVisible })),
     "view.toggle-bottom-panel": () =>
       s.setSession((v) => ({ ...v, panel: !v.panel })),
     "view.show-problems": () =>
@@ -209,10 +205,9 @@ export function App() {
       (s.started &&
         !s.busy &&
         !s.running &&
-        !builder.busy &&
         !!s.snapshot.project.workspaces[s.session.active])) &&
     (id !== "build.surface" ||
-      (s.started &&
+      (s.started && !builder.busy &&
         !s.busy &&
         !s.running &&
         !!s.snapshot.project.workspaces[s.session.active] &&
@@ -234,6 +229,7 @@ export function App() {
     (id !== "build.convert" ||
       (!!s.session.active && s.started && !s.busy && !s.running)) &&
     !(s.busy && id.startsWith("file.")) &&
+    (id !== "file.new" || (s.settings.ready && s.resources.ready)) &&
     !(s.running && (id === "file.new" || id === "file.open")) &&
     (id !== "edit.undo" || s.snapshot.canUndo) &&
     (id !== "edit.redo" || s.snapshot.canRedo) &&
@@ -320,16 +316,14 @@ export function App() {
   }, []);
   return (
     <main className="studio">
-      <header className="topbar">
+      <header className="topbar" role="banner">
         <button
           className="brand"
           onClick={() => s.setStarted(false)}
           aria-label="返回开始页"
         >
           <span className="brand-mark">B</span>
-          <strong>
-            Blocky <span>Studio</span>
-          </strong>
+          <strong>Blocky</strong>
         </button>
         <MenuBar
           active={
@@ -357,86 +351,19 @@ export function App() {
               ].includes(popup.kind))
           }
         />
-        <button
-          className="command-search"
-          onClick={() => execute("view.command-center")}
-        >
-          ⌕ 搜索命令 <kbd>Ctrl K</kbd>
-        </button>
+        {s.started && <div className="project-title" title={s.snapshot.project.manifest.displayName}>
+          <strong>{s.snapshot.project.manifest.displayName}</strong>
+          {s.snapshot.dirty && <span className="dirty" title="未保存">●</span>}
+        </div>}
         <span className="spacer" />
-        <button onClick={() => execute("settings.open")} aria-label="打开设置">
-          ⚙
-        </button>
+        <ToolbarActions studio={s} execute={execute} enabled={enabled} />
       </header>
       {!s.started ? (
         <Welcome studio={s} />
       ) : (
         <>
-          <div className="project-toolbar">
-            <div>
-              <strong>{s.snapshot.project.manifest.displayName}</strong>
-              {s.snapshot.dirty && (
-                <span className="dirty" title="未保存">
-                  ●
-                </span>
-              )}
-              <span className="project-count">
-                {s.snapshot.project.manifest.modules.length} 个画布
-              </span>
-            </div>
-            <span className="spacer" />
-            {commands
-              .filter((c) =>
-                [
-                  "edit.blueprint",
-                  "build.assistant",
-                  "build.convert",
-                  "build.surface",
-                ].includes(c.commandId),
-              )
-              .map((c) => (
-                <button
-                  key={c.commandId}
-                  disabled={!enabled(c.commandId)}
-                  onClick={() => execute(c.commandId)}
-                >
-                  {c.label}
-                </button>
-              ))}
-            <button
-              disabled={!enabled("file.save")}
-              onClick={() => execute("file.save")}
-            >
-              保存
-            </button>
-            <button
-              disabled={!enabled("edit.undo")}
-              onClick={() => execute("edit.undo")}
-              aria-label="撤销"
-            >
-              ↶
-            </button>
-            <button
-              disabled={!enabled("edit.redo")}
-              onClick={() => execute("edit.redo")}
-              aria-label="重做"
-            >
-              ↷
-            </button>
-            <button
-              className="primary"
-              onClick={() => execute("run.start")}
-              disabled={!enabled("run.start")}
-            >
-              ▶ 运行
-            </button>
-          </div>
-          <div
-            className="workbench"
-            style={{
-              gridTemplateColumns: `${s.session.leftWidth}px minmax(0, 1fr) ${s.session.rightWidth}px`,
-            }}
-          >
+          <WorkbenchLayout studio={s}
+            left={
             <Library
               studio={s}
               blueprints={construction.blueprints}
@@ -453,6 +380,14 @@ export function App() {
               add={(type) => api.current?.add(type)}
               onContext={(blockType, x, y) => setPopup({ kind: "context", scope: "library", blockType, x, y })}
             />
+            }
+            right={<StudioSidebar studio={s} builder={builder} createSurface={builderSurface} setCreateSurface={setBuilderSurface}
+              execute={execute} enabled={enabled}
+              onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })}
+              review={() => void (async () => {
+                if (builder.result?.patch && await construction.reviewBuilder(builder.result.patch)) show("patch-review");
+              })()} />}
+          >
             <section
               className={`workspace ${s.session.dock === "right" && s.session.panel && !s.session.maximized ? "panel-right" : ""}`}
               style={
@@ -620,21 +555,7 @@ export function App() {
                 terminals={terminals}
               />
             </section>
-            <aside className="right-sidebar">
-              <StarterGuide
-                studio={s}
-                resources={() => void execute("settings.resources")}
-              />
-              <RunPanel studio={s} execute={execute}
-                onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })} />
-              <ProjectMap studio={s} />
-              <EditorTools studio={s} execute={execute} enabled={enabled} />
-              <Inspector
-                studio={s}
-                configureResource={() => execute("settings.resources")}
-              />
-            </aside>
-          </div>
+          </WorkbenchLayout>
         </>
       )}
       <footer className="statusbar">
@@ -661,24 +582,6 @@ export function App() {
       {lifecycle.requested && (
         <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
       )}
-      {popup?.kind === "builder" && !s.confirmation && (
-        <BuilderDialog
-          key={`builder-${builderSurface}`}
-          studio={s}
-          builder={builder}
-          createSurface={builderSurface}
-          close={() => setPopup(null)}
-          review={() =>
-            void (async () => {
-              if (
-                builder.result?.patch &&
-                (await construction.reviewBuilder(builder.result.patch))
-              )
-                show("patch-review");
-            })()
-          }
-        />
-      )}
       {popup &&
         [
           "blueprint-save",
@@ -699,7 +602,6 @@ export function App() {
         )}
       {popup &&
         popup.kind !== "menu" &&
-        popup.kind !== "builder" &&
         popup.kind !== "rpa" &&
         ![
           "blueprint-save",

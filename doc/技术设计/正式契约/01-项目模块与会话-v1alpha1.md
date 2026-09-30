@@ -81,6 +81,13 @@ type WorkspaceSessionState = {
     order: number;
   }>;
   activeTabId?: StableId;
+  sidebars: {
+    leftWidth: number;
+    rightWidth: number;
+    leftVisible: boolean;
+    rightVisible: boolean;
+    rightView: "agent" | "builder";
+  };
   bottomPanel: {
     visible: boolean;
     activeView: "problems" | "run-log" | "terminal" | "output";
@@ -106,6 +113,7 @@ type WorkspaceSessionState = {
 ```
 
 - 会话存入本机应用数据目录，按 `projectId` 隔离，不随项目导出、提交或分享。
+- 2026-09-30：新会话底栏默认收起，左右栏默认显示；旧会话保留已有显隐与尺寸。新增侧栏字段缺失时采用默认值。三栏边界可用指针或键盘调整；右栏运行/构建页签与显隐不销毁当前输入或执行状态。会话宽高按合法范围读取，并按实际窗口空间限制显示尺寸。
 - `canvas.targetId` 必须引用既有 `moduleId`；`browser.targetId` 必须引用既有 `surfaceId`。
 - 关闭标签只更新会话，不删除模块、Workspace 或 AppSurface。
 - 恢复时找不到目标的标签应被跳过并产生信息级诊断，不能按显示名猜测。

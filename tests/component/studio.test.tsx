@@ -127,6 +127,7 @@ it("navigation reopens a closed tab and the problem panel uses compiler diagnost
       ),
     ).toBe(true),
   );
+  act(() => hook.result.current.setSession(session => ({ ...session, panel: true })));
   render(<BottomPanel studio={hook.result.current} />);
   expect(screen.getByText("BLK-LINK-002")).toBeTruthy();
 });

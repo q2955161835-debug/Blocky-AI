@@ -5,6 +5,8 @@ import type { StudioTask } from "../composition/useTask";
 import { TaskPanel } from "./TaskPanel";
 import { UserTerminalPanel } from "./UserTerminalPanel";
 import type { StudioTerminals } from "../composition/useTerminals";
+import { useEffect, useRef, useState } from "react";
+import { ResizeHandle } from "./ResizeHandle";
 const views = [
   ["problems", "问题"],
   ["logs", "运行日志"],
@@ -22,18 +24,33 @@ export function BottomPanel({
   logs?: StudioLogs;
   terminals?: StudioTerminals;
 }) {
+  const root = useRef<HTMLElement>(null);
+  const [space, setSpace] = useState({ width: window.innerWidth, height: window.innerHeight });
+  useEffect(() => {
+    const parent = root.current?.parentElement;
+    if (!parent || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => setSpace({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(parent);
+    return () => observer.disconnect();
+  }, []);
+  const dockedRight = s.session.dock === "right";
+  const maximum = dockedRight ? Math.max(240, space.width - 240) : Math.max(120, space.height - 220);
+  const size = Math.min(maximum, dockedRight ? s.session.width : s.session.height);
   return (
     <section
+      ref={root}
+      hidden={!s.session.panel}
       className={`bottom-panel ${s.session.maximized && s.session.panel ? "panel-maximized" : ""}`}
       style={{
-        height: s.session.panel
-          ? s.session.maximized
+        height: s.session.maximized
             ? "calc(100% - 40px)"
-            : s.session.height
-          : 35,
+            : size,
       }}
       aria-label="底部面板"
     >
+      {s.session.panel && !s.session.maximized && <ResizeHandle className="panel-boundary" label={dockedRight ? "面板宽度" : "底部面板高度"}
+        axis={dockedRight ? "x" : "y"} reverse value={size} min={dockedRight ? 240 : 120} max={maximum}
+        onChange={value => s.setSession(current => ({ ...current, [dockedRight ? "width" : "height"]: value }))} />}
       <div className="panel-tabs">
         {views.map(([id, label]) => (
           <button
@@ -238,24 +255,6 @@ export function BottomPanel({
               <div className="panel-empty">尚无任务运行</div>
             ))}
         </div>
-      )}
-      {s.session.panel && (
-        <input
-          className="panel-resizer"
-          type="range"
-          min={120}
-          max={480}
-          value={
-            s.session.dock === "right" ? s.session.width : s.session.height
-          }
-          aria-label={s.session.dock === "right" ? "面板宽度" : "底部面板高度"}
-          onChange={(e) =>
-            s.setSession((v) => ({
-              ...v,
-              [v.dock === "right" ? "width" : "height"]: Number(e.target.value),
-            }))
-          }
-        />
       )}
     </section>
   );

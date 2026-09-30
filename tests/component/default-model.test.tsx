@@ -3,7 +3,7 @@ import { afterEach, beforeAll, expect, it } from "vitest";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useBuilder } from "../../apps/studio-desktop/src/composition/useBuilder";
-import { BuilderDialog } from "../../apps/studio-desktop/src/app/BuilderDialog";
+import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
 import { SettingsPanel } from "../../apps/studio-desktop/src/app/SettingsPanel";
 import { createAgentExample } from "../../packages/block-catalog/src";
 import { modelResource } from "../fixtures/model-resource";
@@ -30,14 +30,14 @@ it("reopens the builder with the persisted model while keeping local mode availa
   hook = renderHook(() => useStudio());
   await waitFor(() => expect(hook.result.current.settings.ready && hook.result.current.resources.ready).toBe(true));
   const builder = renderHook(() => useBuilder(hook.result.current));
-  const props = { studio: hook.result.current, builder: builder.result.current, createSurface: false, review() {}, close() {} };
-  const dialog = render(<BuilderDialog {...props} />);
+  const props = { studio: hook.result.current, builder: builder.result.current, createSurface: false, review() {}, setCreateSurface() {} };
+  const dialog = render(<BuilderPanel {...props} />);
   expect((screen.getByLabelText("构建模型模式") as HTMLSelectElement).value).toBe("live");
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
   fireEvent.change(screen.getByLabelText("构建模型模式"), { target: { value: "deterministic" } });
   expect(screen.queryByLabelText("构建模型资源")).toBeNull();
   dialog.unmount();
-  render(<BuilderDialog {...props} />);
+  render(<BuilderPanel {...props} />);
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
 });
 
@@ -61,7 +61,7 @@ it("shows a missing default and prevents an implicit switch to another online mo
   act(() => hook.result.current.resources.remove("saved-model"));
   await act(() => hook.result.current.resources.flush());
   const builder = renderHook(() => useBuilder(hook.result.current));
-  render(<BuilderDialog studio={hook.result.current} builder={builder.result.current} createSurface={false} review={() => {}} close={() => {}} />);
+  render(<BuilderPanel studio={hook.result.current} builder={builder.result.current} createSurface={false} review={() => {}} setCreateSurface={() => {}} />);
   fireEvent.change(screen.getByLabelText("构建需求"), { target: { value: "Explain the selected blocks" } });
   expect(screen.getByRole("alert").textContent).toContain("默认模型不可用");
   expect((screen.getByRole("button", { name: "生成方案" }) as HTMLButtonElement).disabled).toBe(true);

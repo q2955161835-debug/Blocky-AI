@@ -42,6 +42,7 @@ export function Canvas(props: Props) {
   const refreshOverview = useRef<() => void>(() => {});
   useEffect(() => {
     registerBlocks();
+    Blockly.Scrollbar.scrollbarThickness = 8;
     const el = root.current!;
     const ws = Blockly.inject(el, {
       theme,

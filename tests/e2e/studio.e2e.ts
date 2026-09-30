@@ -185,7 +185,7 @@ describe("Blocky native editor", () => {
       (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
     );
     await expect($("[aria-label='画布名称']")).toHaveValue("研究助手");
-    await $(".project-toolbar button.primary").click();
+    await $('.topbar button[aria-label="运行"]').click();
     await $(".answer").waitForDisplayed();
     await expect($(".answer")).toHaveText(expect.stringContaining("叶绿素"));
     await expect($(".answer summary")).toHaveText(
