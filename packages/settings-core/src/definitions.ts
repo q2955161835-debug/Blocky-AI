@@ -6,12 +6,13 @@ export type SettingValues = {
   "terminal.outputBudgetBytes": number;
   "logs.retentionDays": number;
   "logs.maxStoredBytes": number;
+  "models.defaultResourceId": string;
 };
 export type SettingId = keyof SettingValues;
 export type SettingValue = SettingValues[SettingId];
 export type SettingValidationRule = {
   ruleId: string;
-  kind: "integer" | "minimum" | "maximum" | "one-of";
+  kind: "integer" | "minimum" | "maximum" | "one-of" | "resource-id";
   argument?: number | readonly string[];
   code: string;
   message: string;
@@ -25,7 +26,7 @@ export type SettingDefinition = {
   /** Default owning scope. Overrides are permitted only in allowedScopes. */
   scope: SettingScope;
   allowedScopes: readonly SettingScope[];
-  valueType: "boolean" | "number" | "enum";
+  valueType: "boolean" | "number" | "enum" | "model-resource";
   defaultValue: SettingValue;
   sensitive: boolean;
   requiresRestart: boolean;
@@ -76,6 +77,21 @@ function bounds(
 }
 
 const definitions: SettingDefinition[] = [
+  {
+    ...base,
+    id: "models.defaultResourceId",
+    title: "默认模型",
+    description: "用于构建助手和新建项目；已有项目保留所选模型",
+    category: "模型",
+    valueType: "model-resource",
+    defaultValue: "",
+    validationRules: [{
+      ruleId: "models.defaultResourceId.reference",
+      kind: "resource-id",
+      code: "BLK-SET-RESOURCE",
+      message: "请选择已配置的本机模型",
+    }],
+  },
   {
     ...base,
     id: "ui.reduceMotion",

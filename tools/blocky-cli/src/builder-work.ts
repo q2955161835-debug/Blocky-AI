@@ -7,7 +7,7 @@ import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 export const builderWorkHelp = [
-  "builder work <work-id> <file.blocky> --input <request.json> --output <candidate-or-report.json> [--live --model <resource-id> --approve <digest> --turns 4] --json",
+  "builder work <work-id> <file.blocky> --input <request.json> --output <candidate-or-report.json> [--live [--model <resource-id>] --approve <digest> --turns 4] --json",
 ];
 export async function builderWorkCommand(args: Args, signal: AbortSignal) {
   if (args.words[0] !== "builder" || args.words[1] !== "work") return;

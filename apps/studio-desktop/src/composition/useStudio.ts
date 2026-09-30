@@ -11,6 +11,7 @@ import {
   configureBlock,
   editSelection,
   copyAcrossModules,
+  applyDefaultModel,
   type SelectionEdit,
 } from "@blocky/project-model";
 import { createStarter } from "@blocky/test-fixtures";
@@ -37,6 +38,7 @@ import {
 } from "@blocky/observability";
 import { digest, interactionKey, type SourceRef } from "@blocky/language-schema";
 import { resolveResource } from "@blocky/resource-registry";
+import { resolveSetting } from "@blocky/settings-core";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
@@ -374,6 +376,10 @@ export function useStudio() {
   };
   const startBlueprint = async (starterId: string) => {
     if (closing.current || runBusy.current || ioBusy.current) return;
+    if (!settings.ready || !resources.ready) {
+      setMessage("本机模型配置尚未就绪，请稍后重试。");
+      return;
+    }
     ioBusy.current = true;
     setBusy(true);
     try {
@@ -382,12 +388,13 @@ export function useStudio() {
         !(await confirm("新建项目将放弃当前未保存的修改。"))
       )
         return;
-      const p =
+      const starter =
         starterId === "agent-loop"
           ? createAgentExample()
           : architectureStarters.some((s) => s.id === starterId)
             ? createArchitectureStarter(starterId)
             : await createBlueprintProject(starterId);
+      const p = applyDefaultModel(starter, resolveSetting("models.defaultResourceId", settings.layers).value, resources.map);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);

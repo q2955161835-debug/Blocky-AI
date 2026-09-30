@@ -3,6 +3,7 @@ import { validateResource } from "./validate";
 export { validateResource } from "./validate";
 export { implementationKey } from "./implementation";
 export * from "./user-registry";
+export { isUserOnlineModel, configuredOnlineModel } from "./model-defaults";
 export { resourceDefinitions } from "./definitions";
 export type {
   ResourceKind,

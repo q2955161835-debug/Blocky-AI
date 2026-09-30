@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { searchSettings, resolveSetting } from "@blocky/settings-core";
+import { isUserOnlineModel } from "@blocky/resource-registry";
 import type { Studio } from "../composition/useStudio";
 function NumericSetting({
   title,
@@ -29,6 +30,7 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
   const [query, setQuery] = useState(""),
     [scope, setScope] = useState<"app" | "project">("app"),
     [error, setError] = useState("");
+  const models = [...s.resources.map.values()].filter(isUserOnlineModel);
   const change = (id: string, value: unknown, reset = false) => {
     try {
       s.settings.change(scope, id, value, reset);
@@ -86,6 +88,14 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
                   checked={resolved.value === true}
                   onChange={(e) => change(def.id, e.target.checked)}
                 />
+              ) : def.valueType === "model-resource" ? (
+                <select aria-label={def.title} value={String(resolved.value)} disabled={disabled || !s.resources.ready}
+                  onChange={(e) => change(def.id, e.target.value)}>
+                  <option value="">使用本地默认</option>
+                  {resolved.value && !models.some(model => model.resourceId === resolved.value) &&
+                    <option value={String(resolved.value)} disabled>默认模型不可用</option>}
+                  {models.map(model => <option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}
+                </select>
               ) : def.valueType === "enum" ? (
                 <select
                   aria-label={def.title}

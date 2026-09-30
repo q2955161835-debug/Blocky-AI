@@ -12,7 +12,7 @@ import {
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
 import { runAgent, type RunAgentContext } from "./run-agent";
-import { projectDigest } from "@blocky/project-model";
+import { projectDigest, applyDefaultModel } from "@blocky/project-model";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -46,6 +46,8 @@ import {
   userConfigCommand,
   userConfigHelp,
   userRegistryMap,
+  readDefaultModelId,
+  defaultModelError,
 } from "./user-config";
 export const help = {
   version: "0.7.0",
@@ -246,7 +248,7 @@ export async function dispatch(
     )
       throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     const output = required(args, "output"),
-      project =
+      starter =
         required(args, "template") === "agent-loop"
           ? createAgentExample()
           : architectureStarters.some(
@@ -254,6 +256,13 @@ export async function dispatch(
               )
             ? createArchitectureStarter(required(args, "template"))
             : await createBlueprintProject(required(args, "template"));
+    let project;
+    try {
+      project = applyDefaultModel(starter, await readDefaultModelId(), await userRegistryMap());
+    } catch (error) {
+      if (error instanceof Error && error.message === "BLK-MODEL-DEFAULT-001") throw defaultModelError();
+      throw error;
+    }
     await createProject(output, project);
     const bytes = await readFile(output);
     const result = envelope(command, {

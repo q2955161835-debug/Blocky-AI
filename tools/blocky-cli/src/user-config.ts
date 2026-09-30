@@ -4,11 +4,13 @@ import {
   updateSetting,
   resetSetting,
   settingDefinitions,
+  resolveSetting,
 } from "@blocky/settings-core";
 import {
   emptyRegistry,
   parseRegistry,
   upsertUserResource,
+  configuredOnlineModel,
 } from "@blocky/resource-registry";
 import {
   emptyBindings,
@@ -21,6 +23,7 @@ import { allow, required, type Args } from "./arguments";
 import { envelope, CliError } from "./protocol";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 import { resolve } from "node:path";
+import type { Resource } from "@blocky/language-schema";
 export const userConfigHelp = [
   "settings list --json",
   "settings set --id <setting> --value <JSON> --json",
@@ -48,6 +51,19 @@ export async function userRegistryMap() {
   return new Map(
     (await readUserRegistry()).resources.map((r) => [r.resourceId, r]),
   );
+}
+export async function readDefaultModelId(): Promise<string> {
+  const raw = await nativeUserOperation("user-read", { stateKind: "settings", stateId: "app" });
+  const settings = raw === null ? createSettings("app") : parseSettings(raw);
+  if (settings.scope !== "app") throw new CliError(3, "BLK-CONFIG-001", "本机应用配置无效。");
+  return resolveSetting("models.defaultResourceId", { app: settings }).value;
+}
+export function defaultModelError(): CliError {
+  return new CliError(3, "BLK-MODEL-DEFAULT-001", "本机模型未配置或不可用。", "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。");
+}
+export function requireOnlineModel(id: string, registry: ReadonlyMap<string, Resource>): string {
+  try { configuredOnlineModel(id, registry); return id; }
+  catch { throw defaultModelError(); }
 }
 export async function userConfigCommand(args: Args) {
   const [kind, action] = args.words;
@@ -118,6 +134,10 @@ export async function userConfigCommand(args: Args) {
               required(args, "id"),
               JSON.parse(required(args, "value")),
             );
+      if (action === "set" && required(args, "id") === "models.defaultResourceId") {
+        const id = resolveSetting("models.defaultResourceId", { app: parseSettings(value) }).value;
+        if (id) requireOnlineModel(id, await userRegistryMap());
+      }
     } else if (kind === "shortcuts") {
       const doc = raw === null ? emptyBindings() : parseBindings(raw);
       if (action === "list")

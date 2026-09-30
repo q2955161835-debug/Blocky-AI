@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { resolveSetting } from "@blocky/settings-core";
+import { isUserOnlineModel } from "@blocky/resource-registry";
 import type { Studio } from "../composition/useStudio";
 import type { Builder, BuilderInput } from "../composition/useBuilder";
 export function BuilderDialog({
@@ -18,17 +20,18 @@ export function BuilderDialog({
   const [intent, setIntent] = useState<BuilderInput["intent"]>("build"),
     [prompt, setPrompt] = useState(""),
     [surface, setSurface] = useState(createSurface),
-    [mode, setMode] = useState<BuilderInput["mode"]>("deterministic"),
-    [resourceId, setResourceId] = useState("");
+    [modeOverride, setMode] = useState<BuilderInput["mode"]>(),
+    [resourceOverride, setResourceId] = useState<string>();
+  const defaultResourceId = resolveSetting("models.defaultResourceId", studio.settings.layers).value;
+  const mode = modeOverride ?? (defaultResourceId ? "live" : "deterministic");
+  const resourceId = resourceOverride ?? defaultResourceId;
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
-  const models = [...studio.resources.map.values()].filter(
-    (r) =>
-      r.kind === "model" &&
-      r.scope === "user" &&
-      ["deepseek", "xirang"].includes(String(r.definition.provider)),
-  );
+  const models = [...studio.resources.map.values()].filter(isUserOnlineModel);
+  const ready = studio.settings.ready && studio.resources.ready;
+  const availableModel = models.some(model => model.resourceId === resourceId);
+  const missingDefault = ready && mode === "live" && resourceId === defaultResourceId && !!resourceId && !availableModel;
   const dismiss = () => {
     builder.clear();
     close();
@@ -110,6 +113,7 @@ export function BuilderDialog({
               }}
             >
               <option value="">选择已配置模型</option>
+              {resourceId && !availableModel && <option value={resourceId} disabled>默认模型不可用</option>}
               {models.map((r) => (
                 <option key={r.resourceId} value={r.resourceId}>
                   {r.displayName}
@@ -118,6 +122,7 @@ export function BuilderDialog({
             </select>
           </label>
         )}
+        {missingDefault && <p role="alert">默认模型不可用，请在设置中重新选择，或为本次构建选择其他模型。</p>}
         {mode === "deterministic" && (
           <p className="muted">
             本地模拟支持角色调整和选择解释，不调用外部模型。
@@ -140,7 +145,7 @@ export function BuilderDialog({
         <div className="actions">
           <button
             disabled={
-              builder.busy || !prompt.trim() || (mode === "live" && !resourceId)
+              builder.busy || !ready || !prompt.trim() || (mode === "live" && !availableModel)
             }
             onClick={() =>
               void builder.generate({

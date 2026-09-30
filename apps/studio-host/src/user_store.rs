@@ -85,6 +85,12 @@ pub fn validate_settings(value: &Value) -> Result<(), String> {
         let valid = match key.as_str() {
             "ui.reduceMotion" | "window.minimizeToTray" => value_item.is_boolean(),
             "ui.view" => matches!(value_item.as_str(), Some("beginner" | "professional")),
+            "models.defaultResourceId" => value_item.as_str().is_some_and(|id| {
+                id.is_empty() || (id.len() <= 128
+                    && crate::project_store::stable(id)
+                    && !id.to_ascii_lowercase().starts_with("sk-")
+                    && !["__proto__", "prototype", "constructor"].contains(&id))
+            }),
             "terminal.outputBudgetBytes" => value_item
                 .as_u64()
                 .is_some_and(|v| (256..=16777216).contains(&v)),
@@ -129,6 +135,25 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn default_model_reference_reopens_and_rejects_secret_text_and_project_scope() {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/default-model-store");
+        std::fs::create_dir_all(&root).unwrap();
+        let dir = tempfile::tempdir_in(root).unwrap();
+        let value = serde_json::json!({"schemaVersion":"blocky.settings/v1","scope":"app","values":{"models.defaultResourceId":"saved-model"}});
+        UserStore::new(dir.path().to_owned()).write("settings", "app", value.clone()).unwrap();
+        let reopened = UserStore::new(dir.path().to_owned());
+        assert_eq!(reopened.read("settings", "app").unwrap(), Some(value.clone()));
+        for id in ["../secret", "https://example.com", "sk-do-not-store-a-key", "__proto__", "constructor"] {
+            let mut invalid = value.clone();
+            invalid["values"]["models.defaultResourceId"] = id.into();
+            assert!(reopened.write("settings", "app", invalid).is_err());
+        }
+        let mut invalid = value.clone();
+        invalid["scope"] = "project".into();
+        assert!(reopened.write("settings", "app", invalid).is_err());
+        assert_eq!(reopened.read("settings", "app").unwrap(), Some(value));
+    }
     #[test]
     fn native_scoped_settings_are_atomic_and_invalid_input_preserves_saved_values() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/stage2-store");

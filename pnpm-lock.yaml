@@ -346,6 +346,9 @@ importers:
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../resource-registry
       '@blocky/settings-core':
         specifier: workspace:*
         version: link:../settings-core

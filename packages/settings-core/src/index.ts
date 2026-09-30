@@ -90,7 +90,9 @@ function validateValue(
   if (!validType) return fail("BLK-SET-TYPE", "设置值类型无效", id);
   for (const rule of definition.validationRules) {
     const valid =
-      rule.kind === "integer"
+      rule.kind === "resource-id"
+        ? value === "" || (typeof value === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value) && !/^(?:sk-)/i.test(value) && !["__proto__", "prototype", "constructor"].includes(value))
+      : rule.kind === "integer"
         ? Number.isInteger(value)
         : rule.kind === "minimum"
           ? (value as number) >= (rule.argument as number)
@@ -99,7 +101,7 @@ function validateValue(
             : (rule.argument as readonly string[]).includes(value as string);
     if (!valid) return fail(rule.code, rule.message, id);
   }
-  // No arbitrary string definitions: enum members are the only admitted strings.
+  // Strings are restricted to enum members or bounded resource identifiers.
   return value as SettingValue;
 }
 export function createSettings(scope: SettingScope): SettingsDocument {
