@@ -86,6 +86,7 @@ export function useSession(project: Project, report: (text: string) => void) {
   }, [session, loaded, project]);
   return {
     session,
+    ready: loaded === id || loaded === `invalid:${id}`,
     setSession,
     flush: persist,
     reset: () => {

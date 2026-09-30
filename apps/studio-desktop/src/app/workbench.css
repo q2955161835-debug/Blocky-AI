@@ -1,6 +1,12 @@
 [hidden] {
   display: none !important;
 }
+.workbench-loading {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  color: var(--muted);
+}
 .topbar > .brand,
 .topbar > nav,
 .toolbar-actions,

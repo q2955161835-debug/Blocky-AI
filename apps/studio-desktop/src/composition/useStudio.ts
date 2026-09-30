@@ -552,6 +552,7 @@ export function useStudio() {
     compiled,
     compiling,
     session,
+    sessionReady: sessionStore.ready,
     setSession,
     preferences,
     settings,

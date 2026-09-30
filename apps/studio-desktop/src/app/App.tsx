@@ -360,6 +360,8 @@ export function App() {
       </header>
       {!s.started ? (
         <Welcome studio={s} />
+      ) : !s.sessionReady ? (
+        <div className="workbench-loading" role="status">正在恢复工作区…</div>
       ) : (
         <>
           <WorkbenchLayout studio={s}
