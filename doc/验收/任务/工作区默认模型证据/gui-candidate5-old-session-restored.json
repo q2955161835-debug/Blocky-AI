@@ -1,0 +1,36 @@
+{
+  "time": "2026-09-30T11:10:42.607Z",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1-candidate5\\Blocky Studio.exe",
+    "id": 4923066,
+    "title": "Blocky Studio"
+  },
+  "accessibility": {
+    "document_text": "B\nBlocky\n文件编辑视图运行构建终端帮助\n搜索命令\n打开设置\n把想法搭起来\n从一个问题，\n开始创作。\n用积木组合角色、资料和工具，构建你的 AI 项目。\n＋ 新建项目\n打开本机项目\n文本分析 Agent\n蓝图 01\n资料问答伙伴\n↗\n从自己的资料中检索原文摘录，逐条核对引用与缺失证据。\n角色 · 资料 · 引用\n蓝图 02\n代码库讲解助手\n↗\n定位仓库源码的相对路径与行号，沿原文完成阅读任务。\n角色 · 资料 · 引用\n蓝图 03\n知识小老师\n↗\n用引用的学习资料安排阅读、复述与证据自查，不虚构评分。\n角色 · 资料 · 引用\n蓝图 04\n轻量任务助手\n↗\n按 JSON 数值计算总工时；可切换为总分钟工具，不访问文件或网络。\n计算 · 工具 · 结果\n架构起点\n审批工作流\n↗\n保存输入并等待审批；批准后交付，拒绝后清除准备状态并补偿。\n模块 · 条件 · 动作\n架构起点\n事件收件箱\n↗\n发送输入到当前会话的事件队列，再按顺序接收并处理。\n模块 · 条件 · 动作\n架构起点\n有限状态机\n↗\n用状态、输入事件和条件完成待机→运行→完成；状态保留在当前会话。\n模块 · 条件 · 动作\n架构起点\n行为树\n↗\n展开查看 Sequence、Selector、条件和动作组合；失败选择后备，运行中保留状态。\n模块 · 条件 · 动作\n架构起点\n优先级规则\n↗\n按优先级检查事实，执行首个匹配动作；同一输入只命中一条规则。\n模块 · 条件 · 动作\n架构起点\n规则与模型协作\n↗\n已知问题直接返回规则结果，其余输入进入可配置模型步骤。\n模块 · 条件 · 动作\n✓ 项目就绪\n￼\nBlocky Studio",
+    "focused_element": "23 文档 Blocky Studio Value: http://tauri.localhost/ ID: RootWebArea",
+    "tree": "Window: \"Blocky Studio\", App: Blocky Studio.exe.\n\t0 窗口 Blocky Studio Secondary Actions: Raise\n\t\t1 窗格\n\t\t\t2 窗格 Blocky Studio\n\t\t\t\t3 窗格 (disabled)\n\t\t\t\t4 区域 Blocky Studio - Web 内容\n\t\t\t\t\t5 区域\n\t\t\t\t\t\t6 区域\n\t\t\t\t\t\t\t7 区域\n\t\t\t\t\t\t\t\t8 区域\n\t\t\t\t\t\t\t\t9 区域\n\t\t\t\t\t\t\t\t\t10 区域\n\t\t\t\t\t\t\t\t\t\t11 区域\n\t\t\t\t\t\t\t\t\t\t\t12 区域\n\t\t\t\t\t\t\t\t\t\t\t\t13 区域\n\t\t\t\t\t\t\t\t\t\t\t\t23 文档 Blocky Studio Value: http://tauri.localhost/ ID: RootWebArea\n\t\t\t\t\t\t\t\t\t\t\t\t\t91 组 ID: root\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t92 主要\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t93 横幅\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t94 按钮 返回开始页\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t95 菜单栏 应用菜单\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t96 菜单项目 文件 ID: menu-trigger-file\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t97 菜单项目 编辑 ID: menu-trigger-edit\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t98 菜单项目 视图 ID: menu-trigger-view\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t99 菜单项目 运行 ID: menu-trigger-run\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t100 菜单项目 构建 ID: menu-trigger-build\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t101 菜单项目 终端 ID: menu-trigger-terminal\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t102 菜单项目 帮助 ID: menu-trigger-help\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t103 按钮 搜索命令 Description: 搜索命令 (Ctrl+K / Ctrl+Shift+P)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t104 组 面板布局\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t105 按钮 打开设置 Description: 打开设置 (Ctrl+,)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t106 文本 把想法搭起来\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t107 标题 从一个问题， 开始创作。\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t108 文本 用积木组合角色、资料和工具，构建你的 AI 项目。\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t109 按钮 (disabled) ＋ 新建项目\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t110 按钮 打开本机项目\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t111 按钮 (disabled) 文本分析 Agent\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t112 按钮 (disabled) 蓝图 01 资料问答伙伴 ↗ 从自己的资料中检索原文摘录，逐条核对引用与缺失证据。 角色 · 资料 · 引用\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t113 标题 资料问答伙伴 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t114 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t115 按钮 (disabled) 蓝图 02 代码库讲解助手 ↗ 定位仓库源码的相对路径与行号，沿原文完成阅读任务。 角色 · 资料 · 引用\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t116 标题 代码库讲解助手 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t117 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t118 按钮 (disabled) 蓝图 03 知识小老师 ↗ 用引用的学习资料安排阅读、复述与证据自查，不虚构评分。 角色 · 资料 · 引用\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t119 标题 知识小老师 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t120 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t121 按钮 (disabled) 蓝图 04 轻量任务助手 ↗ 按 JSON 数值计算总工时；可切换为总分钟工具，不访问文件或网络。 计算 · 工具 · 结果\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t122 标题 轻量任务助手 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t123 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t124 组 架构起点\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t125 按钮 (disabled) 架构起点 审批工作流 ↗ 保存输入并等待审批；批准后交付，拒绝后清除准备状态并补偿。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t126 标题 审批工作流 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t127 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t128 按钮 (disabled) 架构起点 事件收件箱 ↗ 发送输入到当前会话的事件队列，再按顺序接收并处理。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t129 标题 事件收件箱 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t130 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t131 按钮 (disabled) 架构起点 有限状态机 ↗ 用状态、输入事件和条件完成待机→运行→完成；状态保留在当前会话。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t132 标题 有限状态机 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t133 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t134 按钮 (disabled) 架构起点 行为树 ↗ 展开查看 Sequence、Selector、条件和动作组合；失败选择后备，运行中保留状态。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t135 标题 行为树 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t136 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t137 按钮 (disabled) 架构起点 优先级规则 ↗ 按优先级检查事实，执行首个匹配动作；同一输入只命中一条规则。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t138 标题 优先级规则 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t139 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t140 按钮 (disabled) 架构起点 规则与模型协作 ↗ 已知问题直接返回规则结果，其余输入进入可配置模型步骤。 模块 · 条件 · 动作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t141 标题 规则与模型协作 ↗\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t142 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t143 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t144 文本 ✓ 项目就绪\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t145 状态\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t146 文本 Blocky Studio\n\t\t\t\t\t\t\t\t14 区域\n\t\t\t\t\t\t15 区域\n\t\t\t\t\t\t16 区域\n\t\t17 标题栏 (settable, string) Value: Blocky Studio\n\t\t\t18 菜单栏 系统 ID: MenuBar\n\t\t\t\t85 菜单项目 系统\n\t\t\t20 按钮 最小化\n\t\t\t21 按钮 最大化\n\t\t\t22 按钮 关闭\n\nDocument text: ```\nB\nBlocky\n文件编辑视图运行构建终端帮助\n搜索命令\n打开设置\n把想法搭起来\n从一个问题，\n开始创作。\n用积木组合角色、资料和工具，构建你的 AI 项目。\n＋ 新建项目\n打开本机项目\n文本分析 Agent\n蓝图 01\n资料问答伙伴\n↗\n从自己的资料中检索原文摘录，逐条核对引用与缺失证据。\n角色 · 资料 · 引用\n蓝图 02\n代码库讲解助手\n↗\n定位仓库源码的相对路径与行号，沿原文完成阅读任务。\n角色 · 资料 · 引用\n蓝图 03\n知识小老师\n↗\n用引用的学习资料安排阅读、复述与证据自查，不虚构评分。\n角色 · 资料 · 引用\n蓝图 04\n轻量任务助手\n↗\n按 JSON 数值计算总工时；可切换为总分钟工具，不访问文件或网络。\n计算 · 工具 · 结果\n架构起点\n审批工作流\n↗\n保存输入并等待审批；批准后交付，拒绝后清除准备状态并补偿。\n模块 · 条件 · 动作\n架构起点\n事件收件箱\n↗\n发送输入到当前会话的事件队列，再按顺序接收并处理。\n模块 · 条件 · 动作\n架构起点\n有限状态机\n↗\n用状态、输入事件和条件完成待机→运行→完成；状态保留在当前会话。\n模块 · 条件 · 动作\n架构起点\n行为树\n↗\n展开查看 Sequence、Selector、条件和动作组合；失败选择后备，运行中保留状态。\n模块 · 条件 · 动作\n架构起点\n优先级规则\n↗\n按优先级检查事实，执行首个匹配动作；同一输入只命中一条规则。\n模块 · 条件 · 动作\n架构起点\n规则与模型协作\n↗\n已知问题直接返回规则结果，其余输入进入可配置模型步骤。\n模块 · 条件 · 动作\n✓ 项目就绪\n￼\nBlocky Studio\n```"
+  },
+  "screenshots": [
+    {
+      "id": "screenshot-0",
+      "width": 16,
+      "height": 16,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "screenshot-1",
+      "width": 16,
+      "height": 16,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "screenshot-2",
+      "width": 1182,
+      "height": 812,
+      "originX": 7,
+      "originY": 0
+    }
+  ]
+}

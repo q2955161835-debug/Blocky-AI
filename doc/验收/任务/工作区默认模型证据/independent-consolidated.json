@@ -1,0 +1,892 @@
+{
+  "time": "2026-09-30T11:22:24.361Z",
+  "productSource": "4f8173ecca4a2bdacf5f36f78f9c26d7db994dd5",
+  "finalDirectory": "dist/Blocky-Studio-0.7.1",
+  "finalCount": 143,
+  "finalBytes": 449569411,
+  "finalMatchesCandidate": true,
+  "sharedArtifacts": [
+    {
+      "path": "browser/browser.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "browser/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node.exe",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/install_media_pack.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/install_webkit_wsl.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_beta_linux.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_beta_mac.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_beta_win.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_stable_linux.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_stable_mac.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_chrome_stable_win.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_beta_linux.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_beta_mac.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_beta_win.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_dev_linux.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_dev_mac.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_dev_win.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_stable_linux.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_stable_mac.sh",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/bin/reinstall_msedge_stable_win.ps1",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/browsers.json",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/cli.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/index.d.ts",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/index.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/index.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/bootstrap.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/coreBundle.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/entry/cliDaemon.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/entry/dashboardApp.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/entry/mcp.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/entry/oopBrowserDownload.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/package.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/server/chromium/appIcon.png",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/server/electron/loader.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/serverRegistry.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/serverRegistry.js.LICENSE",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/channelSessions.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/cli.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/help.json",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/minimist.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/output.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/program.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/registry.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/cli-client/session.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/dashboard/appIcon.png",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/element-attributes.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/playwright-tests.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/request-mocking.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/running-code.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/session-management.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/storage-state.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/test-generation.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/tracing.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/references/video-recording.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-cli/SKILL.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/gallery-spec.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/migration.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/react.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/typing.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/references/vue.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-component-testing/SKILL.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/skills/playwright-trace/SKILL.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/utils/extension.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/tools/utils/socketConnection.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/utilsBundle.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/utilsBundle.js.LICENSE",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/codeMirrorModule--QdMvsKi.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/codeMirrorModule-CQ8RZGBm.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/codicon-DCmgc-ay.ttf",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/index-AwgwcYie.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/index-hRvO4yU2.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/assets/safari-na3_-uQk.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/index.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/dashboard/playwright-logo.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/htmlReport/index.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/htmlReport/report.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/htmlReport/report.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/assets/codeMirrorModule--QdMvsKi.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/assets/codeMirrorModule-CVQWJZAA.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/assets/codicon-DCmgc-ay.ttf",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/assets/index-BZpYJZ-P.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/assets/index-hrlLqLtq.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/index.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/assets/codeMirrorModule-BbkfBe3n.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/assets/defaultSettingsView-Ds6CBOo0.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/assets/urlMatch-L3liM589.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/assets/xtermModule-DywYcAf8.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/codeMirrorModule.-QdMvsKi.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/codicon.DCmgc-ay.ttf",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/defaultSettingsView.Bqk9acqE.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/index.B4cLoZK3.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/index.B_TqY17P.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/index.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/manifest.webmanifest",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/snapshot.B_Jk1wbt.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/snapshot.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/sw.bundle.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/uiMode.CU5KtEkS.js",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/uiMode.CyMfwkXJ.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/uiMode.html",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/vite/traceViewer/xtermModule.kHJ-D0s7.css",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/webp_codec.LICENSE",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/webp_codec.wasm",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/lib/xdg-open",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/LICENSE",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/NOTICE",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/package.json",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/ThirdPartyNotices.txt",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/types/protocol.d.ts",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/types/structs.d.ts",
+      "unchanged": true
+    },
+    {
+      "path": "browser/node_modules/playwright-core/types/types.d.ts",
+      "unchanged": true
+    },
+    {
+      "path": "builder/builder.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "builder/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "builder/node.exe",
+      "unchanged": true
+    },
+    {
+      "path": "cli/bin/blocky-project-io.exe",
+      "unchanged": false
+    },
+    {
+      "path": "cli/bin/DirectML.dll",
+      "unchanged": true
+    },
+    {
+      "path": "cli/blocky.cmd",
+      "unchanged": true
+    },
+    {
+      "path": "cli/main.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "cli/runtime-worker.mjs",
+      "unchanged": true
+    }
+  ],
+  "hostAndCliProductSourceUnchanged": true,
+  "currentPackageCli": [
+    {
+      "name": "current-profile",
+      "code": 0,
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "profile.show",
+        "data": {
+          "profile": {
+            "custom": true,
+            "profileId": "a98a30e9799cc03917d0bbff69b2f6772e0ba49b24c9f6ae939a9b096ca1d483"
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "current-default",
+      "code": 0,
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "models.defaultResourceId": "gui-xirang"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "current-open-project",
+      "code": 0,
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-9adda826-a832-4fc3-9cd2-8cd99495b351",
+          "displayName": "资料问答伙伴",
+          "digest": "f92b9c886ba763fd7c065b7ee275a7098f21d100368ab3e5cb58f8d6820ddbec",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "资料问答伙伴",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ]
+            },
+            {
+              "moduleId": "citation-service",
+              "displayName": "资料引用服务",
+              "purpose": "service",
+              "workspaceRef": "workspaces/citation-service.workspace.json",
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "product-handbook",
+              "kind": "knowledge",
+              "scope": "project"
+            },
+            {
+              "resourceId": "local-composer",
+              "kind": "model",
+              "scope": "project"
+            },
+            {
+              "resourceId": "gui-xirang",
+              "kind": "model",
+              "scope": "user"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "current-default-live-preflight",
+      "code": 4,
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "pendingApproval": {
+            "approvalExpiresAt": 1790769144,
+            "createSurface": false,
+            "endpoint": "https://ai.ctaigw.cn/v1/chat/completions",
+            "inputScope": "目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义",
+            "maxOutputTokensPerTurn": 1024,
+            "maxTurns": 4,
+            "mode": "live",
+            "modelId": "deepseek-v4-pro",
+            "projectId": "project-9adda826-a832-4fc3-9cd2-8cd99495b351",
+            "projectName": "资料问答伙伴",
+            "provider": "xirang",
+            "requestDigest": "e50550efc2af0a703b989e07f1f625cdcd37eb24979e32e92faab9a8ed90aa19",
+            "requestId": "acceptance-current-package"
+          },
+          "modelApiCalled": false,
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    }
+  ],
+  "projectAudit": {
+    "file": "try/workbench-acceptance/gui/accepted.blocky",
+    "nativeRead": true,
+    "roleRetained": true,
+    "defaultModelReferenceRetained": true,
+    "layoutExcluded": true,
+    "appDefaultExcluded": true,
+    "plaintextSyntheticSecretExcluded": true
+  },
+  "isolatedProfilePrivacy": {
+    "fileCount": 309,
+    "bytes": 37849784,
+    "plaintextSyntheticSecretMatches": []
+  },
+  "sessionRestore": {
+    "sameProject": true,
+    "sidebars": true,
+    "bottom": true,
+    "scale": true,
+    "offsetX": true,
+    "offsetY": true
+  },
+  "passed": true
+}

@@ -94,10 +94,15 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 用户级配置写入本机用户存储。`settings` 的 `--value` 和 `shortcuts set` 的 `--keys` 接受 JSON；`resource set` 读取一个本地资源定义 JSON，示例文件内容不属于 CLI 固定字段。
 
+`models.defaultResourceId` 保存已配置的本机在线模型资源 ID，仅允许应用作用域。它用于新建项目与桌面构建助手，已有项目保留自己的模型引用；设置为空或重置后恢复本地模式。资源被删除或失效时明确报错。设置只保存引用，模型凭据仍由 Host 安全存储管理。
+
 ```powershell
 .\blocky.cmd settings list --json
 .\blocky.cmd settings set --id ui.reduceMotion --value true --json
 .\blocky.cmd settings reset --id ui.reduceMotion --json
+# my-online-model 须先通过 resource set 配置
+.\blocky.cmd settings set --id models.defaultResourceId --value '"my-online-model"' --json
+.\blocky.cmd settings reset --id models.defaultResourceId --json
 .\blocky.cmd shortcuts list --json
 .\blocky.cmd shortcuts set --id view.command-center --keys '["Ctrl+Alt+P"]' --json
 .\blocky.cmd shortcuts reset --id view.command-center --json
@@ -164,7 +169,7 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 .\blocky.cmd surface build .\try\with-page.blocky --surface-id surface-example --output .\try\page.html --json
 ```
 
-在线构建在 `builder draft/explain/repair` 增加 `--live --model <已配置资源ID> --request-id <唯一ID> --turns 4`。首次无 `--approve` 只返回预检；核对项目、模型、输入范围和预算后，以完全相同参数增加 `--approve <requestDigest>` 执行。批准一次使用，不自动重试；模型密钥仍由 Host 安全存储读取，不放命令行。需要页面时明确增加 `--surface`，模型建议不能代替授权。
+在线构建在 `builder draft/explain/repair` 增加 `--live --request-id <唯一ID> --turns 4`。省略 `--model` 时读取本机默认模型，显式 `--model <已配置资源ID>` 优先；未指定 `--live` 仍使用本地模式。首次无 `--approve` 只返回预检；核对项目、模型、输入范围和预算后，以完全相同参数增加 `--approve <requestDigest>` 执行。批准一次使用，不自动重试；模型密钥仍由 Host 安全存储读取，不放命令行。需要页面时明确增加 `--surface`，模型建议不能代替授权。
 
 `surface-spec.json` 使用 `blocky.surface-spec/v1`，字段及受控桥接见[契约 14](../../doc/技术设计/正式契约/14-阶段5构建助手与应用界面.md)。页面构建验证已接受源码并生成离线 HTML；不执行 npm 脚本，不发布。旧版未提供 `--spec` 的固定页面命令继续兼容。
 

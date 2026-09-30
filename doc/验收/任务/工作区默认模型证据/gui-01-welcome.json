@@ -1,0 +1,20 @@
+{
+  "time": "2026-09-30T10:31:32.719Z",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1-candidate3\\Blocky Studio.exe",
+    "id": 10097676,
+    "title": "Blocky Studio"
+  },
+  "accessibility": {
+    "tree": "Window: \"Blocky Studio\", App: Blocky Studio.exe.\n\t0 窗口 Blocky Studio Secondary Actions: Raise\n\t\t1 窗格\n\t\t\t2 窗格 Blocky Studio\n\t\t\t\t3 窗格 (disabled)\n\t\t\t\t4 区域 Blocky Studio - Web 内容\n\t\t\t\t\t5 区域\n\t\t\t\t\t\t6 区域\n\t\t\t\t\t\t\t7 区域\n\t\t\t\t\t\t\t\t8 区域\n\t\t\t\t\t\t\t\t9 区域\n\t\t\t\t\t\t\t\t\t10 区域\n\t\t\t\t\t\t\t\t\t\t11 区域\n\t\t\t\t\t\t\t\t\t\t\t12 区域\n\t\t\t\t\t\t\t\t\t\t\t\t13 区域\n\t\t\t\t\t\t\t\t14 区域\n\t\t\t\t\t\t15 区域\n\t\t\t\t\t\t16 区域\n\t\t17 标题栏 (settable, string) Value: Blocky Studio\n\t\t\t18 菜单栏 系统 ID: MenuBar\n\t\t\t\t19 菜单项目 系统\n\t\t\t20 按钮 最小化\n\t\t\t21 按钮 最大化\n\t\t\t22 按钮 关闭"
+  },
+  "screenshots": [
+    {
+      "id": "screenshot-0",
+      "width": 1442,
+      "height": 932,
+      "originX": 215,
+      "originY": 208
+    }
+  ]
+}

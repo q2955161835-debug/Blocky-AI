@@ -1,0 +1,83 @@
+{
+  "runId": "6557721a-afbf-4f29-b172-728ddcdc8283",
+  "schemaVersion": "blocky.performance/v1",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+    "hardwareConcurrency": 24,
+    "width": 1372,
+    "height": 858,
+    "dpr": 1.0499999523162842
+  },
+  "load": {
+    "samplesMs": [
+      57.29999999888241,
+      50.20000000111759,
+      61.79999999888241,
+      46.80000000074506,
+      49.69999999925494
+    ],
+    "observedBlockCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "observedNodeCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "medianMs": 50.20000000111759
+  },
+  "saveCompile": {
+    "samplesMs": [
+      2.900000000372529,
+      1.900000000372529,
+      2.300000000745058,
+      2,
+      2.5
+    ],
+    "observedBlockCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "observedNodeCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "medianMs": 2.300000000745058
+  },
+  "runtime": {
+    "samplesMs": [
+      24.5,
+      24.59999999962747,
+      23.09999999962747,
+      22.5,
+      21.299999998882413
+    ],
+    "observedBlockCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "observedNodeCounts": [
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "medianMs": 23.09999999962747
+  }
+}

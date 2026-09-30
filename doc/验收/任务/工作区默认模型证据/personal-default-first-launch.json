@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-09-30T11:20:47.670Z",
+  "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1\\Blocky Studio.exe",
+  "defaultModel": "xirang-personal",
+  "displayName": "息壤 · deepseek-v4-pro",
+  "builderMode": "在线模型",
+  "newProjectModelReference": "xirang-personal",
+  "bottomPanelVisible": false,
+  "evidence": [
+    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t131 切换按钮 显示底部面板 Description: 显示底部面板 (Ctrl+J)",
+    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t219 语句 组织回答, 资源, xirang-personal, 有输入 ID: blockly-a",
+    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t324 组合框 (settable, string) 构建模型模式 Value: 在线模型",
+    "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t326 组合框 (settable, string) 构建模型资源 Value: 息壤 · deepseek-v4-pro",
+    "显示底部面板",
+    "组织回答, 资源, xirang-personal, 有输入",
+    "构建模型模式",
+    "构建模型资源"
+  ]
+}

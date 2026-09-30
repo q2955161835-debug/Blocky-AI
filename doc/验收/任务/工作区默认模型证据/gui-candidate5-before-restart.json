@@ -1,0 +1,37 @@
+{
+  "time": "2026-09-30T11:13:21.305Z",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1-candidate5\\Blocky Studio.exe",
+    "id": 4923066,
+    "title": "Blocky Studio"
+  },
+  "accessibility": {
+    "document_text": "资料问答伙伴",
+    "focused_element": "23 文档 Blocky Studio Value: http://tauri.localhost/ ID: RootWebArea",
+    "selected_text": "开设置",
+    "tree": "Window: \"Blocky Studio\", App: Blocky Studio.exe.\n\t0 窗口 Blocky Studio Secondary Actions: Raise\n\t\t1 窗格\n\t\t\t2 窗格 Blocky Studio\n\t\t\t\t3 窗格 (disabled)\n\t\t\t\t4 区域 Blocky Studio - Web 内容\n\t\t\t\t\t5 区域\n\t\t\t\t\t\t6 区域\n\t\t\t\t\t\t\t7 区域\n\t\t\t\t\t\t\t\t8 区域\n\t\t\t\t\t\t\t\t9 区域\n\t\t\t\t\t\t\t\t\t10 区域\n\t\t\t\t\t\t\t\t\t\t11 区域\n\t\t\t\t\t\t\t\t\t\t\t12 区域\n\t\t\t\t\t\t\t\t\t\t\t\t13 区域\n\t\t\t\t\t\t\t\t\t\t\t\t23 文档 Blocky Studio Value: http://tauri.localhost/ ID: RootWebArea\n\t\t\t\t\t\t\t\t\t\t\t\t\t91 组 ID: root\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t92 主要\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t93 横幅\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t94 按钮 返回开始页\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t95 菜单栏 应用菜单\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t96 菜单项目 文件 ID: menu-trigger-file\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t97 菜单项目 编辑 ID: menu-trigger-edit\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t98 菜单项目 视图 ID: menu-trigger-view\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t99 菜单项目 运行 ID: menu-trigger-run\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t100 菜单项目 构建 ID: menu-trigger-build\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t101 菜单项目 终端 ID: menu-trigger-terminal\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t102 菜单项目 帮助 ID: menu-trigger-help\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t267 文本 资料问答伙伴\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t103 按钮 搜索命令 Description: 搜索命令 (Ctrl+K / Ctrl+Shift+P)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t268 组 项目操作\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t269 按钮 (disabled) 保存为蓝图 Description: 保存为蓝图\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t270 按钮 从仓库快照生成候选 Description: 从仓库快照生成候选\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t271 按钮 Blocky 构建助手 Description: Blocky 构建助手\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t272 按钮 创建应用界面 Description: 创建应用界面\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t273 按钮 保存项目 Description: 保存项目 (Ctrl+S)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t274 按钮 (disabled) 撤销 Description: 撤销 (Ctrl+Z)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t275 按钮 (disabled) 重做 Description: 重做 (Ctrl+Y / Ctrl+Shift+Z)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t276 按钮 运行 Description: 运行 (F5 / Ctrl+Enter)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t104 组 面板布局\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t277 切换按钮 显示左侧积木库 Description: 显示左侧积木库 (Ctrl+B)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t278 切换按钮 隐藏底部面板 Description: 隐藏底部面板 (Ctrl+J)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t279 切换按钮 显示右侧面板 Description: 显示右侧面板 (Ctrl+Alt+B)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t105 按钮 打开设置 Description: 打开设置 (Ctrl+,)\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t356 按钮 ▧ 资料问答伙伴\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t357 按钮 关闭 资料问答伙伴\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t358 按钮 ▧ 资料引用服务\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t359 按钮 关闭 资料引用服务\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t360 按钮 (disabled) 返回上一位置\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t361 编辑 (settable, string) 画布名称 Value: 资料问答伙伴\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t362 按钮 缩小画布\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t363 按钮 放大画布\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t364 组 积木画布\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t365 应用程序\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t366 区域 Blocks工作区。 ID: GMkNeeg{acvq[a|T]H`_\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t367 工作区 0个块堆 ID: GMkNeeg{acvq[a|T]H`__focusTarget\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t368 容器 块堆开始, 智能体, 角色, 将角色设为严谨的验收研究助手, 有输入 ID: blockly-2\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t369 语句 收到问题, 名称, 资料问答伙伴, 有输入 ID: blockly-4\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t370 语句 查找资料, 资源, product-handbook, 有输入 ID: blockly-7\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t371 语句 组织回答, 资源, gui-xirang, 有输入 ID: blockly-a\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t372 语句 回答, 方式, 条目, 有输入 ID: blockly-d\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t373 按钮 dropdown: 条目 ID: reply-answer_field_blockly-i\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t374 语句位置 ID: reply-answer_connection_blockly-e\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t375 语句位置 ID: reply-answer_connection_blockly-f\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t376 按钮 Edit text: gui-xirang ID: compose-answer_field_blockly-l\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t377 语句位置 ID: compose-answer_connection_blockly-b\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t378 语句位置 ID: compose-answer_connection_blockly-c\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t379 按钮 Edit text: product-handbook ID: call-citation_field_blockly-o\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t380 语句位置 ID: call-citation_connection_blockly-8\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t381 语句位置 ID: call-citation_connection_blockly-9\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t382 按钮 Edit text: 资料问答伙伴 ID: on-question_field_blockly-r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t383 语句位置 ID: on-question_connection_blockly-5\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t384 语句位置 ID: on-question_connection_blockly-6\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t385 按钮 Edit text: 将角色设为严谨的验收研究助手 ID: research-root_field_blockly-u\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t386 语句位置 ID: research-root_connection_blockly-3\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t387 状态 ID: blocklyAriaAnnounce\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t388 文本 Shift 多选 · 空白框选 · 中键平移 · 滚轮缩放 · Tab 搜索\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t389 状态\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t390 补充 画布导航\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t391 详细信息\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t392 开合三角标记 画布大纲 · 5\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t393 文本 画布大纲 ·\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t394 文本 5\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t395 详细信息\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t396 开合三角标记 迷你地图\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t397 文本 迷你地图\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t398 图形 画布位置概览\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t399 区域 底部面板\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t400 缩略图 底部面板高度 Value: 285\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t401 按钮 问题\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t402 按钮 运行日志\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t403 按钮 终端\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t404 按钮 输出\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t405 按钮 切换面板停靠\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t406 按钮 最大化面板\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t407 按钮 折叠面板\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t408 文本 ✓\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t409 文本 没有发现问题\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t143 章节页脚\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t144 文本 ✓ 项目就绪\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t145 状态\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t427 文本 已打开项目并重新编译\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t146 文本 Blocky Studio\n\t\t\t\t\t\t\t\t14 区域\n\t\t\t\t\t\t15 区域\n\t\t\t\t\t\t16 区域\n\t\t17 标题栏 (settable, string) Value: Blocky Studio\n\t\t\t18 菜单栏 系统 ID: MenuBar\n\t\t\t\t85 菜单项目 系统\n\t\t\t20 按钮 最小化\n\t\t\t21 按钮 最大化\n\t\t\t22 按钮 关闭\n\nSelected text: ```\n开设置\n```\n\nNote: Pay special attention to the content selected by the user. If the user asks a question or refers to the content they are looking at on-screen, they might be referring to the selected content (but they might be referring to something else that's visible, too)."
+  },
+  "screenshots": [
+    {
+      "id": "screenshot-0",
+      "width": 16,
+      "height": 16,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "screenshot-1",
+      "width": 16,
+      "height": 16,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "screenshot-2",
+      "width": 1182,
+      "height": 812,
+      "originX": 7,
+      "originY": 0
+    }
+  ]
+}

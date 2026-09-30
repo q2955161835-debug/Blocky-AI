@@ -1,0 +1,13 @@
+{
+  "time": "2026-09-30T10:18:47.715Z",
+  "provider": "xirang",
+  "model": "deepseek-v4-pro",
+  "requestId": "chatcmpl-8f2cf5b2-d806-9a6a-be7a-dc6a12d7d701",
+  "usage": {
+    "inputTokens": 9,
+    "outputTokens": 1,
+    "totalTokens": 10
+  },
+  "transport": "remote",
+  "hasText": true
+}

@@ -1,0 +1,1542 @@
+{
+  "startedAt": "2026-09-30T10:26:27.212Z",
+  "finishedAt": "2026-09-30T10:26:34.764Z",
+  "bundle": "dist/Blocky-Studio-0.7.1-candidate2",
+  "sourceCommit": "17f9241",
+  "realModelApiCalled": false,
+  "outcome": "passed",
+  "checks": [
+    {
+      "name": "new-process-default-read",
+      "passed": true
+    },
+    {
+      "name": "new-project-uses-default-reference",
+      "passed": true
+    },
+    {
+      "name": "new-project-has-user-resource-reference",
+      "passed": true
+    },
+    {
+      "name": "secret-body-excluded-from-project",
+      "passed": true
+    },
+    {
+      "name": "app-default-excluded-from-project",
+      "passed": true
+    },
+    {
+      "name": "workbench-layout-excluded-from-project",
+      "passed": true
+    },
+    {
+      "name": "existing-project-preserved-byte-for-byte",
+      "passed": true
+    },
+    {
+      "name": "existing-project-keeps-own-model",
+      "passed": true
+    },
+    {
+      "name": "default-preflight-requests-native-approval",
+      "passed": true
+    },
+    {
+      "name": "preflight-does-not-generate-candidate",
+      "passed": true
+    },
+    {
+      "name": "invalid-approval-rejected-before-provider-evidence",
+      "passed": true,
+      "detail": {
+        "rejection": "BLK-PERM-001",
+        "evidence": "BLK-BUILDER-EVIDENCE"
+      }
+    },
+    {
+      "name": "explicit-model-takes-priority",
+      "passed": true
+    },
+    {
+      "name": "project-id-found",
+      "passed": true
+    },
+    {
+      "name": "builder-work-reuses-default",
+      "passed": true
+    },
+    {
+      "name": "rejected-setting-keeps-default",
+      "passed": true
+    },
+    {
+      "name": "missing-resource-has-actionable-error",
+      "passed": true
+    },
+    {
+      "name": "missing-default-does-not-fallback-online",
+      "passed": true
+    },
+    {
+      "name": "reset-removes-reference",
+      "passed": true
+    },
+    {
+      "name": "reset-project-uses-local-default",
+      "passed": true
+    },
+    {
+      "name": "isolated-profile-no-plaintext-key",
+      "passed": true,
+      "detail": [
+        {
+          "path": "approvals/ledger.json",
+          "bytes": 678,
+          "plaintextSecret": false
+        },
+        {
+          "path": "approvals/ledger.lock",
+          "bytes": 0,
+          "plaintextSecret": false
+        },
+        {
+          "path": "builder-evidence/latest.json",
+          "bytes": 276,
+          "plaintextSecret": false
+        },
+        {
+          "path": "secrets/acceptance-model-secret.bin",
+          "bytes": 267,
+          "plaintextSecret": false
+        },
+        {
+          "path": "user/resources/app.json",
+          "bytes": 537,
+          "plaintextSecret": false
+        },
+        {
+          "path": "user/settings/app.json",
+          "bytes": 64,
+          "plaintextSecret": false
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "name": "profile",
+      "code": 0,
+      "args": [
+        "profile",
+        "show"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "profile.show",
+        "data": {
+          "profile": {
+            "custom": true,
+            "profileId": "6ffe9c0534f6e72c63e979d9cc311a30de924abb4982589a9509acfa22f5d9be"
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-before-default",
+      "code": 0,
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\existing.blocky"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-95bb6fbc-f0de-46fe-b49a-1df9c88af794",
+          "digest": "0c606a47c8167c857ffe85f4ba6746eb09828e9e73a0739745a9a261a2e9e0c8",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "existing.blocky",
+            "bytes": 3235,
+            "sha256": "9c32c16256bb4a4a8325d42d9ffdda61cf29cfb91a363d794ca1c92f59aca9e2"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "resource-set",
+      "code": 0,
+      "args": [
+        "resource",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\resource.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "secret-import",
+      "code": 0,
+      "args": [
+        "secret",
+        "import",
+        "--id",
+        "acceptance-model-secret",
+        "--env-file",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\synthetic.env",
+        "--variable",
+        "MODEL_KEY"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "secret.import",
+        "data": {
+          "secretRef": "acceptance-model-secret",
+          "configured": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "secret-status",
+      "code": 0,
+      "args": [
+        "secret",
+        "status",
+        "--id",
+        "acceptance-model-secret"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "secret.status",
+        "data": {
+          "secretRef": "acceptance-model-secret",
+          "configured": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "default-set",
+      "code": 0,
+      "args": [
+        "settings",
+        "set",
+        "--id",
+        "models.defaultResourceId",
+        "--value",
+        "\"acceptance-xirang\""
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "new-process-settings",
+      "code": 0,
+      "args": [
+        "settings",
+        "list"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "models.defaultResourceId": "acceptance-xirang"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-default-project",
+      "code": 0,
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-246f9077-9739-4401-abaa-9bc5a02b6cf0",
+          "digest": "fa37980f7df7a81a75a4449f7d8d4861838ea9f3dcc88a8be9a36befc10d62b5",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "default-new.blocky",
+            "bytes": 3275,
+            "sha256": "d050bffba947e168815e513206f2ad204c426373b4e1b9b8713760d6f5cf750d"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "open-existing-project",
+      "code": 0,
+      "args": [
+        "project",
+        "inspect",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\existing.blocky"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-95bb6fbc-f0de-46fe-b49a-1df9c88af794",
+          "displayName": "资料问答伙伴",
+          "digest": "0c606a47c8167c857ffe85f4ba6746eb09828e9e73a0739745a9a261a2e9e0c8",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "资料问答伙伴",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ]
+            },
+            {
+              "moduleId": "citation-service",
+              "displayName": "资料引用服务",
+              "purpose": "service",
+              "workspaceRef": "workspaces/citation-service.workspace.json",
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "product-handbook",
+              "kind": "knowledge",
+              "scope": "project"
+            },
+            {
+              "resourceId": "local-composer",
+              "kind": "model",
+              "scope": "project"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "default-live-preflight",
+      "code": 4,
+      "args": [
+        "builder",
+        "draft",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "Explain the project structure",
+        "--live",
+        "--request-id",
+        "acceptance-default",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\pending.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "pendingApproval": {
+            "approvalExpiresAt": 1790765789,
+            "createSurface": false,
+            "endpoint": "https://ai.ctaigw.cn/v1/chat/completions",
+            "inputScope": "目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义",
+            "maxOutputTokensPerTurn": 1024,
+            "maxTurns": 4,
+            "mode": "live",
+            "modelId": "deepseek-v4-pro",
+            "projectId": "project-246f9077-9739-4401-abaa-9bc5a02b6cf0",
+            "projectName": "资料问答伙伴",
+            "provider": "xirang",
+            "requestDigest": "00338897d647b526bfd17c79bfffb7ae1e97cd6b3fc32e127e037f3026301b5c",
+            "requestId": "acceptance-default"
+          },
+          "modelApiCalled": false,
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "invalid-approval",
+      "code": 3,
+      "args": [
+        "builder",
+        "draft",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "Explain the project structure",
+        "--live",
+        "--request-id",
+        "acceptance-default",
+        "--approve",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\denied.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-PERM-001",
+          "message": "请求尚未获准，或批准已失效。",
+          "path": "",
+          "hint": "重新预检项目、资源与摘要，仅批准本次明确的操作。"
+        }
+      }
+    },
+    {
+      "name": "invalid-approval-evidence",
+      "code": 3,
+      "args": [
+        "builder",
+        "evidence",
+        "--request-id",
+        "acceptance-default"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-BUILDER-EVIDENCE",
+          "message": "构建操作未完成；原项目保持不变。",
+          "path": "",
+          "hint": "运行 blocky --help 查看命令。"
+        }
+      }
+    },
+    {
+      "name": "explicit-resource-set",
+      "code": 0,
+      "args": [
+        "resource",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\resource.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "explicit-model-preflight",
+      "code": 4,
+      "args": [
+        "builder",
+        "draft",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "Explain the project structure",
+        "--live",
+        "--model",
+        "acceptance-explicit",
+        "--request-id",
+        "acceptance-explicit",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\explicit.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "pendingApproval": {
+            "approvalExpiresAt": 1790765791,
+            "createSurface": false,
+            "endpoint": "https://ai.ctaigw.cn/v1/chat/completions",
+            "inputScope": "目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义",
+            "maxOutputTokensPerTurn": 1024,
+            "maxTurns": 4,
+            "mode": "live",
+            "modelId": "deepseek-v4-flash",
+            "projectId": "project-246f9077-9739-4401-abaa-9bc5a02b6cf0",
+            "projectName": "资料问答伙伴",
+            "provider": "xirang",
+            "requestDigest": "75e259e9c8303324ce4579678cb1a5258b87a4cd0389d119f66669c3cda262c9",
+            "requestId": "acceptance-explicit"
+          },
+          "modelApiCalled": false,
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "builder-work-default",
+      "code": 4,
+      "args": [
+        "builder",
+        "work",
+        "build-blocky-agents",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky",
+        "--input",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\request.json",
+        "--live",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\work-default.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "pendingApproval": {
+            "approvalExpiresAt": 1790765791,
+            "createSurface": false,
+            "endpoint": "https://ai.ctaigw.cn/v1/chat/completions",
+            "inputScope": "目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义",
+            "maxOutputTokensPerTurn": 1024,
+            "maxTurns": 4,
+            "mode": "live",
+            "modelId": "deepseek-v4-pro",
+            "projectId": "project-246f9077-9739-4401-abaa-9bc5a02b6cf0",
+            "projectName": "资料问答伙伴",
+            "provider": "xirang",
+            "requestDigest": "2f74f30121842ed4c4c82c2e589be0040342373645fda49cf0939a9d34265641",
+            "requestId": "acceptance-work-default"
+          },
+          "modelApiCalled": false,
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "unconfigured-default-rejected",
+      "code": 3,
+      "args": [
+        "settings",
+        "set",
+        "--id",
+        "models.defaultResourceId",
+        "--value",
+        "\"missing-resource\""
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    },
+    {
+      "name": "non-reference-setting-rejected",
+      "code": 3,
+      "args": [
+        "settings",
+        "set",
+        "--id",
+        "models.defaultResourceId",
+        "--value",
+        "\"https://invalid.example/key\""
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-CONFIG-001",
+          "message": "配置无效或与已有快捷键冲突；未覆盖本机配置。",
+          "path": "",
+          "hint": "运行 blocky --help 查看命令。"
+        }
+      }
+    },
+    {
+      "name": "settings-after-invalid",
+      "code": 0,
+      "args": [
+        "settings",
+        "list"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "models.defaultResourceId": "acceptance-xirang"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "delete-default-resource",
+      "code": 0,
+      "args": [
+        "resource",
+        "delete",
+        "--id",
+        "acceptance-xirang"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.delete",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "deleted-default-new-project",
+      "code": 3,
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\missing.blocky"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    },
+    {
+      "name": "deleted-default-builder",
+      "code": 3,
+      "args": [
+        "builder",
+        "draft",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\default-new.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "Explain the project",
+        "--live",
+        "--request-id",
+        "acceptance-missing",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\missing-candidate.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    },
+    {
+      "name": "reset-default",
+      "code": 0,
+      "args": [
+        "settings",
+        "reset",
+        "--id",
+        "models.defaultResourceId"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "settings-after-reset",
+      "code": 0,
+      "args": [
+        "settings",
+        "list"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {}
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-local-project",
+      "code": 0,
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\reset.blocky"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-400dca05-a228-4967-b7de-8bfb231ff2f0",
+          "digest": "6c9207c359c0f13061a1765e50458a90d09e062cd6fa3c40adf1e581083a1f6e",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "reset.blocky",
+            "bytes": 3235,
+            "sha256": "048d3c2949faa2caec361dae4ea125009eeadcabec4b98d168138b240ff881c4"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "local-explain",
+      "code": 0,
+      "args": [
+        "builder",
+        "explain",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\reset.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "Explain selected blocks",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\workbench-acceptance\\run-1790763987210\\local-candidate.json"
+      ],
+      "response": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.explain",
+        "data": {
+          "requestId": "builder-77454206-bbce-46fa-9588-70dbaeffb827",
+          "modelApiCalled": false,
+          "generations": [
+            {
+              "model": "local-builder-v1",
+              "provider": "deterministic",
+              "requestId": "local-response",
+              "transport": "local",
+              "usage": null
+            }
+          ],
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "local-candidate.json",
+            "bytes": 2518,
+            "sha256": "6a484cab6c3360c7711b3a6d6d92d6f7c4b289804ea811bad0bee2b8b081482d"
+          }
+        ],
+        "nextCursor": null
+      }
+    }
+  ]
+}

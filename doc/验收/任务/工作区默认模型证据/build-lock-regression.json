@@ -1,0 +1,9 @@
+{
+  "time": "2026-09-30T18:48:35.1808231+08:00",
+  "exitCode": 0,
+  "mappedReaderActiveDuringBuild": true,
+  "sameHash": true,
+  "sameMtime": true,
+  "preFixError": "UNKNOWN -4094 open",
+  "preFixExitCode": 1
+}

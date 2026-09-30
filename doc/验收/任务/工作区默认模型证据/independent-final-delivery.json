@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-09-30T19:51:43.1239553+08:00",
+  "ordinaryPackage": {
+    "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1",
+    "sourceCommit": "4f8173ecca4a2bdacf5f36f78f9c26d7db994dd5",
+    "files": 143,
+    "bytes": 449569411.0,
+    "matchesAcceptedCandidate": true,
+    "mismatch": []
+  },
+  "desktopShortcut": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1",
+    "arguments": "",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1\\Blocky Studio.exe,0",
+    "exists": true,
+    "version": "0.7.1",
+    "sha256": "718fab1913a77db45267573a258b51f54e5e06fe1459f961d6404e283d67b979",
+    "targetMatches": true,
+    "workingDirectoryMatches": true,
+    "argumentsEmpty": true,
+    "iconMatches": true
+  },
+  "full": {
+    "runId": "6557721a-afbf-4f29-b172-728ddcdc8283",
+    "passed": true,
+    "cycles": 360,
+    "roundTrips": 30,
+    "elapsedMs": 1803333,
+    "startedAt": "2026-09-30T11:19:42.96Z",
+    "endedAt": "2026-09-30T11:49:46.293Z",
+    "heapDelta": 168876,
+    "errors": [],
+    "trustedInput": [],
+    "outbound": [],
+    "persistedCycleRecords": 360,
+    "finalCycleRecord": {
+      "cycle": 360,
+      "blocks": 100,
+      "nodes": 100,
+      "roundTrip": true,
+      "viewEvents": 22,
+      "logRecords": 500,
+      "dropped": 8263,
+      "droppedImportant": 0,
+      "elapsedMs": 1803331
+    }
+  },
+  "mutation": "Only this evidence file was written; shortcut and package were read without save or launch."
+}

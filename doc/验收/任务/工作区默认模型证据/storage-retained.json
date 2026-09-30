@@ -1,0 +1,193 @@
+{
+  "measuredAt": "2026-09-30T19:54:30.2660794+08:00",
+  "holding": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930",
+  "logicalBytes": 2320989753.0,
+  "files": 1361.0,
+  "items": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\Blocky-Studio-0.7.1-candidate1",
+      "files": 143,
+      "bytes": 449569047.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\Blocky-Studio-0.7.1-candidate2",
+      "files": 143,
+      "bytes": 449569047.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\Blocky-Studio-0.7.1-candidate3",
+      "files": 143,
+      "bytes": 449569411.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\Blocky-Studio-0.7.1-candidate4",
+      "files": 143,
+      "bytes": 449569411.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\Blocky-Studio-0.7.1-candidate5",
+      "files": 143,
+      "bytes": 449569411.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-20260930",
+      "files": 279,
+      "bytes": 34965534.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-acceptance",
+      "files": 337,
+      "bytes": 37903948.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-check.log",
+      "files": 1,
+      "bytes": 827.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-cli-retry.log",
+      "files": 1,
+      "bytes": 1519.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-component.log",
+      "files": 1,
+      "bytes": 4649.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-e2e-2.log",
+      "files": 1,
+      "bytes": 4830.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full-2.log",
+      "files": 1,
+      "bytes": 36507.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full-3.log",
+      "files": 1,
+      "bytes": 26342.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full-4.log",
+      "files": 1,
+      "bytes": 26342.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full-5.log",
+      "files": 1,
+      "bytes": 36522.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full-final.log",
+      "files": 1,
+      "bytes": 37990.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-full.log",
+      "files": 1,
+      "bytes": 40163.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-layout-fix.log",
+      "files": 1,
+      "bytes": 290.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-lock-reproduction.log",
+      "files": 1,
+      "bytes": 577.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-mapped-lock-fixed.log",
+      "files": 1,
+      "bytes": 0.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-mapped-lock-reproduction.log",
+      "files": 1,
+      "bytes": 571.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-moves-3-4.json",
+      "files": 1,
+      "bytes": 605.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-moves-dev.json",
+      "files": 1,
+      "bytes": 259.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-native-fix.log",
+      "files": 1,
+      "bytes": 6798.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-native-session-fix-2.log",
+      "files": 1,
+      "bytes": 8237.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-native-session-fix-3.log",
+      "files": 1,
+      "bytes": 3150.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-native-session-fix.log",
+      "files": 1,
+      "bytes": 13521.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-3.log",
+      "files": 1,
+      "bytes": 3883.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-4.log",
+      "files": 1,
+      "bytes": 3883.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-5.log",
+      "files": 1,
+      "bytes": 3883.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-build.log",
+      "files": 1,
+      "bytes": 3499.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-build2.log",
+      "files": 1,
+      "bytes": 3499.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-scan.log",
+      "files": 1,
+      "bytes": 162.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-release-scan2.log",
+      "files": 1,
+      "bytes": 162.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-session-check.log",
+      "files": 1,
+      "bytes": 2864.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-session-green.log",
+      "files": 1,
+      "bytes": 1046.0
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\工作区默认模型-20260930\\workbench-session-red.log",
+      "files": 1,
+      "bytes": 1364.0
+    }
+  ]
+}
