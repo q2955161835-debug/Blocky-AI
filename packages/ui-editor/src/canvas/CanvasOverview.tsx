@@ -17,7 +17,7 @@ export function CanvasOverview({ data, focus, center }: { data: Overview; focus(
         {(matches.length > 200 || data.omitted > 0) && <p>当前最多列出 200 项；缩小查找范围可定位更多积木。{data.omitted > 0 ? `另有 ${data.omitted} 项未载入大纲。` : ""}</p>}
       </div>
     </details>
-    <details open>
+    <details>
       <summary>迷你地图</summary>
       <svg viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`} role="img" aria-label="画布位置概览"
         onClick={event => {
