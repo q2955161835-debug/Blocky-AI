@@ -29,6 +29,7 @@ function setup(
   const context: ToolLoopContext = {
     project,
     budget,
+    capabilities: ["text.analyze"],
     model: project.resources["agent-model"],
     requestId: "run-loop",
     role: "Use the available tools to answer the request.",

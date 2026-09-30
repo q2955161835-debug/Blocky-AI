@@ -1,13 +1,116 @@
 [
-  {"type":"core.prompt.context","label":"补充指令","category":2,"color":"#8863b2","fields":["TEXT"],"inputs":[],"statement":true},
-  {"type":"core.run.budget","label":"运行预算","category":9,"color":"#ba6f4c","fields":["STEPS","CALLS","OUTPUT_TOKENS","TIMEOUT_MS"],"inputs":[],"statement":true},
-  {"type":"core.data.set","label":"设置结果","category":10,"color":"#6384b8","fields":["VALUE"],"inputs":[],"statement":true},
-  {"type":"core.logic.condition","label":"如果","category":10,"color":"#6384b8","fields":["SOURCE","OP","VALUE"],"fieldOptions":{"SOURCE":["input","result","memory"],"OP":["equals","contains","truthy"]},"optionalFields":["VALUE"],"inputs":["THEN","ELSE"],"statement":true},
-  {"type":"core.memory.read","label":"读取记忆","category":5,"color":"#9971b5","fields":["SCOPE","KEY"],"fieldOptions":{"SCOPE":["session","project"]},"inputs":[],"statement":true},
-  {"type":"core.memory.write","label":"保存记忆","category":5,"color":"#9971b5","fields":["SCOPE","KEY","SOURCE"],"fieldOptions":{"SCOPE":["session","project"],"SOURCE":["input","result"]},"inputs":[],"statement":true},
-  {"type":"core.memory.delete","label":"删除记忆","category":5,"color":"#9971b5","fields":["SCOPE","KEY"],"fieldOptions":{"SCOPE":["session","project"]},"inputs":[],"statement":true},
-  {"type":"core.tool.invoke","label":"调用工具","category":6,"color":"#418eac","fields":["RESOURCE","SOURCE"],"fieldOptions":{"SOURCE":["input","result"]},"inputs":[],"statement":true},
-  {"type":"core.guardrail.evidence","label":"引用护栏","category":9,"color":"#ba6f4c","fields":["POLICY"],"fieldOptions":{"POLICY":["require","optional"]},"inputs":[],"statement":true},
-  {"type":"core.output.structured","label":"结构化输出","category":11,"color":"#45997e","fields":["SCHEMA"],"inputs":[],"statement":true},
-  {"type":"core.output.file","label":"文件输出","category":11,"color":"#45997e","fields":["NAME","FORMAT"],"fieldOptions":{"FORMAT":["text","json"]},"inputs":[],"statement":true}
+  {
+    "type": "core.prompt.context",
+    "label": "补充指令",
+    "category": 2,
+    "color": "#8863b2",
+    "fields": ["TEXT"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.run.budget",
+    "label": "运行预算",
+    "category": 9,
+    "color": "#ba6f4c",
+    "fields": ["STEPS", "CALLS", "OUTPUT_TOKENS", "TIMEOUT_MS"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.data.set",
+    "label": "设置结果",
+    "category": 10,
+    "color": "#6384b8",
+    "fields": ["VALUE"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.logic.condition",
+    "label": "如果",
+    "category": 10,
+    "color": "#6384b8",
+    "fields": ["SOURCE", "OP", "VALUE"],
+    "fieldOptions": {
+      "SOURCE": ["input", "result", "memory"],
+      "OP": ["equals", "contains", "truthy"]
+    },
+    "optionalFields": ["VALUE"],
+    "inputs": ["THEN", "ELSE"],
+    "statement": true
+  },
+  {
+    "type": "core.memory.read",
+    "label": "读取记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": ["SCOPE", "KEY"],
+    "fieldOptions": { "SCOPE": ["session", "project"] },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.write",
+    "label": "保存记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": ["SCOPE", "KEY", "SOURCE"],
+    "fieldOptions": {
+      "SCOPE": ["session", "project"],
+      "SOURCE": ["input", "result"]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.delete",
+    "label": "删除记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": ["SCOPE", "KEY"],
+    "fieldOptions": { "SCOPE": ["session", "project"] },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.tool.invoke",
+    "label": "调用工具",
+    "category": 6,
+    "color": "#418eac",
+    "fields": ["RESOURCE", "SOURCE"],
+    "resourceFields": { "RESOURCE": "tool" },
+    "fieldOptions": { "SOURCE": ["input", "result"] },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.guardrail.evidence",
+    "label": "引用护栏",
+    "category": 9,
+    "color": "#ba6f4c",
+    "fields": ["POLICY"],
+    "fieldOptions": { "POLICY": ["require", "optional"] },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.structured",
+    "label": "结构化输出",
+    "category": 11,
+    "color": "#45997e",
+    "fields": ["SCHEMA"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.file",
+    "label": "文件输出",
+    "category": 11,
+    "color": "#45997e",
+    "fields": ["NAME", "FORMAT"],
+    "fieldOptions": { "FORMAT": ["text", "json"] },
+    "inputs": [],
+    "statement": true
+  }
 ]

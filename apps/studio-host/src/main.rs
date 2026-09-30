@@ -15,6 +15,7 @@ mod runtime_commands;
 mod secret_commands;
 mod task_commands;
 mod terminal_commands;
+mod tool_commands;
 mod user_commands;
 mod window_lifecycle;
 mod window_state;
@@ -74,6 +75,7 @@ fn main() {
         .manage(commands::Handles::default())
         .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
+        .manage(blocky_studio::tool_gateway::ToolHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
@@ -159,6 +161,13 @@ fn main() {
             agent_data_commands::agent_tool_preflight,
             agent_data_commands::agent_tool_call,
             agent_data_commands::agent_tool_cancel,
+            tool_commands::tool_preflight,
+            tool_commands::tool_call,
+            tool_commands::tool_cancel,
+            tool_commands::tool_status,
+            tool_commands::tool_reconcile,
+            tool_commands::tool_cleanup_status,
+            tool_commands::tool_cleanup,
             agent_data_commands::agent_output_save,
             provider_commands::provider_preflight,
             provider_commands::provider_model_preflight,

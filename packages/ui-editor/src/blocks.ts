@@ -31,11 +31,31 @@ const labels: Record<string, string> = {
   RESOURCE: "资源",
   CHANNEL: "通道",
   LABEL: "审批事项",
-  TARGET: "目标窗口", URL: "网址", ACTION: "动作", LOCATOR: "定位器",
+  TARGET: "目标窗口",
+  URL: "网址",
+  ACTION: "动作",
+  LOCATOR: "定位器",
   MILLISECONDS: "毫秒",
+  COUNT: "重复次数",
+  MAX_ITEMS: "最多项目数",
+  MAX_ITERATIONS: "最多循环次数",
+  ATTEMPTS: "最多尝试次数",
+  WAIT_MS: "重试等待毫秒",
+  MAX_TURNS: "最多轮次",
   STYLE: "方式",
-  TEXT: '内容', STEPS: '最多步数', CALLS: '最多调用', OUTPUT_TOKENS: '输出 Token 预算', TIMEOUT_MS: '总时限毫秒',
-  SOURCE: '取值', OP: '判断', VALUE: '值', SCOPE: '范围', KEY: '键', POLICY: '策略', SCHEMA: '输出结构', FORMAT: '格式',
+  TEXT: "内容",
+  STEPS: "最多步数",
+  CALLS: "最多调用",
+  OUTPUT_TOKENS: "输出 Token 预算",
+  TIMEOUT_MS: "总时限毫秒",
+  SOURCE: "取值",
+  OP: "判断",
+  VALUE: "值",
+  SCOPE: "范围",
+  KEY: "键",
+  POLICY: "策略",
+  SCHEMA: "输出结构",
+  FORMAT: "格式",
 };
 export function registerBlocks() {
   if (registered) return;
@@ -63,11 +83,16 @@ export function registerBlocks() {
       init(this: Blockly.Block) {
         this.appendDummyInput().appendField(def.label);
         if (def.type === "core.data.transform")
-          this.appendDummyInput().appendField(new Blockly.FieldLabel("✖ 代码无效", "blocky-code-badge"), "BLOCKY_CODE_STATE");
+          this.appendDummyInput().appendField(
+            new Blockly.FieldLabel("✖ 代码无效", "blocky-code-badge"),
+            "BLOCKY_CODE_STATE",
+          );
         const input = this.appendDummyInput();
         for (const field of def.fields) {
           if (def.jsonFields?.includes(field)) {
-            input.appendField(labels[field] ?? "值").appendField(new JsonField(), field);
+            input
+              .appendField(labels[field] ?? "值")
+              .appendField(new JsonField(), field);
             continue;
           }
           if (field === "INPUT" || field === "OUTPUT") {
@@ -76,7 +101,11 @@ export function registerBlocks() {
             hidden.setVisible(false);
             continue;
           }
-          input.appendField(def.type === "core.event.receive" && field === "TIMEOUT_MS" ? "等待毫秒" : labels[field] ?? field);
+          input.appendField(
+            def.type === "core.event.receive" && field === "TIMEOUT_MS"
+              ? "等待毫秒"
+              : (labels[field] ?? field),
+          );
           if (def.fieldOptions?.[field])
             input.appendField(
               new Blockly.FieldDropdown(
@@ -87,14 +116,17 @@ export function registerBlocks() {
           else
             input.appendField(
               new Blockly.FieldTextInput(
-                field === "NAME"
-                  ? "资料问答"
-                  : field === "ROLE"
-                    ? "用清晰可靠的中文回答，只引用资料中的事实"
-                    : "",
+                def.defaultFields?.[field] ??
+                  (field === "NAME"
+                    ? "资料问答"
+                    : field === "ROLE"
+                      ? "用清晰可靠的中文回答，只引用资料中的事实"
+                      : ""),
               ),
               field,
             );
+          if (def.defaultFields?.[field] && def.fieldOptions?.[field])
+            this.setFieldValue(def.defaultFields[field], field);
         }
         for (const input of def.inputs) {
           const check = def.inputChecks?.[input] ?? "step";
@@ -102,11 +134,22 @@ export function registerBlocks() {
             this.appendValueInput(input).setCheck(check);
           else {
             const statement = this.appendStatementInput(input).setCheck(check);
-            if (def.type === "core.event.receive") statement.appendField(input === "RECEIVED" ? "收到消息" : "队列为空或等待超时");
-            if (def.type === "core.flow.parallel") statement.appendField(input === "LEFT" ? "分支一" : "分支二");
-            if (def.type === "runtime.task.durable") statement.appendField("工作流步骤");
-            if (def.type === "runtime.compensate") statement.appendField(input === "DO" ? "执行" : "补偿（可选）");
-            if (["core.computer.attach","core.browser.navigate"].includes(def.type)) statement.appendField("自动化步骤");
+            if (def.type === "core.event.receive")
+              statement.appendField(
+                input === "RECEIVED" ? "收到消息" : "队列为空或等待超时",
+              );
+            if (def.type === "core.flow.parallel")
+              statement.appendField(input === "LEFT" ? "分支一" : "分支二");
+            if (def.type === "runtime.task.durable")
+              statement.appendField("工作流步骤");
+            if (def.type === "runtime.compensate")
+              statement.appendField(input === "DO" ? "执行" : "补偿（可选）");
+            if (
+              ["core.computer.attach", "core.browser.navigate"].includes(
+                def.type,
+              )
+            )
+              statement.appendField("自动化步骤");
           }
         }
         if (def.output) this.setOutput(true, def.output);
@@ -115,7 +158,11 @@ export function registerBlocks() {
           this.setNextStatement(true, def.statementCheck ?? "step");
         }
         this.setColour(def.color);
-        this.setTooltip(def.type==="runtime.compensate"?"补偿开始时，结果包含 before（步骤前）、after（步骤后）和 current（当前值）。":def.label);
+        this.setTooltip(
+          def.type === "runtime.compensate"
+            ? "补偿开始时，结果包含 before（步骤前）、after（步骤后）和 current（当前值）。"
+            : def.label,
+        );
         this.setHelpUrl("");
         this.contextMenu = false;
       },

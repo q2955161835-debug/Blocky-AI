@@ -1,6 +1,6 @@
 use blocky_studio::{project_store, strict_json};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::io::{BufRead, Read, Write};
 use std::path::Path;
 const SCHEMA: &str = "blocky.project-io/v1alpha1";
@@ -28,54 +28,115 @@ fn execute(bytes: &[u8]) -> Value {
     execute_value(value)
 }
 fn execute_value(value: Value) -> Value {
-    if let Err(code) = blocky_studio::profile::from_environment() { return json!({"ok":false,"code":code}); }
-    if value["operation"] == "workflow-decide" {
-        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::decision::dispatch(root.join("workflow"), &value));
-        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+    if let Err(code) = blocky_studio::profile::from_environment() {
+        return json!({"ok":false,"code":code});
     }
-    if value["operation"] == "workflow-reconcile" {
-        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::reconciliation::dispatch(root.join("workflow"), &value));
-        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
-    }
-    if matches!(value["operation"].as_str(), Some("workflow-list" | "workflow-show")) {
-        let result = blocky_studio::profile::cli_root().and_then(|root| blocky_studio::workflow::query::dispatch(root.join("workflow"), &value));
-        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
-    }
-    if matches!(value["operation"].as_str(),Some("rpa-captures"|"rpa-capture-read"|"rpa-capture-delete")) {
-        let result=blocky_studio::profile::cli_root().and_then(|root|blocky_studio::rpa::captures::dispatch(root.join("rpa/captures"),value));
-        return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};
-    }
-    if value["operation"] == "profile-info" {
-        if value["schemaVersion"] != SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) { return json!({"ok":false,"code":"BLK-CLI-002"}); }
-        return match blocky_studio::profile::cli_root() {
-            Ok(root) => json!({"ok":true,"value":{"profileId":blocky_studio::profile::identity(&root),"custom":std::env::var_os(blocky_studio::profile::VARIABLE).is_some()}}),
+    if value["operation"]
+        .as_str()
+        .is_some_and(|s| s.starts_with("tool-"))
+    {
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::tool_gateway::dispatch::execute(
+                &root,
+                &value,
+                &std::sync::atomic::AtomicBool::new(false),
+            )
+        });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
             Err(code) => json!({"ok":false,"code":code}),
         };
     }
-    if matches!(value["operation"].as_str(), Some("rpa-checkpoints" | "rpa-checkpoint" | "rpa-recovery-preview" | "rpa-checkpoint-delete")) {
+    if value["operation"] == "workflow-decide" {
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::workflow::decision::dispatch(root.join("workflow"), &value)
+        });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
+    if value["operation"] == "workflow-reconcile" {
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::workflow::reconciliation::dispatch(root.join("workflow"), &value)
+        });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
+    if matches!(
+        value["operation"].as_str(),
+        Some("workflow-list" | "workflow-show")
+    ) {
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::workflow::query::dispatch(root.join("workflow"), &value)
+        });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
+    if matches!(
+        value["operation"].as_str(),
+        Some("rpa-captures" | "rpa-capture-read" | "rpa-capture-delete")
+    ) {
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::rpa::captures::dispatch(root.join("rpa/captures"), value)
+        });
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
+    if value["operation"] == "profile-info" {
+        if value["schemaVersion"] != SCHEMA || value.as_object().is_none_or(|v| v.len() != 2) {
+            return json!({"ok":false,"code":"BLK-CLI-002"});
+        }
+        return match blocky_studio::profile::cli_root() {
+            Ok(root) => {
+                json!({"ok":true,"value":{"profileId":blocky_studio::profile::identity(&root),"custom":std::env::var_os(blocky_studio::profile::VARIABLE).is_some()}})
+            }
+            Err(code) => json!({"ok":false,"code":code}),
+        };
+    }
+    if matches!(
+        value["operation"].as_str(),
+        Some(
+            "rpa-checkpoints" | "rpa-checkpoint" | "rpa-recovery-preview" | "rpa-checkpoint-delete"
+        )
+    ) {
         let result = blocky_studio::rpa::journal::local_root()
             .and_then(|root| blocky_studio::rpa::journal::dispatch(root, value));
-        return match result { Ok(value) => json!({"ok":true,"value":value}), Err(code) => json!({"ok":false,"code":code}) };
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
     }
-    if value["operation"]=="rpa-targets" {
-        if value["schemaVersion"]!=SCHEMA || value.as_object().is_none_or(|v|v.len()!=2) {return json!({"ok":false,"code":"BLK-CLI-002"});}
+    if value["operation"] == "rpa-targets" {
+        if value["schemaVersion"] != SCHEMA || value.as_object().is_none_or(|v| v.len() != 2) {
+            return json!({"ok":false,"code":"BLK-CLI-002"});
+        }
         return json!({"ok":true,"value":blocky_studio::rpa::target::list_details()});
     }
-    if value["operation"].as_str().is_some_and(|s|s.starts_with("builder-")) {
-        let result=blocky_studio::profile::cli_root().and_then(|root|blocky_studio::builder::dispatch(root,&value));
-        return match result {Ok(value)=>json!({"ok":true,"value":value}),Err(code)=>json!({"ok":false,"code":code})};
+    if value["operation"]
+        .as_str()
+        .is_some_and(|s| s.starts_with("builder-"))
+    {
+        let result = blocky_studio::profile::cli_root()
+            .and_then(|root| blocky_studio::builder::dispatch(root, &value));
+        return match result {
+            Ok(value) => json!({"ok":true,"value":value}),
+            Err(code) => json!({"ok":false,"code":code}),
+        };
     }
     if value["operation"]
         .as_str()
         .is_some_and(|s| s.starts_with("agent-"))
     {
-        let result = blocky_studio::profile::cli_root()
-            .and_then(|root| {
-                blocky_studio::agent_data::dispatch(
-                    root.join("user/agent-memory"),
-                    &value,
-                )
-            });
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            blocky_studio::agent_data::dispatch(root.join("user/agent-memory"), &value)
+        });
         return match result {
             Ok(value) => json!({"ok":true,"value":value}),
             Err(code) => json!({"ok":false,"code":code}),
@@ -86,9 +147,7 @@ fn execute_value(value: Value) -> Value {
         .is_some_and(|s| s.starts_with("provider-"))
     {
         let result = blocky_studio::profile::cli_root()
-            .and_then(|root| {
-                blocky_studio::provider::dispatch(root, &value)
-            });
+            .and_then(|root| blocky_studio::provider::dispatch(root, &value));
         return match result {
             Ok(value) => json!({"ok":true,"value":value}),
             Err(code) => json!({"ok":false,"code":code}),
@@ -101,13 +160,10 @@ fn execute_value(value: Value) -> Value {
         if value["schemaVersion"] != SCHEMA {
             return json!({"ok":false,"code":"BLK-MIG-001"});
         }
-        let result = blocky_studio::profile::cli_root()
-            .and_then(|root| {
-                let store = blocky_studio::conversion::ConversionStore::new(
-                    root.join("conversion"),
-                );
-                blocky_studio::conversion::dispatch(&store, &value)
-            });
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            let store = blocky_studio::conversion::ConversionStore::new(root.join("conversion"));
+            blocky_studio::conversion::dispatch(&store, &value)
+        });
         return match result {
             Ok(value) => {
                 let mut response = json!({"ok":true});
@@ -124,13 +180,10 @@ fn execute_value(value: Value) -> Value {
         if value["schemaVersion"] != SCHEMA {
             return json!({"ok":false,"code":"BLK-MIG-001"});
         }
-        let result = blocky_studio::profile::cli_root()
-            .and_then(|root| {
-                let store = blocky_studio::knowledge::KnowledgeStore::new(
-                    root.join("knowledge"),
-                );
-                blocky_studio::knowledge::dispatch(&store, &value)
-            });
+        let result = blocky_studio::profile::cli_root().and_then(|root| {
+            let store = blocky_studio::knowledge::KnowledgeStore::new(root.join("knowledge"));
+            blocky_studio::knowledge::dispatch(&store, &value)
+        });
         return match result {
             Ok(value) => {
                 let mut response = json!({"ok":true});
@@ -218,8 +271,7 @@ fn execute_value(value: Value) -> Value {
             }
             let original = r.original_json.as_deref().ok_or("BLK-CLI-002")?;
             let root = blocky_studio::profile::cli_root()?;
-            let store =
-                blocky_studio::user_store::UserStore::new(root.join("user"));
+            let store = blocky_studio::user_store::UserStore::new(root.join("user"));
             let registry = store.read("resources", "app")?.unwrap_or(Value::Null);
             let next = blocky_studio::patch_guard::validate_with_registry(
                 original,
@@ -294,14 +346,29 @@ fn execute_value(value: Value) -> Value {
 }
 fn main() {
     match std::env::args().nth(1).as_deref() {
-        Some("--blocky-model-install") => std::process::exit(blocky_studio::local_models::install_session::main()),
-        Some("--blocky-workflow-session") => std::process::exit(blocky_studio::workflow::session::main()),
-        Some("--blocky-runtime-session") => std::process::exit(blocky_studio::workflow::managed::main()),
+        Some("--blocky-tool-call") => {
+            std::process::exit(blocky_studio::tool_gateway::dispatch::session_main())
+        }
+        Some("--blocky-model-install") => {
+            std::process::exit(blocky_studio::local_models::install_session::main())
+        }
+        Some("--blocky-workflow-session") => {
+            std::process::exit(blocky_studio::workflow::session::main())
+        }
+        Some("--blocky-runtime-session") => {
+            std::process::exit(blocky_studio::workflow::managed::main())
+        }
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
-        Some("--blocky-rpa-recording-worker") => std::process::exit(blocky_studio::rpa::recording::worker_main()),
-        Some("--blocky-rpa-record") => std::process::exit(blocky_studio::rpa::recording::session_main()),
+        Some("--blocky-rpa-recording-worker") => {
+            std::process::exit(blocky_studio::rpa::recording::worker_main())
+        }
+        Some("--blocky-rpa-record") => {
+            std::process::exit(blocky_studio::rpa::recording::session_main())
+        }
         Some("--blocky-rpa-run") => std::process::exit(blocky_studio::rpa::runner_main()),
-        Some("--blocky-rpa-module") => std::process::exit(blocky_studio::rpa::module_session_main()),
+        Some("--blocky-rpa-module") => {
+            std::process::exit(blocky_studio::rpa::module_session_main())
+        }
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         Some("--blocky-knowledge-session") => std::process::exit(knowledge_session()),
@@ -371,7 +438,8 @@ mod tests {
         );
         assert_eq!(execute(br#"{"schemaVersion":"blocky.project-io/v1alpha1","operation":"version","path":"unexpected"}"#)["ok"],false);
         assert_eq!(
-            execute(br#"{"schemaVersion":"blocky.project-io/v1alpha1","operation":"version"}"#)["ok"],
+            execute(br#"{"schemaVersion":"blocky.project-io/v1alpha1","operation":"version"}"#)
+                ["ok"],
             true
         );
     }

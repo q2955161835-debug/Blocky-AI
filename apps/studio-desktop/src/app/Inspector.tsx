@@ -103,6 +103,16 @@ export function Inspector({
                 OUTPUT: "输出类型",
                 RESOURCE: "资源",
                 STYLE: "回答方式",
+                MAX_TURNS: "最多轮次",
+                OUTPUT_TOKENS: "输出 Token 预算",
+                COUNT: "重复次数",
+                SOURCE: "取值来源",
+                OP: "判断方式",
+                VALUE: "比较值",
+                MAX_ITEMS: "最多项目数",
+                MAX_ITERATIONS: "最多循环次数",
+                ATTEMPTS: "最多尝试次数",
+                WAIT_MS: "重试等待毫秒",
               } as Record<string, string>
             )[field]
           }
@@ -113,7 +123,7 @@ export function Inspector({
               value={block.fields?.[field]}
               save={(text) => s.updateField(block.id, field, text)}
             />
-          ) : field === "RESOURCE" ? (
+          ) : def?.resourceFields?.[field] ? (
             <select
               aria-label="资源"
               value={String(block.fields?.RESOURCE ?? "")}
@@ -121,13 +131,7 @@ export function Inspector({
             >
               <option value="">选择资源</option>
               {s.snapshot.project.manifest.resources
-                .filter(
-                  (r) =>
-                    r.kind ===
-                    (block.type === "core.knowledge.retrieve"
-                      ? "knowledge"
-                      : "model"),
-                )
+                .filter((r) => r.kind === def.resourceFields?.[field])
                 .map((r) => (
                   <option key={r.resourceId} value={r.resourceId}>
                     {(r.scope === "project"

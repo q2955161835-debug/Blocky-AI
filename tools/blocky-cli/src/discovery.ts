@@ -6,16 +6,34 @@ import {
 import { surfaceSpecSchema } from "@blocky/app-surface";
 import { workspaceBlockShape } from "@blocky/block-catalog";
 import { editorOperationSchema } from "@blocky/project-model";
-import { rpaPlanSchema, rpaGrantSchema, rpaRecoverySchema, rpaBrowserStartSchema, rpaModuleInputsSchema, rpaCheckpointDeleteSchema } from "@blocky/rpa-core";
-import { rpaRecordingStartSchema, rpaRecordingResultSchema, rpaRecordingStopSchema, rpaRecordingControlSchema } from "@blocky/rpa-core/recording";
+import {
+  rpaPlanSchema,
+  rpaGrantSchema,
+  rpaRecoverySchema,
+  rpaBrowserStartSchema,
+  rpaModuleInputsSchema,
+  rpaCheckpointDeleteSchema,
+} from "@blocky/rpa-core";
+import {
+  rpaRecordingStartSchema,
+  rpaRecordingResultSchema,
+  rpaRecordingStopSchema,
+  rpaRecordingControlSchema,
+} from "@blocky/rpa-core/recording";
 import { allow, required, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { runInputsSchema } from "./run-inputs";
-import { workflowSummarySchema, workflowDecisionResultSchema, workflowReconciliationSchema } from "./workflow-schema";
+import {
+  workflowSummarySchema,
+  workflowDecisionResultSchema,
+  workflowReconciliationSchema,
+} from "./workflow-schema";
 import { modelRequestSchema, modelResponseSchema } from "./model-schema";
+import { toolRequestSchema } from "./tool-schema";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.tool-request/v2": toolRequestSchema,
   "blocky.model-request/v2": modelRequestSchema,
   "blocky.model-response/v2": modelResponseSchema,
   "blocky.workflow-summary/v1": workflowSummarySchema,

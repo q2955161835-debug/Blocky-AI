@@ -1,10 +1,11 @@
 import { catalog, catalogVersion, walkBlocks } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
-import type { Project, Resource } from "@blocky/language-schema";
+import { validRef, type Project, type Resource } from "@blocky/language-schema";
 import { projectDigest } from "@blocky/project-model";
 import { builderInputBudget, type BuilderRequest } from "./request";
 
-/** Deliberately excludes resource definitions, bindings, local paths and secrets. */
+/** Publishes whitelisted capabilities and public schemas; excludes bindings,
+ * endpoints, process configuration and secrets. */
 export async function inspectBuilder(
   project: Project,
   request: BuilderRequest,
@@ -24,6 +25,21 @@ export async function inspectBuilder(
   const declaredIds = new Set(
     project.manifest.resources.map((r) => r.resourceId),
   );
+  const toolSchema = (resource: Resource, field: string) => {
+    const reference = resource.definition[field];
+    if (
+      !reference ||
+      typeof reference !== "object" ||
+      Array.isArray(reference) ||
+      reference.kind !== "schema" ||
+      typeof reference.id !== "string"
+    )
+      return undefined;
+    const path = `schemas/${reference.id}.json`;
+    return validRef(path) && Object.hasOwn(project.schemas, path)
+      ? project.schemas[path]
+      : undefined;
+  };
   const summaries = blocks.map((b) => ({
     id: b.id,
     type: b.type,
@@ -58,6 +74,33 @@ export async function inspectBuilder(
         resourceId: r.resourceId,
         kind: r.kind,
         displayName: r.displayName,
+        ...(r.kind === "model"
+          ? {
+              modelCapabilities: Array.isArray(r.definition.capabilities)
+                ? r.definition.capabilities.filter(
+                    (v) =>
+                      typeof v === "string" &&
+                      [
+                        "text",
+                        "tools",
+                        "structured-output",
+                        "embedding",
+                        "rerank",
+                        "image",
+                        "audio",
+                        "classify",
+                        "score",
+                      ].includes(v),
+                  )
+                : [],
+            }
+          : {}),
+        ...(r.kind === "tool"
+          ? {
+              inputSchema: toolSchema(r, "inputSchemaRef"),
+              outputSchema: toolSchema(r, "outputSchemaRef"),
+            }
+          : {}),
       })),
     catalog: catalog.map(
       ({ type, label, fields, inputs, requiredInputs, fieldOptions }) => ({

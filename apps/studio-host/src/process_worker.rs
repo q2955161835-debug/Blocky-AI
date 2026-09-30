@@ -13,7 +13,7 @@ use std::{
 };
 use windows_sys::Win32::{
     Foundation::*,
-    Security::SECURITY_ATTRIBUTES,
+    Security::{PSID, SECURITY_ATTRIBUTES, SECURITY_CAPABILITIES},
     System::{Pipes::CreatePipe, Threading::*},
 };
 const FAILED: &str = "BLK-WORKFLOW-OWNER";
@@ -130,6 +130,7 @@ pub(crate) struct Worker {
     stopped: bool,
     input: Option<File>,
     output: Option<File>,
+    error: Option<File>,
 }
 pub(crate) struct IsolatedLaunch<'a> {
     pub environment: &'a [(OsString, OsString)],
@@ -143,7 +144,7 @@ impl Worker {
         arguments: &[OsString],
         job_name: &str,
     ) -> Result<Self, String> {
-        Self::spawn_configured(executable, arguments, job_name, None)
+        Self::spawn_configured(executable, arguments, job_name, None, None)
     }
     pub(crate) fn spawn_isolated(
         executable: &Path,
@@ -151,13 +152,26 @@ impl Worker {
         job_name: &str,
         options: IsolatedLaunch<'_>,
     ) -> Result<Self, String> {
-        Self::spawn_configured(executable, arguments, job_name, Some(options))
+        Self::spawn_configured(executable, arguments, job_name, Some(options), None)
+    }
+    pub(crate) fn spawn_sandboxed(
+        executable: &Path,
+        arguments: &[OsString],
+        job_name: &str,
+        options: IsolatedLaunch<'_>,
+        sid: PSID,
+    ) -> Result<Self, String> {
+        if sid.is_null() {
+            return Err(INVALID.into());
+        }
+        Self::spawn_configured(executable, arguments, job_name, Some(options), Some(sid))
     }
     fn spawn_configured(
         executable: &Path,
         arguments: &[OsString],
         job_name: &str,
         options: Option<IsolatedLaunch<'_>>,
+        sandbox: Option<PSID>,
     ) -> Result<Self, String> {
         if !executable.is_absolute()
             || executable
@@ -182,8 +196,23 @@ impl Worker {
         if let Some(options) = &options {
             job.memory_limit(options.memory_limit)?;
         }
+        if sandbox.is_some() {
+            job.process_limit(1)?;
+        }
         let (input_read, input_write) = pipe()?;
         let (output_read, output_write) = pipe()?;
+        let error_pipe = if sandbox.is_some() {
+            Some(pipe()?)
+        } else {
+            None
+        };
+        if let Some((read, _)) = &error_pipe {
+            if unsafe { SetHandleInformation(read.as_raw_handle() as _, HANDLE_FLAG_INHERIT, 0) }
+                == 0
+            {
+                return Err(FAILED.into());
+            }
+        }
         for handle in [&input_write, &output_read] {
             if unsafe { SetHandleInformation(handle.as_raw_handle() as _, HANDLE_FLAG_INHERIT, 0) }
                 == 0
@@ -191,20 +220,24 @@ impl Worker {
                 return Err(FAILED.into());
             }
         }
-        let inherited = [
+        let mut inherited = vec![
             input_read.as_raw_handle() as HANDLE,
             output_write.as_raw_handle() as HANDLE,
         ];
+        if let Some((_, write)) = &error_pipe {
+            inherited.push(write.as_raw_handle() as HANDLE);
+        }
+        let attribute_count = if sandbox.is_some() { 2 } else { 1 };
         let mut size = 0;
         unsafe {
-            InitializeProcThreadAttributeList(null_mut(), 1, 0, &mut size);
+            InitializeProcThreadAttributeList(null_mut(), attribute_count, 0, &mut size);
         }
         if size == 0 || size > 65536 {
             return Err(FAILED.into());
         }
         let mut storage = vec![0usize; size.div_ceil(std::mem::size_of::<usize>())];
         let ptr = storage.as_mut_ptr() as LPPROC_THREAD_ATTRIBUTE_LIST;
-        if unsafe { InitializeProcThreadAttributeList(ptr, 1, 0, &mut size) } == 0 {
+        if unsafe { InitializeProcThreadAttributeList(ptr, attribute_count, 0, &mut size) } == 0 {
             return Err(FAILED.into());
         }
         let attributes = Attributes {
@@ -217,11 +250,32 @@ impl Worker {
                 0,
                 PROC_THREAD_ATTRIBUTE_HANDLE_LIST as usize,
                 inherited.as_ptr() as _,
-                std::mem::size_of_val(&inherited),
+                std::mem::size_of_val(inherited.as_slice()),
                 null_mut(),
                 null(),
             )
         } == 0
+        {
+            return Err(FAILED.into());
+        }
+        let security = SECURITY_CAPABILITIES {
+            AppContainerSid: sandbox.unwrap_or(null_mut()),
+            Capabilities: null_mut(),
+            CapabilityCount: 0,
+            Reserved: 0,
+        };
+        if sandbox.is_some()
+            && unsafe {
+                UpdateProcThreadAttribute(
+                    attributes.ptr,
+                    0,
+                    PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES as usize,
+                    &security as *const _ as _,
+                    std::mem::size_of_val(&security),
+                    null_mut(),
+                    null(),
+                )
+            } == 0
         {
             return Err(FAILED.into());
         }
@@ -231,7 +285,7 @@ impl Worker {
         startup.StartupInfo.wShowWindow = 0;
         startup.StartupInfo.hStdInput = inherited[0];
         startup.StartupInfo.hStdOutput = inherited[1];
-        startup.StartupInfo.hStdError = inherited[1];
+        startup.StartupInfo.hStdError = *inherited.get(2).unwrap_or(&inherited[1]);
         startup.lpAttributeList = attributes.ptr;
         let mut info: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
         let mut environment = if let Some(options) = &options {
@@ -276,6 +330,8 @@ impl Worker {
             }
         }
         if created == 0 {
+            #[cfg(test)]
+            eprintln!("worker CreateProcessW={}", unsafe { GetLastError() });
             return Err(FAILED.into());
         }
         let process = unsafe { OwnedHandle::from_raw_handle(info.hProcess as _) };
@@ -286,6 +342,10 @@ impl Worker {
         let identity = match prepared {
             Ok(value) => value,
             Err(code) => {
+                #[cfg(test)]
+                eprintln!("worker assign/identity failure={code} last={}", unsafe {
+                    GetLastError()
+                });
                 unsafe {
                     TerminateProcess(info.hProcess, 1);
                 }
@@ -306,6 +366,7 @@ impl Worker {
             stopped: false,
             input: Some(File::from(input_write)),
             output: Some(File::from(output_read)),
+            error: error_pipe.map(|(read, _)| File::from(read)),
         })
     }
     pub(crate) fn identity(&self) -> &Identity {
@@ -327,8 +388,14 @@ impl Worker {
     pub(crate) fn input(&mut self) -> Option<&mut File> {
         self.input.as_mut()
     }
+    pub(crate) fn take_input(&mut self) -> Option<File> {
+        self.input.take()
+    }
     pub(crate) fn take_output(&mut self) -> Option<File> {
         self.output.take()
+    }
+    pub(crate) fn take_error(&mut self) -> Option<File> {
+        self.error.take()
     }
     pub(crate) fn stop(&mut self) -> Result<(), String> {
         if self.stopped {

@@ -31,6 +31,7 @@
     "category": 3,
     "color": "#5178ce",
     "fields": ["RESOURCE"],
+    "resourceFields": { "RESOURCE": "model" },
     "inputs": [],
     "statement": true
   },
@@ -59,7 +60,32 @@
     "category": 4,
     "color": "#4f9c86",
     "fields": ["RESOURCE"],
+    "resourceFields": { "RESOURCE": "knowledge" },
     "inputs": [],
     "statement": true
+  },
+  {
+    "type": "core.reason.tool_loop",
+    "label": "调用可用工具",
+    "category": 3,
+    "color": "#5178ce",
+    "fields": ["RESOURCE", "MAX_TURNS", "OUTPUT_TOKENS"],
+    "resourceFields": { "RESOURCE": "model" },
+    "defaultFields": { "MAX_TURNS": "4", "OUTPUT_TOKENS": "512" },
+    "inputs": ["TOOLS"],
+    "inputChecks": { "TOOLS": "agent-tool" },
+    "requiredInputs": ["TOOLS"],
+    "statement": true
+  },
+  {
+    "type": "core.tool.expose",
+    "label": "提供给模型的工具",
+    "category": 6,
+    "color": "#418eac",
+    "fields": ["RESOURCE"],
+    "resourceFields": { "RESOURCE": "tool" },
+    "inputs": [],
+    "statement": true,
+    "statementCheck": "agent-tool"
   }
 ]

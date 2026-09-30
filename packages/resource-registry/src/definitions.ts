@@ -12,10 +12,11 @@ export type ResourceKind =
 export type ResourceFieldSchema = {
   type: "string" | "number" | "boolean" | "array" | "object";
   enum?: readonly string[];
-  format?: "id" | "public-https" | "implementation-ref";
+  format?: "id" | "public-https" | "implementation-ref" | "json-schema";
   minimum?: number;
   maximum?: number;
   integer?: boolean;
+  maxLength?: number;
   properties?: Record<string, ResourceFieldSchema>;
   required?: readonly string[];
   items?: ResourceFieldSchema;
@@ -187,9 +188,31 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
     "tool",
     "工具",
     object(
-      { ...executable, inputSchemaRef: reference, outputSchemaRef: reference },
+      {
+        ...executable,
+        inputSchemaRef: reference,
+        outputSchemaRef: reference,
+        inputSchemaJson: {
+          type: "string",
+          format: "json-schema",
+          maxLength: 16384,
+        },
+        outputSchemaJson: {
+          type: "string",
+          format: "json-schema",
+          maxLength: 16384,
+        },
+        timeoutMs: number(1, 120000),
+        method: enumeration("GET", "POST"),
+        networkMode: enumeration("remote", "loopback"),
+        mcpResourceId: id,
+        toolName: { type: "string", maxLength: 128 },
+        moduleId: id,
+        exportId: id,
+      },
       ["version", "permissions", "implementationRef"],
     ),
+    ["endpoint", "headers", "access"],
   ),
   definition(
     "skill",
@@ -208,11 +231,13 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
         ...executable,
         transport: enumeration("stdio", "streamable-http", "sse"),
         endpoint: https,
+        timeoutMs: number(1, 120000),
+        networkMode: enumeration("remote", "loopback"),
         tools: array(id),
       },
       ["version", "permissions", "implementationRef", "transport"],
     ),
-    ["endpoint", "authorization", "headers", "access"],
+    ["endpoint", "authorization", "headers", "access", "launch"],
   ),
   definition(
     "guardrail",

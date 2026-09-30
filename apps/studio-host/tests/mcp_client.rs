@@ -1,7 +1,5 @@
-#[path = "../src/mcp_client/mod.rs"]
-mod mcp_client;
-use mcp_client::{Client, Transport};
-use serde_json::{Value, json};
+use blocky_studio::mcp_client::{Client, Transport};
+use serde_json::{json, Value};
 use std::sync::{Arc, Mutex};
 #[derive(Default)]
 struct State {

@@ -6,6 +6,8 @@ import {
 } from "@blocky/block-catalog";
 import {
   officialStarters,
+  capabilityStarters,
+  createCapabilityStarter,
   architectureStarters,
   createArchitectureStarter,
   createBlueprintProject,
@@ -43,6 +45,7 @@ import { migrationCommand } from "./migration";
 import { foundationsCommand, foundationsHelp } from "./foundations";
 import { knowledgeCommand, knowledgeHelp } from "./knowledge";
 import { modelCommand, modelHelp } from "./models";
+import { toolCommand, toolHelp } from "./tools";
 import {
   userConfigCommand,
   userConfigHelp,
@@ -63,6 +66,7 @@ export const help = {
     ...traceHelp,
     ...knowledgeHelp,
     ...modelHelp,
+    ...toolHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
@@ -98,12 +102,19 @@ export async function dispatch(
   const command = args.words.slice(0, 2).join(".");
   if (command === "profile.show") {
     allow(args, ["json"], 2);
-    return { code: 0, result: envelope(command, { profile: await nativeUserOperation("profile-info", {}, signal) }) };
+    return {
+      code: 0,
+      result: envelope(command, {
+        profile: await nativeUserOperation("profile-info", {}, signal),
+      }),
+    };
   }
   const discovered = discoveryCommand(args, help.commands);
   if (discovered) return discovered;
   const model = await modelCommand(args, signal);
   if (model) return model;
+  const tool = await toolCommand(args, signal);
+  if (tool) return tool;
   const blocks = await blockQueryCommand(args);
   if (blocks) return blocks;
   const productivity = await productivityCommand(args, signal);
@@ -197,7 +208,7 @@ export async function dispatch(
             kind: "blueprint",
             compatibilityClaim: "none",
           })),
-          ...architectureStarters.map((s) => ({
+          ...[...capabilityStarters, ...architectureStarters].map((s) => ({
             ...s,
             templateId: s.id,
             kind: "project",
@@ -227,16 +238,20 @@ export async function dispatch(
           compatibilityClaim: "none",
         }),
       };
-    const selected = [...officialStarters, ...architectureStarters].find(
-      (s) => s.id === args.words[2],
-    );
+    const selected = [
+      ...officialStarters,
+      ...architectureStarters,
+      ...capabilityStarters,
+    ].find((s) => s.id === args.words[2]);
     if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
     return {
       code: 0,
       result: envelope(command, {
         ...selected,
         templateId: selected.id,
-        kind: architectureStarters.some((s) => s.id === selected.id)
+        kind: [...architectureStarters, ...capabilityStarters].some(
+          (s) => s.id === selected.id,
+        )
           ? "project"
           : "blueprint",
         compatibilityClaim: "none",
@@ -247,6 +262,7 @@ export async function dispatch(
     allow(args, ["json", "template", "output"], 2);
     if (
       required(args, "template") !== "agent-loop" &&
+      !capabilityStarters.some((s) => s.id === required(args, "template")) &&
       !architectureStarters.some((s) => s.id === required(args, "template")) &&
       !officialStarters.some((s) => s.id === required(args, "template"))
     )
@@ -255,16 +271,23 @@ export async function dispatch(
       starter =
         required(args, "template") === "agent-loop"
           ? createAgentExample()
-          : architectureStarters.some(
-                (s) => s.id === required(args, "template"),
-              )
-            ? createArchitectureStarter(required(args, "template"))
-            : await createBlueprintProject(required(args, "template"));
+          : capabilityStarters.some((s) => s.id === required(args, "template"))
+            ? createCapabilityStarter(required(args, "template"))
+            : architectureStarters.some(
+                  (s) => s.id === required(args, "template"),
+                )
+              ? createArchitectureStarter(required(args, "template"))
+              : await createBlueprintProject(required(args, "template"));
     let project;
     try {
-      project = applyDefaultModel(starter, await readDefaultModelId(), await userRegistryMap());
+      project = applyDefaultModel(
+        starter,
+        await readDefaultModelId(),
+        await userRegistryMap(),
+      );
     } catch (error) {
-      if (error instanceof Error && error.message === "BLK-MODEL-DEFAULT-001") throw defaultModelError();
+      if (error instanceof Error && error.message === "BLK-MODEL-DEFAULT-001")
+        throw defaultModelError();
       throw error;
     }
     await createProject(output, project);

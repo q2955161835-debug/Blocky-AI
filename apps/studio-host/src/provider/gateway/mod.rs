@@ -5,13 +5,24 @@ mod protocol;
 mod structured;
 use super::ProviderHost;
 pub use endpoint::validate_endpoint;
-pub use protocol::{GatewayRequest, ModelMessage, ModelTool, ToolCall, parse_response};
+pub use protocol::{parse_response, GatewayRequest, ModelMessage, ModelTool, ToolCall};
 use serde_json::Value;
 use std::{
     path::{Path, PathBuf},
     sync::atomic::Ordering,
     time::{Duration, Instant},
 };
+pub(crate) fn validate_data_schema(schema: &Value) -> Result<(), String> {
+    protocol::schema(schema, 0).map_err(|_| "BLK-TOOL-SCHEMA".into())
+}
+pub(crate) fn validate_data(value: &Value, schema: &Value) -> Result<(), String> {
+    validate_data_schema(schema)?;
+    if structured::matches(value, schema, 0) {
+        Ok(())
+    } else {
+        Err("BLK-TOOL-SCHEMA".into())
+    }
+}
 impl ProviderHost {
     pub fn model_preflight(&self, root: &Path, request: &GatewayRequest) -> Result<Value, String> {
         Ok(binding::Binding::load(root, request)?.preview(request))

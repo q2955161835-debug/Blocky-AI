@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::collections::BTreeSet;
 pub const INVALID: &str = "BLK-MODEL-REQUEST";
 pub const RESPONSE: &str = "BLK-MODEL-RESPONSE";
@@ -71,7 +71,7 @@ fn fixed_builder_tool(tool: &ModelTool) -> bool {
     serde_json::to_value(tool).is_ok_and(|value| definitions.contains(&value))
 }
 /// Bounded JSON-schema subset shared with the runtime's structured output validator.
-fn schema(value: &Value, depth: usize) -> Result<(), String> {
+pub(super) fn schema(value: &Value, depth: usize) -> Result<(), String> {
     let o = value.as_object().ok_or(INVALID)?;
     if depth > 8
         || value.to_string().len() > 16384
@@ -260,12 +260,11 @@ impl GatewayRequest {
             value["temperature"] = json!(t);
         }
         if !self.tools.is_empty() {
-            value["tools"] = json!(
-                self.tools
-                    .iter()
-                    .map(|t| json!({"type":"function","function":t}))
-                    .collect::<Vec<_>>()
-            );
+            value["tools"] = json!(self
+                .tools
+                .iter()
+                .map(|t| json!({"type":"function","function":t}))
+                .collect::<Vec<_>>());
             value["tool_choice"] = json!(self.tool_choice.as_deref().unwrap_or("auto"));
         }
         if let Some(schema) = &self.output_schema {

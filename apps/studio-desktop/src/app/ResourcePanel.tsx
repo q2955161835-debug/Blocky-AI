@@ -16,6 +16,20 @@ import {
   modelResourceError,
   modelSecretFields,
 } from "./ModelResourceEditor";
+import {
+  isPresetTool,
+  toolResourceAdapter,
+  toolResourceSchemaError,
+  toolResourceSecretFields,
+  ToolResourceEditor,
+} from "./ToolResourceEditor";
+import {
+  isPresetMcp,
+  mcpResourceAdapter,
+  mcpResourceSecretFields,
+  McpResourceEditor,
+} from "./McpResourceEditor";
+import { ToolOperationsPanel } from "./ToolOperationsPanel";
 import { KnowledgePanel } from "./KnowledgePanel";
 import { knowledgeNative } from "../composition/knowledge";
 import {
@@ -35,6 +49,27 @@ function initial(schema: ResourceFieldSchema): unknown {
   if (schema.type === "array") return [];
   if (schema.type === "number") return schema.minimum ?? 0;
   return schema.type === "boolean" ? false : "";
+}
+function hostAdapter(resource: Resource): string {
+  const implementation = resource.definition.implementationRef;
+  if (
+    !implementation ||
+    typeof implementation !== "object" ||
+    Array.isArray(implementation)
+  )
+    return "";
+  return implementation.kind === "adapter" && typeof implementation.id === "string"
+    ? implementation.id
+    : "";
+}
+function supportsHostOperation(resource: Resource): boolean {
+  if (resource.scope !== "user") return false;
+  const adapter = hostAdapter(resource);
+  return (
+    (resource.kind === "tool" &&
+      ["http-json-v1", "search-json-v1", "mcp-tool-v1"].includes(adapter)) ||
+    (resource.kind === "mcp" && adapter === "mcp-server-v1")
+  );
 }
 function Fields({
   schema,
@@ -172,13 +207,29 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
     [error, setError] = useState("");
   const [kind, setKind] = useState("model");
   const [managedBusy, setManagedBusy] = useState(false);
+  const [toolOperationsBusy, setToolOperationsBusy] = useState(false);
+  const [operationResourceId, setOperationResourceId] = useState("");
+  const panelBusy = managedBusy || toolOperationsBusy;
   const [scope, setScope] = useState<"project" | "user">("project");
   const project = s.snapshot.project;
+  const operationResources = s.resources.registry.resources.filter(supportsHostOperation);
+  const operationResource = operationResources.find(
+    (resource) => resource.resourceId === operationResourceId,
+  );
   const definition = resourceDefinitions.find((d) => d.kind === draft?.kind);
   const editableModel =
     draft?.kind === "model" &&
     typeof draft.definition.implementationRef !== "string";
+  const editableTool =
+    draft?.kind === "tool" && (isPresetTool(draft) || !toolResourceAdapter(draft));
+  const editableMcp =
+    draft?.kind === "mcp" &&
+    (isPresetMcp(draft) || !mcpResourceAdapter(draft));
   const modelError = editableModel ? modelResourceError(draft!) : "";
+  const toolSchemaError =
+    editableTool && isPresetTool(draft!)
+      ? toolResourceSchemaError(draft!, project)
+      : "";
   const secretFields = editableModel
     ? [
         ...new Set([
@@ -186,7 +237,11 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           ...draft!.secretBindings.map((b) => b.fieldId),
         ]),
       ]
-    : (definition?.secretFields ?? []);
+    : editableTool
+      ? toolResourceSecretFields(draft!)
+      : editableMcp
+        ? mcpResourceSecretFields(draft!)
+        : (definition?.secretFields ?? []);
   const advancedSchema =
     editableModel && definition
       ? {
@@ -237,15 +292,20 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
     }
   }
   const edit = (resource: Resource) => {
-    if (managedBusy) return;
+    if (managedBusy || toolOperationsBusy) return;
+    setOperationResourceId("");
     setDraft(structuredClone(resource));
     setError("");
   };
   const save = () => {
-    if (managedBusy) return;
+    if (managedBusy || toolOperationsBusy) return;
     try {
       if (modelError) {
         setError(modelError);
+        return;
+      }
+      if (toolSchemaError) {
+        setError(toolSchemaError);
         return;
       }
       const resource = validateResource(draft);
@@ -266,7 +326,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         资源范围
         <select
           aria-label="资源范围"
-          disabled={managedBusy}
+          disabled={panelBusy}
           value={scope}
           onChange={(e) => setScope(e.target.value as "project" | "user")}
         >
@@ -278,7 +338,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       <div>
         <select
           aria-label="资源类型"
-          disabled={managedBusy}
+          disabled={panelBusy}
           value={kind}
           onChange={(e) => setKind(e.target.value)}
         >
@@ -289,7 +349,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           ))}
         </select>
         <button
-          disabled={managedBusy || (scope === "user" && !s.resources.ready)}
+          disabled={panelBusy || (scope === "user" && !s.resources.ready)}
           onClick={() => {
             const def = resourceDefinitions.find((d) => d.kind === kind)!;
             edit({
@@ -312,11 +372,11 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       {scope === "user" &&
         s.resources.registry.resources.map((r) => (
           <div key={r.resourceId}>
-            <button disabled={managedBusy} onClick={() => edit(r)}>
+            <button disabled={panelBusy} onClick={() => edit(r)}>
               {r.displayName} · {r.kind}
             </button>
             <button
-              disabled={managedBusy}
+              disabled={panelBusy}
               onClick={() => {
                 try {
                   const next = referenceUserResource(project, r);
@@ -330,7 +390,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               引用到当前项目
             </button>
             <button
-              disabled={managedBusy}
+              disabled={panelBusy}
               onClick={() =>
                 void s
                   .confirm("删除本机资源后，引用它的项目将报告资源缺失。继续？")
@@ -345,14 +405,14 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         ))}
       {Object.values(project.resources).map((r) => (
         <div key={r.resourceId}>
-          <button disabled={managedBusy} onClick={() => edit(r)}>
+          <button disabled={panelBusy} onClick={() => edit(r)}>
             {r.displayName} · {r.kind}
           </button>
           <small>
             {analyzeResourceReferences(project, r.resourceId).length} 个引用
           </small>
           <button
-            disabled={managedBusy}
+            disabled={panelBusy}
             onClick={() =>
               void s
                 .confirm("删除资源后，使用它的积木将报告缺失引用。继续？")
@@ -372,6 +432,34 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           </button>
         </div>
       ))}
+      {!draft && operationResources.length > 0 && (
+        <>
+          <label>
+            工具操作资源
+            <select
+              aria-label="工具操作资源"
+              disabled={toolOperationsBusy}
+              value={operationResourceId}
+              onChange={(event) => setOperationResourceId(event.target.value)}
+            >
+              <option value="">选择已保存的本机工具或 MCP 服务</option>
+              {operationResources.map((resource) => (
+                <option key={resource.resourceId} value={resource.resourceId}>
+                  {resource.displayName} · {resource.kind}
+                </option>
+              ))}
+            </select>
+          </label>
+          {operationResource && (
+            <ToolOperationsPanel
+              key={operationResource.resourceId}
+              resource={operationResource}
+              projectId={project.manifest.projectId}
+              onBusyChange={setToolOperationsBusy}
+            />
+          )}
+        </>
+      )}
       {draft && definition && (
         <section key={draft.resourceId}>
           <label>
@@ -396,9 +484,18 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               onBusyChange={setManagedBusy}
             />
           )}
+          {editableTool && (
+            <ToolResourceEditor
+              resource={draft}
+              project={project}
+              userResources={s.resources.registry.resources}
+              change={setDraft}
+            />
+          )}
+          {editableMcp && <McpResourceEditor resource={draft} change={setDraft} />}
           {typeof draft.definition.implementationRef === "string" ? (
             <p>此资源使用本地确定性适配器。</p>
-          ) : (
+          ) : !editableTool && !editableMcp ? (
             <details>
               <summary>资源高级配置</summary>
               <fieldset disabled={managedBusy}>
@@ -414,7 +511,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
                 />
               </fieldset>
             </details>
-          )}
+          ) : null}
           {secretFields.length > 0 && (
             <fieldset disabled={managedBusy}>
               <SecretBindings
@@ -427,6 +524,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             </fieldset>
           )}
           {knowledgeError && <p role="alert">{knowledgeError}</p>}
+          {toolSchemaError && <p role="alert">{toolSchemaError}</p>}
           {draft.kind === "knowledge" &&
             draft.scope === "project" &&
             !knowledgeError && (
@@ -458,7 +556,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               />
             )}
           {error && <p role="alert">{error}</p>}
-          <button onClick={save} disabled={managedBusy || !!modelError}>
+          <button onClick={save} disabled={managedBusy || !!modelError || !!toolSchemaError}>
             保存资源
           </button>
           <button disabled={managedBusy} onClick={() => setDraft(undefined)}>

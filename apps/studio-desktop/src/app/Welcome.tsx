@@ -1,5 +1,5 @@
 import type { Studio } from "../composition/useStudio";
-import { officialStarters, architectureStarters } from "@blocky/block-catalog";
+import { officialStarters, architectureStarters, capabilityStarters } from "@blocky/block-catalog";
 export function Welcome({ studio: s }: { studio: Studio }) {
   const creatingDisabled = s.busy || !s.settings.ready || !s.resources.ready;
   return (
@@ -71,7 +71,7 @@ export function Welcome({ studio: s }: { studio: Studio }) {
         ))}
       </div>
       <div className="starter-grid" aria-label="架构起点">
-        {architectureStarters.map((starter) => (
+        {[...capabilityStarters, ...architectureStarters].map((starter) => (
           <button
             key={starter.id}
             className="starter-card"

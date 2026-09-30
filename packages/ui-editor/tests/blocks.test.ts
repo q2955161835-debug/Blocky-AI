@@ -13,38 +13,95 @@ import { compileProject } from "../../compiler/src";
 import type { Workspace } from "../../language-schema/src";
 import { createTextProject } from "../../test-fixtures/src/text-project";
 import { editSelection } from "../../project-model/src";
-it("round-trips typed workflow steps and approval fields through real Blockly connections",()=>{
-  registerBlocks();const workspace=new Blockly.Workspace(),reloaded=new Blockly.Workspace();
-  try{
-    const root=workspace.newBlock("runtime.task.durable","workflow");
-    const step=workspace.newBlock("runtime.compensate","step");
-    const action=workspace.newBlock("core.data.set","action");action.setFieldValue("1","VALUE");
-    const approval=workspace.newBlock("core.human.approve","approval");approval.setFieldValue("确认继续","LABEL");
-    const checkpoint=workspace.newBlock("runtime.checkpoint.save","checkpoint");
+it("round-trips typed workflow steps and approval fields through real Blockly connections", () => {
+  registerBlocks();
+  const workspace = new Blockly.Workspace(),
+    reloaded = new Blockly.Workspace();
+  try {
+    const root = workspace.newBlock("runtime.task.durable", "workflow");
+    const step = workspace.newBlock("runtime.compensate", "step");
+    const action = workspace.newBlock("core.data.set", "action");
+    action.setFieldValue("1", "VALUE");
+    const approval = workspace.newBlock("core.human.approve", "approval");
+    approval.setFieldValue("确认继续", "LABEL");
+    const checkpoint = workspace.newBlock(
+      "runtime.checkpoint.save",
+      "checkpoint",
+    );
     root.getInput("STEPS")!.connection!.connect(step.previousConnection!);
     step.getInput("DO")!.connection!.connect(action.previousConnection!);
-    step.nextConnection!.connect(approval.previousConnection!);approval.nextConnection!.connect(checkpoint.previousConnection!);
+    step.nextConnection!.connect(approval.previousConnection!);
+    approval.nextConnection!.connect(checkpoint.previousConnection!);
     expect(step.previousConnection!.getCheck()).toEqual(["workflow-step"]);
-    const saved=JSON.parse(JSON.stringify(Blockly.serialization.workspaces.save(workspace)));
-    Blockly.serialization.workspaces.load(saved,reloaded);
-    expect(reloaded.getBlockById("workflow")!.getInputTargetBlock("STEPS")!.id).toBe("step");
-    expect(reloaded.getBlockById("step")!.getInputTargetBlock("DO")!.id).toBe("action");
-    expect(reloaded.getBlockById("step")!.getInputTargetBlock("UNDO")).toBeNull();
-    expect(reloaded.getBlockById("approval")!.getFieldValue("LABEL")).toBe("确认继续");
-    expect(reloaded.getBlockById("approval")!.getNextBlock()!.id).toBe("checkpoint");
-  }finally{workspace.dispose();reloaded.dispose();}
+    const saved = JSON.parse(
+      JSON.stringify(Blockly.serialization.workspaces.save(workspace)),
+    );
+    Blockly.serialization.workspaces.load(saved, reloaded);
+    expect(
+      reloaded.getBlockById("workflow")!.getInputTargetBlock("STEPS")!.id,
+    ).toBe("step");
+    expect(reloaded.getBlockById("step")!.getInputTargetBlock("DO")!.id).toBe(
+      "action",
+    );
+    expect(
+      reloaded.getBlockById("step")!.getInputTargetBlock("UNDO"),
+    ).toBeNull();
+    expect(reloaded.getBlockById("approval")!.getFieldValue("LABEL")).toBe(
+      "确认继续",
+    );
+    expect(reloaded.getBlockById("approval")!.getNextBlock()!.id).toBe(
+      "checkpoint",
+    );
+  } finally {
+    workspace.dispose();
+    reloaded.dispose();
+  }
+});
+it("uses catalog defaults and typed tool-flow Blockly connections", () => {
+  registerBlocks();
+  const workspace = new Blockly.Workspace();
+  try {
+    const loop = workspace.newBlock("core.reason.tool_loop");
+    const tool = workspace.newBlock("core.tool.expose");
+    const repeat = workspace.newBlock("core.flow.repeat");
+    const foreach = workspace.newBlock("core.flow.foreach");
+    const whileBlock = workspace.newBlock("core.flow.while");
+    const retry = workspace.newBlock("core.flow.retry");
+    expect(loop.getFieldValue("MAX_TURNS")).toBe("4");
+    expect(loop.getFieldValue("OUTPUT_TOKENS")).toBe("512");
+    expect(loop.getInput("TOOLS")!.connection!.getCheck()).toEqual([
+      "agent-tool",
+    ]);
+    expect(tool.previousConnection!.getCheck()).toEqual(["agent-tool"]);
+    expect(repeat.getFieldValue("COUNT")).toBe("1");
+    expect(foreach.getFieldValue("SOURCE")).toBe("result");
+    expect(whileBlock.getFieldValue("OP")).toBe("truthy");
+    expect(retry.getFieldValue("ATTEMPTS")).toBe("2");
+  } finally {
+    workspace.dispose();
+  }
 });
 it("preserves editor group and note metadata through Blockly serialization", () => {
   registerBlocks();
   const source = createStarter().workspaces["research-agent"];
-  editSelection(source, ["research-root"], { kind: "group", groupId: "group-study", label: "研究区域", region: true });
-  editSelection(source, ["research-root"], { kind: "annotate", note: "检查证据" });
+  editSelection(source, ["research-root"], {
+    kind: "group",
+    groupId: "group-study",
+    label: "研究区域",
+    region: true,
+  });
+  editSelection(source, ["research-root"], {
+    kind: "annotate",
+    note: "检查证据",
+  });
   const workspace = new Blockly.Workspace();
   try {
     Blockly.serialization.workspaces.load(source, workspace);
     const saved = Blockly.serialization.workspaces.save(workspace) as Workspace;
     expect(saved.blocks.blocks[0].data).toEqual(source.blocks.blocks[0].data);
-  } finally { workspace.dispose(); }
+  } finally {
+    workspace.dispose();
+  }
 });
 it.each(officialStarters)(
   "$id preserves blueprint instance metadata, edited role and answer style through actual Blockly save/reload",

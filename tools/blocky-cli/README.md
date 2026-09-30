@@ -39,6 +39,20 @@ $LASTEXITCODE
 
 ## 阶段 4 Agent 运行
 
+### 工具与 MCP
+
+`tool preflight --request <request.json> --json` 返回本次操作的 `requestDigest`。核对后用 `tool call --request <request.json> --approve <digest> --json` 执行；预检不执行工具。请求使用项目及资源引用，固定目标的 endpoint、headers、launch 只通过本地 `.env` 的 `secret-env` 导入，CLI 不输出秘密。
+
+```json
+{"schemaVersion":"blocky.tool-request/v2","projectId":"project-one","runId":"run-one","requestId":"request-one","resourceId":"tool-one","action":"call","input":{"query":"public question"},"timeoutMs":30000}
+```
+
+`schema show blocky.tool-request/v2 --json` 可发现格式。`input` 最多 32768 UTF-8 字节，深度最多 32、节点最多 8192，超时为 1–120000ms。MCP 工具和资源发现使用 `action:"discover", input:{}`；读取资源使用 `action:"read-resource", input:{"uriRef":"uri-<64位小写十六进制摘要>"}`，uriRef 取自发现结果。两者仍按同一 preflight/call 流程明确批准。
+
+`tool status --project-id <id> --json` 查询结构化回执。出现 `unknown` 时，先到目标服务核实实际副作用，再用 `tool reconcile-preflight --project-id <id> --request-id <id> --outcome confirmed-completed|confirmed-not-applied --json` 预检，核对摘要后以相同参数运行 `tool reconcile ... --approve <digest> --json`。结算不会重发原调用；已消费的 requestId 不可重放。
+
+`tool cleanup-status --json` 查询可清理的 Host 暂存；`tool cleanup --json` 显式清理通过归属和锁检查的文件。执行中的工件及未知文件不靠 CLI 强制删除。
+
 模型入口使用同一原生 Host：`model catalog` 返回可安装的锁定型号、后端、尺寸与许可证；`model status|verify|remove|cleanup <model-id>` 管理本机托管工件。安装必须显式选择来源，例如 `model install qwen3-0.6b-q8-v1 --backend cpu --download --json`，或用成对的 `--model-file <gguf> --runtime-file <zip>` 离线安装；两种来源互斥。取消会等待安装器清理并退出。`status` 显示未完成安装数量和已识别临时文件字节数，`cleanup` 只删除通过归属校验的临时工件；未知文件会阻止清理。文件路径只发送给 Host，结果返回安全摘要。运行占用时停止相关运行并等待结算，再验证或移除；不会接管已有 Ollama 服务。
 
 `model preflight --request <request.json> --json` 校验 `blocky.model-request/v2` 请求并返回本次批准摘要；核对后用 `model generate --request <request.json> --approve <sha256> --json` 调用。请求只使用 projectId/resourceId 引用本机模型配置，不接受端点或凭据。消息允许 `toolCalls`/`toolCallId`，工具与输出 Schema 采用有界结构；`toolChoice` 可为 auto、required、none。`schema list/show` 可发现请求与 `blocky.model-response/v2` 响应格式。

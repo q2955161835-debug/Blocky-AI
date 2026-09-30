@@ -33,6 +33,7 @@ export type ToolLoopContext = {
   project: Project;
   registry?: Map<string, Resource>;
   model: Resource;
+  capabilities: string[];
   budget: RunBudget;
   requestId: string;
   question: string;
@@ -95,6 +96,14 @@ function bind(context: ToolLoopContext): BoundTool[] {
       context.registry,
     );
     if (resource.definition.version !== "1") throw Error("BLK-TOOL-003");
+    const permissions = resource.definition.permissions;
+    if (
+      !Array.isArray(permissions) ||
+      ![...resource.capabilityRequirements, ...permissions].every(
+        (p) => typeof p === "string" && context.capabilities.includes(p),
+      )
+    )
+      throw Error("BLK-TOOL-001");
     const input = schema(context.project, resource, "inputSchemaRef"),
       output = schema(context.project, resource, "outputSchemaRef");
     return {
@@ -216,6 +225,8 @@ export async function runToolLoop(context: ToolLoopContext): Promise<string> {
     const batchIds = new Set(ids),
       batchOperations = new Set(operations);
     const batch = proposed.map((call) => {
+      if (!call || typeof call !== "object" || Array.isArray(call))
+        throw Error("BLK-TOOL-PROPOSAL");
       const tool = tools.find((tool) => tool.model.name === call.name);
       if (
         !tool ||

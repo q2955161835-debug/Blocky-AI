@@ -23,6 +23,21 @@ export function nativeAgentServices(
   } = { mode: "desktop" },
 ): AgentServices {
   const tokens = new Map<AbortSignal, string>();
+  const active = new Map<AbortSignal, Set<Promise<unknown>>>();
+  const native = call;
+  call = async (operation, fields, signal) => {
+    const pending = native(operation, fields, signal);
+    if (!signal) return pending;
+    let requests = active.get(signal);
+    if (!requests) active.set(signal, (requests = new Set()));
+    requests.add(pending);
+    try {
+      return await pending;
+    } finally {
+      requests.delete(pending);
+      if (!requests.size) active.delete(signal);
+    }
+  };
   async function approved(
     kind: PendingApproval["kind"],
     operation: string,
@@ -117,6 +132,48 @@ export function nativeAgentServices(
       return value.value ?? null;
     },
     async tool(input, signal) {
+      const implementation = implementationKey(
+        input.resource.definition.implementationRef,
+      );
+      if (
+        [
+          "adapter://http-json-v1",
+          "adapter://search-json-v1",
+          "adapter://mcp-tool-v1",
+        ].includes(implementation)
+      ) {
+        const request = {
+          schemaVersion: "blocky.tool-request/v2",
+          projectId: input.projectId,
+          runId: input.runId,
+          requestId: input.requestId,
+          resourceId: input.resource.resourceId,
+          action: "call",
+          input: input.input,
+          timeoutMs: input.resource.definition.timeoutMs,
+        };
+        const approval =
+          options.mode === "cli"
+            ? await approved("tool", "tool-preflight", request, signal)
+            : undefined;
+        signal.throwIfAborted();
+        const cancel = () => {
+          if (options.mode === "desktop")
+            void call("tool-cancel", { requestId: input.requestId }).catch(
+              () => {},
+            );
+        };
+        signal.addEventListener("abort", cancel, { once: true });
+        try {
+          return (await call(
+            "tool-call",
+            { request, ...(approval ? { approval } : {}) },
+            signal,
+          )) as Json;
+        } finally {
+          signal.removeEventListener("abort", cancel);
+        }
+      }
       const permissions = input.resource.definition.permissions;
       if (
         !Array.isArray(permissions) ||
@@ -164,6 +221,7 @@ export function nativeAgentServices(
       }
     },
     async close(signal) {
+      await Promise.allSettled([...(active.get(signal) ?? [])]);
       const token = tokens.get(signal);
       tokens.delete(signal);
       if (token) await call("agent-memory-cancel", { token }).catch(() => {});

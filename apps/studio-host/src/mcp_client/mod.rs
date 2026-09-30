@@ -1,7 +1,13 @@
 //! Bounded MCP client semantics. Transports never acquire Host capabilities.
+pub mod http;
+#[cfg(windows)]
+pub(crate) mod stdio;
 mod validation;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::collections::BTreeSet;
+pub(crate) fn validate_json(value: &Value, bytes: usize) -> Result<(), String> {
+    validation::bounded(value, bytes)
+}
 pub trait Transport {
     fn exchange(
         &mut self,
@@ -19,6 +25,26 @@ pub struct Client<T: Transport> {
     closed: bool,
 }
 impl<T: Transport> Client<T> {
+    pub(crate) fn tools_if_available(
+        &mut self,
+        cancel: &dyn Fn() -> Result<(), String>,
+    ) -> Result<Vec<Value>, String> {
+        if self.tools {
+            self.tools(cancel)
+        } else {
+            Ok(vec![])
+        }
+    }
+    pub(crate) fn resources_if_available(
+        &mut self,
+        cancel: &dyn Fn() -> Result<(), String>,
+    ) -> Result<Vec<Value>, String> {
+        if self.resources {
+            self.resources(cancel)
+        } else {
+            Ok(vec![])
+        }
+    }
     pub fn connect(transport: T, cancel: &dyn Fn() -> Result<(), String>) -> Result<Self, String> {
         let mut client = Self {
             transport,

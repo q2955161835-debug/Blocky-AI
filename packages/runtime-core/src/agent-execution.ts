@@ -23,6 +23,7 @@ import { validateOutput } from "./output-schema";
 import type { TraceDetails } from "@blocky/observability";
 import { EventMailbox } from "./event-mailbox";
 import { parseAgentCheckpoint, type AgentCheckpoint } from "./workflow/context";
+import { executeControlFlow } from "./control-flow";
 
 const valueType = (value: Json) =>
   value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
@@ -128,6 +129,49 @@ export class AgentExecution {
     branch.memory = structuredClone(this.memory);
     return branch;
   }
+  forkTool(input: Json): AgentExecution {
+    const child = new AgentExecution(
+      this.project,
+      typeof input === "string" ? input : canonicalJson(input),
+      this.runId,
+      this.sessionId,
+      this.budget,
+      this.services,
+      this.registry,
+      this.sessionMemory,
+      this.mailbox,
+    );
+    child.value = structuredClone(input);
+    return child;
+  }
+  async invokeTool(
+    resource: Resource,
+    input: Json,
+    requestId: string,
+    port = this.services.tool,
+  ): Promise<Json> {
+    this.budget.check();
+    if (!port) throw Error("BLK-TOOL-001");
+    if (resource.definition.version !== "1") throw Error("BLK-TOOL-003");
+    this.validateResourceSchema(resource, "inputSchemaRef", input);
+    const value = await abortable(
+      port(
+        {
+          projectId: this.project.manifest.projectId,
+          runId: this.runId,
+          resource,
+          input,
+          requestId,
+        },
+        this.budget.signal,
+      ),
+      this.budget.signal,
+    );
+    this.budget.check();
+    this.validateResourceSchema(resource, "outputSchemaRef", value);
+    if (utf8(canonicalJson(value)) > 32768) throw Error("BLK-TOOL-LIMIT");
+    return value;
+  }
   async compose(
     resource: Resource,
     role: string,
@@ -219,7 +263,7 @@ export class AgentExecution {
     }
     this.budget.check();
     checkGenerationMetadata(result);
-    this.generations.push({ ...result, text: "" });
+    this.generations.push({ ...result, text: "", toolCalls: [] });
     try {
       if (this.services.validateCitations)
         await abortable(
@@ -249,7 +293,14 @@ export class AgentExecution {
     node: IrNode,
     execute: (node: IrNode, state?: AgentExecution) => Promise<void>,
     report: (details: TraceDetails) => void = () => {},
+    tool?: (
+      resource: Resource,
+      input: Json,
+      requestId: string,
+    ) => Promise<Json>,
   ): Promise<boolean> {
+    if (await executeControlFlow(node, this, (child) => execute(child)))
+      return true;
     const f = node.fields;
     switch (node.blockType) {
       case "core.flow.parallel": {
@@ -413,7 +464,7 @@ export class AgentExecution {
           this.registry,
         );
         if (
-          !this.services.tool ||
+          (!this.services.tool && !tool) ||
           !["input", "result"].includes(String(f.SOURCE))
         )
           throw Error("BLK-TOOL-001");
@@ -430,19 +481,10 @@ export class AgentExecution {
         };
         report(detail);
         this.budget.call();
-        const value = await abortable(
-          this.services.tool(
-            {
-              projectId: this.project.manifest.projectId,
-              runId: this.runId,
-              resource,
-              input,
-              requestId: `${this.runId}-${node.nodeId}-${this.budget.calls}`,
-            },
-            this.budget.signal,
-          ),
-          this.budget.signal,
-        );
+        const requestId = `${this.runId}-${node.nodeId}-${this.budget.calls}`;
+        const value = await (tool
+          ? tool(resource, input, requestId)
+          : this.invokeTool(resource, input, requestId));
         this.budget.check();
         this.validateResourceSchema(resource, "outputSchemaRef", value);
         detail.tool!.outputType = valueType(value);

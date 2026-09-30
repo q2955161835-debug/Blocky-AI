@@ -1,8 +1,6 @@
 //! One installation per process. The client keeps stdin open until completion;
 //! cancellation or a disconnected client lets the installer release its TempDir.
 use super::*;
-use std::io::{BufRead, Read, Write};
-use std::sync::Arc;
 #[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct Request {
@@ -30,43 +28,11 @@ fn parse(bytes: &[u8]) -> Result<Request, String> {
     Ok(r)
 }
 pub fn main() -> i32 {
-    let result = (|| {
-        let mut bytes = Vec::new();
-        std::io::stdin()
-            .lock()
-            .take(32769)
-            .read_until(b'\n', &mut bytes)
-            .map_err(|_| IO)?;
-        if bytes.len() > 32768 || !bytes.ends_with(b"\n") {
-            return Err(INVALID.into());
-        }
-        let r = parse(&bytes)?;
+    crate::native_session::run(32768, INVALID, |value, cancel| {
+        let r = parse(&serde_json::to_vec(&value).map_err(|_| INVALID)?)?;
         let root = crate::profile::cli_root()?;
-        let cancel = Arc::new(AtomicBool::new(false));
-        let reader_cancel = cancel.clone();
-        std::thread::spawn(move || {
-            let mut bytes = Vec::new();
-            // Any next frame (including malformed input) or EOF cancels. No extra
-            // operation can execute in this session, and the frame is bounded.
-            let _ = std::io::stdin()
-                .lock()
-                .take(1025)
-                .read_until(b'\n', &mut bytes);
-            reader_cancel.store(true, Ordering::SeqCst);
-        });
-        install(&root, &r.model_id, &r.backend, r.source.as_ref(), &cancel)
-    })();
-    let ok = result.is_ok();
-    let reply = match result {
-        Ok(value) => {
-            serde_json::json!({"schemaVersion":"blocky.project-io/v1alpha1","ok":true,"value":value})
-        }
-        Err(code) => {
-            serde_json::json!({"schemaVersion":"blocky.project-io/v1alpha1","ok":false,"code":code})
-        }
-    };
-    let _ = writeln!(std::io::stdout(), "{reply}");
-    if ok { 0 } else { 3 }
+        install(&root, &r.model_id, &r.backend, r.source.as_ref(), cancel)
+    })
 }
 #[cfg(test)]
 mod tests {

@@ -6,6 +6,7 @@ import flowPrimitives from "./flow-primitives.json";
 import workflowPrimitives from "./workflow-primitives.json";
 import rpaPrimitives from "./rpa-primitives.json";
 import version from "./version.json";
+export type ResourceFieldKind = "knowledge" | "model" | "tool";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -21,6 +22,10 @@ export type BlockDefinition = {
   requiredInputs?: string[];
   optionalFields?: string[];
   jsonFields?: string[];
+  /** Resource references handled by the shared resource selector. */
+  resourceFields?: Record<string, ResourceFieldKind>;
+  /** Safe initial values for editable text fields. */
+  defaultFields?: Record<string, string | undefined>;
 };
 export const categories = [
   "触发与交互",

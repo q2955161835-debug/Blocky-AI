@@ -1,4 +1,5 @@
 import type { Project, Resource } from "@blocky/language-schema";
+import { canonicalJson } from "@blocky/language-schema";
 import { validateResource, invalidResource } from "./validate";
 export type UserRegistry = {
   schemaVersion: "blocky.resource-registry/v1";
@@ -61,6 +62,28 @@ export function referenceUserResource(
   )
     invalidResource();
   const result = structuredClone(project);
+  if (resource.kind === "tool") {
+    for (const prefix of ["input", "output"] as const) {
+      const schemaText = resource.definition[`${prefix}SchemaJson`];
+      const reference = resource.definition[`${prefix}SchemaRef`];
+      if (typeof schemaText !== "string") continue;
+      if (
+        !reference ||
+        typeof reference !== "object" ||
+        Array.isArray(reference) ||
+        typeof reference.id !== "string"
+      )
+        invalidResource();
+      const schema = JSON.parse(schemaText);
+      const path = `schemas/${reference.id}.json`;
+      if (
+        Object.hasOwn(result.schemas, path) &&
+        canonicalJson(result.schemas[path]) !== canonicalJson(schema)
+      )
+        throw Error("BLK-RESOURCE-SCHEMA-CONFLICT");
+      result.schemas[path] = schema;
+    }
+  }
   result.manifest.resources = [
     ...result.manifest.resources.filter(
       (r) => r.resourceId !== resource.resourceId,

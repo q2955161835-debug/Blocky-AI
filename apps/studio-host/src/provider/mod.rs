@@ -10,8 +10,8 @@ use std::{
     collections::{HashMap, HashSet},
     path::PathBuf,
     sync::{
-        Arc, Mutex,
         atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
     },
     time::{Duration, Instant},
 };
@@ -27,6 +27,19 @@ pub struct ProviderHost {
     state: Arc<Mutex<State>>,
 }
 impl ProviderHost {
+    /// Shared request lifetime for native adapters. This grants no provider or
+    /// filesystem capability; the caller still validates its own typed binding.
+    pub(crate) fn with_cancellable<T>(
+        &self,
+        id: &str,
+        operation: impl FnOnce(&AtomicBool) -> Result<T, String>,
+    ) -> Result<T, String> {
+        if id.len() > 128 || !crate::project_store::stable(id) {
+            return Err(types::INVALID.into());
+        }
+        let active = self.begin(id)?;
+        operation(&active.cancel)
+    }
     pub fn local_model_install(
         &self,
         root: &std::path::Path,

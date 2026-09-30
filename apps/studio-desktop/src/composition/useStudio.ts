@@ -18,6 +18,8 @@ import { createStarter } from "@blocky/test-fixtures";
 import {
   createBlueprintProject,
   createAgentExample,
+  capabilityStarters,
+  createCapabilityStarter,
   officialStarters,
   architectureStarters,
   createArchitectureStarter,
@@ -391,6 +393,8 @@ export function useStudio() {
       const starter =
         starterId === "agent-loop"
           ? createAgentExample()
+          : capabilityStarters.some((s) => s.id === starterId)
+            ? createCapabilityStarter(starterId)
           : architectureStarters.some((s) => s.id === starterId)
             ? createArchitectureStarter(starterId)
             : await createBlueprintProject(starterId);
@@ -408,7 +412,7 @@ export function useStudio() {
       setQuestion(
         starterId === "agent-loop"
           ? "Hello Blocky\n一起学习"
-          : ([...officialStarters, ...architectureStarters].find(
+          : ([...officialStarters, ...architectureStarters, ...capabilityStarters].find(
               (s) => s.id === starterId,
             )?.sampleInput ?? ""),
       );

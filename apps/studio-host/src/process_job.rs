@@ -140,6 +140,37 @@ impl Job {
     pub(crate) fn settle(&self) -> bool {
         crate::process_job::settle_job(self.0 as _, Duration::from_secs(2))
     }
+    pub(crate) fn process_limit(&self, limit: u32) -> Result<(), String> {
+        use windows_sys::Win32::System::JobObjects::*;
+        let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = unsafe { std::mem::zeroed() };
+        if limit == 0
+            || unsafe {
+                QueryInformationJobObject(
+                    self.0 as _,
+                    JobObjectExtendedLimitInformation,
+                    &mut info as *mut _ as _,
+                    std::mem::size_of_val(&info) as u32,
+                    std::ptr::null_mut(),
+                )
+            } == 0
+        {
+            return Err("BLK-WORKFLOW-OWNER".into());
+        }
+        info.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_ACTIVE_PROCESS;
+        info.BasicLimitInformation.ActiveProcessLimit = limit;
+        if unsafe {
+            SetInformationJobObject(
+                self.0 as _,
+                JobObjectExtendedLimitInformation,
+                &info as *const _ as _,
+                std::mem::size_of_val(&info) as u32,
+            )
+        } == 0
+        {
+            return Err("BLK-WORKFLOW-OWNER".into());
+        }
+        Ok(())
+    }
 }
 #[cfg(windows)]
 impl Drop for Job {

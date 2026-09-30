@@ -79,10 +79,24 @@ function check(value: unknown, schema: ResourceFieldSchema, depth = 0): void {
     if (
       typeof value !== "string" ||
       !value.trim() ||
-      value.length > 2048 ||
-      /[\u0000-\u001f]/.test(value)
+      value.length > (schema.maxLength ?? 2048) ||
+      (schema.format === "json-schema"
+        ? /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value)
+        : /[\u0000-\u001f]/.test(value))
     )
       invalidResource();
+    if (schema.format === "json-schema") {
+      if (new TextEncoder().encode(value).length > (schema.maxLength ?? 32768))
+        invalidResource();
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(value);
+      } catch {
+        invalidResource();
+      }
+      assertBoundedJsonSchema(parsed);
+      return;
+    }
     if (
       /^(?:Bearer\s|sk-)|(?:api[_-]?key|authorization|password|cookie)\s*[:=]/i.test(
         value,
@@ -99,6 +113,195 @@ function check(value: unknown, schema: ResourceFieldSchema, depth = 0): void {
     if (schema.format === "public-https" && !publicHttps(value))
       invalidResource();
   } else if (typeof value !== "boolean") invalidResource();
+}
+
+function assertBoundedJsonSchema(value: unknown): void {
+  let nodes = 0;
+  const visit = (item: unknown, depth: number): void => {
+    if (++nodes > 1000 || depth > 16) invalidResource();
+    if (item === null || typeof item === "boolean") return;
+    if (typeof item === "number") {
+      if (!Number.isFinite(item)) invalidResource();
+      return;
+    }
+    if (typeof item === "string") {
+      if (
+        item.length > 2048 ||
+        /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(item)
+      )
+        invalidResource();
+      return;
+    }
+    if (Array.isArray(item)) {
+      if (item.length > 1000) invalidResource();
+      item.forEach((child) => visit(child, depth + 1));
+      return;
+    }
+    if (
+      !record(item) ||
+      Object.keys(item).some(
+        (key) =>
+          key === "__proto__" ||
+          key === "prototype" ||
+          key === "constructor" ||
+          key.length > 128,
+      )
+    )
+      invalidResource();
+    for (const child of Object.values(item)) visit(child, depth + 1);
+  };
+  if (!record(value)) invalidResource();
+  visit(value, 0);
+}
+
+function exactOne(values: unknown, expected: string): boolean {
+  return Array.isArray(values) && values.length === 1 && values[0] === expected;
+}
+
+function hasSecret(bindings: Set<string>, field: string): boolean {
+  return bindings.has(field);
+}
+
+function adapterId(config: Record<string, unknown>): string | undefined {
+  const ref = config.implementationRef;
+  return record(ref) && ref.kind === "adapter" && typeof ref.id === "string"
+    ? ref.id
+    : undefined;
+}
+
+function requireToolSchemas(config: Record<string, unknown>): void {
+  for (const key of ["inputSchemaRef", "outputSchemaRef"] as const) {
+    const reference = config[key];
+    if (
+      !record(reference) ||
+      reference.kind !== "schema" ||
+      !validResourceId(reference.id)
+    )
+      invalidResource();
+  }
+  for (const key of ["inputSchemaJson", "outputSchemaJson"] as const) {
+    const value = config[key];
+    if (typeof value !== "string") invalidResource();
+    check(value, { type: "string", format: "json-schema", maxLength: 16384 });
+  }
+  if (
+    !Number.isInteger(config.timeoutMs) ||
+    Number(config.timeoutMs) < 1 ||
+    Number(config.timeoutMs) > 120000
+  )
+    invalidResource();
+}
+
+function validateNewTool(
+  input: Record<string, any>,
+  config: Record<string, unknown>,
+  secrets: Set<string>,
+): void {
+  const adapter = adapterId(config);
+  if (
+    ![
+      "http-json-v1",
+      "search-json-v1",
+      "mcp-tool-v1",
+      "module-tool-v1",
+    ].includes(adapter ?? "")
+  )
+    return;
+  requireToolSchemas(config);
+  const permissions = config.permissions;
+  const capabilities = input.capabilityRequirements;
+  if (adapter === "http-json-v1" || adapter === "search-json-v1") {
+    if (
+      input.scope !== "user" ||
+      !exactOne(permissions, "network.request") ||
+      !exactOne(capabilities, "network.request") ||
+      !hasSecret(secrets, "endpoint") ||
+      (config.method !== "GET" && config.method !== "POST") ||
+      (config.networkMode !== "remote" && config.networkMode !== "loopback") ||
+      ["mcpResourceId", "toolName", "moduleId", "exportId"].some((key) =>
+        Object.hasOwn(config, key),
+      ) ||
+      secrets.has("access")
+    )
+      invalidResource();
+    return;
+  }
+  if (adapter === "mcp-tool-v1") {
+    const serverId = config.mcpResourceId;
+    if (
+      input.scope !== "user" ||
+      !validResourceId(serverId) ||
+      typeof config.toolName !== "string" ||
+      !config.toolName.trim() ||
+      config.toolName.length > 128 ||
+      /[\u0000-\u001f]/.test(config.toolName) ||
+      !Array.isArray(permissions) ||
+      permissions.length !== 1 ||
+      !["mcp.local", "network.request"].includes(String(permissions[0])) ||
+      !exactOne(capabilities, String(permissions[0])) ||
+      ["moduleId", "exportId", "method", "networkMode"].some((key) =>
+        Object.hasOwn(config, key),
+      ) ||
+      secrets.size > 0
+    )
+      invalidResource();
+    return;
+  }
+  if (
+    input.scope !== "project" ||
+    !exactOne(permissions, "module.execute") ||
+    !exactOne(capabilities, "module.execute") ||
+    !validResourceId(config.moduleId) ||
+    !validResourceId(config.exportId) ||
+    ["mcpResourceId", "toolName", "method", "networkMode"].some((key) =>
+      Object.hasOwn(config, key),
+    ) ||
+    secrets.size > 0
+  )
+    invalidResource();
+}
+
+function validateNewMcp(
+  input: Record<string, any>,
+  config: Record<string, unknown>,
+  secrets: Set<string>,
+): void {
+  if (adapterId(config) !== "mcp-server-v1") return;
+  if (
+    input.scope !== "user" ||
+    !Number.isInteger(config.timeoutMs) ||
+    Number(config.timeoutMs) < 1 ||
+    Number(config.timeoutMs) > 120000
+  )
+    invalidResource();
+  if (config.transport === "stdio") {
+    if (
+      !exactOne(config.permissions, "mcp.local") ||
+      !exactOne(input.capabilityRequirements, "mcp.local") ||
+      !hasSecret(secrets, "launch") ||
+      secrets.size !== 1 ||
+      Object.hasOwn(config, "networkMode") ||
+      Object.hasOwn(config, "endpoint")
+    )
+      invalidResource();
+    return;
+  }
+  if (config.transport === "streamable-http") {
+    if (
+      !exactOne(config.permissions, "network.request") ||
+      !exactOne(input.capabilityRequirements, "network.request") ||
+      !hasSecret(secrets, "endpoint") ||
+      (config.networkMode !== "remote" && config.networkMode !== "loopback") ||
+      secrets.has("launch") ||
+      Object.hasOwn(config, "endpoint") ||
+      Array.from(secrets).some(
+        (field) => !["endpoint", "headers"].includes(field),
+      )
+    )
+      invalidResource();
+    return;
+  }
+  invalidResource();
 }
 
 /** Validates untrusted input without executing implementations or resolving secrets. */
@@ -221,6 +424,8 @@ export function validateResource(input: unknown): Resource {
     Number(config.chunking.overlap) >= Number(config.chunking.size)
   )
     invalidResource();
+  if (input.kind === "tool") validateNewTool(input, config, bound);
+  if (input.kind === "mcp") validateNewMcp(input, config, bound);
   if (
     input.kind === "mcp" &&
     config.transport !== "stdio" &&

@@ -1,5 +1,99 @@
 [
-  {"type":"core.flow.parallel","label":"并行计算后汇合","category":8,"color":"#9971b5","fields":[],"inputs":["LEFT","RIGHT"],"requiredInputs":["LEFT","RIGHT"],"statement":true},
-  {"type":"core.flow.delay","label":"等待一段时间","category":8,"color":"#9971b5","fields":["MILLISECONDS"],"inputs":[],"statement":true},
-  {"type":"core.flow.fail","label":"报告流程失败","category":8,"color":"#9971b5","fields":[],"inputs":[],"statement":true}
+  {
+    "type": "core.flow.parallel",
+    "label": "并行计算后汇合",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": ["LEFT", "RIGHT"],
+    "requiredInputs": ["LEFT", "RIGHT"],
+    "statement": true
+  },
+  {
+    "type": "core.flow.delay",
+    "label": "等待一段时间",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["MILLISECONDS"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.flow.fail",
+    "label": "报告流程失败",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.flow.repeat",
+    "label": "重复执行",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["COUNT"],
+    "defaultFields": { "COUNT": "1" },
+    "inputs": ["DO"],
+    "inputChecks": { "DO": "step" },
+    "requiredInputs": ["DO"],
+    "statement": true
+  },
+  {
+    "type": "core.flow.foreach",
+    "label": "逐项处理",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["SOURCE", "MAX_ITEMS"],
+    "fieldOptions": { "SOURCE": ["input", "result", "memory"] },
+    "defaultFields": { "SOURCE": "result", "MAX_ITEMS": "50" },
+    "inputs": ["DO"],
+    "inputChecks": { "DO": "step" },
+    "requiredInputs": ["DO"],
+    "statement": true
+  },
+  {
+    "type": "core.flow.while",
+    "label": "满足条件时循环",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["SOURCE", "OP", "VALUE", "MAX_ITERATIONS"],
+    "fieldOptions": {
+      "SOURCE": ["input", "result", "memory"],
+      "OP": ["equals", "contains", "truthy"]
+    },
+    "optionalFields": ["VALUE"],
+    "defaultFields": {
+      "SOURCE": "result",
+      "OP": "truthy",
+      "MAX_ITERATIONS": "10"
+    },
+    "inputs": ["DO"],
+    "inputChecks": { "DO": "step" },
+    "requiredInputs": ["DO"],
+    "statement": true
+  },
+  {
+    "type": "core.flow.try",
+    "label": "尝试并处理错误",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": [],
+    "inputs": ["TRY", "CATCH"],
+    "inputChecks": { "TRY": "step", "CATCH": "step" },
+    "requiredInputs": ["TRY", "CATCH"],
+    "statement": true
+  },
+  {
+    "type": "core.flow.retry",
+    "label": "安全重试",
+    "category": 8,
+    "color": "#9971b5",
+    "fields": ["ATTEMPTS", "WAIT_MS"],
+    "defaultFields": { "ATTEMPTS": "2", "WAIT_MS": "250" },
+    "inputs": ["DO"],
+    "inputChecks": { "DO": "step" },
+    "requiredInputs": ["DO"],
+    "statement": true
+  }
 ]
