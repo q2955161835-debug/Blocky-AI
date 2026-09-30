@@ -20,6 +20,7 @@ impl UserStore {
             "session",
             "window",
             "recovery",
+            "builder-chat",
         ]
         .contains(&kind)
             || !crate::project_store::stable(id)
@@ -39,12 +40,18 @@ impl UserStore {
         }
         let value = crate::strict_json::parse(&std::fs::read(path).map_err(|_| ERROR)?)?;
         validate(kind, &value)?;
+        if kind == "builder-chat" && value["projectId"] != id {
+            return Err(ERROR.into());
+        }
         Ok(Some(value))
     }
     pub fn write(&self, kind: &str, id: &str, value: Value) -> Result<(), String> {
         let _guard = self.lock.lock().map_err(|_| ERROR)?;
         let path = self.path(kind, id)?;
         validate(kind, &value)?;
+        if kind == "builder-chat" && value["projectId"] != id {
+            return Err(ERROR.into());
+        }
         let bytes = serde_json::to_vec(&value).map_err(|_| ERROR)?;
         if bytes.len() > 8 * 1024 * 1024 {
             return Err(ERROR.into());
@@ -86,10 +93,11 @@ pub fn validate_settings(value: &Value) -> Result<(), String> {
             "ui.reduceMotion" | "window.minimizeToTray" => value_item.is_boolean(),
             "ui.view" => matches!(value_item.as_str(), Some("beginner" | "professional")),
             "models.defaultResourceId" => value_item.as_str().is_some_and(|id| {
-                id.is_empty() || (id.len() <= 128
-                    && crate::project_store::stable(id)
-                    && !id.to_ascii_lowercase().starts_with("sk-")
-                    && !["__proto__", "prototype", "constructor"].contains(&id))
+                id.is_empty()
+                    || (id.len() <= 128
+                        && crate::project_store::stable(id)
+                        && !id.to_ascii_lowercase().starts_with("sk-")
+                        && !["__proto__", "prototype", "constructor"].contains(&id))
             }),
             "terminal.outputBudgetBytes" => value_item
                 .as_u64()
@@ -110,6 +118,9 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
     crate::project_store::check_secrets(value, 0)?;
     if kind == "settings" {
         return validate_settings(value);
+    }
+    if kind == "builder-chat" {
+        return validate_chat(value);
     }
     if kind == "recovery" {
         if value["schemaVersion"] != "blocky.recovery/v1"
@@ -132,19 +143,110 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
     }
     Ok(())
 }
+fn validate_chat(value: &Value) -> Result<(), String> {
+    if crate::builder::contains_credentials(value) {
+        return Err(ERROR.into());
+    }
+    let map = value.as_object().ok_or(ERROR)?;
+    let messages = value["messages"].as_array().ok_or(ERROR)?;
+    if value["schemaVersion"] != "blocky.builder-chat/v1"
+        || !value["projectId"]
+            .as_str()
+            .is_some_and(crate::project_store::stable)
+        || map
+            .keys()
+            .any(|key| !["schemaVersion", "projectId", "messages"].contains(&key.as_str()))
+        || messages.len() > 40
+    {
+        return Err(ERROR.into());
+    }
+    let mut total = 0;
+    let mut ids = std::collections::HashSet::new();
+    for message in messages {
+        let fields = message.as_object().ok_or(ERROR)?;
+        let id = message["id"].as_str().ok_or(ERROR)?;
+        let text = message["text"].as_str().ok_or(ERROR)?;
+        let length = text.chars().count();
+        total += length;
+        if !crate::project_store::stable(id)
+            || id.len() > 200
+            || !ids.insert(id)
+            || !matches!(message["role"].as_str(), Some("user" | "assistant"))
+            || text.trim().is_empty()
+            || length > 4000
+            || total > 64000
+            || fields
+                .keys()
+                .any(|key| !["id", "role", "text", "status"].contains(&key.as_str()))
+            || fields.get("status").is_some_and(|status| {
+                !matches!(
+                    status.as_str(),
+                    Some(
+                        "proposed"
+                            | "accepted"
+                            | "rejected"
+                            | "explained"
+                            | "failed"
+                            | "cancelled"
+                            | "stale"
+                    )
+                )
+            })
+        {
+            return Err(ERROR.into());
+        }
+    }
+    Ok(())
+}
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn chat_is_project_bound_and_does_not_store_candidates_or_credentials() {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../try/agent-capability-upgrade/chat-store");
+        std::fs::create_dir_all(&root).unwrap();
+        let temp = tempfile::tempdir_in(root).unwrap();
+        let store = UserStore::new(temp.path().to_owned());
+        let chat = serde_json::json!({"schemaVersion":"blocky.builder-chat/v1","projectId":"classroom","messages":[{"id":"message-1","role":"assistant","text":"Public classroom example","status":"accepted"}]});
+        store
+            .write("builder-chat", "classroom", chat.clone())
+            .unwrap();
+        assert_eq!(
+            store.read("builder-chat", "classroom").unwrap(),
+            Some(chat.clone())
+        );
+        assert!(store.read("builder-chat", "other").unwrap().is_none());
+        assert!(store.write("builder-chat", "other", chat.clone()).is_err());
+        let mut extra = chat.clone();
+        extra["patch"] = serde_json::json!({});
+        assert!(store.write("builder-chat", "classroom", extra).is_err());
+        let mut secret = chat.clone();
+        secret["messages"][0]["text"] = format!("sk-{}", "a".repeat(32)).into();
+        assert!(store.write("builder-chat", "classroom", secret).is_err());
+        assert_eq!(store.read("builder-chat", "classroom").unwrap(), Some(chat));
+    }
     #[test]
     fn default_model_reference_reopens_and_rejects_secret_text_and_project_scope() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/default-model-store");
         std::fs::create_dir_all(&root).unwrap();
         let dir = tempfile::tempdir_in(root).unwrap();
         let value = serde_json::json!({"schemaVersion":"blocky.settings/v1","scope":"app","values":{"models.defaultResourceId":"saved-model"}});
-        UserStore::new(dir.path().to_owned()).write("settings", "app", value.clone()).unwrap();
+        UserStore::new(dir.path().to_owned())
+            .write("settings", "app", value.clone())
+            .unwrap();
         let reopened = UserStore::new(dir.path().to_owned());
-        assert_eq!(reopened.read("settings", "app").unwrap(), Some(value.clone()));
-        for id in ["../secret", "https://example.com", "sk-do-not-store-a-key", "__proto__", "constructor"] {
+        assert_eq!(
+            reopened.read("settings", "app").unwrap(),
+            Some(value.clone())
+        );
+        for id in [
+            "../secret",
+            "https://example.com",
+            "sk-do-not-store-a-key",
+            "__proto__",
+            "constructor",
+        ] {
             let mut invalid = value.clone();
             invalid["values"]["models.defaultResourceId"] = id.into();
             assert!(reopened.write("settings", "app", invalid).is_err());

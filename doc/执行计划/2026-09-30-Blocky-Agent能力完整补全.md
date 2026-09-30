@@ -128,3 +128,15 @@
 复用 `AgentServices.tool/generate`、`RunBudget`、`RuntimeEvent`、模块导出、Host 资源/秘密、公共网络校验、审批账本与进程 Job。外部工具配置属于本机资源，项目只保存引用；MCP 服务器提供的工具说明和资源正文均是数据，不能扩张权限。协议接口与传输可由辅助 Agent 独立实现，权限绑定和运行内核由主 Agent 负责。
 
 参考：[MCP 传输](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)、[生命周期](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)、[工具](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)。
+
+## 9. 批次 C 可执行步骤
+
+在 B 检查点 `96da2ec` 的独立验收期间推进 C。聊天式构建助手归入 A15，本机对话、连续上下文和候选审阅复用原构建链。
+
+- [ ] C1 锁定本地文档解析依赖及 OCR 数据。独立 Node worker 只读取 Host 复制的输入，返回有界正文与页/段/单元格/图像区域定位；Host 控制进程、网络、文件与资源预算。覆盖 PDF、扫描 PDF、DOCX、XLSX、CSV 与图片，损坏、加密、异常 ZIP 和缺工件给出明确错误。
+- [ ] C2 Host 来源快照将解析片段交给原分段器，并把定位贯穿分段预览、同步、索引和引用查看。增量更新、撤权、取消和异常不能覆盖上个有效索引。
+- [ ] C3 保留原多语言 E5；增加实际本地 MiniLM 嵌入和神经重排。模型工件锁 revision/SHA/许可证，签名区分模型、维度和窗口策略；重建原子切换，保存可检查的回退快照。英文 MiniLM 的语言适用范围明确显示。
+- [ ] C4 完成来源、解析、分段、嵌入、索引的组合积木和可展开摄取蓝图；问题改写/相关性判断复用真实模型与预算。共享 CLI/资源界面提供同一配置、进度、状态及错误恢复。
+- [ ] C5 固定 20 个有证据问题和 10 个无证据问题；执行资料助手质量验证及 C 的直接影响回归，再由独立 Agent 验收 A02–A05 和本批 A15 场景。普通包和完整 Full 仍归 F。
+
+解析可行性证据在 `try/agent-capability-upgrade/document-feasibility/feasibility.md`，仅为开发选择依据；真实 PDF/Office/OCR 探针不等于产品已接入。辅助 Agent 只实现解析适配器和相关测试，主 Agent 负责 Host 边界、知识索引、模型、运行和整合。

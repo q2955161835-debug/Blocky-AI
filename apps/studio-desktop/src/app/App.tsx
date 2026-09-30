@@ -56,7 +56,7 @@ export function App() {
   const task = useTask(s);
   const terminals = useTerminals(s);
   const logs = useLogs(s),
-    lifecycle = useLifecycle(s, logs, task);
+    lifecycle = useLifecycle(s, logs, task, builder);
   const [popup, setPopup] = useState<Popup>(null),
     [query, setQuery] = useState("");
   const eventContext = popup?.kind === "context" && popup.scope === "event";
@@ -600,6 +600,7 @@ export function App() {
             kind={popup.kind as ConstructionKind}
             close={() => setPopup(null)}
             showReview={() => show("patch-review")}
+            onDecision={(outcome, patchId) => outcome === "accepted" ? builder.markApplied(patchId) : builder.markRejected(patchId)}
           />
         )}
       {popup &&

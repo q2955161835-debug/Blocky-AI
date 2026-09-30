@@ -15,10 +15,9 @@ fn real_sidecar_is_read_only_and_reaped_before_completion() {
     assert_eq!(result["modelApiCalled"], false);
     assert!(result.get("patch").is_none());
     assert!(host.state.lock().unwrap().active.is_empty());
-    assert!(
-        host.run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
-            .is_err()
-    );
+    assert!(host
+        .run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
+        .is_err());
     host.shutdown().unwrap();
 }
 #[test]
@@ -34,11 +33,9 @@ fn request_and_approval_boundaries_reject_before_launch() {
     assert!(s.validate().is_err());
     s = start();
     let root = tempfile::tempdir().unwrap();
-    assert!(
-        BuilderHost::default()
-            .run(root.path().to_owned(), s, "forged")
-            .is_err()
-    );
+    assert!(BuilderHost::default()
+        .run(root.path().to_owned(), s, "forged")
+        .is_err());
 }
 #[test]
 fn rejects_credentials_before_sidecar() {
@@ -54,6 +51,28 @@ fn rejects_credentials_before_sidecar() {
         s.request.prompt = text;
         assert_eq!(s.validate().unwrap_err(), "BLK-BUILDER-001");
     }
+}
+
+#[test]
+fn conversation_is_bounded_private_input_bound_to_approval() {
+    let mut s = start();
+    let previous = s.digest().unwrap();
+    s.request.conversation.push(ConversationMessage {
+        role: "user".into(),
+        text: "Use the classroom context".into(),
+        status: None,
+    });
+    assert_ne!(previous, s.digest().unwrap());
+    s.request.conversation[0].text = "api_key=fictional-canary-secret".into();
+    assert!(s.validate().is_err());
+    s.request.conversation[0].text = "x".repeat(4001);
+    assert!(s.validate().is_err());
+    s.request.conversation[0].text = "public".into();
+    s.request.conversation[0].role = "system".into();
+    assert!(s.validate().is_err());
+    s.request.conversation[0].role = "assistant".into();
+    s.request.conversation[0].status = Some("arbitrary-approval".into());
+    assert!(s.validate().is_err());
 }
 
 #[test]

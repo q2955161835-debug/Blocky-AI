@@ -5,7 +5,11 @@ import {
 } from "@blocky/builder-protocol";
 import { canonicalJson } from "@blocky/language-schema";
 import { readProject, nativeUserOperation } from "./native-store";
-import { userRegistryMap, readDefaultModelId, requireOnlineModel } from "./user-config";
+import {
+  userRegistryMap,
+  readDefaultModelId,
+  requireOnlineModel,
+} from "./user-config";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 import { allow, required, integer, type Args } from "./arguments";
 import { CliError, envelope } from "./protocol";
@@ -13,7 +17,7 @@ import { CliError, envelope } from "./protocol";
 export const builderHelp = [
   "builder evidence --request-id <id> --json",
   "builder inspect <file.blocky> --module <id> [--blocks <id,id>] --json",
-  "builder draft|explain|repair <file.blocky> --module <id> --prompt <text> [--blocks <id,id>] [--surface] [--live [--model <resource-id>] --request-id <id> --approve <request-digest>] [--turns 4] --output <candidate.json> --json",
+  "builder draft|explain|repair <file.blocky> --module <id> --prompt <text> [--conversation <messages.json>] [--blocks <id,id>] [--surface] [--live [--model <resource-id>] --request-id <id> --approve <request-digest>] [--turns 4] --output <candidate.json> --json",
   "builder patch|verify <file.blocky> --candidate <candidate.json> --json",
 ];
 export async function builderCommand(args: Args, signal: AbortSignal) {
@@ -56,6 +60,7 @@ export async function builderCommand(args: Args, signal: AbortSignal) {
         : [
             "module",
             "prompt",
+            "conversation",
             "blocks",
             "surface",
             "live",
@@ -113,6 +118,13 @@ export async function builderCommand(args: Args, signal: AbortSignal) {
         .split(",")
         .filter(Boolean),
       createSurface: args.options.has("surface"),
+      ...(args.options.has("conversation")
+        ? {
+            conversation: await readJsonArtifact(
+              required(args, "conversation"),
+            ),
+          }
+        : {}),
     });
     if (action === "inspect")
       return {
@@ -133,7 +145,14 @@ export async function builderCommand(args: Args, signal: AbortSignal) {
       request,
       originalJson: canonicalJson(project),
       mode: live ? "live" : "deterministic",
-      resourceId: live ? requireOnlineModel(args.options.has("model") ? required(args, "model") : await readDefaultModelId(), registry) : null,
+      resourceId: live
+        ? requireOnlineModel(
+            args.options.has("model")
+              ? required(args, "model")
+              : await readDefaultModelId(),
+            registry,
+          )
+        : null,
       maxTurns: integer(args, "turns", 4, 4),
     };
     if (live && !args.options.has("approve")) {

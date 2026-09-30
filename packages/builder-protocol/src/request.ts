@@ -9,6 +9,31 @@ export const builderWorkIds = [
   "convert-github-project-to-blocky",
   "reverse-agent-to-blocky",
 ] as const;
+export const builderConversationSchema = z
+  .array(
+    z
+      .object({
+        role: z.enum(["user", "assistant"]),
+        text: z.string().trim().min(1).max(4000),
+        status: z
+          .enum([
+            "proposed",
+            "accepted",
+            "rejected",
+            "explained",
+            "failed",
+            "cancelled",
+            "stale",
+          ])
+          .optional(),
+      })
+      .strict(),
+  )
+  .max(20)
+  .refine(
+    (messages) =>
+      messages.reduce((sum, message) => sum + message.text.length, 0) <= 32000,
+  );
 export const builderRequestSchema = z
   .object({
     schemaVersion: z.literal("blocky.builder-request/v1"),
@@ -22,6 +47,7 @@ export const builderRequestSchema = z
       .max(100)
       .refine((ids) => new Set(ids).size === ids.length),
     createSurface: z.boolean(),
+    conversation: builderConversationSchema.optional(),
   })
   .strict();
 export type BuilderRequest = z.infer<typeof builderRequestSchema>;

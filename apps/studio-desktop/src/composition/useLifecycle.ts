@@ -4,16 +4,18 @@ import { invoke, isTauri } from "@tauri-apps/api/core";
 import type { Studio } from "./useStudio";
 import type { StudioLogs } from "./useLogs";
 import type { StudioTask } from "./useTask";
+import type { Builder } from "./useBuilder";
 export function useLifecycle(
   studio: Studio,
   logs: StudioLogs,
   task: StudioTask,
+  builder: Builder,
 ) {
   const [requested, setRequested] = useState(false),
     [working, setWorking] = useState(false),
     [error, setError] = useState("");
-  const current = useRef({ studio, logs, task });
-  current.current = { studio, logs, task };
+  const current = useRef({ studio, logs, task, builder });
+  current.current = { studio, logs, task, builder };
   const gate = useRef(false);
   useEffect(() => {
     if (!isTauri()) return;
@@ -51,6 +53,7 @@ export function useLifecycle(
       await invoke("begin_exit");
       await current.current.studio.settle();
       await current.current.task.settle();
+      await current.current.builder.settle();
       await current.current.logs.flush();
       await invoke("finish_exit");
     } catch {

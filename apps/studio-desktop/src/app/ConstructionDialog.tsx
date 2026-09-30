@@ -15,16 +15,22 @@ export function ConstructionDialog({
   kind,
   close,
   showReview,
+  onDecision,
 }: {
   studio: Studio;
   construction: Construction;
   kind: ConstructionKind;
   close(): void;
   showReview(): void;
+  onDecision?(outcome: "accepted" | "rejected", patchId: string): void;
 }) {
   const update = c.blueprintUpdate;
   const [approved, setApproved] = useState<string[]>([]);
   const dialog = useRef<HTMLDialogElement>(null);
+  const reject = () => {
+    if (c.review) onDecision?.("rejected", c.review.patch.patchId);
+    c.reject();
+  };
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
@@ -48,7 +54,7 @@ export function ConstructionDialog({
       onCancel={(event) => {
         event.preventDefault();
         if (!c.busy) {
-          c.reject();
+          reject();
           close();
         }
       }}
@@ -59,7 +65,7 @@ export function ConstructionDialog({
           aria-label="关闭弹层"
           disabled={c.busy}
           onClick={() => {
-            c.reject();
+            reject();
             close();
           }}
         >
@@ -368,7 +374,7 @@ export function ConstructionDialog({
             <button
               disabled={c.busy}
               onClick={() => {
-                c.reject();
+                reject();
                 close();
               }}
             >
@@ -381,7 +387,11 @@ export function ConstructionDialog({
                 c.review.permissionDelta.some((p) => !approved.includes(p))
               }
               onClick={async () => {
-                if (await c.accept(approved)) close();
+                const patchId = c.review?.patch.patchId;
+                if (await c.accept(approved)) {
+                  if (patchId) onDecision?.("accepted", patchId);
+                  close();
+                }
               }}
             >
               接受变更

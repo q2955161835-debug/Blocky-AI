@@ -1,6 +1,6 @@
 use serde_json::Value;
 use std::sync::OnceLock;
-pub(super) fn credentials(value: &Value) -> bool {
+pub(crate) fn credentials(value: &Value) -> bool {
     static PATTERNS: OnceLock<Vec<regex::Regex>> = OnceLock::new();
     let patterns = PATTERNS.get_or_init(|| {
         serde_json::from_str::<Vec<String>>(include_str!(

@@ -31,13 +31,11 @@
           "maxItems": 12
         },
         "explanation": {
-          "type": "string"
+          "type": "string",
+          "description": "The complete user-facing answer to the current question, including any requested explanation or example. Use relevant facts from request.conversation. Do not replace the answer with a plan, a promise, or a statement that no files will be modified."
         }
       },
-      "required": [
-        "plan",
-        "acceptanceCriteria"
-      ],
+      "required": ["plan", "acceptanceCriteria"],
       "additionalProperties": false
     }
   },
@@ -74,12 +72,7 @@
                     "$ref": "#/$defs/__schema0"
                   }
                 },
-                "required": [
-                  "op",
-                  "moduleId",
-                  "blockId",
-                  "payload"
-                ],
+                "required": ["op", "moduleId", "blockId", "payload"],
                 "additionalProperties": false
               },
               {
@@ -113,18 +106,11 @@
                         }
                       }
                     },
-                    "required": [
-                      "fields"
-                    ],
+                    "required": ["fields"],
                     "additionalProperties": false
                   }
                 },
-                "required": [
-                  "op",
-                  "moduleId",
-                  "blockId",
-                  "payload"
-                ],
+                "required": ["op", "moduleId", "blockId", "payload"],
                 "additionalProperties": false
               },
               {
@@ -158,19 +144,11 @@
                         "maximum": 100000
                       }
                     },
-                    "required": [
-                      "x",
-                      "y"
-                    ],
+                    "required": ["x", "y"],
                     "additionalProperties": false
                   }
                 },
-                "required": [
-                  "op",
-                  "moduleId",
-                  "blockId",
-                  "payload"
-                ],
+                "required": ["op", "moduleId", "blockId", "payload"],
                 "additionalProperties": false
               },
               {
@@ -191,11 +169,7 @@
                     "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
                   }
                 },
-                "required": [
-                  "op",
-                  "moduleId",
-                  "blockId"
-                ],
+                "required": ["op", "moduleId", "blockId"],
                 "additionalProperties": false
               }
             ]
@@ -219,10 +193,7 @@
             },
             "layout": {
               "type": "string",
-              "enum": [
-                "stack",
-                "split"
-              ]
+              "enum": ["stack", "split"]
             },
             "submitLabel": {
               "type": "string",
@@ -258,11 +229,7 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "text",
-                      "textarea",
-                      "select"
-                    ]
+                    "enum": ["text", "textarea", "select"]
                   },
                   "required": {
                     "type": "boolean"
@@ -277,13 +244,7 @@
                     }
                   }
                 },
-                "required": [
-                  "id",
-                  "label",
-                  "type",
-                  "required",
-                  "options"
-                ],
+                "required": ["id", "label", "type", "required", "options"],
                 "additionalProperties": false
               }
             }
@@ -302,9 +263,7 @@
           "additionalProperties": false
         }
       },
-      "required": [
-        "operations"
-      ],
+      "required": ["operations"],
       "additionalProperties": false,
       "$defs": {
         "__schema0": {
@@ -353,9 +312,7 @@
                   "$ref": "#/$defs/__schema0"
                 }
               },
-              "required": [
-                "block"
-              ],
+              "required": ["block"],
               "additionalProperties": false
             },
             "x": {
@@ -378,10 +335,7 @@
               "$ref": "#/$defs/__schema2"
             }
           },
-          "required": [
-            "type",
-            "id"
-          ],
+          "required": ["type", "id"],
           "additionalProperties": false
         },
         "__schema1": {

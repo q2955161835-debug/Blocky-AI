@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, renderHook, cleanup } from "@testing-library/react";
+import { act, renderHook, cleanup, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { ProjectController } from "../../packages/project-model/src";
 import { createStarter } from "../../packages/test-fixtures/src";
@@ -53,6 +53,7 @@ it("keeps generated changes as a proposal and discards them when cancelled", asy
     name === "builder_run" ? result(s, args.start.request) : undefined,
   );
   const hook = renderHook(() => useBuilder(s));
+  await waitFor(() => expect(hook.result.current.ready).toBe(true));
   await act(async () => {
     await hook.result.current.generate({
       intent: "build",
@@ -81,6 +82,7 @@ it("rejects a candidate arriving after the project changed", async () => {
     return candidate;
   });
   const hook = renderHook(() => useBuilder(s));
+  await waitFor(() => expect(hook.result.current.ready).toBe(true));
   let pending: Promise<void>;
   await act(async () => {
     pending = hook.result.current.generate({

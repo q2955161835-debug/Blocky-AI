@@ -32,6 +32,10 @@ CLI 安装使用独立的单次行协议。取消或 stdin 断开通知安装器
 
 本地推理的响应证据明确标记 local；外部 API 调用根据 remote 传输事实记录。引擎内部 SDK 的用量占位值不进入实际响应证据；生成记录保留 reported/unavailable 和原始有效用量。
 
+右侧构建助手采用消息区与底部输入区。`builder-request/v1` 增加可选 conversation，最多 20 条、每条 4000 字符、合计 32000 字符，包含 user/assistant 正文及候选状态；CLI 用 `--conversation <messages.json>` 提供同一字段。每轮传入当前项目摘要，旧方案状态不授予权限，只有当前候选可审阅和接受。解释操作必须直接回答当前问题，不能用后续计划代替答案。
+
+对话保存到当前资料根 `user/builder-chat/<projectId>.json`，不写入作品、蓝图或补丁。记录最多 40 条、正文合计 64000 字符，并受全包输入字节预算限制；Host 拒绝凭据文本、未知字段、跨项目 ID 和候选载荷。重开只恢复对话，未应用候选标记需重新生成；切换项目隔离历史并取消旧请求。停止、退出和取消状态等原生请求结算后才结束，退出还须刷新本机对话。
+
 ## 参考与边界
 
 工具调用参考 [Qwen 官方说明](https://github.com/QwenLM/Qwen3/blob/main/docs/source/framework/function_call.md)及 [llama.cpp 的 required 工具选择讨论](https://github.com/ggml-org/llama.cpp/issues/27217)。特定上游版本/模型的问题不能直接外推到当前锁定工件；本项目仍验证实际响应结构，不把服务端宣称支持当作调用成功。

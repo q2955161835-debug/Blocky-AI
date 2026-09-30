@@ -9,6 +9,8 @@ import {
   type BuilderEvent,
 } from "@blocky/builder-protocol";
 import type { Studio } from "./useStudio";
+import { conversationContext, useBuilderChat } from "./useBuilderChat";
+export type { BuilderChatMessage } from "./useBuilderChat";
 export type BuilderProposal = BuilderResult & {
   events?: BuilderEvent[];
   engine: string;
@@ -50,38 +52,104 @@ export type BuilderEvidence = {
 export function useBuilder(studio: Studio) {
   const current = useRef(studio);
   current.current = studio;
-  const active = useRef<string | undefined>(undefined);
+  const projectId = studio.snapshot.project.manifest.projectId;
+  const chat = useBuilderChat(projectId, studio.setMessage);
+  const mounted = useRef(true);
+  const active = useRef<
+    | {
+        id: string;
+        projectId: string;
+        cancelled: boolean;
+        settled: Promise<void>;
+        finish(): void;
+      }
+    | undefined
+  >(undefined);
   const [busy, setBusy] = useState(false),
+    [stopping, setStopping] = useState(false),
     [result, setResult] = useState<BuilderProposal>(),
     [error, setError] = useState(""),
     [evidence, setEvidence] = useState<BuilderEvidence>();
+  const stop = () => {
+    const owner = active.current;
+    if (!owner || owner.cancelled) return;
+    owner.cancelled = true;
+    if (mounted.current) setStopping(true);
+    void invoke("builder_cancel", { requestId: owner.id }).catch(() => {});
+  };
+  const decision = (status: "accepted" | "rejected", patchId?: string) => {
+    if (!result || (patchId && result.patch?.patchId !== patchId)) return;
+    chat.update(result.projectId, (messages) =>
+      messages.map((message) =>
+        message.id === `${result.requestId}-answer`
+          ? { ...message, status }
+          : message,
+      ),
+    );
+    setResult(undefined);
+  };
+  const reject = () => decision("rejected");
   const clear = () => {
-    const id = active.current;
-    active.current = undefined;
-    if (id) void invoke("builder_cancel", { requestId: id }).catch(() => {});
-    setBusy(false);
+    if (active.current) stop();
+    else reject();
+    setError("");
+    setEvidence(undefined);
+  };
+  const newChat = () => {
+    if (active.current) return;
+    chat.update(projectId, () => []);
     setResult(undefined);
     setError("");
     setEvidence(undefined);
   };
-  const scope = `${studio.snapshot.project.manifest.projectId}/${studio.session.active}/${studio.selectedRoots.join(",")}/${studio.selected ?? ""}`;
   useEffect(() => {
-    clear();
+    mounted.current = true;
     return () => {
-      const id = active.current;
-      active.current = undefined;
-      if (id) void invoke("builder_cancel", { requestId: id }).catch(() => {});
+      mounted.current = false;
+      stop();
     };
-  }, [scope]);
-  const generate = async (input: BuilderInput) => {
-    if (active.current) return;
-    const s = current.current,
-      id = `builder-${crypto.randomUUID()}`;
-    active.current = id;
-    setBusy(true);
+  }, []);
+  useEffect(() => {
     setResult(undefined);
     setError("");
     setEvidence(undefined);
+    return () => {
+      if (active.current?.projectId === projectId) stop();
+    };
+  }, [projectId]);
+  const generate = async (input: BuilderInput) => {
+    if (active.current || !chat.ready) return;
+    const s = current.current,
+      id = `builder-${crypto.randomUUID()}`;
+    let finish!: () => void;
+    const settled = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const owner = { id, projectId, cancelled: false, settled, finish };
+    active.current = owner;
+    setBusy(true);
+    setStopping(false);
+    setResult(undefined);
+    setError("");
+    setEvidence(undefined);
+    const visible = () =>
+      mounted.current &&
+      current.current.snapshot.project.manifest.projectId === owner.projectId;
+    const answer = (
+      text: string,
+      status: "proposed" | "explained" | "failed" | "cancelled",
+    ) => {
+      chat.update(owner.projectId, (messages) => [
+        ...messages,
+        {
+          id: `${id}-answer`,
+          role: "assistant",
+          text: text.slice(0, 4000),
+          status,
+        },
+      ]);
+    };
+    let appended = false;
     try {
       const project = s.controller.getSnapshot().project;
       const request = parseBuilderRequest({
@@ -97,9 +165,25 @@ export function useBuilder(studio: Studio) {
             ? [s.selected]
             : [],
         createSurface: input.createSurface && input.intent === "build",
+        conversation: conversationContext(
+          chat.messages.map((message) =>
+            message.status === "proposed"
+              ? { ...message, status: "stale" }
+              : message,
+          ),
+        ),
       });
+      chat.update(owner.projectId, (messages) => [
+        ...messages.map((message) =>
+          message.status === "proposed"
+            ? { ...message, status: "stale" as const }
+            : message,
+        ),
+        { id, role: "user", text: input.prompt.trim().slice(0, 4000) },
+      ]);
+      appended = true;
       await s.resources.flush();
-      if (active.current !== id) return;
+      if (owner.cancelled) throw Error("BLK-BUILDER-CANCELLED");
       const value = await invoke<BuilderProposal>("builder_run", {
         start: {
           request,
@@ -109,7 +193,7 @@ export function useBuilder(studio: Studio) {
           maxTurns: 4,
         },
       });
-      if (active.current !== id) return;
+      if (owner.cancelled || !visible()) throw Error("BLK-BUILDER-CANCELLED");
       if (
         value.requestId !== id ||
         value.projectId !== project.manifest.projectId ||
@@ -119,34 +203,71 @@ export function useBuilder(studio: Studio) {
           ))
       )
         throw Error("BLK-PATCH-001");
-      if (active.current === id) {
+      if (owner.cancelled) throw Error("BLK-BUILDER-CANCELLED");
+      if (visible()) {
         for (const raw of value.events ?? []) {
           const event = builderEventSchema.parse(raw);
-          s.bus.write("builder", "info", event.kind, {
+          s.bus?.write("builder", "info", event.kind, {
             requestId: id,
             sequence: event.sequence,
             ...(event.tool ? { tool: event.tool } : {}),
           });
         }
+        answer(
+          value.explanation || value.spec.plan.join("\n"),
+          value.patch ? "proposed" : "explained",
+        );
         setResult(value);
       }
     } catch (cause) {
-      if (active.current === id) {
+      if (owner.cancelled) {
+        if (appended) answer("已停止本轮构建。", "cancelled");
+      } else if (visible()) {
         const code = cause instanceof Error ? cause.message : String(cause);
-        setError(/^BLK-[A-Z0-9-]+$/.test(code) ? code : "BLK-BUILDER-ENGINE");
+        const safe = /^BLK-[A-Z0-9-]+$/.test(code)
+          ? code
+          : "BLK-BUILDER-ENGINE";
+        setError(safe);
+        if (appended) answer(`本轮构建未完成（${safe}）。`, "failed");
         const recorded = await invoke<BuilderEvidence>("builder_evidence", {
           requestId: id,
         }).catch(() => undefined);
-        if (active.current === id && recorded?.requestId === id)
+        if (visible() && !owner.cancelled && recorded?.requestId === id)
           setEvidence(recorded);
       }
     } finally {
-      if (active.current === id) {
+      owner.finish();
+      if (active.current === owner) {
         active.current = undefined;
-        setBusy(false);
+        if (mounted.current) {
+          setBusy(false);
+          setStopping(false);
+        }
       }
     }
   };
-  return { busy, result, error, evidence, generate, clear };
+  return {
+    busy,
+    stopping,
+    ready: chat.ready,
+    messages: chat.messages,
+    result,
+    error,
+    evidence,
+    generate,
+    clear,
+    stop,
+    reject,
+    newChat,
+    markApplied: (patchId: string) => decision("accepted", patchId),
+    markRejected: (patchId: string) => decision("rejected", patchId),
+    flush: chat.flush,
+    settle: async () => {
+      const owner = active.current;
+      stop();
+      await owner?.settled;
+      await chat.flush();
+    },
+  };
 }
 export type Builder = ReturnType<typeof useBuilder>;

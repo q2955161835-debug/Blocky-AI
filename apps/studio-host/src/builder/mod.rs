@@ -1,22 +1,31 @@
 pub(crate) mod evidence;
 mod input_guard;
+pub(crate) use input_guard::credentials as contains_credentials;
 mod process;
 #[cfg(test)]
 mod tests;
 use crate::provider::builder_model::BuilderModel;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{HashMap, HashSet},
     path::{Path, PathBuf},
     sync::{
-        Arc, Mutex,
         atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
     },
     time::{Duration, Instant},
 };
 const INVALID: &str = "BLK-BUILDER-001";
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ConversationMessage {
+    pub role: String,
+    pub text: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub status: Option<String>,
+}
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct BuilderRequest {
@@ -28,6 +37,8 @@ pub struct BuilderRequest {
     pub module_id: String,
     pub selection: Vec<String>,
     pub create_surface: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub conversation: Vec<ConversationMessage>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -57,11 +68,37 @@ impl BuilderStart {
             || r.selection.iter().collect::<HashSet<_>>().len() != r.selection.len()
             || self.original_json.len() > 8 * 1024 * 1024
             || (r.create_surface && r.intent != "build")
+            || r.conversation.len() > 20
+            || r.conversation
+                .iter()
+                .map(|m| m.text.chars().count())
+                .sum::<usize>()
+                > 32000
+            || r.conversation.iter().any(|m| {
+                !["user", "assistant"].contains(&m.role.as_str())
+                    || m.text.trim().is_empty()
+                    || m.text.chars().count() > 4000
+                    || m.status.as_deref().is_some_and(|s| {
+                        ![
+                            "proposed",
+                            "accepted",
+                            "rejected",
+                            "explained",
+                            "failed",
+                            "cancelled",
+                            "stale",
+                        ]
+                        .contains(&s)
+                    })
+            })
         {
             return Err(INVALID.into());
         }
         let p = crate::strict_json::parse(self.original_json.as_bytes()).map_err(|_| INVALID)?;
         if input_guard::credentials(&Value::String(r.prompt.clone()))
+            || input_guard::credentials(
+                &serde_json::to_value(&r.conversation).map_err(|_| INVALID)?,
+            )
             || input_guard::credentials(&p)
         {
             return Err(INVALID.into());
@@ -157,7 +194,7 @@ impl BuilderHost {
         let project = start.validate()?;
         let b = binding(root, start)?;
         Ok(
-            json!({"requestDigest":approval_digest(start,b.as_ref())?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"provider":b.as_ref().map(|b|b.provider()),"endpoint":b.as_ref().map(|b|b.endpoint_label()),"modelId":b.as_ref().map(|b|b.model()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义"}),
+            json!({"requestDigest":approval_digest(start,b.as_ref())?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"provider":b.as_ref().map(|b|b.provider()),"endpoint":b.as_ref().map(|b|b.endpoint_label()),"modelId":b.as_ref().map(|b|b.model()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择、诊断和本机对话上下文；不发送秘密绑定或资源定义"}),
         )
     }
     pub fn run(&self, root: PathBuf, start: BuilderStart, digest: &str) -> Result<Value, String> {
