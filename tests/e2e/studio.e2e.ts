@@ -680,10 +680,13 @@ describe("Blocky native editor", () => {
       .locator(".panel-tabs")
       .getByRole("button", { name: "输出", exact: true })
       .click();
+    // The restored session can retain another channel from earlier user work.
+    await page.getByLabel("输出通道").selectOption("runtime");
     await page.getByRole("button", { name: "当前运行", exact: true }).click();
     expect(await page.getByLabel("诊断关联标识").inputValue()).toBe(
       state.runId,
     );
+    await page.waitForFunction(() => document.querySelectorAll(".panel-body .log-row").length > 0);
     expect(await page.locator(".panel-body .log-row").count()).toBeGreaterThan(
       0,
     );

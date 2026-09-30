@@ -29,10 +29,11 @@ export function install(get: () => Studio) {
     new Promise<void>((r) =>
       requestAnimationFrame(() => requestAnimationFrame(() => r())),
     );
-  const workspace = () => {
-    const found = Blockly.Workspace.getAll().find(
+  const findWorkspace = () => Blockly.Workspace.getAll().find(
       (w) => w instanceof Blockly.WorkspaceSvg && !w.isFlyout,
-    );
+    ) as Blockly.WorkspaceSvg | undefined;
+  const workspace = () => {
+    const found = findWorkspace();
     if (!found) throw Error("visible Blockly workspace missing");
     return found as Blockly.WorkspaceSvg;
   };
@@ -77,7 +78,7 @@ export function install(get: () => Studio) {
     await paint();
     await wait(
       () =>
-        !get().compiling &&
+        get().sessionReady && !get().compiling && !!findWorkspace() &&
         !!get().compiled &&
         get().compiled!.modules[0]?.roots[0]?.fields.ROLE ===
           get().controller.getSnapshot().project.workspaces["research-agent"]
@@ -155,7 +156,7 @@ export function install(get: () => Studio) {
       get().controller.replace(createParallelProject());
       get().setSession(restoreSession(get().controller.getSnapshot().project, null));
       get().setStarted(true);
-      await wait(() => !!get().compiled?.interaction.entries.some(e => e.interactionId === "on-parallel") && !!workspace().getBlockById("parallel"));
+      await wait(() => get().sessionReady && !!get().compiled?.interaction.entries.some(e => e.interactionId === "on-parallel") && !!findWorkspace()?.getBlockById("parallel"));
       return { canRun: get().compiled?.diagnostics.every(d => d.severity !== "error") };
     },
     async diagnosticScopeState() {
@@ -231,7 +232,7 @@ export function install(get: () => Studio) {
       get().setStarted(true);
       await paint();
       await wait(
-        () => !get().compiling && workspace().getAllBlocks(false).length === 4,
+        () => get().sessionReady && !get().compiling && findWorkspace()?.getAllBlocks(false).length === 4,
       );
       workspace().setScale(0.65);
       workspace().scroll(0, 0);
