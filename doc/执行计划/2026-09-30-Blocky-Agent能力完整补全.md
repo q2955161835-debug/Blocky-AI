@@ -110,3 +110,19 @@
 - [ ] A6 整理无秘密开发证据，由独立 Agent 验收 A01 对应阶段及直接影响范围。批次 A 通过后继续 B–E；F 执行最终完整门禁。
 
 重点复核：审批后资源发生变化、模型伪造工具名/重复调用 ID、取消时进程或网络残留、未知 Token 用量、默认模型不兼容旧项目。以上均对应行为负例，不以测试文件存在代替实际执行。
+
+## 8. 批次 B 可执行步骤
+
+目标：作品 Agent 使用模型返回的工具决定下一步，参数来自实际结果；受控工具、项目模块与 MCP 通过同一运行接口调用。A 的独立验收期间只准备 B 设计及不重叠的新增模块；共享实现整合在 A 的问题明确后进行。
+
+- [ ] B1 在 `language-schema` 增加有界工具声明、repeat/foreach/while/try/retry 校验；在 `block-catalog` 提供 `core.reason.tool_loop`、工具公开声明及相应控制积木。重复使用已有条件、结果、模块、RPA 和预算语义，不创建品牌积木。
+- [ ] B2 将工具循环和扩展控制流放入 `runtime-core` 独立模块；每轮携带历史工具回执，严格校验输入/输出 Schema、重复调用、总预算、取消和最终引用。逐项处理保留逐项结果；异常分支只携带稳定错误码；有副作用或结果未知的步骤不得自动重试。
+- [ ] B3 在 Host 新建类型化工具网关，保留 text.analyze v1；新增固定登记目标的 HTTP/搜索和 MCP 适配器。模型只给业务输入，Host 解析已登记端点/进程与秘密；审批摘要绑定请求、配置和工件。调用前登记状态，未知结果不可自动重发；提供可读状态与恢复指引。
+- [ ] B4 MCP 协议模块负责初始化、能力协商、分页发现、工具调用和资源读取；stdio 与 Streamable HTTP 负责对应传输。仅声明支持的客户端能力，拒绝服务器反向模型、Shell 或文件系统请求；按 MCP 2025-11-25 兼容已明确的历史协商版本。HTTP 接受 JSON/SSE，限制帧、总响应、会话和时间；本机子进程归属独立 Job，stderr 与 RPC stdout 分离。
+- [ ] B5 复用模块导出与 Schema 建立项目工具调用，限制递归深度并共享预算。原有 RPA 可经有类型模块封装，继续执行本身的原生审批；工具循环不会赋予额外权限。
+- [ ] B6 CLI 提供工具/MCP 的发现、预检、调用、状态、停止及 Schema；桌面资源配置与积木入口对等。`run start --live --interactive` 继续逐请求结构化审批；无人值守范围不扩大。
+- [ ] B7 创建工具办事助手起点；使用真实模型自主完成至少两次依赖调用后结束。验证错误分支、纯操作重试、取消、重复请求、未知结果恢复与跨模块轨迹，再执行 A06/A07 对应阶段独立验收。
+
+复用 `AgentServices.tool/generate`、`RunBudget`、`RuntimeEvent`、模块导出、Host 资源/秘密、公共网络校验、审批账本与进程 Job。外部工具配置属于本机资源，项目只保存引用；MCP 服务器提供的工具说明和资源正文均是数据，不能扩张权限。协议接口与传输可由辅助 Agent 独立实现，权限绑定和运行内核由主 Agent 负责。
+
+参考：[MCP 传输](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)、[生命周期](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)、[工具](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)。

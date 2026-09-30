@@ -236,4 +236,5 @@ export type ToolContract = {
   implementationRef: string;
 };
 export { validateParallelNode } from "./parallel";
+export { controlTypes, boundedField, controlBody, validateControlNode, assertRetrySafe, condition } from "./control-flow";
 export { workflowLayout,isWorkflowMarker,type WorkflowLayoutStep } from "./workflow";
