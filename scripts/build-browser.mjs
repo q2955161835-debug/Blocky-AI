@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile, copyFile, readdir, realpath } from "node:fs
 import { createHash } from "node:crypto";
 import { resolve, dirname, join } from "node:path";
 import { createRequire } from "node:module";
+import { writeGenerated } from "./write-generated.mjs";
 
 const output = resolve("try/stage7/browser-runtime");
 await mkdir(output, { recursive: true });
@@ -38,5 +39,5 @@ const files = [];
 for (const name of names.sort()) { const bytes = await readFile(join(output, name)); files.push({ name, bytes: bytes.length, sha256: hash(bytes) }); }
 const manifest = JSON.stringify({ schemaVersion: "blocky.browser-runtime/v1", nodeVersion: "22.23.1", playwrightVersion: pkg.version, files }, null, 2) + "\n";
 await writeFile(join(output, "manifest.json"), manifest);
-await writeFile("packages/rpa-core/runtime-lock.json", manifest);
+await writeGenerated("packages/rpa-core/runtime-lock.json", manifest);
 console.log(JSON.stringify({ files: files.length, bytes: files.reduce((n, f) => n + f.bytes, 0), externals }));

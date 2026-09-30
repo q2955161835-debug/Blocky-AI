@@ -1,6 +1,7 @@
 import { build } from "esbuild";
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, mkdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { writeGenerated } from "./write-generated.mjs";
 await mkdir("tools/blocky-cli/dist", { recursive: true });
 const outfile = "tools/blocky-cli/dist/runtime-worker.mjs";
 await build({
@@ -13,7 +14,7 @@ await build({
   sourcemap: false,
 });
 const bytes = await readFile(outfile);
-await writeFile(
+await writeGenerated(
   "tools/blocky-cli/runtime-worker-lock.json",
   JSON.stringify(
     {

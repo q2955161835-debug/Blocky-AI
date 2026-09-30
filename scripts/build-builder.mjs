@@ -2,6 +2,7 @@ import { build } from "esbuild";
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { resolve, dirname } from "node:path";
+import { writeGenerated } from "./write-generated.mjs";
 
 const output = resolve("try/stage5/builder-runtime");
 await mkdir(output, { recursive: true });
@@ -108,7 +109,7 @@ const manifest =
     2,
   ) + "\n";
 await writeFile(`${output}/manifest.json`, manifest);
-await writeFile("packages/builder-engine/runtime-lock.json", manifest);
+await writeGenerated("packages/builder-engine/runtime-lock.json", manifest);
 await writeFile(
   "try/stage5/builder-bundle-audit.json",
   JSON.stringify({ retained, builtins, forbidden, files }, null, 2) + "\n",
