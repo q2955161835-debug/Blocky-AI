@@ -50,6 +50,7 @@ export function WorkbenchLayout({
       </div>
       {leftVisible ? (
         <ResizeHandle
+          className="left-boundary"
           label="左侧积木库宽度"
           axis="x"
           value={leftSize}
@@ -60,11 +61,12 @@ export function WorkbenchLayout({
           }
         />
       ) : (
-        <div />
+        <div className="left-boundary" />
       )}
       {children}
       {rightVisible ? (
         <ResizeHandle
+          className="right-boundary"
           label="右侧面板宽度"
           axis="x"
           reverse
@@ -76,7 +78,7 @@ export function WorkbenchLayout({
           }
         />
       ) : (
-        <div />
+        <div className="right-boundary" />
       )}
       <div className="workbench-right" hidden={!rightVisible}>
         {right}

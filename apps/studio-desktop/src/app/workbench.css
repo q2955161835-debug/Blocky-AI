@@ -51,6 +51,13 @@
   min-height: 0;
   overflow: hidden;
 }
+/* Explicit slots keep hidden sidebars from shifting the remaining grid items. */
+.workbench > * { grid-row: 1; }
+.workbench > .workbench-left { grid-column: 1; }
+.workbench > .left-boundary { grid-column: 2; }
+.workbench > .workspace { grid-column: 3; }
+.workbench > .right-boundary { grid-column: 4; }
+.workbench > .workbench-right { grid-column: 5; }
 .workbench-left > .library {
   height: 100%;
   border-right: none;

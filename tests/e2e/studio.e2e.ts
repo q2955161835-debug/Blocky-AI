@@ -171,6 +171,23 @@ describe("Blocky native editor", () => {
     await mkdir("try/stage7/native", { recursive: true });
     await page.screenshot({ path: "try/stage7/native/canvas-overview.png" });
   });
+  it("keeps the canvas usable with either or both sidebars hidden", async () => {
+    await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject());
+    for (const [leftVisible, rightVisible] of [[false, true], [false, false], [true, false], [true, true]]) {
+      for (const [visible, name] of [[leftVisible, "左侧积木库"], [rightVisible, "右侧面板"]] as const) {
+        const toggle = page.getByRole("button", { name: `${visible ? "显示" : "隐藏"}${name}`, exact: true });
+        if (await toggle.count()) await toggle.click();
+      }
+      await browser.waitUntil(async () => page.locator(".workspace").evaluate(el => {
+        const box = el.getBoundingClientRect();
+        const canvas = el.querySelector(".blockly-host")?.getBoundingClientRect();
+        if (!canvas || box.width < 240 || canvas.height < 100) return false;
+        const hit = document.elementFromPoint(canvas.x + canvas.width / 2, canvas.y + canvas.height / 2);
+        const right = document.querySelector(".workbench-right:not([hidden])")?.getBoundingClientRect();
+        return !!hit && el.contains(hit) && (!right || right.left >= box.right - 1);
+      }), { timeout: 5000, timeoutMsg: `Canvas obscured for left=${leftVisible}, right=${rightVisible}` });
+    }
+  });
   it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
     await page.getByRole("button", { name: "返回开始页", exact: true }).click();
     await page
