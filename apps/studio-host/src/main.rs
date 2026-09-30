@@ -6,10 +6,12 @@ mod builder_commands;
 mod commands;
 mod conversion_commands;
 mod knowledge_commands;
+mod local_model_commands;
 mod log_commands;
 mod provider_commands;
-mod rpa_commands;
 mod rpa_capture_commands;
+mod rpa_commands;
+mod runtime_commands;
 mod secret_commands;
 mod task_commands;
 mod terminal_commands;
@@ -17,29 +19,44 @@ mod user_commands;
 mod window_lifecycle;
 mod window_state;
 mod workflow_commands;
-mod runtime_commands;
 use blocky_studio::project_store;
 use tauri::Manager;
 fn main() {
     match std::env::args().nth(1).as_deref() {
-        Some("--blocky-rpa-recording-worker") => std::process::exit(blocky_studio::rpa::recording::worker_main()),
+        Some("--blocky-rpa-recording-worker") => {
+            std::process::exit(blocky_studio::rpa::recording::worker_main())
+        }
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),
         Some("--blocky-task-worker") => std::process::exit(blocky_studio::task_host::worker_main()),
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         _ => {}
     }
-    let mut selected = blocky_studio::profile::from_options(std::env::args_os().skip(1), std::env::var_os(blocky_studio::profile::VARIABLE))
-        .unwrap_or_else(|code| { eprintln!("{code}"); std::process::exit(2); });
+    let mut selected = blocky_studio::profile::from_options(
+        std::env::args_os().skip(1),
+        std::env::var_os(blocky_studio::profile::VARIABLE),
+    )
+    .unwrap_or_else(|code| {
+        eprintln!("{code}");
+        std::process::exit(2);
+    });
     let mut context = tauri::generate_context!();
     // Naming the default root explicitly must not create a second instance on it.
-    if selected.as_ref().is_some_and(|root| blocky_studio::profile::is_default(root, &context.config().identifier)) { selected = None; }
+    if selected
+        .as_ref()
+        .is_some_and(|root| blocky_studio::profile::is_default(root, &context.config().identifier))
+    {
+        selected = None;
+    }
     if let Some(root) = &selected {
-        context.config_mut().identifier = blocky_studio::profile::instance_identifier(&context.config().identifier, root);
+        context.config_mut().identifier =
+            blocky_studio::profile::instance_identifier(&context.config().identifier, root);
     }
     // Restore saved physical bounds before the first visible frame.
     let mut profile_windows = Vec::new();
     for window in &mut context.config_mut().app.windows {
-        if window.label == "main" { window.visible = false; }
+        if window.label == "main" {
+            window.visible = false;
+        }
         if selected.is_some() && window.create {
             profile_windows.push(window.clone());
             window.create = false;
@@ -61,10 +78,17 @@ fn main() {
         .manage(blocky_studio::user_terminal::UserTerminals::default())
         .manage(window_lifecycle::Lifecycle::default())
         .setup(move |app| {
-            let root = match selected { Some(root) => root, None => app.path().app_local_data_dir()? };
+            let root = match selected {
+                Some(root) => root,
+                None => app.path().app_local_data_dir()?,
+            };
             app.manage(blocky_studio::profile::DataRoot(root.clone()));
-            app.manage(blocky_studio::workflow::host::WorkflowHost::new(root.join("workflow")));
-            app.manage(blocky_studio::workflow::desktop::RuntimeHost::new(root.join("workflow")));
+            app.manage(blocky_studio::workflow::host::WorkflowHost::new(
+                root.join("workflow"),
+            ));
+            app.manage(blocky_studio::workflow::desktop::RuntimeHost::new(
+                root.join("workflow"),
+            ));
             app.manage(blocky_studio::rpa::RpaHost::with_journal(
                 root.join("rpa/checkpoints"),
             ));
@@ -77,9 +101,7 @@ fn main() {
             app.manage(blocky_studio::knowledge::KnowledgeStore::new(
                 root.join("knowledge"),
             ));
-            app.manage(blocky_studio::user_store::UserStore::new(
-                root.join("user"),
-            ));
+            app.manage(blocky_studio::user_store::UserStore::new(root.join("user")));
             app.manage(blocky_studio::secret_store::SecretStore::new(
                 root.join("secrets"),
             ));
@@ -95,7 +117,9 @@ fn main() {
             }
             window_state::restore(app);
             window_lifecycle::setup(app)?;
-            if let Some(window) = app.get_webview_window("main") { window.show()?; }
+            if let Some(window) = app.get_webview_window("main") {
+                window.show()?;
+            }
             Ok(())
         })
         .on_window_event(window_lifecycle::window_event)
@@ -137,6 +161,13 @@ fn main() {
             agent_data_commands::agent_tool_cancel,
             agent_data_commands::agent_output_save,
             provider_commands::provider_preflight,
+            provider_commands::provider_model_preflight,
+            provider_commands::provider_model_call,
+            local_model_commands::provider_local_model_catalog,
+            local_model_commands::provider_local_model_status,
+            local_model_commands::provider_local_model_install,
+            local_model_commands::provider_local_model_verify,
+            local_model_commands::provider_local_model_remove,
             provider_commands::provider_call,
             provider_commands::provider_cancel,
             #[cfg(feature = "wdio")]

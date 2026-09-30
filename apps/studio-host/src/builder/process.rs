@@ -1,13 +1,14 @@
 use super::BuilderStart;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
     io::{BufRead, BufReader, Read, Write},
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::{
+        Arc,
         atomic::{AtomicBool, Ordering},
-        mpsc, Arc,
+        mpsc,
     },
     time::{Duration, Instant},
 };
@@ -95,7 +96,7 @@ pub(super) fn run(
     start: &BuilderStart,
     project: Value,
     registry: &Value,
-    binding: Option<&crate::provider::ProviderRequest>,
+    binding: Option<&crate::provider::builder_model::BuilderModel>,
     cancel: &Arc<AtomicBool>,
     evidence: &mut super::evidence::Evidence,
 ) -> Result<Value, String> {
@@ -175,7 +176,7 @@ pub(super) fn run(
         send(
             &mut stdin,
             id,
-            json!({"kind":"start","request":start.request,"project":project,"registry":registry["resources"],"mode":start.mode,"modelId":binding.map(|b|b.model_id.as_str()).unwrap_or("local-builder-v1")}),
+            json!({"kind":"start","request":start.request,"project":project,"registry":registry["resources"],"mode":start.mode,"modelId":binding.map(|b|b.model()).unwrap_or("local-builder-v1")}),
         )?;
         loop {
             if cancel.load(Ordering::SeqCst) {
@@ -216,8 +217,6 @@ pub(super) fn run(
                     if remaining == 0 {
                         return Err("BLK-BUILDER-TIMEOUT".into());
                     }
-                    let mut bounded = binding.unwrap().clone();
-                    bounded.timeout_ms = bounded.timeout_ms.min(remaining);
                     evidence.attempts.push(super::evidence::Attempt {
                         turn,
                         started_at_ms: super::evidence::now().max(
@@ -234,10 +233,10 @@ pub(super) fn run(
                     });
                     evidence.save(root)?;
                     let mut metadata = None;
-                    let generated = crate::provider::builder::generate(
+                    let generated = binding.unwrap().generate(
                         root,
-                        &bounded,
                         frame["messages"].clone(),
+                        remaining,
                         cancel,
                         &mut metadata,
                         &mut || {

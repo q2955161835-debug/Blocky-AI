@@ -163,7 +163,19 @@ export async function runBuilderEngine(
         builderInputBudget(generated);
         if (
           options.mode === "live" &&
-          (generated.transport !== "remote" || !generated.usage)
+          !(
+            (generated.transport === "remote" && generated.usage) ||
+            (generated.schemaVersion === "blocky.model-response/v2" &&
+              (generated.transport === "remote" ||
+                (generated.transport === "local" &&
+                  (generated.provider === "ollama" ||
+                    (generated.provider === "managed-local" &&
+                      generated.localInference === true)))) &&
+              ((generated.usageStatus === "reported" &&
+                generated.usage !== null) ||
+                (generated.usageStatus === "unavailable" &&
+                  generated.usage === null)))
+          )
         )
           throw Error("BLK-BUILDER-EVIDENCE");
         if (!Array.isArray(generated.content) || generated.content.length > 16)

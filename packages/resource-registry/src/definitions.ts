@@ -110,6 +110,16 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
           contextLength: number(1, 10000000),
         }),
         implementationRef: implementation,
+        localRuntime: object(
+          {
+            backend: enumeration("cpu", "vulkan"),
+            device: id,
+            contextTokens: number(1024, 8192),
+            threads: number(1, 16),
+            memoryMb: number(2048, 32768),
+          },
+          ["backend"],
+        ),
       },
       ["provider", "modelId", "protocol", "timeoutMs", "capabilities"],
     ),

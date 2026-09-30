@@ -44,6 +44,25 @@ const response = {
   usage: null,
 };
 
+it("runs a local inference transport and preserves missing vendor usage without claiming an external API", async () => {
+  const result = await runBuilderEngine(createStarter(), request, {
+    mode: "live",
+    modelId: "qwen3-0.6b-q8-v1",
+    generate: async () => ({
+      ...structuredClone(response),
+      schemaVersion: "blocky.model-response/v2",
+      usageStatus: "unavailable",
+      provider: "managed-local",
+      localInference: true,
+      externalApi: false,
+    }),
+  });
+  expect(result.verification?.passed).toBe(true);
+  expect(result.modelApiCalled).toBe(false);
+  expect(result.generations[0].usage).toBeNull();
+  expect(result.generations[0].usageStatus).toBe("unavailable");
+});
+
 it("executes genuine Pi tool dispatch through a custom transport with no file or shell tools", async () => {
   const project = createStarter(),
     before = JSON.stringify(project);

@@ -104,6 +104,16 @@ impl SecretStore {
     }
     /// Values stay inside Host consumers; no IPC endpoint returns decrypted bytes.
     pub fn with_secret<T>(&self, id: &str, consume: impl FnOnce(&[u8]) -> T) -> Result<T, String> {
+        self.with_versioned_secret(id, consume)
+            .map(|(value, _)| value)
+    }
+    /// Value and encrypted-version fingerprint come from the same read, including during rotation.
+    pub(crate) fn with_versioned_secret<T>(
+        &self,
+        id: &str,
+        consume: impl FnOnce(&[u8]) -> T,
+    ) -> Result<(T, String), String> {
+        use sha2::{Digest, Sha256};
         let _guard = self.lock.lock().map_err(|_| ERROR)?;
         let path = self.path(id)?;
         if std::fs::metadata(&path).map_err(|_| ERROR)?.len() > 65536 {
@@ -116,7 +126,7 @@ impl SecretStore {
         let mut plain = crypt(&bytes[5..], false)?;
         let value = consume(&plain);
         wipe(&mut plain);
-        Ok(value)
+        Ok((value, format!("{:x}", Sha256::digest(bytes))))
     }
 }
 pub(crate) fn wipe(bytes: &mut [u8]) {

@@ -1,0 +1,200 @@
+use super::*;
+use serde_json::{Value, json};
+
+fn request() -> Value {
+    json!({"schemaVersion":"blocky.model-request/v2","requestId":"req1","projectId":"project1","resourceId":"model1",
+      "messages":[{"role":"user","content":"Count the words"}],"tools":[{"name":"count","description":"Count words","parameters":{"type":"object","properties":{"text":{"type":"string"}},"required":["text"],"additionalProperties":false}}],
+      "maxOutputTokens":512,"timeoutMs":30000})
+}
+#[test]
+fn json_schema_properties_are_json_names_instead_of_block_identifiers() {
+    let mut r = request();
+    r["tools"][0]["parameters"] = json!({"type":"object","properties":{"acceptanceCriteria":{"type":"array","items":{"type":"string"}},"说明":{"type":"string"}},"required":["acceptanceCriteria","说明"],"additionalProperties":false});
+    serde_json::from_value::<GatewayRequest>(r)
+        .unwrap()
+        .validate()
+        .unwrap();
+}
+fn response() -> Value {
+    json!({"id":"result1","model":"small:latest","choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"call1","type":"function","function":{"name":"count","arguments":"{\"text\":\"two words\"}"}}]},"finish_reason":"tool_calls"}]})
+}
+#[test]
+fn model_request_is_reference_only_and_tool_results_must_resolve_pending_calls() {
+    let valid: GatewayRequest = serde_json::from_value(request()).unwrap();
+    valid.validate().unwrap();
+    let mut value = request();
+    value["endpoint"] = json!("https://arbitrary.example.com");
+    assert!(serde_json::from_value::<GatewayRequest>(value).is_err());
+    let mut value = request();
+    value["messages"].as_array_mut().unwrap().extend([
+      json!({"role":"assistant","content":"","toolCalls":[{"id":"c1","name":"count","arguments":{"text":"a"}}]}),
+      json!({"role":"tool","content":"1","toolCallId":"c1"})]);
+    let valid: GatewayRequest = serde_json::from_value(value.clone()).unwrap();
+    valid.validate().unwrap();
+    value["messages"][2]["toolCallId"] = json!("forged");
+    assert!(
+        serde_json::from_value::<GatewayRequest>(value)
+            .unwrap()
+            .validate()
+            .is_err()
+    );
+}
+#[test]
+fn unknown_usage_is_explicit_and_undeclared_or_malformed_tool_calls_fail() {
+    let req: GatewayRequest = serde_json::from_value(request()).unwrap();
+    let output = parse_response(&serde_json::to_vec(&response()).unwrap(), &req).unwrap();
+    assert_eq!(output["usage"], Value::Null);
+    assert_eq!(output["usageStatus"], "unavailable");
+    assert_eq!(output["toolCalls"][0]["arguments"]["text"], "two words");
+    for bad in [json!("undeclared"), json!("")] {
+        let mut value = response();
+        value["choices"][0]["message"]["tool_calls"][0]["function"]["name"] = bad;
+        assert!(parse_response(&serde_json::to_vec(&value).unwrap(), &req).is_err());
+    }
+    let mut value = response();
+    value["choices"][0]["finish_reason"] = json!("length");
+    assert!(parse_response(&serde_json::to_vec(&value).unwrap(), &req).is_err());
+    let mut value = response();
+    value["usage"] = json!({"prompt_tokens":10,"completion_tokens":4,"total_tokens":15});
+    assert!(parse_response(&serde_json::to_vec(&value).unwrap(), &req).is_err());
+}
+#[test]
+fn endpoint_profiles_do_not_admit_private_remote_or_non_loopback_local_targets() {
+    assert!(validate_endpoint("https://api.example.com/v1", false).is_ok());
+    assert!(validate_endpoint("http://127.0.0.1:11434", true).is_ok());
+    assert!(validate_endpoint("http://[::1]:11434", true).is_ok());
+    for target in [
+        "http://api.example.com",
+        "https://127.0.0.1",
+        "https://10.1.2.3",
+        "https://user:pass@api.example.com",
+        "https://api.example.com/?key=value",
+        "https://api.example.com/v1#fragment",
+        "https://foo.local",
+        "https://api.example.com/../admin",
+    ] {
+        assert!(validate_endpoint(target, false).is_err(), "{target}");
+    }
+    for target in [
+        "http://0.0.0.0:11434",
+        "http://192.168.1.2",
+        "http://example.com:11434",
+        "http://localhost:11434",
+        "http://127.0.0.2:11434",
+    ] {
+        assert!(validate_endpoint(target, true).is_err(), "{target}");
+    }
+}
+
+fn profile() -> tempfile::TempDir {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../try/agent-capability-upgrade/gateway-tests");
+    std::fs::create_dir_all(&root).unwrap();
+    tempfile::tempdir_in(root).unwrap()
+}
+fn install_resource(root: &std::path::Path, endpoint: &str) -> Value {
+    let env = root.join("fixture.env");
+    std::fs::write(&env, format!("MODEL_ENDPOINT={endpoint}\n")).unwrap();
+    crate::secret_store::SecretStore::new(root.join("secrets"))
+        .import_env("endpoint1", &env, "MODEL_ENDPOINT")
+        .unwrap();
+    let registry = json!({"schemaVersion":"blocky.user-resources/v1","resources":[{"schemaVersion":"blocky.resource/v1alpha1","resourceId":"model1","kind":"model","scope":"user","displayName":"Local test model","capabilityRequirements":[],"definition":{"provider":"ollama","modelId":"small:latest","protocol":"openai-chat","timeoutMs":30000,"capabilities":["text","tools"],"implementationRef":{"kind":"adapter","id":"ollama-v1"}},"secretBindings":[{"fieldId":"baseUrl","secretRef":"endpoint1"}]}]});
+    crate::user_store::UserStore::new(root.join("user"))
+        .write("resources", "app", registry.clone())
+        .unwrap();
+    registry
+}
+#[test]
+fn approval_is_bound_to_secret_endpoint_and_resource_capabilities() {
+    let root = profile();
+    let mut registry = install_resource(root.path(), "http://127.0.0.1:11434/v1");
+    let req: GatewayRequest = serde_json::from_value(request()).unwrap();
+    let host = crate::provider::ProviderHost::default();
+    let original = host.model_preflight(root.path(), &req).unwrap();
+    assert!(!original.to_string().contains("127.0.0.1"));
+    install_resource(root.path(), "http://127.0.0.1:11435/v1");
+    let next = host.model_preflight(root.path(), &req).unwrap();
+    assert_ne!(original["requestDigest"], next["requestDigest"]);
+    assert_eq!(
+        host.model_call(
+            root.path().to_owned(),
+            req.clone(),
+            original["requestDigest"].as_str().unwrap()
+        )
+        .unwrap_err(),
+        "BLK-PERM-001"
+    );
+    registry["resources"][0]["definition"]["capabilities"] = json!(["text"]);
+    crate::user_store::UserStore::new(root.path().join("user"))
+        .write("resources", "app", registry)
+        .unwrap();
+    assert_eq!(
+        host.model_preflight(root.path(), &req).unwrap_err(),
+        "BLK-MODEL-CAPABILITY"
+    );
+}
+#[test]
+fn local_request_uses_bound_model_and_tool_payload_without_fabricating_usage() {
+    use std::io::{Read, Write};
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let addr = listener.local_addr().unwrap();
+    let root = profile();
+    install_resource(root.path(), &format!("http://{addr}/v1"));
+    let worker = std::thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(std::time::Duration::from_secs(3)))
+            .unwrap();
+        let mut bytes = vec![];
+        let mut buf = [0u8; 8192];
+        loop {
+            let n = stream.read(&mut buf).unwrap();
+            if n == 0 {
+                break;
+            }
+            bytes.extend_from_slice(&buf[..n]);
+            if let Some(index) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
+                let head = String::from_utf8_lossy(&bytes[..index]);
+                let size = head
+                    .lines()
+                    .find_map(|l| {
+                        l.to_lowercase()
+                            .strip_prefix("content-length: ")
+                            .and_then(|n| n.parse::<usize>().ok())
+                    })
+                    .unwrap();
+                if bytes.len() >= index + 4 + size {
+                    break;
+                }
+            }
+        }
+        let body = response().to_string();
+        write!(
+            stream,
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            body
+        )
+        .unwrap();
+        String::from_utf8(bytes).unwrap()
+    });
+    let req: GatewayRequest = serde_json::from_value(request()).unwrap();
+    let host = crate::provider::ProviderHost::default();
+    let p = host.model_preflight(root.path(), &req).unwrap();
+    let value = host
+        .model_call(
+            root.path().to_owned(),
+            req,
+            p["requestDigest"].as_str().unwrap(),
+        )
+        .unwrap();
+    assert_eq!(value["transport"], "local");
+    assert_eq!(value["usageStatus"], "unavailable");
+    assert_eq!(value["toolCalls"][0]["name"], "count");
+    let wire = worker.join().unwrap();
+    assert!(wire.starts_with("POST /v1/chat/completions "));
+    assert!(!wire.to_lowercase().contains("authorization:"));
+    let body: Value = serde_json::from_str(wire.split_once("\r\n\r\n").unwrap().1).unwrap();
+    assert_eq!(body["model"], "small:latest");
+    assert_eq!(body["tools"][0]["function"]["name"], "count");
+}

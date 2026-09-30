@@ -117,6 +117,26 @@ impl Job {
             Ok(())
         }
     }
+    pub(crate) fn memory_limit(&self, bytes: usize) -> Result<(), String> {
+        use windows_sys::Win32::System::JobObjects::*;
+        let mut info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = unsafe { std::mem::zeroed() };
+        info.BasicLimitInformation.LimitFlags =
+            JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_JOB_MEMORY;
+        info.JobMemoryLimit = bytes;
+        if bytes < 1024 * 1024
+            || unsafe {
+                SetInformationJobObject(
+                    self.0 as _,
+                    JobObjectExtendedLimitInformation,
+                    &info as *const _ as _,
+                    std::mem::size_of_val(&info) as u32,
+                )
+            } == 0
+        {
+            return Err("BLK-WORKFLOW-OWNER".into());
+        }
+        Ok(())
+    }
     pub(crate) fn settle(&self) -> bool {
         crate::process_job::settle_job(self.0 as _, Duration::from_secs(2))
     }

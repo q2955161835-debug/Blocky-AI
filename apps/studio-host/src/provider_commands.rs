@@ -1,6 +1,53 @@
+use blocky_studio::provider::gateway::GatewayRequest;
 use blocky_studio::provider::{ProviderHost, ProviderRequest};
 use serde_json::Value;
 use tauri::Manager;
+#[tauri::command]
+pub fn provider_model_preflight(
+    window: tauri::WebviewWindow,
+    host: tauri::State<'_, ProviderHost>,
+    request: GatewayRequest,
+) -> Result<Value, String> {
+    crate::window_lifecycle::visible(&window)?;
+    host.model_preflight(
+        &blocky_studio::profile::for_app(window.app_handle())?,
+        &request,
+    )
+}
+#[tauri::command]
+pub async fn provider_model_call(
+    window: tauri::WebviewWindow,
+    host: tauri::State<'_, ProviderHost>,
+    request: GatewayRequest,
+) -> Result<Value, String> {
+    crate::window_lifecycle::visible(&window)?;
+    let root = blocky_studio::profile::for_app(window.app_handle())?;
+    let preview = host.model_preflight(&root, &request)?;
+    let digest = preview["requestDigest"]
+        .as_str()
+        .ok_or("BLK-MODEL-CONFIG")?
+        .to_owned();
+    let destination = host.model_destination(&root, &request, &digest)?;
+    let description = format!(
+        "模型：{}\n资源：{}\n地址：{}\n输入：{} bytes\n工具：{}\n输出上限：{} tokens\n请求摘要：{}",
+        preview["modelId"],
+        request.resource_id,
+        destination,
+        preview["inputBytes"],
+        preview["toolNames"],
+        request.max_output_tokens,
+        digest
+    );
+    if !blocky_studio::native_confirmation::yes_no(&window, "批准模型请求", description).await
+    {
+        return Err("BLK-PERM-001".into());
+    }
+    crate::window_lifecycle::visible(&window)?;
+    let host = host.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || host.model_call(root, request, &digest))
+        .await
+        .map_err(|_| "BLK-PROVIDER-STATE".to_string())?
+}
 #[tauri::command]
 pub fn provider_preflight(
     window: tauri::WebviewWindow,

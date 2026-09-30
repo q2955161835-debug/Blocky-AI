@@ -1,5 +1,5 @@
 use super::types::*;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::{
     sync::atomic::{AtomicBool, Ordering},
     time::Duration,
@@ -115,12 +115,33 @@ pub(crate) fn send_raw_observed(
         .map_err(|_| "BLK-PROVIDER-TRANSPORT")?;
     exchange_using(client, endpoint, body, timeout_ms, key, cancel, before_send)
 }
-fn exchange_using(
+pub(crate) fn exchange_using(
     client: reqwest::Client,
     endpoint: &str,
     body: &Value,
     timeout_ms: u64,
     key: &str,
+    cancel: &AtomicBool,
+    before_send: &mut dyn FnMut() -> Result<(), String>,
+) -> Result<Vec<u8>, String> {
+    exchange_headers_using(
+        client,
+        endpoint,
+        body,
+        timeout_ms,
+        key,
+        None,
+        cancel,
+        before_send,
+    )
+}
+pub(crate) fn exchange_headers_using(
+    client: reqwest::Client,
+    endpoint: &str,
+    body: &Value,
+    timeout_ms: u64,
+    key: &str,
+    headers: Option<&reqwest::header::HeaderMap>,
     cancel: &AtomicBool,
     before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
@@ -140,7 +161,7 @@ fn exchange_using(
             biased;
             _=cancelled=>Err("BLK-PROVIDER-CANCELLED".into()),
             _=tokio::time::sleep(Duration::from_millis(timeout_ms))=>Err("BLK-PROVIDER-TIMEOUT".into()),
-            result=exchange(client,endpoint,body,key,before_send)=>result,
+            result=exchange(client,endpoint,body,key,headers,before_send)=>result,
         }
     })
 }
@@ -149,15 +170,20 @@ async fn exchange(
     endpoint: &str,
     body: &Value,
     key: &str,
+    headers: Option<&reqwest::header::HeaderMap>,
     before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
-    let request = client
+    let mut request = client
         .post(endpoint)
-        .bearer_auth(key)
         .header("Content-Type", "application/json")
-        .body(body.to_string())
-        .build()
-        .map_err(|_| "BLK-PROVIDER-CONFIG")?;
+        .body(body.to_string());
+    if !key.is_empty() {
+        request = request.bearer_auth(key);
+    }
+    if let Some(headers) = headers {
+        request = request.headers(headers.clone());
+    }
+    let request = request.build().map_err(|_| "BLK-PROVIDER-CONFIG")?;
     before_send()?;
     let mut response = client.execute(request).await.map_err(|e| {
         if e.is_timeout() {

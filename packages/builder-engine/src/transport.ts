@@ -11,6 +11,10 @@ export type WireMessage = {
   tool_call_id?: string;
 };
 export type BuilderGeneration = {
+  schemaVersion?: "blocky.model-response/v2";
+  usageStatus?: "reported" | "unavailable";
+  localInference?: boolean;
+  externalApi?: boolean;
   content: {
     type: string;
     text?: string;
@@ -87,7 +91,7 @@ export function wireMessages(messages: Message[]): WireMessage[] {
 }
 export function safeBuilderError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
-  return /^(BLK-(?:BUILDER|PROVIDER|PATCH|SURFACE|PERM|APPROVAL)[A-Z0-9-]*)$/.test(
+  return /^(BLK-(?:BUILDER|PROVIDER|MODEL|LOCAL-MODEL|PATCH|SURFACE|PERM|APPROVAL)[A-Z0-9-]*)$/.test(
     message,
   )
     ? message

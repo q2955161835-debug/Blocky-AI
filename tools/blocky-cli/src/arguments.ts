@@ -10,6 +10,7 @@ const booleans = new Set([
   "reuse-bindings",
   "surface",
   "control-stdin",
+  "download",
 ]);
 export type Args = { words: string[]; options: Map<string, string | true> };
 export function parse(argv: string[]): Args {

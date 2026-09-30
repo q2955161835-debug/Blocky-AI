@@ -24,7 +24,8 @@ import type { TraceDetails } from "@blocky/observability";
 import { EventMailbox } from "./event-mailbox";
 import { parseAgentCheckpoint, type AgentCheckpoint } from "./workflow/context";
 
-const valueType = (value: Json) => value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
+const valueType = (value: Json) =>
+  value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 
 /** Run-local values; persistence and external effects belong to injected Host ports. */
 export class AgentExecution {
@@ -47,41 +48,82 @@ export class AgentExecution {
     private sessionMemory = new Map<string, Json>(),
     private mailbox = new EventMailbox(),
   ) {}
-  checkpoint():AgentCheckpoint {
-    const memory=[];
-    for(const [encoded,value] of this.sessionMemory){
-      const [project,session,key]=JSON.parse(encoded) as string[];
-      if(project===this.project.manifest.projectId&&session===this.sessionId)memory.push({key,value});
+  checkpoint(): AgentCheckpoint {
+    const memory = [];
+    for (const [encoded, value] of this.sessionMemory) {
+      const [project, session, key] = JSON.parse(encoded) as string[];
+      if (
+        project === this.project.manifest.projectId &&
+        session === this.sessionId
+      )
+        memory.push({ key, value });
     }
-    memory.sort((a,b)=>a.key.localeCompare(b.key));
-    return parseAgentCheckpoint({schemaVersion:"blocky.workflow-agent/v1",projectId:this.project.manifest.projectId,question:this.question,
-      value:this.value,memory:this.memory,instruction:this.instruction,requireEvidence:this.requireEvidence,
-      ...(this.generated!==undefined?{generated:this.generated}:{}),...(this.structured!==undefined?{structured:this.structured}:{}),files:this.files,
-      sessionMemory:memory,events:this.mailbox.checkpoint(this.project.manifest.projectId)});
+    memory.sort((a, b) => a.key.localeCompare(b.key));
+    return parseAgentCheckpoint({
+      schemaVersion: "blocky.workflow-agent/v1",
+      projectId: this.project.manifest.projectId,
+      question: this.question,
+      value: this.value,
+      memory: this.memory,
+      instruction: this.instruction,
+      requireEvidence: this.requireEvidence,
+      ...(this.generated !== undefined ? { generated: this.generated } : {}),
+      ...(this.structured !== undefined ? { structured: this.structured } : {}),
+      files: this.files,
+      sessionMemory: memory,
+      events: this.mailbox.checkpoint(this.project.manifest.projectId),
+    });
   }
   /** Completed tasks expose saved outputs without reintroducing consumed state. */
-  restoreCompletedOutput(input:unknown):void {
-    const value=parseAgentCheckpoint(input);
-    if(value.projectId!==this.project.manifest.projectId)throw Error("BLK-WORKFLOW-BINDING");
-    this.generated=value.generated;this.structured=value.structured;this.files=value.files;
+  restoreCompletedOutput(input: unknown): void {
+    const value = parseAgentCheckpoint(input);
+    if (value.projectId !== this.project.manifest.projectId)
+      throw Error("BLK-WORKFLOW-BINDING");
+    this.generated = value.generated;
+    this.structured = value.structured;
+    this.files = value.files;
   }
-  restoreCheckpoint(input:unknown):void {
-    const value=parseAgentCheckpoint(input);
-    if(value.projectId!==this.project.manifest.projectId)throw Error("BLK-WORKFLOW-BINDING");
-    const current=this.checkpoint();
-    if(current.sessionMemory.length&&canonicalJson(current.sessionMemory)!==canonicalJson(value.sessionMemory))throw Error("BLK-WORKFLOW-CONTEXT");
-    const candidate=new Map(this.sessionMemory);
-    for(const entry of value.sessionMemory)candidate.set(JSON.stringify([value.projectId,this.sessionId,entry.key]),entry.value);
-    if(utf8(JSON.stringify([...candidate]))>1048576)throw Error("BLK-MEMORY-001");
+  restoreCheckpoint(input: unknown): void {
+    const value = parseAgentCheckpoint(input);
+    if (value.projectId !== this.project.manifest.projectId)
+      throw Error("BLK-WORKFLOW-BINDING");
+    const current = this.checkpoint();
+    if (
+      current.sessionMemory.length &&
+      canonicalJson(current.sessionMemory) !==
+        canonicalJson(value.sessionMemory)
+    )
+      throw Error("BLK-WORKFLOW-CONTEXT");
+    const candidate = new Map(this.sessionMemory);
+    for (const entry of value.sessionMemory)
+      candidate.set(
+        JSON.stringify([value.projectId, this.sessionId, entry.key]),
+        entry.value,
+      );
+    if (utf8(JSON.stringify([...candidate])) > 1048576)
+      throw Error("BLK-MEMORY-001");
     // Last fallible operation before mutation: active waiters, queue conflicts and total capacity.
-    this.mailbox.restoreCheckpoint(value.projectId,value.events);
-    this.sessionMemory.clear();for(const [key,item] of candidate)this.sessionMemory.set(key,item);
-    this.question=value.question;this.value=value.value;this.memory=value.memory;this.instruction=value.instruction;
-    this.requireEvidence=value.requireEvidence;this.generated=value.generated;this.structured=value.structured;this.files=value.files;
+    this.mailbox.restoreCheckpoint(value.projectId, value.events);
+    this.sessionMemory.clear();
+    for (const [key, item] of candidate) this.sessionMemory.set(key, item);
+    this.question = value.question;
+    this.value = value.value;
+    this.memory = value.memory;
+    this.instruction = value.instruction;
+    this.requireEvidence = value.requireEvidence;
+    this.generated = value.generated;
+    this.structured = value.structured;
+    this.files = value.files;
     // generations are facts from this run, never restored as if a new API call happened.
   }
   private forkPure(): AgentExecution {
-    const branch = new AgentExecution(this.project, this.question, this.runId, this.sessionId, this.budget);
+    const branch = new AgentExecution(
+      this.project,
+      this.question,
+      this.runId,
+      this.sessionId,
+      this.budget,
+    );
     branch.value = structuredClone(this.value);
     branch.memory = structuredClone(this.memory);
     return branch;
@@ -98,15 +140,27 @@ export class AgentExecution {
       ![
         "adapter://deepseek-v1",
         "adapter://xirang-v1",
+        "adapter://openai-compatible-v1",
+        "adapter://ollama-v1",
+        "adapter://managed-local-v1",
         "adapter://generator-v1",
       ].includes(key)
     )
       return false;
     const details: TraceDetails = {
-      context: { roleBytes: utf8(role), instructionBytes: utf8(this.instruction), userBytes: utf8(this.question),
-        memoryBytes: utf8(JSON.stringify(this.memory)), resultBytes: utf8(JSON.stringify(this.value)),
-        evidenceCount: citations.length, evidenceBytes: utf8(canonicalJson(contextEvidence(citations))) },
-      guard: { policy: this.requireEvidence ? "require" : "optional", decision: "checking" },
+      context: {
+        roleBytes: utf8(role),
+        instructionBytes: utf8(this.instruction),
+        userBytes: utf8(this.question),
+        memoryBytes: utf8(JSON.stringify(this.memory)),
+        resultBytes: utf8(JSON.stringify(this.value)),
+        evidenceCount: citations.length,
+        evidenceBytes: utf8(canonicalJson(contextEvidence(citations))),
+      },
+      guard: {
+        policy: this.requireEvidence ? "require" : "optional",
+        decision: "checking",
+      },
     };
     report(details);
     if (this.requireEvidence && !citations.length) {
@@ -200,13 +254,21 @@ export class AgentExecution {
     switch (node.blockType) {
       case "core.flow.parallel": {
         validateParallelNode(node);
-        const branches = ["LEFT", "RIGHT"].map(port => ({ node: node.inputs[port] as IrNode, state: this.forkPure() }));
-        const outcomes = await Promise.allSettled(branches.map(branch => execute(branch.node, branch.state)));
+        const branches = ["LEFT", "RIGHT"].map((port) => ({
+          node: node.inputs[port] as IrNode,
+          state: this.forkPure(),
+        }));
+        const outcomes = await Promise.allSettled(
+          branches.map((branch) => execute(branch.node, branch.state)),
+        );
         this.budget.check();
-        const failed = outcomes.find(outcome => outcome.status === "rejected");
+        const failed = outcomes.find(
+          (outcome) => outcome.status === "rejected",
+        );
         if (failed?.status === "rejected") throw failed.reason;
-        this.value = branches.map(branch => branch.state.value);
-        if (utf8(JSON.stringify(this.value)) > 32768) throw Error("BLK-FLOW-002");
+        this.value = branches.map((branch) => branch.state.value);
+        if (utf8(JSON.stringify(this.value)) > 32768)
+          throw Error("BLK-FLOW-002");
         break;
       }
       case "core.flow.delay":
@@ -215,12 +277,23 @@ export class AgentExecution {
       case "core.flow.fail":
         throw Error("BLK-FLOW-003");
       case "core.event.send": {
-        if (!["input", "result"].includes(String(f.SOURCE))) throw Error("BLK-EVENT-001");
-        this.mailbox.send(this.project.manifest.projectId, String(f.CHANNEL), f.SOURCE === "input" ? this.question : this.value, this.budget.signal);
+        if (!["input", "result"].includes(String(f.SOURCE)))
+          throw Error("BLK-EVENT-001");
+        this.mailbox.send(
+          this.project.manifest.projectId,
+          String(f.CHANNEL),
+          f.SOURCE === "input" ? this.question : this.value,
+          this.budget.signal,
+        );
         break;
       }
       case "core.event.receive": {
-        const message = await this.mailbox.receive(this.project.manifest.projectId, String(f.CHANNEL), integer(f.TIMEOUT_MS, 0, 30000), this.budget.signal);
+        const message = await this.mailbox.receive(
+          this.project.manifest.projectId,
+          String(f.CHANNEL),
+          integer(f.TIMEOUT_MS, 0, 30000),
+          this.budget.signal,
+        );
         this.value = message?.payload ?? null;
         const child = node.inputs[message ? "RECEIVED" : "EMPTY"];
         if (Array.isArray(child)) throw Error("BLK-TYPE-009");
@@ -348,7 +421,13 @@ export class AgentExecution {
         const input = f.SOURCE === "input" ? this.question : this.value;
         for (const [kind, value] of [["inputSchemaRef", input]] as const)
           this.validateResourceSchema(resource, kind, value);
-        const detail: TraceDetails = { tool: { source: f.SOURCE as "input" | "result", inputType: valueType(input), inputBytes: utf8(JSON.stringify(input)) } };
+        const detail: TraceDetails = {
+          tool: {
+            source: f.SOURCE as "input" | "result",
+            inputType: valueType(input),
+            inputBytes: utf8(JSON.stringify(input)),
+          },
+        };
         report(detail);
         this.budget.call();
         const value = await abortable(
@@ -376,7 +455,12 @@ export class AgentExecution {
         if (!["require", "optional"].includes(String(f.POLICY)))
           throw Error("BLK-GUARD-001");
         this.requireEvidence = f.POLICY === "require";
-        report({ guard: { policy: f.POLICY as "require" | "optional", decision: "configured" } });
+        report({
+          guard: {
+            policy: f.POLICY as "require" | "optional",
+            decision: "configured",
+          },
+        });
         break;
       case "core.output.structured": {
         const schema = this.project.schemas[String(f.SCHEMA)];

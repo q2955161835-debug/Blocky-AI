@@ -24,14 +24,11 @@ pub async fn builder_run(
         .ok_or("BLK-BUILDER-001")?
         .to_owned();
     if start.mode == "live" {
+        let destination = host.destination(&root, &start, &digest)?;
         let description = format!(
             "构建助手将向 {} 发送目标模块积木、目录、选择与诊断。\n地址：{}\n项目：{}\n模型：{}\n最多 {} 次请求，每次输出上限 1024 tokens；不自动重试。\n创建应用界面：{}\n候选仍需你审查接受才会修改项目。\n请求摘要：{}",
-            if preview["provider"] == "xirang" {
-                "息壤"
-            } else {
-                "DeepSeek"
-            },
-            preview["endpoint"],
+            preview["provider"].as_str().unwrap_or("模型服务"),
+            destination,
             preview["projectName"],
             preview["modelId"],
             start.max_turns,

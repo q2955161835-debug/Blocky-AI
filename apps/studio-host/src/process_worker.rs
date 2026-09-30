@@ -103,6 +103,9 @@ fn environment() -> Vec<u16> {
                 .is_some_and(|s| allowed.contains(&s.to_ascii_uppercase().as_str()))
         })
         .collect();
+    environment_block(&mut values)
+}
+fn environment_block(values: &mut [(OsString, OsString)]) -> Vec<u16> {
     values.sort_by_key(|(name, _)| name.to_string_lossy().to_uppercase());
     let mut block = Vec::new();
     for (name, value) in values {
@@ -128,12 +131,33 @@ pub(crate) struct Worker {
     input: Option<File>,
     output: Option<File>,
 }
+pub(crate) struct IsolatedLaunch<'a> {
+    pub environment: &'a [(OsString, OsString)],
+    pub directory: &'a Path,
+    pub memory_limit: usize,
+}
 impl Worker {
     /// `executable` and `arguments` must come from the Host's pinned runtime launcher.
     pub(crate) fn spawn(
         executable: &Path,
         arguments: &[OsString],
         job_name: &str,
+    ) -> Result<Self, String> {
+        Self::spawn_configured(executable, arguments, job_name, None)
+    }
+    pub(crate) fn spawn_isolated(
+        executable: &Path,
+        arguments: &[OsString],
+        job_name: &str,
+        options: IsolatedLaunch<'_>,
+    ) -> Result<Self, String> {
+        Self::spawn_configured(executable, arguments, job_name, Some(options))
+    }
+    fn spawn_configured(
+        executable: &Path,
+        arguments: &[OsString],
+        job_name: &str,
+        options: Option<IsolatedLaunch<'_>>,
     ) -> Result<Self, String> {
         if !executable.is_absolute()
             || executable
@@ -155,6 +179,9 @@ impl Worker {
         }
         command.push(0);
         let job = Job::named(job_name)?;
+        if let Some(options) = &options {
+            job.memory_limit(options.memory_limit)?;
+        }
         let (input_read, input_write) = pipe()?;
         let (output_read, output_write) = pipe()?;
         for handle in [&input_write, &output_read] {
@@ -207,8 +234,25 @@ impl Worker {
         startup.StartupInfo.hStdError = inherited[1];
         startup.lpAttributeList = attributes.ptr;
         let mut info: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
-        let environment = environment();
-        if unsafe {
+        let mut environment = if let Some(options) = &options {
+            if !options.directory.is_absolute()
+                || options.environment.iter().any(|(k, v)| {
+                    k.is_empty()
+                        || k.encode_wide().any(|c| c == 0 || c == b'=' as u16)
+                        || v.encode_wide().any(|c| c == 0)
+                })
+            {
+                return Err(INVALID.into());
+            }
+            environment_block(&mut options.environment.to_vec())
+        } else {
+            environment()
+        };
+        let directory = options
+            .as_ref()
+            .map(|o| wide(o.directory.as_os_str()))
+            .transpose()?;
+        let created = unsafe {
             CreateProcessW(
                 application.as_ptr(),
                 command.as_mut_ptr(),
@@ -220,12 +264,18 @@ impl Worker {
                     | EXTENDED_STARTUPINFO_PRESENT
                     | CREATE_UNICODE_ENVIRONMENT,
                 environment.as_ptr() as _,
-                null(),
+                directory.as_ref().map_or(null(), |d| d.as_ptr()),
                 &startup.StartupInfo,
                 &mut info,
             )
-        } == 0
-        {
+        };
+        // Isolated model credentials are present only while creating the child environment.
+        for value in &mut environment {
+            unsafe {
+                std::ptr::write_volatile(value, 0);
+            }
+        }
+        if created == 0 {
             return Err(FAILED.into());
         }
         let process = unsafe { OwnedHandle::from_raw_handle(info.hProcess as _) };

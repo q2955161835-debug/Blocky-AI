@@ -1,7 +1,7 @@
 import { implementationKey } from "@blocky/resource-registry";
 import type { Json } from "@blocky/language-schema";
 import type { AgentServices, Generation } from "./agent-context";
-import { integer } from "./budget";
+import { nativeModelRequest } from "./native-model";
 export type NativeAgentCall = (
   operation: string,
   fields: Record<string, unknown>,
@@ -54,43 +54,11 @@ export function nativeAgentServices(
   return {
     async generate(input, signal) {
       if (options.live === false) throw Error("BLK-PROVIDER-DISABLED");
-      const resource = input.resource,
-        d = resource.definition;
-      const binding = resource.secretBindings.find(
-        (b) => b.fieldId === "apiKey",
-      );
-      if (
-        resource.scope !== "user" ||
-        !["deepseek", "xirang"].includes(String(d.provider)) ||
-        d.protocol !== "openai-chat" ||
-        typeof d.modelId !== "string" ||
-        !binding
-      )
-        throw Error("BLK-PROVIDER-CONFIG");
-      const p = d.parameters as Record<string, Json> | undefined;
-      if (
-        p &&
-        Object.keys(p).some(
-          (k) => !["temperature", "maxOutputTokens"].includes(k),
-        )
-      )
-        throw Error("BLK-PROVIDER-CONFIG");
-      const request = {
-        schemaVersion: "blocky.provider-request/v1",
-        requestId: input.requestId,
-        projectId: input.projectId,
-        resourceId: resource.resourceId,
-        secretRef: binding.secretRef,
-        modelId: d.modelId,
-        ...(d.provider === "xirang" ? { provider: "xirang" } : {}),
-        messages: input.messages,
-        maxOutputTokens: Math.min(1024, input.maxOutputTokens),
-        timeoutMs: integer(d.timeoutMs, 1, 120000),
-        ...(p?.temperature !== undefined ? { temperature: p.temperature } : {}),
-      };
+      const model = nativeModelRequest(input),
+        request = model.request;
       const approval =
         options.mode === "cli"
-          ? await approved("provider", "provider-preflight", request, signal)
+          ? await approved("provider", model.preflight, request, signal)
           : undefined;
       signal.throwIfAborted();
       const cancel = () => {
@@ -102,7 +70,7 @@ export function nativeAgentServices(
       signal.addEventListener("abort", cancel, { once: true });
       try {
         return (await call(
-          "provider-call",
+          model.call,
           { request, ...(approval ? { approval } : {}) },
           signal,
         )) as Generation;

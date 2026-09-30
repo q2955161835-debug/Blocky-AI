@@ -13,8 +13,11 @@ import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { runInputsSchema } from "./run-inputs";
 import { workflowSummarySchema, workflowDecisionResultSchema, workflowReconciliationSchema } from "./workflow-schema";
+import { modelRequestSchema, modelResponseSchema } from "./model-schema";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.model-request/v2": modelRequestSchema,
+  "blocky.model-response/v2": modelResponseSchema,
   "blocky.workflow-summary/v1": workflowSummarySchema,
   "blocky.workflow-decision-result/v1": workflowDecisionResultSchema,
   "blocky.workflow-reconciliation/v1": workflowReconciliationSchema,

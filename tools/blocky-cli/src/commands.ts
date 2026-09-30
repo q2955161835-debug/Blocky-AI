@@ -42,6 +42,7 @@ import { exportDiagnostics } from "./diagnostics";
 import { migrationCommand } from "./migration";
 import { foundationsCommand, foundationsHelp } from "./foundations";
 import { knowledgeCommand, knowledgeHelp } from "./knowledge";
+import { modelCommand, modelHelp } from "./models";
 import {
   userConfigCommand,
   userConfigHelp,
@@ -61,6 +62,7 @@ export const help = {
     ...workflowHelp,
     ...traceHelp,
     ...knowledgeHelp,
+    ...modelHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
@@ -100,6 +102,8 @@ export async function dispatch(
   }
   const discovered = discoveryCommand(args, help.commands);
   if (discovered) return discovered;
+  const model = await modelCommand(args, signal);
+  if (model) return model;
   const blocks = await blockQueryCommand(args);
   if (blocks) return blocks;
   const productivity = await productivityCommand(args, signal);

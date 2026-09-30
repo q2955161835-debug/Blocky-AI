@@ -186,7 +186,20 @@ export function validateResource(input: unknown): Resource {
           config.protocol === "openai-chat") ||
         (config.implementationRef.id === "xirang-v1" &&
           config.provider === "xirang" &&
-          config.protocol === "openai-chat"));
+          config.protocol === "openai-chat") ||
+        (config.implementationRef.id === "managed-local-v1" &&
+          config.provider === "managed-local" &&
+          config.protocol === "local" &&
+          config.modelId === "qwen3-0.6b-q8-v1" &&
+          input.scope === "user" &&
+          input.secretBindings.length === 0));
+    if (config.localRuntime && config.provider !== "managed-local")
+      invalidResource();
+    if (
+      config.provider === "managed-local" &&
+      (!builtinModel || config.baseUrl)
+    )
+      invalidResource();
     if (
       input.kind === "model" &&
       !builtinModel &&

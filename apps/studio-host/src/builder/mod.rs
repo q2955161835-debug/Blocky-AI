@@ -3,15 +3,16 @@ mod input_guard;
 mod process;
 #[cfg(test)]
 mod tests;
+use crate::provider::builder_model::BuilderModel;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{HashMap, HashSet},
     path::{Path, PathBuf},
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
     },
     time::{Duration, Instant},
 };
@@ -98,10 +99,7 @@ fn registry(root: &Path) -> Result<Value, String> {
         .read("resources", "app")?
         .unwrap_or(json!({"resources":[]})))
 }
-fn binding(
-    root: &Path,
-    start: &BuilderStart,
-) -> Result<Option<crate::provider::ProviderRequest>, String> {
+fn binding(root: &Path, start: &BuilderStart) -> Result<Option<BuilderModel>, String> {
     if start.mode == "deterministic" {
         return Ok(None);
     }
@@ -114,14 +112,25 @@ fn binding(
             })
         })
         .ok_or("BLK-PROVIDER-CONFIG")?;
-    let request:crate::provider::ProviderRequest=serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":start.request.request_id,"projectId":start.request.project_id,"resourceId":r["resourceId"],"secretRef":r["secretBindings"][0]["secretRef"],"provider":r["definition"]["provider"],"modelId":r["definition"]["modelId"],"messages":[{"role":"user","content":"Blocky 构建会话"}],"maxOutputTokens":1024,"timeoutMs":60000})).map_err(|_|"BLK-PROVIDER-CONFIG")?;
+    if !["deepseek", "xirang"].contains(&r["definition"]["provider"].as_str().unwrap_or("")) {
+        return Ok(Some(BuilderModel::gateway(
+            root,
+            &start.request.request_id,
+            &start.request.project_id,
+            r["resourceId"].as_str().ok_or("BLK-PROVIDER-CONFIG")?,
+            &start.request.intent,
+        )?));
+    }
+    let secret_ref = r["secretBindings"]
+        .as_array()
+        .and_then(|a| a.iter().find(|v| v["fieldId"] == "apiKey"))
+        .map(|v| v["secretRef"].clone())
+        .ok_or("BLK-PROVIDER-CONFIG")?;
+    let request:crate::provider::ProviderRequest=serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":start.request.request_id,"projectId":start.request.project_id,"resourceId":r["resourceId"],"secretRef":secret_ref,"provider":r["definition"]["provider"],"modelId":r["definition"]["modelId"],"messages":[{"role":"user","content":"Blocky 构建会话"}],"maxOutputTokens":1024,"timeoutMs":60000})).map_err(|_|"BLK-PROVIDER-CONFIG")?;
     crate::provider::ProviderHost::default().preflight(root, &request)?;
-    Ok(Some(request))
+    Ok(Some(BuilderModel::Legacy(request)))
 }
-fn approval_digest(
-    start: &BuilderStart,
-    binding: Option<&crate::provider::ProviderRequest>,
-) -> Result<String, String> {
+fn approval_digest(start: &BuilderStart, binding: Option<&BuilderModel>) -> Result<String, String> {
     let request = start.digest()?;
     match binding {
         None => Ok(request),
@@ -132,11 +141,23 @@ fn approval_digest(
     }
 }
 impl BuilderHost {
+    pub fn destination(
+        &self,
+        root: &Path,
+        start: &BuilderStart,
+        digest: &str,
+    ) -> Result<String, String> {
+        let model = binding(root, start)?;
+        if approval_digest(start, model.as_ref())? != digest {
+            return Err("BLK-PERM-001".into());
+        }
+        model.ok_or("BLK-PROVIDER-CONFIG")?.destination(root)
+    }
     pub fn preflight(&self, root: &Path, start: &BuilderStart) -> Result<Value, String> {
         let project = start.validate()?;
         let b = binding(root, start)?;
         Ok(
-            json!({"requestDigest":approval_digest(start,b.as_ref())?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"provider":b.as_ref().map(|b|b.provider_name()),"endpoint":b.as_ref().map(|b|b.endpoint()),"modelId":b.as_ref().map(|b|b.model_id.as_str()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义"}),
+            json!({"requestDigest":approval_digest(start,b.as_ref())?,"requestId":start.request.request_id,"projectId":start.request.project_id,"projectName":project["manifest"]["displayName"],"mode":start.mode,"provider":b.as_ref().map(|b|b.provider()),"endpoint":b.as_ref().map(|b|b.endpoint_label()),"modelId":b.as_ref().map(|b|b.model()),"maxTurns":start.max_turns,"maxOutputTokensPerTurn":1024,"createSurface":start.request.create_surface,"inputScope":"目标模块积木、目录、资源名称、选择和诊断；不发送秘密绑定或资源定义"}),
         )
     }
     pub fn run(&self, root: PathBuf, start: BuilderStart, digest: &str) -> Result<Value, String> {

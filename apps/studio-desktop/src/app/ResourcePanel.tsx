@@ -11,6 +11,11 @@ import {
 import type { Resource } from "@blocky/language-schema";
 import type { Studio } from "../composition/useStudio";
 import { SecretBindings } from "./SecretBindings";
+import {
+  ModelResourceEditor,
+  modelResourceError,
+  modelSecretFields,
+} from "./ModelResourceEditor";
 import { KnowledgePanel } from "./KnowledgePanel";
 import { knowledgeNative } from "../composition/knowledge";
 import {
@@ -166,9 +171,33 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   const [draft, setDraft] = useState<Resource>(),
     [error, setError] = useState("");
   const [kind, setKind] = useState("model");
+  const [managedBusy, setManagedBusy] = useState(false);
   const [scope, setScope] = useState<"project" | "user">("project");
   const project = s.snapshot.project;
   const definition = resourceDefinitions.find((d) => d.kind === draft?.kind);
+  const editableModel =
+    draft?.kind === "model" &&
+    typeof draft.definition.implementationRef !== "string";
+  const modelError = editableModel ? modelResourceError(draft!) : "";
+  const secretFields = editableModel
+    ? [
+        ...new Set([
+          ...modelSecretFields(draft!),
+          ...draft!.secretBindings.map((b) => b.fieldId),
+        ]),
+      ]
+    : (definition?.secretFields ?? []);
+  const advancedSchema =
+    editableModel && definition
+      ? {
+          ...definition.definitionSchema,
+          properties: Object.fromEntries(
+            Object.entries(definition.definitionSchema.properties ?? {}).filter(
+              ([key]) => key !== "baseUrl",
+            ),
+          ),
+        }
+      : definition?.definitionSchema;
   let knowledgeOptions: RetrievalOptions | undefined;
   let knowledgeChunking:
     | { strategy: string; size: number; overlap: number }
@@ -208,11 +237,17 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
     }
   }
   const edit = (resource: Resource) => {
+    if (managedBusy) return;
     setDraft(structuredClone(resource));
     setError("");
   };
   const save = () => {
+    if (managedBusy) return;
     try {
+      if (modelError) {
+        setError(modelError);
+        return;
+      }
       const resource = validateResource(draft);
       if (resource.scope === "user") s.resources.upsert(resource);
       else {
@@ -231,6 +266,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         资源范围
         <select
           aria-label="资源范围"
+          disabled={managedBusy}
           value={scope}
           onChange={(e) => setScope(e.target.value as "project" | "user")}
         >
@@ -242,6 +278,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       <div>
         <select
           aria-label="资源类型"
+          disabled={managedBusy}
           value={kind}
           onChange={(e) => setKind(e.target.value)}
         >
@@ -252,7 +289,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           ))}
         </select>
         <button
-          disabled={scope === "user" && !s.resources.ready}
+          disabled={managedBusy || (scope === "user" && !s.resources.ready)}
           onClick={() => {
             const def = resourceDefinitions.find((d) => d.kind === kind)!;
             edit({
@@ -275,10 +312,11 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       {scope === "user" &&
         s.resources.registry.resources.map((r) => (
           <div key={r.resourceId}>
-            <button onClick={() => edit(r)}>
+            <button disabled={managedBusy} onClick={() => edit(r)}>
               {r.displayName} · {r.kind}
             </button>
             <button
+              disabled={managedBusy}
               onClick={() => {
                 try {
                   const next = referenceUserResource(project, r);
@@ -292,6 +330,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               引用到当前项目
             </button>
             <button
+              disabled={managedBusy}
               onClick={() =>
                 void s
                   .confirm("删除本机资源后，引用它的项目将报告资源缺失。继续？")
@@ -306,13 +345,14 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         ))}
       {Object.values(project.resources).map((r) => (
         <div key={r.resourceId}>
-          <button onClick={() => edit(r)}>
+          <button disabled={managedBusy} onClick={() => edit(r)}>
             {r.displayName} · {r.kind}
           </button>
           <small>
             {analyzeResourceReferences(project, r.resourceId).length} 个引用
           </small>
           <button
+            disabled={managedBusy}
             onClick={() =>
               void s
                 .confirm("删除资源后，使用它的积木将报告缺失引用。继续？")
@@ -338,6 +378,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             名称
             <input
               aria-label="资源名称"
+              disabled={managedBusy}
               value={draft.displayName}
               onChange={(e) =>
                 setDraft({ ...draft, displayName: e.target.value })
@@ -348,28 +389,43 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             {draft.resourceId} ·{" "}
             {draft.scope === "project" ? "项目配置" : "本机用户配置"}
           </small>
+          {editableModel && (
+            <ModelResourceEditor
+              resource={draft}
+              change={setDraft}
+              onBusyChange={setManagedBusy}
+            />
+          )}
           {typeof draft.definition.implementationRef === "string" ? (
             <p>此资源使用本地确定性适配器。</p>
           ) : (
             <details>
               <summary>资源高级配置</summary>
-              <Fields
-                schema={definition.definitionSchema}
-                value={draft.definition}
-                change={(value) =>
-                  setDraft({
-                    ...draft,
-                    definition: value as Resource["definition"],
-                  })
-                }
-              />
+              <fieldset disabled={managedBusy}>
+                <Fields
+                  schema={advancedSchema!}
+                  value={draft.definition}
+                  change={(value) =>
+                    setDraft({
+                      ...draft,
+                      definition: value as Resource["definition"],
+                    })
+                  }
+                />
+              </fieldset>
             </details>
           )}
-          <SecretBindings
-            resource={draft}
-            fields={definition.secretFields}
-            change={(secretBindings) => setDraft({ ...draft, secretBindings })}
-          />
+          {secretFields.length > 0 && (
+            <fieldset disabled={managedBusy}>
+              <SecretBindings
+                resource={draft}
+                fields={secretFields}
+                change={(secretBindings) =>
+                  setDraft({ ...draft, secretBindings })
+                }
+              />
+            </fieldset>
+          )}
           {knowledgeError && <p role="alert">{knowledgeError}</p>}
           {draft.kind === "knowledge" &&
             draft.scope === "project" &&
@@ -402,8 +458,12 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               />
             )}
           {error && <p role="alert">{error}</p>}
-          <button onClick={save}>保存资源</button>
-          <button onClick={() => setDraft(undefined)}>取消</button>
+          <button onClick={save} disabled={managedBusy || !!modelError}>
+            保存资源
+          </button>
+          <button disabled={managedBusy} onClick={() => setDraft(undefined)}>
+            取消
+          </button>
         </section>
       )}
     </div>

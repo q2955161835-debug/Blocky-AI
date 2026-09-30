@@ -6,10 +6,32 @@ import {
 import type { Citation } from "./adapters";
 import { utf8 } from "./budget";
 export type Message = {
-  role: "system" | "user" | "assistant";
+  role: "system" | "user" | "assistant" | "tool";
   content: string;
+  toolCalls?: ModelToolCall[];
+  toolCallId?: string;
+};
+export type ModelToolCall = {
+  id: string;
+  name: string;
+  arguments: Record<string, Json>;
+};
+export type ModelTool = { name: string; description: string; parameters: Json };
+export type GenerationRequest = {
+  projectId: string;
+  resource: Resource;
+  messages: Message[];
+  maxOutputTokens: number;
+  requestId: string;
+  tools?: ModelTool[];
+  outputSchema?: Json;
+  toolChoice?: "auto" | "required" | "none";
 };
 export type Generation = {
+  schemaVersion?: "blocky.model-response/v2";
+  usageStatus?: "reported" | "unavailable";
+  toolCalls?: ModelToolCall[];
+  finishReason?: "stop" | "tool_calls";
   text: string;
   provider: string;
   transport: "local" | "remote";
@@ -29,13 +51,7 @@ export type AgentServices = {
     signal: AbortSignal,
   ) => Promise<void>;
   generate?: (
-    request: {
-      projectId: string;
-      resource: Resource;
-      messages: Message[];
-      maxOutputTokens: number;
-      requestId: string;
-    },
+    request: GenerationRequest,
     signal: AbortSignal,
   ) => Promise<Generation>;
   memory?: (
@@ -66,7 +82,8 @@ export type OutputFile = {
   format: "text" | "json";
   content: string;
 };
-export const contextEvidence = (citations: Citation[]) => citations.map(c => ({ id: c.id, title: c.title, text: c.text }));
+export const contextEvidence = (citations: Citation[]) =>
+  citations.map((c) => ({ id: c.id, title: c.title, text: c.text }));
 export function messages(
   role: string,
   instruction: string,
@@ -116,7 +133,19 @@ export function checkGenerationMetadata(result: Generation): void {
         result.usage.inputTokens + result.usage.outputTokens)
   )
     throw Error("BLK-MODEL-003");
-  if (result.transport === "remote" && !result.usage)
+  if (
+    result.usageStatus !== undefined &&
+    (result.usageStatus === "reported") !== (result.usage !== null)
+  )
+    throw Error("BLK-MODEL-003");
+  if (
+    result.transport === "remote" &&
+    !result.usage &&
+    !(
+      result.schemaVersion === "blocky.model-response/v2" &&
+      result.usageStatus === "unavailable"
+    )
+  )
     throw Error("BLK-MODEL-003");
 }
 export function checkGeneration(

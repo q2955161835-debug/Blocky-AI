@@ -15,9 +15,10 @@ fn real_sidecar_is_read_only_and_reaped_before_completion() {
     assert_eq!(result["modelApiCalled"], false);
     assert!(result.get("patch").is_none());
     assert!(host.state.lock().unwrap().active.is_empty());
-    assert!(host
-        .run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
-        .is_err());
+    assert!(
+        host.run(root.path().to_owned(), s.clone(), &s.digest().unwrap())
+            .is_err()
+    );
     host.shutdown().unwrap();
 }
 #[test]
@@ -33,9 +34,11 @@ fn request_and_approval_boundaries_reject_before_launch() {
     assert!(s.validate().is_err());
     s = start();
     let root = tempfile::tempdir().unwrap();
-    assert!(BuilderHost::default()
-        .run(root.path().to_owned(), s, "forged")
-        .is_err());
+    assert!(
+        BuilderHost::default()
+            .run(root.path().to_owned(), s, "forged")
+            .is_err()
+    );
 }
 #[test]
 fn rejects_credentials_before_sidecar() {
@@ -57,7 +60,7 @@ fn rejects_credentials_before_sidecar() {
 fn approval_binds_model_provider_and_secret_reference() {
     let s = start();
     let b: crate::provider::ProviderRequest = serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":"r1","projectId":"p1","resourceId":"m1","secretRef":"s1","modelId":"deepseek-v4-pro","provider":"xirang","messages":[{"role":"user","content":"public fixture"}],"maxOutputTokens":1024,"timeoutMs":500})).unwrap();
-    let digest = approval_digest(&s, Some(&b)).unwrap();
+    let digest = approval_digest(&s, Some(&BuilderModel::Legacy(b.clone()))).unwrap();
     assert_ne!(digest, s.digest().unwrap());
     for field in ["provider", "modelId", "secretRef"] {
         let mut value = serde_json::to_value(&b).unwrap();
@@ -67,7 +70,10 @@ fn approval_binds_model_provider_and_secret_reference() {
             "changed"
         });
         let changed = serde_json::from_value(value).unwrap();
-        assert_ne!(digest, approval_digest(&s, Some(&changed)).unwrap());
+        assert_ne!(
+            digest,
+            approval_digest(&s, Some(&BuilderModel::Legacy(changed))).unwrap()
+        );
     }
     assert_eq!(approval_digest(&s, None).unwrap(), s.digest().unwrap());
 }

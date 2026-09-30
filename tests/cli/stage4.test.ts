@@ -69,11 +69,14 @@ it("native patch validation accepts current Agent catalog and agrees on tool per
     await rm(root, { recursive: true, force: true });
   }
 });
-function run(args: string[]) {
+function run(args: string[], profileDir?: string) {
   const result = spawnSync(process.execPath, [cli, ...args], {
     encoding: "utf8",
     windowsHide: true,
     timeout: 30000,
+    ...(profileDir
+      ? { env: { ...process.env, BLOCKY_PROFILE_DIR: profileDir } }
+      : {}),
   });
   return {
     code: result.status,
@@ -121,18 +124,22 @@ it("preserves numeric usage evidence while redacting secret-shaped values", () =
 });
 it("complete example requires exact approval and produces checked JSON through native tool", async () => {
   const root = await mkdtemp(resolve("try/stage4-cli-"));
+  const profile = join(root, "profile");
   try {
     const file = join(root, "agent.blocky");
     expect(
-      run([
-        "project",
-        "create",
-        "--template",
-        "agent-loop",
-        "--output",
-        file,
-        "--json",
-      ]).code,
+      run(
+        [
+          "project",
+          "create",
+          "--template",
+          "agent-loop",
+          "--output",
+          file,
+          "--json",
+        ],
+        profile,
+      ).code,
     ).toBe(0);
     const base = [
       "run",
@@ -145,21 +152,23 @@ it("complete example requires exact approval and produces checked JSON through n
       `run-${crypto.randomUUID()}`,
       "--jsonl",
     ];
-    const pending = run(base);
+    const pending = run(base, profile);
     expect(pending.code).toBe(4);
     const approval = pending.lines.at(-1).data.pendingApprovals[0];
     expect(approval.kind).toBe("tool");
     const approved = join(root, "approve.json");
     await writeFile(approved, JSON.stringify([approval.requestDigest]));
     const exported = join(root, "result.json");
-    const done = run([
-      ...base,
-      "--approval-file",
-      approved,
-      "--output",
-      exported,
-    ]);
-    expect(done.code).toBe(0);
+    const done = run(
+      [...base, "--approval-file", approved, "--output", exported],
+      profile,
+    );
+    expect(
+      done.code,
+      JSON.stringify(
+        done.lines.filter((line) => JSON.stringify(line).includes("BLK-")),
+      ),
+    ).toBe(0);
     expect(done.lines.at(-1).data.structured).toEqual({
       characters: 12,
       lines: 1,

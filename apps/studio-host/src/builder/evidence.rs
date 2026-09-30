@@ -18,10 +18,20 @@ pub struct ResponseMetadata {
     pub provider: String,
     pub model: String,
     pub response_id: String,
-    pub input_tokens: u64,
-    pub output_tokens: u64,
-    pub total_tokens: u64,
+    pub input_tokens: Option<u64>,
+    pub output_tokens: Option<u64>,
+    pub total_tokens: Option<u64>,
+    #[serde(default = "reported")]
+    pub usage_status: String,
+    #[serde(default = "remote")]
+    pub transport: String,
     pub finish_reason: String,
+}
+fn reported() -> String {
+    "reported".into()
+}
+fn remote() -> String {
+    "remote".into()
 }
 fn identifier(s: &str, max: usize) -> bool {
     !s.is_empty()
@@ -31,7 +41,20 @@ fn identifier(s: &str, max: usize) -> bool {
 }
 impl ResponseMetadata {
     fn valid(&self) -> bool {
-        ["deepseek", "xirang"].contains(&self.provider.as_str())
+        [
+            "deepseek",
+            "xirang",
+            "openai-compatible",
+            "ollama",
+            "managed-local",
+        ]
+        .contains(&self.provider.as_str())
+            && self.transport
+                == if ["ollama", "managed-local"].contains(&self.provider.as_str()) {
+                    "local"
+                } else {
+                    "remote"
+                }
             && identifier(&self.model, 128)
             && identifier(&self.response_id, 256)
             && [
@@ -42,9 +65,20 @@ impl ResponseMetadata {
                 "insufficient_system_resource",
             ]
             .contains(&self.finish_reason.as_str())
-            && self.input_tokens <= 10_000_000
-            && self.output_tokens <= 2048
-            && self.input_tokens.checked_add(self.output_tokens) == Some(self.total_tokens)
+            && match (self.input_tokens, self.output_tokens, self.total_tokens) {
+                (Some(input), Some(output), Some(total)) => {
+                    self.usage_status == "reported"
+                        && input <= 10_000_000
+                        && output <= 2048
+                        && input.checked_add(output) == Some(total)
+                }
+                (None, None, None) => {
+                    self.usage_status == "unavailable"
+                        && ["openai-compatible", "ollama", "managed-local"]
+                            .contains(&self.provider.as_str())
+                }
+                _ => false,
+            }
     }
 }
 pub fn response_metadata(bytes: &[u8], provider: &str) -> Option<ResponseMetadata> {
@@ -53,9 +87,21 @@ pub fn response_metadata(bytes: &[u8], provider: &str) -> Option<ResponseMetadat
         provider: provider.into(),
         model: v["model"].as_str()?.into(),
         response_id: v["id"].as_str()?.into(),
-        input_tokens: v["usage"]["prompt_tokens"].as_u64()?,
-        output_tokens: v["usage"]["completion_tokens"].as_u64()?,
-        total_tokens: v["usage"]["total_tokens"].as_u64()?,
+        input_tokens: v["usage"]["prompt_tokens"].as_u64(),
+        output_tokens: v["usage"]["completion_tokens"].as_u64(),
+        total_tokens: v["usage"]["total_tokens"].as_u64(),
+        usage_status: if v["usage"].is_null() {
+            "unavailable"
+        } else {
+            "reported"
+        }
+        .into(),
+        transport: if ["ollama", "managed-local"].contains(&provider) {
+            "local"
+        } else {
+            "remote"
+        }
+        .into(),
         finish_reason: v["choices"][0]["finish_reason"].as_str()?.into(),
     };
     meta.valid().then_some(meta)
@@ -209,12 +255,26 @@ mod tests {
     use super::*;
     use serde_json::json;
     #[test]
+    fn missing_usage_is_explicit_and_local_inference_is_not_remote() {
+        let v = json!({"id":"response-1","model":"qwen3-0.6b-q8-v1","choices":[{"finish_reason":"stop"}]});
+        let metadata = response_metadata(v.to_string().as_bytes(), "managed-local").unwrap();
+        assert_eq!(metadata.transport, "local");
+        assert_eq!(metadata.usage_status, "unavailable");
+        assert!(metadata.total_tokens.is_none());
+        assert!(response_metadata(v.to_string().as_bytes(), "deepseek").is_none());
+        let mut partial = v;
+        partial["usage"] = json!({"prompt_tokens":4});
+        assert!(response_metadata(partial.to_string().as_bytes(), "managed-local").is_none());
+    }
+    #[test]
     fn rejects_contradictory_attempts_and_timestamps() {
         let valid = json!({"schemaVersion":"blocky.builder-evidence/v1","requestId":"r-1","projectId":"p-1","startedAtMs":100,"completedAtMs":120,"outcome":"completed","tools":[],"attempts":[{"turn":1,"startedAtMs":101,"completedAtMs":119,"networkAttempted":true,"outcome":"response","response":{"provider":"deepseek","model":"deepseek-flash","responseId":"response-1","inputTokens":4,"outputTokens":2,"totalTokens":6,"finishReason":"stop"}}]});
-        assert!(serde_json::from_value::<Evidence>(valid.clone())
-            .unwrap()
-            .validate()
-            .is_ok());
+        assert!(
+            serde_json::from_value::<Evidence>(valid.clone())
+                .unwrap()
+                .validate()
+                .is_ok()
+        );
         for (pointer, value) in [
             ("/attempts/0/networkAttempted", json!(false)),
             ("/attempts/0/completedAtMs", Value::Null),

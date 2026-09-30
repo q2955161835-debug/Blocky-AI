@@ -39,6 +39,12 @@ $LASTEXITCODE
 
 ## 阶段 4 Agent 运行
 
+模型入口使用同一原生 Host：`model catalog` 返回可安装的锁定型号、后端、尺寸与许可证；`model status|verify|remove <model-id>` 管理本机托管工件。安装必须显式选择来源，例如 `model install qwen3-0.6b-q8-v1 --backend cpu --download --json`，或用成对的 `--model-file <gguf> --runtime-file <zip>` 离线安装；两种来源互斥。文件路径只发送给 Host，结果返回安全摘要。运行占用时停止相关运行并等待结算，再验证或移除；不会接管已有 Ollama 服务。
+
+`model preflight --request <request.json> --json` 校验 `blocky.model-request/v2` 请求并返回本次批准摘要；核对后用 `model generate --request <request.json> --approve <sha256> --json` 调用。请求只使用 projectId/resourceId 引用本机模型配置，不接受端点或凭据。消息允许 `toolCalls`/`toolCallId`，工具与输出 Schema 采用有界结构；`toolChoice` 可为 auto、required、none。`schema list/show` 可发现请求与 `blocky.model-response/v2` 响应格式。
+
+生成结果保留 provider、transport、真实响应标识和用量。仅 transport=remote 时 `modelApiCalled=true`；本机托管与 Ollama 为 false。供应商未报告用量时保留 `usageStatus=unavailable`、`usage=null`，不能推算为零。预检不产生生成调用；批准与请求、资源及秘密版本绑定，不能沿用旧摘要。取消传到原生 Host，失败后使用结构化错误码与 `diagnostics explain` 获取恢复提示。
+
 `agent-loop` 是可编辑的文本分析项目示例，与四个官方知识蓝图分别列出。默认使用无网络模型，但本机工具仍需要批准。
 
 ```powershell

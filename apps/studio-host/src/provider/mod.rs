@@ -1,8 +1,10 @@
-mod transport;
-mod types;
 pub(crate) mod builder;
+pub(crate) mod builder_model;
 #[cfg(test)]
 mod builder_tests;
+pub mod gateway;
+mod transport;
+mod types;
 use serde_json::Value;
 use std::{
     collections::{HashMap, HashSet},
@@ -25,6 +27,53 @@ pub struct ProviderHost {
     state: Arc<Mutex<State>>,
 }
 impl ProviderHost {
+    pub fn local_model_install(
+        &self,
+        root: &std::path::Path,
+        id: &str,
+        backend: &str,
+        request_id: &str,
+        source: Option<&crate::local_models::InstallSource>,
+    ) -> Result<Value, String> {
+        if request_id.len() > 128 || !crate::project_store::stable(request_id) {
+            return Err(types::INVALID.into());
+        }
+        let active = self.begin(request_id)?;
+        crate::local_models::install(root, id, backend, source, &active.cancel)
+    }
+    pub fn local_model_verify(&self, root: &std::path::Path, id: &str) -> Result<Value, String> {
+        self.local_model_verify_request(
+            root,
+            id,
+            &format!("verify-{}", uuid::Uuid::new_v4().simple()),
+        )
+    }
+    pub fn local_model_verify_request(
+        &self,
+        root: &std::path::Path,
+        id: &str,
+        request_id: &str,
+    ) -> Result<Value, String> {
+        if request_id.len() > 128 || !crate::project_store::stable(request_id) {
+            return Err(types::INVALID.into());
+        }
+        let active = self.begin(request_id)?;
+        crate::local_models::verify(root, id, &active.cancel)
+    }
+    fn begin(&self, id: &str) -> Result<ActiveRequest, String> {
+        let cancel = Arc::new(AtomicBool::new(false));
+        let mut s = self.state.lock().map_err(|_| "BLK-PROVIDER-STATE")?;
+        if s.closing || s.used.contains(id) || s.active.len() >= 2 || s.used.len() >= 4096 {
+            return Err("BLK-PROVIDER-STATE".into());
+        }
+        s.used.insert(id.to_owned());
+        s.active.insert(id.to_owned(), cancel.clone());
+        Ok(ActiveRequest {
+            host: self.clone(),
+            id: id.to_owned(),
+            cancel,
+        })
+    }
     pub fn preflight(&self, root: &std::path::Path, r: &ProviderRequest) -> Result<Value, String> {
         let registry = crate::user_store::UserStore::new(root.join("user"))
             .read("resources", "app")?
@@ -40,28 +89,13 @@ impl ProviderHost {
             return Err("BLK-PERM-001".into());
         }
         self.preflight(&root, &r)?;
-        let cancel = Arc::new(AtomicBool::new(false));
-        {
-            let mut s = self.state.lock().map_err(|_| "BLK-PROVIDER-STATE")?;
-            if s.closing
-                || s.used.contains(&r.request_id)
-                || s.active.len() >= 2
-                || s.used.len() >= 4096
-            {
-                return Err("BLK-PROVIDER-STATE".into());
-            }
-            s.used.insert(r.request_id.clone());
-            s.active.insert(r.request_id.clone(), cancel.clone());
-        }
+        let active = self.begin(&r.request_id)?;
         let result = crate::secret_store::SecretStore::new(root.join("secrets"))
-            .with_secret(&r.secret_ref, |key| transport::send(&r, key, &cancel))
+            .with_secret(&r.secret_ref, |key| {
+                transport::send(&r, key, &active.cancel)
+            })
             .and_then(|v| v);
-        let cancelled = cancel.load(Ordering::SeqCst);
-        self.state
-            .lock()
-            .map_err(|_| "BLK-PROVIDER-STATE")?
-            .active
-            .remove(&r.request_id);
+        let cancelled = active.cancel.load(Ordering::SeqCst);
         if cancelled {
             Err("BLK-PROVIDER-CANCELLED".into())
         } else {
@@ -104,7 +138,31 @@ impl ProviderHost {
         Ok(())
     }
 }
+struct ActiveRequest {
+    host: ProviderHost,
+    id: String,
+    cancel: Arc<AtomicBool>,
+}
+impl Drop for ActiveRequest {
+    fn drop(&mut self) {
+        if let Ok(mut state) = self.host.state.lock() {
+            state.active.remove(&self.id);
+        }
+    }
+}
 pub fn dispatch(root: PathBuf, value: &Value) -> Result<Value, String> {
+    if value["operation"]
+        .as_str()
+        .is_some_and(|s| s.starts_with("provider-local-model-"))
+    {
+        return crate::local_models::dispatch(root, value, &ProviderHost::default());
+    }
+    if value["operation"]
+        .as_str()
+        .is_some_and(|s| s.starts_with("provider-model-"))
+    {
+        return gateway::dispatch(root, value);
+    }
     #[derive(serde::Deserialize)]
     #[serde(rename_all = "camelCase", deny_unknown_fields)]
     struct Envelope {
