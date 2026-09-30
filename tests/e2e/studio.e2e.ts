@@ -245,7 +245,7 @@ describe("Blocky native editor", () => {
       "//aside[contains(@class,'library')]//button[contains(.,'引用服务')]",
     ).click();
     await expect($("[aria-label='画布名称']")).toHaveValue("引用服务");
-    await $("button*=搜索命令").click();
+    await $("[aria-label='搜索命令']").click();
     await $("[aria-label='命令搜索词']").setValue("运行日志");
     await $(
       "//div[contains(@class,'popup-list')]//button[contains(.,'运行日志')]",
@@ -269,9 +269,9 @@ describe("Blocky native editor", () => {
     } catch (error) {
       console.log(
         "BUILDER_UI_FAILURE",
-        await page.getByRole("dialog", { name: "Blocky 构建助手" }).innerText(),
+        await page.getByRole("region", { name: "Blocky 构建助手" }).innerText(),
       );
-      await page.getByRole("button", { name: "关闭构建助手" }).click();
+      await page.getByRole("tab", { name: "运行 Agent", exact: true }).click();
       throw error;
     }
     await page
@@ -479,10 +479,14 @@ describe("Blocky native editor", () => {
     for (const viewport of ["mobile", "tablet", "desktop"]) {
       await page.getByLabel("预览视口", { exact: true }).selectOption(viewport);
       expect(await frame.locator("#submit").isVisible()).toBe(true);
-      const width = await frame.locator("body").evaluate(() => innerWidth);
-      expect(width).toBe(
-        viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1280,
-      );
+      const expectedWidth = viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1280;
+      await browser.waitUntil(async () => (await frame.locator("body").evaluate(() => innerWidth)) === expectedWidth,
+        { timeout: 5000, timeoutMsg: `Preview ${viewport} should settle at ${expectedWidth}px` }).catch(async error => {
+          console.log("PREVIEW_VIEWPORT_DIAGNOSTIC", await page.locator("iframe").evaluate(el => ({
+            width: el.clientWidth, rect: el.getBoundingClientRect().toJSON(), style: el.getAttribute("style"), dpr: devicePixelRatio,
+          })), await frame.locator("body").evaluate(() => ({ innerWidth, clientWidth: document.documentElement.clientWidth, dpr: devicePixelRatio })));
+          throw error;
+        });
       if (viewport === "mobile")
         expect(
           (await page.locator("iframe").boundingBox())!.width,
@@ -498,6 +502,8 @@ describe("Blocky native editor", () => {
     await frame.locator("#submit").waitFor();
   });
   it("keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls", async () => {
+    if (!(await page.locator(".bottom-panel").isVisible()))
+      await page.getByRole("button", { name: "显示底部面板", exact: true }).click();
     await $(
       "//div[contains(@class,'panel-tabs')]//button[normalize-space()='终端']",
     ).click();
@@ -506,7 +512,7 @@ describe("Blocky native editor", () => {
     await $("[aria-label='任务输出上限']").setValue("256");
     await $("button=运行检查").click();
     await $("[aria-label='折叠面板']").click();
-    await $("[aria-label='展开面板']").click();
+    await $("[aria-label='显示底部面板']").click();
     await browser.waitUntil(
       async () =>
         (await $(".task-panel [role='status']").getText()).includes("检查通过"),
@@ -651,6 +657,8 @@ describe("Blocky native editor", () => {
     const state = await page.evaluate(() =>
       (window as any).__BLOCKY_ACCEPTANCE__.diagnosticScopeState(),
     );
+    if (!(await page.locator(".bottom-panel").isVisible()))
+      await page.getByRole("button", { name: "显示底部面板", exact: true }).click();
     await page
       .locator(".panel-tabs")
       .getByRole("button", { name: "输出", exact: true })

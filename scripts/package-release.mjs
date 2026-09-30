@@ -80,7 +80,7 @@ await writeFile(
   join(out, "使用说明.txt"),
   `Blocky Studio ${version}\n\n运行环境：Windows x64，Microsoft Edge WebView2 Runtime，以及 Microsoft Visual C++ 2015–2022 x64 Runtime（14.44 或更新版本）。\nVC 运行库未随包分发；官方安装入口：${registry.vcRuntime.download}\n双击 Blocky Studio.exe 开始创作。项目使用 .blocky 文件保存，可在程序中重新打开。\n\nCLI 使用随包运行库。命令入口为 cli\\blocky.cmd；运行 --help 查看命令。\nCLI 输出 JSON/JSONL，创建新文件时拒绝覆盖已有目标。\n\n本地知识检索使用随包的 multilingual-e5-small 模型；请保留 models 目录。桌面与 CLI 共用这份模型。默认使用本地处理。需要在线生成时，在模型资源中配置 DeepSeek 或息壤并选择该模型；请求会在批准后发送，模型密钥不进入项目。内置文本分析 Agent 支持本机统计和结果导出。\n\n第三方许可证见 licenses。selectors 的对应原始源码随附于 licenses\\sources。\n`,
 );
-await appendFile(join(out,"使用说明.txt"),"\n有人值守浏览器自动化需已安装完整 Microsoft Edge 浏览器；WebView2 Runtime 不能替代。每次运行新建隔离会话，不沿用个人登录；只允许初始来源，暂不支持跨来源资源和 HTTP 重定向。驱动与许可证位于 browser 目录，请完整保留。\n");
+await appendFile(join(out,"使用说明.txt"),"\n左右栏与底部面板可拖动边界调整大小，右上角图标控制显隐，底栏默认收起。构建助手可在右侧标签页打开。应用设置中的默认模型保存在本机，供新建项目与构建助手使用；已有项目保留原模型。CLI 的 builder --live 未指定 --model 时使用本机默认模型，实际请求仍需批准。\n\n有人值守浏览器自动化需已安装完整 Microsoft Edge 浏览器；WebView2 Runtime 不能替代。每次运行新建隔离会话，不沿用个人登录；只允许初始来源，暂不支持跨来源资源和 HTTP 重定向。驱动与许可证位于 browser 目录，请完整保留。\n");
 const files = [];
 async function walk(folder) {
   for (const entry of await readdir(folder, { withFileTypes: true })) {
