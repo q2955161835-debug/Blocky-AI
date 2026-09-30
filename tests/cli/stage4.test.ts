@@ -113,6 +113,7 @@ it("preserves numeric usage evidence while redacting secret-shaped values", () =
       outputTokens: 2,
       totalTokens: 5,
       maxOutputTokens: 1024,
+      localRuntime: { contextTokens: 8192, threads: 4 },
       apiKey: "fixture-private",
       accessToken: "fixture-private",
       inputTokensBad: "fixture-private",
@@ -120,6 +121,7 @@ it("preserves numeric usage evidence while redacting secret-shaped values", () =
   );
   expect(value.inputTokens).toBe(3);
   expect(value.totalTokens).toBe(5);
+  expect(value.localRuntime).toEqual({ contextTokens: 8192, threads: 4 });
   expect(JSON.stringify(value)).not.toContain("fixture-private");
 });
 it("complete example requires exact approval and produces checked JSON through native tool", async () => {

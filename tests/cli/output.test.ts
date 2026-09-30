@@ -3,7 +3,7 @@ import { redact } from "../../packages/observability/src";
 import { output } from "../../tools/blocky-cli/src/output";
 
 it("preserves the same bounded numeric token counters in event and CLI transport", () => {
-  for (const key of ["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens", "maxOutputTokensPerTurn"]) {
+  for (const key of ["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens", "maxOutputTokensPerTurn", "contextTokens"]) {
     for (const value of [0, 20, 10_000_000]) {
       const payload = { budget: { [key]: value } };
       expect(redact(payload)).toMatchObject({ value: payload, redaction: { applied: false } });
