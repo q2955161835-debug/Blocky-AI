@@ -138,6 +138,9 @@
 .builder-panel textarea {
   max-width: 100%;
 }
+.builder-panel .settings label { margin: 0; }
+.builder-panel .settings select { margin-left: 0; width: 100%; }
+.builder-panel .settings p { margin: 0; line-height: 1.6; }
 .builder-panel pre {
   max-width: 100%;
   overflow: auto;
