@@ -7,6 +7,51 @@ pub(super) fn root() -> tempfile::TempDir {
     tempfile::tempdir_in(root).unwrap()
 }
 #[test]
+fn interrupted_install_is_visible_and_cleanup_checks_ownership_before_deleting() {
+    let root = root();
+    let parent = store::path(root.path(), MODEL_ID)
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_owned();
+    let stage = parent.join(".install-owned");
+    std::fs::create_dir(&stage).unwrap();
+    let locked = artifacts::lock().unwrap();
+    let backend = artifacts::backend(&locked, "cpu").unwrap();
+    std::fs::write(
+        stage.join("manifest.json"),
+        store::manifest_value(&locked, &backend).to_string(),
+    )
+    .unwrap();
+    std::fs::write(stage.join("runtime.zip"), b"partial download").unwrap();
+    assert_eq!(
+        status(root.path(), MODEL_ID).unwrap()["incompleteInstalls"],
+        1
+    );
+    std::fs::write(stage.join("foreign.txt"), b"user content").unwrap();
+    assert_eq!(
+        cleanup(root.path(), MODEL_ID).unwrap_err(),
+        "BLK-LOCAL-MODEL-OWNERSHIP"
+    );
+    assert!(stage.join("runtime.zip").exists());
+    std::fs::remove_file(stage.join("foreign.txt")).unwrap();
+    let guard = store::guard(root.path()).unwrap();
+    assert_eq!(
+        cleanup(root.path(), MODEL_ID).unwrap_err(),
+        "BLK-LOCAL-MODEL-BUSY"
+    );
+    drop(guard);
+    assert_eq!(
+        cleanup(root.path(), MODEL_ID).unwrap()["cleanedInstalls"],
+        1
+    );
+    assert!(!stage.exists());
+    assert_eq!(
+        status(root.path(), MODEL_ID).unwrap()["incompleteInstalls"],
+        0
+    );
+}
+#[test]
 fn missing_or_unknown_models_are_reported_without_selecting_another_installation() {
     let root = root();
     let state = status(root.path(), MODEL_ID).unwrap();

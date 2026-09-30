@@ -33,7 +33,11 @@ pub(super) fn guard(root: &Path) -> Result<File, String> {
     file.try_lock().map_err(|_| "BLK-LOCAL-MODEL-BUSY")?;
     Ok(file)
 }
-fn manifest(directory: &Path, removing: bool) -> Result<(Value, artifacts::Backend), String> {
+fn manifest(
+    directory: &Path,
+    removing: bool,
+    staging: bool,
+) -> Result<(Value, artifacts::Backend), String> {
     crate::knowledge::no_links(directory).map_err(|_| "BLK-LOCAL-MODEL-PATH")?;
     let mut bytes = Vec::new();
     File::open(directory.join("manifest.json"))
@@ -50,13 +54,16 @@ fn manifest(directory: &Path, removing: bool) -> Result<(Value, artifacts::Backe
     if value != manifest_value(&locked, &backend) {
         return Err("BLK-LOCAL-MODEL-OWNERSHIP".into());
     }
-    let expected = BTreeSet::from([
+    let mut expected = BTreeSet::from([
         "manifest.json".to_string(),
         "model.gguf".into(),
         "runtime".into(),
         "LICENSE-llama.txt".into(),
         "LICENSE-Qwen.txt".into(),
     ]);
+    if staging {
+        expected.insert("runtime.zip".into());
+    }
     exact_entries(directory, &expected, removing)?;
     if !removing || directory.join("runtime").exists() {
         exact_entries(
@@ -92,7 +99,7 @@ pub fn status(root: &Path, id: &str) -> Result<Value, String> {
     let locked = artifacts::lock()?;
     let mut value = json!({"modelId":id,"displayName":"Qwen3 0.6B","modelBytes":locked.model.bytes,"modelSha256":locked.model.sha256,"runtimeVersion":locked.runtime_version,"modelRevision":locked.model_revision,"capabilities":["text","tools","structured-output"],"installed":directory.is_dir(),"verified":false,"loaded":false,"externalApi":false,"backends":["cpu","vulkan"]});
     if directory.exists() {
-        let (m, b) = manifest(&directory, false)?;
+        let (m, b) = manifest(&directory, false, false)?;
         value["backend"] = m["backend"].clone();
         let files = [
             "model.gguf",
@@ -116,6 +123,18 @@ pub fn status(root: &Path, id: &str) -> Result<Value, String> {
         );
     }
     value["busy"] = json!(guard(root).is_err());
+    let stages = stages(root)?;
+    let mut bytes = 0u64;
+    let mut unknown = 0usize;
+    for stage in &stages {
+        match manifest(stage, true, true).and_then(|(_, b)| owned_bytes(stage, &b)) {
+            Ok(size) => bytes += size,
+            Err(_) => unknown += 1,
+        }
+    }
+    value["incompleteInstalls"] = json!(stages.len());
+    value["incompleteBytes"] = json!(bytes);
+    value["unrecognizedInstalls"] = json!(unknown);
     if value["busy"] == true {
         value["loaded"] = Value::Null;
     }
@@ -131,7 +150,7 @@ pub(super) fn verify_open(
     if !directory.exists() {
         return Err("BLK-LOCAL-MODEL-MISSING".into());
     }
-    let (_, backend) = manifest(&directory, false)?;
+    let (_, backend) = manifest(&directory, false, false)?;
     let locked = artifacts::lock()?;
     let mut files = vec![artifacts::open_asset(
         &directory.join("model.gguf"),
@@ -176,6 +195,12 @@ pub fn install(
         .prefix(".install-")
         .tempdir_in(parent)
         .map_err(|_| IO)?;
+    // Establish recoverable ownership before writing any large artifact.
+    std::fs::write(
+        staging.path().join("manifest.json"),
+        manifest_value(&locked, &backend).to_string(),
+    )
+    .map_err(|_| IO)?;
     let archive = staging.path().join("runtime.zip");
     artifacts::obtain(
         &archive,
@@ -201,11 +226,6 @@ pub fn install(
         include_bytes!("LICENSE-Qwen.txt"),
     )
     .map_err(|_| IO)?;
-    std::fs::write(
-        staging.path().join("manifest.json"),
-        manifest_value(&locked, &backend).to_string(),
-    )
-    .map_err(|_| IO)?;
     artifacts::cancelled(cancel)?;
     std::fs::rename(staging.path(), &target).map_err(|_| IO)?;
     let mut result = status(root, id)?;
@@ -220,7 +240,11 @@ pub fn remove(root: &Path, id: &str) -> Result<Value, String> {
     if !directory.exists() {
         return Ok(json!({"modelId":id,"removed":false}));
     }
-    let (_, backend) = manifest(&directory, true)?;
+    let (_, backend) = manifest(&directory, true, false)?;
+    remove_owned(&directory, &backend)?;
+    Ok(json!({"modelId":id,"removed":true}))
+}
+fn remove_owned(directory: &Path, backend: &artifacts::Backend) -> Result<(), String> {
     // Exact owned files only, no recursive traversal of user-selected paths.
     for asset in &backend.files {
         let file = directory.join("runtime").join(&asset.name);
@@ -232,6 +256,7 @@ pub fn remove(root: &Path, id: &str) -> Result<Value, String> {
         std::fs::remove_dir(directory.join("runtime")).map_err(|_| IO)?;
     }
     for name in [
+        "runtime.zip",
         "model.gguf",
         "LICENSE-llama.txt",
         "LICENSE-Qwen.txt",
@@ -243,5 +268,61 @@ pub fn remove(root: &Path, id: &str) -> Result<Value, String> {
         }
     }
     std::fs::remove_dir(directory).map_err(|_| IO)?;
-    Ok(json!({"modelId":id,"removed":true}))
+    Ok(())
+}
+fn stages(root: &Path) -> Result<Vec<PathBuf>, String> {
+    let target = path(root, MODEL_ID)?;
+    std::fs::read_dir(target.parent().ok_or(INVALID)?)
+        .map_err(|_| IO)?
+        .filter_map(|entry| match entry {
+            Ok(entry) if entry.file_name().to_string_lossy().starts_with(".install-") => {
+                Some(Ok(entry.path()))
+            }
+            Ok(_) => None,
+            Err(_) => Some(Err(IO.into())),
+        })
+        .collect()
+}
+fn owned_bytes(directory: &Path, backend: &artifacts::Backend) -> Result<u64, String> {
+    let files = [
+        "runtime.zip",
+        "manifest.json",
+        "model.gguf",
+        "LICENSE-llama.txt",
+        "LICENSE-Qwen.txt",
+    ]
+    .into_iter()
+    .map(|n| directory.join(n))
+    .chain(
+        backend
+            .files
+            .iter()
+            .map(|a| directory.join("runtime").join(&a.name)),
+    );
+    let mut total = 0;
+    for file in files {
+        if file.exists() {
+            total += std::fs::metadata(file).map_err(|_| IO)?.len();
+        }
+    }
+    Ok(total)
+}
+pub fn cleanup(root: &Path, id: &str) -> Result<Value, String> {
+    path(root, id)?;
+    let _guard = guard(root)?;
+    // Validate the whole set before deleting. Unknown files are never guessed to be owned.
+    let stages = stages(root)?
+        .into_iter()
+        .map(|p| {
+            let (_, b) = manifest(&p, true, true)?;
+            let bytes = owned_bytes(&p, &b)?;
+            Ok((p, b, bytes))
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    let mut removed_bytes = 0;
+    for (path, backend, bytes) in &stages {
+        remove_owned(path, backend)?;
+        removed_bytes += bytes;
+    }
+    Ok(json!({"modelId":id,"cleanedInstalls":stages.len(),"removedBytes":removed_bytes}))
 }

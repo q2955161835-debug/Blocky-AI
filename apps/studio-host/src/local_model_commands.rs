@@ -2,6 +2,30 @@ use blocky_studio::{local_models, provider::ProviderHost};
 use serde_json::Value;
 use tauri::Manager;
 #[tauri::command]
+pub async fn provider_local_model_cleanup(
+    window: tauri::WebviewWindow,
+    model_id: String,
+) -> Result<Value, String> {
+    crate::window_lifecycle::visible(&window)?;
+    let root = blocky_studio::profile::for_app(window.app_handle())?;
+    if model_id != local_models::MODEL_ID {
+        return Err("BLK-LOCAL-MODEL-INVALID".into());
+    }
+    if !blocky_studio::native_confirmation::yes_no(
+        &window,
+        "清理未完成安装",
+        "删除 Blocky 托管模型未完成安装的临时文件。未知文件会保留。",
+    )
+    .await
+    {
+        return Err("BLK-PERM-001".into());
+    }
+    crate::window_lifecycle::visible(&window)?;
+    tauri::async_runtime::spawn_blocking(move || local_models::cleanup(&root, &model_id))
+        .await
+        .map_err(|_| "BLK-PROVIDER-STATE".to_string())?
+}
+#[tauri::command]
 pub fn provider_local_model_catalog(window: tauri::WebviewWindow) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
     local_models::catalog()

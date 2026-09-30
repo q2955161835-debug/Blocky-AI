@@ -15,6 +15,9 @@ type Status = {
   busy: boolean;
   installedBytes?: number;
   backend?: string;
+  incompleteInstalls?: number;
+  incompleteBytes?: number;
+  unrecognizedInstalls?: number;
 };
 type Catalog = {
   backends: { id: string; downloadBytes: number }[];
@@ -35,6 +38,13 @@ function readStatus(value: unknown, id: string): Status {
       (typeof value.installedBytes !== "number" ||
         !Number.isSafeInteger(value.installedBytes) ||
         value.installedBytes < 0)) ||
+    ["incompleteInstalls", "incompleteBytes", "unrecognizedInstalls"].some(
+      (key) =>
+        value[key] !== undefined &&
+        (typeof value[key] !== "number" ||
+          !Number.isSafeInteger(value[key]) ||
+          Number(value[key]) < 0),
+    ) ||
     (value.backend !== undefined &&
       !["cpu", "vulkan"].includes(String(value.backend)))
   )
@@ -188,7 +198,7 @@ export function ManagedModelPanel({
     };
   }, [modelId, call]);
   const execute = async (
-    action: "refresh" | "install" | "verify" | "remove",
+    action: "refresh" | "install" | "verify" | "remove" | "cleanup",
     importFiles = false,
   ) => {
     if (task.current) return;
@@ -224,7 +234,7 @@ export function ManagedModelPanel({
           requestId,
         });
       else {
-        await call("provider_local_model_remove", { modelId });
+        await call(`provider_local_model_${action}`, { modelId });
         value = await call("provider_local_model_status", { modelId });
       }
       if (current !== epoch.current) return;
@@ -246,7 +256,9 @@ export function ManagedModelPanel({
             ? "校验完成"
             : action === "remove"
               ? "卸载完成"
-              : "状态已刷新",
+              : action === "cleanup"
+                ? "清理完成"
+                : "状态已刷新",
       );
     } catch (e) {
       if (current === epoch.current) setError(safeError(e));
@@ -350,6 +362,15 @@ export function ManagedModelPanel({
         </p>
       )}
       <small>按请求加载，完成后退出。</small>
+      {!!status?.incompleteInstalls && (
+        <p>
+          未完成安装：{status.incompleteInstalls} 项 · 已识别临时文件{" "}
+          {mib(status.incompleteBytes ?? 0)}
+          {status.unrecognizedInstalls
+            ? ` · ${status.unrecognizedInstalls} 项内容待核对`
+            : ""}
+        </p>
+      )}
       {status?.installed && status.backend !== backend && (
         <p role="alert">
           安装后端与配置不一致。更换后端前停止运行并卸载原安装。
@@ -383,6 +404,11 @@ export function ManagedModelPanel({
         >
           卸载模型
         </button>
+        {!!status?.incompleteInstalls && (
+          <button disabled={locked} onClick={() => void execute("cleanup")}>
+            清理未完成安装
+          </button>
+        )}
         {working && active.current && (
           <button
             disabled={cancelling.current}

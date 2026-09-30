@@ -168,6 +168,7 @@ fn main() {
             local_model_commands::provider_local_model_install,
             local_model_commands::provider_local_model_verify,
             local_model_commands::provider_local_model_remove,
+            local_model_commands::provider_local_model_cleanup,
             provider_commands::provider_call,
             provider_commands::provider_cancel,
             #[cfg(feature = "wdio")]

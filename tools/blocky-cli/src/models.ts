@@ -12,7 +12,7 @@ import {
 
 export const modelHelp = [
   "model catalog --json",
-  "model status|verify|remove <model-id> --json",
+  "model status|verify|remove|cleanup <model-id> --json",
   "model install <model-id> --backend <cpu|vulkan> (--download | --model-file <gguf> --runtime-file <zip>) [--request-id <id>] --json",
   "model preflight --request <request.json> --json",
   "model generate --request <request.json> --approve <sha256> --json",
@@ -91,7 +91,7 @@ export async function modelCommand(args: Args, signal: AbortSignal) {
       ),
     };
   }
-  if (!["status", "verify", "remove", "install"].includes(action))
+  if (!["status", "verify", "remove", "cleanup", "install"].includes(action))
     throw invalid("模型命令不存在。");
   allow(
     args,

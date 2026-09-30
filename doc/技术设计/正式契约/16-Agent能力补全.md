@@ -22,7 +22,9 @@ v2 响应包含实际 model/requestId、finishReason、text/toolCalls 和 usageS
 
 推理使用带随机临时认证的 loopback llama-server。进程在暂停状态加入 Windows Job 后启动，仅传入必要环境；读取的模型与运行库保持禁止写入/删除的文件句柄。预算覆盖上下文、线程、进程内存、请求截止时间；Vulkan 必须指定设备。每次请求结束、失败或取消后终止 Job、等待进程、关闭端口并回收输出读取线程。当前不保持后台常驻模型；忙碌时状态不把 loaded 伪报为 false。进程内存限制不等同驱动级显存硬上限。
 
-共享 CLI 为 `model catalog/status/install/verify/remove/preflight/generate`，通过 `commands` 和 `schema` 发现请求结构及恢复入口。下载必须显式 `--download`，本地导入须同时给出模型和运行库文件。桌面导入由 Host 原生选择文件，WebView 不接触文件路径；安装/卸载在 Host 显示操作确认，验证和安装可取消。
+共享 CLI 为 `model catalog/status/install/verify/remove/cleanup/preflight/generate`，通过 `commands` 和 `schema` 发现请求结构及恢复入口。下载必须显式 `--download`，本地导入须同时给出模型和运行库文件。桌面导入由 Host 原生选择文件，WebView 不接触文件路径；安装/卸载/临时工件清理在 Host 显示操作确认，验证和安装可取消。
+
+CLI 安装使用独立的单次行协议。取消或 stdin 断开通知安装器回收临时目录，客户端等待进程退出后才确认取消；5 秒仍未退出则强制停止并报告中断，要求查询状态。安装开始即写入精确归属清单，`status` 显示未完成安装数量和已识别字节数；`cleanup` 在共用锁内先检查全部目录，只删除已知清单和白名单文件，未知文件、链接和旧版无清单现场一律保留。
 
 ## 构建助手接入
 

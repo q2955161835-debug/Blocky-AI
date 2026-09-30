@@ -5,8 +5,8 @@
   "files": [
     {
       "name": "builder.mjs",
-      "bytes": 594620,
-      "sha256": "23de8e4271ae72b1e47fa5e91287704b9304c93c1c5833ebad07090922488dbf"
+      "bytes": 594862,
+      "sha256": "f31330dac48e503496534e4d3a4414985302b89e9c086043e3d6c7641d4baa81"
     },
     {
       "name": "node.exe",

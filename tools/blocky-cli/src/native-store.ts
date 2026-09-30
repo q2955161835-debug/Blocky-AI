@@ -8,6 +8,7 @@ import { canonicalJson } from "@blocky/language-schema";
 import { CliError } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { KnowledgeTransport } from "./knowledge-transport";
+import { installModel } from "./model-install-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = /\/(?:main|runtime-worker)\.mjs$/.test(import.meta.url)
   ? resolve(
@@ -124,9 +125,11 @@ export async function nativeUserOperation(
   // The session is privately owned by this CLI; the next request starts afresh.
   if (operation === "knowledge-cancel") knowledgeTransport.cancel();
   const reply = (
-    operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
-      ? await knowledgeTransport.request({ operation, ...fields })
-      : await request({ operation, ...fields }, signal)
+    operation === "provider-local-model-install"
+      ? await installModel(helper, { operation, ...fields }, signal)
+      : operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
+        ? await knowledgeTransport.request({ operation, ...fields })
+        : await request({ operation, ...fields }, signal)
   ) as Reply;
   if (
     reply.schemaVersion !== "blocky.project-io/v1alpha1" ||

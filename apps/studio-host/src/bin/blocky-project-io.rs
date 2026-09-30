@@ -294,6 +294,7 @@ fn execute_value(value: Value) -> Value {
 }
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("--blocky-model-install") => std::process::exit(blocky_studio::local_models::install_session::main()),
         Some("--blocky-workflow-session") => std::process::exit(blocky_studio::workflow::session::main()),
         Some("--blocky-runtime-session") => std::process::exit(blocky_studio::workflow::managed::main()),
         Some("--blocky-rpa-worker") => std::process::exit(blocky_studio::rpa::worker_main()),

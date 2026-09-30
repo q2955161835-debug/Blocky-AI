@@ -46,7 +46,7 @@ beforeEach(() => {
   mocks.native.mockResolvedValue({ installed: false });
   mocks.read.mockResolvedValue(request);
 });
-it.each(["catalog", "status", "verify", "remove"])(
+it.each(["catalog", "status", "verify", "remove", "cleanup"])(
   "dispatches model %s to the owned Host",
   async (action) => {
     const args = parse([

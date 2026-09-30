@@ -1,6 +1,7 @@
 mod artifacts;
 mod config;
 mod download;
+pub mod install_session;
 #[cfg(windows)]
 mod process;
 mod store;
@@ -14,7 +15,7 @@ use std::{
     path::{Path, PathBuf},
     sync::atomic::{AtomicBool, Ordering},
 };
-pub use store::{install, remove, status, verify};
+pub use store::{cleanup, install, remove, status, verify};
 #[cfg(not(windows))]
 pub(crate) use unsupported::LocalSession;
 pub const MODEL_ID: &str = "qwen3-0.6b-q8-v1";
@@ -70,6 +71,11 @@ pub fn dispatch(
             if r.backend.is_none() && r.source.is_none() && r.request_id.is_none() =>
         {
             remove(&root, &id)
+        }
+        "provider-local-model-cleanup"
+            if r.backend.is_none() && r.source.is_none() && r.request_id.is_none() =>
+        {
+            cleanup(&root, &id)
         }
         "provider-local-model-verify"
             if r.backend.is_none() && r.source.is_none() && r.request_id.is_none() =>

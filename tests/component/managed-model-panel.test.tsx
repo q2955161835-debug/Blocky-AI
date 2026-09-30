@@ -39,6 +39,30 @@ beforeEach(() => {
   );
 });
 afterEach(cleanup);
+it("shows interrupted installs and refreshes after explicit cleanup", async () => {
+  let cleaned = false;
+  io.invoke.mockImplementation(async (command: string) => {
+    if (command === "provider_local_model_catalog") return catalog;
+    if (command === "provider_local_model_cleanup") {
+      cleaned = true;
+      return { cleanedInstalls: 1 };
+    }
+    return {
+      ...status,
+      incompleteInstalls: cleaned ? 0 : 1,
+      incompleteBytes: cleaned ? 0 : 1048576,
+    };
+  });
+  render(<Panel />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "清理未完成安装" }),
+  );
+  await screen.findByText("清理完成");
+  expect(screen.queryByRole("button", { name: "清理未完成安装" })).toBeNull();
+  expect(io.invoke).toHaveBeenCalledWith("provider_local_model_cleanup", {
+    modelId: id,
+  });
+});
 function Panel() {
   const [value, change] = useState<Resource["definition"]>({
     backend: "cpu",

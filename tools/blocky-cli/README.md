@@ -39,7 +39,7 @@ $LASTEXITCODE
 
 ## 阶段 4 Agent 运行
 
-模型入口使用同一原生 Host：`model catalog` 返回可安装的锁定型号、后端、尺寸与许可证；`model status|verify|remove <model-id>` 管理本机托管工件。安装必须显式选择来源，例如 `model install qwen3-0.6b-q8-v1 --backend cpu --download --json`，或用成对的 `--model-file <gguf> --runtime-file <zip>` 离线安装；两种来源互斥。文件路径只发送给 Host，结果返回安全摘要。运行占用时停止相关运行并等待结算，再验证或移除；不会接管已有 Ollama 服务。
+模型入口使用同一原生 Host：`model catalog` 返回可安装的锁定型号、后端、尺寸与许可证；`model status|verify|remove|cleanup <model-id>` 管理本机托管工件。安装必须显式选择来源，例如 `model install qwen3-0.6b-q8-v1 --backend cpu --download --json`，或用成对的 `--model-file <gguf> --runtime-file <zip>` 离线安装；两种来源互斥。取消会等待安装器清理并退出。`status` 显示未完成安装数量和已识别临时文件字节数，`cleanup` 只删除通过归属校验的临时工件；未知文件会阻止清理。文件路径只发送给 Host，结果返回安全摘要。运行占用时停止相关运行并等待结算，再验证或移除；不会接管已有 Ollama 服务。
 
 `model preflight --request <request.json> --json` 校验 `blocky.model-request/v2` 请求并返回本次批准摘要；核对后用 `model generate --request <request.json> --approve <sha256> --json` 调用。请求只使用 projectId/resourceId 引用本机模型配置，不接受端点或凭据。消息允许 `toolCalls`/`toolCallId`，工具与输出 Schema 采用有界结构；`toolChoice` 可为 auto、required、none。`schema list/show` 可发现请求与 `blocky.model-response/v2` 响应格式。
 
