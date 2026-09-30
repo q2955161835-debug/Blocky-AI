@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Resource } from "@blocky/language-schema";
 import {
   toolNative,
@@ -74,6 +74,18 @@ export function ToolOperationsPanel({
   const activeRequest = useRef<ToolRequest | undefined>(undefined);
   const busyRef = useRef(false);
   const mounted = useRef(true);
+  const cancelRequested = useRef(false);
+  const cancelPromise = useRef<Promise<void> | undefined>(undefined);
+  const executionPhase = useRef<"idle" | "preflight" | "call" | "settling">("idle");
+
+  const sendCancel = useCallback((requestId: string) => {
+    cancelRequested.current = true;
+    const pending = toolNative.cancel(requestId).catch((error: unknown) => {
+      if (mounted.current) setMessage(errorText(error));
+    });
+    cancelPromise.current = pending;
+    return pending;
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
@@ -94,9 +106,16 @@ export function ToolOperationsPanel({
     return () => {
       current = false;
       mounted.current = false;
-      onBusyChange?.(false);
+      const request = activeRequest.current;
+      if (
+        request &&
+        busyRef.current &&
+        (executionPhase.current === "preflight" || executionPhase.current === "call") &&
+        !cancelRequested.current
+      )
+        void sendCancel(request.requestId);
     };
-  }, [projectId, resource.resourceId, onBusyChange]);
+  }, [projectId, resource.resourceId, onBusyChange, sendCancel]);
 
   const refreshStatus = async () => {
     try {
@@ -125,10 +144,12 @@ export function ToolOperationsPanel({
   const finishBusy = () => {
     busyRef.current = false;
     activeRequest.current = undefined;
-    if (mounted.current) {
-      setBusy(false);
-      onBusyChange?.(false);
-    }
+    executionPhase.current = "idle";
+    cancelRequested.current = false;
+    cancelPromise.current = undefined;
+    if (mounted.current) setBusy(false);
+    // The parent must remain busy after this panel unmounts until the host request settles.
+    onBusyChange?.(false);
   };
 
   const execute = async (action: ToolAction, input: unknown) => {
@@ -143,6 +164,9 @@ export function ToolOperationsPanel({
       input,
       timeoutMs: timeout(resource),
     };
+    cancelRequested.current = false;
+    cancelPromise.current = undefined;
+    executionPhase.current = "preflight";
     activeRequest.current = request;
     beginBusy();
     setMessage("正在核对资源并准备本机请求。");
@@ -155,10 +179,16 @@ export function ToolOperationsPanel({
     try {
       const currentPreview = await toolNative.preflight(request);
       if (mounted.current) setPreview(currentPreview);
+      if (cancelRequested.current) {
+        if (mounted.current) setMessage("预检期间已停止；不会发送工具调用。");
+        return;
+      }
       if (currentPreview.unresolvedCalls > 0)
         throw Error("BLK-TOOL-RECOVERY-REQUIRED");
       if (mounted.current) setMessage("等待本机确认。");
+      executionPhase.current = "call";
       const actual = await toolNative.call(request);
+      executionPhase.current = "settling";
       if (mounted.current) {
         setResult(actual);
         if (action === "discover") setResources(mcpResources(actual));
@@ -167,6 +197,8 @@ export function ToolOperationsPanel({
     } catch (error) {
       if (mounted.current) setMessage(errorText(error));
     } finally {
+      executionPhase.current = "settling";
+      await cancelPromise.current;
       await refreshStatus();
       finishBusy();
     }
@@ -192,13 +224,14 @@ export function ToolOperationsPanel({
   };
   const stop = async () => {
     const request = activeRequest.current;
-    if (!request || !busyRef.current) return;
+    if (
+      !request ||
+      !busyRef.current ||
+      (executionPhase.current !== "preflight" && executionPhase.current !== "call") ||
+      cancelRequested.current
+    ) return;
     setMessage("已发送停止请求；等待本机完成结算和状态读取。");
-    try {
-      await toolNative.cancel(request.requestId);
-    } catch (error) {
-      if (mounted.current) setMessage(errorText(error));
-    }
+    await sendCancel(request.requestId);
   };
   const reconcile = async (receipt: ToolReceipt, outcome: ToolReconcileOutcome) => {
     if (busyRef.current || receipt.status !== "unknown") return;
@@ -266,7 +299,7 @@ export function ToolOperationsPanel({
           <button disabled={!selectedUriRef} onClick={readSelectedResource}>读取所选资料</button>
         </fieldset>
       )}
-      {busy && activeRequest.current && (
+      {busy && activeRequest.current && executionPhase.current !== "settling" && (
         <button onClick={() => void stop()}>停止工具请求</button>
       )}
       {preview && (
