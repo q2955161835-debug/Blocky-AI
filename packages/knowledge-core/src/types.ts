@@ -4,6 +4,18 @@ export type Locator = {
   lineEnd: number;
   url?: string;
   commit?: string;
+  page?: number;
+  paragraph?: number;
+  sheet?: string;
+  cellRange?: string;
+  row?: number;
+  region?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    unit: "pixel";
+  };
 };
 export type DocumentInput = {
   documentId: string;

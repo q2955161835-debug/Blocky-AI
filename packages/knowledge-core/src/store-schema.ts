@@ -13,6 +13,21 @@ const locator = z
     lineEnd: z.number().int().positive(),
     url: z.string().max(8192).optional(),
     commit: z.string().max(100).optional(),
+    page: z.number().int().min(1).max(1000000).optional(),
+    paragraph: z.number().int().min(1).max(1000000).optional(),
+    row: z.number().int().min(1).max(1000000).optional(),
+    sheet: z.string().min(1).max(256).optional(),
+    cellRange: z.string().min(1).max(256).optional(),
+    region: z
+      .object({
+        x: z.number().min(0).max(100000),
+        y: z.number().min(0).max(100000),
+        width: z.number().positive().max(100000),
+        height: z.number().positive().max(100000),
+        unit: z.literal("pixel"),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 const chunk = z

@@ -31,8 +31,10 @@ import {
 } from "./workflow-schema";
 import { modelRequestSchema, modelResponseSchema } from "./model-schema";
 import { toolRequestSchema } from "./tool-schema";
+import { retrievalOptionsSchema } from "@blocky/knowledge-core";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.knowledge-retrieval/v1": retrievalOptionsSchema,
   "blocky.tool-request/v2": toolRequestSchema,
   "blocky.model-request/v2": modelRequestSchema,
   "blocky.model-response/v2": modelResponseSchema,

@@ -155,6 +155,7 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
             strategy: enumeration("keyword", "vector", "hybrid"),
             topK: number(1, 20),
             rerankResourceId: id,
+            rerankModelId: enumeration("ms-marco-minilm-l6-v2-int8-v1"),
             maxCandidates: number(1, 200),
             minScore: number(0, 1, false),
             contextBudget: number(64, 64000),

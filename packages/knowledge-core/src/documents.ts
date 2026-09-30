@@ -1,7 +1,25 @@
 import { parse, type DefaultTreeAdapterMap } from "parse5";
 import { digest } from "@blocky/language-schema";
 import type { DocumentInput, ParsedDocument, Chunk } from "./types";
+const extractedFormats = new Set([
+  "pdf",
+  "docx",
+  "xlsx",
+  "csv",
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
+]);
 const formats = new Set([
+  "pdf",
+  "docx",
+  "xlsx",
+  "csv",
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
   "text",
   "txt",
   "markdown",
@@ -32,6 +50,8 @@ const formats = new Set([
 export function parseDocument(input: DocumentInput): ParsedDocument {
   if (
     !formats.has(input.format.toLowerCase()) ||
+    (extractedFormats.has(input.format.toLowerCase()) &&
+      input.metadata.parser !== "blocky.document-result/v1") ||
     input.text.includes("\0") ||
     new TextEncoder().encode(input.text).length > 2 * 1024 * 1024
   )

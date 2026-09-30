@@ -148,7 +148,7 @@ impl KnowledgeStore {
                     doc.text=String::from_utf8(read_bounded(&path.join("objects").join(format!("{}.txt",doc.revision)),MAX_DOCUMENT)?).map_err(|_|INVALID)?;
                     if digest(doc.text.as_bytes())!=doc.revision{return Err("BLK-KNOW-CORRUPT".into());}Some(doc)
                 }else{None};
-                let mut snapshot = ingest::scan(source,previous.as_ref())?;
+                let mut snapshot = ingest::scan(source,previous.as_ref(), &self.root)?;
                 let objects = path.join("objects");
                 fs::create_dir_all(&objects).map_err(|_| IO)?;
                 ingest::no_links(&objects)?;
@@ -302,7 +302,7 @@ fn remove_snapshot(path: &Path, id: &str) -> Result<(), String> {
     }
     Ok(())
 }
-fn read_bounded(path: &Path, max: usize) -> Result<Vec<u8>, String> {
+pub(super) fn read_bounded(path: &Path, max: usize) -> Result<Vec<u8>, String> {
     ingest::no_links(path)?;
     let file = fs::File::open(path).map_err(|_| IO)?;
     let mut bytes = Vec::new();

@@ -4,7 +4,7 @@ use fastembed::{
     InitOptionsUserDefined, Pooling, QuantizationMode, TextEmbedding, TokenizerFiles,
     UserDefinedEmbeddingModel,
 };
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::{
     collections::VecDeque,
     fs,
@@ -118,7 +118,7 @@ pub fn verify_directory(root: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-fn metadata() -> Value {
+pub fn metadata() -> Value {
     json!({"modelId":MODEL_ID,"dimension":DIM,"modelRevision":MODEL_REV,"modelSha256":MODEL_SHA,"backend":"onnx-cpu","externalApi":false,"windowPolicy":WINDOW_POLICY,"maxTokens":512,"microbatchSize":1,"intraThreads":4,"signature":signature()})
 }
 pub fn status(id: &str) -> Result<Value, String> {
@@ -215,45 +215,9 @@ fn windows(
     text: &str,
     prefix: &str,
 ) -> Result<Vec<(String, usize)>, String> {
-    let encoded = tokenizer
-        .encode(text, false)
-        .map_err(|_| "BLK-EMBED-TOKENIZE")?;
-    let offsets = encoded.get_offsets();
-    if offsets.is_empty() {
-        return Err(INVALID.into());
-    }
-    let mut result = Vec::new();
-    let mut token_start = 0;
-    let mut byte_start = 0;
-    while token_start < offsets.len() {
-        cancel::check()?;
-        let mut token_end = (token_start + 500).min(offsets.len());
-        loop {
-            let byte_end = if token_end == offsets.len() {
-                text.len()
-            } else {
-                offsets[token_end - 1].1
-            };
-            let fragment = text.get(byte_start..byte_end).ok_or("BLK-EMBED-TOKENIZE")?;
-            let input = format!("{prefix}: {fragment}");
-            let length = tokenizer
-                .encode(input.as_str(), true)
-                .map_err(|_| "BLK-EMBED-TOKENIZE")?
-                .len();
-            if length <= 512 && byte_end > byte_start {
-                result.push((input, token_end - token_start));
-                byte_start = byte_end;
-                token_start = token_end;
-                break;
-            }
-            if token_end <= token_start + 1 {
-                return Err("BLK-EMBED-TOKENIZE".into());
-            }
-            token_end -= 1;
-        }
-    }
-    Ok(result)
+    super::model_windows::windows(tokenizer, text, Some(prefix), 500, 512)
 }
+
 pub fn infer(text: &str, query: bool) -> Result<Vec<f32>, String> {
     if text.trim().is_empty() || text.len() > 65536 {
         return Err(INVALID.into());

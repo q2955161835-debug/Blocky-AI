@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseDocument, chunkDocument } from "../src/documents";
+import { formatLocator } from "../src/retrieval";
 const document = (text: string, format = "markdown") => ({
   documentId: "doc-water",
   title: "水循环",
@@ -10,6 +11,30 @@ const document = (text: string, format = "markdown") => ({
   metadata: {},
 });
 describe("real document parsing", () => {
+  it("preserves native extracted page and cell locations through chunking and citations", async () => {
+    const source = {
+      ...document("Plant leaves absorb light.\nRoots absorb water.", "pdf"),
+      locator: { path: "plants.pdf", lineStart: 1, lineEnd: 2, page: 3 },
+      metadata: { parser: "blocky.document-result/v1" },
+    };
+    const chunks = await chunkDocument("source-a", parseDocument(source), {
+      size: 35,
+      overlap: 0,
+    });
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks.every((c) => c.locator.page === 3)).toBe(true);
+    expect(formatLocator(chunks[0].locator)).toContain("第 3 页");
+    expect(
+      formatLocator({
+        path: "table.xlsx",
+        lineStart: 1,
+        lineEnd: 1,
+        sheet: "植物",
+        cellRange: "B2:C2",
+        row: 2,
+      }),
+    ).toContain("植物 · B2:C2 · 第 2 行");
+  });
   it("keeps original line positions while removing HTML executable and navigation content", () => {
     const parsed = parseDocument(
       document(

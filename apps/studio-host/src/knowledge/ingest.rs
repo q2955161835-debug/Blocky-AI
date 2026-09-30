@@ -65,7 +65,32 @@ pub fn grant(kind: &str, location: &str, reference: Option<&str>) -> Result<Sour
         metadata,
     })
 }
-pub fn scan(source: &Source, previous: Option<&Document>) -> Result<Snapshot, String> {
+pub fn scan(
+    source: &Source,
+    previous: Option<&Document>,
+    parser_root: &Path,
+) -> Result<Snapshot, String> {
+    #[cfg(windows)]
+    let mut parser = None;
+    let result = scan_inner(
+        source,
+        previous,
+        parser_root,
+        #[cfg(windows)]
+        &mut parser,
+    );
+    #[cfg(windows)]
+    if let Some(mut parser) = parser {
+        parser.close()?;
+    }
+    result
+}
+fn scan_inner(
+    source: &Source,
+    previous: Option<&Document>,
+    parser_root: &Path,
+    #[cfg(windows)] parser: &mut Option<super::document_worker::Parser>,
+) -> Result<Snapshot, String> {
     let mut documents = Vec::new();
     let mut excluded = Vec::new();
     let mut total = 0;
@@ -142,19 +167,43 @@ pub fn scan(source: &Source, previous: Option<&Document>) -> Result<Snapshot, St
                 }
                 let file = options.open(&path).map_err(|_| IO)?;
                 verify_handle(&file, root)?;
-                if file.metadata().map_err(|_| IO)?.len() > MAX_DOCUMENT as u64 {
+                let parsed_format = super::document_result::format(&relative);
+                let limit = if parsed_format.is_some() {
+                    super::document_result::INPUT_LIMIT
+                } else {
+                    MAX_DOCUMENT
+                };
+                if file.metadata().map_err(|_| IO)?.len() > limit as u64 {
                     excluded.push(json!({"path":relative,"reason":"document-too-large"}));
                     continue;
                 }
-                file.take(MAX_DOCUMENT as u64 + 1)
+                file.take(limit as u64 + 1)
                     .read_to_end(&mut bytes)
                     .map_err(|_| IO)?;
-                if bytes.len() > MAX_DOCUMENT {
+                if bytes.len() > limit {
                     return Err(LIMIT.into());
                 }
                 total += bytes.len();
                 if total > MAX_CORPUS {
                     return Err(LIMIT.into());
+                }
+                if let Some(extension) = parsed_format {
+                    #[cfg(windows)]
+                    {
+                        if parser.is_none() {
+                            *parser = Some(super::document_worker::Parser::new(parser_root)?);
+                        }
+                        let parsed = parser.as_mut().ok_or(INVALID)?.parse(&bytes, &extension)?;
+                        documents.extend(super::document_result::documents(
+                            source, &relative, &bytes, &parsed,
+                        )?);
+                    }
+                    #[cfg(not(windows))]
+                    {
+                        let _ = (extension, parser_root);
+                        return Err("BLK-DOCUMENT-PLATFORM".into());
+                    }
+                    continue;
                 }
                 match make_document(source, &relative, &bytes) {
                     Ok(doc) => documents.push(doc),
@@ -235,7 +284,7 @@ pub fn excluded_path(relative: &str, directory: bool) -> Option<&'static str> {
     if name.ends_with(".min.js") || name.ends_with(".map") {
         return Some("generated-file");
     }
-    if format(relative).is_none() {
+    if format(relative).is_none() && super::document_result::format(relative).is_none() {
         return Some("unsupported-format");
     }
     None

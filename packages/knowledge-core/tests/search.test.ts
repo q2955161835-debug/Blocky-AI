@@ -42,7 +42,9 @@ async function fixture() {
     heads = 0,
     denyAt = Infinity,
     vectorFailure = true;
-  const call = async (op: string) => {
+  let rerankForged = false;
+  let rerankInput: Record<string, unknown> | undefined;
+  const call = async (op: string, fields: Record<string, unknown> = {}) => {
     if (op === "knowledge-sources") {
       if (++heads === denyAt) {
         generation++;
@@ -72,6 +74,18 @@ async function fixture() {
       };
     }
     if (op === "knowledge-read-document") return doc;
+    if (op === "knowledge-rerank") {
+      rerankInput = fields;
+      return {
+        modelId: "ms-marco-minilm-l6-v2-int8-v1",
+        indexRevision: revision,
+        generation,
+        modelSha256: "b".repeat(64),
+        hits: [
+          { chunkId: rerankForged ? "foreign" : chunks[0].chunkId, score: -2 },
+        ],
+      };
+    }
     throw Error(op);
   };
   return {
@@ -86,8 +100,32 @@ async function fixture() {
     allowVector() {
       vectorFailure = false;
     },
+    forgeRerank() {
+      rerankForged = true;
+    },
+    get rerankInput() {
+      return rerankInput;
+    },
   };
 }
+it("uses neural logits only for ordering authorized candidates and rechecks the source epoch", async () => {
+  const f = await fixture();
+  const options = { rerankModelId: "ms-marco-minilm-l6-v2-int8-v1" };
+  const result = await f.search.query("cache permissions", options);
+  expect(result.reranking?.scoreMeaning).toBe("sigmoid-logit-not-probability");
+  expect(result.citations[0].score).toBeCloseTo(1 / (1 + Math.exp(2)));
+  expect(f.rerankInput?.chunkIds).toEqual([f.chunks[0].chunkId]);
+  expect(f.rerankInput).not.toHaveProperty("texts");
+  f.forgeRerank();
+  await expect(f.search.query("cache permissions", options)).rejects.toThrow(
+    "BLK-KNOWLEDGE-RERANK",
+  );
+  const revoked = await fixture();
+  revoked.denyOnFinal();
+  await expect(
+    revoked.search.query("cache permissions", options),
+  ).rejects.toThrow("BLK-KNOWLEDGE-CONFLICT");
+});
 it("caches only a matching published version and rejects revocation during query", async () => {
   const f = await fixture();
   const first = await f.search.query("cache permissions");

@@ -1,0 +1,26 @@
+{
+  "name": "@blocky/document-parser",
+  "version": "0.7.1",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "scripts": {
+    "test": "node --test ../../tests/document-parser/*.test.mjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "0.1.88",
+    "csv-parse": "6.1.0",
+    "exceljs": "4.4.0",
+    "mammoth": "1.11.0",
+    "pdfjs-dist": "5.4.624",
+    "tesseract.js": "6.0.1",
+    "tesseract.js-core": "6.1.2",
+    "yauzl": "3.2.0"
+  },
+  "devDependencies": {
+    "jszip": "3.10.1",
+    "pdf-lib": "1.17.1",
+    "@tesseract.js-data/eng": "1.0.0",
+    "@tesseract.js-data/chi_sim": "1.0.0"
+  }
+}

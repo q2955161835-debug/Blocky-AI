@@ -9,6 +9,7 @@ const config = z
     minScore: z.number().min(0).max(1).default(0),
     contextBudget: z.number().int().min(64).max(64000).default(4000),
     rerank: z.boolean().default(true),
+    rerankModelId: z.literal("ms-marco-minilm-l6-v2-int8-v1").optional(),
     timeoutMs: z.number().int().min(50).max(120000).default(10000),
     fallback: z.enum(["error", "keyword"]).default("error"),
     modelId: z
@@ -19,6 +20,7 @@ const config = z
   })
   .strict()
   .refine((c) => c.maxCandidates >= c.topK);
+export const retrievalOptionsSchema = config;
 export type RetrievalOptions = z.infer<typeof config>;
 export function retrievalOptions(input: unknown = {}): RetrievalOptions {
   const result = config.safeParse(input);
@@ -98,7 +100,7 @@ export function selectEvidence(
     if (citations.length >= options.topK) break;
     const chunk = byId.get(hit.chunkId)!;
     if (seen.has(chunk.digest)) continue;
-    const title = `${chunk.title} (${chunk.locator.path}:${chunk.locator.lineStart}–${chunk.locator.lineEnd})`;
+    const title = `${chunk.title} (${formatLocator(chunk.locator)})`;
     const overhead = bytes(title) + bytes(chunk.chunkId) + 8;
     const remaining = options.contextBudget - contextBytes - overhead;
     if (remaining < 16) continue;
@@ -120,4 +122,19 @@ export function selectEvidence(
     seen.add(chunk.digest);
   }
   return { citations, contextBytes, ranked };
+}
+
+export function formatLocator(locator: Locator): string {
+  const parts = [locator.path];
+  if (locator.page !== undefined) parts.push(`第 ${locator.page} 页`);
+  if (locator.paragraph !== undefined) parts.push(`第 ${locator.paragraph} 段`);
+  if (locator.sheet !== undefined) parts.push(locator.sheet);
+  if (locator.cellRange !== undefined) parts.push(locator.cellRange);
+  if (locator.row !== undefined) parts.push(`第 ${locator.row} 行`);
+  if (locator.region)
+    parts.push(
+      `区域 ${locator.region.x},${locator.region.y} · ${locator.region.width}×${locator.region.height} px`,
+    );
+  parts.push(`行 ${locator.lineStart}–${locator.lineEnd}`);
+  return parts.join(" · ");
 }

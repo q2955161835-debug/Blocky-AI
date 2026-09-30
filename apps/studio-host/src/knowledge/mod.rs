@@ -1,6 +1,9 @@
 //! Native, project-scoped knowledge storage. Paths and grants never leave this module.
 mod dns;
 mod ingest;
+mod document_result;
+#[cfg(windows)]
+mod document_worker;
 mod network;
 mod store;
 mod types;
@@ -19,6 +22,10 @@ pub(crate) use store::atomic_bytes;
 mod embedding;
 mod embedding_binary;
 mod embedding_model;
+mod embedding_backend;
+mod small_models;
+mod model_windows;
+mod rerank;
 #[cfg(test)]
 mod embedding_tests;
 mod git_job;

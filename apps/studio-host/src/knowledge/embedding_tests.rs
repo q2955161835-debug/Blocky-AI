@@ -1,4 +1,38 @@
 use super::*;
+
+#[test]
+#[ignore = "requires both pinned embedding models and the reranker"]
+fn real_model_migration_and_rerank_acl() {
+    use serde_json::json;
+    let dir = tempfile::tempdir_in(std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/agent-capability-upgrade")).unwrap();
+    let source_path = dir.path().join("public.txt");
+    std::fs::write(&source_path,"Public plants and banking notes.").unwrap();
+    let store = KnowledgeStore::new(dir.path().join("store"));
+    let source = store.add("p","c","file",source_path.to_str().unwrap(),None).unwrap();
+    let sid = source["sourceId"].as_str().unwrap();
+    let page = store.read_source("p","c",sid,None,None).unwrap();
+    let head = store.load_index("p","c").unwrap();
+    let generation = head["generation"].as_u64().unwrap();
+    let texts = [("plants","Plants turn sunlight into food."),("bank","A bank offers loans to customers.")];
+    let chunks = texts.iter().map(|(id,text)| json!({"chunkId":id,"sourceId":sid,"text":text,"digest":digest(text.as_bytes())})).collect::<Vec<_>>();
+    let saved = store.save_index("p","c",head["revision"].as_u64().unwrap(),generation,json!({"schemaVersion":"blocky.knowledge-store/v1","index":{"schemaVersion":"blocky.knowledge-index/v1","generation":generation,"sources":{sid:page["revision"]},"documents":[],"chunks":chunks},"pending":null})).unwrap();
+    let revision = saved["revision"].as_u64().unwrap();
+    for id in [embedding_model::MODEL_ID,small_models::EMBED] { assert_eq!(embedding::build_index(&store,"p","c",id,revision,generation).unwrap()["embedded"],2); }
+    let status = embedding::migration::status(&store,"p","c").unwrap();
+    assert_eq!(status["models"].as_array().unwrap().len(),2);
+    assert!(status["models"].as_array().unwrap().iter().all(|m| m["compatible"] == true));
+    let ids = vec!["plants".into(),"bank".into()];
+    assert_eq!(embedding::query(&store,"p","c",embedding_model::MODEL_ID,revision,generation,"bank loans",&ids,2).unwrap_err(),"BLK-EMBED-MODEL-MISMATCH");
+    embedding::migration::activate(&store,"p","c",embedding_model::MODEL_ID,revision,generation).unwrap();
+    assert_eq!(embedding::query(&store,"p","c",embedding_model::MODEL_ID,revision,generation,"bank loans",&ids,2).unwrap()["hits"][0]["chunkId"],"bank");
+    let ranked = rerank::query(&store,"p","c",small_models::RERANK,revision,generation,"Where can I borrow money?",&ids).unwrap();
+    assert_eq!(ranked["hits"][0]["chunkId"],"bank");
+    assert_eq!(rerank::query(&store,"p","c",small_models::RERANK,revision,generation,"bank",&["foreign".into()]).unwrap_err(),DENIED);
+    store.acl("p","c",sid,vec![]).unwrap();
+    assert!(embedding::migration::activate(&store,"p","c",small_models::EMBED,revision,generation).is_err());
+    assert!(rerank::query(&store,"p","c",small_models::RERANK,revision,generation,"bank",&ids).is_err());
+    eprintln!("migration-evidence {}",json!({"models":status,"rankedModel":ranked["modelId"],"rollback":true,"revocationDenied":true,"externalApi":false}));
+}
 #[test]
 fn locked_model_rejects_unknown_and_missing_assets() {
     assert_eq!(

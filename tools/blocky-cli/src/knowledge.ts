@@ -25,7 +25,8 @@ export const knowledgeHelp = [
   "knowledge remove <file.blocky> --collection <id> --source <id> --json",
   "knowledge access <file.blocky> --collection <id> --source <id> --access <local|deny> --json",
   "knowledge bind <file.blocky> --collection <resource-id> --output <new.blocky> --json",
-  "knowledge model-status|model-install|embed <file.blocky> --collection <id> --json",
+  "knowledge model-status|model-install|embed <file.blocky> --collection <id> [--model <id>] --json",
+  "knowledge embedding-status|activate-index <file.blocky> --collection <id> [--model <id>] --json",
   "knowledge query <file.blocky> --collection <id> --query <question> [--options <JSON>] --json",
   "knowledge query <file.blocky> --collection <id> --queries <questions.json> [--options <JSON>] --json",
 ];
@@ -41,9 +42,11 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
     remove: ["source"],
     access: ["source", "access"],
     bind: ["output"],
-    "model-status": [],
-    "model-install": [],
-    embed: [],
+    "model-status": ["model"],
+    "model-install": ["model"],
+    embed: ["model"],
+    "embedding-status": [],
+    "activate-index": ["model"],
     query: ["query", "queries", "options"],
   };
   if (!Object.hasOwn(flags, action))
@@ -78,15 +81,31 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
     } else if (action === "model-status" || action === "model-install")
       data = await nativeUserOperation(`knowledge-${action}`, {
         ...fields,
-        modelId: LOCAL_EMBEDDING_MODEL,
+        modelId: args.options.has("model")
+          ? required(args, "model")
+          : LOCAL_EMBEDDING_MODEL,
       });
     else if (action === "embed")
       data = await new KnowledgeSearch(
         nativeUserOperation,
         projectId,
         collectionId,
-      ).embed();
-    else if (action === "query") {
+      ).embed(
+        args.options.has("model")
+          ? required(args, "model")
+          : LOCAL_EMBEDDING_MODEL,
+      );
+    else if (action === "embedding-status")
+      data = await nativeUserOperation("knowledge-embedding-status", fields);
+    else if (action === "activate-index") {
+      const head = await port.load();
+      data = await nativeUserOperation("knowledge-embedding-activate", {
+        ...fields,
+        modelId: required(args, "model"),
+        expectedRevision: head.revision,
+        expectedGeneration: head.generation,
+      });
+    } else if (action === "query") {
       const search = new KnowledgeSearch(
         nativeUserOperation,
         projectId,

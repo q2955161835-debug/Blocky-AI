@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "blocky.additional-knowledge-models/v1",
+  "models": [
+    {
+      "kind": "embedding",
+      "upstream": "sentence-transformers/all-MiniLM-L6-v2",
+      "repo": "Xenova/all-MiniLM-L6-v2",
+      "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+      "files": [
+        {
+          "sha256": "afdb6f1a0e45b715d0bb9b11772f032c399babd23bfc31fed1c170afc848bdb1",
+          "bytes": 22972370,
+          "name": "model_quantized.onnx",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/onnx/model_quantized.onnx"
+        },
+        {
+          "sha256": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+          "bytes": 711661,
+          "name": "tokenizer.json",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/tokenizer.json"
+        },
+        {
+          "sha256": "7135149f7cffa1a573466c6e4d8423ed73b62fd2332c575bf738a0d033f70df7",
+          "bytes": 650,
+          "name": "config.json",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/config.json"
+        },
+        {
+          "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+          "bytes": 125,
+          "name": "special_tokens_map.json",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/special_tokens_map.json"
+        },
+        {
+          "sha256": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
+          "bytes": 366,
+          "name": "tokenizer_config.json",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/tokenizer_config.json"
+        },
+        {
+          "sha256": "63ea99bf681a2e9eda4f6a537d5ed8fda95d1677111656da37e9cfd080c3af02",
+          "bytes": 1767,
+          "name": "README.md",
+          "url": "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/751bff37182d3f1213fa05d7196b954e230abad9/README.md"
+        }
+      ],
+      "id": "minilm-l6-v2-int8-v1",
+      "dimension": 384,
+      "license": "Apache-2.0",
+      "upstreamLicenseEvidence": {
+        "license": "apache-2.0",
+        "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "repository": "sentence-transformers/all-MiniLM-L6-v2",
+        "modelCard": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/blob/1110a243fdf4706b3f48f1d95db1a4f5529b4d41/README.md"
+      },
+      "directory": "minilm-l6-v2-int8-v1"
+    },
+    {
+      "kind": "reranking",
+      "upstream": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "repo": "Xenova/ms-marco-MiniLM-L-6-v2",
+      "revision": "a09144355adeed5f58c8ed011d209bf8ee5a1fec",
+      "files": [
+        {
+          "sha256": "e9d8ebf845c413e981c175bfe49a3bfa9b3dcce2a3ba54875ee5df5a58639fbe",
+          "bytes": 23143499,
+          "name": "model_quantized.onnx",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/onnx/model_quantized.onnx"
+        },
+        {
+          "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+          "bytes": 711396,
+          "name": "tokenizer.json",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/tokenizer.json"
+        },
+        {
+          "sha256": "d827779a72d27ae68cf878a6fc2e954542663fe21ca515d9f4783fc96be2d37e",
+          "bytes": 824,
+          "name": "config.json",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/config.json"
+        },
+        {
+          "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+          "bytes": 125,
+          "name": "special_tokens_map.json",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/special_tokens_map.json"
+        },
+        {
+          "sha256": "0b29c7bfc889e53b36d9dd3e686dd4300f6525110eaa98c76a5dafceb2029f53",
+          "bytes": 1242,
+          "name": "tokenizer_config.json",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/tokenizer_config.json"
+        },
+        {
+          "sha256": "5ab9570ca405274a5eed93c119b32bc6415e6dfcc5f822b00e5d6757b4190a31",
+          "bytes": 1783,
+          "name": "README.md",
+          "url": "https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2/resolve/a09144355adeed5f58c8ed011d209bf8ee5a1fec/README.md"
+        }
+      ],
+      "id": "ms-marco-minilm-l6-v2-int8-v1",
+      "dimension": 1,
+      "license": "Apache-2.0",
+      "upstreamLicenseEvidence": {
+        "license": "apache-2.0",
+        "revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+        "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+        "modelCard": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2/blob/233902d25c440f23af6f7d6e94d2946bac0bee0a/README.md"
+      },
+      "directory": "ms-marco-minilm-l6-v2-int8-v1"
+    }
+  ],
+  "licenses": [
+    {
+      "file": "licenses/LICENSE.MiniLM.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    }
+  ]
+}

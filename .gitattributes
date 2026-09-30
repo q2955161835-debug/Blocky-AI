@@ -3,6 +3,9 @@ vendor/wry/** -text
 vendor/licenses/** -text
 vendor/models/** -text
 vendor/node/LICENSE -text
+# The parser manifest verifies the exact source bytes after checkout.
+packages/document-parser/*.mjs -text
+tests/document-parser/fixtures/OFL.txt -text whitespace=-trailing-space
 # Locked upstream licenses retain their original whitespace and checksums.
 vendor/models/licenses/** whitespace=-trailing-space
 doc/验收/任务/阶段1证据/** -text

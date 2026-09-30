@@ -37,6 +37,12 @@ export type SearchResult = {
   elapsedMs: number;
   cacheHit: boolean;
   warning?: string;
+  reranking?: {
+    modelId: string;
+    modelSha256: string;
+    scoreMeaning: "sigmoid-logit-not-probability";
+    externalApi: false;
+  };
   embedding?: {
     modelId: string;
     dimension: number;
@@ -119,6 +125,7 @@ export class KnowledgeSearch {
     let strategy = options.strategy,
       warning = cached.pending ? "BLK-KNOWLEDGE-PENDING" : undefined,
       embedding: SearchResult["embedding"],
+      reranking: SearchResult["reranking"],
       ranked: ScoredChunk[] = [];
     const abort = () => {
       void this.invoke("knowledge-cancel").catch(() => {});
@@ -187,7 +194,63 @@ export class KnowledgeSearch {
           }
         }
       }
-      const selected = selectEvidence(question, chunks, ranked, options);
+      if (options.rerank && options.rerankModelId && ranked.length) {
+        signal.throwIfAborted();
+        const candidateIds = ranked.map((hit) => hit.chunkId);
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        let reply: VectorReply;
+        try {
+          reply = await Promise.race([
+            this.invoke("knowledge-rerank", {
+              modelId: options.rerankModelId,
+              query: question,
+              chunkIds: candidateIds,
+              expectedRevision: head.revision,
+              expectedGeneration: head.generation,
+            }) as Promise<VectorReply>,
+            new Promise<never>((_, reject) => {
+              timer = setTimeout(() => {
+                abort();
+                reject(Error("BLK-KNOWLEDGE-TIMEOUT"));
+              }, options.timeoutMs);
+            }),
+          ]);
+        } finally {
+          if (timer) clearTimeout(timer);
+        }
+        if (
+          reply.indexRevision !== head.revision ||
+          reply.generation !== head.generation
+        )
+          throw Error("BLK-KNOWLEDGE-CONFLICT");
+        if (
+          reply.modelId !== options.rerankModelId ||
+          reply.hits.length !== candidateIds.length ||
+          new Set(reply.hits.map((h) => h.chunkId)).size !==
+            candidateIds.length ||
+          reply.hits.some(
+            (h) =>
+              !candidateIds.includes(h.chunkId) || !Number.isFinite(h.score),
+          )
+        )
+          throw Error("BLK-KNOWLEDGE-RERANK");
+        ranked = reply.hits.map((hit) => ({
+          ...hit,
+          score: 1 / (1 + Math.exp(-hit.score)),
+        }));
+        reranking = {
+          modelId: reply.modelId,
+          modelSha256: reply.modelSha256,
+          scoreMeaning: "sigmoid-logit-not-probability",
+          externalApi: false,
+        };
+      }
+      const selected = selectEvidence(
+        question,
+        chunks,
+        ranked,
+        reranking ? { ...options, rerank: false } : options,
+      );
       for (const citation of selected.citations) {
         const chunk = chunks.find((c) => c.chunkId === citation.id)!;
         if ((await digest(chunk.text)) !== chunk.digest)
@@ -218,6 +281,7 @@ export class KnowledgeSearch {
         cacheHit,
         ...(warning ? { warning } : {}),
         ...(embedding ? { embedding } : {}),
+        ...(reranking ? { reranking } : {}),
       };
     } finally {
       signal.removeEventListener("abort", abort);
@@ -244,6 +308,13 @@ export class KnowledgeSearch {
       raw.locator.path !== citation.locator.path ||
       raw.locator.url !== citation.locator.url ||
       raw.locator.commit !== citation.locator.commit ||
+      ["page", "paragraph", "sheet", "cellRange", "row", "region"].some(
+        (key) =>
+          JSON.stringify(raw.locator[key as keyof typeof raw.locator]) !==
+          JSON.stringify(
+            citation.locator[key as keyof typeof citation.locator],
+          ),
+      ) ||
       !citation.text ||
       !text.includes(citation.text)
     )

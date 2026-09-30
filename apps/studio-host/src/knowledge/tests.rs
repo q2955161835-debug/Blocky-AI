@@ -53,7 +53,7 @@ fn citation_read_rejects_stale_version_and_revoked_grant() {
 fn real_source_paging_restart_and_cross_project_denial() {
     let (_dir, store, files) = setup();
     fs::write(files.join(".env"), "API_KEY=private").unwrap();
-    fs::write(files.join("image.png"), [0, 1, 2]).unwrap();
+    fs::write(files.join("unsupported.bin"), [0, 1, 2]).unwrap();
     let s = store
         .add("p.one", "c.one", "directory", files.to_str().unwrap(), None)
         .unwrap();
@@ -119,6 +119,19 @@ fn atomic_index_cas_acl_invalidation_and_restart() {
             .acl("p", "c", id, vec!["impersonated-user".into()])
             .is_err()
     );
+}
+
+#[test]
+fn failed_document_extraction_preserves_the_last_source_snapshot() {
+    let (_dir, store, files) = setup();
+    let source = store.add("p", "c", "directory", files.to_str().unwrap(), None).unwrap();
+    let id = source["sourceId"].as_str().unwrap();
+    let before = store.read_source("p", "c", id, None, None).unwrap();
+    fs::write(files.join("broken.pdf"), b"invalid PDF").unwrap();
+    assert!(store.read_source("p", "c", id, None, None).is_err());
+    let retained = store.read_source("p", "c", id, Some(0), before["revision"].as_str()).unwrap();
+    assert_eq!(retained["documents"], before["documents"]);
+    assert_eq!(retained["revision"], before["revision"]);
 }
 #[test]
 fn changed_and_deleted_files_change_snapshot_and_old_cursor_is_rejected() {

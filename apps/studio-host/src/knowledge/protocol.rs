@@ -1,5 +1,5 @@
 use super::*;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String> {
     let object = request.as_object().ok_or(INVALID)?;
     let operation = request["operation"].as_str().ok_or(INVALID)?;
@@ -7,7 +7,17 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
         "knowledge-source-add" => &["kind", "path", "url", "ref"],
         "knowledge-read-document" => &["sourceId", "documentId", "revision"],
         "knowledge-model-status" | "knowledge-model-install" => &["modelId"],
-        "knowledge-embed-index" => &["modelId", "expectedRevision", "expectedGeneration"],
+        "knowledge-embed-index" | "knowledge-embedding-activate" => {
+            &["modelId", "expectedRevision", "expectedGeneration"]
+        }
+        "knowledge-embedding-status" => &[],
+        "knowledge-rerank" => &[
+            "modelId",
+            "query",
+            "chunkIds",
+            "expectedRevision",
+            "expectedGeneration",
+        ],
         "knowledge-vector-query" => &[
             "modelId",
             "query",
@@ -33,6 +43,26 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
     let p = string("projectId")?;
     let c = string("collectionId")?;
     match operation {
+        "knowledge-embedding-status" => embedding::migration::status(store, p, c),
+        "knowledge-embedding-activate" => embedding::migration::activate(
+            store,
+            p,
+            c,
+            string("modelId")?,
+            request["expectedRevision"].as_u64().ok_or(INVALID)?,
+            request["expectedGeneration"].as_u64().ok_or(INVALID)?,
+        ),
+        "knowledge-rerank" => rerank::query(
+            store,
+            p,
+            c,
+            string("modelId")?,
+            request["expectedRevision"].as_u64().ok_or(INVALID)?,
+            request["expectedGeneration"].as_u64().ok_or(INVALID)?,
+            string("query")?,
+            &serde_json::from_value::<Vec<String>>(request["chunkIds"].clone())
+                .map_err(|_| INVALID)?,
+        ),
         "knowledge-source-add" => {
             let kind = string("kind")?;
             if kind == "url" && object.contains_key("path")
@@ -91,9 +121,9 @@ pub fn dispatch(store: &KnowledgeStore, request: &Value) -> Result<Value, String
                 .transpose()?
                 .unwrap_or(embedding_model::MODEL_ID);
             if operation == "knowledge-model-status" {
-                embedding_model::status(id)
+                embedding_backend::status(id)
             } else {
-                embedding_model::install(id)
+                embedding_backend::install(id)
             }
         }
         "knowledge-embed-index" | "knowledge-vector-query" => {

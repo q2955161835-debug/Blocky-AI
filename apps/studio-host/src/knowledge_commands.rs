@@ -1,5 +1,5 @@
 use blocky_studio::knowledge::KnowledgeStore;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 fn guard(window: &tauri::WebviewWindow) -> Result<(), String> {
     if window.label() != "main" {
         return Err("BLK-PERM-001".into());
@@ -30,7 +30,9 @@ pub async fn knowledge_source_add(
         if url.is_some() {
             return Err("BLK-KNOW-INVALID".into());
         }
-        let dialog = rfd::AsyncFileDialog::new().set_parent(&window).set_title("选择知识来源");
+        let dialog = rfd::AsyncFileDialog::new()
+            .set_parent(&window)
+            .set_title("选择知识来源");
         let picked = match kind.as_str() {
             "file" => dialog.pick_file().await,
             "directory" | "repository" => dialog.pick_folder().await,
@@ -218,4 +220,43 @@ pub async fn knowledge_vector_query(
         request["modelId"] = model.into();
     }
     run(store.inner().clone(), request).await
+}
+
+#[tauri::command]
+pub async fn knowledge_embedding_status(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+) -> Result<Value, String> {
+    guard(&window)?;
+    run(store.inner().clone(), json!({"operation":"knowledge-embedding-status","projectId":project_id,"collectionId":collection_id})).await
+}
+#[tauri::command]
+pub async fn knowledge_embedding_activate(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: String,
+    expected_revision: u64,
+    expected_generation: u64,
+) -> Result<Value, String> {
+    guard(&window)?;
+    run(store.inner().clone(), json!({"operation":"knowledge-embedding-activate","projectId":project_id,"collectionId":collection_id,"modelId":model_id,"expectedRevision":expected_revision,"expectedGeneration":expected_generation})).await
+}
+#[tauri::command]
+pub async fn knowledge_rerank(
+    window: tauri::WebviewWindow,
+    store: tauri::State<'_, KnowledgeStore>,
+    project_id: String,
+    collection_id: String,
+    model_id: String,
+    expected_revision: u64,
+    expected_generation: u64,
+    query: String,
+    chunk_ids: Vec<String>,
+) -> Result<Value, String> {
+    guard(&window)?;
+    run(store.inner().clone(), json!({"operation":"knowledge-rerank","projectId":project_id,"collectionId":collection_id,"modelId":model_id,"expectedRevision":expected_revision,"expectedGeneration":expected_generation,"query":query,"chunkIds":chunk_ids})).await
 }

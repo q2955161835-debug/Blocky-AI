@@ -2,7 +2,7 @@
 //! source-authorized row map. Querying never exports or deserializes the matrix.
 use super::*;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::{
     collections::HashSet,
     fs::{self, OpenOptions},
@@ -53,12 +53,19 @@ fn epoch(
 ) -> Result<(), String> {
     store.locked(p, c, |_, state| versions(state, revision, generation))
 }
-fn pack(path: &Path) -> PathBuf {
-    path.join(format!("vectors-{}.bin", embedding_model::signature()))
+fn pack(path: &Path, model: &str) -> Result<PathBuf, String> {
+    Ok(path.join(format!(
+        "vectors-{}.bin",
+        embedding_backend::signature(model)?
+    )))
 }
-fn evidence(revision: u64, generation: u64) -> Value {
-    json!({"modelId":embedding_model::MODEL_ID,"modelSha256":embedding_model::MODEL_SHA,"modelRevision":embedding_model::MODEL_REV,"dimension":embedding_model::DIM,"indexRevision":revision,"generation":generation,"backend":"onnx-cpu","externalApi":false,"windowPolicy":embedding_model::WINDOW_POLICY})
+fn evidence(model: &str, revision: u64, generation: u64) -> Result<Value, String> {
+    let mut value = embedding_backend::metadata(model)?;
+    value["indexRevision"] = revision.into();
+    value["generation"] = generation.into();
+    Ok(value)
 }
+
 fn snapshot(
     store: &KnowledgeStore,
     p: &str,
@@ -89,7 +96,7 @@ pub fn build_index(
     revision: u64,
     generation: u64,
 ) -> Result<Value, String> {
-    embedding_model::validate_id(model)?;
+    embedding_backend::validate_id(model)?;
     let path = store.scope(p, c)?;
     let _cancel = cancel::Cancellation::begin(&path);
     let lock_path = path.join("embedding.lock");
@@ -123,12 +130,12 @@ pub fn build_index(
             return Err(LIMIT.into());
         }
     }
-    embedding_model::install(model)?;
-    let mut cache = embedding_binary::Cache::open(&pack(&path))?;
+    embedding_backend::install(model)?;
+    let mut cache = embedding_binary::Cache::open(&pack(&path, model)?)?;
     let mut rows = Vec::with_capacity(chunks.len());
     let mut embedded = 0usize;
     let mut reused = 0usize;
-    let signature = embedding_model::signature();
+    let signature = embedding_backend::signature(model)?;
     let progress = |completed: usize, embedded: usize, reused: usize| -> Result<(), String> {
         store::atomic_json(
             &path.join("embedding-progress.json"),
@@ -151,7 +158,7 @@ pub fn build_index(
             // Recheck before every actual inference, including mid-batch revocation.
             cancel::check()?;
             epoch(store, p, c, revision, generation)?;
-            let vector = embedding_model::infer(text, false)?;
+            let vector = embedding_backend::infer(model, text, false)?;
             cancel::check()?;
             let offset = cache.append(&key, &vector)?;
             embedded += 1;
@@ -182,9 +189,16 @@ pub fn build_index(
     store.locked(p, c, |path, state| {
         cancel::check()?;
         versions(state, revision, generation)?;
+        // Keep the previous valid model publication, including legacy active-only indexes.
+        migration::archive_current(path)?;
+        // Keep prior compatible publications for an explicit model rollback.
+        store::atomic_json(
+            &path.join(format!("embedding-{}.json", published.model_signature)),
+            &published,
+        )?;
         store::atomic_json(&path.join("embedding.json"), &published)
     })?;
-    let mut result = evidence(revision, generation);
+    let mut result = evidence(model, revision, generation)?;
     result["chunkCount"] = chunks.len().into();
     result["embedded"] = embedded.into();
     result["reused"] = reused.into();
@@ -192,6 +206,28 @@ pub fn build_index(
     result["published"] = true.into();
     store::atomic_json(&path.join("embedding-progress.json"), &result)?;
     Ok(result)
+}
+fn validate_shape(value: &Published) -> Result<(), String> {
+    if value.schema_version != "blocky.embedding-index/v1"
+        || embedding_backend::validate_id(&value.model_id).is_err()
+        || value.model_signature != embedding_backend::signature(&value.model_id)?
+        || value.dimension != embedding_model::DIM
+        || value.rows.len() > MAX_ROWS
+    {
+        return Err("BLK-EMBED-CORRUPT".into());
+    }
+    let mut ids = HashSet::new();
+    for row in &value.rows {
+        if !valid_id(&row.chunk_id)
+            || !valid_id(&row.source_id)
+            || !ids.insert(&row.chunk_id)
+            || row.key.len() != 64
+            || !row.key.bytes().all(|b| b.is_ascii_hexdigit())
+        {
+            return Err("BLK-EMBED-CORRUPT".into());
+        }
+    }
+    Ok(())
 }
 fn published(
     path: &Path,
@@ -217,25 +253,7 @@ fn published(
         cached.value.clone()
     } else {
         let value: Published = store::read_json(&path, 128 * 1024 * 1024)?;
-        if value.schema_version != "blocky.embedding-index/v1"
-            || value.model_id != embedding_model::MODEL_ID
-            || value.model_signature != embedding_model::signature()
-            || value.dimension != embedding_model::DIM
-            || value.rows.len() > MAX_ROWS
-        {
-            return Err("BLK-EMBED-CORRUPT".into());
-        }
-        let mut ids = HashSet::new();
-        for row in &value.rows {
-            if !valid_id(&row.chunk_id)
-                || !valid_id(&row.source_id)
-                || !ids.insert(&row.chunk_id)
-                || row.key.len() != 64
-                || !row.key.bytes().all(|b| b.is_ascii_hexdigit())
-            {
-                return Err("BLK-EMBED-CORRUPT".into());
-            }
-        }
+        validate_shape(&value)?;
         let value = Arc::new(value);
         *cache = Some(PublishedCache {
             path,
@@ -274,7 +292,7 @@ pub fn query(
     eligible: &[String],
     top: usize,
 ) -> Result<Value, String> {
-    embedding_model::validate_id(model)?;
+    embedding_backend::validate_id(model)?;
     if !(1..=200).contains(&top)
         || eligible.len() > MAX_ROWS
         || text.trim().is_empty()
@@ -288,6 +306,9 @@ pub fn query(
     let published = store.locked(p, c, |path, state| {
         published(path, state, revision, generation)
     })?;
+    if published.model_id != model {
+        return Err("BLK-EMBED-MODEL-MISMATCH".into());
+    }
     let selected_ids = eligible.iter().map(String::as_str).collect::<HashSet<_>>();
     if selected_ids.len() != eligible.len() {
         return Err(INVALID.into());
@@ -303,8 +324,8 @@ pub fn query(
     selected.sort_by_key(|row| row.offset);
     let mut hits = Vec::<(String, f32)>::new();
     if !selected.is_empty() {
-        let vector = embedding_model::infer(text, true)?;
-        let mut reader = embedding_binary::VectorReader::open(&pack(&path))?;
+        let vector = embedding_backend::infer(model, text, true)?;
+        let mut reader = embedding_binary::VectorReader::open(&pack(&path, model)?)?;
         let mut previous: Option<(u64, String, Vec<f32>)> = None;
         for (n, row) in selected.iter().enumerate() {
             if n % 128 == 0 {
@@ -347,14 +368,16 @@ pub fn query(
         {
             return Err(DENIED.into());
         }
-        let mut result = evidence(revision, generation);
+        let mut result = evidence(model, revision, generation)?;
         result["candidateCount"] = selected.len().into();
-        result["hits"] = json!(
-            hits.into_iter()
-                .map(|(chunk_id, score)| json!({"chunkId":chunk_id,"score":score}))
-                .collect::<Vec<_>>()
-        );
+        result["hits"] = json!(hits
+            .into_iter()
+            .map(|(chunk_id, score)| json!({"chunkId":chunk_id,"score":score}))
+            .collect::<Vec<_>>());
         result["elapsedMs"] = (start.elapsed().as_millis() as u64).into();
         Ok(result)
     })
 }
+
+#[path = "embedding_migration.rs"]
+pub(super) mod migration;
