@@ -1,10 +1,11 @@
 import { it, expect } from "vitest";
-import { mkdtemp, readFile, stat, utimes, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, stat, utimes, rm } from "node:fs/promises";
 import { join } from "node:path";
 // @ts-expect-error Build scripts run as native JavaScript.
 import { writeGenerated } from "../../scripts/write-generated.mjs";
 
 it("keeps an unchanged digest stable and still replaces changed content", async () => {
+  await mkdir("try", { recursive: true });
   const root = await mkdtemp(join("try", "generated-manifest-"));
   const file = join(root, "digest.json");
   try {
