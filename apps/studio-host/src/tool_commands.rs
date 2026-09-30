@@ -56,17 +56,15 @@ pub async fn tool_call(
 ) -> Result<Value, String> {
     crate::window_lifecycle::visible(&window)?;
     let root = blocky_studio::profile::for_app(window.app_handle())?;
-    let cloned = host.inner().clone();
-    let preview_request = request.clone();
+    let operation = host.begin(&request)?;
     let preview_root = root.clone();
-    let (preview, destination) = tauri::async_runtime::spawn_blocking(move || {
-        let preview = cloned.preflight(&preview_root, &preview_request)?;
-        let destination = cloned.destination(
+    let (operation, preview, destination) = tauri::async_runtime::spawn_blocking(move || {
+        let preview = operation.preflight(&preview_root)?;
+        let destination = operation.destination(
             &preview_root,
-            &preview_request,
             preview["requestDigest"].as_str().ok_or("BLK-TOOL-CONFIG")?,
         )?;
-        Ok::<_, String>((preview, destination))
+        Ok::<_, String>((operation, preview, destination))
     })
     .await
     .map_err(|_| "BLK-TOOL-STATE".to_owned())??;
@@ -74,18 +72,19 @@ pub async fn tool_call(
         .as_str()
         .ok_or("BLK-TOOL-CONFIG")?
         .to_owned();
-    let operation = match request.action.as_str() {
+    let action = match request.action.as_str() {
         "discover" => "发现可用工具和资料",
         "read-resource" => "读取所选资料",
         _ => "执行工具",
     };
-    let message=format!("操作：{operation}\n资源：{}\n目标：{destination}\n输入：{} bytes\n时限：{} ms\n未核实调用：{}\n请求摘要：{digest}",request.resource_id,preview["inputBytes"],request.timeout_ms,preview["unresolvedCalls"]);
+    let message=format!("操作：{action}\n资源：{}\n目标：{destination}\n输入：{} bytes\n时限：{} ms\n未核实调用：{}\n请求摘要：{digest}",request.resource_id,preview["inputBytes"],request.timeout_ms,preview["unresolvedCalls"]);
+    operation.check_cancel()?;
     if !blocky_studio::native_confirmation::yes_no(&window, "批准工具请求", message).await {
         return Err("BLK-PERM-001".into());
     }
     crate::window_lifecycle::visible(&window)?;
-    let host = host.inner().clone();
-    tauri::async_runtime::spawn_blocking(move || host.call(&root, &request, &digest))
+    operation.check_cancel()?;
+    tauri::async_runtime::spawn_blocking(move || operation.call(&root, &digest))
         .await
         .map_err(|_| "BLK-TOOL-STATE".to_owned())?
 }

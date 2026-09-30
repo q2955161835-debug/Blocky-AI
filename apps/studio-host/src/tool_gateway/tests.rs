@@ -308,3 +308,38 @@ fn tool_request_only_contains_resource_references_and_bounded_business_input() {
     read.input = json!({"uriRef":"file:///host-private-file"});
     assert!(read.validate().is_err());
 }
+
+#[test]
+fn native_operation_cancel_before_preflight_or_after_preview_blocks_approval_and_effects() {
+    let root = profile();
+    resource(root.path(), "http://127.0.0.1:54321/count");
+    let host = ToolHost::default();
+    let first = request("cancel-before-preflight");
+    let operation = host.begin(&first).unwrap();
+    host.cancel(&first.request_id).unwrap();
+    assert_eq!(
+        operation.preflight(root.path()).unwrap_err(),
+        "BLK-TOOL-CANCELLED"
+    );
+    assert_eq!(operation.check_cancel().unwrap_err(), "BLK-TOOL-CANCELLED");
+    drop(operation);
+    assert!(host.begin(&first).is_err());
+
+    let second = request("cancel-after-preview");
+    let operation = host.begin(&second).unwrap();
+    let preview = operation.preflight(root.path()).unwrap();
+    let digest = preview["requestDigest"].as_str().unwrap();
+    operation.destination(root.path(), digest).unwrap();
+    host.cancel(&second.request_id).unwrap();
+    assert_eq!(operation.check_cancel().unwrap_err(), "BLK-TOOL-CANCELLED");
+    assert_eq!(
+        operation.call(root.path(), digest).unwrap_err(),
+        "BLK-TOOL-CANCELLED"
+    );
+    assert_eq!(
+        host.status(root.path(), "project-test").unwrap()["receipts"],
+        json!([])
+    );
+    drop(operation);
+    host.shutdown().unwrap();
+}

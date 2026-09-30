@@ -29,16 +29,11 @@ pub struct ProviderHost {
 impl ProviderHost {
     /// Shared request lifetime for native adapters. This grants no provider or
     /// filesystem capability; the caller still validates its own typed binding.
-    pub(crate) fn with_cancellable<T>(
-        &self,
-        id: &str,
-        operation: impl FnOnce(&AtomicBool) -> Result<T, String>,
-    ) -> Result<T, String> {
+    pub(crate) fn begin_cancellable(&self, id: &str) -> Result<ActiveRequest, String> {
         if id.len() > 128 || !crate::project_store::stable(id) {
             return Err(types::INVALID.into());
         }
-        let active = self.begin(id)?;
-        operation(&active.cancel)
+        self.begin(id)
     }
     pub fn local_model_install(
         &self,
@@ -151,10 +146,10 @@ impl ProviderHost {
         Ok(())
     }
 }
-struct ActiveRequest {
+pub(crate) struct ActiveRequest {
     host: ProviderHost,
     id: String,
-    cancel: Arc<AtomicBool>,
+    pub(crate) cancel: Arc<AtomicBool>,
 }
 impl Drop for ActiveRequest {
     fn drop(&mut self) {
