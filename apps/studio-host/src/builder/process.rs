@@ -176,7 +176,7 @@ pub(super) fn run(
         send(
             &mut stdin,
             id,
-            json!({"kind":"start","request":start.request,"project":project,"registry":registry["resources"],"mode":start.mode,"modelId":binding.map(|b|b.model()).unwrap_or("local-builder-v1")}),
+            json!({"kind":"start","request":start.request,"project":project,"registry":if registry["schemaVersion"]=="blocky.resource-registry/v2" {registry}else{&registry["resources"]},"mode":start.mode,"modelId":binding.map(|b|b.model()).unwrap_or("local-builder-v1")}),
         )?;
         loop {
             if cancel.load(Ordering::SeqCst) {

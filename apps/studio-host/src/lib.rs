@@ -6,6 +6,7 @@ pub mod knowledge;
 pub mod local_models;
 pub mod log_store;
 pub mod mcp_client;
+pub mod model_registry;
 pub mod native_confirmation;
 mod native_session;
 mod network_policy;

@@ -9,6 +9,24 @@ export type ModelProvider = {
 };
 const resolvedConnections = new WeakSet<Resource>();
 export const isResolvedConnection = (resource: Resource): boolean => resolvedConnections.has(resource);
+/** Reconstruct a raw ledger for transport; derived bindings are never accepted as caller assertions. */
+export function serializeRegistryResources(map: ReadonlyMap<string, Resource>): UserRegistry {
+  const providers = new Map<string, ModelProvider>();
+  const resources = [...map.values()].map(r => {
+    if (r.definition.connectionRef === undefined) return validateResource(r);
+    if (!isResolvedConnection(r)) invalidResource();
+    const { connectionRevision, provider, protocol, implementationRef: _impl, ...definition } = r.definition;
+    const p = parseModelProvider({ schemaVersion: "blocky.model-provider/v1", providerId: definition.connectionRef,
+      displayName: String(provider), adapter: provider, protocol, revision: connectionRevision, secretBindings: r.secretBindings });
+    const old = providers.get(p.providerId);
+    if (old && canonicalJson(old) !== canonicalJson(p)) invalidResource();
+    providers.set(p.providerId, p);
+    return validateResource({ ...r, definition, secretBindings: [] });
+  });
+  const registry: UserRegistry = { schemaVersion: "blocky.resource-registry/v2", revision: 0, providers: [...providers.values()], resources };
+  resolveRegistryResources(registry);
+  return registry;
+}
 export function parseModelProvider(value: unknown): ModelProvider {
   const p = value as ModelProvider;
   if (!p || typeof p !== "object" || Array.isArray(p) ||

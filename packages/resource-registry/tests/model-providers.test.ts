@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
 import { modelResource } from "../../../tests/fixtures/model-resource";
 import { emptyRegistry, parseRegistry, upsertUserResource, referenceUserResource, resolveResource,
-  upsertModelProvider, removeModelProvider, resolveRegistryResources } from "../src";
+  upsertModelProvider, removeModelProvider, resolveRegistryResources, serializeRegistryResources } from "../src";
 const provider = (id = "shared", secretRef = "account-one") => ({
   schemaVersion: "blocky.model-provider/v1", providerId: id, displayName: "同一厂商",
   adapter: "xirang", protocol: "openai-chat", revision: 1,
@@ -10,6 +10,15 @@ const provider = (id = "shared", secretRef = "account-one") => ({
 });
 const model = (id: string, connectionRef = "shared") => ({ ...modelResource(id),
   definition: { connectionRef, modelId: id, timeoutMs: 60000, capabilities: ["text"] }, secretBindings: [],
+});
+it("rebuilds validated connection identity after a worker JSON round trip", () => {
+  const registry = upsertUserResource(upsertModelProvider(emptyRegistry(), provider()), model("one"));
+  const effective = resolveRegistryResources(registry);
+  const wire = JSON.parse(JSON.stringify(serializeRegistryResources(effective)));
+  const restored = resolveRegistryResources(parseRegistry(wire));
+  const project = referenceUserResource(createStarter(), effective.get("one")!);
+  expect(resolveResource(project, "one", "model", restored)).toEqual(effective.get("one"));
+  expect(() => serializeRegistryResources(new Map([["one", structuredClone(effective.get("one")!)]]))).toThrow();
 });
 it("shares a connection and its edits across two models while retaining model IDs", () => {
   let r = upsertModelProvider(emptyRegistry(), provider());

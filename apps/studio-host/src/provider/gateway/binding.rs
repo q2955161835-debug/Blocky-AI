@@ -25,10 +25,7 @@ impl Binding {
         let registry = crate::user_store::UserStore::new(root.join("user"))
             .read("resources", "app")?
             .ok_or(ERROR)?;
-        let resource = registry["resources"]
-            .as_array()
-            .and_then(|a| a.iter().find(|v| v["resourceId"] == r.resource_id))
-            .ok_or(ERROR)?;
+        let resource = crate::model_registry::resolve_resource(&registry, &r.resource_id)?;
         let d = &resource["definition"];
         let provider = d["provider"]
             .as_str()

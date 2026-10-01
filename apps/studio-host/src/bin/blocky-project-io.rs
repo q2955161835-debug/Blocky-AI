@@ -229,6 +229,12 @@ fn execute_value(value: Value) -> Value {
                         store.write(kind, id, r.state_value.clone().ok_or("BLK-CLI-002")?)?;
                         Ok(json!({"ok":true}))
                     }
+                    "user-resource-rollback" if kind == "resources" && id == "app" => {
+                        let fields=r.state_value.as_ref().ok_or("BLK-CLI-002")?;
+                        if fields.as_object().is_none_or(|m|m.len()!=1){return Err("BLK-CLI-002".into());}
+                        blocky_studio::model_registry::rollback(&root.join("user"), fields["expectedRevision"].as_u64().ok_or("BLK-CLI-002")?)?;
+                        Ok(json!({"ok":true}))
+                    }
                     _ => Err("BLK-CLI-002".into()),
                 };
             }

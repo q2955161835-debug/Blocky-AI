@@ -141,15 +141,8 @@ fn binding(root: &Path, start: &BuilderStart) -> Result<Option<BuilderModel>, St
         return Ok(None);
     }
     let resources = registry(root)?;
-    let r = resources["resources"]
-        .as_array()
-        .and_then(|a| {
-            a.iter().find(|r| {
-                Some(r["resourceId"].as_str().unwrap_or("")) == start.resource_id.as_deref()
-            })
-        })
-        .ok_or("BLK-PROVIDER-CONFIG")?;
-    if !["deepseek", "xirang"].contains(&r["definition"]["provider"].as_str().unwrap_or("")) {
+    let r = crate::model_registry::resolve_resource(&resources, start.resource_id.as_deref().ok_or("BLK-PROVIDER-CONFIG")?)?;
+    if r["definition"].get("connectionRef").is_some() || !["deepseek", "xirang"].contains(&r["definition"]["provider"].as_str().unwrap_or("")) {
         return Ok(Some(BuilderModel::gateway(
             root,
             &start.request.request_id,

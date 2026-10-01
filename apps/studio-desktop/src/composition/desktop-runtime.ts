@@ -9,6 +9,7 @@ import {
   type RuntimeFrame,
   type RuntimePort,
 } from "./runtime-port";
+import { serializeRegistryResources } from "@blocky/resource-registry";
 const failure = () => Error("BLK-RUN-SERVICE");
 function wait<T>(
   promise: Promise<T>,
@@ -229,7 +230,7 @@ export class DesktopRuntime {
               ...(options.debug === undefined ? {} : { debug: options.debug }),
               ...(options.userRegistry === undefined
                 ? {}
-                : { userRegistry: [...options.userRegistry.values()] }),
+                : { userRegistry: serializeRegistryResources(options.userRegistry) }),
             },
           },
           receive,

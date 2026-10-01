@@ -213,6 +213,9 @@ importers:
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema
+      '@blocky/resource-registry':
+        specifier: workspace:*
+        version: link:../resource-registry
       '@earendil-works/pi-agent-core':
         specifier: 0.86.0
         version: 0.86.0(ws@8.21.3)(zod@4.4.3)

@@ -3,6 +3,7 @@ import { inspectBuilder, parseBuilderRequest } from "@blocky/builder-protocol";
 import type { Project, Resource } from "@blocky/language-schema";
 import { localBuilderResponse } from "./local";
 import { safeBuilderError } from "./transport";
+import { readBuilderRegistry } from "./provider-registry";
 
 const controller = new AbortController();
 let started = false,
@@ -62,9 +63,7 @@ async function receive(value: Record<string, unknown>) {
     )
       throw Error("BLK-BUILDER-WIRE");
     const project = value.project as Project;
-    const registry = new Map(
-      (value.registry as Resource[]).map((r) => [r.resourceId, r]),
-    );
+    const registry = readBuilderRegistry(value.registry);
     const inspection = await inspectBuilder(project, request, registry);
     const result = await runBuilderEngine(project, request, {
       registry,

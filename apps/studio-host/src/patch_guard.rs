@@ -304,6 +304,7 @@ fn find_mut<'a>(block: &'a mut Value, id: &str) -> Option<&'a mut Value> {
     None
 }
 fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Result<BTreeSet<String>, String> {
+    if registry["schemaVersion"] == "blocky.resource-registry/v2" { crate::model_registry::validate_registry(registry)?; }
     fn visit(
         b: &Value,
         p: &Value,
@@ -332,7 +333,7 @@ fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Res
                 let resource = if reference["scope"] == "project" {
                     &p["resources"][resource_id]
                 } else if reference["scope"] == "user"
-                    && registry["schemaVersion"] == "blocky.resource-registry/v1"
+                    && matches!(registry["schemaVersion"].as_str(),Some("blocky.resource-registry/v1"|"blocky.resource-registry/v2"))
                 {
                     array(&registry["resources"])?
                         .iter()

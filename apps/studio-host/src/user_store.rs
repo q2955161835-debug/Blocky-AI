@@ -49,6 +49,9 @@ impl UserStore {
         let _guard = self.lock.lock().map_err(|_| ERROR)?;
         let path = self.path(kind, id)?;
         validate(kind, &value)?;
+        if kind == "resources" && id == "app" {
+            return crate::model_registry::write_registry(&self.root, &value);
+        }
         if kind == "builder-chat" && value["projectId"] != id {
             return Err(ERROR.into());
         }
@@ -116,6 +119,9 @@ pub fn validate_settings(value: &Value) -> Result<(), String> {
 }
 fn validate(kind: &str, value: &Value) -> Result<(), String> {
     crate::project_store::check_secrets(value, 0)?;
+    if kind == "resources" && value["schemaVersion"] == "blocky.resource-registry/v2" {
+        return crate::model_registry::validate_registry(value);
+    }
     if kind == "settings" {
         return validate_settings(value);
     }

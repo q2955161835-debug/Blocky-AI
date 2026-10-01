@@ -1,6 +1,6 @@
 import { stableId, type Resource } from "@blocky/language-schema";
 import { parseProject } from "@blocky/project-model";
-import { validateResource } from "@blocky/resource-registry";
+import { validateResource, parseRegistry, resolveRegistryResources } from "@blocky/resource-registry";
 import type { RuntimeEvent } from "@blocky/observability";
 import { readRpaResult } from "@blocky/rpa-core";
 import { Runtime, type RunResult } from "./runtime";
@@ -65,10 +65,10 @@ function parse(input: unknown) {
       }
       debug = raw as typeof debug;
     }
-    const registry = new Map<string, Resource>();
+    let registry = new Map<string, Resource>();
     if (options.userRegistry !== undefined) {
-      if (!Array.isArray(options.userRegistry)) throw invalid();
-      for (const item of options.userRegistry) {
+      if (!Array.isArray(options.userRegistry)) registry = resolveRegistryResources(parseRegistry(options.userRegistry));
+      else for (const item of options.userRegistry) {
         const resource = validateResource(item);
         if (resource.scope !== "user" || registry.has(resource.resourceId))
           throw invalid();

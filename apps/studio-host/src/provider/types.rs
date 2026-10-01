@@ -95,10 +95,8 @@ impl ProviderRequest {
 }
 pub fn check_binding(registry: &Value, r: &ProviderRequest) -> Result<(), String> {
     r.validate()?;
-    let resource = registry["resources"]
-        .as_array()
-        .and_then(|a| a.iter().find(|v| v["resourceId"] == r.resource_id))
-        .ok_or("BLK-PROVIDER-CONFIG")?;
+    let resource = crate::model_registry::resolve_resource(registry, &r.resource_id)
+        .map_err(|_| "BLK-PROVIDER-CONFIG")?;
     let d = &resource["definition"];
     let bindings = resource["secretBindings"]
         .as_array()
