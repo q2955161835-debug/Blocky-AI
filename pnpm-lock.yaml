@@ -213,6 +213,9 @@ importers:
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema
+      '@blocky/project-model':
+        specifier: workspace:*
+        version: link:../project-model
       '@blocky/resource-registry':
         specifier: workspace:*
         version: link:../resource-registry

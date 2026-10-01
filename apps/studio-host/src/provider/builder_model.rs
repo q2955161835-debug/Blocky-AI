@@ -38,6 +38,38 @@ impl BuilderModel {
         let preview = Binding::load(root, &request)?.preview(&request);
         Ok(Self::Gateway { request, preview })
     }
+    pub(crate) fn coding(
+        root: &Path,
+        request_id: &str,
+        project_id: &str,
+        resource_id: &str,
+    ) -> Result<Self, String> {
+        let definitions: Value = serde_json::from_str(include_str!(
+            "../../../../packages/builder-engine/src/coding-tool-schemas.json"
+        ))
+        .map_err(|_| ERROR)?;
+        let registry = crate::user_store::UserStore::new(root.join("user"))
+            .read("resources", "app")?
+            .ok_or("BLK-MODEL-CONFIG")?;
+        let resource = crate::model_registry::resolve_resource(&registry, resource_id)?;
+        let max_output = resource["definition"]["parameters"]["maxOutputTokens"]
+            .as_u64()
+            .unwrap_or(8192)
+            .min(8192);
+        let timeout = resource["definition"]["timeoutMs"]
+            .as_u64()
+            .unwrap_or(60000)
+            .min(60000);
+        let request: GatewayRequest = serde_json::from_value(json!({"schemaVersion":"blocky.model-request/v2","requestId":request_id,"projectId":project_id,"resourceId":resource_id,"messages":[{"role":"user","content":"Blocky 代码会话"}],"tools":definitions,"toolChoice":"auto","maxOutputTokens":max_output,"timeoutMs":timeout})).map_err(|_| ERROR)?;
+        let preview = Binding::load(root, &request)?.preview(&request);
+        Ok(Self::Gateway { request, preview })
+    }
+    pub(crate) fn max_output_tokens(&self) -> u32 {
+        match self {
+            Self::Legacy(r) => r.max_output_tokens,
+            Self::Gateway { request, .. } => request.max_output_tokens,
+        }
+    }
     pub fn digest(&self) -> Result<String, String> {
         match self {
             Self::Legacy(r) => r.digest(),
@@ -91,7 +123,11 @@ impl BuilderModel {
                 super::builder::generate(root, &r, messages, cancel, metadata, before_send)
             }
             Self::Gateway { request, preview } => {
-                super::builder::validate_messages(&messages)?;
+                if request.tools.iter().any(|t| t.name == "workspace_read") {
+                    super::builder::validate_coding_messages(&messages)?;
+                } else {
+                    super::builder::validate_messages(&messages)?;
+                }
                 let bound = Binding::load(root, request)?;
                 if preview["requestDigest"] != bound.digest {
                     return Err("BLK-PERM-001".into());

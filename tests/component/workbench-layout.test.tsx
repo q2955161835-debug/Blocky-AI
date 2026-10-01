@@ -76,11 +76,11 @@ it("fully hides panels, keeps the assistant draft when switching views, and expo
   fireEvent.change(screen.getByLabelText("构建需求"), {
     target: { value: "帮我讲解这些积木" },
   });
-  fireEvent.click(screen.getByRole("tab", { name: "运行 Agent" }));
+  fireEvent.click(screen.getByRole("tab", { name: "Blocky Agent" }));
   fireEvent.click(
     within(toolbar).getByRole("button", { name: "隐藏右侧面板" }),
   );
-  expect(screen.queryByRole("tab", { name: "运行 Agent" })).toBeNull();
+  expect(screen.queryByRole("tab", { name: "Blocky Agent" })).toBeNull();
   fireEvent.click(
     within(toolbar).getByRole("button", { name: "显示右侧面板" }),
   );
@@ -91,8 +91,8 @@ it("fully hides panels, keeps the assistant draft when switching views, and expo
   expect(screen.queryByRole("dialog", { name: "Blocky 构建助手" })).toBeNull();
   await waitFor(() =>
     expect(
-      (screen.getByRole("button", { name: "生成方案" }) as HTMLButtonElement)
+      (screen.getByRole("button", { name: "发送" }) as HTMLButtonElement)
         .disabled,
-    ).toBe(false),
+    ).toBe(true),
   );
 });

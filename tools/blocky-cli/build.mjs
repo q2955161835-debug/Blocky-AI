@@ -1,9 +1,11 @@
 import { build } from "esbuild";
 import { installDocumentParser } from "../../scripts/install-document-parser.mjs";
 import { installKnowledgeModels } from "../../scripts/install-knowledge-models.mjs";
-import {installAudioRuntime} from '../../scripts/install-audio-runtime.mjs';
-import {installBrowser} from "../../scripts/browser-runtime.mjs";
-import { mkdir, copyFile, writeFile } from "node:fs/promises";
+import { installAudioRuntime } from "../../scripts/install-audio-runtime.mjs";
+import { installBrowser } from "../../scripts/browser-runtime.mjs";
+import { mkdir, copyFile, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { writeGenerated } from "../../scripts/write-generated.mjs";
 import {
   installDirectML,
   checkSystemRuntime,
@@ -18,6 +20,21 @@ await build({
   sourcemap: false,
   banner: { js: "#!/usr/bin/env node" },
 });
+const cliBytes = await readFile("dist/main.mjs");
+await writeGenerated(
+  "cli-runtime-lock.json",
+  JSON.stringify(
+    {
+      schemaVersion: "blocky.cli-runtime/v1",
+      bytes: cliBytes.length,
+      sha256: createHash("sha256").update(cliBytes).digest("hex"),
+    },
+    null,
+    2,
+  ) + "\n",
+);
+// Native binaries embed this lock; generate it before compiling them.
+if (process.argv[2] === "--bundle-only") process.exit(0);
 await mkdir("dist/bin", { recursive: true });
 await installBrowser("dist/bin");
 await installDocumentParser("dist/bin");

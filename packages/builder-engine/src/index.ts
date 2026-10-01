@@ -27,6 +27,7 @@ import {
   type BuilderGeneration,
 } from "./transport";
 export { type BuilderGeneration, type WireMessage } from "./transport";
+export { runCodingAgent, type CodingAgentOptions } from "./coding";
 
 export type BuilderEngineOptions = {
   mode: "deterministic" | "live";

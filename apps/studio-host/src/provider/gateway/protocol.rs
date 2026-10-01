@@ -75,7 +75,15 @@ fn fixed_builder_tool(tool: &ModelTool) -> bool {
         ))
         .unwrap_or_default()
     });
-    serde_json::to_value(tool).is_ok_and(|value| definitions.contains(&value))
+    static CODING: std::sync::OnceLock<Vec<Value>> = std::sync::OnceLock::new();
+    let coding = CODING.get_or_init(|| {
+        serde_json::from_str(include_str!(
+            "../../../../../packages/builder-engine/src/coding-tool-schemas.json"
+        ))
+        .unwrap_or_default()
+    });
+    serde_json::to_value(tool)
+        .is_ok_and(|value| definitions.contains(&value) || coding.contains(&value))
 }
 /// Bounded JSON-schema subset shared with the runtime's structured output validator.
 pub(super) fn schema(value: &Value, depth: usize) -> Result<(), String> {
@@ -175,6 +183,7 @@ pub(super) fn schema(value: &Value, depth: usize) -> Result<(), String> {
 }
 impl GatewayRequest {
     pub fn validate(&self) -> Result<(), String> {
+        let coding=self.tools.len()==7 && self.tools.iter().all(|t|crate::coding::TOOLS.contains(&t.name.as_str()) && fixed_builder_tool(t));
         if self.schema_version != "blocky.model-request/v2"
             || [&self.request_id, &self.project_id, &self.resource_id]
                 .iter()
@@ -186,9 +195,9 @@ impl GatewayRequest {
                 .is_some_and(|t| !t.is_finite() || !(0.0..=2.0).contains(&t))
             || self.top_p.is_some_and(|p| !p.is_finite() || !(0.0..=1.0).contains(&p))
             || self.messages.is_empty()
-            || self.messages.len() > 128
+            || self.messages.len() > if coding {256} else {128}
             || self.tools.len() > 32
-            || serde_json::to_vec(self).map_err(|_| INVALID)?.len() > 262144
+            || serde_json::to_vec(self).map_err(|_| INVALID)?.len() > if coding {4 * 1024 * 1024} else {262144}
         {
             return Err(INVALID.into());
         }
@@ -219,7 +228,7 @@ impl GatewayRequest {
         let mut used = BTreeSet::new();
         let mut image_count=0;
         for (index, m) in self.messages.iter().enumerate() {
-            if m.content.len() > 65536 || m.tool_calls.len() > 8 {
+            if m.content.len() > if coding {2 * 1024 * 1024} else {65536} || m.tool_calls.len() > 8 {
                 return Err(INVALID.into());
             }
             image_count+=m.image_refs.len();

@@ -8,7 +8,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import type { Builder } from "../../apps/studio-desktop/src/composition/useBuilder";
+import type { CodingAgent } from "../../apps/studio-desktop/src/composition/useCodingAgent";
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
@@ -25,7 +25,10 @@ async function readyStudio() {
       hook.result.current.settings.ready && hook.result.current.resources.ready,
     ).toBe(true),
   );
-  return hook.result.current;
+  const s=hook.result.current;
+  s.resources.map.set("test-model",{resourceId:"test-model",kind:"model",scope:"user",displayName:"测试模型",definition:{provider:"deepseek",protocol:"openai-chat",modelId:"test",capabilities:["text","tools"],implementationRef:"adapter://deepseek-v1"},secretBindings:[{fieldId:"apiKey",secretRef:"synthetic-ref"}]} as any);
+  s.settings.layers.app={schemaVersion:"blocky.settings/v1",scope:"app",values:{"models.defaultResourceId":"test-model"}} as any;
+  return s;
 }
 
 function makeBuilder(overrides: Record<string, unknown> = {}) {
@@ -36,35 +39,32 @@ function makeBuilder(overrides: Record<string, unknown> = {}) {
     stopping: false,
     result: undefined,
     error: "",
-    evidence: undefined,
+    events: [], liveText: "", changes: [], workspace: undefined, projectReview: undefined,
+    pickWorkspace:vi.fn(),undoChange:vi.fn(),applyProject:vi.fn(),
     generate: vi.fn(async () => {}),
     stop: vi.fn(),
     reject: vi.fn(),
     newChat: vi.fn(),
     clear: vi.fn(),
     ...overrides,
-  } as unknown as Builder;
+  } as unknown as CodingAgent;
 }
 
 function proposal() {
   return {
-    spec: { plan: ["创建工具"], acceptanceCriteria: ["工具可完成查询"] },
-    patch: {},
-    explanation: "候选解释",
+    project: {}, text:"候选解释",
     modelApiCalled: false,
     generations: [],
     engine: "test",
   };
 }
 
-function panel(studio: Studio, builder: Builder, review = vi.fn()) {
+function panel(studio: Studio, builder: CodingAgent, review = vi.fn()) {
   return render(
     <BuilderPanel
       studio={studio}
       builder={builder}
-      createSurface={false}
-      setCreateSurface={vi.fn()}
-      review={review}
+      configureModel={review}
     />,
   );
 }
@@ -76,7 +76,7 @@ it("renders saved chat as plain text and keeps the candidate while editing", asy
       { id: "u1", role: "user", text: "Use <img src=x onerror=alert(1)>" },
       { id: "a1", role: "assistant", text: "准备审阅", status: "proposed" },
     ],
-    result: proposal(),
+    result: proposal(), projectReview:{files:[{path:"project.json",before:"旧项目",after:"创建工具"}],permissions:[]},
   });
   const review = vi.fn();
   panel(studio, builder, review);
@@ -84,17 +84,17 @@ it("renders saved chat as plain text and keeps the candidate while editing", asy
   expect(screen.getByText("Use <img src=x onerror=alert(1)>")).toBeTruthy();
   expect(screen.queryByRole("img")).toBeNull();
   expect(screen.getByRole("button", { name: "审阅候选差异" })).toBeTruthy();
-  expect(screen.getByLabelText("构建模型模式")).toBeTruthy();
-  expect(screen.getByLabelText("构建操作")).toBeTruthy();
+  expect(screen.queryByLabelText("构建模型模式")).toBeNull();
+  expect(screen.queryByLabelText("构建操作")).toBeNull();
 
   fireEvent.change(screen.getByLabelText("构建需求"), {
     target: { value: "Add a search tool" },
   });
   expect(builder.clear).not.toHaveBeenCalled();
-  expect(screen.getByLabelText("构建方案").textContent).toContain("创建工具");
+  expect(screen.getByLabelText("项目修改").textContent).toContain("project.json");
   fireEvent.click(screen.getByRole("button", { name: "审阅候选差异" }));
-  expect(review).toHaveBeenCalledOnce();
-  fireEvent.click(screen.getByRole("button", { name: "拒绝方案" }));
+  expect(screen.getByText("创建工具")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "舍弃项目修改" }));
   expect(builder.reject).toHaveBeenCalledOnce();
   expect(builder.clear).not.toHaveBeenCalled();
 });
@@ -126,7 +126,7 @@ it("shows real loading and stopping state and disables new chat while busy", asy
   panel(studio, builder);
 
   expect(screen.getByRole("status").textContent).toContain(
-    "正在生成并验证候选",
+    "正在处理任务",
   );
   const stop = screen.getByRole("button", { name: "停止" });
   const newChat = screen.getByRole("button", {
@@ -142,40 +142,17 @@ it("shows real loading and stopping state and disables new chat while busy", asy
   expect(screen.getByRole("status").textContent).toContain("正在停止");
 });
 
-it("keeps failed model-call evidence readable without a candidate result", async () => {
-  const studio = await readyStudio();
-  const builder = makeBuilder({
-    error: "BLK-BUILDER-LOCAL-LIMIT",
-    evidence: {
-      requestId: "request-failed",
-      outcome: "validation-rejected",
-      attempts: [
-        {
-          turn: 1,
-          outcome: "validation-rejected",
-          response: {
-            model: "test-model",
-            responseId: "response-failed",
-            inputTokens: 17,
-            outputTokens: 5,
-            totalTokens: 22,
-          },
-        },
-      ],
-    },
-  });
-  panel(studio, builder);
-
-  expect(screen.getByRole("alert").textContent).toContain(
-    "BLK-BUILDER-LOCAL-LIMIT",
-  );
-  const evidenceSummary = screen.getByText("本次调用记录");
-  expect(screen.getAllByText("本次调用记录")).toHaveLength(1);
-  fireEvent.click(evidenceSummary);
-  expect(
-    screen.getByText(/test-model · 22 Token · response-failed/),
-  ).toBeTruthy();
-  expect(screen.queryByRole("article", { name: "构建方案" })).toBeNull();
+it("requires a configured model and exposes real file changes with undo", async () => {
+  const studio=await readyStudio();studio.resources.map.clear();
+  const builder=makeBuilder({changes:[{change:{changeId:"change-1",path:"src/main.ts",before:"old",after:"new",beforeDigest:"a".repeat(64),afterDigest:"b".repeat(64)},undone:false}],error:"BLK-CODING-CONFLICT"});
+  panel(studio,builder);
+  expect(screen.getAllByRole("alert").some(node=>node.textContent?.includes("模型"))).toBe(true);
+  fireEvent.change(screen.getByLabelText("构建需求"),{target:{value:"修改代码"}});
+  expect((screen.getByRole("button",{name:"发送"}) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole("button",{name:"撤回 src/main.ts"}));
+  expect(builder.undoChange).toHaveBeenCalledWith("change-1");
+  expect(screen.getByText("src/main.ts")).toBeTruthy();
+  expect(screen.queryByRole("checkbox",{name:"生成本地应用界面"})).toBeNull();
 });
 
 it("starts a new conversation when idle", async () => {

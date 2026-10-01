@@ -21,6 +21,7 @@ impl UserStore {
             "window",
             "recovery",
             "builder-chat",
+            "coding-chat",
         ]
         .contains(&kind)
             || !crate::project_store::stable(id)
@@ -40,7 +41,7 @@ impl UserStore {
         }
         let value = crate::strict_json::parse(&std::fs::read(path).map_err(|_| ERROR)?)?;
         validate(kind, &value)?;
-        if kind == "builder-chat" && value["projectId"] != id {
+        if ["builder-chat", "coding-chat"].contains(&kind) && value["projectId"] != id {
             return Err(ERROR.into());
         }
         Ok(Some(value))
@@ -52,7 +53,7 @@ impl UserStore {
         if kind == "resources" && id == "app" {
             return crate::model_registry::write_registry(&self.root, &value);
         }
-        if kind == "builder-chat" && value["projectId"] != id {
+        if ["builder-chat", "coding-chat"].contains(&kind) && value["projectId"] != id {
             return Err(ERROR.into());
         }
         let bytes = serde_json::to_vec(&value).map_err(|_| ERROR)?;
@@ -125,8 +126,8 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
     if kind == "settings" {
         return validate_settings(value);
     }
-    if kind == "builder-chat" {
-        return validate_chat(value);
+    if ["builder-chat", "coding-chat"].contains(&kind) {
+        return validate_chat(value, kind == "coding-chat");
     }
     if kind == "recovery" {
         if value["schemaVersion"] != "blocky.recovery/v1"
@@ -149,13 +150,19 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
     }
     Ok(())
 }
-fn validate_chat(value: &Value) -> Result<(), String> {
+fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
     if crate::builder::contains_credentials(value) {
         return Err(ERROR.into());
     }
     let map = value.as_object().ok_or(ERROR)?;
     let messages = value["messages"].as_array().ok_or(ERROR)?;
-    if value["schemaVersion"] != "blocky.builder-chat/v1"
+    if (coding && value.to_string().len() > 128000)
+        || value["schemaVersion"]
+            != if coding {
+                "blocky.coding-chat/v1"
+            } else {
+                "blocky.builder-chat/v1"
+            }
         || !value["projectId"]
             .as_str()
             .is_some_and(crate::project_store::stable)
@@ -172,23 +179,34 @@ fn validate_chat(value: &Value) -> Result<(), String> {
         let fields = message.as_object().ok_or(ERROR)?;
         let id = message["id"].as_str().ok_or(ERROR)?;
         let text = message["text"].as_str().ok_or(ERROR)?;
-        let length = text.chars().count();
+        let length = if coding { text.encode_utf16().count() } else { text.chars().count() };
         total += length;
-        if !crate::project_store::stable(id)
+        if (coding && crate::coding::text_safe(text).is_err())
+            || (if coding {
+                id.is_empty()
+                    || !id
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b"_-".contains(&b))
+            } else {
+                !crate::project_store::stable(id)
+            })
             || id.len() > 200
             || !ids.insert(id)
             || !matches!(message["role"].as_str(), Some("user" | "assistant"))
             || text.trim().is_empty()
-            || length > 4000
+            || length > if coding { 16000 } else { 4000 }
             || total > 64000
             || fields
                 .keys()
                 .any(|key| !["id", "role", "text", "status"].contains(&key.as_str()))
+            || (!coding && message["status"] == "completed")
+            || (coding && message["status"] == "explained")
             || fields.get("status").is_some_and(|status| {
                 !matches!(
                     status.as_str(),
                     Some(
-                        "proposed"
+                        "completed"
+                            | "proposed"
                             | "accepted"
                             | "rejected"
                             | "explained"
@@ -207,6 +225,33 @@ fn validate_chat(value: &Value) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn coding_chat_is_strict_bounded_and_separate_from_builder_history() {
+        let root = tempfile::tempdir().unwrap();
+        let store = UserStore::new(root.path().to_owned());
+        let value = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"sample","messages":[{"id":"m_1","role":"assistant","text":"完成","status":"completed"}]});
+        store.write("coding-chat", "sample", value.clone()).unwrap();
+        assert_eq!(
+            store.read("coding-chat", "sample").unwrap(),
+            Some(value.clone())
+        );
+        assert!(store.write("coding-chat", "other", value.clone()).is_err());
+        assert!(
+            store
+                .write("builder-chat", "sample", value.clone())
+                .is_err()
+        );
+        let mut extra = value.clone();
+        extra["workspaceId"] = serde_json::json!("workspace-unsafe");
+        assert!(store.write("coding-chat", "sample", extra).is_err());
+        let mut large = value.clone();
+        large["messages"][0]["text"] = serde_json::json!("x".repeat(16001));
+        assert!(store.write("coding-chat", "sample", large).is_err());
+        let mut secret = value.clone();
+        secret["messages"][0]["text"] =
+            serde_json::json!("sk-abcdefghijklmnopqrstuvwxyz1234567890123456");
+        assert!(store.write("coding-chat", "sample", secret).is_err());
+    }
     #[test]
     fn chat_is_project_bound_and_does_not_store_candidates_or_credentials() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))

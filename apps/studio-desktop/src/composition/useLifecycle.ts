@@ -4,12 +4,11 @@ import { invoke, isTauri } from "@tauri-apps/api/core";
 import type { Studio } from "./useStudio";
 import type { StudioLogs } from "./useLogs";
 import type { StudioTask } from "./useTask";
-import type { Builder } from "./useBuilder";
 export function useLifecycle(
   studio: Studio,
   logs: StudioLogs,
   task: StudioTask,
-  builder: Builder,
+  builder: { settle(): Promise<void> },
 ) {
   const [requested, setRequested] = useState(false),
     [working, setWorking] = useState(false),

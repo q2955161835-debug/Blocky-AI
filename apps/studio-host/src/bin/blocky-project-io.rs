@@ -121,6 +121,14 @@ fn execute_value(value: Value) -> Value {
     }
     if value["operation"]
         .as_str()
+        .is_some_and(|s| s.starts_with("coding-"))
+    {
+        let result = blocky_studio::profile::cli_root()
+            .and_then(|root| blocky_studio::coding::dispatch(root, &value));
+        return blocky_studio::coding::native_reply(result);
+    }
+    if value["operation"]
+        .as_str()
         .is_some_and(|s| s.starts_with("builder-"))
     {
         let result = blocky_studio::profile::cli_root()
@@ -359,6 +367,7 @@ fn main() {
         Some("--trigger-session") => {
             std::process::exit(blocky_studio::agent_data::trigger_api::session::main())
         }
+        Some("--blocky-coding-run") => std::process::exit(blocky_studio::coding::session_main()),
         Some("--blocky-tool-call") => {
             std::process::exit(blocky_studio::tool_gateway::dispatch::session_main())
         }

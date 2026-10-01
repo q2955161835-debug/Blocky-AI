@@ -1,5 +1,5 @@
-use super::{transport, types, ProviderRequest};
-use serde_json::{json, Value};
+use super::{ProviderRequest, transport, types};
+use serde_json::{Value, json};
 use std::{
     collections::BTreeSet,
     path::Path,
@@ -18,7 +18,7 @@ fn fields(value: &Value, names: &[&str]) -> Result<(), String> {
     }
     Ok(())
 }
-fn call(value: &Value) -> Result<(String, Value), String> {
+fn call_with_tools(value: &Value, tools: &[&str]) -> Result<(String, Value), String> {
     fields(value, &["id", "type", "function", "index"])?;
     if value
         .get("index")
@@ -38,7 +38,7 @@ fn call(value: &Value) -> Result<(String, Value), String> {
         .ok_or(ERROR)?;
     let name = value["function"]["name"]
         .as_str()
-        .filter(|s| TOOLS.contains(s))
+        .filter(|s| tools.contains(s))
         .ok_or(ERROR)?;
     let args = value["function"]["arguments"]
         .as_str()
@@ -54,18 +54,41 @@ fn call(value: &Value) -> Result<(String, Value), String> {
     ))
 }
 pub fn validate_messages(value: &Value) -> Result<(), String> {
+    validate_messages_with_tools(value, &TOOLS, 32)
+}
+pub(crate) fn validate_coding_messages(value: &Value) -> Result<(), String> {
+    validate_messages_with_tools(value, &crate::coding::TOOLS, 256)
+}
+fn validate_messages_with_tools(
+    value: &Value,
+    tools: &[&str],
+    max_messages: usize,
+) -> Result<(), String> {
     let messages = value
         .as_array()
-        .filter(|a| !a.is_empty() && a.len() <= 32)
+        .filter(|a| !a.is_empty() && a.len() <= max_messages)
         .ok_or(ERROR)?;
-    if value.to_string().len() > 131072 {
+    if value.to_string().len()
+        > if max_messages > 32 {
+            4 * 1024 * 1024
+        } else {
+            131072
+        }
+    {
         return Err("BLK-BUILDER-BUDGET".into());
     }
     let mut pending = BTreeSet::new();
     let mut used = BTreeSet::new();
     for (index, message) in messages.iter().enumerate() {
         fields(message, &["role", "content", "tool_calls", "tool_call_id"])?;
-        if message["content"].as_str().is_some_and(|s| s.len() > 65536) {
+        if message["content"].as_str().is_some_and(|s| {
+            s.len()
+                > if max_messages > 32 {
+                    2 * 1024 * 1024
+                } else {
+                    65536
+                }
+        }) {
             return Err(ERROR.into());
         }
         match message["role"].as_str() {
@@ -89,7 +112,7 @@ pub fn validate_messages(value: &Value) -> Result<(), String> {
                         .filter(|a| !a.is_empty() && a.len() <= 8)
                         .ok_or(ERROR)?
                     {
-                        let (id, _) = call(value)?;
+                        let (id, _) = call_with_tools(value, tools)?;
                         if !used.insert(id.clone()) {
                             return Err(ERROR.into());
                         }
@@ -157,7 +180,7 @@ pub fn parse_response(bytes: &[u8], max: u32) -> Result<Value, String> {
             .filter(|a| !a.is_empty() && a.len() <= 8)
             .ok_or(ERROR)?
         {
-            let (id, parsed) = call(value)?;
+            let (id, parsed) = call_with_tools(value, &TOOLS)?;
             if !ids.insert(id) {
                 return Err(ERROR.into());
             }

@@ -22,6 +22,8 @@ try {
  try {
   & node scripts/build-runtime-worker.mjs
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  & pnpm --dir tools/blocky-cli exec node build.mjs --bundle-only
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & node scripts/build-builder.mjs
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   & node scripts/build-document-parser.mjs

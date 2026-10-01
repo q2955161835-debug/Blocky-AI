@@ -13,7 +13,7 @@ use std::{
     time::{Duration, Instant},
 };
 const ERROR: &str = "BLK-BUILDER-PROCESS";
-fn assets() -> Result<PathBuf, String> {
+pub(crate) fn assets() -> Result<PathBuf, String> {
     let exe = std::env::current_exe().map_err(|_| ERROR)?;
     let directory = exe.parent().ok_or(ERROR)?;
     let mut candidates = vec![directory.join("builder")];
@@ -38,7 +38,7 @@ fn assets() -> Result<PathBuf, String> {
         .find(|p| p.join("manifest.json").is_file())
         .ok_or("BLK-BUILDER-RUNTIME".into())
 }
-fn verify_assets(directory: &Path) -> Result<(), String> {
+pub(crate) fn verify_assets(directory: &Path) -> Result<(), String> {
     let bytes = std::fs::read(directory.join("manifest.json")).map_err(|_| ERROR)?;
     if bytes.len() > 4096 {
         return Err(ERROR.into());

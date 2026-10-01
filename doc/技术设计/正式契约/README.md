@@ -3,10 +3,10 @@
 | 项目 | 内容 |
 |---|---|
 | 契约代际 | 阶段 0 的 `v1alpha1` 与阶段 2 的项目/IR `v1` 共存 |
-| 当前阶段 | 阶段 0–7 已验收；Agent 能力补全批次 A 开发验证中 |
-| 当前任务 | `codex/feat-agent-capability-upgrade`；范围见契约 16 |
-| 目标版本 | `0.8.0`；现有普通包为 `0.7.1` |
-| 稳定性 | 新能力尚未完成独立最终验收；历史证据仅绑定各自来源 |
+| 当前阶段 | 阶段 0–7及Agent能力补全已验收；内置代码Agent开发验证中 |
+| 当前任务 | `codex/feat-built-in-code-agent`；范围见契约17 |
+| 目标版本 | 现有普通包`0.8.0`；本轮未发布新包 |
+| 稳定性 | 内置代码Agent尚未完成Windows最终验收；历史证据仅绑定各自来源 |
 
 本目录是 Blocky 正式产品接口索引。它定义不同包、Host、桌面界面和 CLI 之间交换什么数据；契约登记与源码消费者不等于对应产品功能已经完成。Windows Core 技术尖峰目录已从当前工作区删除，相关结果只作为 Git 历史证据，不是正式契约或包边界。
 
@@ -50,6 +50,15 @@
 | `blocky.task/v1alpha1` | 项目具名任务 | [底部面板、终端、日志与审计](06-底部面板终端日志与审计-v1alpha1.md) | 项目/扩展资源 | 否 | `terminal-protocol` |
 | `blocky.audit/v1alpha1` | 高风险授权与外部副作用审计元数据 | [底部面板、终端、日志与审计](06-底部面板终端日志与审计-v1alpha1.md) | 有界本机审计存储 | 是 | `observability` |
 | `blocky.settings/v1` | 分层设置文档与继承值 | [阶段 2 语言与桌面地基](11-阶段2语言与桌面地基.md) | 应用/项目设置 | 否 | `settings-core` |
+
+| `blocky.coding-change/v1` | 文件前后内容/摘要与撤回/失效关系 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务回执 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.coding-failure/v1` | CLI失败/取消及实际变更回执 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | CLI输出工件 | 否 | `blocky-cli` / `studio-host` |
+| `blocky.coding-start/v1` | 任务与项目基线 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.coding-event/v1` | 流式正文与工具事实 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.coding-result/v1` | 终态、文件回执与项目候选 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.coding-chat/v1` | 按项目持久聊天 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 本机用户会话 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.coding-ipc/v1` | Host与Pi worker消息 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.cli-runtime/v1` | 实际CLI bundle完整性锁定 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 构建工件 | 否 | `studio-host` / `builder-protocol` |
 
 ## 3. 唯一数据流
 

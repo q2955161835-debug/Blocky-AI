@@ -1,5 +1,5 @@
 import type { Studio } from "../composition/useStudio";
-import type { Builder } from "../composition/useBuilder";
+import type { CodingAgent } from "../composition/useCodingAgent";
 import type { SourceRef } from "@blocky/language-schema";
 import { BuilderPanel } from "./BuilderPanel";
 import { StarterGuide } from "./StarterGuide";
@@ -11,24 +11,20 @@ import { Inspector } from "./Inspector";
 export function StudioSidebar({
   studio: s,
   builder,
-  createSurface,
-  setCreateSurface,
-  review,
+  promptSuggestion,
   execute,
   enabled,
   onTraceContext,
 }: {
   studio: Studio;
-  builder: Builder;
-  createSurface: boolean;
-  setCreateSurface(value: boolean): void;
-  review(): void;
+  builder: CodingAgent;
+  promptSuggestion?: { nonce: number; text: string };
   execute(id: string): void;
   enabled(id: string): boolean;
   onTraceContext(x: number, y: number, source: SourceRef): void;
 }) {
   const views = [
-    ["agent", "运行 Agent"],
+    ["agent", "Blocky Agent"],
     ["builder", "构建助手"],
   ] as const;
   const select = (rightView: "agent" | "builder") =>
@@ -104,9 +100,8 @@ export function StudioSidebar({
           key={s.snapshot.project.manifest.projectId}
           studio={s}
           builder={builder}
-          createSurface={createSurface}
-          setCreateSurface={setCreateSurface}
-          review={review}
+          promptSuggestion={promptSuggestion}
+          configureModel={() => execute("settings.resources")}
         />
       </div>
     </aside>

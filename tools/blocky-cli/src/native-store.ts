@@ -9,6 +9,7 @@ import { CliError } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { KnowledgeTransport } from "./knowledge-transport";
 import { installModel } from "./model-install-transport";
+import { codingNativeRequest } from "./coding-transport";
 import { cooperativeNativeRequest } from "./cooperative-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = /\/(?:main|runtime-worker)\.mjs$/.test(import.meta.url)
@@ -53,9 +54,11 @@ function request(
         child.kill();
         finish(new CliError(6, "BLK-HOST-002", "原生存储请求超时。"));
       },
-      /^(conversion-|provider-|builder-)/.test(String(input.operation))
-        ? 130000
-        : 30000,
+      String(input.operation).startsWith("coding-")
+        ? 310000
+        : /^(conversion-|provider-|builder-)/.test(String(input.operation))
+          ? 130000
+          : 30000,
     );
     const cancel = () => {
       child.kill();
@@ -126,24 +129,29 @@ export async function nativeUserOperation(
   // The session is privately owned by this CLI; the next request starts afresh.
   if (operation === "knowledge-cancel") knowledgeTransport.cancel();
   const reply = (
-    operation === "tool-call"
-      ? await cooperativeNativeRequest(
-          helper,
-          { operation, ...fields },
-          "tool-call",
-          signal,
-        )
-      : operation === "provider-local-model-install"
-        ? await installModel(helper, { operation, ...fields }, signal)
-        : operation.startsWith("knowledge-") && operation !== "knowledge-cancel"
-          ? await knowledgeTransport.request({ operation, ...fields })
-          : await request({ operation, ...fields }, signal)
+    operation === "coding-run"
+      ? await codingNativeRequest(helper, { operation, ...fields }, signal)
+      : operation === "tool-call"
+        ? await cooperativeNativeRequest(
+            helper,
+            { operation, ...fields },
+            "tool-call",
+            signal,
+          )
+        : operation === "provider-local-model-install"
+          ? await installModel(helper, { operation, ...fields }, signal)
+          : operation.startsWith("knowledge-") &&
+              operation !== "knowledge-cancel"
+            ? await knowledgeTransport.request({ operation, ...fields })
+            : await request({ operation, ...fields }, signal)
   ) as Reply;
   if (
     reply.schemaVersion !== "blocky.project-io/v1alpha1" ||
     typeof reply.ok !== "boolean"
   )
     throw new CliError(6, "BLK-HOST-001", "原生响应格式无效。");
+  if (!reply.ok && operation === "coding-run" && reply.value != null)
+    return reply.value;
   if (!reply.ok)
     throw new CliError(
       3,
@@ -153,7 +161,7 @@ export async function nativeUserOperation(
         : operation.startsWith("conversion-")
           ? "仓库转换操作失败，请检查版本、目录、工件与预算。"
           : (errorGuidance(reply.code ?? "")?.message ??
-            (operation.startsWith("builder-")
+            (operation.startsWith("builder-") || operation.startsWith("coding-")
               ? "构建操作未完成；原项目保持不变。"
               : "本机配置操作失败，未返回秘密内容。")),
       errorGuidance(reply.code ?? "")?.hint,

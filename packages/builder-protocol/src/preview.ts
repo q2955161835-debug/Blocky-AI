@@ -14,7 +14,7 @@ import { rpaNodePermissions } from "@blocky/rpa-core";
 const same = (a: string[], b: string[]) =>
   canonicalJson([...new Set(a)].sort()) ===
   canonicalJson([...new Set(b)].sort());
-async function permissions(
+export async function projectPermissions(
   project: Project,
   userRegistry?: Map<string, Resource>,
   allowUnresolved = false,
@@ -65,8 +65,8 @@ export async function previewPatch(
   if (patch.catalogVersion !== catalogVersion) throw Error("BLK-PATCH-002");
   const next = projectWithOperations(project, patch.operations);
   const [before, after] = await Promise.all([
-    permissions(project, userRegistry, true),
-    permissions(next, userRegistry),
+    projectPermissions(project, userRegistry, true),
+    projectPermissions(next, userRegistry),
   ]);
   if (after.compiled.diagnostics.some((d) => d.severity === "error"))
     throw Error("BLK-PATCH-004");
@@ -117,8 +117,8 @@ export async function makePatch(
 ) {
   const next = projectWithOperations(project, operations);
   const [before, after] = await Promise.all([
-    permissions(project, userRegistry, true),
-    permissions(next, userRegistry),
+    projectPermissions(project, userRegistry, true),
+    projectPermissions(next, userRegistry),
   ]);
   const patch = {
     schemaVersion: "blocky.patch/v1alpha1" as const,

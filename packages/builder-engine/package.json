@@ -8,6 +8,7 @@
     "@blocky/builder-protocol": "workspace:*",
     "@blocky/app-surface": "workspace:*",
     "@blocky/language-schema": "workspace:*",
+    "@blocky/project-model": "workspace:*",
     "@blocky/resource-registry": "workspace:*",
     "@earendil-works/pi-agent-core": "0.86.0",
     "@earendil-works/pi-ai": "0.86.0",

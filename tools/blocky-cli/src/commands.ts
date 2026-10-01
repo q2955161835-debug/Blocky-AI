@@ -30,6 +30,7 @@ import {
 import { configure } from "./configure";
 import { construction, constructionHelp } from "./construction";
 import { builderCommand, builderHelp } from "./builder";
+import { codingCommand, codingHelp } from "./coding";
 import { builderWorkCommand, builderWorkHelp } from "./builder-work";
 import { discoveryCommand, discoveryHelp } from "./discovery";
 import { blockQueryCommand, blockQueryHelp } from "./block-query";
@@ -84,6 +85,7 @@ export const help = {
     "project migrate <old.blocky> --output <new.blocky> --json",
     ...constructionHelp,
     ...builderHelp,
+    ...codingHelp,
     ...builderWorkHelp,
     ...conversionHelp,
     ...taskHelp,
@@ -149,6 +151,8 @@ export async function dispatch(
   if (trace) return trace;
   const workResult = await builderWorkCommand(args, signal);
   if (workResult) return workResult;
+  const codingResult = await codingCommand(args, signal);
+  if (codingResult) return codingResult;
   const builderResult = await builderCommand(args, signal);
   if (builderResult) return builderResult;
   const knowledge = await knowledgeCommand(args, signal);

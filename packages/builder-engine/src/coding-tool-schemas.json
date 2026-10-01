@@ -1,0 +1,128 @@
+[
+  {
+    "name": "workspace_list",
+    "description": "List files and directories in the Host-authorized workspace using relative paths.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "maxLength": 512
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "workspace_search",
+    "description": "Search text in the authorized workspace; returns bounded relative paths, line numbers and text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "path": {
+          "type": "string",
+          "maxLength": 512
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "workspace_read",
+    "description": "Read a workspace text file and its digest before editing. Binary and sensitive files are refused.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "workspace_write",
+    "description": "Create or edit a text file using the digest from workspace_read, or null only for a new file. Blocky project packages must be edited through CLI.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 1048576
+        },
+        "expectedDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["path", "text", "expectedDigest"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "workspace_undo",
+    "description": "Undo a recorded workspace change after Host verifies its current file version.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "changeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      },
+      "required": ["changeId"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "blocky_cli",
+    "description": "Run the actual Blocky CLI using an argument array and --json. Discover version, command schemas and catalog first. Use $project for the isolated current project candidate; mutation output must also be $project. For --patch or --operations, use a workspace relative JSON file or $json:<compact JSON> for a bounded staged artifact. Only deterministic Host-approved commands are available; no shell or nested builder tasks.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 65536
+          },
+          "minItems": 1,
+          "maxItems": 64
+        }
+      },
+      "required": ["args"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "project_context",
+    "description": "Read the latest isolated Blocky project candidate, target module and selection from Host. Use blocky_cli project compile for actual compiler diagnostics.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  }
+]

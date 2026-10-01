@@ -3,6 +3,7 @@
 mod acceptance;
 mod agent_data_commands;
 mod builder_commands;
+mod coding_commands;
 mod commands;
 mod conversion_commands;
 mod knowledge_commands;
@@ -74,6 +75,7 @@ fn main() {
     builder
         .manage(commands::Handles::default())
         .manage(blocky_studio::builder::BuilderHost::default())
+        .manage(blocky_studio::coding::CodingHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
         .manage(blocky_studio::tool_gateway::ToolHost::default())
         .manage(blocky_studio::task_host::TaskHost::default())
@@ -227,6 +229,12 @@ fn main() {
             commands::save_project,
             commands::validate_patch,
             commands::authorize_surface,
+            coding_commands::coding_workspace_pick,
+            coding_commands::coding_run,
+            coding_commands::coding_cancel,
+            coding_commands::coding_undo,
+            coding_commands::coding_validate_project,
+            coding_commands::coding_changes,
             builder_commands::builder_run,
             builder_commands::builder_cancel,
             builder_commands::builder_evidence,

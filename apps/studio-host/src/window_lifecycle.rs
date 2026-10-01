@@ -155,6 +155,9 @@ pub fn finish_exit(
     window
         .state::<blocky_studio::workflow::desktop::RuntimeHost>()
         .shutdown()?;
+    window
+        .state::<blocky_studio::coding::CodingHost>()
+        .shutdown()?;
     tasks.shutdown()?;
     window
         .state::<blocky_studio::workflow::host::WorkflowHost>()

@@ -80,14 +80,20 @@ if (
   throw Error(
     `Unexpected sidecar imports: ${JSON.stringify({ forbidden, builtins })}`,
   );
-const node = await readFile(process.execPath);
+// Cross-platform bundling still pins the exact Windows runtime bytes.
+// This prepares assets only; it does not claim to execute the Windows Host.
+const runtimeArgs = process.argv.slice(2);
+if (runtimeArgs.length && (runtimeArgs.length !== 2 || runtimeArgs[0] !== "--node-runtime"))
+  throw Error("Usage: build-builder.mjs [--node-runtime <locked Windows node.exe>]");
+const nodePath = runtimeArgs[1] ? resolve(runtimeArgs[1]) : process.execPath;
+const node = await readFile(nodePath);
 if (
-  process.version !== "v22.23.1" ||
+  (!runtimeArgs.length && process.version !== "v22.23.1") ||
   createHash("sha256").update(node).digest("hex") !==
     "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed"
 )
   throw Error("Builder runtime must be locked Node 22.23.1 x64");
-await copyFile(process.execPath, `${output}/node.exe`);
+await copyFile(nodePath, `${output}/node.exe`);
 const files = [];
 for (const name of ["builder.mjs", "node.exe"]) {
   const bytes = await readFile(`${output}/${name}`);

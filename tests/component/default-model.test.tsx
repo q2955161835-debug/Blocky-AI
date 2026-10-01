@@ -2,7 +2,7 @@
 import { afterEach, beforeAll, expect, it } from "vitest";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
-import { useBuilder } from "../../apps/studio-desktop/src/composition/useBuilder";
+import { useCodingAgent } from "../../apps/studio-desktop/src/composition/useCodingAgent";
 import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
 import { SettingsPanel } from "../../apps/studio-desktop/src/app/SettingsPanel";
 import { createAgentExample } from "../../packages/block-catalog/src";
@@ -17,25 +17,24 @@ afterEach(() => { cleanup(); localStorage.clear(); });
 async function configuredStudio() {
   const hook = renderHook(() => useStudio());
   await waitFor(() => expect(hook.result.current.settings.ready && hook.result.current.resources.ready).toBe(true));
-  await act(() => hook.result.current.resources.upsert(modelResource()));
+  await act(() => hook.result.current.resources.upsert({...modelResource(),definition:{...modelResource().definition,capabilities:["text","tools"]}}));
   await act(() => hook.result.current.resources.flush());
   act(() => hook.result.current.settings.change("app", "models.defaultResourceId", "saved-model"));
   await act(() => hook.result.current.settings.flush());
   return hook;
 }
 
-it("reopens the builder with the persisted model while keeping local mode available for one request", async () => {
+it("reopens the coding assistant with the persisted model and no simulated mode", async () => {
   let hook = await configuredStudio();
   hook.unmount();
   hook = renderHook(() => useStudio());
   await waitFor(() => expect(hook.result.current.settings.ready && hook.result.current.resources.ready).toBe(true));
-  const builder = renderHook(() => useBuilder(hook.result.current));
-  const props = { studio: hook.result.current, builder: builder.result.current, createSurface: false, review() {}, setCreateSurface() {} };
+  const builder = renderHook(() => useCodingAgent(hook.result.current));
+  const props = { studio: hook.result.current, builder: builder.result.current, configureModel() {} };
   const dialog = render(<BuilderPanel {...props} />);
-  expect((screen.getByLabelText("构建模型模式") as HTMLSelectElement).value).toBe("live");
+  expect(screen.queryByLabelText("构建模型模式")).toBeNull();
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
-  fireEvent.change(screen.getByLabelText("构建模型模式"), { target: { value: "deterministic" } });
-  expect(screen.queryByLabelText("构建模型资源")).toBeNull();
+
   dialog.unmount();
   render(<BuilderPanel {...props} />);
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
@@ -60,11 +59,11 @@ it("shows a missing default and prevents an implicit switch to another online mo
   const hook = await configuredStudio();
   await act(() => hook.result.current.resources.remove("saved-model"));
   await act(() => hook.result.current.resources.flush());
-  const builder = renderHook(() => useBuilder(hook.result.current));
-  render(<BuilderPanel studio={hook.result.current} builder={builder.result.current} createSurface={false} review={() => {}} setCreateSurface={() => {}} />);
+  const builder = renderHook(() => useCodingAgent(hook.result.current));
+  render(<BuilderPanel studio={hook.result.current} builder={builder.result.current} configureModel={() => {}} />);
   fireEvent.change(screen.getByLabelText("构建需求"), { target: { value: "Explain the selected blocks" } });
   expect(screen.getByRole("alert").textContent).toContain("默认模型不可用");
-  expect((screen.getByRole("button", { name: "生成方案" }) as HTMLButtonElement).disabled).toBe(true);
+  expect((screen.getByRole("button", { name: "发送" }) as HTMLButtonElement).disabled).toBe(true);
 });
 
 it("offers configured user models in settings and resets the preference to local defaults", async () => {

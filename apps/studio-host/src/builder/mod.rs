@@ -1,7 +1,7 @@
 pub(crate) mod evidence;
 mod input_guard;
 pub(crate) use input_guard::credentials as contains_credentials;
-mod process;
+pub(crate) mod process;
 #[cfg(test)]
 mod tests;
 use crate::provider::builder_model::BuilderModel;

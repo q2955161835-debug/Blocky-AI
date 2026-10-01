@@ -375,3 +375,11 @@ agent-skills/
 - Agent Skills 完整格式、命名、目录与验证约束：<https://agentskills.io/specification>
 - Codex 开放仓库、Claude Code 扩展能力与 OpenClaw Tools：<https://github.com/openai/codex>、<https://code.claude.com/docs/en/features-overview>、<https://docs.openclaw.ai/tools>
 - LangChain 模块化 Retrieval 与 Qdrant 混合查询/过滤/生产优化：<https://docs.langchain.com/oss/python/langchain/retrieval>、<https://qdrant.tech/documentation/search/hybrid-queries/>、<https://qdrant.tech/documentation/production-checklist/>
+
+## 2026-10-01 内置代码 Agent
+
+桌面构建助手与`coding run <file.blocky> --module <id> --prompt <text> --output <result.json> --json`共用Pi/Host工具，模型沿用默认资源或`--model`。`--workspace`在本次原生helper中显示目录选择，不接受模型传来的目录字符串作为授权。可用`--conversation`传入有界角色/正文历史；新命令/Schema由command list、schema发现。旧`builder`仍兼容。
+
+内置`blocky_cli`调用锁定bundle与原生存储helper，仅开放确定性发现、项目候选修改/校验/编译/补丁与模拟预检；不递归调用模型、不运行任意Shell。`$project`是当前未保存项目的隔离候选；`$json:<JSON>`提供有界补丁/操作工件。项目结果保持`applied:false`，桌面显式审阅后再应用。
+
+共享契约与验证边界见[契约17](../技术设计/正式契约/17-内置代码Agent与Host工具.md)。源码可发现不代表Windows原生或新普通包已验收。

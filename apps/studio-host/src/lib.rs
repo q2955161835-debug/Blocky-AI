@@ -1,6 +1,7 @@
 pub mod agent_data;
 mod approval_ledger;
 pub mod builder;
+pub mod coding;
 pub mod conversion;
 pub mod knowledge;
 pub mod local_models;

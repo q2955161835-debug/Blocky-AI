@@ -18,7 +18,7 @@ import {
   type ConstructionKind,
 } from "./ConstructionDialog";
 import { useConstruction } from "../composition/useConstruction";
-import { useBuilder } from "../composition/useBuilder";
+import { useCodingAgent } from "../composition/useCodingAgent";
 import { useTask } from "../composition/useTask";
 import { useTerminals } from "../composition/useTerminals";
 import { SurfacePreview } from "./SurfacePreview";
@@ -51,8 +51,8 @@ export function App() {
     };
   }, []);
   const construction = useConstruction(s);
-  const builder = useBuilder(s);
-  const [builderSurface, setBuilderSurface] = useState(false);
+  const builder = useCodingAgent(s);
+  const [builderPrompt, setBuilderPrompt] = useState<{nonce:number;text:string}>();
   const task = useTask(s);
   const terminals = useTerminals(s);
   const logs = useLogs(s),
@@ -135,7 +135,7 @@ export function App() {
     "terminal.run-task": task.start,
     "terminal.stop-task": task.cancel,
     "build.surface": () => {
-      setBuilderSurface(true);
+      setBuilderPrompt({nonce:Date.now(),text:"为当前项目创建本地应用界面"});
       s.setSession(v => ({ ...v, rightVisible: true, rightView: "builder" }));
     },
     "terminal.stop": () => void terminals.close(),
@@ -383,12 +383,10 @@ export function App() {
               onContext={(blockType, x, y) => setPopup({ kind: "context", scope: "library", blockType, x, y })}
             />
             }
-            right={<StudioSidebar studio={s} builder={builder} createSurface={builderSurface} setCreateSurface={setBuilderSurface}
+            right={<StudioSidebar studio={s} builder={builder} promptSuggestion={builderPrompt}
               execute={execute} enabled={enabled}
               onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })}
-              review={() => void (async () => {
-                if (builder.result?.patch && await construction.reviewBuilder(builder.result.patch)) show("patch-review");
-              })()} />}
+              />}
           >
             <section
               className={`workspace ${s.session.dock === "right" && s.session.panel && !s.session.maximized ? "panel-right" : ""}`}
@@ -600,7 +598,6 @@ export function App() {
             kind={popup.kind as ConstructionKind}
             close={() => setPopup(null)}
             showReview={() => show("patch-review")}
-            onDecision={(outcome, patchId) => outcome === "accepted" ? builder.markApplied(patchId) : builder.markRejected(patchId)}
           />
         )}
       {popup &&

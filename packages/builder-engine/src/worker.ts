@@ -4,6 +4,7 @@ import type { Project, Resource } from "@blocky/language-schema";
 import { localBuilderResponse } from "./local";
 import { safeBuilderError } from "./transport";
 import { readBuilderRegistry } from "./provider-registry";
+import { createCodingWorker } from "./coding-worker";
 
 const controller = new AbortController();
 let started = false,
@@ -16,6 +17,25 @@ let started = false,
       }
     | undefined;
 let buffer = "";
+let protocol: "builder" | "coding" | undefined;
+const coding = createCodingWorker({
+  send: (frame) => process.stdout.write(JSON.stringify(frame) + "\n"),
+  close: () => process.stdin.destroy(),
+});
+function finish(error?: unknown) {
+  if (protocol === "coding") coding.end(error);
+  else end(error);
+}
+async function dispatch(value: Record<string, unknown>) {
+  if (!protocol) {
+    if (value?.schemaVersion === "blocky.coding-ipc/v1") protocol = "coding";
+    else if (value?.schemaVersion === "blocky.builder-ipc/v1")
+      protocol = "builder";
+    else throw Error("BLK-BUILDER-WIRE");
+  }
+  if (protocol === "coding") await coding.receive(value);
+  else await receive(value);
+}
 function send(value: Record<string, unknown>) {
   const line = JSON.stringify({
     schemaVersion: "blocky.builder-ipc/v1",
@@ -126,7 +146,9 @@ process.stdin.setEncoding("utf8");
 process.stdin.on("data", (chunk: string) => {
   buffer += chunk;
   if (Buffer.byteLength(buffer) > 16 * 1024 * 1024) {
-    end(Error("BLK-BUILDER-BUDGET"));
+    finish(
+      Error(protocol === "coding" ? "BLK-CODING-BUDGET" : "BLK-BUILDER-BUDGET"),
+    );
     return;
   }
   let split: number;
@@ -134,12 +156,13 @@ process.stdin.on("data", (chunk: string) => {
     const line = buffer.slice(0, split);
     buffer = buffer.slice(split + 1);
     try {
-      void receive(JSON.parse(line)).catch(end);
+      void dispatch(JSON.parse(line)).catch(finish);
     } catch (error) {
-      end(error);
+      finish(error);
     }
   }
 });
 process.stdin.on("end", () => {
-  if (!controller.signal.aborted) end(Error("BLK-BUILDER-CANCELLED"));
+  if (protocol === "coding") coding.end(Error("BLK-CODING-CANCELLED"));
+  else if (!controller.signal.aborted) end(Error("BLK-BUILDER-CANCELLED"));
 });

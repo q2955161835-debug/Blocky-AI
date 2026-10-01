@@ -11,6 +11,7 @@ const booleans = new Set([
   "surface",
   "control-stdin",
   "download",
+  "workspace",
 ]);
 export type Args = { words: string[]; options: Map<string, string | true> };
 export function parse(argv: string[]): Args {
