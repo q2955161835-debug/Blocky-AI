@@ -12,6 +12,8 @@
 
 ## 使用约定
 
+原生驱动支持inspect/capture/set-value/invoke/file-select/file-cancel。file-select只接受项目try下的绝对.blocky路径，打开必须已存在，保存必须不存在；祖先reparse、覆盖保存和凭据控件均排除。WindowsPowerShell 5子进程须继承launcher桌面；后台UIA缺失模式时，文件选择只按本机观测到的两种Win32控件树定位，不使用全局输入。
+
 launcher必填Application和RunDirectory，支持Arguments、TimeoutSeconds、ChildEnvironment、ControllerScript和CdpPort。RunDirectory限定在仓库try下，不能覆盖已有background-result.json。
 
 ```powershell
@@ -33,6 +35,6 @@ launcher必填Application和RunDirectory，支持Arguments、TimeoutSeconds、Ch
 
 ## 已有开发证据与剩余验证
 
-首轮普通candidate1已实际通过独立desktop启动、自有WebView截图、loopback所有权及Job/句柄结算；正式launcher的smoke2通过。原生打开对话框后台截图通过，完整文件选择动作及新候选/Full后续由独立Agent签发，不外推本开发探针。精确证据在`try/agent-capability-upgrade/background-ui/`及当日进展记录；这些探针没有外部大模型API请求。
+首轮普通candidate1已实际通过独立desktop启动、自有WebView截图、loopback所有权及Job/句柄结算；正式launcher的smoke2通过。原生打开、另存为取消及新文件保存已在普通candidate1后台实测，旧项目显示三画布，保存文件2735字节且ZIP六条目有效；新候选GUI及Full仍由独立Agent签发，不外推本开发探针。精确证据在`try/agent-capability-upgrade/background-ui/`及当日进展记录；这些探针没有外部大模型API请求。
 
 依据：[CreateDesktopW](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)、[线程desktop绑定](https://learn.microsoft.com/en-us/windows/win32/winstation/thread-connection-to-a-desktop)、[WebView2调试环境](https://learn.microsoft.com/en-us/microsoft-edge/webview2/how-to/debug-visual-studio-code)。子进程继承行为和普通包可绘制性仍以本机实测为准。
