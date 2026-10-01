@@ -1,6 +1,7 @@
 import { build } from "esbuild";
 import { installDocumentParser } from "../../scripts/install-document-parser.mjs";
 import { installKnowledgeModels } from "../../scripts/install-knowledge-models.mjs";
+import {installAudioRuntime} from '../../scripts/install-audio-runtime.mjs';
 import {installBrowser} from "../../scripts/browser-runtime.mjs";
 import { mkdir, copyFile, writeFile } from "node:fs/promises";
 import {
@@ -21,6 +22,7 @@ await mkdir("dist/bin", { recursive: true });
 await installBrowser("dist/bin");
 await installDocumentParser("dist/bin");
 await installKnowledgeModels("dist/bin");
+await installAudioRuntime("dist/bin");
 await mkdir("dist/bin/builder", { recursive: true });
 for (const name of ["builder.mjs", "node.exe", "manifest.json"])
   await copyFile(

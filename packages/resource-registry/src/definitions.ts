@@ -100,6 +100,7 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
             "tools",
             "structured-output",
             "embedding",
+            "rerank",
           ),
         ),
         parameters: object({

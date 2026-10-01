@@ -45,6 +45,10 @@ export type Generation = {
 };
 export type AgentServices = {
   memoryEntries?: import("./memory").MemoryPort;
+  skills?: import("./skills").SkillPort;
+  media?: import("./media").MediaPort;
+  decision?: import("./decision").DecisionPort;
+  evaluation?: import("./evaluation/native").NativeEvaluationPort;
   close?: (signal: AbortSignal) => Promise<void>;
   validateCitations?: (
     projectId: string,

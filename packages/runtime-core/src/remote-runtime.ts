@@ -146,6 +146,9 @@ export class RemoteRuntime {
         service("agent.memory", { input }, signal) as ReturnType<
           NonNullable<AgentServices["memory"]>
         >,
+      skills:(input,signal)=>service("agent.skills",{input},signal) as ReturnType<NonNullable<AgentServices["skills"]>>,
+      media:(input,signal)=>service("agent.media",{input},signal) as ReturnType<NonNullable<AgentServices["media"]>>,
+      decision:(input,signal)=>service("agent.decision",{input},signal) as ReturnType<NonNullable<AgentServices["decision"]>>,
       memoryEntries: (input, signal) => service("agent.memoryEntries", { input }, signal) as ReturnType<NonNullable<AgentServices["memoryEntries"]>>,
       tool: (input, signal) =>
         service("agent.tool", { input }, signal) as ReturnType<

@@ -61,10 +61,10 @@ impl ManageRequest {
         let upsert = self.action == "upsert";
         let delete = self.action == "delete";
         let search = self.action == "search";
-        let source = ["revoke-source", "allow-source"].contains(&self.action.as_str());
+        let source = ["revoke-source", "allow-source", "check-source"].contains(&self.action.as_str());
         if self.schema_version != "blocky.memory-request/v1" || !stable(&self.request_id)
             || !stable(&self.project_id) || !stable(&self.session_id)
-            || !["read", "upsert", "delete", "search", "revoke-source", "allow-source"].contains(&self.action.as_str())
+            || !["read", "upsert", "delete", "search", "revoke-source", "allow-source", "check-source"].contains(&self.action.as_str())
             || ((!search && !source) != self.key.is_some()) || self.key.as_ref().is_some_and(|s| !stable(s))
             || upsert != self.value.is_some() || (upsert || delete) != self.expected_version.is_some()
             || upsert != self.conflict_policy.is_some()
@@ -150,7 +150,7 @@ fn source_head(root: &std::path::Path, project: &str, source: &str) -> Result<Op
     let allowed=head["sources"].as_array().is_some_and(|sources|sources.iter().any(|s|s["sourceId"]==parts[2]&&s["readable"]==true));
     Ok(Some(json!({"readable":allowed,"revision":head["revision"],"generation":head["generation"]})))
 }
-fn transaction(root: &std::path::Path, project: &str, f: impl FnOnce(&mut Store, u64) -> Result<(Value,bool),String>) -> Result<Value,String> {
+fn transaction(root: &std::path::Path, project: &str, incoming_source: Option<&String>, f: impl FnOnce(&mut Store, u64) -> Result<(Value,bool),String>) -> Result<Value,String> {
     regular(root)?;
     std::fs::create_dir_all(root).map_err(|_| "BLK-AGENT-IO")?;
     crate::knowledge::no_links(root).map_err(|_| PERMISSION)?;
@@ -159,7 +159,8 @@ fn transaction(root: &std::path::Path, project: &str, f: impl FnOnce(&mut Store,
     lock.try_lock().map_err(|_| "BLK-AGENT-BUSY")?;
     let file = root.join(format!("{project}.json"));
     let mut store = load(&file)?;
-    let sources=store.entries.values().filter_map(|e|e.source_ref.clone()).collect::<BTreeSet<_>>();
+    let mut sources=store.entries.values().filter_map(|e|e.source_ref.clone()).collect::<BTreeSet<_>>();
+    if let Some(source)=incoming_source {sources.insert(source.clone());}
     let mut snapshots=BTreeMap::new();
     for source in sources {
         let head=source_head(root,project,&source)?;
@@ -180,7 +181,7 @@ fn transaction(root: &std::path::Path, project: &str, f: impl FnOnce(&mut Store,
     Ok(result)
 }
 pub(super) fn legacy(root: &std::path::Path, r: &MemoryRequest) -> Result<Value,String> {
-    transaction(root, &r.project_id, |s,time| {
+    transaction(root, &r.project_id, None, |s,time| {
         let old = s.entries.get(&r.key);
         if r.action == "read" {
             let e = old.filter(|e|live(e,s,time));
@@ -195,7 +196,11 @@ pub(super) fn legacy(root: &std::path::Path, r: &MemoryRequest) -> Result<Value,
 }
 pub(super) fn manage(root: &std::path::Path, r: &ManageRequest) -> Result<Value,String> {
     if r.action=="upsert" && r.source_ref.as_ref().map(|source|source_head(root,&r.project_id,source)).transpose()?.flatten().is_some_and(|v|v["readable"]!=true) {return Err(PERMISSION.into());}
-    transaction(root, &r.project_id, |s,time| {
+    transaction(root, &r.project_id, r.source_ref.as_ref(), |s,time| {
+        if r.action=="check-source" {
+            let source=r.source_ref.as_ref().ok_or(INVALID)?;
+            return Ok((json!({"readable":!s.revoked_sources.contains(source)&&!s.denied_sources.contains(source)}),false));
+        }
         if ["revoke-source","allow-source"].contains(&r.action.as_str()) {
             let source = r.source_ref.clone().ok_or(INVALID)?;
             if r.action == "revoke-source" { s.revoked_sources.insert(source.clone());

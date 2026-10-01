@@ -2,6 +2,7 @@
 vendor/wry/** -text
 vendor/licenses/** -text
 vendor/models/** -text
+vendor/audio/** -text
 vendor/node/LICENSE -text
 # The parser manifest verifies the exact source bytes after checkout.
 packages/document-parser/*.mjs -text

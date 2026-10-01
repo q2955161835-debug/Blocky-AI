@@ -3,8 +3,12 @@ import { createAgentExample } from "./agent-example";
 import { correctionStarter } from "./starters/correction";
 import { ingestionStarter } from "./starters/ingestion";
 import type { OfficialStarter } from "./starters";
+import {delegationStarter} from './starters/delegation';
+import {decisionStarter} from './starters/decision';
 
 export const capabilityStarters: OfficialStarter[] = [
+  {id:'learned-routing',displayName:'英文候选评分',description:'以规则或本地相关性模型选择候选；分数是 logit，需自行校准阈值。',sampleInput:'Where is Paris located?',steps:['编辑英文候选说明和规则。','明确设置 logit 阈值及后备标签；此功能为实验性英文相关性路由。','运行并核对规则、模型或后备来源及实际模型版本。'],version:1},
+  {id:'agent-collaboration',displayName:'协作 Agent',description:'将任务交给两个有身份的模块 Agent，共享预算并保留结果来源。',sampleInput:'提出一个课堂活动，再检查方案中的风险。',steps:['选择两个子任务模块使用的模型。','编辑委派积木中的任务身份、权限和顺序或并行模式。','运行并核对独立回执与汇总结果；可随时停止。'],version:1},
   {
     id: "knowledge-correction",
     displayName: "资料检索纠正",
@@ -50,6 +54,8 @@ export function createCapabilityStarter(
 ): Project {
   const starter = capabilityStarters.find((s) => s.id === id);
   if (!starter) throw Error("BLK-STARTER-001");
+  if(id==='learned-routing')return decisionStarter(projectId);
+  if(id==='agent-collaboration')return delegationStarter(projectId);
   if (id === "knowledge-ingestion") return ingestionStarter(starter, projectId);
   if (id === "knowledge-correction")
     return correctionStarter(starter, projectId);

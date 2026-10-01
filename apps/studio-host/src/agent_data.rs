@@ -1,6 +1,13 @@
 //! Project memory and one registered pure tool. No client-controlled filesystem paths.
 mod memory_store;
+pub mod media_store;
+mod media_api;
+pub mod decision;
+pub mod evaluation_store;
+mod extensions_api;
+pub mod skill_store;
 pub use memory_store::ManageRequest;
+pub use skill_store::SkillRequest;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
@@ -120,6 +127,10 @@ struct State {
     grants: HashMap<String, Grant>,
     used_tools: HashSet<String>,
     closed: bool,
+    media_tasks:HashMap<String,media_api::Active>,
+    used_media:HashSet<String>,
+    decision_tasks:HashMap<String,(String,Arc<std::sync::atomic::AtomicBool>)>,
+    used_decisions:HashSet<String>,
 }
 #[derive(Clone)]
 pub struct AgentData {
@@ -158,7 +169,9 @@ impl AgentData {
         Ok(token)
     }
     pub fn revoke(&self, token: &str) -> Result<(), String> {
-        self.state.lock().map_err(|_| INVALID)?.grants.remove(token);
+        let mut state=self.state.lock().map_err(|_|INVALID)?;state.grants.remove(token);
+        for task in state.media_tasks.values().filter(|t|t.token==token){task.cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
+        for (owner,cancel) in state.decision_tasks.values(){if owner==token{cancel.store(true,std::sync::atomic::Ordering::SeqCst);}}
         Ok(())
     }
     pub fn memory(&self, token: &str, request: &MemoryRequest) -> Result<Value, String> {
@@ -187,6 +200,12 @@ impl AgentData {
         state.grants.get(token).filter(|g| !state.closed && g.project == r.project_id
             && g.session == r.session_id && g.created.elapsed() < g.lifetime).ok_or(PERMISSION)?;
         memory_store::manage(&self.root, r)
+    }
+    pub fn manage_skill(&self, token:&str, r:&SkillRequest)->Result<Value,String> {
+        r.validate()?;
+        let state=self.state.lock().map_err(|_|INVALID)?;
+        state.grants.get(token).filter(|g|!state.closed&&g.project==r.project_id&&g.session==r.session_id&&g.created.elapsed()<g.lifetime).ok_or(PERMISSION)?;
+        skill_store::manage(self.root.parent().ok_or(INVALID)?,r)
     }
     pub fn tool(&self, r: &ToolRequest, approved_digest: &str) -> Result<Value, String> {
         r.validate()?;
@@ -219,6 +238,8 @@ impl AgentData {
         let mut state = self.state.lock().map_err(|_| INVALID)?;
         state.closed = true;
         state.grants.clear();
+        for task in state.media_tasks.values(){task.cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
+        for (_,cancel) in state.decision_tasks.values(){cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
         Ok(())
     }
 }
@@ -244,6 +265,54 @@ pub fn dispatch(root: PathBuf, v: &Value) -> Result<Value, String> {
     let approvals = root.join("approvals");
     let host = AgentData::new(root);
     match e.operation.as_str() {
+        "agent-evaluation-preflight" | "agent-evaluation" => {
+            let r:evaluation_store::Request=serde_json::from_value(e.request).map_err(|_|INVALID)?;r.validate()?;let identity=format!("evaluation/{}/{}",r.project_id,r.request_id);let d=digest(&r)?;
+            if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}let mut preview=r.preflight()?;preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&d)?.into();return Ok(preview);}
+            let a=e.approval.filter(|a|a.approved&&a.request_digest==d).ok_or(PERMISSION)?;crate::approval_ledger::consume(&approvals,&identity,&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.manage_evaluation(&token,&r)
+        }
+        "agent-decision-preflight" | "agent-decision" => {
+            let r:decision::DecisionRequest=serde_json::from_value(e.request).map_err(|_|INVALID)?;r.validate()?;let identity=format!("decision/{}/{}",r.project_id,r.request_id);let d=digest(&r)?;
+            if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}let mut preview=r.preflight()?;preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&d)?.into();return Ok(preview);}
+            let a=e.approval.filter(|a|a.approved&&a.request_digest==d).ok_or(PERMISSION)?;crate::approval_ledger::consume(&approvals,&identity,&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.infer_decision(&token,&r)
+        }
+        "agent-media-import-preflight" | "agent-media-import" => {
+            #[derive(Deserialize)] #[serde(rename_all="camelCase",deny_unknown_fields)] struct Import {project_id:String,session_id:String,request_id:String,path:PathBuf}
+            let r:Import=serde_json::from_value(e.request).map_err(|_|INVALID)?;validate_context(&r.project_id,&r.session_id)?;if !stable(&r.request_id){return Err(INVALID.into());}
+            let input=media_store::read_native_file(&r.path)?;let mut preview=input.preflight()?;
+            preview["projectId"]=r.project_id.clone().into();preview["sessionId"]=r.session_id.clone().into();preview["requestId"]=r.request_id.clone().into();
+            let digest=digest(&preview)?;let identity=format!("media-import/{}/{}",r.project_id,r.request_id);
+            if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}preview["requestDigest"]=digest.clone().into();preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&digest)?.into();return Ok(preview);}
+            let a=e.approval.filter(|a|a.approved&&a.request_digest==digest).ok_or(PERMISSION)?;crate::approval_ledger::consume(&approvals,&identity,&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.import_media(&token,&r.project_id,&r.session_id,&input)
+        }
+        "agent-media-preflight" | "agent-media" => {
+            let r:media_store::MediaRequest=serde_json::from_value(e.request).map_err(|_|INVALID)?;r.validate()?;
+            let identity=format!("media/{}/{}",r.project_id,r.request_id);let d=digest(&r)?;
+            if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}let mut preview=r.preflight()?;preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&d)?.into();return Ok(preview);}
+            let a=e.approval.filter(|a|a.approved&&a.request_digest==d).ok_or(PERMISSION)?;crate::approval_ledger::consume(&approvals,&identity,&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.manage_media(&token,&r)
+        }
+        "agent-skill-prepare" => {
+            #[derive(Deserialize)] #[serde(rename_all="camelCase",deny_unknown_fields)]
+            struct Prepare {project_id:String,session_id:String,directory:PathBuf}
+            if e.approval.is_some(){return Err(INVALID.into());}
+            let p:Prepare=serde_json::from_value(e.request).map_err(|_|INVALID)?;validate_context(&p.project_id,&p.session_id)?;
+            let (metadata,files)=skill_store::read_native_directory(&p.directory)?;
+            Ok(json!({"schemaVersion":"blocky.skill-request/v1","requestId":format!("skill-{}",uuid::Uuid::new_v4()),"projectId":p.project_id,"sessionId":p.session_id,"action":"install","metadata":metadata,"files":files}))
+        }
+        "agent-skill-preflight" | "agent-skill" => {
+            let r:SkillRequest=serde_json::from_value(e.request).map_err(|_|INVALID)?;
+            if e.operation.ends_with("preflight") {
+                if e.approval.is_some(){return Err(INVALID.into());}
+                let mut preview=r.preflight()?;
+                preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&format!("skill/{}/{}",r.project_id,r.request_id),&digest(&r)?)?.into();return Ok(preview);
+            }
+            r.validate()?;let a=e.approval.filter(|a|a.approved&&a.request_digest==digest(&r).unwrap_or_default()).ok_or(PERMISSION)?;
+            crate::approval_ledger::consume(&approvals,&format!("skill/{}/{}",r.project_id,r.request_id),&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.manage_skill(&token,&r)
+        }
         "agent-memory-manage-preflight" | "agent-memory-manage" => {
             let r: ManageRequest = serde_json::from_value(e.request).map_err(|_| INVALID)?;
             if e.operation.ends_with("preflight") {

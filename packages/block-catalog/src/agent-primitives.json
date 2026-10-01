@@ -228,10 +228,13 @@
     "category": 5,
     "color": "#9971b5",
     "fields": [
+      "SCOPE",
       "RESOURCE",
       "KEY",
       "SOURCE",
-      "POLICY"
+      "POLICY",
+      "SOURCE_REF",
+      "TTL_SECONDS"
     ],
     "resourceFields": {
       "RESOURCE": "memory"
@@ -245,14 +248,24 @@
         "reject",
         "replace",
         "merge"
+      ],
+      "SCOPE": [
+        "project",
+        "session"
       ]
     },
     "defaultFields": {
       "KEY": "note",
-      "POLICY": "reject"
+      "POLICY": "reject",
+      "SCOPE": "project"
     },
     "inputs": [],
-    "statement": true
+    "statement": true,
+    "optionalFields": [
+      "RESOURCE",
+      "SOURCE_REF",
+      "TTL_SECONDS"
+    ]
   },
   {
     "type": "core.memory.revoke_source",
@@ -260,6 +273,7 @@
     "category": 5,
     "color": "#9971b5",
     "fields": [
+      "SCOPE",
       "RESOURCE",
       "SOURCE_REF"
     ],
@@ -267,6 +281,114 @@
       "RESOURCE": "memory"
     },
     "inputs": [],
+    "statement": true,
+    "fieldOptions": {
+      "SCOPE": [
+        "project",
+        "session"
+      ]
+    },
+    "defaultFields": {
+      "SCOPE": "project"
+    },
+    "optionalFields": [
+      "RESOURCE"
+    ]
+  },
+  {
+    "type": "core.agent.delegate",
+    "label": "委派 Agent 子任务",
+    "category": 8,
+    "color": "#8863b2",
+    "fields": [
+      "TASKS",
+      "MODE",
+      "FAILURE",
+      "SOURCE"
+    ],
+    "fieldOptions": {
+      "MODE": [
+        "sequential",
+        "parallel"
+      ],
+      "FAILURE": [
+        "stop",
+        "collect"
+      ],
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    },
+    "defaultFields": {
+      "TASKS": "[]",
+      "MODE": "sequential",
+      "FAILURE": "stop"
+    },
+    "inputs": [],
     "statement": true
-  }
+  },
+  {
+    "type": "core.skill.discover",
+    "label": "发现已安装 Skill",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.skill.use",
+    "label": "加载 Skill 指令",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill"
+    }
+  },
+  {
+    "type": "core.skill.execute",
+    "label": "执行 Skill 声明工具",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE",
+      "TOOL",
+      "SOURCE"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill",
+      "TOOL": "tool"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    }
+  },
+  {
+    "type": "core.skill.read_resource",
+    "label": "读取 Skill 附属资料",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE",
+      "PATH"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill"
+    }
+  },
+  {"type":"core.model.score","label":"英文候选评分（实验）","category":3,"color":"#8863b2","fields":["RESOURCE","SOURCE","LABELS","RULES","THRESHOLD","FALLBACK"],"inputs":[],"statement":true,"resourceFields":{"RESOURCE":"model"},"jsonFields":["LABELS","RULES"],"fieldOptions":{"SOURCE":["input","result"]},"defaultFields":{"LABELS":"[{\"id\":\"geography\",\"description\":\"Geography and locations\"},{\"id\":\"sports\",\"description\":\"Sports and athletes\"}]","RULES":"[]","THRESHOLD":"0","FALLBACK":"unknown"}},
+  {"type":"core.media.transcribe","label":"转写项目音频","category":6,"color":"#6384b8","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}}
 ]

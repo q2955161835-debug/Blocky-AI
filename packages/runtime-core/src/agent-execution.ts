@@ -28,13 +28,38 @@ import {
   type KnowledgeJudgmentInput,
 } from "@blocky/knowledge-core";
 import { executeControlFlow } from "./control-flow";
+import {sessionRequest,newSessionLedger,type SessionLedger} from "./session-memory";
 import { ProjectMemory } from "./memory";
+import {NativeDecision,decisionModelId} from './decision';
+import {NativeMedia} from './media';
 
 const valueType = (value: Json) =>
   value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
 
 /** Run-local values; persistence and external effects belong to injected Host ports. */
 export class AgentExecution {
+  allowedCapabilities?: readonly string[];
+  toolPath: readonly string[] = [];
+  taskIdentity?: { taskId:string; parentTaskId:string; agentId:string };
+  activeSkillTools?: readonly string[];
+  memoryBinding?: {scope:'session'|'project';keys:{key:string;version:number}[]};
+  private async sessionSourceReadable(source:string|null|undefined):Promise<boolean>{
+    if(!source?.startsWith('knowledge/'))return true;
+    if(!this.services.memoryEntries)return false;
+    const result=await new ProjectMemory(this.services.memoryEntries,this.project.manifest.projectId,this.sessionId).request({action:'check-source',sourceRef:source},this.budget.signal);
+    return result.readable===true;
+  }
+  async refreshMemoryContext():Promise<void> {
+    if(!this.memoryBinding)return;
+    const {scope,keys}=this.memoryBinding;
+    try {for(const ref of keys) {
+      this.budget.check();
+      const current=scope==='session'?sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key:ref.key}):
+        this.services.memoryEntries?await new ProjectMemory(this.services.memoryEntries,this.project.manifest.projectId,this.sessionId).request({action:'read',key:ref.key},this.budget.signal):undefined;
+      if(!current?.found||current.version!==ref.version||(scope==='session'&&!await this.sessionSourceReadable(current.entry?.sourceRef)))throw Error('BLK-MEMORY-STALE');
+    }
+    }catch(error){this.memory=null;this.value=null;this.generated=undefined;this.structured=undefined;this.files=[];this.generations=this.generations.map(g=>({...g,text:'',toolCalls:[]}));this.memoryBinding=undefined;throw error;}
+  }
   value: Json = null;
   memory: Json = null;
   instruction = "";
@@ -53,6 +78,7 @@ export class AgentExecution {
     readonly registry?: Map<string, Resource>,
     private sessionMemory = new Map<string, Json>(),
     private mailbox = new EventMailbox(),
+    private sessionLedger:SessionLedger = newSessionLedger(),
   ) {}
   checkpoint(): AgentCheckpoint {
     const memory = [];
@@ -78,6 +104,9 @@ export class AgentExecution {
       files: this.files,
       sessionMemory: memory,
       events: this.mailbox.checkpoint(this.project.manifest.projectId),
+      sessionMemoryMetadata:[...this.sessionLedger.entries].flatMap(([encoded,entry])=>{const [project,session,key]=JSON.parse(encoded);return project===this.project.manifest.projectId&&session===this.sessionId?[{key,entry}]:[];}),
+      revokedMemorySources:[...this.sessionLedger.revoked].flatMap(encoded=>{const [project,session,source]=JSON.parse(encoded);return project===this.project.manifest.projectId&&session===this.sessionId?[source]:[];}),
+      ...(this.memoryBinding?{memoryBinding:this.memoryBinding}:{}),
     });
   }
   /** Completed tasks expose saved outputs without reintroducing consumed state. */
@@ -108,13 +137,21 @@ export class AgentExecution {
       );
     if (utf8(JSON.stringify([...candidate])) > 1048576)
       throw Error("BLK-MEMORY-001");
+    const metadata=new Map(this.sessionLedger.entries),revoked=new Set(this.sessionLedger.revoked);
+    for(const item of value.sessionMemoryMetadata??[]){const key=JSON.stringify([value.projectId,this.sessionId,item.key]),old=metadata.get(key);if(old&&canonicalJson(old)!==canonicalJson(item.entry))throw Error('BLK-WORKFLOW-CONTEXT');metadata.set(key,item.entry);}
+    for(const source of value.revokedMemorySources??[])revoked.add(JSON.stringify([value.projectId,this.sessionId,source]));
+    if(utf8(JSON.stringify([...candidate]))+utf8(JSON.stringify([...metadata]))>1048576||metadata.size>1024||revoked.size>1024)throw Error('BLK-MEMORY-001');
     // Last fallible operation before mutation: active waiters, queue conflicts and total capacity.
     this.mailbox.restoreCheckpoint(value.projectId, value.events);
     this.sessionMemory.clear();
     for (const [key, item] of candidate) this.sessionMemory.set(key, item);
+    this.sessionLedger.entries.clear();for(const [key,item] of metadata)this.sessionLedger.entries.set(key,item);
+    this.sessionLedger.revoked.clear();for(const key of revoked)this.sessionLedger.revoked.add(key);
     this.question = value.question;
     this.value = value.value;
-    this.memory = value.memory;
+    this.memory = value.memoryBinding?value.memory:null;
+    if(!value.memoryBinding&&canonicalJson(value.value)===canonicalJson(value.memory))this.value=null;
+    this.memoryBinding=value.memoryBinding;
     this.instruction = value.instruction;
     this.requireEvidence = value.requireEvidence;
     this.generated = value.generated;
@@ -145,8 +182,15 @@ export class AgentExecution {
       this.registry,
       this.sessionMemory,
       this.mailbox,
+      this.sessionLedger,
     );
     child.value = structuredClone(input);
+    child.allowedCapabilities=this.allowedCapabilities;
+    child.toolPath=this.toolPath;
+    child.taskIdentity=this.taskIdentity;
+    child.activeSkillTools=this.activeSkillTools;
+    child.memoryBinding=this.memoryBinding?structuredClone(this.memoryBinding):undefined;
+    child.instruction=this.instruction;
     return child;
   }
   async invokeTool(
@@ -156,6 +200,7 @@ export class AgentExecution {
     port = this.services.tool,
   ): Promise<Json> {
     this.budget.check();
+    await this.refreshMemoryContext();
     if (!port) throw Error("BLK-TOOL-001");
     if (resource.definition.version !== "1") throw Error("BLK-TOOL-003");
     this.validateResourceSchema(resource, "inputSchemaRef", input);
@@ -229,6 +274,7 @@ export class AgentExecution {
     requestId: string,
     report: (details: TraceDetails) => void = () => {},
   ): Promise<boolean> {
+    await this.refreshMemoryContext();
     const key = implementationKey(resource.definition.implementationRef);
     if (
       ![
@@ -315,6 +361,7 @@ export class AgentExecution {
     checkGenerationMetadata(result);
     this.generations.push({ ...result, text: "", toolCalls: [] });
     try {
+      await this.refreshMemoryContext();
       if (this.services.validateCitations)
         await abortable(
           this.services.validateCitations(
@@ -349,10 +396,25 @@ export class AgentExecution {
       requestId: string,
     ) => Promise<Json>,
   ): Promise<boolean> {
+    if(node.blockType.startsWith('core.output.'))await this.refreshMemoryContext();
     if (await executeControlFlow(node, this, (child) => execute(child)))
       return true;
     const f = node.fields;
     switch (node.blockType) {
+      case 'core.model.score': {
+        await this.refreshMemoryContext();
+        if(!this.allowedCapabilities?.includes('model.score')||!this.services.decision)throw Error('BLK-PERM-001');
+        const resource=resolveResource(this.project,String(f.RESOURCE),'model',this.registry);
+        if(resource.definition.modelId!==decisionModelId||implementationKey(resource.definition.implementationRef)!=='adapter://local-score-v1'||resource.capabilityRequirements.some(c=>!this.allowedCapabilities?.includes(c)))throw Error('BLK-DECISION-INVALID');
+        let labels:unknown,rules:unknown;try{labels=JSON.parse(String(f.LABELS));rules=JSON.parse(String(f.RULES??'[]'));}catch{throw Error('BLK-DECISION-INVALID');}
+        this.budget.call();const result=await new NativeDecision(this.services.decision,this.project.manifest.projectId,this.sessionId).infer({language:'en',text:f.SOURCE==='input'?this.question:typeof this.value==='string'?this.value:canonicalJson(this.value),labels:labels as never,rules:rules as never,threshold:Number(f.THRESHOLD),fallbackLabel:String(f.FALLBACK),modelId:decisionModelId},this.budget.signal);
+        this.budget.check();this.value=result as unknown as Json;this.structured=this.value;this.generated=canonicalJson(this.value);break;
+      }
+      case 'core.media.transcribe': {
+        if(!this.allowedCapabilities?.includes('media.read')||!this.services.media)throw Error('BLK-PERM-001');
+        this.budget.call();const result=await new NativeMedia(this.services.media,this.project.manifest.projectId,this.sessionId).request({action:'transcribe',mediaId:String(f.MEDIA_ID),expectedSha256:String(f.SHA256),expectedVersion:Number(f.VERSION)},this.budget.signal);
+        if(!('transcript'in result))throw Error('BLK-MEDIA-INVALID');this.value=result as unknown as Json;this.generated=result.transcript.segments.map(s=>s.text).join(' ').trim();break;
+      }
       case "core.flow.parallel": {
         validateParallelNode(node);
         const branches = ["LEFT", "RIGHT"].map((port) => ({
@@ -449,14 +511,15 @@ export class AgentExecution {
       case "core.memory.update":
       case "core.memory.revoke_source": {
         const query=String(f.QUERY??this.question),limit=integer(f.LIMIT??20,1,100);
-        if(node.blockType==="core.memory.search" && f.SCOPE==="session") {
-          const terms=query.toLowerCase().split(/\s+/).filter(Boolean);
-          const entries=[...this.sessionMemory].flatMap(([encoded,value])=>{
-            const [project,session,key]=JSON.parse(encoded) as string[];
-            if(project!==this.project.manifest.projectId || session!==this.sessionId) return [];
-            const text=canonicalJson(value);return terms.every(t=>(key+' '+text).toLowerCase().includes(t)) ? [{key,value,summary:text.slice(0,256),summaryKind:'extract'}] : [];
-          }).slice(0,limit);
-          this.value={entries};break;
+        if(f.SCOPE==='session') {
+          this.budget.call();
+          const input=node.blockType==='core.memory.search'?{action:'search' as const,query,limit}:node.blockType==='core.memory.revoke_source'?{action:'revoke-source' as const,sourceRef:String(f.SOURCE_REF)}:{action:'upsert' as const,key:String(f.KEY),value:f.SOURCE==='input'?this.question:this.value,expectedVersion:sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key:String(f.KEY)}).version!,conflictPolicy:f.POLICY as 'replace'|'merge'|'reject',...(f.TTL_SECONDS!==undefined?{ttlSeconds:integer(f.TTL_SECONDS,0,3153600000)}:{}),...(f.SOURCE_REF?{sourceRef:String(f.SOURCE_REF)}:{})};
+          if(input.action==='upsert'&&!await this.sessionSourceReadable(input.sourceRef))throw Error('BLK-PERM-001');
+          const deniedSources=new Set<string>();
+          if(input.action==='search')for(const [encoded,entry] of this.sessionLedger.entries){const [project,session]=JSON.parse(encoded);if(project===this.project.manifest.projectId&&session===this.sessionId&&entry.sourceRef&&!deniedSources.has(entry.sourceRef)&&!await this.sessionSourceReadable(entry.sourceRef))deniedSources.add(entry.sourceRef);}
+          const result=sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,input,Math.floor(Date.now()/1000),deniedSources);
+          this.value=result as unknown as Json;this.memory=node.blockType==='core.memory.revoke_source'?null:this.value;
+          this.memoryBinding=node.blockType==='core.memory.revoke_source'?undefined:{scope:'session',keys:result.entries?.map(e=>({key:e.key,version:e.entry.version}))??(result.entry?[{key:String(f.KEY),version:result.entry.version}]:[])};break;
         }
         const resource=resolveResource(this.project,String(f.RESOURCE),"memory",this.registry);
         if(!this.services.memoryEntries)throw Error("BLK-MEMORY-001");
@@ -465,8 +528,11 @@ export class AgentExecution {
         if(node.blockType==="core.memory.search") {
           this.memory=await memory.request({action:'search',query,limit},this.budget.signal) as unknown as Json;
           this.value=this.memory;
+          this.memoryBinding={scope:'project',keys:(this.memory as unknown as {entries:{key:string;entry:{version:number}}[]}).entries.map(e=>({key:e.key,version:e.entry.version}))};
         } else if(node.blockType==="core.memory.revoke_source") {
           this.value=await memory.request({action:'revoke-source',sourceRef:String(f.SOURCE_REF)},this.budget.signal) as unknown as Json;
+          this.memory=null;
+          this.memoryBinding=undefined;
         } else {
           const key=String(f.KEY),current=await memory.request({action:'read',key},this.budget.signal);
           const source=resource.definition.sourceRef;
@@ -474,8 +540,9 @@ export class AgentExecution {
           const result=await memory.request({action:'upsert',key,value:f.SOURCE==='input'?this.question:this.value,expectedVersion:current.version!,conflictPolicy:f.POLICY as 'replace'|'merge'|'reject',
             ttlSeconds:Number(resource.definition.retentionDays??0)*86400,...(sourceRef?{sourceRef}: {})},this.budget.signal);
           this.memory=result as unknown as Json;
+          this.memoryBinding={scope:'project',keys:result.entry?[{key,version:result.entry.version}]:[]};
         }
-        this.budget.check();break;
+        this.budget.check();if(utf8(canonicalJson(this.value))>32768 || utf8(canonicalJson(this.memory))>32768)throw Error("BLK-MEMORY-001");break;
       }
       case "core.memory.read":
       case "core.memory.write":
@@ -500,20 +567,11 @@ export class AgentExecution {
         if (utf8(JSON.stringify(value)) > 32768) throw Error("BLK-MEMORY-001");
         this.budget.call();
         if (f.SCOPE === "session") {
-          const key = JSON.stringify([
-            this.project.manifest.projectId,
-            this.sessionId,
-            f.KEY,
-          ]);
-          if (action === "delete") this.sessionMemory.delete(key);
-          if (action === "write") {
-            const candidate = new Map(this.sessionMemory);
-            candidate.set(key, structuredClone(value));
-            if (utf8(JSON.stringify([...candidate])) > 1048576)
-              throw Error("BLK-MEMORY-001");
-            this.sessionMemory.set(key, structuredClone(value));
-          }
-          this.memory = structuredClone(this.sessionMemory.get(key) ?? null);
+          const key=String(f.KEY),current=sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key});
+          if(current.entry&&!await this.sessionSourceReadable(current.entry.sourceRef)){current.found=false;current.entry=null;}
+          const result=action==='read'?current:sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,action==='delete'?{action:'delete',key,expectedVersion:current.version!}:{action:'upsert',key,value,expectedVersion:current.version!,conflictPolicy:'replace'});
+          this.memory=action==='read'?result.entry?.value??null:action==='write'?value:null;
+          this.memoryBinding=current.found&&action==='read'?{scope:'session',keys:[{key,version:current.version!}]}:undefined;
         } else {
           if (!this.services.memory) throw Error("BLK-MEMORY-001");
           this.memory = await abortable(
@@ -531,6 +589,10 @@ export class AgentExecution {
             ),
             this.budget.signal,
           );
+        }
+        if(f.SCOPE==='project'&&this.services.memoryEntries&&action!=='delete') {
+          const current=await new ProjectMemory(this.services.memoryEntries,this.project.manifest.projectId,this.sessionId).request({action:'read',key:f.KEY},this.budget.signal);
+          this.memoryBinding=current.found?{scope:'project',keys:[{key:f.KEY,version:current.version!}]}:undefined;
         }
         this.budget.check();
         if (utf8(JSON.stringify(this.memory)) > 32768)

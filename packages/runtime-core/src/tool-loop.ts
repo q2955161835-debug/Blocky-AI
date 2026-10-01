@@ -33,7 +33,7 @@ export type ToolLoopContext = {
   project: Project;
   registry?: Map<string, Resource>;
   model: Resource;
-  capabilities: string[];
+  capabilities: readonly string[];
   budget: RunBudget;
   requestId: string;
   question: string;

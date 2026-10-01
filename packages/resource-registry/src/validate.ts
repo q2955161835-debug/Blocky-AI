@@ -384,6 +384,10 @@ export function validateResource(input: unknown): Resource {
       ((config.implementationRef.id === "generator-v1" &&
         config.provider === "deterministic" &&
         config.protocol === "local") ||
+        (config.implementationRef.id === "local-score-v1" &&
+          config.provider === "local-cpu" && config.protocol === "local" &&
+          config.modelId === "ms-marco-minilm-l6-v2-int8-v1" &&
+          exactOne(config.capabilities,"rerank") && input.secretBindings.length===0 && !config.baseUrl) ||
         (config.implementationRef.id === "deepseek-v1" &&
           config.provider === "deepseek" &&
           config.protocol === "openai-chat") ||

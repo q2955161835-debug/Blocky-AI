@@ -1,3 +1,4 @@
+import {sessionMetadataSchema,type SessionMetadata} from "./session-memory";
 import { stableId, type Json } from "@blocky/language-schema";
 import { workflowJson, workflowKeys } from "./workflow/protocol";
 
@@ -13,6 +14,8 @@ export type RuntimeSessionState = {
   sequence: number;
   memory: { projectId: string; key: string; value: Json }[];
   mailbox: RuntimeMailboxState;
+  memoryMetadata?: {projectId:string;key:string;entry:SessionMetadata}[];
+  revokedMemorySources?: {projectId:string;source:string}[];
 };
 const invalid = () => Error("BLK-RUN-STATE");
 const id = (value: unknown): value is string =>
@@ -47,7 +50,7 @@ export function parseRuntimeSession(input: unknown): RuntimeSessionState {
       "sequence",
       "memory",
       "mailbox",
-    ]);
+    ],["memoryMetadata","revokedMemorySources"]);
     if (
       value.schemaVersion !== "blocky.runtime-state/v1" ||
       !id(value.sessionId) ||
@@ -71,6 +74,15 @@ export function parseRuntimeSession(input: unknown): RuntimeSessionState {
     }
     // Match the live Runtime memory budget, including its encoded keys.
     if (bytes(encoded) > 1048576) throw invalid();
+    if(value.memoryMetadata!==undefined) {
+      if(!Array.isArray(value.memoryMetadata)||value.memoryMetadata.length>1024)throw invalid();
+      const seen=new Set();for(const item of value.memoryMetadata){workflowKeys(item,["projectId","key","entry"]);if(!id(item.projectId)||!id(item.key))throw invalid();const key=JSON.stringify([item.projectId,item.key]);if(seen.has(key))throw invalid();seen.add(key);sessionMetadataSchema.parse(item.entry);}
+      if(bytes(encoded)+bytes(value.memoryMetadata)>1048576)throw invalid();
+    }
+    if(value.revokedMemorySources!==undefined) {
+      if(!Array.isArray(value.revokedMemorySources)||value.revokedMemorySources.length>1024)throw invalid();
+      for(const item of value.revokedMemorySources){workflowKeys(item,["projectId","source"]);if(!id(item.projectId)||typeof item.source!=="string"||item.source.length>256)throw invalid();}
+    }
     parseRuntimeMailbox(value.mailbox);
     return value as unknown as RuntimeSessionState;
   } catch {

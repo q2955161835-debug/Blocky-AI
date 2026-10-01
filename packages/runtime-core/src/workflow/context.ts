@@ -1,3 +1,4 @@
+import {sessionMetadataSchema,type SessionMetadata} from "../session-memory";
 import { stableId, type Json } from "@blocky/language-schema";
 import type { OutputFile } from "../agent-context";
 import { requireWorkflow, workflowJson, workflowKeys } from "./protocol";
@@ -16,6 +17,9 @@ export type AgentCheckpoint = {
   files: OutputFile[];
   sessionMemory: { key: string; value: Json }[];
   events: MailboxCheckpoint;
+  memoryBinding?:{scope:"session"|"project";keys:{key:string;version:number}[]};
+  sessionMemoryMetadata?:{key:string;entry:SessionMetadata}[];
+  revokedMemorySources?:string[];
 };
 export type BudgetCheckpoint = {
   steps: number;
@@ -59,7 +63,7 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
       "sessionMemory",
       "events",
     ],
-    ["generated", "structured"],
+    ["generated", "structured", "sessionMemoryMetadata", "revokedMemorySources", "memoryBinding"],
   );
   requireWorkflow(
     v.schemaVersion === "blocky.workflow-agent/v1" &&
@@ -91,6 +95,9 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
     seen.add(entry.key);
     workflowJson(entry.value, 32768);
   }
+  if(v.sessionMemoryMetadata!==undefined){requireWorkflow(Array.isArray(v.sessionMemoryMetadata)&&v.sessionMemoryMetadata.length<=1024);const seen=new Set();for(const item of v.sessionMemoryMetadata){workflowKeys(item,["key","entry"]);requireWorkflow(validId(item.key)&&!seen.has(item.key));seen.add(item.key);sessionMetadataSchema.parse(item.entry);}}
+  if(v.revokedMemorySources!==undefined){requireWorkflow(Array.isArray(v.revokedMemorySources)&&v.revokedMemorySources.length<=1024);for(const source of v.revokedMemorySources)requireWorkflow(typeof source==='string'&&source.length<=256);}
+  if(v.memoryBinding!==undefined){const binding=v.memoryBinding;workflowKeys(binding,["scope","keys"]);requireWorkflow(typeof binding.scope==='string'&&['session','project'].includes(binding.scope)&&Array.isArray(binding.keys)&&binding.keys.length<=100);const seen=new Set();for(const ref of binding.keys){workflowKeys(ref,["key","version"]);requireWorkflow(validId(ref.key)&&!seen.has(ref.key)&&typeof ref.version==='number'&&Number.isSafeInteger(ref.version)&&ref.version>0);seen.add(ref.key);}}
   parseMailboxCheckpoint(v.events);
   return v as unknown as AgentCheckpoint;
 }

@@ -1,5 +1,6 @@
 use blocky_studio::agent_data::{AgentData, MemoryRequest, ToolRequest};
 use blocky_studio::agent_data::ManageRequest;
+use blocky_studio::agent_data::SkillRequest;
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::io::Write;
@@ -15,7 +16,7 @@ pub async fn agent_memory_authorize(
 ) -> Result<Value, String> {
     guard(&window)?;
     blocky_studio::agent_data::validate_context(&project_id, &session_id)?;
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目记忆访问", format!("本次运行将读取、写入和删除此项目在本机保存的记忆。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
+    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目本机能力", format!("本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型。工具和在线模型继续独立核验。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
         return Err("BLK-PERM-001".into());
     }
     guard(&window)?;
@@ -40,6 +41,41 @@ pub fn agent_memory_manage(
 ) -> Result<Value, String> {
     guard(&window)?;
     host.manage_memory(&token, &request)
+}
+#[tauri::command]
+pub fn agent_skill(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:SkillRequest)->Result<Value,String>{guard(&window)?;host.manage_skill(&token,&request)}
+#[tauri::command]
+pub async fn agent_media(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::media_store::MediaRequest)->Result<Value,String>{
+    guard(&window)?;let owned=host.inner().clone();
+    tauri::async_runtime::spawn_blocking(move||owned.manage_media(&token,&request)).await.map_err(|_|"BLK-MEDIA-IO")?
+}
+#[tauri::command]
+pub fn agent_media_cancel(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request_id:String)->Result<(),String>{if window.label()!="main"{return Err("BLK-PERM-001".into());}host.cancel_media(&token,&request_id)}
+#[tauri::command]
+pub fn agent_evaluation(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::evaluation_store::Request)->Result<Value,String>{guard(&window)?;host.manage_evaluation(&token,&request)}
+#[tauri::command]
+pub async fn agent_decision(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::decision::DecisionRequest)->Result<Value,String>{
+ guard(&window)?;let owned=host.inner().clone();tauri::async_runtime::spawn_blocking(move||owned.infer_decision(&token,&request)).await.map_err(|_|"BLK-DECISION-INVALID")?
+}
+#[tauri::command]
+pub fn agent_decision_cancel(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request_id:String)->Result<(),String>{if window.label()!="main"{return Err("BLK-PERM-001".into());}host.cancel_decision(&token,&request_id)}
+#[tauri::command]
+pub async fn agent_media_import(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,project_id:String,session_id:String)->Result<Value,String>{
+    guard(&window)?;blocky_studio::agent_data::validate_context(&project_id,&session_id)?;
+    let selected=rfd::AsyncFileDialog::new().set_parent(&window).set_title("导入图片或音频").add_filter("媒体",&["png","jpg","jpeg","wav"]).pick_file().await.ok_or("BLK-RUN-005")?;
+    guard(&window)?;let input=blocky_studio::agent_data::media_store::read_native_file(selected.path())?;let preview=input.preflight()?;
+    if !blocky_studio::native_confirmation::yes_no(&window,"保存项目媒体",format!("格式：{}\n大小：{} bytes\n文件会保存为此项目的本机媒体引用。",preview["mimeType"],preview["byteLength"])).await{return Err("BLK-PERM-001".into());}
+    guard(&window)?;let token=host.authorize(&project_id,&session_id)?;let result=host.import_media(&token,&project_id,&session_id,&input);host.revoke(&token)?;result
+}
+#[tauri::command]
+pub async fn agent_skill_install(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,project_id:String,session_id:String)->Result<Value,String>{
+    guard(&window)?;blocky_studio::agent_data::validate_context(&project_id,&session_id)?;
+    let selected=rfd::AsyncFileDialog::new().set_title("安装 Blocky Skill").pick_folder().await.ok_or("BLK-RUN-005")?;
+    guard(&window)?;let (metadata,files)=blocky_studio::agent_data::skill_store::read_native_directory(selected.path())?;
+    let request:SkillRequest=serde_json::from_value(json!({"schemaVersion":"blocky.skill-request/v1","requestId":format!("skill-{}",uuid::Uuid::new_v4()),"projectId":project_id,"sessionId":session_id,"action":"install","metadata":metadata,"files":files})).map_err(|_|"BLK-SKILL-INVALID")?;
+    let preview=request.preflight()?;
+    if !blocky_studio::native_confirmation::yes_no(&window,"安装 Skill",format!("技能：{}\n版本：{}\n正文和附属文件仅作为资料加载，脚本不会自动运行。\n声明工具：{}",preview["metadata"]["name"].as_str().unwrap_or(""),preview["metadata"]["version"].as_str().unwrap_or(""),preview["metadata"]["toolIds"])).await{return Err("BLK-PERM-001".into());}
+    guard(&window)?;let token=host.authorize(&request.project_id,&request.session_id)?;let result=host.manage_skill(&token,&request);host.revoke(&token)?;result
 }
 #[tauri::command]
 pub fn agent_memory_cancel(

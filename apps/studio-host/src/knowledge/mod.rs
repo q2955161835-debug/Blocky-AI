@@ -24,6 +24,7 @@ mod embedding_binary;
 mod embedding_model;
 mod embedding_backend;
 mod small_models;
+pub(crate) use small_models::rerank as score_decision;
 mod model_windows;
 mod rerank;
 #[cfg(test)]

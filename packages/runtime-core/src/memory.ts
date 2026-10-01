@@ -11,6 +11,7 @@ export const memoryRequestSchema = z.discriminatedUnion("action", [
   z.object({ ...base, action: z.literal("delete"), key: id, expectedVersion: z.number().int().nonnegative() }).strict(),
   z.object({ ...base, action: z.literal("revoke-source"), sourceRef: source }).strict(),
   z.object({ ...base, action: z.literal("allow-source"), sourceRef: source }).strict(),
+  z.object({ ...base, action: z.literal("check-source"), sourceRef: source }).strict(),
 ]);
 export type MemoryRequest = z.infer<typeof memoryRequestSchema>;
 type WithoutContext<T> = T extends unknown ? Omit<T, "schemaVersion" | "requestId" | "projectId" | "sessionId"> : never;
@@ -20,9 +21,9 @@ export const memoryEntrySchema = z.object({
   summaryKind: z.enum(["extract", "manual"]), updatedAt: z.number().int().nonnegative(), expiresAt: z.number().int().nonnegative().nullable(),
 }).strict();
 export type MemoryEntry = z.infer<typeof memoryEntrySchema>;
-export type MemoryResult = { found?: boolean; version?: number; entry?: MemoryEntry | null; entries?: { key: string; entry: MemoryEntry }[]; ok?: boolean; time?: number };
+export type MemoryResult = { readable?:boolean; found?: boolean; version?: number; entry?: MemoryEntry | null; entries?: { key: string; entry: MemoryEntry }[]; ok?: boolean; time?: number };
 export function parseMemoryResult(value: unknown): MemoryResult {
-  return z.object({ found: z.boolean().optional(), version: z.number().int().nonnegative().optional(), entry: memoryEntrySchema.nullable().optional(),
+  return z.object({ readable:z.boolean().optional(), found: z.boolean().optional(), version: z.number().int().nonnegative().optional(), entry: memoryEntrySchema.nullable().optional(),
     entries: z.array(z.object({key:id,entry:memoryEntrySchema}).strict()).max(100).optional(), ok:z.boolean().optional(),time:z.number().int().nonnegative().optional() }).strict().parse(value);
 }
 export type MemoryPort = (request: MemoryRequest, signal: AbortSignal) => Promise<Json>;

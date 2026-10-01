@@ -29,6 +29,7 @@ import {
 } from "./adapters";
 import { RunBudget, abortable, utf8, wait } from "./budget";
 import { AgentExecution } from "./agent-execution";
+import {newSessionLedger} from "./session-memory";
 import { EventMailbox } from "./event-mailbox";
 import { RpaExecution } from "./rpa-execution";
 import { isRpaSession, isRpaStep } from "@blocky/rpa-core";
@@ -41,6 +42,8 @@ import {
 import { resolveRunEntry } from "./entry";
 import { parseRuntimeSession, type RuntimeSessionState } from "./session-state";
 import { runToolLoop } from "./tool-loop";
+import { delegateTasks, delegationSchema } from "./delegation";
+import {executeSkill} from './skill-execution';
 type Options = {
   sessionState?: unknown;
   sessionId?: string;
@@ -66,6 +69,7 @@ export type RunResult = {
 export class Runtime {
   private readonly sessionId: string;
   private readonly sessionMemory = new Map<string, Json>();
+  private readonly sessionLedger = newSessionLedger();
   private readonly mailbox = new EventMailbox();
   private factory: EventFactory;
   private options: Options;
@@ -113,6 +117,8 @@ export class Runtime {
           JSON.stringify([item.projectId, this.sessionId, item.key]),
           item.value,
         );
+      for(const item of state.memoryMetadata??[])this.sessionLedger.entries.set(JSON.stringify([item.projectId,this.sessionId,item.key]),item.entry);
+      for(const item of state.revokedMemorySources??[])this.sessionLedger.revoked.add(JSON.stringify([item.projectId,this.sessionId,item.source]));
       this.mailbox.restoreSession(state.mailbox);
     }
     this.factory = new EventFactory(
@@ -133,6 +139,8 @@ export class Runtime {
         return { projectId, key, value };
       }),
       mailbox: this.mailbox.captureSession(),
+      memoryMetadata:[...this.sessionLedger.entries].map(([encoded,entry])=>{const [projectId,sessionId,key]=JSON.parse(encoded);if(sessionId!==this.sessionId)throw Error('BLK-RUN-STATE');return {projectId,key,entry};}),
+      revokedMemorySources:[...this.sessionLedger.revoked].map(encoded=>{const [projectId,sessionId,source]=JSON.parse(encoded);if(sessionId!==this.sessionId)throw Error('BLK-RUN-STATE');return {projectId,source};}),
     });
   }
   async run(
@@ -198,6 +206,7 @@ export class Runtime {
       options.userRegistry,
       this.sessionMemory,
       this.mailbox,
+      this.sessionLedger,
     );
     type Scope = {
       answer: string;
@@ -269,20 +278,23 @@ export class Runtime {
       if (!entry) throw Error("BLK-RUN-001");
       // These are available typed Host requests. The Host still checks its own
       // resource binding and asks for approval before any external effect.
-      const capabilities = this.options.capabilities ?? [
+      const baseCapabilities = this.options.capabilities ?? [
         "knowledge.read",
+        "memory.read", "memory.write", "skill.read", "model.score", "media.read",
         ...(adapters.agent
           ? ["text.analyze", "module.execute", "network.request", "mcp.local"]
           : []),
       ];
-      const toolStack = new Set<string>();
+      agent.allowedCapabilities = baseCapabilities;
       const invokeTool = async (
         resource: Resource,
         input: Json,
         requestId: string,
         state: AgentExecution,
       ): Promise<Json> => {
+        const capabilities = state.allowedCapabilities ?? baseCapabilities;
         const permissions = resource.definition.permissions;
+        if(state.activeSkillTools&&!state.activeSkillTools.includes(resource.resourceId))throw Error('BLK-SKILL-PERMISSION');
         if (
           !Array.isArray(permissions) ||
           ![...resource.capabilityRequirements, ...permissions].every(
@@ -296,7 +308,7 @@ export class Runtime {
         )
           return state.invokeTool(resource, input, requestId);
         const key = `${resource.definition.moduleId}:${resource.definition.exportId}`;
-        if (toolStack.size >= 8 || toolStack.has(key))
+        if (state.toolPath.length >= 8 || state.toolPath.includes(key))
           throw Error("BLK-TOOL-RECURSION");
         return state.invokeTool(resource, input, requestId, async () => {
           const target = compiled.modules.find(
@@ -339,12 +351,11 @@ export class Runtime {
             role: "",
             style: "条目",
           });
-          toolStack.add(key);
+          child.toolPath = [...state.toolPath, key];
           try {
             await execute(entry, target.moduleId, child);
             return child.structured ?? child.value;
           } finally {
-            toolStack.delete(key);
             state.generations.push(...child.generations);
           }
         });
@@ -406,6 +417,13 @@ export class Runtime {
         moduleId: string,
         state: AgentExecution = agent,
       ): Promise<void> => {
+        const capabilities = state.allowedCapabilities ?? baseCapabilities;
+        const emitForTask:typeof emit=(type,moduleId,blockId,data,correlationId)=>emit(type,moduleId,blockId,{...(state.taskIdentity??{}),...data},correlationId);
+        if(state.taskIdentity) {
+          const needed=node.blockType.startsWith('core.memory.')?(node.blockType.endsWith('.read')||node.blockType.endsWith('.search')?'memory.read':'memory.write'):
+            node.blockType==='core.module.call'?'module.execute':isRpaSession(node.blockType)||isRpaStep(node.blockType)?'rpa.execute':undefined;
+          if(needed&&!capabilities.includes(needed))throw Error('BLK-AGENT-PERMISSION');
+        }
         let scope = scopes.get(state);
         if (!scope) {
           scope = { answer: "", citations: [], role: "", style: "条目" };
@@ -423,7 +441,7 @@ export class Runtime {
           return;
         let stepped = await pauseBoundary(moduleId, node.nodeId);
         runBudget.step();
-        emit("block.started", moduleId, node.nodeId, {
+        emitForTask("block.started", moduleId, node.nodeId, {
           summary: "正在运行",
           blockType: node.blockType,
           inputPorts: Object.keys(node.inputs).sort(),
@@ -432,7 +450,7 @@ export class Runtime {
         const reportDetails = (value: TraceDetails) => {
           details = structuredClone(value);
           if (value.rpa?.phase === "authorized")
-            emit("checkpoint.created", moduleId, node.nodeId, {
+            emitForTask("checkpoint.created", moduleId, node.nodeId, {
               summary: "自动化会话已授权，检查点已建立",
               checkpointId: value.rpa.checkpointId!,
             });
@@ -445,12 +463,12 @@ export class Runtime {
           const toolCall =
             node.blockType === "core.tool.invoke" || isRpaStep(node.blockType);
           if (isRpaSession(node.blockType))
-            emit("tool.permission-requested", moduleId, node.nodeId, {
+            emitForTask("tool.permission-requested", moduleId, node.nodeId, {
               summary: "等待审阅自动化目标与操作",
             });
           const toolCorrelation = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
           if (toolCall)
-            emit(
+            emitForTask(
               "tool.started",
               moduleId,
               node.nodeId,
@@ -460,7 +478,26 @@ export class Runtime {
           try {
             if (isRpaSession(node.blockType) || isRpaStep(node.blockType))
               runBudget.call();
-            if (node.blockType === "runtime.task.durable") {
+            if(await executeSkill(node,state,capabilities,(r,input,id)=>invokeTool(r,input,id,state))) {
+              emitForTask('tool.completed',moduleId,node.nodeId,{summary:'Skill 操作完成',operation:node.blockType});handled=true;
+            }else if (node.blockType === "core.agent.delegate") {
+              let tasks:unknown;try{tasks=JSON.parse(String(node.fields.TASKS));}catch{throw Error("BLK-AGENT-CONFIG");}
+              const parsed=delegationSchema.safeParse({tasks,mode:node.fields.MODE,failurePolicy:node.fields.FAILURE});
+              if(!parsed.success)throw Error("BLK-AGENT-CONFIG");
+              const parentTaskId=state.taskIdentity?.taskId??runId;
+              state.value=await delegateTasks({spec:parsed.data,parentTaskId,capabilities,input:node.fields.SOURCE==='input'?state.question:state.value,budget:runBudget,
+                resolve:id=>resolveResource(project,id,"tool",options.userRegistry),
+                invoke:async(task,resource,input)=>{
+                  const child=state.forkTool(input);child.allowedCapabilities=task.permissions;child.taskIdentity=task;child.instruction+='\n'+task.instruction;
+                  try{return await invokeTool(resource,input,task.taskId,child);}finally{state.generations.push(...child.generations);}
+                },
+                event:(task,status,code)=>emitForTask(status==='started'?'tool.started':status==='completed'?'tool.completed':'tool.failed',moduleId,node.nodeId,
+                  {summary:status==='started'?'子任务开始':status==='completed'?'子任务完成':'子任务失败',taskId:task.taskId,parentTaskId:task.parentTaskId,agentId:task.agentId,resourceId:task.resourceId,...(code?{code}:{})},task.taskId),
+              }) as unknown as Json;
+              state.structured=state.value;
+              state.generated=canonicalJson(state.value);
+              handled=true;
+            } else if (node.blockType === "runtime.task.durable") {
               if (state !== agent) throw Error("BLK-WORKFLOW-SCOPE");
               await workflow.execute(
                 node,
@@ -486,7 +523,7 @@ export class Runtime {
                   invokeTool(resource, input, requestId, state),
               );
             if (toolCall)
-              emit(
+              emitForTask(
                 "tool.completed",
                 moduleId,
                 node.nodeId,
@@ -495,7 +532,7 @@ export class Runtime {
               );
           } catch (error) {
             if (toolCall)
-              emit(
+              emitForTask(
                 "tool.failed",
                 moduleId,
                 node.nodeId,
@@ -520,7 +557,7 @@ export class Runtime {
                   await pauseBoundary();
                   runBudget.step();
                   const expressionStartedAt = this.monotonicNow();
-                  emit("block.started", moduleId, value.nodeId, {
+                  emitForTask("block.started", moduleId, value.nodeId, {
                     summary: "正在运行",
                     blockType: value.blockType,
                     inputPorts: Object.keys(value.inputs).sort(),
@@ -542,7 +579,7 @@ export class Runtime {
                         : JSON.stringify(content);
                   } else throw Error("BLK-TYPE-009");
                   signal.throwIfAborted();
-                  emit("block.completed", moduleId, value.nodeId, {
+                  emitForTask("block.completed", moduleId, value.nodeId, {
                     summary: "已完成",
                     elapsedMs: Math.max(
                       0,
@@ -560,7 +597,7 @@ export class Runtime {
                 const text = await evaluate(node.inputs.MESSAGE);
                 if (typeof text !== "string") throw Error("BLK-TYPE-009");
                 scope.answer += text;
-                emit("model.chunk", moduleId, node.nodeId, {
+                emitForTask("model.chunk", moduleId, node.nodeId, {
                   summary: "产生输出",
                   outputType: "text",
                   outputBytes: utf8(text),
@@ -606,7 +643,7 @@ export class Runtime {
                 const stage = node.blockType
                   .split(".")
                   .at(-1) as import("@blocky/knowledge-core").KnowledgeStage;
-                emit("tool.started", moduleId, node.nodeId, {
+                emitForTask("tool.started", moduleId, node.nodeId, {
                   summary: "正在处理知识来源",
                   stage,
                 });
@@ -635,7 +672,7 @@ export class Runtime {
                 signal.throwIfAborted();
                 if (utf8(canonicalJson(state.value)) > 32768)
                   throw Error("BLK-KNOWLEDGE-BUDGET");
-                emit("tool.completed", moduleId, node.nodeId, {
+                emitForTask("tool.completed", moduleId, node.nodeId, {
                   summary: "知识处理阶段完成",
                   stage,
                 });
@@ -718,7 +755,7 @@ export class Runtime {
                     async (input, operationSignal) => {
                       operationSignal.throwIfAborted();
                       const judgment = await state.judgeKnowledge(model, input);
-                      emit("model.completed", moduleId, node.nodeId, {
+                      emitForTask("model.completed", moduleId, node.nodeId, {
                         summary: "证据相关性检查完成",
                         transport: state.generations.at(-1)!.transport,
                         model: state.generations.at(-1)!.model,
@@ -736,7 +773,7 @@ export class Runtime {
                   ...retrieved.correction,
                 };
                 if (!scope.citations.length)
-                  emit("block.warning", moduleId, node.nodeId, {
+                  emitForTask("block.warning", moduleId, node.nodeId, {
                     code: "BLK-RUN-101",
                     summary: "证据不足，请补充资料或澄清问题",
                   });
@@ -766,7 +803,7 @@ export class Runtime {
                 );
                 if (!adapter) throw Error("BLK-TOOL-002");
                 const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
-                emit(
+                emitForTask(
                   "tool.started",
                   moduleId,
                   node.nodeId,
@@ -799,7 +836,7 @@ export class Runtime {
                   )
                     throw Error("BLK-TOOL-003");
                   scope.citations = scope.citations.slice(0, 20);
-                  emit(
+                  emitForTask(
                     "tool.completed",
                     moduleId,
                     node.nodeId,
@@ -810,7 +847,7 @@ export class Runtime {
                     correlationId,
                   );
                 } catch (error) {
-                  emit(
+                  emitForTask(
                     "tool.failed",
                     moduleId,
                     node.nodeId,
@@ -825,7 +862,7 @@ export class Runtime {
                   throw error;
                 }
                 if (!scope.citations.length)
-                  emit("block.warning", moduleId, node.nodeId, {
+                  emitForTask("block.warning", moduleId, node.nodeId, {
                     code: "BLK-RUN-101",
                     summary: "资料不足，回答将标记待核实",
                   });
@@ -845,7 +882,7 @@ export class Runtime {
                 )
                   throw Error("BLK-TOOL-001");
                 const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
-                emit(
+                emitForTask(
                   "model.started",
                   moduleId,
                   node.nodeId,
@@ -867,7 +904,7 @@ export class Runtime {
                       state.generations.length > generationCount
                         ? state.generations.at(-1)
                         : undefined;
-                    emit(
+                    emitForTask(
                       "model.completed",
                       moduleId,
                       node.nodeId,
@@ -911,7 +948,7 @@ export class Runtime {
                       ),
                     )
                     .filter((c): c is Citation => !!c);
-                  emit(
+                  emitForTask(
                     "model.completed",
                     moduleId,
                     node.nodeId,
@@ -919,7 +956,7 @@ export class Runtime {
                     correlationId,
                   );
                 } catch (error) {
-                  emit(
+                  emitForTask(
                     "model.failed",
                     moduleId,
                     node.nodeId,
@@ -937,6 +974,7 @@ export class Runtime {
                 break;
               }
               case "core.reason.tool_loop": {
+                await state.refreshMemoryContext();
                 const resource = resolveResource(
                   project,
                   String(node.fields.RESOURCE),
@@ -962,6 +1000,7 @@ export class Runtime {
                   )
                     throw Error("BLK-TOOL-LOOP-CONFIG");
                   resourceIds.push(String(declaration.fields.RESOURCE));
+                  if(state.activeSkillTools&&!state.activeSkillTools.includes(String(declaration.fields.RESOURCE)))throw Error('BLK-SKILL-PERMISSION');
                   declaration = declaration.next ?? null;
                 }
                 state.generated = await runToolLoop({
@@ -981,7 +1020,7 @@ export class Runtime {
                   resourceIds,
                   maxTurns: Number(node.fields.MAX_TURNS),
                   outputPerTurn: Number(node.fields.OUTPUT_TOKENS),
-                  generate: state.services.generate,
+                  generate:async(request,signal)=>{await state.refreshMemoryContext();const result=await state.services.generate!(request,signal);try{await state.refreshMemoryContext();}catch(error){state.generations.push({...result,text:'',toolCalls:[]});throw error;}return result;},
                   invoke: (tool, input, id) =>
                     invokeTool(tool, input, id, state),
                   onGeneration: (value) =>
@@ -991,7 +1030,7 @@ export class Runtime {
                       toolCalls: [],
                     }),
                   onEvent: (value) =>
-                    emit(
+                    emitForTask(
                       value.type,
                       moduleId,
                       node.nodeId,
@@ -1014,6 +1053,7 @@ export class Runtime {
                 break;
               }
               case "core.output.answer":
+                await state.refreshMemoryContext();
                 scope.style = String(node.fields.STYLE);
                 scope.answer =
                   state.generated ??
@@ -1036,7 +1076,7 @@ export class Runtime {
                   : [value]
                 : [])
                 await execute(child, moduleId, state);
-          emit("block.completed", moduleId, node.nodeId, {
+          emitForTask("block.completed", moduleId, node.nodeId, {
             summary: "已完成",
             elapsedMs: Math.max(0, Math.floor(this.monotonicNow() - startedAt)),
             ...(details ? { details } : {}),
@@ -1054,7 +1094,7 @@ export class Runtime {
           });
         } catch (error) {
           if (!signal.aborted && !(error instanceof WorkflowWaiting))
-            emit("block.failed", moduleId, node.nodeId, {
+            emitForTask("block.failed", moduleId, node.nodeId, {
               code: safeCode(error),
               summary: "积木运行失败",
               ...(details ? { details } : {}),
@@ -1062,7 +1102,7 @@ export class Runtime {
           throw error;
         }
         if (stepped && this.paused)
-          emit("run.paused", moduleId, node.nodeId, {
+          emitForTask("run.paused", moduleId, node.nodeId, {
             summary: "单步已完成",
             blockId: node.nodeId,
           });

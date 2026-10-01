@@ -8,7 +8,7 @@ export type NativeAgentCall = (
   signal?: AbortSignal,
 ) => Promise<unknown>;
 export type PendingApproval = {
-  kind: "provider" | "tool" | "memory";
+  kind: "provider" | "tool" | "memory" | "skill" | "media" | "decision" | "evaluation";
   requestDigest: string;
   preview: unknown;
 };
@@ -82,6 +82,30 @@ export function nativeAgentServices(
     try { return await pending; } finally { if (authorizations.get(signal) === pending) authorizations.delete(signal); }
   }
   return {
+    async evaluation(request,signal){
+      const approval=options.mode==='cli'?await approved('evaluation','agent-evaluation-preflight',request,signal):undefined;
+      const token=options.mode==='desktop'?await tokenFor(request.projectId,request.sessionId,signal):undefined;
+      signal.throwIfAborted();return await call('agent-evaluation',{request,...(approval?{approval}:{token})},signal) as Json;
+    },
+    async decision(request,signal){
+      const approval=options.mode==='cli'?await approved('decision','agent-decision-preflight',request,signal):undefined;
+      const token=options.mode==='desktop'?await tokenFor(request.projectId,request.sessionId,signal):undefined;
+      const cancel=()=>{if(token)void call('agent-decision-cancel',{token,requestId:request.requestId}).catch(()=>{});};
+      signal.addEventListener('abort',cancel,{once:true});
+      try{signal.throwIfAborted();return await call('agent-decision',{request,...(approval?{approval}:{token})},signal) as Json;}finally{signal.removeEventListener('abort',cancel);}
+    },
+    async media(request,signal){
+      const approval=options.mode==='cli'?await approved('media','agent-media-preflight',request,signal):undefined;
+      const token=options.mode==='desktop'?await tokenFor(request.projectId,request.sessionId,signal):undefined;
+      const cancel=()=>{if(token)void call('agent-media-cancel',{token,requestId:request.requestId}).catch(()=>{});};
+      signal.addEventListener('abort',cancel,{once:true});
+      try{signal.throwIfAborted();return await call('agent-media',{request,...(approval?{approval}:{token})},signal) as Json;}finally{signal.removeEventListener('abort',cancel);}
+    },
+    async skills(request,signal) {
+      const approval=options.mode==='cli'?await approved('skill','agent-skill-preflight',request,signal):undefined;
+      const token=options.mode==='desktop'?await tokenFor(request.projectId,request.sessionId,signal):undefined;
+      signal.throwIfAborted();return await call('agent-skill',{request,...(approval?{approval}:{token})},signal) as Json;
+    },
     async generate(input, signal) {
       if (options.live === false) throw Error("BLK-PROVIDER-DISABLED");
       const model = nativeModelRequest(input),

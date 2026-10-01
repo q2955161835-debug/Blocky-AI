@@ -22,6 +22,8 @@ import {
 } from "@blocky/rpa-core/recording";
 import { allow, required, type Args } from "./arguments";
 import { memoryRequestSchema } from "@blocky/runtime-core";
+import {skillRequestSchema,skillMetadataSchema,delegationSchema} from '@blocky/runtime-core';
+import {mediaRequestSchema,mediaMetadataSchema,decisionRequestSchema,decisionRecordSchema,evaluationAssetRequestSchema,evaluationDatasetSchema,evaluationReportSchema} from '@blocky/runtime-core';
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { runInputsSchema } from "./run-inputs";
@@ -39,6 +41,16 @@ import {
 } from "@blocky/knowledge-core";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  'blocky.media-request/v1':mediaRequestSchema,
+  'blocky.media-metadata/v1':mediaMetadataSchema,
+  'blocky.decision-request/v1':decisionRequestSchema,
+  'blocky.decision-record/v1':decisionRecordSchema,
+  'blocky.evaluation-asset-request/v1':evaluationAssetRequestSchema,
+  'blocky.evaluation-dataset/v1':evaluationDatasetSchema,
+  'blocky.evaluation-report/v1':evaluationReportSchema,
+  'blocky.skill-request/v1':skillRequestSchema,
+  'blocky.skill/v1':skillMetadataSchema,
+  'blocky.agent-delegation/v1':delegationSchema,
   "blocky.memory-request/v1": memoryRequestSchema,
   "blocky.knowledge-ingestion/v1": ingestionOptionsSchema,
   "blocky.knowledge-judgment/v1": knowledgeJudgmentSchema,

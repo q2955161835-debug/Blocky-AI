@@ -31,6 +31,7 @@ it("session search excludes another project/session and exposes an extract summa
   try {
     const state=new AgentExecution(project,"hello","r","s",budget,{},undefined,session);
     await state.execute({nodeId:"search",blockType:"core.memory.search",fields:{SCOPE:"session",QUERY:"hello",LIMIT:20},inputs:{}},async()=>{});
-    expect(state.value).toEqual({entries:[{key:"note",value:"hello local",summary:'"hello local"',summaryKind:"extract"}]});
+    expect(state.value).toMatchObject({entries:[{key:"note",entry:{value:"hello local",version:1,sourceRef:null,summary:'"hello local"',summaryKind:"extract",expiresAt:null}}]});
+    expect((state.value as any).entries).toHaveLength(1);expect(JSON.stringify(state.value)).not.toContain('private');expect(JSON.stringify(state.value)).not.toContain('hello other');
   } finally {budget.dispose();}
 });

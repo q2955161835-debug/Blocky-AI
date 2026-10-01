@@ -1,4 +1,7 @@
 import { knowledgeStages } from "@blocky/knowledge-core";
+import { skillRequestSchema } from "./skills";
+import { mediaRequestSchema } from "./media";
+import { decisionRequestSchema } from "./decision";
 import { memoryRequestSchema } from "./memory";
 import { validateResource } from "@blocky/resource-registry";
 import type { Adapters, Citation } from "./adapters";
@@ -59,6 +62,9 @@ const methods = {
   "agent.generate": ["input"],
   "agent.memory": ["input"],
   "agent.memoryEntries": ["input"],
+  "agent.skills": ["input"],
+  "agent.media": ["input"],
+  "agent.decision": ["input"],
   "agent.tool": ["input"],
   "agent.validate-citations": ["projectId", "citations"],
   "agent.close": [],
@@ -213,6 +219,20 @@ export class RuntimeServiceHost {
             Parameters<NonNullable<AgentServices["tool"]>>[0],
           signal,
         );
+      }
+      case "agent.skills": {
+        project(v.input);const request=skillRequestSchema.parse(v.input);
+        if(!['discover','load','read-resource'].includes(request.action)||!this.adapters.agent?.skills)throw invalid();
+        return this.adapters.agent.skills(request,signal);
+      }
+      case "agent.media": {
+        project(v.input);const request=mediaRequestSchema.parse(v.input);
+        if(request.action==='delete'||!this.adapters.agent?.media)throw invalid();
+        return this.adapters.agent.media(request,signal);
+      }
+      case "agent.decision": {
+        project(v.input);const request=decisionRequestSchema.parse(v.input);
+        if(!this.adapters.agent?.decision)throw invalid();return this.adapters.agent.decision(request,signal);
       }
       case "agent.memoryEntries": {
         project(v.input);
