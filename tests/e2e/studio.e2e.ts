@@ -73,6 +73,8 @@ describe("Blocky native editor", () => {
       (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
     );
     const overview = page.getByLabel("画布导航", { exact: true });
+    expect(await overview.getByRole("img", { name: "画布位置概览" }).isVisible()).toBe(false);
+    await overview.getByText("迷你地图", { exact: true }).click();
     await overview.locator(".overview-block").first().waitFor();
     const before = await page.evaluate(() =>
       (window as any).__BLOCKY_ACCEPTANCE__.overviewState(),
@@ -497,7 +499,13 @@ describe("Blocky native editor", () => {
       await page.getByLabel("预览视口", { exact: true }).selectOption(viewport);
       expect(await frame.locator("#submit").isVisible()).toBe(true);
       const expectedWidth = viewport === "mobile" ? 390 : viewport === "tablet" ? 768 : 1280;
-      await browser.waitUntil(async () => (await frame.locator("body").evaluate(() => innerWidth)) === expectedWidth,
+      // The declared iframe width stays exact. WebView2 with fractional DPR can
+      // round the internal CSS viewport by one pixel (768 -> 769 at DPR 1.05).
+      await browser.waitUntil(async () => {
+        const outerWidth = await page.locator("iframe").evaluate(el => el.clientWidth);
+        const inner = await frame.locator("body").evaluate(() => ({ width: innerWidth, dpr: devicePixelRatio }));
+        return outerWidth === expectedWidth && Math.abs(inner.width - expectedWidth) <= (Number.isInteger(inner.dpr) ? 0 : 1);
+      },
         { timeout: 5000, timeoutMsg: `Preview ${viewport} should settle at ${expectedWidth}px` }).catch(async error => {
           console.log("PREVIEW_VIEWPORT_DIAGNOSTIC", await page.locator("iframe").evaluate(el => ({
             width: el.clientWidth, rect: el.getBoundingClientRect().toJSON(), style: el.getAttribute("style"), dpr: devicePixelRatio,
