@@ -43,13 +43,18 @@ export class AgentExecution {
   taskIdentity?: { taskId:string; parentTaskId:string; agentId:string };
   activeSkillTools?: readonly string[];
   memoryBinding?: {scope:'session'|'project';keys:{key:string;version:number}[]};
+  imageBinding?:{mediaId:string;sha256:string;version:number};
+  mediaBinding?:{mediaId:string;sha256:string;version:number};
+  private mediaSource():string|undefined {const media=this.mediaBinding??this.imageBinding;return media?`media/${media.mediaId}/${media.sha256}/${media.version}`:undefined;}
   private async sessionSourceReadable(source:string|null|undefined):Promise<boolean>{
-    if(!source?.startsWith('knowledge/'))return true;
+    if(!source?.startsWith('knowledge/')&&!source?.startsWith('media/'))return true;
     if(!this.services.memoryEntries)return false;
     const result=await new ProjectMemory(this.services.memoryEntries,this.project.manifest.projectId,this.sessionId).request({action:'check-source',sourceRef:source},this.budget.signal);
     return result.readable===true;
   }
   async refreshMemoryContext():Promise<void> {
+    const media=this.mediaBinding??this.imageBinding;
+    if(media)try{if(!this.services.media)throw Error('BLK-MEDIA-INVALID');await new NativeMedia(this.services.media,this.project.manifest.projectId,this.sessionId).request({action:'summary',mediaId:media.mediaId,expectedSha256:media.sha256,expectedVersion:media.version},this.budget.signal);}catch(error){this.memory=null;this.value=null;this.generated=undefined;this.structured=undefined;this.files=[];this.generations=this.generations.map(g=>({...g,text:'',toolCalls:[]}));this.imageBinding=undefined;this.mediaBinding=undefined;this.memoryBinding=undefined;throw error;}
     if(!this.memoryBinding)return;
     const {scope,keys}=this.memoryBinding;
     try {for(const ref of keys) {
@@ -107,6 +112,8 @@ export class AgentExecution {
       sessionMemoryMetadata:[...this.sessionLedger.entries].flatMap(([encoded,entry])=>{const [project,session,key]=JSON.parse(encoded);return project===this.project.manifest.projectId&&session===this.sessionId?[{key,entry}]:[];}),
       revokedMemorySources:[...this.sessionLedger.revoked].flatMap(encoded=>{const [project,session,source]=JSON.parse(encoded);return project===this.project.manifest.projectId&&session===this.sessionId?[source]:[];}),
       ...(this.memoryBinding?{memoryBinding:this.memoryBinding}:{}),
+      ...(this.imageBinding?{imageBinding:this.imageBinding}:{}),
+      ...(this.mediaBinding?{mediaBinding:this.mediaBinding}:{}),
     });
   }
   /** Completed tasks expose saved outputs without reintroducing consumed state. */
@@ -152,6 +159,8 @@ export class AgentExecution {
     this.memory = value.memoryBinding?value.memory:null;
     if(!value.memoryBinding&&canonicalJson(value.value)===canonicalJson(value.memory))this.value=null;
     this.memoryBinding=value.memoryBinding;
+    this.imageBinding=value.imageBinding;
+    this.mediaBinding=value.mediaBinding;
     this.instruction = value.instruction;
     this.requireEvidence = value.requireEvidence;
     this.generated = value.generated;
@@ -190,6 +199,8 @@ export class AgentExecution {
     child.taskIdentity=this.taskIdentity;
     child.activeSkillTools=this.activeSkillTools;
     child.memoryBinding=this.memoryBinding?structuredClone(this.memoryBinding):undefined;
+    child.imageBinding=this.imageBinding?structuredClone(this.imageBinding):undefined;
+    child.mediaBinding=this.mediaBinding?structuredClone(this.mediaBinding):undefined;
     child.instruction=this.instruction;
     return child;
   }
@@ -234,7 +245,7 @@ export class AgentExecution {
         {
           projectId: this.project.manifest.projectId,
           resource,
-          requestId: `${this.runId}-judgment-${this.budget.calls}`,
+          requestId: `judgment-${crypto.randomUUID()}`,
           maxOutputTokens: limit,
           messages: [
             {
@@ -328,6 +339,7 @@ export class AgentExecution {
       citations,
     );
     let result: Generation;
+    if(this.imageBinding){if(key==='adapter://generator-v1'||!Array.isArray(resource.definition.capabilities)||!resource.definition.capabilities.includes('image'))throw Error('BLK-MODEL-CAPABILITY');input[input.length-1].imageRefs=[this.imageBinding];}
     if (key === "adapter://generator-v1") {
       result = {
         text: citations.length
@@ -401,6 +413,11 @@ export class AgentExecution {
       return true;
     const f = node.fields;
     switch (node.blockType) {
+      case 'core.media.image': {
+        if(!this.allowedCapabilities?.includes('media.read')||!this.services.media)throw Error('BLK-PERM-001');this.budget.call();
+        const result=await new NativeMedia(this.services.media,this.project.manifest.projectId,this.sessionId).request({action:'image-reference',mediaId:String(f.MEDIA_ID),expectedSha256:String(f.SHA256),expectedVersion:Number(f.VERSION)},this.budget.signal);
+        if(!('metadata'in result)||!result.metadata.mimeType.startsWith('image/'))throw Error('BLK-MEDIA-INVALID');this.imageBinding={mediaId:result.metadata.mediaId,sha256:result.metadata.sha256,version:result.metadata.version};this.mediaBinding=this.imageBinding;this.value={mediaId:result.metadata.mediaId,mimeType:result.metadata.mimeType};break;
+      }
       case 'core.model.score': {
         await this.refreshMemoryContext();
         if(!this.allowedCapabilities?.includes('model.score')||!this.services.decision)throw Error('BLK-PERM-001');
@@ -413,7 +430,7 @@ export class AgentExecution {
       case 'core.media.transcribe': {
         if(!this.allowedCapabilities?.includes('media.read')||!this.services.media)throw Error('BLK-PERM-001');
         this.budget.call();const result=await new NativeMedia(this.services.media,this.project.manifest.projectId,this.sessionId).request({action:'transcribe',mediaId:String(f.MEDIA_ID),expectedSha256:String(f.SHA256),expectedVersion:Number(f.VERSION)},this.budget.signal);
-        if(!('transcript'in result))throw Error('BLK-MEDIA-INVALID');this.value=result as unknown as Json;this.generated=result.transcript.segments.map(s=>s.text).join(' ').trim();break;
+        if(!('transcript'in result))throw Error('BLK-MEDIA-INVALID');this.mediaBinding={mediaId:result.metadata.mediaId,sha256:result.metadata.sha256,version:result.metadata.version};this.value=result as unknown as Json;this.generated=result.transcript.segments.map(s=>s.text).join(' ').trim();break;
       }
       case "core.flow.parallel": {
         validateParallelNode(node);
@@ -514,6 +531,7 @@ export class AgentExecution {
         if(f.SCOPE==='session') {
           this.budget.call();
           const input=node.blockType==='core.memory.search'?{action:'search' as const,query,limit}:node.blockType==='core.memory.revoke_source'?{action:'revoke-source' as const,sourceRef:String(f.SOURCE_REF)}:{action:'upsert' as const,key:String(f.KEY),value:f.SOURCE==='input'?this.question:this.value,expectedVersion:sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key:String(f.KEY)}).version!,conflictPolicy:f.POLICY as 'replace'|'merge'|'reject',...(f.TTL_SECONDS!==undefined?{ttlSeconds:integer(f.TTL_SECONDS,0,3153600000)}:{}),...(f.SOURCE_REF?{sourceRef:String(f.SOURCE_REF)}:{})};
+          if(input.action==='upsert'&&f.SOURCE==='result'&&this.mediaSource())input.sourceRef=this.mediaSource();
           if(input.action==='upsert'&&!await this.sessionSourceReadable(input.sourceRef))throw Error('BLK-PERM-001');
           const deniedSources=new Set<string>();
           if(input.action==='search')for(const [encoded,entry] of this.sessionLedger.entries){const [project,session]=JSON.parse(encoded);if(project===this.project.manifest.projectId&&session===this.sessionId&&entry.sourceRef&&!deniedSources.has(entry.sourceRef)&&!await this.sessionSourceReadable(entry.sourceRef))deniedSources.add(entry.sourceRef);}
@@ -536,7 +554,7 @@ export class AgentExecution {
         } else {
           const key=String(f.KEY),current=await memory.request({action:'read',key},this.budget.signal);
           const source=resource.definition.sourceRef;
-          const sourceRef=typeof source==='string'?source:source&&typeof source==='object'&&!Array.isArray(source)&&typeof source.id==='string'?source.id:undefined;
+          const sourceRef=f.SOURCE==='result'&&this.mediaSource()?this.mediaSource():typeof source==='string'?source:source&&typeof source==='object'&&!Array.isArray(source)&&typeof source.id==='string'?source.id:undefined;
           const result=await memory.request({action:'upsert',key,value:f.SOURCE==='input'?this.question:this.value,expectedVersion:current.version!,conflictPolicy:f.POLICY as 'replace'|'merge'|'reject',
             ttlSeconds:Number(resource.definition.retentionDays??0)*86400,...(sourceRef?{sourceRef}: {})},this.budget.signal);
           this.memory=result as unknown as Json;
@@ -564,20 +582,30 @@ export class AgentExecution {
           | "delete";
         report({ memory: { action, scope: f.SCOPE as "session" | "project" } });
         const value = f.SOURCE === "input" ? this.question : this.value;
+        const mediaSource=f.SOURCE==='result'?this.mediaSource():undefined;
+        if(action==='write'&&mediaSource&&!await this.sessionSourceReadable(mediaSource))throw Error('BLK-PERM-001');
         if (utf8(JSON.stringify(value)) > 32768) throw Error("BLK-MEMORY-001");
         this.budget.call();
         if (f.SCOPE === "session") {
           const key=String(f.KEY),current=sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key});
           if(current.entry&&!await this.sessionSourceReadable(current.entry.sourceRef)){current.found=false;current.entry=null;}
-          const result=action==='read'?current:sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,action==='delete'?{action:'delete',key,expectedVersion:current.version!}:{action:'upsert',key,value,expectedVersion:current.version!,conflictPolicy:'replace'});
+          const result=action==='read'?current:sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,action==='delete'?{action:'delete',key,expectedVersion:current.version!}:{action:'upsert',key,value,expectedVersion:current.version!,conflictPolicy:'replace',...(f.SOURCE==='result'&&this.mediaSource()?{sourceRef:this.mediaSource()}: {})});
           this.memory=action==='read'?result.entry?.value??null:action==='write'?value:null;
           this.memoryBinding=current.found&&action==='read'?{scope:'session',keys:[{key,version:current.version!}]}:undefined;
         } else {
+          if(action==='write'&&mediaSource){
+            if(!this.services.memoryEntries)throw Error('BLK-MEMORY-001');
+            const store=new ProjectMemory(this.services.memoryEntries,this.project.manifest.projectId,this.sessionId);
+            const current=await store.request({action:'read',key:f.KEY},this.budget.signal);
+            const result=await store.request({action:'upsert',key:f.KEY,value,expectedVersion:current.version!,conflictPolicy:'replace',sourceRef:mediaSource},this.budget.signal);
+            if(!result.entry)throw Error('BLK-MEMORY-001');
+            this.memory=value;this.memoryBinding={scope:'project',keys:[{key:f.KEY,version:result.entry.version}]};break;
+          }
           if (!this.services.memory) throw Error("BLK-MEMORY-001");
           this.memory = await abortable(
             this.services.memory(
               {
-                requestId: `${this.runId}-memory-${this.budget.calls}`,
+                requestId: `memory-${crypto.randomUUID()}`,
                 projectId: this.project.manifest.projectId,
                 sessionId: this.sessionId,
                 scope: "project",

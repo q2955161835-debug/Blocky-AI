@@ -4,17 +4,19 @@ import { pathToFileURL } from 'node:url';
 import { safeDirectory } from './build-document-parser.mjs';
 import { audioLock, audioRuntimeSource, prepareAudioRuntime, verifyAudioRuntime } from './prepare-audio-runtime.mjs';
 
-export async function installAudioRuntime(target) {
+export async function installAudioRuntime(target, { source = audioRuntimeSource, lock = audioLock } = {}) {
   if (!target) throw Error('Audio install requires a project target');
   const output = await safeDirectory(resolve(target, 'audio-runtime'));
-  if (output === audioRuntimeSource || output.startsWith(audioRuntimeSource + sep) || audioRuntimeSource.startsWith(output + sep)) throw Error('Audio install target conflicts with source');
-  await prepareAudioRuntime();
-  if ((await readdir(output)).length) return verifyAudioRuntime(output);
-  for (const file of audioLock.files) {
+  source = resolve(source);
+  if (output === source || output.startsWith(source + sep) || source.startsWith(output + sep)) throw Error('Audio install target conflicts with source');
+  if (source === audioRuntimeSource && lock === audioLock) await prepareAudioRuntime();
+  else await verifyAudioRuntime(source, lock);
+  if ((await readdir(output)).length) return verifyAudioRuntime(output, lock);
+  for (const file of lock.files) {
     await safeDirectory(dirname(resolve(output, file.name)));
-    await writeFile(resolve(output, file.name), await readFile(resolve(audioRuntimeSource, file.name)), { flag: 'wx' });
+    await writeFile(resolve(output, file.name), await readFile(resolve(source, file.name)), { flag: 'wx' });
   }
-  await writeFile(resolve(output, 'runtime-lock.json'), JSON.stringify(audioLock, null, 2) + '\n', { flag: 'wx' });
-  return verifyAudioRuntime(output);
+  await writeFile(resolve(output, 'runtime-lock.json'), JSON.stringify(lock, null, 2) + '\n', { flag: 'wx' });
+  return verifyAudioRuntime(output, lock);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) console.log(JSON.stringify(await installAudioRuntime(process.argv[2])));

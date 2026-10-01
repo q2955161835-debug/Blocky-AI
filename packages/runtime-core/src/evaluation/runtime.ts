@@ -52,6 +52,7 @@ function runErrorCode(result: RunResult): string | undefined {
 }
 
 function mapRunResult(result: RunResult): EvaluationRunResult {
+  const errorCode = runErrorCode(result);
   return {
     status: result.status,
     answer: result.answer,
@@ -62,7 +63,7 @@ function mapRunResult(result: RunResult): EvaluationRunResult {
     ...(result.generations !== undefined
       ? { generations: result.generations }
       : {}),
-    ...(runErrorCode(result) ? { errorCode: runErrorCode(result) } : {}),
+    ...(errorCode ? { errorCode } : {}),
   };
 }
 

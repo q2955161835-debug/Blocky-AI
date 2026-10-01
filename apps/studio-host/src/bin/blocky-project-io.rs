@@ -237,6 +237,10 @@ fn execute_value(value: Value) -> Value {
             }
             let store = blocky_studio::secret_store::SecretStore::new(root.join("secrets"));
             match r.operation.as_str() {
+                "secret-import-key" if r.variable.is_none()=>{
+                    store.import_key_file(id,Path::new(r.path.as_deref().ok_or("BLK-CLI-002")?))?;
+                    Ok(json!({"ok":true,"value":true}))
+                }
                 "secret-import" => {
                     store.import_env(
                         id,
@@ -346,6 +350,9 @@ fn execute_value(value: Value) -> Value {
 }
 fn main() {
     match std::env::args().nth(1).as_deref() {
+        Some("--trigger-session") => {
+            std::process::exit(blocky_studio::agent_data::trigger_api::session::main())
+        }
         Some("--blocky-tool-call") => {
             std::process::exit(blocky_studio::tool_gateway::dispatch::session_main())
         }

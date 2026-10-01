@@ -156,7 +156,7 @@ pub fn validate_files(files: &ProjectFiles) -> Result<(), String> {
     {
         return Err("BLK-MIG-001".into());
     }
-    if !["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0"].contains(&text(
+    if !["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0", "0.7.0", "0.7.1", "0.8.0"].contains(&text(
         manifest.get("format").ok_or(REJECT)?,
         "minimumReaderVersion",
     )?) {
@@ -395,13 +395,13 @@ mod tests {
         BTreeMap::from([("project.json".into(),r#"{"schemaVersion":"blocky.project/v1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.1.0","minimumReaderVersion":"0.1.0"}}"#.into()),("workspaces/main.json".into(),r#"{"blocks":{"languageVersion":0,"blocks":[]}}"#.into())])
     }
     #[test]
-    fn stage5_reader_preserves_old_versions_and_rejects_future_formats() {
-        for version in ["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0"] {
+    fn current_reader_preserves_old_versions_and_rejects_future_formats() {
+        for version in ["0.1.0", "0.2.0", "0.3.0", "0.4.0", "0.5.0", "0.6.0", "0.7.0", "0.7.1", "0.8.0", "0.9.0"] {
             let mut candidate = files();
             let mut manifest: Value = serde_json::from_str(&candidate["project.json"]).unwrap();
             manifest["format"]["minimumReaderVersion"] = version.into();
             candidate.insert("project.json".into(), manifest.to_string());
-            assert_eq!(validate_files(&candidate).is_ok(), version != "0.6.0");
+            assert_eq!(validate_files(&candidate).is_ok(), version != "0.9.0");
         }
     }
     #[test]

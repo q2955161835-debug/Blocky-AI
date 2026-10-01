@@ -458,6 +458,169 @@ describe("evaluation runs", () => {
     expect(resumed.report.status).toBe("completed");
   });
 
+  it("waits for an aborted execution cleanup before returning its partial report", async () => {
+    const dataset = await makeDataset();
+    const store = new MemoryStore();
+    const controller = new AbortController();
+    let markStarted!: () => void;
+    const didStart = new Promise<void>((resolve) => (markStarted = resolve));
+    let markAbortObserved!: () => void;
+    const abortObserved = new Promise<void>((resolve) => {
+      markAbortObserved = resolve;
+    });
+    let releaseCleanup!: () => void;
+    const cleanupGate = new Promise<void>((resolve) => {
+      releaseCleanup = resolve;
+    });
+    let cleanupSettled = false;
+    let returnedBeforeCleanup = false;
+
+    const pending = runEvaluation({
+      dataset,
+      candidate: {
+        id: "assistant",
+        version: "1.0",
+        contentHash: "b".repeat(64),
+      },
+      checkpointId: "checkpoint-cancel-cleanup",
+      reportId: "report-cancel-cleanup",
+      store,
+      signal: controller.signal,
+      execute: async (
+        { caseId }: { caseId: string },
+        context: { signal: AbortSignal },
+      ) => {
+        if (caseId === "case-two") {
+          markStarted();
+          await new Promise<void>((resolve) => {
+            context.signal.addEventListener(
+              "abort",
+              () => {
+                markAbortObserved();
+                resolve();
+              },
+              { once: true },
+            );
+          });
+          await cleanupGate;
+          cleanupSettled = true;
+          throw new EvaluationRunnerError("BLK-RUN-005", "unknown");
+        }
+        return result("See the guide.", { answer: "See the guide." });
+      },
+    });
+    const observedReturn = pending.then(() => {
+      returnedBeforeCleanup = !cleanupSettled;
+    });
+
+    await didStart;
+    controller.abort();
+    await abortObserved;
+    await Promise.race([
+      observedReturn,
+      new Promise<void>((resolve) => setTimeout(resolve, 0)),
+    ]);
+    releaseCleanup();
+    const cancelled = await pending;
+    await observedReturn;
+
+    expect(returnedBeforeCleanup).toBe(false);
+    expect(cleanupSettled).toBe(true);
+    expect(cancelled.checkpoint.value.status).toBe("cancelled");
+    expect(cancelled.checkpoint.value.cases[1]?.status).toBe("uncertain");
+  });
+
+  it("waits for an aborted scorer cleanup before returning its partial report", async () => {
+    const dataset = await makeDataset();
+    const store = new MemoryStore();
+    const controller = new AbortController();
+    const scorerBinding = {
+      resourceId: "judge-resource",
+      provider: "local",
+      modelId: "judge-model",
+      version: "4.0",
+    };
+    let markStarted!: () => void;
+    const didStart = new Promise<void>((resolve) => (markStarted = resolve));
+    let markAbortObserved!: () => void;
+    const abortObserved = new Promise<void>((resolve) => {
+      markAbortObserved = resolve;
+    });
+    let releaseCleanup!: () => void;
+    const cleanupGate = new Promise<void>((resolve) => {
+      releaseCleanup = resolve;
+    });
+    let cleanupSettled = false;
+    let returnedBeforeCleanup = false;
+
+    const pending = runEvaluation({
+      dataset,
+      candidate: {
+        id: "assistant",
+        version: "1.0",
+        contentHash: "b".repeat(64),
+      },
+      checkpointId: "checkpoint-score-cancel-cleanup",
+      reportId: "report-score-cancel-cleanup",
+      store,
+      signal: controller.signal,
+      execute: async () =>
+        result("See the guide.", { answer: "See the guide." }),
+      scorer: {
+        binding: scorerBinding,
+        score: async (_input, signal) => {
+          markStarted();
+          await new Promise<void>((resolve) => {
+            signal.addEventListener(
+              "abort",
+              () => {
+                markAbortObserved();
+                resolve();
+              },
+              { once: true },
+            );
+          });
+          await cleanupGate;
+          cleanupSettled = true;
+          return {
+            score: 0.8,
+            binding: scorerBinding,
+            generation: {
+              provider: "local",
+              model: "judge-model",
+              transport: "local",
+              requestId: "judge-request",
+              text: "0.8",
+              usage: null,
+            },
+          };
+        },
+      },
+    });
+    const observedReturn = pending.then(() => {
+      returnedBeforeCleanup = !cleanupSettled;
+    });
+
+    await didStart;
+    controller.abort();
+    await abortObserved;
+    await Promise.race([
+      observedReturn,
+      new Promise<void>((resolve) => setTimeout(resolve, 0)),
+    ]);
+    releaseCleanup();
+    const cancelled = await pending;
+    await observedReturn;
+
+    expect(returnedBeforeCleanup).toBe(false);
+    expect(cleanupSettled).toBe(true);
+    expect(cancelled.checkpoint.value.status).toBe("cancelled");
+    expect(cancelled.checkpoint.value.cases[0]?.status).toBe("settled");
+    expect(cancelled.checkpoint.value.modelScoring.rows[0]?.caseId).toBe(
+      "case-one",
+    );
+  });
+
   it("records stable runner errors and keeps unknown usage as null", async () => {
     const dataset = await makeDataset();
     const store = new MemoryStore();

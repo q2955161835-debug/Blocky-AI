@@ -3,6 +3,7 @@ mod budget;
 mod endpoint;
 mod protocol;
 mod structured;
+mod images;
 use super::ProviderHost;
 pub use endpoint::validate_endpoint;
 pub use protocol::{parse_response, GatewayRequest, ModelMessage, ModelTool, ToolCall};
@@ -128,15 +129,16 @@ pub(crate) fn execute(
             let bytes = super::transport::exchange_headers_using(
                 client,
                 endpoint.as_str(),
-                &request.body(&bound.model, &bound.provider),
+                &images::body(root,request,&bound.model,&bound.provider)?,
                 remaining,
                 std::str::from_utf8(key).map_err(|_| "BLK-MODEL-CONFIG")?,
                 Some(&bound.headers),
                 cancel,
-                before_send,
+                &mut ||{images::validate(root,request)?;before_send()},
             )?;
             observe(&bytes);
             cancelled()?;
+            images::validate(root,request)?;
             let mut result = parse_response(&bytes, &request)?;
             result["provider"] = bound.provider.clone().into();
             result["transport"] = if bound.local { "local" } else { "remote" }.into();

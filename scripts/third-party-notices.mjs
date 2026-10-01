@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { documentRuntimeFiles, documentRuntimePackages } from "./install-document-parser.mjs";
 import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
 import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
+import {audioLock,audioRuntimeSource,verifyAudioRuntime} from "./prepare-audio-runtime.mjs";
 const json = async (path) =>
   JSON.parse((await readFile(path, "utf8")).replace(/^\uFEFF/, ""));
 const js = Object.values(await json("try/production-js-licenses.json")).flat();
@@ -114,6 +115,11 @@ for (const entry of extraKnowledgeModels.licenses) {
   if (bytes.length !== entry.bytes || createHash("sha256").update(bytes).digest("hex") !== entry.sha256) throw Error("Additional model license checksum mismatch");
   seen.add(`additional-models/${entry.file}`);
   sections.push(`\n${"=".repeat(72)}\nMiniLM embeddings and MS MARCO cross-encoder\nDeclared license: Apache-2.0\n${"=".repeat(72)}\n${bytes.toString("utf8")}`);
+}
+await verifyAudioRuntime(audioRuntimeSource);
+for(const file of audioLock.files.filter(file=>file.name.startsWith("licenses/"))) {
+  seen.add(`audio-runtime/${file.name}`);
+  sections.push(`\n${"=".repeat(72)}\nAudio runtime: ${file.name}\n${"=".repeat(72)}\n${await readFile(resolve(audioRuntimeSource,file.name),"utf8")}`);
 }
 await mkdir("try/stage3-release", { recursive: true });
 await writeFile(

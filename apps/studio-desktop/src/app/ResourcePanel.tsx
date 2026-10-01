@@ -33,6 +33,9 @@ import { ToolOperationsPanel } from "./ToolOperationsPanel";
 import { KnowledgePanel } from "./KnowledgePanel";
 import { MemoryPanel } from "./MemoryPanel";
 import {SkillPanel} from './SkillPanel';
+import {MediaPanel} from './MediaPanel';
+import {EvaluationWorkspace} from './EvaluationWorkspace';
+import {TriggerPanel} from './TriggerPanel';
 import { knowledgeNative } from "../composition/knowledge";
 import {
   knowledgeResource,
@@ -324,6 +327,9 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   };
   return (
     <div className="settings resource-panel">
+      <details><summary>项目媒体</summary><MediaPanel key={project.manifest.projectId} projectId={project.manifest.projectId}/></details>
+      <details><summary>评估工作台</summary><EvaluationWorkspace key={project.manifest.projectId} studio={s}/></details>
+      <details><summary>项目触发器</summary><TriggerPanel key={project.manifest.projectId} studio={s}/></details>
       <label>
         资源范围
         <select

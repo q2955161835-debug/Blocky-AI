@@ -4,6 +4,9 @@ pub mod media_store;
 mod media_api;
 pub mod decision;
 pub mod evaluation_store;
+pub mod trigger_store;
+pub mod external_receiver;
+pub mod trigger_api;
 mod extensions_api;
 pub mod skill_store;
 pub use memory_store::ManageRequest;
@@ -131,6 +134,7 @@ struct State {
     used_media:HashSet<String>,
     decision_tasks:HashMap<String,(String,Arc<std::sync::atomic::AtomicBool>)>,
     used_decisions:HashSet<String>,
+    trigger_receivers:HashMap<String,trigger_api::Active>,
 }
 #[derive(Clone)]
 pub struct AgentData {
@@ -172,6 +176,10 @@ impl AgentData {
         let mut state=self.state.lock().map_err(|_|INVALID)?;state.grants.remove(token);
         for task in state.media_tasks.values().filter(|t|t.token==token){task.cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
         for (owner,cancel) in state.decision_tasks.values(){if owner==token{cancel.store(true,std::sync::atomic::Ordering::SeqCst);}}
+        let ids:Vec<String>=state.trigger_receivers.iter().filter(|(_,a)|a.token==token).map(|(id,_)|id.clone()).collect();
+        let receivers:Vec<_>=ids.iter().filter_map(|id|state.trigger_receivers.remove(id)).collect();
+        for a in &receivers{a.cancelled.store(true,std::sync::atomic::Ordering::Release);}
+        drop(state);drop(receivers);
         Ok(())
     }
     pub fn memory(&self, token: &str, request: &MemoryRequest) -> Result<Value, String> {
@@ -240,6 +248,9 @@ impl AgentData {
         state.grants.clear();
         for task in state.media_tasks.values(){task.cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
         for (_,cancel) in state.decision_tasks.values(){cancel.store(true,std::sync::atomic::Ordering::SeqCst);}
+        let receivers:Vec<_>=state.trigger_receivers.drain().map(|(_,a)|a).collect();
+        for a in &receivers{a.cancelled.store(true,std::sync::atomic::Ordering::Release);}
+        drop(state);drop(receivers);
         Ok(())
     }
 }
@@ -265,6 +276,19 @@ pub fn dispatch(root: PathBuf, v: &Value) -> Result<Value, String> {
     let approvals = root.join("approvals");
     let host = AgentData::new(root);
     match e.operation.as_str() {
+        "agent-trigger-session-preflight" => {
+            if e.approval.is_some(){return Err(INVALID.into());}
+            let r:trigger_api::session::Context=serde_json::from_value(e.request).map_err(|_|INVALID)?;let mut preview=r.preflight()?;
+            preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&format!("trigger-session/{}/{}",r.project_id,r.request_id),&digest(&r)?)?.into();Ok(preview)
+        }
+        "agent-trigger-preflight" | "agent-trigger" => {
+            let r:trigger_store::Request=serde_json::from_value(e.request).map_err(|_|INVALID)?;r.validate()?;
+            if r.action=="claim"&&r.occurrence.as_ref().is_some_and(|o|o.kind=="external"){return Err(PERMISSION.into());}
+            let identity=format!("trigger/{}/{}",r.project_id,r.request_id);let d=digest(&r)?;
+            if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}let mut preview=r.preflight()?;preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&d)?.into();return Ok(preview);}
+            let a=e.approval.filter(|a|a.approved&&a.request_digest==d).ok_or(PERMISSION)?;crate::approval_ledger::consume(&approvals,&identity,&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;host.manage_trigger(&token,&r)
+        }
         "agent-evaluation-preflight" | "agent-evaluation" => {
             let r:evaluation_store::Request=serde_json::from_value(e.request).map_err(|_|INVALID)?;r.validate()?;let identity=format!("evaluation/{}/{}",r.project_id,r.request_id);let d=digest(&r)?;
             if e.operation.ends_with("preflight"){if e.approval.is_some(){return Err(INVALID.into());}let mut preview=r.preflight()?;preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,&identity,&d)?.into();return Ok(preview);}

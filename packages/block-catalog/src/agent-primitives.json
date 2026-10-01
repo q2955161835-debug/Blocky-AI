@@ -390,5 +390,6 @@
     }
   },
   {"type":"core.model.score","label":"英文候选评分（实验）","category":3,"color":"#8863b2","fields":["RESOURCE","SOURCE","LABELS","RULES","THRESHOLD","FALLBACK"],"inputs":[],"statement":true,"resourceFields":{"RESOURCE":"model"},"jsonFields":["LABELS","RULES"],"fieldOptions":{"SOURCE":["input","result"]},"defaultFields":{"LABELS":"[{\"id\":\"geography\",\"description\":\"Geography and locations\"},{\"id\":\"sports\",\"description\":\"Sports and athletes\"}]","RULES":"[]","THRESHOLD":"0","FALLBACK":"unknown"}},
-  {"type":"core.media.transcribe","label":"转写项目音频","category":6,"color":"#6384b8","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}}
+  {"type":"core.media.transcribe","label":"转写项目音频","category":6,"color":"#6384b8","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}},
+  {"type":"core.media.image","label":"添加项目图片","category":3,"color":"#8863b2","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}}
 ]

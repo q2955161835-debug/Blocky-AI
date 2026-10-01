@@ -37,6 +37,7 @@ export const userConfigHelp = [
   "resource set --definition <resource.json> --json",
   "resource delete --id <id> --json",
   "secret import --id <secret-ref> --env-file <local-file> --variable <name> --json",
+  "secret import-key --id <secret-ref> --file <local-key-file> --json",
   "secret status --id <secret-ref> --json",
   "secret remove --id <secret-ref> --json",
 ];
@@ -82,6 +83,7 @@ export async function userConfigCommand(args: Args) {
     "resource.set": ["definition"],
     "resource.delete": ["id"],
     "secret.import": ["id", "env-file", "variable"],
+    "secret.import-key": ["id", "file"],
     "secret.status": ["id"],
     "secret.remove": ["id"],
   };
@@ -96,7 +98,7 @@ export async function userConfigCommand(args: Args) {
             path: resolve(required(args, "env-file")),
             variable: required(args, "variable"),
           }
-        : {}),
+        : action === "import-key" ? {path:resolve(required(args,"file"))}: {}),
     });
     return {
       code: 0,

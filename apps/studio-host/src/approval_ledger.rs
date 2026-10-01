@@ -12,6 +12,17 @@ const DENIED: &str = "BLK-PERM-001";
 const IO: &str = "BLK-APPROVAL-IO";
 const MAX_BYTES: usize = 8 * 1024 * 1024;
 const MAX_ENTRIES: usize = 32768;
+fn acquire(lock:&std::fs::File)->Result<(),String>{
+    let deadline=std::time::Instant::now()+std::time::Duration::from_secs(5);
+    loop {match lock.try_lock(){
+        Ok(())=>return Ok(()),
+        Err(std::fs::TryLockError::WouldBlock)=>{
+            if std::time::Instant::now()>=deadline{return Err("BLK-APPROVAL-BUSY".into());}
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        Err(std::fs::TryLockError::Error(_))=>return Err(IO.into()),
+    }}
+}
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct Entry {
@@ -42,17 +53,19 @@ fn now() -> Result<u64, String> {
         .map_err(|_| IO.into())
 }
 pub fn issue(root: &Path, identity: &str, digest: &str) -> Result<u64, String> {
-    transact(root, identity, digest, false, now()?)
+    transact_at(root, identity, digest, false, None)
 }
 pub fn consume(root: &Path, identity: &str, digest: &str) -> Result<(), String> {
-    transact(root, identity, digest, true, now()?).map(|_| ())
+    transact_at(root, identity, digest, true, None).map(|_| ())
 }
-fn transact(
+#[cfg(test)]
+fn transact(root:&Path,identity:&str,digest:&str,consume:bool,time:u64)->Result<u64,String>{transact_at(root,identity,digest,consume,Some(time))}
+fn transact_at(
     root: &Path,
     identity: &str,
     digest: &str,
     consume: bool,
-    now: u64,
+    provided_now: Option<u64>,
 ) -> Result<u64, String> {
     if !valid_hash(digest) || identity.is_empty() || identity.len() > 512 {
         return Err(DENIED.into());
@@ -65,7 +78,10 @@ fn transact(
         .truncate(false)
         .open(root.join("ledger.lock"))
         .map_err(|_| IO)?;
-    lock.try_lock().map_err(|_| "BLK-APPROVAL-BUSY")?;
+    // Parallel model branches share this profile ledger. Serialize only this
+    // short disk transaction, never the approval prompt or provider request.
+    acquire(&lock)?;
+    let now=match provided_now{Some(time)=>time,None=>now()?};
     let path = root.join("ledger.json");
     let mut ledger = if path.exists() {
         let mut bytes = Vec::new();
@@ -176,5 +192,19 @@ mod tests {
         let root = fixture();
         std::fs::write(root.path().join("ledger.json"), b"broken").unwrap();
         assert_eq!(issue(root.path(), "tool/p/r", &hash("x")).unwrap_err(), IO);
+    }
+    #[test]
+    fn concurrent_approvals_serialize_without_replaying_consumed_entries(){
+        let root=fixture();
+        let lock=std::fs::OpenOptions::new().read(true).write(true).create(true).truncate(false).open(root.path().join("ledger.lock")).unwrap();
+        lock.lock().unwrap();
+        let barrier=std::sync::Arc::new(std::sync::Barrier::new(9));
+        let children=(0..8).map(|index|{let path=root.path().to_owned();let barrier=barrier.clone();std::thread::spawn(move||{
+            let identity=format!("provider/project/request-{index}");let digest=hash(&identity);barrier.wait();
+            issue(&path,&identity,&digest).unwrap();consume(&path,&identity,&digest).unwrap();
+            assert_eq!(consume(&path,&identity,&digest).unwrap_err(),DENIED);
+        })}).collect::<Vec<_>>();
+        barrier.wait();std::thread::sleep(std::time::Duration::from_millis(30));lock.unlock().unwrap();
+        for child in children{child.join().unwrap();}
     }
 }

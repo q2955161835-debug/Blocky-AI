@@ -16,7 +16,7 @@ pub async fn agent_memory_authorize(
 ) -> Result<Value, String> {
     guard(&window)?;
     blocky_studio::agent_data::validate_context(&project_id, &session_id)?;
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目本机能力", format!("本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型。工具和在线模型继续独立核验。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
+    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目本机能力", format!("本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
         return Err("BLK-PERM-001".into());
     }
     guard(&window)?;
@@ -52,7 +52,13 @@ pub async fn agent_media(window:tauri::WebviewWindow,host:tauri::State<'_,AgentD
 #[tauri::command]
 pub fn agent_media_cancel(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request_id:String)->Result<(),String>{if window.label()!="main"{return Err("BLK-PERM-001".into());}host.cancel_media(&token,&request_id)}
 #[tauri::command]
+pub fn agent_media_preview(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::media_store::MediaRequest)->Result<Value,String>{guard(&window)?;host.preview_media(&token,&request)}
+#[tauri::command]
 pub fn agent_evaluation(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::evaluation_store::Request)->Result<Value,String>{guard(&window)?;host.manage_evaluation(&token,&request)}
+#[tauri::command]
+pub fn agent_trigger(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::trigger_store::Request)->Result<Value,String>{guard(&window)?;host.manage_trigger(&token,&request)}
+#[tauri::command]
+pub async fn agent_trigger_receiver(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::trigger_api::ReceiverRequest)->Result<Value,String>{guard(&window)?;let owned=host.inner().clone();tauri::async_runtime::spawn_blocking(move||owned.trigger_receiver(&token,&request)).await.map_err(|_|"BLK-TRIGGER-RECEIVER")?}
 #[tauri::command]
 pub async fn agent_decision(window:tauri::WebviewWindow,host:tauri::State<'_,AgentData>,token:String,request:blocky_studio::agent_data::decision::DecisionRequest)->Result<Value,String>{
  guard(&window)?;let owned=host.inner().clone();tauri::async_runtime::spawn_blocking(move||owned.infer_decision(&token,&request)).await.map_err(|_|"BLK-DECISION-INVALID")?

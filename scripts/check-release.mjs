@@ -6,6 +6,7 @@ import { registry, verifyAsset } from "./prepare-knowledge-model.mjs";
 import { documentRuntimeFiles } from "./install-document-parser.mjs";
 import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
 import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
+import { audioLock, audioRuntimeSource, verifyAudioRuntime } from "./prepare-audio-runtime.mjs";
 import { checkSystemRuntime } from "./prepare-native-runtime.mjs";
 const root = process.cwd();
 const files = [
@@ -18,6 +19,7 @@ const files = [
   "tools/blocky-cli/dist/bin/DirectML.dll",
 ];
 const vendorFiles = [
+  ...audioLock.files.map(asset => ({path: `${audioRuntimeSource}/${asset.name}`, asset})),
   {
     path: "try/stage5/builder-runtime/node.exe",
     asset: {
@@ -42,6 +44,10 @@ const vendorFiles = [
     asset: license,
   })),
 ];
+await verifyAudioRuntime(audioRuntimeSource);
+for (const directory of ["try/release-native-target/release/audio-runtime", "tools/blocky-cli/dist/bin/audio-runtime"])
+  await verifyAudioRuntime(directory);
+files.push(`${audioRuntimeSource}/runtime-lock.json`);
 const builderLock = JSON.parse(
   await readFile("packages/builder-engine/runtime-lock.json", "utf8"),
 );

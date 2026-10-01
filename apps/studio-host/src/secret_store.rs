@@ -102,6 +102,23 @@ impl SecretStore {
         tmp.persist(path).map_err(|_| ERROR)?;
         Ok(())
     }
+    /// Explicit local key-file import. No plaintext copy or IPC result is produced.
+    pub fn import_key_file(&self,id:&str,file:&Path)->Result<(),String> {
+        if !file.is_absolute(){return Err(ERROR.into());}
+        crate::knowledge::no_links(file).map_err(|_|ERROR)?;
+        if !std::fs::metadata(file).map_err(|_|ERROR)?.is_file(){return Err(ERROR.into());}
+        let mut raw=Vec::new();
+        std::fs::File::open(file).map_err(|_|ERROR)?.take(65537).read_to_end(&mut raw).map_err(|_|ERROR)?;
+        let result=(||{if raw.len()>65536{return Err(ERROR.into());}
+          let mut candidates=Vec::new();let mut i=0;
+          while i+3<raw.len(){if &raw[i..i+3]==b"sk-" && (i==0 || !raw[i-1].is_ascii_alphanumeric()) {
+            let start=i;i+=3;while i<raw.len()&&(raw[i].is_ascii_alphanumeric()||b"_-".contains(&raw[i])){i+=1;}
+            if i-start>=23 && i-start<=259{candidates.push((start,i));}
+          }else{i+=1;}}
+          if candidates.len()!=1{return Err(ERROR.into());}
+          let(start,end)=candidates[0];self.put(id,&raw[start..end])
+        })();wipe(&mut raw);result
+    }
     /// Values stay inside Host consumers; no IPC endpoint returns decrypted bytes.
     pub fn with_secret<T>(&self, id: &str, consume: impl FnOnce(&[u8]) -> T) -> Result<T, String> {
         self.with_versioned_secret(id, consume)
@@ -197,6 +214,21 @@ pub(crate) fn crypt(_: &[u8], _: bool) -> Result<Vec<u8>, String> {
 #[cfg(all(test, windows))]
 mod tests {
     use super::*;
+    #[test]
+    fn key_file_import_is_native_encrypted_and_ambiguous_input_preserves_old_key() {
+        let root=PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try");
+        let dir=tempfile::tempdir_in(root).unwrap();let file=dir.path().join("key.txt");
+        let store=SecretStore::new(dir.path().join("vault"));
+        let key="sk-syntheticlocalkey0123456789";
+        std::fs::write(&file,format!("Example local key document\nKey: {key}\n")).unwrap();
+        store.import_key_file("example",&file).unwrap();
+        assert!(store.with_secret("example",|value|value==key.as_bytes()).unwrap());
+        assert!(!std::fs::read(store.path("example").unwrap()).unwrap().windows(key.len()).any(|value|value==key.as_bytes()));
+        std::fs::write(&file,format!("{key}\nsk-secondsynthetickey0123456789")).unwrap();
+        assert!(store.import_key_file("example",&file).is_err());
+        assert!(store.with_secret("example",|value|value==key.as_bytes()).unwrap());
+        assert!(store.import_key_file("example",Path::new("relative.txt")).is_err());
+    }
     #[test]
     fn native_secret_import_is_encrypted_and_never_returned_by_status() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/stage2-secrets");

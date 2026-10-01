@@ -3,20 +3,20 @@ import {invoke} from '@tauri-apps/api/core';
 import {InstalledSkills,skillResultSchema,type InstalledSkill,type SkillInput,type SkillResult} from '@blocky/runtime-core';
 import {studioAgentServices} from '../composition/agent';
 export function SkillPanel({projectId,onBind}:{projectId:string;onBind:(skill:InstalledSkill)=>void}) {
- const [skills,setSkills]=useState<InstalledSkill[]>([]),[body,setBody]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false);
+ const [skills,setSkills]=useState<InstalledSkill[]>([]),[body,setBody]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[picker,setPicker]=useState(false);
  const active=useRef<AbortController|null>(null),alive=useRef(true);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;active.current?.abort();}},[]);
  async function operate(input:SkillInput,consume:(value:SkillResult)=>void){
   if(active.current)return;const controller=new AbortController();active.current=controller;setBusy(true);setMessage('');const services=studioAgentServices();
   try{const result=await new InstalledSkills(services.skills!,projectId,`skill-panel-${crypto.randomUUID()}`).request(input,controller.signal);if(alive.current&&!controller.signal.aborted)consume(result);}
   catch(error){if(alive.current)setMessage(error instanceof Error&&/^BLK-/.test(error.message)?error.message:'Skill 操作未完成。');}
-  finally{await services.close?.(controller.signal);active.current=null;if(alive.current)setBusy(false);}
+  finally{try{await services.close?.(controller.signal);}finally{active.current=null;if(alive.current){setBusy(false);setPicker(false);}}}
  }
  async function install(){
-  if(active.current)return;const controller=new AbortController();active.current=controller;setBusy(true);setMessage('');
+  if(active.current)return;const controller=new AbortController();active.current=controller;setBusy(true);setPicker(true);setMessage('');
   try{const result=skillResultSchema.parse(await invoke('agent_skill_install',{projectId,sessionId:`skill-panel-${crypto.randomUUID()}`}));if(alive.current&&!controller.signal.aborted&&result.action==='install'){setSkills(old=>[...old.filter(s=>s.metadata.skillId!==result.skill.metadata.skillId),result.skill]);setMessage('Skill 已安装。');}}
   catch(error){if(alive.current)setMessage(typeof error==='string'&&/^BLK-/.test(error)?error:'安装未完成。请选择包含 blocky-skill.json 的技能目录。');}
-  finally{active.current=null;if(alive.current)setBusy(false);}
+  finally{active.current=null;if(alive.current){setBusy(false);setPicker(false);}}
  }
  return <section aria-label="已安装 Skill"><h3>已安装 Skill</h3>
   <button disabled={busy} onClick={()=>void operate({action:'discover'},r=>{if(r.action==='discover')setSkills(r.skills);})}>发现 Skill</button>
@@ -28,6 +28,6 @@ export function SkillPanel({projectId,onBind}:{projectId:string;onBind:(skill:In
    <button disabled={busy} onClick={()=>void operate({action:'uninstall',skillId:skill.metadata.skillId,expectedDigest:skill.digest},()=>{setSkills(old=>old.filter(s=>s.digest!==skill.digest));setBody('');})}>卸载</button>
   </li>)}</ul>
   {body&&<textarea aria-label="Skill 正文" readOnly value={body}/>}
-  {busy&&<button onClick={()=>active.current?.abort()}>停止</button>}{message&&<p role="status">{message}</p>}
+  {busy&&!picker&&<button onClick={()=>active.current?.abort()}>停止</button>}{message&&<p role="status">{message}</p>}
  </section>;
 }

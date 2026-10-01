@@ -49,6 +49,8 @@ import { toolCommand, toolHelp } from "./tools";
 import { memoryCommand, memoryHelp } from "./memory";
 import {skillCommand,skillHelp} from './skills';
 import {nativeCapabilitiesCommand,nativeCapabilitiesHelp} from './native-capabilities';
+import {evaluationWorkspaceCommand,evaluationWorkspaceHelp} from './evaluation-workspace';
+import {triggerCommand,triggerHelp} from './triggers';
 import {
   userConfigCommand,
   userConfigHelp,
@@ -73,6 +75,8 @@ export const help = {
     ...memoryHelp,
     ...skillHelp,
     ...nativeCapabilitiesHelp,
+    ...evaluationWorkspaceHelp,
+    ...triggerHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
@@ -125,6 +129,8 @@ export async function dispatch(
   if (memory) return memory;
   const skill=await skillCommand(args,signal);if(skill)return skill;
   const capability=await nativeCapabilitiesCommand(args,signal);if(capability)return capability;
+  const evaluation=await evaluationWorkspaceCommand(args,write,signal,context);if(evaluation)return evaluation;
+  const trigger=await triggerCommand(args,write,signal);if(trigger)return trigger;
   const blocks = await blockQueryCommand(args);
   if (blocks) return blocks;
   const productivity = await productivityCommand(args, signal);

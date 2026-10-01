@@ -67,11 +67,13 @@ impl Binding {
         }
         let capabilities = d["capabilities"].as_array().ok_or(ERROR)?;
         if !capabilities.contains(&json!("text"))
+            || (r.messages.iter().any(|m|!m.image_refs.is_empty())&&!capabilities.contains(&json!("image")))
             || (!r.tools.is_empty() && !capabilities.contains(&json!("tools")))
             || (r.output_schema.is_some() && !capabilities.contains(&json!("structured-output")))
         {
             return Err("BLK-MODEL-CAPABILITY".into());
         }
+        super::images::validate(root,r)?;
         let timeout = d["timeoutMs"].as_u64().ok_or(ERROR)?;
         if r.timeout_ms > timeout.min(120000)
             || d["parameters"]["maxOutputTokens"]
@@ -225,6 +227,6 @@ impl Binding {
         })
     }
     pub fn preview(&self, r: &GatewayRequest) -> Value {
-        json!({"requestDigest":self.digest,"provider":self.provider,"transport":if self.local{"local"}else{"remote"},"projectId":r.project_id,"resourceId":r.resource_id,"modelId":self.model,"inputBytes":r.messages.iter().map(|m|m.content.len()).sum::<usize>(),"toolNames":r.tools.iter().map(|t|&t.name).collect::<Vec<_>>(),"maxOutputTokens":r.max_output_tokens,"timeoutMs":r.timeout_ms})
+        json!({"requestDigest":self.digest,"provider":self.provider,"transport":if self.local{"local"}else{"remote"},"projectId":r.project_id,"resourceId":r.resource_id,"modelId":self.model,"inputBytes":r.messages.iter().map(|m|m.content.len()).sum::<usize>(),"imageCount":r.messages.iter().map(|m|m.image_refs.len()).sum::<usize>(),"toolNames":r.tools.iter().map(|t|&t.name).collect::<Vec<_>>(),"maxOutputTokens":r.max_output_tokens,"timeoutMs":r.timeout_ms})
     }
 }

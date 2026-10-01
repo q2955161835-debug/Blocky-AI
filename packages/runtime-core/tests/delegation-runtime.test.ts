@@ -15,7 +15,7 @@ it('runs actual child module model ports in sequence and carries result and iden
  const receipts=result.events.filter(e=>e.type==='tool.completed'&&e.blockId==='delegate');expect(receipts.map(e=>e.data.agentId)).toEqual(['draft','review']);expect(result.structured).toMatchObject([{agentId:'draft',status:'completed'},{agentId:'review',status:'completed'}]);
 });
 it('allows independent parallel calls to the same export and preserves both sources',async()=>{
- const f=fixture('parallel');const result=await new Runtime({adapters:f.adapters}).run(f.project,'on-question','lesson');expect(result.status).toBe('completed');expect(f.requests).toHaveLength(2);expect(result.events.filter(e=>e.blockId==='collaborator-model'&&e.type==='block.completed').map(e=>e.data.agentId).sort()).toEqual(['draft','review']);
+ const f=fixture('parallel');const result=await new Runtime({adapters:f.adapters}).run(f.project,'on-question','lesson');expect(result.status).toBe('completed');expect(f.requests).toHaveLength(2);expect(new Set(f.requests.map(r=>r.requestId)).size).toBe(2);expect(result.events.filter(e=>e.blockId==='collaborator-model'&&e.type==='block.completed').map(e=>e.data.agentId).sort()).toEqual(['draft','review']);
 });
 it('child cannot expand memory permissions by adding an undeclared block',async()=>{
  const f=fixture();const body=f.project.workspaces.collaborator.blocks.blocks[0].inputs!.BODY.block!;body.next={block:{type:'core.memory.write',id:'forbidden',fields:{SCOPE:'session',KEY:'steal',SOURCE:'result'}}};

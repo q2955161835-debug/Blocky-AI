@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Project } from "@blocky/language-schema";
 import {
   compareEvaluationReports,
+  createEvaluationDataset,
+  evaluationCheckpointSchema,
   evaluationReportSchema,
   forkEvaluationDataset,
   freezeEvaluationDataset,
@@ -9,6 +11,8 @@ import {
   runEvaluation,
   saveEvaluationAsset,
   type EvaluationAssetStore,
+  type EvaluationAssetKind,
+  type EvaluationAssetMetadata,
   type EvaluationBinding,
   type EvaluationCheckpointReference,
   type EvaluationDataset,
@@ -78,11 +82,19 @@ export function EvaluationPanel({
     },
   };
   const pending = useRef<AbortController | null>(null);
+  const mounted=useRef(true);
+  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;pending.current?.abort();};},[]);
   const epoch = useRef(0);
   const latestCheckpoint = useRef<EvaluationCheckpointReference | null>(null);
   const [datasetJson, setDatasetJson] = useState("");
   const [dataset, setDataset] = useState<EvaluationDataset | null>(null);
   const [reports, setReports] = useState<EvaluationReport[]>([]);
+  const [savedAssets, setSavedAssets] = useState<
+    Record<EvaluationAssetKind, EvaluationAssetMetadata[]>
+  >({ dataset: [], report: [], checkpoint: [] });
+  const [selectedAssets, setSelectedAssets] = useState<
+    Record<EvaluationAssetKind, string>
+  >({ dataset: "", report: "", checkpoint: "" });
   const [compareFirst, setCompareFirst] = useState("");
   const [compareSecond, setCompareSecond] = useState("");
   const [comparison, setComparison] = useState("");
@@ -93,21 +105,21 @@ export function EvaluationPanel({
   useEffect(() => {
     const current = ++epoch.current;
     pending.current?.abort();
-    pending.current = null;
     latestCheckpoint.current = null;
     setDatasetJson("");
     setDataset(null);
     setReports([]);
+    setSavedAssets({ dataset: [], report: [], checkpoint: [] });
+    setSelectedAssets({ dataset: "", report: "", checkpoint: "" });
     setCompareFirst("");
     setCompareSecond("");
     setComparison("");
     setStatus("");
     setErrorCode("");
-    setBusy(false);
+    setBusy(pending.current!==null);
     return () => {
       if (epoch.current === current) epoch.current++;
       pending.current?.abort();
-      pending.current = null;
       latestCheckpoint.current = null;
     };
   }, [
@@ -139,7 +151,7 @@ export function EvaluationPanel({
         );
     } finally {
       if (pending.current === controller) pending.current = null;
-      if (currentEpoch === epoch.current) setBusy(false);
+      if (mounted.current) setBusy(false);
     }
   };
 
@@ -165,8 +177,27 @@ export function EvaluationPanel({
       );
     });
 
+  const createDatasetDraft = () => {
+    const draft = createEvaluationDataset({
+      datasetId: newId(),
+      name: "新建评估集",
+      binding,
+      createdAt: Date.now(),
+      cases: [{ caseId: newId(), input: "" }],
+    });
+    latestCheckpoint.current = null;
+    setDataset(null);
+    setDatasetJson(JSON.stringify(draft, null, 2));
+    setStatus("已生成当前模型绑定的草稿 JSON；编辑后导入并冻结");
+    setErrorCode("");
+  };
+
   const readFile = (file: File | undefined) => {
     if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      setErrorCode("BLK-EVAL-FILE-TOO-LARGE");
+      return;
+    }
     const currentEpoch = epoch.current;
     void file
       .text()
@@ -178,6 +209,138 @@ export function EvaluationPanel({
           setErrorCode("BLK-EVAL-DATASET-JSON");
       });
   };
+
+  const refreshSavedAssets = () =>
+    void perform(async (signal, currentEpoch) => {
+      if (!store.list) throw Error("BLK-EVAL-ASSET-LIST-UNAVAILABLE");
+      const kinds: EvaluationAssetKind[] = ["dataset", "report", "checkpoint"];
+      const listed = await Promise.all(
+        kinds.map(async (kind) => {
+          const entries = await store.list!(kind);
+          if (!Array.isArray(entries)) throw Error("BLK-EVAL-SCHEMA");
+          return [
+            kind,
+            entries.filter(
+              (item) =>
+                item.kind === kind &&
+                typeof item.key === "string" &&
+                item.key.length > 0 &&
+                item.key.length <= 256 &&
+                Number.isSafeInteger(item.revision) &&
+                item.revision >= 0,
+            ),
+          ] as const;
+        }),
+      );
+      signal.throwIfAborted();
+      if (currentEpoch !== epoch.current) return;
+      const next = Object.fromEntries(listed) as Record<
+        EvaluationAssetKind,
+        EvaluationAssetMetadata[]
+      >;
+      setSavedAssets(next);
+      setSelectedAssets((current) => ({
+        dataset: next.dataset.some((item) => item.key === current.dataset)
+          ? current.dataset
+          : (next.dataset[0]?.key ?? ""),
+        report: next.report.some((item) => item.key === current.report)
+          ? current.report
+          : (next.report[0]?.key ?? ""),
+        checkpoint: next.checkpoint.some(
+          (item) => item.key === current.checkpoint,
+        )
+          ? current.checkpoint
+          : (next.checkpoint[0]?.key ?? ""),
+      }));
+      setStatus("已刷新已保存评估资产");
+    });
+
+  const loadSavedDataset = () =>
+    void perform(async (signal, currentEpoch) => {
+      const key = selectedAssets.dataset;
+      if (!key) throw Error("BLK-EVAL-ASSET-NOT-FOUND");
+      const stored = await store.read("dataset", key);
+      if (!stored || stored.kind !== "dataset" || stored.key !== key)
+        throw Error("BLK-EVAL-ASSET-NOT-FOUND");
+      const listed = savedAssets.dataset.find((item) => item.key === key);
+      if (
+        (listed && listed.revision !== stored.revision) ||
+        !Number.isSafeInteger(stored.revision) ||
+        stored.revision < 0
+      )
+        throw Error("BLK-EVAL-ASSET-STALE");
+      const loaded = await importEvaluationDataset(stored.value);
+      if (`${loaded.datasetId}:v${loaded.version}` !== key)
+        throw Error("BLK-EVAL-SCHEMA");
+      signal.throwIfAborted();
+      if (currentEpoch !== epoch.current) return;
+      latestCheckpoint.current = null;
+      setDataset(loaded);
+      setDatasetJson(JSON.stringify(loaded, null, 2));
+      setStatus(sameBinding(loaded.binding,binding)?`已加载并校验评估集 v${loaded.version}`:`已加载历史评估集 v${loaded.version}；请创建新版本绑定当前配置后运行。`);
+    });
+
+  const loadSavedReport = () =>
+    void perform(async (signal, currentEpoch) => {
+      const key = selectedAssets.report;
+      if (!key) throw Error("BLK-EVAL-ASSET-NOT-FOUND");
+      const stored = await store.read("report", key);
+      if (!stored || stored.kind !== "report" || stored.key !== key)
+        throw Error("BLK-EVAL-ASSET-NOT-FOUND");
+      const listed = savedAssets.report.find((item) => item.key === key);
+      if (
+        (listed && listed.revision !== stored.revision) ||
+        !Number.isSafeInteger(stored.revision) ||
+        stored.revision < 0
+      )
+        throw Error("BLK-EVAL-ASSET-STALE");
+      const report = evaluationReportSchema.parse(stored.value);
+      if (report.reportId !== key) throw Error("BLK-EVAL-SCHEMA");
+      signal.throwIfAborted();
+      if (currentEpoch !== epoch.current) return;
+      setCompareSecond(JSON.stringify(report, null, 2));
+      setStatus(`已加载并校验报告 ${report.reportId}，可与基准报告比较`);
+    });
+
+  const loadSavedCheckpoint = () =>
+    void perform(async (signal, currentEpoch) => {
+      const key = selectedAssets.checkpoint;
+      if (!key) throw Error("BLK-EVAL-ASSET-NOT-FOUND");
+      const listed = savedAssets.checkpoint.find((item) => item.key === key);
+      const stored = await store.read("checkpoint", key);
+      if (
+        !stored ||
+        stored.kind !== "checkpoint" ||
+        stored.key !== key ||
+        (listed && stored.revision !== listed.revision)
+      )
+        throw Error("BLK-EVAL-ASSET-STALE");
+      const checkpoint = evaluationCheckpointSchema.parse(stored.value);
+      if (checkpoint.checkpointId !== key) throw Error("BLK-EVAL-SCHEMA");
+      if (!dataset || dataset.status !== "frozen")
+        throw Error("BLK-EVAL-DATASET-NOT-FROZEN");
+      const candidateHash = await projectDigest(project);
+      signal.throwIfAborted();
+      if (
+        checkpoint.datasetId !== dataset.datasetId ||
+        checkpoint.datasetVersion !== dataset.version ||
+        checkpoint.datasetContentHash !== dataset.contentHash ||
+        !sameBinding(checkpoint.binding, binding) ||
+        checkpoint.candidate.id !== projectId ||
+        checkpoint.candidate.version !== candidateHash ||
+        checkpoint.candidate.contentHash !== candidateHash ||
+        checkpoint.status === "completed"
+      )
+        throw Error("BLK-EVAL-CHECKPOINT-BINDING");
+      if (currentEpoch !== epoch.current) return;
+      latestCheckpoint.current = {
+        value: checkpoint,
+        revision: stored.revision,
+      };
+      setStatus(
+        `已加载可继续检查点 ${checkpoint.checkpointId} · 存储修订 ${stored.revision}`,
+      );
+    });
 
   const freezeAndSave = () =>
     void perform(async (_signal, currentEpoch) => {
@@ -206,7 +369,7 @@ export function EvaluationPanel({
 
   const forkVersion = () => {
     if (!dataset || dataset.status !== "frozen" || busy) return;
-    void forkEvaluationDataset(dataset, {}, Date.now())
+    void forkEvaluationDataset(dataset, {binding}, Date.now())
       .then((draft) => {
         latestCheckpoint.current = null;
         setReports([]);
@@ -295,6 +458,11 @@ export function EvaluationPanel({
         />
       </label>
       <div>
+        <button disabled={busy} onClick={createDatasetDraft}>
+          新建评估集
+        </button>
+      </div>
+      <div>
         <label>
           导入评估集文件
           <input
@@ -322,6 +490,94 @@ export function EvaluationPanel({
           创建下一版本
         </button>
       </div>
+      {store.list && (
+        <section aria-label="已保存评估资产">
+          <button disabled={busy} onClick={refreshSavedAssets}>
+            刷新已保存资产
+          </button>
+          <label>
+            已保存评估集
+            <select
+              aria-label="已保存评估集"
+              value={selectedAssets.dataset}
+              disabled={busy}
+              onChange={(event) =>
+                setSelectedAssets((current) => ({
+                  ...current,
+                  dataset: event.target.value,
+                }))
+              }
+            >
+              <option value="">选择评估集</option>
+              {savedAssets.dataset.map((item) => (
+                <option key={item.key} value={item.key}>
+                  {item.key} · r{item.revision}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            disabled={busy || !selectedAssets.dataset}
+            onClick={loadSavedDataset}
+          >
+            加载评估集
+          </button>
+          <label>
+            已保存报告
+            <select
+              aria-label="已保存报告"
+              value={selectedAssets.report}
+              disabled={busy}
+              onChange={(event) =>
+                setSelectedAssets((current) => ({
+                  ...current,
+                  report: event.target.value,
+                }))
+              }
+            >
+              <option value="">选择报告</option>
+              {savedAssets.report.map((item) => (
+                <option key={item.key} value={item.key}>
+                  {item.key} · r{item.revision}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            disabled={busy || !selectedAssets.report}
+            onClick={loadSavedReport}
+          >
+            加载报告
+          </button>
+          <label>
+            已保存检查点
+            <select
+              aria-label="已保存检查点"
+              value={selectedAssets.checkpoint}
+              disabled={busy}
+              onChange={(event) =>
+                setSelectedAssets((current) => ({
+                  ...current,
+                  checkpoint: event.target.value,
+                }))
+              }
+            >
+              <option value="">选择检查点</option>
+              {savedAssets.checkpoint.map((item) => (
+                <option key={item.key} value={item.key}>
+                  {item.key} · r{item.revision}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            disabled={busy || !selectedAssets.checkpoint}
+            onClick={loadSavedCheckpoint}
+          >
+            加载检查点
+          </button>
+        </section>
+      )}
       {dataset && (
         <p role="status">
           {dataset.name} · v{dataset.version} · {dataset.cases.length} 行 ·{" "}

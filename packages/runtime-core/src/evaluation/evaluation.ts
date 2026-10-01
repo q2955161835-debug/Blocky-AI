@@ -435,13 +435,24 @@ function abortError() {
 }
 
 function awaitAbortable<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
-  if (signal.aborted) return Promise.reject(abortError());
   return new Promise((resolve, reject) => {
-    const onAbort = () => reject(abortError());
-    signal.addEventListener("abort", onAbort, { once: true });
-    work
-      .then(resolve, reject)
-      .finally(() => signal.removeEventListener("abort", onAbort));
+    let aborted = signal.aborted;
+    const onAbort = () => {
+      aborted = true;
+    };
+    if (!aborted) signal.addEventListener("abort", onAbort, { once: true });
+    const settle = () => signal.removeEventListener("abort", onAbort);
+    work.then(
+      (value) => {
+        settle();
+        if (aborted || signal.aborted) reject(abortError());
+        else resolve(value);
+      },
+      (error) => {
+        settle();
+        reject(aborted || signal.aborted ? abortError() : error);
+      },
+    );
   });
 }
 
@@ -637,9 +648,10 @@ export async function runEvaluation(
     let row: EvaluationRow;
     try {
       const raw = await awaitAbortable(
-        Promise.resolve().then(() =>
-          options.execute(testCase, { signal, candidate, binding }),
-        ),
+        Promise.resolve().then(() => {
+          if (signal.aborted) throw abortError();
+          return options.execute(testCase, { signal, candidate, binding });
+        }),
         signal,
       );
       runResult = schema(
@@ -696,7 +708,12 @@ export async function runEvaluation(
     }
 
     let modelScoring = checkpoint.modelScoring;
-    if (options.scorer && row.status === "completed" && runResult) {
+    if (
+      options.scorer &&
+      row.status === "completed" &&
+      runResult &&
+      !signal.aborted
+    ) {
       try {
         const scored = await awaitAbortable(
           options.scorer.score({ testCase, result: runResult }, signal),

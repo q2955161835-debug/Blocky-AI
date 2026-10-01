@@ -31,8 +31,15 @@ export type EvaluationStoredAsset =
       value: EvaluationCheckpoint;
     };
 
+export type EvaluationAssetMetadata = Pick<
+  EvaluationStoredAsset,
+  "kind" | "key" | "revision"
+>;
+
 /** Host owns durable storage. Implementations must compare revisions atomically. */
 export interface EvaluationAssetStore {
+  /** Optional listing support for user interfaces; storage remains keyed and validated on read. */
+  list?(kind: EvaluationAssetKind): Promise<EvaluationAssetMetadata[]>;
   read(
     kind: EvaluationAssetKind,
     key: string,

@@ -537,6 +537,9 @@ fn describe(bytes: &[u8]) -> Result<Description, String> {
                     return Err(INVALID.into());
                 }
                 let (w, h) = frame.ok_or(INVALID)?;
+                let mut decoder=jpeg_decoder::Decoder::new(std::io::Cursor::new(bytes));
+                decoder.set_max_decoding_buffer_size(64*1024*1024);
+                decoder.decode().map_err(|_|INVALID)?;
                 return Ok(("image/jpeg", Some(w), Some(h), None));
             }
             if [0xc0, 0xc1, 0xc2].contains(&marker) {
@@ -731,6 +734,15 @@ mod tests {
         fs::write(&first, wav()).unwrap();
         fs::hard_link(&first, &second).unwrap();
         assert!(read_native_file(&second.canonicalize().unwrap()).is_err());
+    }
+    #[test]
+    fn jpeg_requires_a_complete_decodable_image() {
+        let bytes=include_bytes!("../../tests/fixtures/tiny-image.jpg");
+        let image=NativeMedia::from_bytes(bytes.to_vec()).unwrap();
+        assert_eq!(image.preflight().unwrap()["mimeType"],"image/jpeg");
+        let mut truncated=bytes[..bytes.len()/2].to_vec();
+        truncated.extend([0xff,0xd9]);
+        assert!(NativeMedia::from_bytes(truncated).is_err());
     }
     #[test]
     fn orphaned_payloads_count_toward_project_capacity() {

@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir } from 'node:fs/promises';
+import { readFile, writeFile, readdir, lstat, realpath } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFile } from 'node:child_process';
@@ -20,9 +20,16 @@ async function download(path, asset) {
     catch (error) { if (attempt === 3 || /mismatch|links|exceeds/.test(error.message)) throw error; }
   }
 }
-export async function verifyAudioRuntime(directory) {
+export async function verifyAudioRuntime(directory, lock = audioLock) {
+  if (lock.schemaVersion !== 'blocky.audio-runtime/v1' || lock.platform !== 'windows-x64' || !Array.isArray(lock.files) || !lock.files.length || lock.files.length > 16) throw Error('Audio runtime manifest invalid');
+  const names = new Set();
+  for (const file of lock.files) {
+    if (!file || typeof file.name !== 'string' || !/^(?:[a-zA-Z0-9_.-]+|licenses\/[a-zA-Z0-9_.-]+)$/.test(file.name) || file.name.split('/').some(part => part === '.' || part === '..') || file.name === 'runtime-lock.json' || names.has(file.name.toLowerCase()) || !Number.isSafeInteger(file.bytes) || file.bytes < 1 || !/^[a-f0-9]{64}$/.test(file.sha256)) throw Error('Audio runtime manifest invalid');
+    names.add(file.name.toLowerCase());
+  }
+  if (lock.files.reduce((n, file) => n + file.bytes, 0) > 96 * 1024 * 1024) throw Error('Audio runtime exceeds bounds');
   directory = await safeDirectory(directory);
-  const expected = audioLock.files.map(file => file.name);
+  const expected = lock.files.map(file => file.name);
   const actual = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     if (entry.name === 'runtime-lock.json' && entry.isFile()) continue;
@@ -32,10 +39,12 @@ export async function verifyAudioRuntime(directory) {
     } else actual.push(entry.name);
   }
   if (JSON.stringify(actual.sort()) !== JSON.stringify(expected.sort())) throw Error('Audio runtime inventory mismatch');
-  for (const file of audioLock.files) await verifyAsset(resolve(directory, file.name), file);
-  const metadata = JSON.parse(await readFile(resolve(directory, 'runtime-lock.json'), 'utf8'));
-  if (JSON.stringify(metadata) !== JSON.stringify(audioLock)) throw Error('Audio runtime manifest mismatch');
-  return { directory, files: audioLock.files.length + 1, bytes: audioLock.files.reduce((n, f) => n + f.bytes, 0) };
+  for (const file of lock.files) await verifyAsset(resolve(directory, file.name), file);
+  const manifest = resolve(directory, 'runtime-lock.json'), info = await lstat(manifest);
+  if (!info.isFile() || info.isSymbolicLink() || info.nlink > 1 || info.size > 64 * 1024 || await realpath(manifest) !== manifest) throw Error('Audio runtime manifest must not contain links or exceed bounds');
+  const metadata = JSON.parse(await readFile(manifest, 'utf8'));
+  if (JSON.stringify(metadata) !== JSON.stringify(lock)) throw Error('Audio runtime manifest mismatch');
+  return { directory, files: lock.files.length + 1, bytes: lock.files.reduce((n, f) => n + f.bytes, 0) };
 }
 export async function prepareAudioRuntime() {
   if (process.platform !== 'win32' || process.arch !== 'x64') throw Error('Audio runtime requires Windows x64');

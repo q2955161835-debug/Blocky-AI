@@ -107,3 +107,41 @@ HTTP 12 场景通过，覆盖实际 Unicode GET、输入/输出 Schema、审批�
 - 临时资料当前约 88057226 字节，其中 `D:\1Folder\Blocky-AI\try\agent-capability-upgrade\windows-bc\b\mcp\bundle\node.exe` 为 86989128 字节可重生成副本。自动审批策略拒绝已结算 bundle 清理，返回 `blocked by policy`，未提供更具体原因；未绕过删除。由主 Agent 后续按项目规则整理待清理目录；其余结构化回执保留供 F 引用。
 
 **真实大模型 API 调用：是。** 本次自主工具、连续聊天和质量判断三项分别为 2099、12992、150571，合计 **165662 Token**；无秘密请求 ID/逐条用量见上述证据。本地嵌入、神经重排、解析/OCR均未真实调用外部大模型 API。
+
+## A07 旧 OWNERSHIP 专项诊断追加（2026-10-01 15:05 ~ 15:12）
+
+本追加由同一独立验收Agent完成，仅涉及MCP及退出/恢复直接影响链；未修改产品源码、未重新执行其他B–C或F。本次真实大模型API调用：否。
+
+### 用户功能：失败后恢复工具办事
+
+#### 原失败账本与可排除项
+
+原第一轮 `profile-1790829237398/tool-runs/99e9df5f…json` 保存 stdio-call / action=call / OWNERSHIP / status=unknown；discover、read各秒级顺序完成。第二轮 `profile-1790829306714/tool-runs/d79b8cab…json` 保存 stdio-read / action=read-resource / OWNERSHIP / status=failed；之前discover完成。因此两次错误不同状态与action相关，并非同一错误随机结算。
+
+原探针对discover/read/call均逐项await，且每輪使用独立profile。原bundle为同一合成三文件（node.exe/server.cjs/public-config.json），来源摘要绑定正常；若审批后字节变更，binding检查返回BLK-PERM-001而非OWNERSHIP。Launch::start每请求创建随机mcp-TempDir，pending清单只读已打开文件名、实际复制/哈希比对后才交给Sandbox::new；Sandbox::record位于CreateAppContainerProfile及Worker启动前。没有发现跨请求复用活动TempDir的代码路径。旧CLI工件版本确曾在诊断后切换，但当前/旧source差异仅细分manifest错误代码，不能将切换视为行为修复或旧失败根因。
+
+失败时的临时manifest和文件系统底层错误未保留（TempDir退出清理），旧两条日志仅有通用OWNERSHIP，因而无法追溯确定是哪一个树检查、manifest检查或OS写入步骤。不能将剩余可能性（瞬时文件系统错误等）报告为确认根因。
+
+#### 当前真实影响：已知尚未启动的失败被误分为未知
+
+明确可定位的现存问题：`apps/studio-host/src/tool_gateway/receipts.rs:227` 的finish把任何action=call的Err统一写unknown；其他action写failed。该层没有接收副作用状态。`Receipt::begin:185–194` 遇同project/resource的unknown拒绝后续新请求，返回RECOVERY-REQUIRED。因此OWNERSHIP虽在manifest/启动前发生，call仍进入需要人工确认结算的状态，read则failed；这是旧两条账本状态差异的直接原因。
+
+在当前工件实际重试旧失败profile，新request返回RECOVERY-REQUIRED；原CLI `tool reconcile-preflight --outcome confirmed-not-applied` 能产生绑定原receipt的正式恢复预览，说明已有显式恢复路径，并非永久无恢复。但是用户必须确认本可由Host确定的未执行失败，当前错误分类损害普通重试体验。保持原unknown账本，未以推断自动结算历史记录。
+
+最小代码改进建议（已报告主Agent，尚未由本追加验收）：MCP执行返回Host内部类型化执行确定性 `NotStarted / MayHaveStarted`，从launch/pending/manifest传递到receipt；仅可靠NotStarted错误写failed，新request可重试、原request仍禁止重放。stdio在调用Worker.resume之前为NotStarted；resume调用及之后任何错误保守MayHaveStarted，因为脚本初始化本身可能写文件，不能仅按tools/call是否发送判断。HTTP未知副作用规则维持原约束。不要按OWNERSHIP代码字符串全局标记failed，也不要自动迁移旧unknown。
+
+最小新增验收：①注入pending/save或Sandbox::record启动前失败，实际worker启动哨兵=0、receipt failed、修正后新id成功；②真实worker已启动并写哨兵后断连/取消，receipt unknown、新idRECOVERY-REQUIRED，仅正式批准结算后恢复；③历史unknown迁移仍保守、同id重放和缺审批仍拒绝。以上尚待产品改动与独立复验。
+
+### 用户功能：正常运行与退出
+
+#### 最小集中复核
+
+当前Host SHA256 `d74673451533e2af24a7b192cb5af7379104355a55173ba10d1bdde0f20de7d1`，CLI SHA256 `57c35881e6df8201f09f40c36f46547bb277e13279449cbed405ed79ee8ee64a`。在旧成功profile重新执行两轮，每輪4组实际discover/read/call（共24顺序操作）全部成功。每輪4不同request并发为1成功、3BLK-TOOL-BUSY，符合Receipt对同资源running互斥，不是OWNERSHIP异常。探针初稿错误预期4个全成功，断言失败只属验收探针预期错误；实际错误和成功结果保留，不将其视为产品缺陷。重复同request并发1成功、1BUSY；重复已消费审批再次执行PERM-001，防重放有效。
+
+监控最终一轮采样605条manifest快照，13个不同私有session目录，pending→active清单均符合三文件集合及协议；退出cleanup-status中active/incomplete/unrecognized均0，owned Host进程集合0。证据：`try/agent-capability-upgrade/windows-bc/b/ownership-audit/results.json`、`first-concurrent.json`、`recovery-preview-and-replay.json`及对应日志。本轮通过只说明这些当前场景稳定，不证明旧底层根因消失。
+
+### 追加结论与存储
+
+A07仍为**有条件通过**：现有执行及明确审批恢复路径可用；已知prelaunch失败分类尚未改正/验收。此次已收窄旧历史风险为“底层旧失败不可追溯；当前恢复状态分层有明确问题”，不再把幸运重复通过当成风险闭环。阶段总结论保留有条件通过，F未执行。
+
+86MB原bundle仍位于原完整路径，未删除、未移动，后续集中复验仍可复用；本追加未产生工作区外文件。新增合成诊断探针与无秘密记录仅在windows-bc/b下。

@@ -11,6 +11,9 @@ export type { AgentServices, Generation, GenerationRequest, Message, OutputFile 
 export * from './skills';
 export * from './media';
 export * from './decision';
+export * from './triggers';
+export * from './trigger-api';
+export * from './trigger-scheduler';
 export * from './evaluation';
 export { nativeAgentServices } from './native-agent';
 export type { NativeAgentCall, PendingApproval } from './native-agent';

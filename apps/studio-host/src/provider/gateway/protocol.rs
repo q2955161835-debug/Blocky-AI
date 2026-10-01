@@ -32,7 +32,12 @@ pub struct ModelMessage {
     pub tool_calls: Vec<ToolCall>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_call_id: Option<String>,
+    #[serde(default,skip_serializing_if="Vec::is_empty")]
+    pub image_refs:Vec<ImageReference>,
 }
+#[derive(Clone,Serialize,Deserialize)]
+#[serde(rename_all="camelCase",deny_unknown_fields)]
+pub struct ImageReference {pub media_id:String,pub sha256:String,pub version:u64}
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ToolCall {
@@ -209,10 +214,13 @@ impl GatewayRequest {
         }
         let mut pending = BTreeSet::new();
         let mut used = BTreeSet::new();
+        let mut image_count=0;
         for (index, m) in self.messages.iter().enumerate() {
             if m.content.len() > 65536 || m.tool_calls.len() > 8 {
                 return Err(INVALID.into());
             }
+            image_count+=m.image_refs.len();
+            if image_count>4||(!m.image_refs.is_empty()&&m.role!="user")||m.image_refs.iter().any(|r|!crate::project_store::stable(&r.media_id)||r.media_id.len()>128||r.version==0||r.version>9_007_199_254_740_991||r.sha256.len()!=64||!r.sha256.bytes().all(|b|b.is_ascii_digit()||(b'a'..=b'f').contains(&b))){return Err(INVALID.into());}
             match m.role.as_str() {
                 "system" | "user"
                     if pending.is_empty()

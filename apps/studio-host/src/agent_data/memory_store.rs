@@ -141,6 +141,18 @@ fn live(e: &Entry, store: &Store, time: u64) -> bool {
 }
 /// A knowledge-derived memory cannot outlive the native source's current ACL.
 fn source_head(root: &std::path::Path, project: &str, source: &str) -> Result<Option<Value>, String> {
+    if source.starts_with("media/") {
+        let p=source.split('/').collect::<Vec<_>>();
+        if p.len()!=4 || !stable(p[1]) || p[2].len()!=64 || !p[2].bytes().all(|b|b.is_ascii_digit()||(b'a'..=b'f').contains(&b)) {return Err(INVALID.into());}
+        let version=p[3].parse::<u64>().map_err(|_|INVALID)?;
+        let request=super::media_store::MediaRequest{schema_version:"blocky.media-request/v1".into(),request_id:"memory-source".into(),project_id:project.into(),session_id:"memory-source".into(),action:"summary".into(),media_id:Some(p[1].into()),expected_sha256:Some(p[2].into()),expected_version:Some(version)};
+        request.validate()?;
+        return match super::media_store::manage(&root.parent().ok_or(INVALID)?.join("agent-media"),&request) {
+            Ok(value)=>Ok(Some(json!({"readable":true,"metadata":value["metadata"]}))),
+            Err(code) if ["BLK-MEDIA-DELETED","BLK-MEDIA-NOT-FOUND","BLK-MEDIA-CONFLICT"].contains(&code.as_str())=>Ok(Some(json!({"readable":false}))),
+            Err(code)=>Err(code),
+        };
+    }
     if !source.starts_with("knowledge/") { return Ok(None); }
     let parts=source.split('/').collect::<Vec<_>>();
     if parts.len()!=3 || !stable(parts[1]) || !stable(parts[2]) { return Err(INVALID.into()); }

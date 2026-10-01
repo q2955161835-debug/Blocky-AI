@@ -10,6 +10,7 @@ export type Message = {
   content: string;
   toolCalls?: ModelToolCall[];
   toolCallId?: string;
+  imageRefs?: {mediaId:string;sha256:string;version:number}[];
 };
 export type ModelToolCall = {
   id: string;

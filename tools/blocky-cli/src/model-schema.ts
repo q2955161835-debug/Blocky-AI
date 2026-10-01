@@ -86,6 +86,7 @@ const messageSchema = z
     content: text(65536),
     toolCalls: modelToolCallSchema.array().max(8).optional(),
     toolCallId: token(128).optional(),
+    imageRefs:z.array(z.object({mediaId:modelIdSchema,sha256:z.string().regex(/^[a-f0-9]{64}$/),version:z.number().int().positive().max(Number.MAX_SAFE_INTEGER)}).strict()).max(4).optional(),
   })
   .strict();
 const toolSchema = z
@@ -129,6 +130,7 @@ export const modelRequestSchema = z
     const used = new Set<string>(),
       pending = new Set<string>();
     r.messages.forEach((m, index) => {
+      if((m.imageRefs?.length??0)>0&&m.role!=='user')fail(['messages',index,'imageRefs']);
       const calls = m.toolCalls ?? [];
       if (m.role === "system" || m.role === "user") {
         if (
@@ -160,6 +162,7 @@ export const modelRequestSchema = z
         fail(["messages", index]);
     });
     if (pending.size) fail(["messages"]);
+    if(r.messages.reduce((sum,m)=>sum+(m.imageRefs?.length??0),0)>4)fail(['messages']);
   });
 
 const usageSchema = z

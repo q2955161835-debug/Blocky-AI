@@ -162,6 +162,9 @@ export class Runtime {
     if (this.running) throw Error("BLK-RUN-003: 已有运行");
     const project = parseProject(input),
       runId = this.options.newId?.() ?? `run-${crypto.randomUUID()}`;
+    // Reserve IDs synchronously, before an async adapter can observe shared budget changes.
+    let requestSequence=0;
+    const requestIdentity=()=>`${runId}-request-${++requestSequence}`;
     this.running = true;
     const breakpoints = options.debug?.breakpoints ?? [];
     if (
@@ -466,7 +469,7 @@ export class Runtime {
             emitForTask("tool.permission-requested", moduleId, node.nodeId, {
               summary: "等待审阅自动化目标与操作",
             });
-          const toolCorrelation = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
+          const toolCorrelation = requestIdentity();
           if (toolCall)
             emitForTask(
               "tool.started",
@@ -802,7 +805,7 @@ export class Runtime {
                   contract.implementationRef,
                 );
                 if (!adapter) throw Error("BLK-TOOL-002");
-                const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
+                const correlationId = requestIdentity();
                 emitForTask(
                   "tool.started",
                   moduleId,
@@ -881,7 +884,7 @@ export class Runtime {
                   )
                 )
                   throw Error("BLK-TOOL-001");
-                const correlationId = `${runId}-${node.nodeId}-${runBudget.calls + 1}`;
+                const correlationId = requestIdentity();
                 emitForTask(
                   "model.started",
                   moduleId,
@@ -1009,7 +1012,7 @@ export class Runtime {
                   model: resource,
                   budget: runBudget,
                   capabilities,
-                  requestId: `${runId}-${node.nodeId}-${runBudget.calls + 1}`,
+                  requestId: requestIdentity(),
                   question: state.question,
                   role: scope.role,
                   instruction: state.instruction,

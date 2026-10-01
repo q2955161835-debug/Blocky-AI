@@ -18,6 +18,8 @@ export type AgentCheckpoint = {
   sessionMemory: { key: string; value: Json }[];
   events: MailboxCheckpoint;
   memoryBinding?:{scope:"session"|"project";keys:{key:string;version:number}[]};
+  imageBinding?:{mediaId:string;sha256:string;version:number};
+  mediaBinding?:{mediaId:string;sha256:string;version:number};
   sessionMemoryMetadata?:{key:string;entry:SessionMetadata}[];
   revokedMemorySources?:string[];
 };
@@ -63,7 +65,7 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
       "sessionMemory",
       "events",
     ],
-    ["generated", "structured", "sessionMemoryMetadata", "revokedMemorySources", "memoryBinding"],
+    ["generated", "structured", "sessionMemoryMetadata", "revokedMemorySources", "memoryBinding", "imageBinding", "mediaBinding"],
   );
   requireWorkflow(
     v.schemaVersion === "blocky.workflow-agent/v1" &&
@@ -99,6 +101,8 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
   if(v.revokedMemorySources!==undefined){requireWorkflow(Array.isArray(v.revokedMemorySources)&&v.revokedMemorySources.length<=1024);for(const source of v.revokedMemorySources)requireWorkflow(typeof source==='string'&&source.length<=256);}
   if(v.memoryBinding!==undefined){const binding=v.memoryBinding;workflowKeys(binding,["scope","keys"]);requireWorkflow(typeof binding.scope==='string'&&['session','project'].includes(binding.scope)&&Array.isArray(binding.keys)&&binding.keys.length<=100);const seen=new Set();for(const ref of binding.keys){workflowKeys(ref,["key","version"]);requireWorkflow(validId(ref.key)&&!seen.has(ref.key)&&typeof ref.version==='number'&&Number.isSafeInteger(ref.version)&&ref.version>0);seen.add(ref.key);}}
   parseMailboxCheckpoint(v.events);
+  if(v.imageBinding!==undefined){const image=v.imageBinding;workflowKeys(image,['mediaId','sha256','version']);requireWorkflow(validId(image.mediaId)&&typeof image.sha256==='string'&&/^[a-f0-9]{64}$/.test(image.sha256)&&typeof image.version==='number'&&Number.isSafeInteger(image.version)&&image.version>0);}
+  if(v.mediaBinding!==undefined){const image=v.mediaBinding;workflowKeys(image,['mediaId','sha256','version']);requireWorkflow(validId(image.mediaId)&&typeof image.sha256==='string'&&/^[a-f0-9]{64}$/.test(image.sha256)&&typeof image.version==='number'&&Number.isSafeInteger(image.version)&&image.version>0);}
   return v as unknown as AgentCheckpoint;
 }
 export function parseBudgetCheckpoint(input: unknown): BudgetCheckpoint {

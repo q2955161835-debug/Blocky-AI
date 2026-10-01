@@ -134,6 +134,7 @@ impl BuilderModel {
                             content: m["content"].as_str().unwrap_or("").into(),
                             tool_calls: calls,
                             tool_call_id: m["tool_call_id"].as_str().map(str::to_owned),
+                            image_refs:Vec::new(),
                         })
                     })
                     .collect::<Result<Vec<_>, String>>()?;

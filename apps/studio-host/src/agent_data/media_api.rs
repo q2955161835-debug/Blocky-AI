@@ -2,6 +2,12 @@ use super::*;
 use std::sync::atomic::{AtomicBool,Ordering};
 pub(super) struct Active {pub token:String,pub project:String,pub media_id:String,pub cancel:Arc<AtomicBool>}
 impl AgentData {
+    pub fn preview_media(&self,token:&str,r:&media_store::MediaRequest)->Result<Value,String>{
+        use base64::{Engine,engine::general_purpose::STANDARD};r.validate()?;if r.action!="image-reference"{return Err(INVALID.into());}
+        let state=self.state.lock().map_err(|_|INVALID)?;self.media_grant(&state,token,&r.project_id,&r.session_id)?;
+        let snapshot=media_store::load_snapshot(&self.media_root()?,r)?;let data=STANDARD.encode(snapshot.image_bytes()?);
+        Ok(json!({"metadata":snapshot.metadata,"dataUrl":format!("data:{};base64,{}",snapshot.metadata.mime_type,data)}))
+    }
     fn media_root(&self)->Result<PathBuf,String>{Ok(self.root.parent().ok_or(INVALID)?.join("agent-media"))}
     fn media_grant(&self,state:&State,token:&str,project:&str,session:&str)->Result<(),String>{
         state.grants.get(token).filter(|g|!state.closed&&g.project==project&&g.session==session&&g.created.elapsed()<g.lifetime).ok_or(PERMISSION)?;Ok(())

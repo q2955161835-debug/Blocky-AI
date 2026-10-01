@@ -12,6 +12,7 @@ import { documentRuntimeFiles } from "./install-document-parser.mjs";
 import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
 import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 import { registry } from "./prepare-knowledge-model.mjs";
+import { audioLock, audioRuntimeSource, verifyAudioRuntime } from "./prepare-audio-runtime.mjs";
 const version = JSON.parse(await readFile("package.json", "utf8")).version;
 const root = process.cwd(),
   base = resolve("dist"),
@@ -59,6 +60,9 @@ const copies = [
     "licenses/sources/selectors-0.36.1.crate",
   ],
 ];
+await verifyAudioRuntime(audioRuntimeSource);
+for (const file of [...audioLock.files.map(f=>f.name), "runtime-lock.json"])
+  copies.push([`${audioRuntimeSource}/${file}`, `audio-runtime/${file}`]);
 for (const name of ["builder.mjs", "node.exe", "manifest.json"])
   copies.push([`try/stage5/builder-runtime/${name}`, `builder/${name}`]);
 copies.push(["vendor/node/LICENSE", "licenses/LICENSE.node"]);
@@ -89,7 +93,7 @@ for (const [source, target] of copies) {
     const bytes = await readFile(join(out, target));
     if (bytes.length !== scanned.bytes || createHash("sha256").update(bytes).digest("hex") !== scanned.sha256)
       throw Error("Packaged artifact differs from the scanned source");
-  } else if (source.startsWith(documentSource + "/") || source.startsWith("try/agent-capability-upgrade/knowledge-models/")) {
+  } else if (source.startsWith(audioRuntimeSource + "/") || source.startsWith(documentSource + "/") || source.startsWith("try/agent-capability-upgrade/knowledge-models/")) {
     throw Error("New knowledge or parser artifact was not included in the release scan");
   }
 }

@@ -23,15 +23,16 @@
     "test:cli": "vitest run tests/cli",
     "test:e2e:build": "pwsh -NoProfile -File scripts/build-native-tests.ps1",
     "test:e2e": "wdio run tests/e2e/wdio.conf.ts",
-    "dev": "pnpm build:builder && pnpm build:browser && pnpm build:document && node scripts/build-runtime-worker.mjs && node scripts/install-builder.mjs apps/studio-host/target/debug && node scripts/install-runtime-worker.mjs apps/studio-host/target/debug && node scripts/install-document-parser.mjs apps/studio-host/target/debug && node scripts/install-knowledge-models.mjs apps/studio-host/target/debug && pnpm --dir apps/studio-host tauri dev",
-    "build": "pnpm build:builder && pnpm build:browser && pnpm build:document && node scripts/build-runtime-worker.mjs && pnpm --dir apps/studio-host tauri build --no-bundle && node scripts/install-builder.mjs apps/studio-host/target/release && node scripts/install-browser.mjs apps/studio-host/target/release && node scripts/install-runtime-worker.mjs apps/studio-host/target/release && node scripts/install-document-parser.mjs apps/studio-host/target/release && node scripts/install-knowledge-models.mjs apps/studio-host/target/release",
+    "dev": "pnpm build:builder && pnpm build:browser && pnpm build:document && node scripts/build-runtime-worker.mjs && node scripts/install-builder.mjs apps/studio-host/target/debug && node scripts/install-runtime-worker.mjs apps/studio-host/target/debug && node scripts/install-document-parser.mjs apps/studio-host/target/debug && node scripts/install-knowledge-models.mjs apps/studio-host/target/debug && node scripts/install-audio-runtime.mjs apps/studio-host/target/debug && pnpm --dir apps/studio-host tauri dev",
+    "build": "pnpm build:builder && pnpm build:browser && pnpm build:document && node scripts/build-runtime-worker.mjs && pnpm --dir apps/studio-host tauri build --no-bundle && node scripts/install-builder.mjs apps/studio-host/target/release && node scripts/install-browser.mjs apps/studio-host/target/release && node scripts/install-runtime-worker.mjs apps/studio-host/target/release && node scripts/install-document-parser.mjs apps/studio-host/target/release && node scripts/install-knowledge-models.mjs apps/studio-host/target/release && node scripts/install-audio-runtime.mjs apps/studio-host/target/release",
     "build:release": "pwsh -NoProfile -File scripts/build-release.ps1",
     "check:release": "node scripts/check-release.mjs",
     "package:release": "node scripts/package-release.mjs",
     "evaluate:knowledge:capability": "tsx scripts/evaluate-knowledge.ts --capability",
     "build:document": "node scripts/build-document-parser.mjs",
     "prepare:knowledge": "node scripts/prepare-knowledge-model.mjs && node scripts/prepare-extra-knowledge-models.mjs",
-    "test:deployment": "node --test tests/document-parser/*.test.mjs scripts/knowledge-deployment.test.mjs scripts/knowledge-assets.test.mjs"
+    "test:deployment": "node --test tests/document-parser/*.test.mjs tests/audio/*.test.mjs scripts/knowledge-deployment.test.mjs scripts/knowledge-assets.test.mjs",
+    "prepare:audio": "node scripts/prepare-audio-runtime.mjs"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "7.0.0",

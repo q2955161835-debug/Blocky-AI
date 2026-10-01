@@ -12,7 +12,7 @@ export function nativeModelRequest(input: GenerationRequest) {
     !legacy ||
     !!input.tools?.length ||
     input.outputSchema !== undefined ||
-    input.messages.some((m) => m.role === "tool" || m.toolCalls?.length);
+    input.messages.some((m) => m.role === "tool" || m.toolCalls?.length || m.imageRefs?.length);
   const binding = resource.secretBindings.find((b) => b.fieldId === "apiKey");
   if (
     resource.scope !== "user" ||

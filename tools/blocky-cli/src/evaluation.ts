@@ -56,7 +56,15 @@ async function saveDataset(
       canonicalJson(current.value as unknown as Json) !==
       canonicalJson(dataset as unknown as Json)
     )
-      throw Error("BLK-EVAL-CAS");
+      {
+        const {frozenAt: _frozen, contentHash: _content, bindingHash: _binding, ...fields} = dataset;
+        if (current.value.status === "draft" && dataset.status === "frozen" &&
+            canonicalJson(current.value as unknown as Json) === canonicalJson({
+              ...fields, status: "draft",
+            } as unknown as Json))
+          return saveEvaluationAsset(store, "dataset", dataset, current.revision);
+        throw Error("BLK-EVAL-CAS");
+      }
     return current;
   }
   return saveEvaluationAsset(store, "dataset", dataset, null);
