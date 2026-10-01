@@ -6,6 +6,8 @@ vendor/audio/** -text
 vendor/node/LICENSE -text
 # The parser manifest verifies the exact source bytes after checkout.
 packages/document-parser/*.mjs -text
+# Browser installation compares this lock to the generated LF manifest byte for byte.
+packages/rpa-core/runtime-lock.json text eol=lf
 # Frozen evaluation corpus is hashed before execution on every platform.
 packages/knowledge-core/fixtures/quality-v1.json -text
 tests/document-parser/fixtures/OFL.txt -text whitespace=-trailing-space
