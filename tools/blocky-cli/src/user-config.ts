@@ -11,6 +11,7 @@ import {
   parseRegistry,
   upsertUserResource,
   configuredOnlineModel,
+  resolveRegistryResources,
 } from "@blocky/resource-registry";
 import {
   emptyBindings,
@@ -49,9 +50,7 @@ export async function readUserRegistry() {
   return value === null ? emptyRegistry() : parseRegistry(value);
 }
 export async function userRegistryMap() {
-  return new Map(
-    (await readUserRegistry()).resources.map((r) => [r.resourceId, r]),
-  );
+  return resolveRegistryResources(await readUserRegistry());
 }
 export async function readDefaultModelId(): Promise<string> {
   const raw = await nativeUserOperation("user-read", { stateKind: "settings", stateId: "app" });
@@ -187,6 +186,7 @@ export async function userConfigCommand(args: Args) {
         if (!doc.resources.some((r) => r.resourceId === id)) throw Error();
         value = parseRegistry({
           ...doc,
+          revision: doc.revision + 1,
           resources: doc.resources.filter((r) => r.resourceId !== id),
         });
       }

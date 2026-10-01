@@ -45,6 +45,7 @@ import { migrationCommand } from "./migration";
 import { foundationsCommand, foundationsHelp } from "./foundations";
 import { knowledgeCommand, knowledgeHelp } from "./knowledge";
 import { modelCommand, modelHelp } from "./models";
+import { modelProfilesCommand, modelProfilesHelp } from "./model-profiles";
 import { toolCommand, toolHelp } from "./tools";
 import { memoryCommand, memoryHelp } from "./memory";
 import {skillCommand,skillHelp} from './skills';
@@ -71,6 +72,7 @@ export const help = {
     ...traceHelp,
     ...knowledgeHelp,
     ...modelHelp,
+    ...modelProfilesHelp,
     ...toolHelp,
     ...memoryHelp,
     ...skillHelp,
@@ -121,6 +123,8 @@ export async function dispatch(
   }
   const discovered = discoveryCommand(args, help.commands);
   if (discovered) return discovered;
+  const profiles = await modelProfilesCommand(args);
+  if (profiles) return profiles;
   const model = await modelCommand(args, signal);
   if (model) return model;
   const tool = await toolCommand(args, signal);

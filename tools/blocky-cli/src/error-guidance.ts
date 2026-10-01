@@ -1,6 +1,9 @@
 const captureHint =
   "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-RESOURCE-CONFLICT": { message: "本机资源已被其他写入修改，原配置保留。", hint: "重新查询 provider list 和 resource list，保留草稿，审查差异后使用当前修订重试。" },
+  "BLK-PROVIDER-IN-USE": { message: "厂商连接仍被模型引用。", hint: "查询 model-profile list，先迁移或删除引用该连接的模型，再删除连接。" },
+  "BLK-RESOURCE-BACKUP-MISSING": { message: "没有可用的旧资源账本备份。", hint: "保留当前配置；resource migrate 首次迁移才创建旧账本备份，不自动丢弃新配置。" },
   "BLK-MEMORY-CONFLICT": { message: "记忆已被其他写入修改，原内容保留。", hint: "读取当前版本，审查差异后用新的 expectedVersion 重试；merge 只合并对象顶层字段，reject 保留已有条目。" },
   ...Object.fromEntries(
     [

@@ -33,6 +33,7 @@ import {
   workflowReconciliationSchema,
 } from "./workflow-schema";
 import { modelRequestSchema, modelResponseSchema } from "./model-schema";
+import { modelProviderSchema, connectedModelSchema } from "./model-profiles";
 import { toolRequestSchema } from "./tool-schema";
 import {
   ingestionOptionsSchema,
@@ -41,6 +42,8 @@ import {
 } from "@blocky/knowledge-core";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.model-provider/v1": modelProviderSchema,
+  "blocky.connected-model/v1": connectedModelSchema,
   'blocky.media-request/v1':mediaRequestSchema,
   'blocky.media-metadata/v1':mediaMetadataSchema,
   'blocky.decision-request/v1':decisionRequestSchema,
