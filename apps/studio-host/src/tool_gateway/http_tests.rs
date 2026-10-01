@@ -314,19 +314,31 @@ fn chunked_json_and_streaming_size_limit() {
         let (u, t) = fixture(move |l| {
             let mut s = accept(&l);
             read(&mut s);
-            write!(s,"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n\r\n").unwrap();
             let body = if oversized {
                 format!("\"{}\"", "x".repeat(32768))
             } else {
                 r#"{"city":"城市"}"#.to_string()
             };
-            for chunk in body.as_bytes().chunks(8192) {
-                write!(s, "{:x}\r\n", chunk.len()).unwrap();
-                s.write_all(chunk).unwrap();
-                s.write_all(b"\r\n").unwrap();
+            let transmitted = (|| -> std::io::Result<()> {
+                write!(s,"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n\r\n")?;
+                for chunk in body.as_bytes().chunks(8192) {
+                    write!(s, "{:x}\r\n", chunk.len())?;
+                    s.write_all(chunk)?;
+                    s.write_all(b"\r\n")?;
+                }
+                s.write_all(b"0\r\n\r\n")?;
+                s.flush()
+            })();
+            if oversized {
+                // The client deliberately drops the stream at the size limit.
+                // Windows can report the close while the fixture writes its trailer.
+                if let Err(error) = transmitted {
+                    assert!(matches!(error.kind(), std::io::ErrorKind::ConnectionAborted
+                        | std::io::ErrorKind::ConnectionReset | std::io::ErrorKind::BrokenPipe));
+                }
+            } else {
+                transmitted.unwrap();
             }
-            s.write_all(b"0\r\n\r\n").unwrap();
-            s.flush().unwrap();
         });
         let result = call(u, "GET", json!({}));
         if oversized {
