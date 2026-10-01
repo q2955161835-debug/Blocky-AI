@@ -1,0 +1,1552 @@
+{
+  "time": "2026-10-01T09:18:43.022Z",
+  "sourceCommit": "6ebf551056b536e5986f340e6f85ed221f82576f",
+  "packageFiles": 2595,
+  "bytes": 767921068,
+  "mismatches": [],
+  "extra": [],
+  "records": [
+    {
+      "name": "schema",
+      "args": [
+        "schema",
+        "list"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "schema.list",
+        "data": {
+          "schemas": [
+            "blocky.media-request/v1",
+            "blocky.media-metadata/v1",
+            "blocky.decision-request/v1",
+            "blocky.decision-record/v1",
+            "blocky.evaluation-asset-request/v1",
+            "blocky.evaluation-dataset/v1",
+            "blocky.evaluation-report/v1",
+            "blocky.evaluation-checkpoint/v1",
+            "blocky.trigger/v1",
+            "blocky.trigger-request/v1",
+            "blocky.trigger-record/v1",
+            "blocky.trigger-receiver-request/v1",
+            "blocky.external-trigger-event/v1",
+            "blocky.skill-request/v1",
+            "blocky.skill/v1",
+            "blocky.agent-delegation/v1",
+            "blocky.memory-request/v1",
+            "blocky.knowledge-ingestion/v1",
+            "blocky.knowledge-judgment/v1",
+            "blocky.knowledge-retrieval/v1",
+            "blocky.tool-request/v2",
+            "blocky.model-request/v2",
+            "blocky.model-response/v2",
+            "blocky.workflow-summary/v1",
+            "blocky.workflow-decision-result/v1",
+            "blocky.workflow-reconciliation/v1",
+            "blocky.run-inputs/v1",
+            "blocky.cli-operations/v1",
+            "blocky.builder-request/v1",
+            "blocky.builder-draft/v1",
+            "blocky.surface-spec/v1",
+            "blocky.workspace-block/v1",
+            "blocky.editor-operation/v1",
+            "blocky.rpa/v1",
+            "blocky.rpa-capture/v1",
+            "blocky.rpa-capture-view/v1",
+            "blocky.rpa-grant/v1",
+            "blocky.rpa-recovery/v1",
+            "blocky.rpa-recording-start/v1",
+            "blocky.rpa-recording-result/v1",
+            "blocky.rpa-recording-stop/v1",
+            "blocky.rpa-recording-control/v1",
+            "blocky.rpa-browser-start/v1",
+            "blocky.rpa-module-inputs/v1",
+            "blocky.rpa-checkpoint-delete/v1"
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "settings-defaults",
+      "args": [
+        "settings",
+        "list"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {}
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-research-companion",
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "digest": "9035d1b51751697034e7082161b822b74d8d0a12a27366611a80aae9d9e366b9",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "research-companion.blocky",
+            "bytes": 3236,
+            "sha256": "201914bcb459029eb09f7a0324f60af962ef33c3e19bbd128445c7ad9e555c42"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "inspect-research-companion",
+      "args": [
+        "project",
+        "inspect",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "displayName": "资料问答伙伴",
+          "digest": "9035d1b51751697034e7082161b822b74d8d0a12a27366611a80aae9d9e366b9",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "资料问答伙伴",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ]
+            },
+            {
+              "moduleId": "citation-service",
+              "displayName": "资料引用服务",
+              "purpose": "service",
+              "workspaceRef": "workspaces/citation-service.workspace.json",
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "product-handbook",
+              "kind": "knowledge",
+              "scope": "project"
+            },
+            {
+              "resourceId": "local-composer",
+              "kind": "model",
+              "scope": "project"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-research-companion",
+      "args": [
+        "project",
+        "validate",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "9035d1b51751697034e7082161b822b74d8d0a12a27366611a80aae9d9e366b9"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "compile-research-companion",
+      "args": [
+        "project",
+        "compile",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.compile",
+        "data": {
+          "modules": [
+            {
+              "schemaVersion": "blocky.module-ir/v1",
+              "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+              "moduleId": "research-agent",
+              "roots": [
+                {
+                  "nodeId": "research-root",
+                  "blockType": "core.agent",
+                  "fields": {
+                    "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                  },
+                  "inputs": {
+                    "BODY": {
+                      "nodeId": "on-question",
+                      "blockType": "core.interaction.chat",
+                      "fields": {
+                        "NAME": "资料问答伙伴"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "call-citation",
+                        "blockType": "core.knowledge.retrieve",
+                        "fields": {
+                          "RESOURCE": "product-handbook"
+                        },
+                        "inputs": {},
+                        "next": {
+                          "nodeId": "compose-answer",
+                          "blockType": "core.model.compose",
+                          "fields": {
+                            "RESOURCE": "local-composer"
+                          },
+                          "inputs": {},
+                          "next": {
+                            "nodeId": "reply-answer",
+                            "blockType": "core.output.answer",
+                            "fields": {
+                              "STYLE": "条目"
+                            },
+                            "inputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ],
+              "sourceMap": {
+                "research-root": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "research-agent",
+                  "blockId": "research-root"
+                },
+                "on-question": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "research-agent",
+                  "blockId": "on-question"
+                },
+                "call-citation": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "research-agent",
+                  "blockId": "call-citation"
+                },
+                "compose-answer": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "research-agent",
+                  "blockId": "compose-answer"
+                },
+                "reply-answer": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "research-agent",
+                  "blockId": "reply-answer"
+                }
+              }
+            },
+            {
+              "schemaVersion": "blocky.module-ir/v1",
+              "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+              "moduleId": "citation-service",
+              "roots": [
+                {
+                  "nodeId": "lookup-entry",
+                  "blockType": "core.tool.entry",
+                  "fields": {
+                    "EXPORT": "lookup-v1"
+                  },
+                  "inputs": {
+                    "BODY": {
+                      "nodeId": "lookup-documents",
+                      "blockType": "core.knowledge.retrieve",
+                      "fields": {
+                        "RESOURCE": "product-handbook"
+                      },
+                      "inputs": {}
+                    }
+                  }
+                }
+              ],
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ],
+              "sourceMap": {
+                "lookup-entry": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "citation-service",
+                  "blockId": "lookup-entry"
+                },
+                "lookup-documents": {
+                  "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+                  "moduleId": "citation-service",
+                  "blockId": "lookup-documents"
+                }
+              }
+            }
+          ],
+          "project": {
+            "schemaVersion": "blocky.project-ir/v1",
+            "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+            "modules": [
+              {
+                "moduleId": "research-agent",
+                "digest": "19c00eaf247b3e9a7d1e64ff350aea74f2d32f8bcf34f1f903d44f926ad67e92"
+              },
+              {
+                "moduleId": "citation-service",
+                "digest": "23ba4e1d79e1f3b8530e541f9802e5297ff8f973c27fa0f04ea0dbbdb90a31ae"
+              }
+            ],
+            "links": []
+          },
+          "interaction": {
+            "schemaVersion": "blocky.interaction/v1alpha1",
+            "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+            "entries": [
+              {
+                "interactionId": "on-question",
+                "moduleId": "research-agent",
+                "ownerAgentId": "research-root",
+                "displayName": "资料问答伙伴",
+                "acceptedParts": [
+                  "text"
+                ],
+                "exposedSkills": [],
+                "exposedActions": [],
+                "executionRequirements": []
+              }
+            ]
+          },
+          "tools": [
+            {
+              "schemaVersion": "blocky.tool/v1alpha1",
+              "toolId": "tool-research-agent-call-citation",
+              "moduleId": "research-agent",
+              "displayName": "我的研究资料",
+              "description": "检索带来源的资料",
+              "inputSchemaRef": "schemas/query.json",
+              "outputSchemaRef": "schemas/citations.json",
+              "permissions": [
+                "knowledge.read"
+              ],
+              "approval": "never",
+              "implementationRef": "adapter://knowledge-local-v1"
+            },
+            {
+              "schemaVersion": "blocky.tool/v1alpha1",
+              "toolId": "tool-citation-service-lookup-documents",
+              "moduleId": "citation-service",
+              "displayName": "我的研究资料",
+              "description": "检索带来源的资料",
+              "inputSchemaRef": "schemas/query.json",
+              "outputSchemaRef": "schemas/citations.json",
+              "permissions": [
+                "knowledge.read"
+              ],
+              "approval": "never",
+              "implementationRef": "adapter://knowledge-local-v1"
+            }
+          ],
+          "diagnostics": [],
+          "digest": "90c6f2a0771e5d091e033c4d6774710ba1b43a21eb007f554f378195cc1cc12b"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "modules-research-companion",
+      "args": [
+        "project",
+        "module",
+        "list",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.module.list",
+        "data": {
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "资料问答伙伴",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ]
+            },
+            {
+              "moduleId": "citation-service",
+              "displayName": "资料引用服务",
+              "purpose": "service",
+              "workspaceRef": "workspaces/citation-service.workspace.json",
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ]
+            }
+          ],
+          "links": [],
+          "diagnostics": []
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "builder-research-companion",
+      "args": [
+        "builder",
+        "draft",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky",
+        "--module",
+        "research-agent",
+        "--prompt",
+        "请解释并完善当前作品",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-candidate.json"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "requestId": "builder-9291a031-1224-4f50-856e-e91840991e1d",
+          "modelApiCalled": false,
+          "generations": [
+            {
+              "model": "local-builder-v1",
+              "provider": "deterministic",
+              "requestId": "local-response",
+              "transport": "local",
+              "usage": null
+            }
+          ],
+          "verification": {
+            "diagnosticCount": 0,
+            "passed": true
+          },
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "research-companion-candidate.json",
+            "bytes": 3939,
+            "sha256": "e7d7921d5e452cf52779734b1e2058972569a24d57ba5997a528a7a2eb47da8f"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "preview-research-companion",
+      "args": [
+        "patch",
+        "preview",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky",
+        "--patch",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-candidate.json"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.preview",
+        "data": {
+          "patch": {
+            "schemaVersion": "blocky.patch/v1alpha1",
+            "patchId": "patch-e9c5efe4-3695-4c93-bb9d-ccce7efb8027",
+            "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+            "baseDigest": "9035d1b51751697034e7082161b822b74d8d0a12a27366611a80aae9d9e366b9",
+            "catalogVersion": "0.5.0",
+            "operations": [
+              {
+                "op": "block.update",
+                "moduleId": "research-agent",
+                "blockId": "research-root",
+                "payload": {
+                  "fields": {
+                    "ROLE": "请解释并完善当前作品"
+                  }
+                }
+              }
+            ],
+            "permissionDelta": [],
+            "diagnostics": []
+          },
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "资料问答伙伴"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.knowledge.retrieve",
+                          "id": "call-citation",
+                          "fields": {
+                            "RESOURCE": "product-handbook"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.model.compose",
+                              "id": "compose-answer",
+                              "fields": {
+                                "RESOURCE": "local-composer"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "reply-answer",
+                                  "fields": {
+                                    "STYLE": "条目"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70,
+                "extraState": {
+                  "blueprintInstance": {
+                    "base": {
+                      "fields": {
+                        "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                      },
+                      "id": "research-root",
+                      "inputs": {
+                        "BODY": {
+                          "block": {
+                            "fields": {
+                              "NAME": "资料问答伙伴"
+                            },
+                            "id": "on-question",
+                            "next": {
+                              "block": {
+                                "fields": {
+                                  "RESOURCE": "product-handbook"
+                                },
+                                "id": "call-citation",
+                                "next": {
+                                  "block": {
+                                    "fields": {
+                                      "RESOURCE": "local-composer"
+                                    },
+                                    "id": "compose-answer",
+                                    "next": {
+                                      "block": {
+                                        "fields": {
+                                          "STYLE": "条目"
+                                        },
+                                        "id": "reply-answer",
+                                        "type": "core.output.answer"
+                                      }
+                                    },
+                                    "type": "core.model.compose"
+                                  }
+                                },
+                                "type": "core.knowledge.retrieve"
+                              }
+                            },
+                            "type": "core.interaction.chat"
+                          }
+                        }
+                      },
+                      "type": "core.agent",
+                      "x": 80,
+                      "y": 70
+                    },
+                    "bindings": {
+                      "modules": {},
+                      "resources": {
+                        "resource-slot-1": "product-handbook",
+                        "resource-slot-2": "local-composer"
+                      }
+                    },
+                    "blueprintId": "official-research-companion",
+                    "digest": "15a885f318790daedd44c57fe90d5923270d1653b6de7df0f6d96992f40f2e8a",
+                    "idMap": {
+                      "call-citation": "call-citation",
+                      "compose-answer": "compose-answer",
+                      "on-question": "on-question",
+                      "reply-answer": "reply-answer",
+                      "research-root": "research-root"
+                    },
+                    "instanceId": "instance-26d30415-986a-4fe2-a72d-4793e36ab5e1",
+                    "schemaVersion": "blocky.blueprint-instance/v1",
+                    "sourceRootId": "research-root",
+                    "version": 1
+                  }
+                }
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请解释并完善当前作品"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "资料问答伙伴"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.knowledge.retrieve",
+                          "id": "call-citation",
+                          "fields": {
+                            "RESOURCE": "product-handbook"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.model.compose",
+                              "id": "compose-answer",
+                              "fields": {
+                                "RESOURCE": "local-composer"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "reply-answer",
+                                  "fields": {
+                                    "STYLE": "条目"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70,
+                "extraState": {
+                  "blueprintInstance": {
+                    "base": {
+                      "fields": {
+                        "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                      },
+                      "id": "research-root",
+                      "inputs": {
+                        "BODY": {
+                          "block": {
+                            "fields": {
+                              "NAME": "资料问答伙伴"
+                            },
+                            "id": "on-question",
+                            "next": {
+                              "block": {
+                                "fields": {
+                                  "RESOURCE": "product-handbook"
+                                },
+                                "id": "call-citation",
+                                "next": {
+                                  "block": {
+                                    "fields": {
+                                      "RESOURCE": "local-composer"
+                                    },
+                                    "id": "compose-answer",
+                                    "next": {
+                                      "block": {
+                                        "fields": {
+                                          "STYLE": "条目"
+                                        },
+                                        "id": "reply-answer",
+                                        "type": "core.output.answer"
+                                      }
+                                    },
+                                    "type": "core.model.compose"
+                                  }
+                                },
+                                "type": "core.knowledge.retrieve"
+                              }
+                            },
+                            "type": "core.interaction.chat"
+                          }
+                        }
+                      },
+                      "type": "core.agent",
+                      "x": 80,
+                      "y": 70
+                    },
+                    "bindings": {
+                      "modules": {},
+                      "resources": {
+                        "resource-slot-1": "product-handbook",
+                        "resource-slot-2": "local-composer"
+                      }
+                    },
+                    "blueprintId": "official-research-companion",
+                    "digest": "15a885f318790daedd44c57fe90d5923270d1653b6de7df0f6d96992f40f2e8a",
+                    "idMap": {
+                      "call-citation": "call-citation",
+                      "compose-answer": "compose-answer",
+                      "on-question": "on-question",
+                      "reply-answer": "reply-answer",
+                      "research-root": "research-root"
+                    },
+                    "instanceId": "instance-26d30415-986a-4fe2-a72d-4793e36ab5e1",
+                    "schemaVersion": "blocky.blueprint-instance/v1",
+                    "sourceRootId": "research-root",
+                    "version": 1
+                  }
+                }
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请解释并完善当前作品"
+                }
+              }
+            }
+          ],
+          "permissionDelta": [],
+          "diagnostics": [],
+          "nextDigest": "044cbe3c208242b2cac34d1a1133bfee064ac3c3ca375ff24b4c6c88e0bdb960"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "apply-research-companion",
+      "args": [
+        "patch",
+        "apply",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion.blocky",
+        "--patch",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-candidate.json",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-accepted.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.apply",
+        "data": {
+          "digest": "044cbe3c208242b2cac34d1a1133bfee064ac3c3ca375ff24b4c6c88e0bdb960",
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "资料问答伙伴"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.knowledge.retrieve",
+                          "id": "call-citation",
+                          "fields": {
+                            "RESOURCE": "product-handbook"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.model.compose",
+                              "id": "compose-answer",
+                              "fields": {
+                                "RESOURCE": "local-composer"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "reply-answer",
+                                  "fields": {
+                                    "STYLE": "条目"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70,
+                "extraState": {
+                  "blueprintInstance": {
+                    "base": {
+                      "fields": {
+                        "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                      },
+                      "id": "research-root",
+                      "inputs": {
+                        "BODY": {
+                          "block": {
+                            "fields": {
+                              "NAME": "资料问答伙伴"
+                            },
+                            "id": "on-question",
+                            "next": {
+                              "block": {
+                                "fields": {
+                                  "RESOURCE": "product-handbook"
+                                },
+                                "id": "call-citation",
+                                "next": {
+                                  "block": {
+                                    "fields": {
+                                      "RESOURCE": "local-composer"
+                                    },
+                                    "id": "compose-answer",
+                                    "next": {
+                                      "block": {
+                                        "fields": {
+                                          "STYLE": "条目"
+                                        },
+                                        "id": "reply-answer",
+                                        "type": "core.output.answer"
+                                      }
+                                    },
+                                    "type": "core.model.compose"
+                                  }
+                                },
+                                "type": "core.knowledge.retrieve"
+                              }
+                            },
+                            "type": "core.interaction.chat"
+                          }
+                        }
+                      },
+                      "type": "core.agent",
+                      "x": 80,
+                      "y": 70
+                    },
+                    "bindings": {
+                      "modules": {},
+                      "resources": {
+                        "resource-slot-1": "product-handbook",
+                        "resource-slot-2": "local-composer"
+                      }
+                    },
+                    "blueprintId": "official-research-companion",
+                    "digest": "15a885f318790daedd44c57fe90d5923270d1653b6de7df0f6d96992f40f2e8a",
+                    "idMap": {
+                      "call-citation": "call-citation",
+                      "compose-answer": "compose-answer",
+                      "on-question": "on-question",
+                      "reply-answer": "reply-answer",
+                      "research-root": "research-root"
+                    },
+                    "instanceId": "instance-26d30415-986a-4fe2-a72d-4793e36ab5e1",
+                    "schemaVersion": "blocky.blueprint-instance/v1",
+                    "sourceRootId": "research-root",
+                    "version": 1
+                  }
+                }
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请解释并完善当前作品"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "资料问答伙伴"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.knowledge.retrieve",
+                          "id": "call-citation",
+                          "fields": {
+                            "RESOURCE": "product-handbook"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.model.compose",
+                              "id": "compose-answer",
+                              "fields": {
+                                "RESOURCE": "local-composer"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "reply-answer",
+                                  "fields": {
+                                    "STYLE": "条目"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70,
+                "extraState": {
+                  "blueprintInstance": {
+                    "base": {
+                      "fields": {
+                        "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+                      },
+                      "id": "research-root",
+                      "inputs": {
+                        "BODY": {
+                          "block": {
+                            "fields": {
+                              "NAME": "资料问答伙伴"
+                            },
+                            "id": "on-question",
+                            "next": {
+                              "block": {
+                                "fields": {
+                                  "RESOURCE": "product-handbook"
+                                },
+                                "id": "call-citation",
+                                "next": {
+                                  "block": {
+                                    "fields": {
+                                      "RESOURCE": "local-composer"
+                                    },
+                                    "id": "compose-answer",
+                                    "next": {
+                                      "block": {
+                                        "fields": {
+                                          "STYLE": "条目"
+                                        },
+                                        "id": "reply-answer",
+                                        "type": "core.output.answer"
+                                      }
+                                    },
+                                    "type": "core.model.compose"
+                                  }
+                                },
+                                "type": "core.knowledge.retrieve"
+                              }
+                            },
+                            "type": "core.interaction.chat"
+                          }
+                        }
+                      },
+                      "type": "core.agent",
+                      "x": 80,
+                      "y": 70
+                    },
+                    "bindings": {
+                      "modules": {},
+                      "resources": {
+                        "resource-slot-1": "product-handbook",
+                        "resource-slot-2": "local-composer"
+                      }
+                    },
+                    "blueprintId": "official-research-companion",
+                    "digest": "15a885f318790daedd44c57fe90d5923270d1653b6de7df0f6d96992f40f2e8a",
+                    "idMap": {
+                      "call-citation": "call-citation",
+                      "compose-answer": "compose-answer",
+                      "on-question": "on-question",
+                      "reply-answer": "reply-answer",
+                      "research-root": "research-root"
+                    },
+                    "instanceId": "instance-26d30415-986a-4fe2-a72d-4793e36ab5e1",
+                    "schemaVersion": "blocky.blueprint-instance/v1",
+                    "sourceRootId": "research-root",
+                    "version": 1
+                  }
+                }
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请解释并完善当前作品"
+                }
+              }
+            }
+          ],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "research-companion-accepted.blocky",
+            "bytes": 3265,
+            "sha256": "a3004055ae5f1c912c693fe53a1070ca0d1322b2ded6a1aad846db01172f1cf2"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reopen-research-companion",
+      "args": [
+        "project",
+        "inspect",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-accepted.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "displayName": "资料问答伙伴",
+          "digest": "044cbe3c208242b2cac34d1a1133bfee064ac3c3ca375ff24b4c6c88e0bdb960",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "资料问答伙伴",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "answer-with-citations",
+                  "displayName": "资料问答伙伴",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/question.json",
+                  "outputSchemaRef": "schemas/answer.json"
+                }
+              ]
+            },
+            {
+              "moduleId": "citation-service",
+              "displayName": "资料引用服务",
+              "purpose": "service",
+              "workspaceRef": "workspaces/citation-service.workspace.json",
+              "exports": [
+                {
+                  "exportId": "lookup-v1",
+                  "displayName": "资料引用服务",
+                  "kind": "tool",
+                  "inputSchemaRef": "schemas/query.json",
+                  "outputSchemaRef": "schemas/citations.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "product-handbook",
+              "kind": "knowledge",
+              "scope": "project"
+            },
+            {
+              "resourceId": "local-composer",
+              "kind": "model",
+              "scope": "project"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-reopened-research-companion",
+      "args": [
+        "project",
+        "validate",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\research-companion-accepted.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "044cbe3c208242b2cac34d1a1133bfee064ac3c3ca375ff24b4c6c88e0bdb960"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-tool-assistant",
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "tool-assistant",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\tool-assistant.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "digest": "21727995b6365692298b0b95b67167d68ff68ccd15886f49d477b3a11d174012",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "tool-assistant.blocky",
+            "bytes": 2356,
+            "sha256": "9cfff0c54c5431771e89b45c3584985f80a97ecd63c84072a42a35d475794285"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "inspect-tool-assistant",
+      "args": [
+        "project",
+        "inspect",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\tool-assistant.blocky"
+      ],
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "displayName": "工具办事助手",
+          "digest": "21727995b6365692298b0b95b67167d68ff68ccd15886f49d477b3a11d174012",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "文本分析",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "agent-model",
+              "kind": "model",
+              "scope": "project"
+            },
+            {
+              "resourceId": "text-tool",
+              "kind": "tool",
+              "scope": "project"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [
+            {
+              "schemaVersion": "blocky.diagnostic/v1alpha1",
+              "diagnosticId": "blk-model-tools.research-agent.tool-loop",
+              "code": "BLK-MODEL-TOOLS",
+              "severity": "error",
+              "message": "工具循环要求所选模型支持工具调用",
+              "source": {
+                "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                "moduleId": "research-agent",
+                "blockId": "tool-loop"
+              },
+              "related": []
+            }
+          ],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-tool-assistant",
+      "args": [
+        "project",
+        "validate",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\tool-assistant.blocky"
+      ],
+      "exit": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "project.validate",
+        "data": {
+          "valid": false,
+          "diagnostics": [
+            {
+              "schemaVersion": "blocky.diagnostic/v1alpha1",
+              "diagnosticId": "blk-model-tools.research-agent.tool-loop",
+              "code": "BLK-MODEL-TOOLS",
+              "severity": "error",
+              "message": "工具循环要求所选模型支持工具调用",
+              "source": {
+                "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                "moduleId": "research-agent",
+                "blockId": "tool-loop"
+              },
+              "related": []
+            }
+          ],
+          "projectDigest": "21727995b6365692298b0b95b67167d68ff68ccd15886f49d477b3a11d174012"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    }
+  ]
+}

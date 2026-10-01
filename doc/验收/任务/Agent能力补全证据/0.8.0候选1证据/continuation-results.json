@@ -1,0 +1,4178 @@
+{
+  "time": "2026-10-01T09:21:45.703Z",
+  "package": "candidate1",
+  "rows": [
+    {
+      "name": "get-existing-model-reference",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.list",
+        "data": {
+          "schemaVersion": "blocky.resource-registry/v1",
+          "resources": [
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text",
+                  "image"
+                ],
+                "implementationRef": {
+                  "id": "deepseek-v1",
+                  "kind": "adapter"
+                },
+                "modelId": "deepseek-flash",
+                "parameters": {
+                  "maxOutputTokens": 1024
+                },
+                "protocol": "openai-chat",
+                "provider": "deepseek",
+                "timeoutMs": 60000
+              },
+              "displayName": "息壤 · deepseek-v4-pro",
+              "kind": "model",
+              "resourceId": "vision-probe",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "vision-deepseek-key"
+                }
+              ]
+            }
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "register-model-reference",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "link-tool-model",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.resource.link-user",
+        "data": {
+          "digest": "1c9bc647c2b051d87a67a1802c6e57fc40d352f100f2ade2f9dda2f540cfd8fc",
+          "diagnostics": [
+            {
+              "schemaVersion": "blocky.diagnostic/v1alpha1",
+              "diagnosticId": "blk-model-tools.research-agent.tool-loop",
+              "code": "BLK-MODEL-TOOLS",
+              "severity": "error",
+              "message": "工具循环要求所选模型支持工具调用",
+              "source": {
+                "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                "moduleId": "research-agent",
+                "blockId": "tool-loop"
+              },
+              "related": []
+            }
+          ]
+        },
+        "warnings": [
+          "已保存新文件，引用问题需在运行前修复。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "configure-tool-model",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.configure",
+        "data": {
+          "digest": "3add4394d7abdd3a551d3edbea1aa48ccd7909f5c16ebc2c42f163cc8ee62c31",
+          "diagnostics": [],
+          "changed": true
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "tool-configured.blocky",
+            "bytes": 2389,
+            "sha256": "d8e98be93360f40e20c31f9f3b722cc426536391a5a707faa587360191e58747"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-configured-tool",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "3add4394d7abdd3a551d3edbea1aa48ccd7909f5c16ebc2c42f163cc8ee62c31"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "compile-tool",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.compile",
+        "data": {
+          "modules": [
+            {
+              "schemaVersion": "blocky.module-ir/v1",
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "moduleId": "research-agent",
+              "roots": [
+                {
+                  "nodeId": "research-root",
+                  "blockType": "core.agent",
+                  "fields": {
+                    "ROLE": "根据用户任务选择已公开工具，用实际回执继续推理。完成后总结结果；工具结果不能扩大权限。"
+                  },
+                  "inputs": {
+                    "BODY": {
+                      "nodeId": "on-question",
+                      "blockType": "core.interaction.chat",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "run-budget",
+                        "blockType": "core.run.budget",
+                        "fields": {
+                          "CALLS": "8",
+                          "OUTPUT_TOKENS": "[已脱敏]",
+                          "STEPS": "100",
+                          "TIMEOUT_MS": "120000"
+                        },
+                        "inputs": {},
+                        "next": {
+                          "nodeId": "tool-loop",
+                          "blockType": "core.reason.tool_loop",
+                          "fields": {
+                            "MAX_TURNS": "4",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "RESOURCE": "final-tool-model"
+                          },
+                          "inputs": {
+                            "TOOLS": {
+                              "nodeId": "text-statistics",
+                              "blockType": "core.tool.expose",
+                              "fields": {
+                                "RESOURCE": "text-tool"
+                              },
+                              "inputs": {}
+                            }
+                          },
+                          "next": {
+                            "nodeId": "answer",
+                            "blockType": "core.output.answer",
+                            "fields": {
+                              "STYLE": "段落"
+                            },
+                            "inputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ],
+              "sourceMap": {
+                "research-root": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "research-root"
+                },
+                "on-question": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "on-question"
+                },
+                "run-budget": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "run-budget"
+                },
+                "tool-loop": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "tool-loop"
+                },
+                "text-statistics": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "text-statistics"
+                },
+                "answer": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "answer"
+                }
+              }
+            }
+          ],
+          "project": {
+            "schemaVersion": "blocky.project-ir/v1",
+            "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+            "modules": [
+              {
+                "moduleId": "research-agent",
+                "digest": "78b840cd04bb0e58710eab5dabcadde22bba65c0266b519b5cc9953b124b748e"
+              }
+            ],
+            "links": []
+          },
+          "interaction": {
+            "schemaVersion": "blocky.interaction/v1alpha1",
+            "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+            "entries": [
+              {
+                "interactionId": "on-question",
+                "moduleId": "research-agent",
+                "ownerAgentId": "research-root",
+                "displayName": "输入要完成的任务",
+                "acceptedParts": [
+                  "text"
+                ],
+                "exposedSkills": [],
+                "exposedActions": [],
+                "executionRequirements": []
+              }
+            ]
+          },
+          "tools": [
+            {
+              "schemaVersion": "blocky.tool/v1alpha1",
+              "toolId": "tool-research-agent-text-statistics",
+              "moduleId": "research-agent",
+              "displayName": "文本统计",
+              "description": "登记的类型化工具",
+              "inputSchemaRef": "schemas/text-input.json",
+              "outputSchemaRef": "schemas/text-result.json",
+              "permissions": [
+                "text.analyze"
+              ],
+              "approval": "always",
+              "implementationRef": "adapter://text-analyze-v1"
+            }
+          ],
+          "diagnostics": [],
+          "digest": "77d5393ad05ee2fdb00b9561905c2e65f26082cf5bf52287a8d480c39a8f0b9b"
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "candidate-tool-live",
+      "exit": 0,
+      "value": [
+        {
+          "data": {
+            "summary": "开始运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 1,
+          "timestamp": "2026-10-01T09:21:28.862Z",
+          "type": "run.started"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "blockType": "core.agent",
+            "inputPorts": [
+              "BODY"
+            ],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 2,
+          "timestamp": "2026-10-01T09:21:28.867Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "blockType": "core.interaction.chat",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 3,
+          "timestamp": "2026-10-01T09:21:28.869Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "budget": {
+              "calls": 0,
+              "reservedOutputTokens": 0,
+              "steps": 2
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 4,
+          "timestamp": "2026-10-01T09:21:28.869Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "run-budget",
+          "data": {
+            "blockType": "core.run.budget",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 5,
+          "timestamp": "2026-10-01T09:21:28.869Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "run-budget",
+          "data": {
+            "budget": {
+              "calls": 0,
+              "reservedOutputTokens": 0,
+              "steps": 3
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 6,
+          "timestamp": "2026-10-01T09:21:28.869Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "tool-loop",
+          "data": {
+            "blockType": "core.reason.tool_loop",
+            "inputPorts": [
+              "TOOLS"
+            ],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 7,
+          "timestamp": "2026-10-01T09:21:28.869Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-m1",
+          "data": {
+            "maxOutputTokens": 512,
+            "summary": "模型选择下一步",
+            "turn": 1
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 8,
+          "timestamp": "2026-10-01T09:21:28.870Z",
+          "type": "model.started"
+        },
+        {
+          "schemaVersion": "blocky.cli/v1",
+          "ok": true,
+          "command": "run.approval-required",
+          "data": {
+            "kind": "provider",
+            "preview": {
+              "approvalExpiresAt": 1790848288,
+              "imageCount": 0,
+              "inputBytes": 522,
+              "maxOutputTokens": 512,
+              "modelId": "deepseek-flash",
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "provider": "deepseek",
+              "requestDigest": "a9c7e8e6a78f981ff7b19d1a10d85e02f7f133f71a8880f7a06c320f54c8d037",
+              "resourceId": "final-tool-model",
+              "timeoutMs": 60000,
+              "toolNames": [
+                "tool_1"
+              ],
+              "transport": "remote"
+            },
+            "requestDigest": "a9c7e8e6a78f981ff7b19d1a10d85e02f7f133f71a8880f7a06c320f54c8d037"
+          },
+          "warnings": [],
+          "artifacts": [],
+          "nextCursor": null
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-m1",
+          "data": {
+            "model": "deepseek-flash",
+            "summary": "模型已返回下一步",
+            "transport": "remote",
+            "turn": 1,
+            "usage": {
+              "inputTokens": 391,
+              "outputTokens": 73,
+              "totalTokens": 464
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 9,
+          "timestamp": "2026-10-01T09:21:31.484Z",
+          "type": "model.completed"
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-1",
+          "data": {
+            "inputBytes": 20,
+            "summary": "正在执行模型选择的工具",
+            "toolId": "text-tool",
+            "turn": 1
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 10,
+          "timestamp": "2026-10-01T09:21:31.484Z",
+          "type": "tool.started"
+        },
+        {
+          "schemaVersion": "blocky.cli/v1",
+          "ok": true,
+          "command": "run.approval-required",
+          "data": {
+            "kind": "tool",
+            "preview": {
+              "approvalExpiresAt": 1790848291,
+              "inputBytes": 18,
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "requestDigest": "006f929bda9a3238c9391a0ad0755c902cb5b72c0558c368c5e34ad822816597",
+              "requestId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-1",
+              "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+              "toolId": "text.analyze/v1"
+            },
+            "requestDigest": "006f929bda9a3238c9391a0ad0755c902cb5b72c0558c368c5e34ad822816597"
+          },
+          "warnings": [],
+          "artifacts": [],
+          "nextCursor": null
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-1",
+          "data": {
+            "outputBytes": 37,
+            "summary": "工具结果已返回",
+            "toolId": "text-tool",
+            "turn": 1
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 11,
+          "timestamp": "2026-10-01T09:21:31.585Z",
+          "type": "tool.completed"
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-2",
+          "data": {
+            "inputBytes": 21,
+            "summary": "正在执行模型选择的工具",
+            "toolId": "text-tool",
+            "turn": 1
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 12,
+          "timestamp": "2026-10-01T09:21:31.585Z",
+          "type": "tool.started"
+        },
+        {
+          "schemaVersion": "blocky.cli/v1",
+          "ok": true,
+          "command": "run.approval-required",
+          "data": {
+            "kind": "tool",
+            "preview": {
+              "approvalExpiresAt": 1790848291,
+              "inputBytes": 19,
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "requestDigest": "5cb50c8051d55eedbaed4d64506c0691ba387a397b93d2bea47657246e5e0678",
+              "requestId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-2",
+              "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+              "toolId": "text.analyze/v1"
+            },
+            "requestDigest": "5cb50c8051d55eedbaed4d64506c0691ba387a397b93d2bea47657246e5e0678"
+          },
+          "warnings": [],
+          "artifacts": [],
+          "nextCursor": null
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-t1-2",
+          "data": {
+            "outputBytes": 37,
+            "summary": "工具结果已返回",
+            "toolId": "text-tool",
+            "turn": 1
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 13,
+          "timestamp": "2026-10-01T09:21:31.695Z",
+          "type": "tool.completed"
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-m2",
+          "data": {
+            "maxOutputTokens": 512,
+            "summary": "模型选择下一步",
+            "turn": 2
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 14,
+          "timestamp": "2026-10-01T09:21:31.695Z",
+          "type": "model.started"
+        },
+        {
+          "schemaVersion": "blocky.cli/v1",
+          "ok": true,
+          "command": "run.approval-required",
+          "data": {
+            "kind": "provider",
+            "preview": {
+              "approvalExpiresAt": 1790848291,
+              "imageCount": 0,
+              "inputBytes": 596,
+              "maxOutputTokens": 512,
+              "modelId": "deepseek-flash",
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "provider": "deepseek",
+              "requestDigest": "e0cf1dae759e7451f23f38ac869cff28142891fcb93832fd6439447aed099d4e",
+              "resourceId": "final-tool-model",
+              "timeoutMs": 60000,
+              "toolNames": [
+                "tool_1"
+              ],
+              "transport": "remote"
+            },
+            "requestDigest": "e0cf1dae759e7451f23f38ac869cff28142891fcb93832fd6439447aed099d4e"
+          },
+          "warnings": [],
+          "artifacts": [],
+          "nextCursor": null
+        },
+        {
+          "blockId": "tool-loop",
+          "correlationId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4-request-5-m2",
+          "data": {
+            "model": "deepseek-flash",
+            "summary": "模型已返回下一步",
+            "transport": "remote",
+            "turn": 2,
+            "usage": {
+              "inputTokens": 510,
+              "outputTokens": 22,
+              "totalTokens": 532
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 15,
+          "timestamp": "2026-10-01T09:21:34.205Z",
+          "type": "model.completed"
+        },
+        {
+          "blockId": "tool-loop",
+          "data": {
+            "budget": {
+              "calls": 4,
+              "reservedOutputTokens": 1024,
+              "steps": 4
+            },
+            "elapsedMs": 5336,
+            "outputType": "string",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 16,
+          "timestamp": "2026-10-01T09:21:34.206Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "answer",
+          "data": {
+            "blockType": "core.output.answer",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 17,
+          "timestamp": "2026-10-01T09:21:34.206Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "answer",
+          "data": {
+            "budget": {
+              "calls": 4,
+              "reservedOutputTokens": 1024,
+              "steps": 5
+            },
+            "elapsedMs": 0,
+            "outputType": "string",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 18,
+          "timestamp": "2026-10-01T09:21:34.206Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "budget": {
+              "calls": 4,
+              "reservedOutputTokens": 1024,
+              "steps": 5
+            },
+            "elapsedMs": 5339,
+            "outputType": "string",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 19,
+          "timestamp": "2026-10-01T09:21:34.206Z",
+          "type": "block.completed"
+        },
+        {
+          "data": {
+            "summary": "运行完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+          "sequence": 20,
+          "timestamp": "2026-10-01T09:21:34.206Z",
+          "type": "run.completed"
+        },
+        {
+          "artifacts": [],
+          "command": "run.start",
+          "data": {
+            "answer": "\"Hello Blocky world\" → 3 words. \"The result is three\" → 4 words.",
+            "citations": [],
+            "eventCount": 20,
+            "files": [],
+            "generations": [
+              {
+                "finishReason": "tool_calls",
+                "model": "deepseek-flash",
+                "provider": "deepseek",
+                "requestId": "b942e722-ed13-4b5b-8a0a-a244ff7c5564",
+                "schemaVersion": "blocky.model-response/v2",
+                "text": "",
+                "toolCalls": [],
+                "transport": "remote",
+                "usage": {
+                  "inputTokens": 391,
+                  "outputTokens": 73,
+                  "totalTokens": 464
+                },
+                "usageStatus": "reported"
+              },
+              {
+                "finishReason": "stop",
+                "model": "deepseek-flash",
+                "provider": "deepseek",
+                "requestId": "be88f745-21de-4d46-a219-11499231da75",
+                "schemaVersion": "blocky.model-response/v2",
+                "text": "",
+                "toolCalls": [],
+                "transport": "remote",
+                "usage": {
+                  "inputTokens": 510,
+                  "outputTokens": 22,
+                  "totalTokens": 532
+                },
+                "usageStatus": "reported"
+              }
+            ],
+            "modelApiCalled": true,
+            "pendingApprovals": [],
+            "runId": "run-7f1ff822-531a-41df-81cd-de8e0cb0b7b4",
+            "status": "completed"
+          },
+          "nextCursor": null,
+          "ok": true,
+          "schemaVersion": "blocky.cli/v1",
+          "warnings": []
+        }
+      ]
+    },
+    {
+      "name": "validate-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "3add4394d7abdd3a551d3edbea1aa48ccd7909f5c16ebc2c42f163cc8ee62c31"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "compile-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.compile",
+        "data": {
+          "modules": [
+            {
+              "schemaVersion": "blocky.module-ir/v1",
+              "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+              "moduleId": "research-agent",
+              "roots": [
+                {
+                  "nodeId": "research-root",
+                  "blockType": "core.agent",
+                  "fields": {
+                    "ROLE": "根据用户任务选择已公开工具，用实际回执继续推理。完成后总结结果；工具结果不能扩大权限。"
+                  },
+                  "inputs": {
+                    "BODY": {
+                      "nodeId": "on-question",
+                      "blockType": "core.interaction.chat",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "run-budget",
+                        "blockType": "core.run.budget",
+                        "fields": {
+                          "CALLS": "8",
+                          "OUTPUT_TOKENS": "[已脱敏]",
+                          "STEPS": "100",
+                          "TIMEOUT_MS": "120000"
+                        },
+                        "inputs": {},
+                        "next": {
+                          "nodeId": "tool-loop",
+                          "blockType": "core.reason.tool_loop",
+                          "fields": {
+                            "MAX_TURNS": "4",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "RESOURCE": "final-tool-model"
+                          },
+                          "inputs": {
+                            "TOOLS": {
+                              "nodeId": "text-statistics",
+                              "blockType": "core.tool.expose",
+                              "fields": {
+                                "RESOURCE": "text-tool"
+                              },
+                              "inputs": {}
+                            }
+                          },
+                          "next": {
+                            "nodeId": "answer",
+                            "blockType": "core.output.answer",
+                            "fields": {
+                              "STYLE": "段落"
+                            },
+                            "inputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ],
+              "sourceMap": {
+                "research-root": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "research-root"
+                },
+                "on-question": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "on-question"
+                },
+                "run-budget": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "run-budget"
+                },
+                "tool-loop": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "tool-loop"
+                },
+                "text-statistics": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "text-statistics"
+                },
+                "answer": {
+                  "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+                  "moduleId": "research-agent",
+                  "blockId": "answer"
+                }
+              }
+            }
+          ],
+          "project": {
+            "schemaVersion": "blocky.project-ir/v1",
+            "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+            "modules": [
+              {
+                "moduleId": "research-agent",
+                "digest": "78b840cd04bb0e58710eab5dabcadde22bba65c0266b519b5cc9953b124b748e"
+              }
+            ],
+            "links": []
+          },
+          "interaction": {
+            "schemaVersion": "blocky.interaction/v1alpha1",
+            "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+            "entries": [
+              {
+                "interactionId": "on-question",
+                "moduleId": "research-agent",
+                "ownerAgentId": "research-root",
+                "displayName": "输入要完成的任务",
+                "acceptedParts": [
+                  "text"
+                ],
+                "exposedSkills": [],
+                "exposedActions": [],
+                "executionRequirements": []
+              }
+            ]
+          },
+          "tools": [
+            {
+              "schemaVersion": "blocky.tool/v1alpha1",
+              "toolId": "tool-research-agent-text-statistics",
+              "moduleId": "research-agent",
+              "displayName": "文本统计",
+              "description": "登记的类型化工具",
+              "inputSchemaRef": "schemas/text-input.json",
+              "outputSchemaRef": "schemas/text-result.json",
+              "permissions": [
+                "text.analyze"
+              ],
+              "approval": "always",
+              "implementationRef": "adapter://text-analyze-v1"
+            }
+          ],
+          "diagnostics": [],
+          "digest": "77d5393ad05ee2fdb00b9561905c2e65f26082cf5bf52287a8d480c39a8f0b9b"
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "builder-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "requestId": "builder-be0a0c0c-479d-4b8c-969b-70ac0f76d630",
+          "modelApiCalled": false,
+          "generations": [
+            {
+              "model": "local-builder-v1",
+              "provider": "deterministic",
+              "requestId": "local-response",
+              "transport": "local",
+              "usage": null
+            }
+          ],
+          "verification": {
+            "diagnosticCount": 0,
+            "passed": true
+          },
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "tool-assistant-candidate.json",
+            "bytes": 4026,
+            "sha256": "2b3a0398a96b002f226a1c44c399d4e0673ec325d5271ee2bedc8dfef21e40c7"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "preview-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.preview",
+        "data": {
+          "patch": {
+            "schemaVersion": "blocky.patch/v1alpha1",
+            "patchId": "patch-68b28574-e6a6-49c4-95f9-9e2788f60a4c",
+            "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+            "baseDigest": "3add4394d7abdd3a551d3edbea1aa48ccd7909f5c16ebc2c42f163cc8ee62c31",
+            "catalogVersion": "0.5.0",
+            "operations": [
+              {
+                "op": "block.update",
+                "moduleId": "research-agent",
+                "blockId": "research-root",
+                "payload": {
+                  "fields": {
+                    "ROLE": "请说明当前作品并保持功能"
+                  }
+                }
+              }
+            ],
+            "permissionDelta": [],
+            "diagnostics": []
+          },
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "根据用户任务选择已公开工具，用实际回执继续推理。完成后总结结果；工具结果不能扩大权限。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.run.budget",
+                          "id": "run-budget",
+                          "fields": {
+                            "CALLS": "8",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "STEPS": "100",
+                            "TIMEOUT_MS": "120000"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.reason.tool_loop",
+                              "id": "tool-loop",
+                              "fields": {
+                                "MAX_TURNS": "4",
+                                "OUTPUT_TOKENS": "[已脱敏]",
+                                "RESOURCE": "final-tool-model"
+                              },
+                              "inputs": {
+                                "TOOLS": {
+                                  "block": {
+                                    "type": "core.tool.expose",
+                                    "id": "text-statistics",
+                                    "fields": {
+                                      "RESOURCE": "text-tool"
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "answer",
+                                  "fields": {
+                                    "STYLE": "段落"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.run.budget",
+                          "id": "run-budget",
+                          "fields": {
+                            "CALLS": "8",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "STEPS": "100",
+                            "TIMEOUT_MS": "120000"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.reason.tool_loop",
+                              "id": "tool-loop",
+                              "fields": {
+                                "MAX_TURNS": "4",
+                                "OUTPUT_TOKENS": "[已脱敏]",
+                                "RESOURCE": "final-tool-model"
+                              },
+                              "inputs": {
+                                "TOOLS": {
+                                  "block": {
+                                    "type": "core.tool.expose",
+                                    "id": "text-statistics",
+                                    "fields": {
+                                      "RESOURCE": "text-tool"
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "answer",
+                                  "fields": {
+                                    "STYLE": "段落"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                }
+              }
+            }
+          ],
+          "permissionDelta": [],
+          "diagnostics": [],
+          "nextDigest": "9fce3271134c231914f294b5b000c1d6337b35dec081be2b37e4223133b10287"
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "accept-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.apply",
+        "data": {
+          "digest": "9fce3271134c231914f294b5b000c1d6337b35dec081be2b37e4223133b10287",
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "根据用户任务选择已公开工具，用实际回执继续推理。完成后总结结果；工具结果不能扩大权限。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.run.budget",
+                          "id": "run-budget",
+                          "fields": {
+                            "CALLS": "8",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "STEPS": "100",
+                            "TIMEOUT_MS": "120000"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.reason.tool_loop",
+                              "id": "tool-loop",
+                              "fields": {
+                                "MAX_TURNS": "4",
+                                "OUTPUT_TOKENS": "[已脱敏]",
+                                "RESOURCE": "final-tool-model"
+                              },
+                              "inputs": {
+                                "TOOLS": {
+                                  "block": {
+                                    "type": "core.tool.expose",
+                                    "id": "text-statistics",
+                                    "fields": {
+                                      "RESOURCE": "text-tool"
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "answer",
+                                  "fields": {
+                                    "STYLE": "段落"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入要完成的任务"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.run.budget",
+                          "id": "run-budget",
+                          "fields": {
+                            "CALLS": "8",
+                            "OUTPUT_TOKENS": "[已脱敏]",
+                            "STEPS": "100",
+                            "TIMEOUT_MS": "120000"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.reason.tool_loop",
+                              "id": "tool-loop",
+                              "fields": {
+                                "MAX_TURNS": "4",
+                                "OUTPUT_TOKENS": "[已脱敏]",
+                                "RESOURCE": "final-tool-model"
+                              },
+                              "inputs": {
+                                "TOOLS": {
+                                  "block": {
+                                    "type": "core.tool.expose",
+                                    "id": "text-statistics",
+                                    "fields": {
+                                      "RESOURCE": "text-tool"
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.output.answer",
+                                  "id": "answer",
+                                  "fields": {
+                                    "STYLE": "段落"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                }
+              }
+            }
+          ],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [
+          {
+            "path": "tool-assistant-accepted.blocky",
+            "bytes": 2308,
+            "sha256": "242494c8543932c6e3177a76f20febc36d9992e30ddcbc12360947448a4a5632"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reopen-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-76f5deed-309c-41f2-b73a-fa3b02789338",
+          "displayName": "工具办事助手",
+          "digest": "9fce3271134c231914f294b5b000c1d6337b35dec081be2b37e4223133b10287",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "文本分析",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "agent-model",
+              "kind": "model",
+              "scope": "project"
+            },
+            {
+              "resourceId": "text-tool",
+              "kind": "tool",
+              "scope": "project"
+            },
+            {
+              "resourceId": "final-tool-model",
+              "kind": "model",
+              "scope": "user"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-reopen-tool-assistant",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "9fce3271134c231914f294b5b000c1d6337b35dec081be2b37e4223133b10287"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "create-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "digest": "335077fcf8018004eb3ade0b4187c2532249a4a14f72df3db3c1aa645383e5ba",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "learned-routing.blocky",
+            "bytes": 2301,
+            "sha256": "d351b42b18a0b243b5d493bf558196caa5d68260bc44eaeab6255637b07ad0f0"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "335077fcf8018004eb3ade0b4187c2532249a4a14f72df3db3c1aa645383e5ba"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "compile-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.compile",
+        "data": {
+          "modules": [
+            {
+              "schemaVersion": "blocky.module-ir/v1",
+              "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+              "moduleId": "research-agent",
+              "roots": [
+                {
+                  "nodeId": "research-root",
+                  "blockType": "core.agent",
+                  "fields": {
+                    "ROLE": "你是文本分析助手。"
+                  },
+                  "inputs": {
+                    "BODY": {
+                      "nodeId": "on-question",
+                      "blockType": "core.interaction.chat",
+                      "fields": {
+                        "NAME": "输入待统计的文字"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "candidate-score",
+                        "blockType": "core.model.score",
+                        "fields": {
+                          "FALLBACK": "unknown",
+                          "LABELS": "[{\"id\":\"geography\",\"description\":\"Geography and location information\"},{\"id\":\"sports\",\"description\":\"Sports and athlete information\"}]",
+                          "RESOURCE": "agent-model",
+                          "RULES": "[{\"contains\":\"scoreboard\",\"label\":\"sports\"}]",
+                          "SOURCE": "input",
+                          "THRESHOLD": "0"
+                        },
+                        "inputs": {},
+                        "next": {
+                          "nodeId": "decision-answer",
+                          "blockType": "core.output.answer",
+                          "fields": {
+                            "STYLE": "段落"
+                          },
+                          "inputs": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ],
+              "sourceMap": {
+                "research-root": {
+                  "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+                  "moduleId": "research-agent",
+                  "blockId": "research-root"
+                },
+                "on-question": {
+                  "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+                  "moduleId": "research-agent",
+                  "blockId": "on-question"
+                },
+                "candidate-score": {
+                  "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+                  "moduleId": "research-agent",
+                  "blockId": "candidate-score"
+                },
+                "decision-answer": {
+                  "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+                  "moduleId": "research-agent",
+                  "blockId": "decision-answer"
+                }
+              }
+            }
+          ],
+          "project": {
+            "schemaVersion": "blocky.project-ir/v1",
+            "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+            "modules": [
+              {
+                "moduleId": "research-agent",
+                "digest": "abb09c14272d3dfbd2b069e851e622f4a3790da2b0421a679fa7e617d231d94f"
+              }
+            ],
+            "links": []
+          },
+          "interaction": {
+            "schemaVersion": "blocky.interaction/v1alpha1",
+            "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+            "entries": [
+              {
+                "interactionId": "on-question",
+                "moduleId": "research-agent",
+                "ownerAgentId": "research-root",
+                "displayName": "输入待统计的文字",
+                "acceptedParts": [
+                  "text"
+                ],
+                "exposedSkills": [],
+                "exposedActions": [],
+                "executionRequirements": []
+              }
+            ]
+          },
+          "tools": [],
+          "diagnostics": [],
+          "digest": "9c7279cf46a1ab0f3d0bb45736395ec75aaef06650867c955610c8e250a3da70"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "builder-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "builder.draft",
+        "data": {
+          "requestId": "builder-da827ea9-3664-4390-a26d-55e24454a2a5",
+          "modelApiCalled": false,
+          "generations": [
+            {
+              "model": "local-builder-v1",
+              "provider": "deterministic",
+              "requestId": "local-response",
+              "transport": "local",
+              "usage": null
+            }
+          ],
+          "verification": {
+            "diagnosticCount": 0,
+            "passed": true
+          },
+          "applied": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "learned-routing-candidate.json",
+            "bytes": 3909,
+            "sha256": "376c11954779603011ca70ed217990d8f57e624faa5f8f9815a956771b489730"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "preview-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.preview",
+        "data": {
+          "patch": {
+            "schemaVersion": "blocky.patch/v1alpha1",
+            "patchId": "patch-11f7db69-b762-471a-a709-7a80a511f0c8",
+            "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+            "baseDigest": "335077fcf8018004eb3ade0b4187c2532249a4a14f72df3db3c1aa645383e5ba",
+            "catalogVersion": "0.5.0",
+            "operations": [
+              {
+                "op": "block.update",
+                "moduleId": "research-agent",
+                "blockId": "research-root",
+                "payload": {
+                  "fields": {
+                    "ROLE": "请说明当前作品并保持功能"
+                  }
+                }
+              }
+            ],
+            "permissionDelta": [],
+            "diagnostics": []
+          },
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "你是文本分析助手。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入待统计的文字"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.model.score",
+                          "id": "candidate-score",
+                          "fields": {
+                            "FALLBACK": "unknown",
+                            "LABELS": "[{\"id\":\"geography\",\"description\":\"Geography and location information\"},{\"id\":\"sports\",\"description\":\"Sports and athlete information\"}]",
+                            "RESOURCE": "agent-model",
+                            "RULES": "[{\"contains\":\"scoreboard\",\"label\":\"sports\"}]",
+                            "SOURCE": "input",
+                            "THRESHOLD": "0"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.output.answer",
+                              "id": "decision-answer",
+                              "fields": {
+                                "STYLE": "段落"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入待统计的文字"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.model.score",
+                          "id": "candidate-score",
+                          "fields": {
+                            "FALLBACK": "unknown",
+                            "LABELS": "[{\"id\":\"geography\",\"description\":\"Geography and location information\"},{\"id\":\"sports\",\"description\":\"Sports and athlete information\"}]",
+                            "RESOURCE": "agent-model",
+                            "RULES": "[{\"contains\":\"scoreboard\",\"label\":\"sports\"}]",
+                            "SOURCE": "input",
+                            "THRESHOLD": "0"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.output.answer",
+                              "id": "decision-answer",
+                              "fields": {
+                                "STYLE": "段落"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                }
+              }
+            }
+          ],
+          "permissionDelta": [],
+          "diagnostics": [],
+          "nextDigest": "36d328156902b138f70e05fca6f27249454a487c01d0922c8f06b9335e5dbfa5"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "accept-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "patch.apply",
+        "data": {
+          "digest": "36d328156902b138f70e05fca6f27249454a487c01d0922c8f06b9335e5dbfa5",
+          "changes": [
+            {
+              "operation": "block.update",
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "before": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "你是文本分析助手。"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入待统计的文字"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.model.score",
+                          "id": "candidate-score",
+                          "fields": {
+                            "FALLBACK": "unknown",
+                            "LABELS": "[{\"id\":\"geography\",\"description\":\"Geography and location information\"},{\"id\":\"sports\",\"description\":\"Sports and athlete information\"}]",
+                            "RESOURCE": "agent-model",
+                            "RULES": "[{\"contains\":\"scoreboard\",\"label\":\"sports\"}]",
+                            "SOURCE": "input",
+                            "THRESHOLD": "0"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.output.answer",
+                              "id": "decision-answer",
+                              "fields": {
+                                "STYLE": "段落"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "after": {
+                "type": "core.agent",
+                "id": "research-root",
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                },
+                "inputs": {
+                  "BODY": {
+                    "block": {
+                      "type": "core.interaction.chat",
+                      "id": "on-question",
+                      "fields": {
+                        "NAME": "输入待统计的文字"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.model.score",
+                          "id": "candidate-score",
+                          "fields": {
+                            "FALLBACK": "unknown",
+                            "LABELS": "[{\"id\":\"geography\",\"description\":\"Geography and location information\"},{\"id\":\"sports\",\"description\":\"Sports and athlete information\"}]",
+                            "RESOURCE": "agent-model",
+                            "RULES": "[{\"contains\":\"scoreboard\",\"label\":\"sports\"}]",
+                            "SOURCE": "input",
+                            "THRESHOLD": "0"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.output.answer",
+                              "id": "decision-answer",
+                              "fields": {
+                                "STYLE": "段落"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "x": 80,
+                "y": 70
+              },
+              "payload": {
+                "fields": {
+                  "ROLE": "请说明当前作品并保持功能"
+                }
+              }
+            }
+          ],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "learned-routing-accepted.blocky",
+            "bytes": 2309,
+            "sha256": "41fb9eb3f82b40bea1ae43d5e84da9f9301c4376ce6d03cb28bac6e9b8412eb4"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reopen-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.inspect",
+        "data": {
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "displayName": "英文候选评分",
+          "digest": "36d328156902b138f70e05fca6f27249454a487c01d0922c8f06b9335e5dbfa5",
+          "modules": [
+            {
+              "moduleId": "research-agent",
+              "displayName": "文本分析",
+              "purpose": "agent",
+              "workspaceRef": "workspaces/research-agent.workspace.json",
+              "exports": [
+                {
+                  "exportId": "analyze",
+                  "displayName": "文本分析",
+                  "kind": "agent",
+                  "inputSchemaRef": "schemas/text-input.json",
+                  "outputSchemaRef": "schemas/text-result.json"
+                }
+              ]
+            }
+          ],
+          "resources": [
+            {
+              "resourceId": "agent-model",
+              "kind": "model",
+              "scope": "project"
+            },
+            {
+              "resourceId": "text-tool",
+              "kind": "tool",
+              "scope": "project"
+            }
+          ],
+          "surfaces": [],
+          "diagnostics": [],
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "validate-reopen-learned-routing",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.validate",
+        "data": {
+          "valid": true,
+          "diagnostics": [],
+          "projectDigest": "36d328156902b138f70e05fca6f27249454a487c01d0922c8f06b9335e5dbfa5"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-ui.reduceMotion",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-ui.reduceMotion",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "ui.reduceMotion": true
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-ui.reduceMotion",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-ui.view",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-ui.view",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "ui.view": "beginner"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-ui.view",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-window.minimizeToTray",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-window.minimizeToTray",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "window.minimizeToTray": false
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-window.minimizeToTray",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-terminal.outputBudgetBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-terminal.outputBudgetBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "terminal.outputBudgetBytes": 4096
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-terminal.outputBudgetBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-logs.retentionDays",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-logs.retentionDays",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "logs.retentionDays": 0
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-logs.retentionDays",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-logs.maxStoredBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-logs.maxStoredBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "logs.maxStoredBytes": 65536
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-logs.maxStoredBytes",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-models.defaultResourceId",
+      "exit": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    },
+    {
+      "name": "read-models.defaultResourceId",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {}
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reset-models.defaultResourceId",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "final-settings",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {}
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "cleanup-status",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "tool.cleanup-status",
+        "data": {
+          "activeSessions": 0,
+          "incompleteBytes": 0,
+          "incompleteSessions": 0,
+          "unrecognizedSessions": 0
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    }
+  ]
+}

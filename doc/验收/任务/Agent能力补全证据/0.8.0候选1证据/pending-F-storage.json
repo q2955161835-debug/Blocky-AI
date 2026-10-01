@@ -1,0 +1,74 @@
+[
+  {
+    "path": "apps/studio-host/target",
+    "files": 26088,
+    "logicalBytes": 33128752804,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/native-e2e-target",
+    "files": 8923,
+    "logicalBytes": 4029707099,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/release-native-target",
+    "files": 8781,
+    "logicalBytes": 4071629040,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "tools/blocky-cli/dist",
+    "files": 2591,
+    "logicalBytes": 694467474,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/agent-capability-upgrade/document-runtime",
+    "files": 2430,
+    "logicalBytes": 182276282,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/agent-capability-upgrade/knowledge-models",
+    "files": 19,
+    "logicalBytes": 182941431,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/agent-capability-upgrade/audio-assets",
+    "files": 34,
+    "logicalBytes": 166082609,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/agent-capability-upgrade/license-evidence",
+    "files": 60,
+    "logicalBytes": 117924,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/agent-capability-upgrade/windows-bc/b/mcp/bundle",
+    "files": 3,
+    "logicalBytes": 86992538,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/待清理/A07-首次边界探针-20261001",
+    "files": 3,
+    "logicalBytes": 86992393,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/待清理/d234-acceptance-synthetic",
+    "files": 67,
+    "logicalBytes": 82465,
+    "action": "read-only inventory; retained pending F"
+  },
+  {
+    "path": "try/待清理/e3-acceptance-synthetic",
+    "files": 54,
+    "logicalBytes": 125347,
+    "action": "read-only inventory; retained pending F"
+  }
+]

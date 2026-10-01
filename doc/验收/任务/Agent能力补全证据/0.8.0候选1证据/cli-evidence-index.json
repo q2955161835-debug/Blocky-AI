@@ -1,0 +1,49 @@
+{
+  "sourceCommit": "6ebf551056b536e5986f340e6f85ed221f82576f",
+  "buildSource": "3e33c660670b22d21d715e82b4b38f5423ffe81a",
+  "candidate": "dist/Blocky-Studio-0.8.0-candidate1",
+  "files": [
+    {
+      "file": "cli-results.json",
+      "bytes": 56853,
+      "sha256": "e6fc07098d2258254bb08239e9db0b063da98c4c3cafb4294073c9c33109869f"
+    },
+    {
+      "file": "continuation-results.json",
+      "bytes": 145394,
+      "sha256": "c4da9dc271a17c824da19b4c6cba3d88bba35ad9263db3ab4001299b65756930"
+    },
+    {
+      "file": "flows-results.json",
+      "bytes": 45887,
+      "sha256": "9b5ac65aebf2a2dfe9dc144eee5e025d5b4badd1dd86fd702e454dea5064ebd1"
+    },
+    {
+      "file": "settings-inheritance-results.json",
+      "bytes": 14859,
+      "sha256": "a69e9be3c82b74b3bcfaa144ec6a3332ffa7b9020db9405d0cdae9cbfacfd703"
+    },
+    {
+      "file": "legacy-create.json",
+      "bytes": 402,
+      "sha256": "310458349481c5a799b80f6515b9f84db260e922bee9e4825b17ccfd9fc874ad"
+    },
+    {
+      "file": "legacy-read.json",
+      "bytes": 1364,
+      "sha256": "56dbdde885925b917478633b00eaa973c1f7ef7cbab854aa19602e3ec1336200"
+    },
+    {
+      "file": "legacy-checkpoint.json",
+      "bytes": 532,
+      "sha256": "cd6be13a65acb55a1d7814e83126ad85ae4b169bbfe7dc4a8cc437427e9ae732"
+    },
+    {
+      "file": "legacy-diff.json",
+      "bytes": 383,
+      "sha256": "0af37a73029d30a4a90fc21374bdb5c2373d50114bc8c5f060fd83e41828eeeb"
+    }
+  ],
+  "gui": "deferred-by-user",
+  "full": "deferred-by-user-incomplete-103-360-and-8-30"
+}

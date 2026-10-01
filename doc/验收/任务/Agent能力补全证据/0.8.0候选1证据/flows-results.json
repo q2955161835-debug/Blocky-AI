@@ -1,0 +1,1325 @@
+{
+  "time": "2026-10-01T09:23:12.703Z",
+  "rows": [
+    {
+      "name": "knowledge-add",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.add",
+        "data": {
+          "allowedPrincipals": [
+            "local-user"
+          ],
+          "kind": "file",
+          "metadata": {},
+          "readable": true,
+          "revision": "",
+          "sourceId": "src-3084a1d4-fc23-4efc-8149-da18a10022d5",
+          "title": "public-synthetic.txt"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "knowledge-sync",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.sync",
+        "data": {
+          "status": "completed",
+          "counts": {
+            "added": 1,
+            "updated": 0,
+            "deleted": 0,
+            "skipped": 0,
+            "chunks": 1
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "knowledge-query",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "knowledge.query",
+        "data": {
+          "status": "found",
+          "strategy": "keyword",
+          "citations": [
+            {
+              "id": "chunk-736bdbffea317813cbbe6bfa895c23a78a8d57a44bb3f0aa8af762114f231057",
+              "title": "public-synthetic.txt (public-synthetic.txt · 行 1–1)",
+              "text": "Blocky验收资料：青叶课堂的作业提交截止为星期五。项目负责人为林老师。",
+              "sourceId": "src-3084a1d4-fc23-4efc-8149-da18a10022d5",
+              "documentId": "doc-e306eb0d4721d4b2b61962d7ca81216b2ffdb43b9dc66514075cfce873630a61",
+              "revision": "1dcff3239abfb295ea51d5efefadbc6b90e024223550881e643b5f0060a37bd0",
+              "digest": "f6cd23f1713f1b3b63b5718412b418c8d6d4c98d0692ca6a8a36c1768432d372",
+              "locator": {
+                "path": "public-synthetic.txt",
+                "lineStart": 1,
+                "lineEnd": 1
+              },
+              "score": 0.6799047485109665,
+              "truncated": false,
+              "collectionId": "product-handbook"
+            }
+          ],
+          "contextBytes": 233,
+          "candidateCount": 1,
+          "indexRevision": 4,
+          "generation": 1,
+          "elapsedMs": 102.57590000000002,
+          "cacheHit": false
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "research-runtime",
+      "exit": 0,
+      "value": [
+        {
+          "data": {
+            "summary": "开始运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 1,
+          "timestamp": "2026-10-01T09:23:09.612Z",
+          "type": "run.started"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "blockType": "core.agent",
+            "inputPorts": [
+              "BODY"
+            ],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 2,
+          "timestamp": "2026-10-01T09:23:09.619Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "blockType": "core.interaction.chat",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 3,
+          "timestamp": "2026-10-01T09:23:09.621Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "budget": {
+              "calls": 0,
+              "reservedOutputTokens": 0,
+              "steps": 2
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 4,
+          "timestamp": "2026-10-01T09:23:09.621Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "call-citation",
+          "data": {
+            "blockType": "core.knowledge.retrieve",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 5,
+          "timestamp": "2026-10-01T09:23:09.621Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "call-citation",
+          "correlationId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7-request-4",
+          "data": {
+            "toolId": "tool-research-agent-call-citation"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 6,
+          "timestamp": "2026-10-01T09:23:09.622Z",
+          "type": "tool.started"
+        },
+        {
+          "blockId": "call-citation",
+          "correlationId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7-request-4",
+          "data": {
+            "resultCount": 1,
+            "summary": "检索完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 7,
+          "timestamp": "2026-10-01T09:23:09.724Z",
+          "type": "tool.completed"
+        },
+        {
+          "blockId": "call-citation",
+          "data": {
+            "budget": {
+              "calls": 1,
+              "reservedOutputTokens": 0,
+              "steps": 3
+            },
+            "elapsedMs": 102,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 8,
+          "timestamp": "2026-10-01T09:23:09.724Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "compose-answer",
+          "data": {
+            "blockType": "core.model.compose",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 9,
+          "timestamp": "2026-10-01T09:23:09.724Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "compose-answer",
+          "correlationId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7-request-6",
+          "data": {
+            "summary": "整理资料"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 10,
+          "timestamp": "2026-10-01T09:23:09.724Z",
+          "type": "model.started"
+        },
+        {
+          "blockId": "compose-answer",
+          "correlationId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7-request-6",
+          "data": {
+            "summary": "资料整理完成",
+            "transport": "local"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 11,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "model.completed"
+        },
+        {
+          "blockId": "compose-answer",
+          "data": {
+            "budget": {
+              "calls": 2,
+              "reservedOutputTokens": 0,
+              "steps": 4
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 12,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "reply-answer",
+          "data": {
+            "blockType": "core.output.answer",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 13,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "reply-answer",
+          "data": {
+            "budget": {
+              "calls": 2,
+              "reservedOutputTokens": 0,
+              "steps": 5
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 14,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "budget": {
+              "calls": 2,
+              "reservedOutputTokens": 0,
+              "steps": 5
+            },
+            "elapsedMs": 106,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 15,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "block.completed"
+        },
+        {
+          "data": {
+            "summary": "运行完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-7acd71b6-7bae-4943-92a9-dc62da4a1335",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+          "sequence": 16,
+          "timestamp": "2026-10-01T09:23:09.725Z",
+          "type": "run.completed"
+        },
+        {
+          "artifacts": [],
+          "command": "run.start",
+          "data": {
+            "answer": "相关资料摘录\n\n• Blocky验收资料：青叶课堂的作业提交截止为星期五。项目负责人为林老师。 [public-synthetic.txt (public-synthetic.txt · 行 1–1)]\n\n这些是原文摘录，尚不能确认完整回答了问题。若缺少所问的信息，请补充资料或说明要核对的内容；未说明的事实仍待核实。",
+            "citations": [
+              {
+                "collectionId": "product-handbook",
+                "digest": "f6cd23f1713f1b3b63b5718412b418c8d6d4c98d0692ca6a8a36c1768432d372",
+                "documentId": "doc-e306eb0d4721d4b2b61962d7ca81216b2ffdb43b9dc66514075cfce873630a61",
+                "id": "chunk-736bdbffea317813cbbe6bfa895c23a78a8d57a44bb3f0aa8af762114f231057",
+                "locator": {
+                  "lineEnd": 1,
+                  "lineStart": 1,
+                  "path": "public-synthetic.txt"
+                },
+                "revision": "1dcff3239abfb295ea51d5efefadbc6b90e024223550881e643b5f0060a37bd0",
+                "score": 0.6799047485109665,
+                "sourceId": "src-3084a1d4-fc23-4efc-8149-da18a10022d5",
+                "text": "Blocky验收资料：青叶课堂的作业提交截止为星期五。项目负责人为林老师。",
+                "title": "public-synthetic.txt (public-synthetic.txt · 行 1–1)",
+                "truncated": false
+              }
+            ],
+            "eventCount": 16,
+            "files": [],
+            "generations": [],
+            "modelApiCalled": false,
+            "pendingApprovals": [],
+            "runId": "run-38eb2013-fd6f-4fe6-8607-cca87da3f1c7",
+            "status": "completed"
+          },
+          "nextCursor": null,
+          "ok": true,
+          "schemaVersion": "blocky.cli/v1",
+          "warnings": []
+        }
+      ]
+    },
+    {
+      "name": "cpu-routing-runtime",
+      "exit": 0,
+      "value": [
+        {
+          "data": {
+            "summary": "开始运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 1,
+          "timestamp": "2026-10-01T09:23:10.339Z",
+          "type": "run.started"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "blockType": "core.agent",
+            "inputPorts": [
+              "BODY"
+            ],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 2,
+          "timestamp": "2026-10-01T09:23:10.344Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "blockType": "core.interaction.chat",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 3,
+          "timestamp": "2026-10-01T09:23:10.346Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "on-question",
+          "data": {
+            "budget": {
+              "calls": 0,
+              "reservedOutputTokens": 0,
+              "steps": 2
+            },
+            "elapsedMs": 0,
+            "outputType": "null",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 4,
+          "timestamp": "2026-10-01T09:23:10.346Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "candidate-score",
+          "data": {
+            "blockType": "core.model.score",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 5,
+          "timestamp": "2026-10-01T09:23:10.347Z",
+          "type": "block.started"
+        },
+        {
+          "schemaVersion": "blocky.cli/v1",
+          "ok": true,
+          "command": "run.approval-required",
+          "data": {
+            "kind": "decision",
+            "preview": {
+              "approvalExpiresAt": 1790848390,
+              "experimental": true,
+              "labels": [
+                "geography",
+                "sports"
+              ],
+              "modelId": "ms-marco-minilm-l6-v2-int8-v1",
+              "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+              "requestDigest": "963c37eb35d2f1aba190749b4927462deb65bdc5cd9681aad136caecaad60a61",
+              "requestId": "decision-e94ac75a-514a-4f5d-92fc-1395234cf2d6",
+              "sessionId": "session-run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+              "textBytes": 23
+            },
+            "requestDigest": "963c37eb35d2f1aba190749b4927462deb65bdc5cd9681aad136caecaad60a61"
+          },
+          "warnings": [],
+          "artifacts": [],
+          "nextCursor": null
+        },
+        {
+          "blockId": "candidate-score",
+          "data": {
+            "budget": {
+              "calls": 1,
+              "reservedOutputTokens": 0,
+              "steps": 3
+            },
+            "elapsedMs": 367,
+            "outputType": "object",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 6,
+          "timestamp": "2026-10-01T09:23:10.714Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "decision-answer",
+          "data": {
+            "blockType": "core.output.answer",
+            "inputPorts": [],
+            "summary": "正在运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 7,
+          "timestamp": "2026-10-01T09:23:10.714Z",
+          "type": "block.started"
+        },
+        {
+          "blockId": "decision-answer",
+          "data": {
+            "budget": {
+              "calls": 1,
+              "reservedOutputTokens": 0,
+              "steps": 4
+            },
+            "elapsedMs": 0,
+            "outputType": "object",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 8,
+          "timestamp": "2026-10-01T09:23:10.714Z",
+          "type": "block.completed"
+        },
+        {
+          "blockId": "research-root",
+          "data": {
+            "budget": {
+              "calls": 1,
+              "reservedOutputTokens": 0,
+              "steps": 4
+            },
+            "elapsedMs": 370,
+            "outputType": "object",
+            "summary": "已完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "moduleId": "research-agent",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 9,
+          "timestamp": "2026-10-01T09:23:10.714Z",
+          "type": "block.completed"
+        },
+        {
+          "data": {
+            "summary": "运行完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+          "redaction": {
+            "applied": false,
+            "categories": []
+          },
+          "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+          "sequence": 10,
+          "timestamp": "2026-10-01T09:23:10.714Z",
+          "type": "run.completed"
+        },
+        {
+          "artifacts": [],
+          "command": "run.start",
+          "data": {
+            "answer": "{\"backendInvoked\":true,\"candidateScores\":[{\"label\":\"geography\",\"score\":-7.588470935821533},{\"label\":\"sports\",\"score\":-11.065589904785156}],\"errorCode\":\"BLK-DECISION-BELOW-THRESHOLD\",\"experimental\":true,\"inferenceMs\":214,\"inputPolicy\":\"english-pair-truncate512-logit-v1\",\"label\":\"unknown\",\"mode\":\"fallback\",\"modelId\":\"ms-marco-minilm-l6-v2-int8-v1\",\"modelSha256\":\"e9d8ebf845c413e981c175bfe49a3bfa9b3dcce2a3ba54875ee5df5a58639fbe\",\"modelVersion\":\"a09144355adeed5f58c8ed011d209bf8ee5a1fec\",\"projectId\":\"project-2128fe88-fce4-4acc-9788-5d06f40dc4da\",\"requestId\":\"decision-e94ac75a-514a-4f5d-92fc-1395234cf2d6\",\"ruleIndex\":null,\"schemaVersion\":\"blocky.decision-record/v1\",\"score\":-7.588470935821533,\"scoreKind\":\"logit\",\"scoreMeaning\":\"relevance-logit-not-probability\",\"sessionId\":\"session-run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069\",\"threshold\":0}",
+            "citations": [],
+            "eventCount": 10,
+            "files": [],
+            "generations": [],
+            "modelApiCalled": false,
+            "pendingApprovals": [],
+            "runId": "run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+            "status": "completed",
+            "structured": {
+              "backendInvoked": true,
+              "candidateScores": [
+                {
+                  "label": "geography",
+                  "score": -7.588470935821533
+                },
+                {
+                  "label": "sports",
+                  "score": -11.065589904785156
+                }
+              ],
+              "errorCode": "BLK-DECISION-BELOW-THRESHOLD",
+              "experimental": true,
+              "inferenceMs": 214,
+              "inputPolicy": "english-pair-truncate512-logit-v1",
+              "label": "unknown",
+              "mode": "fallback",
+              "modelId": "ms-marco-minilm-l6-v2-int8-v1",
+              "modelSha256": "e9d8ebf845c413e981c175bfe49a3bfa9b3dcce2a3ba54875ee5df5a58639fbe",
+              "modelVersion": "a09144355adeed5f58c8ed011d209bf8ee5a1fec",
+              "projectId": "project-2128fe88-fce4-4acc-9788-5d06f40dc4da",
+              "requestId": "decision-e94ac75a-514a-4f5d-92fc-1395234cf2d6",
+              "ruleIndex": null,
+              "schemaVersion": "blocky.decision-record/v1",
+              "score": -7.588470935821533,
+              "scoreKind": "logit",
+              "scoreMeaning": "relevance-logit-not-probability",
+              "sessionId": "session-run-2ff7a4c6-c61c-47fb-be46-a6a5a60a5069",
+              "threshold": 0
+            }
+          },
+          "nextCursor": null,
+          "ok": true,
+          "schemaVersion": "blocky.cli/v1",
+          "warnings": []
+        }
+      ]
+    },
+    {
+      "name": "project-terminal-override",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.settings.set",
+        "data": {
+          "digest": "a03b5cd93bf9d16a4f2e3c997c3789d7b4f70e47e352a76f3d8cca445324dd8c",
+          "diagnostics": []
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-project-override",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.settings.list",
+        "data": {
+          "settings": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": "",
+              "resolved": {
+                "value": "",
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false,
+              "resolved": {
+                "value": false,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional",
+              "resolved": {
+                "value": "professional",
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true,
+              "resolved": {
+                "value": true,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536,
+              "resolved": {
+                "value": 8192,
+                "source": "project"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7,
+              "resolved": {
+                "value": 7,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760,
+              "resolved": {
+                "value": 10485760,
+                "source": "default"
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "project-reset-inherit",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.settings.reset",
+        "data": {
+          "digest": "40bb86fc8e80cc8494772f6c1f5f91723f26580af554d202cfb993dc89b50baa",
+          "diagnostics": []
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "read-project-inherit",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.settings.list",
+        "data": {
+          "settings": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": "",
+              "resolved": {
+                "value": "",
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false,
+              "resolved": {
+                "value": false,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional",
+              "resolved": {
+                "value": "professional",
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true,
+              "resolved": {
+                "value": true,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536,
+              "resolved": {
+                "value": 65536,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7,
+              "resolved": {
+                "value": 7,
+                "source": "default"
+              }
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760,
+              "resolved": {
+                "value": 10485760,
+                "source": "default"
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "register-default",
+      "exit": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.set",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "set-valid-default",
+      "exit": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    }
+  ]
+}

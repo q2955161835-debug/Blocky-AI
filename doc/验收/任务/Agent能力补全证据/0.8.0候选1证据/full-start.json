@@ -1,0 +1,7 @@
+{
+  "attempt": 5,
+  "sourceCommit": "3e33c660670b22d21d715e82b4b38f5423ffe81a",
+  "shortened": false,
+  "startedAt": "2026-10-01T16:44:28.3268940+08:00",
+  "command": "pnpm check:full"
+}
