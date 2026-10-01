@@ -1,0 +1,30 @@
+
+Execution of 1 workers started at 2026-10-01T14:27:29.522Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+[0-0] BLOCKY_PERFORMANCE {"schemaVersion":"blocky.performance/v1","environment":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0","hardwareConcurrency":24,"width":1163,"height":858,"dpr":1.0499999523162842},"load":{"samplesMs":[74,79.30000000447035,61.600000001490116,62.79999999701977,64.70000000298023],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":64.70000000298023},"saveCompile":{"samplesMs":[3.5,3.0999999940395355,2.5,2.7999999970197678,2.2999999970197678],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":2.7999999970197678},"runtime":{"samplesMs":[34.69999999552965,30.80000000447035,30.5,34.899999998509884,31.80000000447035],"observedBlockCounts":[100,100,100,100,100],"observedNodeCounts":[100,100,100,100,100],"medianMs":31.80000000447035}}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":60,"roundTrips":5,"elapsedMs":300454}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":120,"roundTrips":10,"elapsedMs":600911}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":180,"roundTrips":15,"elapsedMs":901360}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":240,"roundTrips":20,"elapsedMs":1201720}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":300,"roundTrips":25,"elapsedMs":1502151}
+[0-0] BLOCKY_SOAK_PROGRESS {"cycle":360,"roundTrips":30,"elapsedMs":1802539}
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/core.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 154.0.0.0 windows #0-0] Running: msedge (v154.0.0.0) on windows
+[msedge 154.0.0.0 windows #0-0] Session ID: 5ea7e465-fc46-43fc-8e5f-96191840610b
+[msedge 154.0.0.0 windows #0-0]
+[msedge 154.0.0.0 windows #0-0] 禄 tests\e2e\core.e2e.ts
+[msedge 154.0.0.0 windows #0-0] formal native Core gates
+[msedge 154.0.0.0 windows #0-0]    鉁?measures 100 blocks and 100 executed nodes with five post-warmup samples
+[msedge 154.0.0.0 windows #0-0]    鉁?preflights actual editor undo, runtime and a Rust archive round trip
+[msedge 154.0.0.0 windows #0-0]    鉁?rejects new runs while hidden and restores authorization through the existing instance
+[msedge 154.0.0.0 windows #0-0]    鉁?completes all 360 five-second cycles and 30 native archive round trips
+[msedge 154.0.0.0 windows #0-0]
+[msedge 154.0.0.0 windows #0-0] 4 passing (30m 8.5s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:30:15  
+

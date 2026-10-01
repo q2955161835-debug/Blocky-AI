@@ -1,0 +1,42 @@
+
+> blocky-studio@0.8.0 test:e2e D:\1Folder\Blocky-AI
+> wdio run tests/e2e/wdio.conf.ts
+
+
+Execution of 1 workers started at 2026-10-01T14:32:23.777Z
+
+[0-0] RUNNING in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 216
+[0-0] WEBVIEW_ERROR JSON error: invalid type: null, expected u32 at line 1 column 133
+[0-0] WEBVIEW_ERROR Connecting to 'http://ipc.localhost/clear_diagnostics' violates the following Content Security Policy directive: "connect-src 'none'". The action has been blocked.
+[0-0] WEBVIEW_ERROR Fetch API cannot load http://ipc.localhost/clear_diagnostics. Refused to connect because it violates the document's Content Security Policy.
+[0-0] PASSED in undefined - file:///D:/1Folder/Blocky-AI/tests/e2e/studio.e2e.ts
+
+ "spec" Reporter:
+------------------------------------------------------------------
+[msedge 154.0.0.0 windows #0-0] Running: msedge (v154.0.0.0) on windows
+[msedge 154.0.0.0 windows #0-0] Session ID: b8465788-e8b4-432d-bd71-384f6e10ca32
+[msedge 154.0.0.0 windows #0-0]
+[msedge 154.0.0.0 windows #0-0] 禄 tests\e2e\studio.e2e.ts
+[msedge 154.0.0.0 windows #0-0] Blocky native editor
+[msedge 154.0.0.0 windows #0-0]    鉁?queries durable RPA receipts through the native desktop entry
+[msedge 154.0.0.0 windows #0-0]    鉁?navigates the real canvas with outline and overview without editing the project
+[msedge 154.0.0.0 windows #0-0]    鉁?keeps the canvas usable with either or both sidebars hidden
+[msedge 154.0.0.0 windows #0-0]    鉁?opens a starter and preserves legacy multi-module runtime and navigation behavior
+[msedge 154.0.0.0 windows #0-0]    鉁?focuses the canvas after a blank click so Tab opens block search
+[msedge 154.0.0.0 windows #0-0]    鉁?opens shared commands, restores closed tabs and keeps two workspaces
+[msedge 154.0.0.0 windows #0-0]    鉁?generates a local builder proposal, renders actual readonly blocks, rejects and accepts with undo
+[msedge 154.0.0.0 windows #0-0]    鉁?opens a previously accepted legacy surface, runs the isolated page and reopens its tab
+[msedge 154.0.0.0 windows #0-0]    鉁?operates a generated task page with attachment, approval, progress, viewport and preview lifecycle
+[msedge 154.0.0.0 windows #0-0]    鉁?keeps a native task running behind a collapsed panel and exposes truncation and diagnostic controls
+[msedge 154.0.0.0 windows #0-0]    鉁?runs stage 4 conditional JSON output and saves new semantics through native storage
+[msedge 154.0.0.0 windows #0-0]    鉁?creates an architecture starter and retains state through desktop input runs
+[msedge 154.0.0.0 windows #0-0]    鉁?renders four code badges and persistent markers without modifying the project
+[msedge 154.0.0.0 windows #0-0]    鉁?renders and runs parallel branches in the native editor
+[msedge 154.0.0.0 windows #0-0]    鉁?persists runtime correlation metadata and filters the output view
+[msedge 154.0.0.0 windows #0-0]
+[msedge 154.0.0.0 windows #0-0] 15 passing (26.3s)
+
+
+Spec Files:	 1 passed, 1 total (100% completed) in 00:00:33  
+
