@@ -14,4 +14,4 @@ vendor/models/licenses/** whitespace=-trailing-space
 doc/验收/任务/阶段1证据/** -text
 doc/验收/任务/阶段2证据/** -text
 # Candidate evidence receipts retain their signed byte hashes across checkouts.
-doc/验收/任务/Agent能力补全证据/0.8.0候选1证据/** -text whitespace=cr-at-eol
+doc/验收/任务/Agent能力补全证据/0.8.0候选*证据/** -text whitespace=cr-at-eol
