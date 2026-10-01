@@ -124,6 +124,7 @@ async function startDesktop(request: unknown) {
     const value = await desktop.run(request, abort.signal, (value) =>
       send({ kind: "event", value }),
     );
+    if(inputClosed)throw Error("BLK-WORKFLOW-CHANNEL");
     send({ kind: "desktop-done", value });
   } catch {
     process.exitCode = 3;
@@ -240,6 +241,7 @@ process.stdin.on("data", (chunk: string) => {
   }
 });
 process.stdin.on("end", () => {
+  if(!inputClosed)process.exitCode=3;
   inputClosed = true;
   abort.abort();
   finish();

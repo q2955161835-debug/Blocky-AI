@@ -119,12 +119,14 @@ it("fails promptly when the desktop owner disconnects during a service reply", a
   let text = "",
     disconnected = false,
     forced = false;
+  const received: {kind:string}[]=[];
   child.stdout.setEncoding("utf8");
   child.stdout.on("data", (chunk) => {
     text += chunk;
     let end: number;
     while ((end = text.indexOf("\n")) >= 0) {
       const frame = JSON.parse(text.slice(0, end));
+      received.push(frame);
       text = text.slice(end + 1);
       if (
         frame.kind === "workflow" &&
@@ -163,6 +165,8 @@ it("fails promptly when the desktop owner disconnects during a service reply", a
     expect(disconnected).toBe(true);
     expect(forced).toBe(false);
     expect(code).toBe(3);
+    expect(received.some(frame=>frame.kind==='desktop-done')).toBe(false);
+    expect(received.some(frame=>frame.kind==='error')).toBe(true);
   } finally {
     clearTimeout(timer);
     if (child.exitCode === null) child.kill();
