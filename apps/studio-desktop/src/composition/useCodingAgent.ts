@@ -5,6 +5,7 @@ import { parseProject, projectDigest } from "@blocky/project-model";
 import { encodeProject } from "@blocky/project-format";
 import {
   parseCodingStart,
+  codingTextPrefix,
   codingEventSchema,
   codingResultSchema,
   codingChangeSchema,
@@ -364,7 +365,7 @@ export function useCodingAgent(studio: Studio) {
         {
           id: `${id}-answer`,
           role: "assistant",
-          text: text.slice(0, 16000),
+          text: codingTextPrefix(text, 16000),
           status,
         },
       ]);

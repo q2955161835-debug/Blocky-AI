@@ -242,3 +242,18 @@ export function parseCodingStart(input: unknown): CodingStart {
     throw Error("BLK-CODING-INPUT");
   }
 }
+
+/** Bound UTF-16 units without sending an unpaired surrogate through native JSON. */
+export function codingTextPrefix(text: string, limit: number): string {
+  let end = Math.min(text.length, limit);
+  if (
+    end > 0 &&
+    end < text.length &&
+    text.charCodeAt(end - 1) >= 0xd800 &&
+    text.charCodeAt(end - 1) <= 0xdbff &&
+    text.charCodeAt(end) >= 0xdc00 &&
+    text.charCodeAt(end) <= 0xdfff
+  )
+    end--;
+  return text.slice(0, end);
+}

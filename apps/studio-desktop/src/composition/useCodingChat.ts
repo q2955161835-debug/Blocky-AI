@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   codingMessageSchema,
+  codingTextPrefix,
   codingChatStateSchema,
   type CodingMessage,
 } from "@blocky/builder-protocol";
@@ -28,7 +29,7 @@ export function codingContext(messages: CodingMessage[]) {
       role,
       text:
         status && status !== "completed"
-          ? `[${status}] ${text}`.slice(0, 16000)
+          ? codingTextPrefix(`[${status}] ${text}`, 16000)
           : text,
     }))
     .reverse()

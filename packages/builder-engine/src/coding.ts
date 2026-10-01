@@ -12,6 +12,7 @@ import {
 import type { TSchema } from "typebox";
 import {
   codingTools,
+  codingTextPrefix,
   parseCodingStart,
   codingChangeSchema,
   codingEventSchema,
@@ -297,8 +298,9 @@ export async function runCodingAgent(
               contentIndex: i,
               partial: output,
             });
-            for (let offset = 0; offset < delta.length; offset += 16384) {
-              const chunk = delta.slice(offset, offset + 16384);
+            for (let offset = 0; offset < delta.length; ) {
+              const chunk = codingTextPrefix(delta.slice(offset), 16384);
+              offset += chunk.length;
               emit("text.delta", { text: chunk });
               stream.push({
                 type: "text_delta",

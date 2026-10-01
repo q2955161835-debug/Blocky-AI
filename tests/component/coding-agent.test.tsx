@@ -426,3 +426,27 @@ it("does not place a late manual-undo error into another project's conversation"
   expect(hook.result.current.error).toBe("");
   expect(hook.result.current.changes).toEqual([]);
 });
+
+it("preserves valid Unicode when saved answers and status-prefixed history are clipped", async () => {
+  const context = codingContext([
+    {
+      id: "message-1",
+      role: "assistant",
+      status: "failed",
+      text: "a".repeat(15990) + "😀",
+    },
+  ]);
+  expect(/\p{Surrogate}/u.test(context[0].text)).toBe(false);
+  const s = studio();
+  native.mockImplementation(async (name, args) =>
+    name === "coding_run"
+      ? { ...(await result(args.start)), text: "a".repeat(15999) + "😀" }
+      : storage(name, args),
+  );
+  const hook = renderHook(() => useCodingAgent(s));
+  await waitFor(() => expect(hook.result.current.ready).toBe(true));
+  await act(() =>
+    hook.result.current.generate({ prompt: "解释", resourceId: "my-model" }),
+  );
+  expect(hook.result.current.messages.at(-1)?.text).toBe("a".repeat(15999));
+});

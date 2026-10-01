@@ -259,3 +259,21 @@ it("bounds output and rejects malformed Host change/project projections", async 
   expect(result.changes).toEqual([]);
   expect(result.project).toBeUndefined();
 });
+
+it("does not split emoji surrogate pairs across streaming frames", async () => {
+  const text = "a" + "😀".repeat(8192);
+  const result = await runCodingAgent(start, {
+    modelId: "fixture",
+    generate: async () => generation([{ type: "text", text }]),
+    executeTool: async () => ({}),
+  });
+  const chunks = result.events
+    .filter((event) => event.kind === "text.delta")
+    .map((event) => event.text!);
+  expect(chunks.join("")).toBe(text);
+  expect(
+    chunks.every(
+      (chunk) => chunk.length <= 16384 && !/\p{Surrogate}/u.test(chunk),
+    ),
+  ).toBe(true);
+});
