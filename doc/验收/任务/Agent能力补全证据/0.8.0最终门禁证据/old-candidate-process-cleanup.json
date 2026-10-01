@@ -1,0 +1,11 @@
+{
+  "ordinaryNaturalExitEvidence": false,
+  "at": "2026-10-01T23:30:19.5145100+08:00",
+  "exe": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate1\\Blocky Studio.exe",
+  "forcedCleanup": true,
+  "profile": "try/agent-capability-upgrade/final-delivery/profile",
+  "reason": "Retire prior synthetic candidate1 test",
+  "foregroundWasDifferent": true,
+  "pid": 107924,
+  "stopped": true
+}

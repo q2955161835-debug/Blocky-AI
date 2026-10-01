@@ -1,0 +1,78 @@
+[
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\host-build-cache",
+    "files": 26088,
+    "logicalBytes": 33149111184,
+    "operation": "move",
+    "startedAt": "2026-10-01T23:20:42.505259+08:00",
+    "completedAt": "2026-10-01T23:20:42.5415081+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\native-test-build-cache",
+    "files": 8929,
+    "logicalBytes": 4030840496,
+    "operation": "move",
+    "startedAt": "2026-10-01T23:20:44.7457479+08:00",
+    "completedAt": "2026-10-01T23:20:44.7677134+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\release-build-cache",
+    "files": 8791,
+    "logicalBytes": 4074270659,
+    "operation": "move",
+    "startedAt": "2026-10-01T23:20:46.9913117+08:00",
+    "completedAt": "2026-10-01T23:20:47.0178654+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\model-providers",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\model-provider-development",
+    "files": 293,
+    "logicalBytes": 2975962,
+    "operation": "move",
+    "startedAt": "2026-10-01T23:20:47.2074556+08:00",
+    "completedAt": "2026-10-01T23:20:47.2776573+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate1",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\candidate1",
+    "files": 2595,
+    "logicalBytes": 767921068,
+    "operation": "move",
+    "completedAt": "2026-10-01T23:31:16.0658561+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\candidate2",
+    "files": 2595,
+    "logicalBytes": 767921068,
+    "operation": "move",
+    "completedAt": "2026-10-01T23:31:16.6256311+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\candidate3",
+    "files": 2595,
+    "logicalBytes": 768101724,
+    "operation": "move",
+    "completedAt": "2026-10-01T23:31:17.1656908+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\raw-delivery-evidence",
+    "files": 4752,
+    "logicalBytes": 441048594,
+    "operation": "move",
+    "completedAt": "2026-10-01T23:31:19.8620814+08:00"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-gates",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-01-Agent能力0.8.0\\raw-native-gates",
+    "files": 1437,
+    "logicalBytes": 152682380,
+    "operation": "move",
+    "completedAt": "2026-10-01T23:31:27.0819621+08:00"
+  }
+]
