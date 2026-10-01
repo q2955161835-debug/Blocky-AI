@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { createInterface } from "node:readline/promises";
 import {
   Runtime,
@@ -30,23 +29,26 @@ const hashSchema = /^[a-f0-9]{64}$/u;
 const idError = () => new CliError(2, "BLK-CLI-002", "触发器参数必须使用稳定 ID 和有效修订。", "运行 blocky --help 查看 trigger 命令格式。");
 
 export const triggerHelp = [
-  "trigger create <project.blocky> --id <id> --module <id> --entry <id> --enabled true [--type timer --at <epoch-ms> [--interval-ms <ms>] [--time-zone UTC|+08:00] [--misfire skip|latest] | --type external --source <id>] [--approve <sha256>] [--interactive] --json",
-  "trigger list <project.blocky> [--approve <sha256>] [--interactive] --json",
-  "trigger pause <project.blocky> --id <id> --revision <n> --paused true|false [--approve <sha256>] [--interactive] --json",
+  "trigger create <project.blocky> --id <id> --module <id> --entry <id> --enabled true [--type timer --at <epoch-ms> [--interval-ms <ms>] [--time-zone UTC|+08:00] [--misfire skip|latest] | --type external --source <id>] [--session-id <id> --request-id <id> --approve <sha256>] [--interactive] --json",
+  "trigger list <project.blocky> [--session-id <id> --request-id <id> --approve <sha256>] [--interactive] --json",
+  "trigger pause <project.blocky> --id <id> --revision <n> --paused true|false [--session-id <id> --request-id <id> --approve <sha256>] [--interactive] --json",
   "trigger run|watch <project.blocky> --id <id> --enabled true --simulate|--live [--session-id <id> --request-id <id>] [--approve <sha256>] [--approval-file <sha256-array.json>] [--interactive] [--interval-ms <ms>] --jsonl",
   "trigger listen <project.blocky> --id <id> --secret-ref <stable-ref> --enabled true --simulate|--live [--session-id <id> --request-id <id>] [--approve <sha256>] [--approval-file <sha256-array.json>] [--interactive] --jsonl",
 ];
 
-function requestId(projectId: string, action: string, fields: Record<string, unknown>) {
-  const hash = createHash("sha256").update(JSON.stringify({ projectId, action, fields })).digest("hex").slice(0, 32);
-  return `trigger-${hash}`;
+function operationIdentity(args:Args){
+  if(args.options.has("approve")&&(!args.options.has("request-id")||!args.options.has("session-id")))
+    throw new CliError(2,"BLK-CLI-002","批准触发器预检时须保留返回的请求和会话 ID。","传入同次预检的 --request-id、--session-id 和 --approve，或使用 --interactive 完成新请求。");
+  const requestId=args.options.has("request-id")?required(args,"request-id"):`trigger-${crypto.randomUUID()}`;
+  const sessionId=args.options.has("session-id")?required(args,"session-id"):`trigger-session-${crypto.randomUUID()}`;
+  if(!idSchema(requestId)||!idSchema(sessionId))throw idError();
+  return {requestId,sessionId};
 }
-function requestFor(projectId: string, sessionId: string, action: TriggerRequest["action"], fields: Record<string, unknown>) {
+function requestFor(projectId: string, args:Args, action: TriggerRequest["action"], fields: Record<string, unknown>) {
   const request = triggerRequestSchema.safeParse({
     schemaVersion: "blocky.trigger-request/v1",
-    requestId: requestId(projectId, action, fields),
+    ...operationIdentity(args),
     projectId,
-    sessionId,
     action,
     ...fields,
   });
@@ -104,7 +106,7 @@ async function oneShot(
     requestDigest = String((preview as { requestDigest: string }).requestDigest);
     const approved = await promptApproval(args, write, { kind: "trigger", requestDigest, preview }, signal);
     if (!approved) {
-      const result = envelope("trigger.preflight", { request, preview, requiresApproval: true, next: "repeat this command with --approve and the returned requestDigest" });
+      const result = envelope("trigger.preflight", { request, preview, requiresApproval: true, next: "repeat this command with the returned request.requestId as --request-id, request.sessionId as --session-id, and preview.requestDigest as --approve" });
       result.ok = false;
       return { code: 4, result };
     }
@@ -127,9 +129,7 @@ async function sessionApproval(
   write: (value: unknown) => void,
   signal: AbortSignal,
 ) {
-  const requestIdValue = args.options.has("request-id") ? required(args, "request-id") : `trigger-${crypto.randomUUID()}`;
-  const sessionId = args.options.has("session-id") ? required(args, "session-id") : `trigger-session-${crypto.randomUUID()}`;
-  if (!idSchema(requestIdValue) || !idSchema(sessionId)) throw idError();
+  const {requestId:requestIdValue,sessionId}=operationIdentity(args);
   const context = { schemaVersion: "blocky.trigger-session/v1", requestId: requestIdValue, projectId, sessionId } as const;
   const preview = await nativeUserOperation("agent-trigger-session-preflight", { request: context }, signal) as { requestDigest?: unknown };
   if (!preview || typeof preview.requestDigest !== "string" || !hashSchema.test(preview.requestDigest))
@@ -162,7 +162,7 @@ export async function triggerCommand(
   signal.throwIfAborted();
   const action = args.words[1];
   if (action === "create") {
-    validateInput(args, ["id", "module", "entry", "type", "source", "at", "interval-ms", "time-zone", "misfire", "enabled", "approve", "interactive", "json"], 3);
+    validateInput(args, ["id", "module", "entry", "type", "source", "at", "interval-ms", "time-zone", "misfire", "enabled", "approve", "request-id", "session-id", "interactive", "json"], 3);
     if (required(args, "enabled") !== "true") throw new CliError(2, "BLK-TRIGGER-OPT-IN", "创建触发器必须显式指定 --enabled true。");
     const project = await readProject(args.words[2]);
     const registry = await userRegistryMap();
@@ -191,26 +191,25 @@ export async function triggerCommand(
       moduleId, exportId, revision: 1, enabled: true, ...triggerBody,
     });
     if (!config.success) throw idError();
-    const session = `session-${requestId(project.manifest.projectId, "upsert", { config: config.data, expectedRevision: null }).slice("trigger-".length)}`;
-    const request = requestFor(project.manifest.projectId, session, "upsert", { config: config.data, expectedRevision: null });
+    const request = requestFor(project.manifest.projectId, args, "upsert", { config: config.data, expectedRevision: null });
     return oneShot(args, request, write, signal);
   }
 
   if (action === "list") {
-    validateInput(args, ["approve", "interactive", "json"], 3);
+    validateInput(args, ["approve", "request-id", "session-id", "interactive", "json"], 3);
     const project = await readProject(args.words[2]);
-    const request = requestFor(project.manifest.projectId, `session-${requestId(project.manifest.projectId, "list", {})}`, "list", {});
+    const request = requestFor(project.manifest.projectId, args, "list", {});
     return oneShot(args, request, write, signal);
   }
 
   if (action === "pause") {
-    validateInput(args, ["id", "revision", "paused", "approve", "interactive", "json"], 3);
+    validateInput(args, ["id", "revision", "paused", "approve", "request-id", "session-id", "interactive", "json"], 3);
     const project = await readProject(args.words[2]);
     const triggerId = required(args, "id"), revision = integer(args, "revision", 1, Number.MAX_SAFE_INTEGER);
     const pausedValue = required(args, "paused");
     if (!idSchema(triggerId) || !["true", "false"].includes(pausedValue)) throw idError();
     const fields = { triggerId, expectedRevision: revision, paused: pausedValue === "true" };
-    const request = requestFor(project.manifest.projectId, `session-${requestId(project.manifest.projectId, "pause", fields)}`, "pause", fields);
+    const request = requestFor(project.manifest.projectId, args, "pause", fields);
     return oneShot(args, request, write, signal);
   }
 
@@ -332,6 +331,11 @@ export async function triggerCommand(
       if (outcome.kind === "blocked") blocked = true;
     });
     return { code: blocked ? 4 : signal.aborted ? 7 : 0, result: envelope("trigger.watch", { stopped: true, blocked, modelApiCalled }) };
+  } catch(error) {
+    if(error instanceof CliError)throw error;
+    if(error instanceof Error&&/^BLK-TRIGGER-(?:[A-Z0-9]+-)*[A-Z0-9]+$/u.test(error.message))
+      throw new CliError(3,error.message,"触发器请求未完成。","运行 trigger list 核对配置修订与已登记事件；claimed 需先核验原工作流，不要自动重投。检查时间和项目入口后重新授权。");
+    throw error;
   } finally {
     await transport.close();
   }

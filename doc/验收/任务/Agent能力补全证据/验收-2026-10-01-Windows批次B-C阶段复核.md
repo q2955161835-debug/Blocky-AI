@@ -11,10 +11,10 @@
 | 知识摄取 / 增量、撤权、共享 CLI 流程 | A04 / L3 | 通过（领域阶段） | 详细报告 3 |
 | 资料问答 / 冻结问题集、真实模型判断及引用 | A05 / L2 | 通过 | 详细报告 4 |
 | 自主办事 / 实际模型决定两次工具调用、控制流与停止 | A06 / L3 | 通过 | 详细报告 5 |
-| 工具连接 / HTTP 与 MCP 协商、调用、权限、结算 | A07 / L3 | 有条件通过 | 详细报告 6：历史异常未归因 |
+| 工具连接 / HTTP 与 MCP 协商、调用、权限、结算 | A07 / L3 | 通过（当前共享领域） | 详细报告6及启动边界修复复验追加；旧异常保留历史限制 |
 | 搭建与操作 / 连续追问及停止、项目隔离 | A15 / L2 | 相关共享领域通过；完整项未执行 | 详细报告 7 |
 
-最终结论：**有条件通过**。当前 Windows 领域实测已完成，但两次旧 Host MCP `BLK-TOOL-OWNERSHIP` 尚未归因；不得依据本报告合并或发布。普通包原生 GUI、完整 Core/Full、三个核心作品和 F 最终验收仍待执行。
+最终结论：**通过**（本阶段共享领域，2026-10-01 15:45更新）。A07已知启动前失败/未知副作用恢复分类已修复并独立复验；旧OWNERSHIP底层原因不可追溯，保持历史证据限制。普通包、完整A15及F未执行，本报告不作为最终发布或交付依据。
 
 ## 详细报告
 
@@ -145,3 +145,25 @@ HTTP 12 场景通过，覆盖实际 Unicode GET、输入/输出 Schema、审批�
 A07仍为**有条件通过**：现有执行及明确审批恢复路径可用；已知prelaunch失败分类尚未改正/验收。此次已收窄旧历史风险为“底层旧失败不可追溯；当前恢复状态分层有明确问题”，不再把幸运重复通过当成风险闭环。阶段总结论保留有条件通过，F未执行。
 
 86MB原bundle仍位于原完整路径，未删除、未移动，后续集中复验仍可复用；本追加未产生工作区外文件。新增合成诊断探针与无秘密记录仅在windows-bc/b下。
+
+
+## A07 启动边界修复独立复验追加（2026-10-01 15:34 ~ 15:45）
+
+当前共享领域结论：**通过**。先前有条件通过涉及的现存恢复分类问题已闭环；未追溯性声称旧底层OWNERSHIP已修复。F/普通包未执行。
+
+绑定Host SHA256 `7050ee045128632044528b3b959a6bde458da2bc875f39277bbbe3ba6f91a36f`，MCP实际复验CLI SHA256 `9edcd2fa4667ba3e7834ea966020cd24d069348e870b70a2c3c61791fa1455f0`。后续仅CLI EVAL输出重打的5cc6784d工件不替代此前MCP来源。未修改产品源码；真实大模型API调用：否。
+
+| 用户功能 / 使用场景 | 结果 | 实际证据 |
+|---|---|---|
+| 启动失败后重试 / 合法登记bundle含不可执行PE | 通过 | 实际CreateProcess前失败BLK-WORKFLOW-OWNER，receipt failed |
+| 修正后执行 / 替换有效Node，新request审批运行 | 通过 | 实际count words=2；旧request依然PERM-001拒绝重放 |
+| 已启动未知结果 / 真stdio执行exit后断连 | 通过 | BLK-MCP-CLOSED，receipt unknown，新idRECOVERY-REQUIRED |
+| 明确结算后恢复 / 原生审批reconcile | 通过 | confirmed-not-applied后新id成功，未自动重投旧id |
+| 历史状态 / 旧count OWNERSHIP unknown | 通过 | 新Host读取保持unknown，未自动迁移 |
+| 权限清单错误 / strict manifest故障 | 通过 | 新源码原生manifest测试1/1，boundary=false |
+| 账本直接影响链 | 通过 | 独立gateway定向8/8，含活跃HTTP取消仍未知/恢复 |
+| 退出 / 状态与owned进程 | 通过 | active/incomplete/unrecognized0；owned0 |
+
+修复使用仅Host内部 `EffectState` 和AtomicBool，stdio在Worker.resume调用前设置MayHaveStarted（包括resume可能错误），启动前检查和写入仍NotStarted。Receipt据可信状态结算，而非按错误字符串判断；HTTP保守未知副作用规则保持。源码审阅确认脚本初始化也被视为可能副作用，没有等待tools/call后才跨越边界。
+
+证据：`try/agent-capability-upgrade/windows-bc/b/mcp-boundary-final/results.json`（实际5组场景）、`mcp-boundary-unit.log`（8/8）、`mcp-boundary-manifest.log`（1/1）。探针初稿期待旧request返回REPLAY，实际在审批消费层更早返回PERM-001；已按“拒绝重放”标准修正并用新隔离profile复验，没有更改产品预期。86MB原bundle保持原位置供历史引用；本次另产生可再生Node探针副本，仍在try证据目录，保留至F来源核对后清理。

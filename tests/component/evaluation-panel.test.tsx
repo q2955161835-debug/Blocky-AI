@@ -400,12 +400,14 @@ describe("evaluation panel", () => {
       />,
     );
     await waitFor(() => expect(runSignal?.aborted).toBe(true));
+    expect((screen.getByRole("button", { name: "新建评估集" }) as HTMLButtonElement).disabled).toBe(true);
     await act(async () => {
       finish({ status: "completed", answer: "late answer" });
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
     expect(screen.queryByRole("table")).toBeNull();
     expect(screen.queryByText("late answer")).toBeNull();
+    await waitFor(() => expect((screen.getByRole("button", { name: "新建评估集" }) as HTMLButtonElement).disabled).toBe(false));
     view.unmount();
     cleanup();
   });

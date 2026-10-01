@@ -13,7 +13,7 @@ export function projectShell(projectId: string, displayName: string): Project {
       resources: [],
       appSurfaces: [],
       format: {
-        createdWith: "blocky-desktop/0.7.1",
+        createdWith: "blocky-desktop/0.8.0",
         minimumReaderVersion: "0.3.0",
       },
     },

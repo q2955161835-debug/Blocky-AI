@@ -59,7 +59,7 @@ import {
   defaultModelError,
 } from "./user-config";
 export const help = {
-  version: "0.7.1",
+  version: "0.8.0",
   commands: [
     "profile show --json",
     ...discoveryHelp,
@@ -161,8 +161,8 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope("version", {
-        cli: "0.7.1",
-        core: "0.7.1",
+        cli: "0.8.0",
+        core: "0.8.0",
         projectSchema: "blocky.project/v1",
         skills: null,
       }),
@@ -180,7 +180,7 @@ export async function dispatch(
     return {
       code: 0,
       result: envelope(command, {
-        cli: "0.7.1",
+        cli: "0.8.0",
         nativeStore: await doctor(),
         runtime: "deterministic",
         modelApiCalled: false,

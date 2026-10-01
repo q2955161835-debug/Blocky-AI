@@ -103,6 +103,7 @@ await writeFile(
 );
 await appendFile(join(out,"使用说明.txt"),"\n左右栏与底部面板可拖动边界调整大小，右上角图标控制显隐，底栏默认收起。构建助手可在右侧标签页打开。应用设置中的默认模型保存在本机，供新建项目与构建助手使用；已有项目保留原模型。CLI 的 builder --live 未指定 --model 时使用本机默认模型，实际请求仍需批准。\n\n有人值守浏览器自动化需已安装完整 Microsoft Edge 浏览器；WebView2 Runtime 不能替代。每次运行新建隔离会话，不沿用个人登录；只允许初始来源，暂不支持跨来源资源和 HTTP 重定向。驱动与许可证位于 browser 目录，请完整保留。\n");
 const files = [];
+await appendFile(join(out,"使用说明.txt"),"\n模型资源支持已有在线服务、自定义兼容服务与本地模型；实际可用能力以所选资源为准。图片理解需支持图片的模型，语音转写在本机执行，请保留 audio-runtime 目录。项目媒体由用户手动删除。\n资源面板提供项目触发器、记忆、技能与评估工作台。定时和外部事件需显式启用并运行；退出后停止监听，已登记但未结算的事件需要先核验恢复。评估集冻结后不能覆盖，修改项目或模型后创建新版本再比较。\n");
 async function walk(folder) {
   for (const entry of await readdir(folder, { withFileTypes: true })) {
     const path = join(folder, entry.name);

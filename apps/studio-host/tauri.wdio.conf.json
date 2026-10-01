@@ -3,7 +3,7 @@
   "build": { "beforeBuildCommand": "pnpm --dir ../studio-desktop exec vite build --mode native-test --outDir ../../try/native-test-web --emptyOutDir", "frontendDist": "../../try/native-test-web" },
   "app": {
     "withGlobalTauri": true,
-    "windows": [{ "label": "main", "title": "Blocky Studio · Test", "width": 1440, "height": 900, "minWidth": 1180, "minHeight": 720 }],
+    "windows": [{ "label": "main", "title": "Blocky Studio · Test", "x": 8, "y": 8, "width": 1220, "height": 900, "minWidth": 1180, "minHeight": 720 }],
     "security": { "capabilities": ["main", { "identifier": "wdio", "windows": ["main"], "permissions": ["wdio:default"] }] }
   }
 }

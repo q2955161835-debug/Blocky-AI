@@ -3,7 +3,11 @@ import type { TauriCapabilities } from "@wdio/tauri-service";
 import "@wdio/tauri-service";
 import { resolve } from "node:path";
 import { createServer } from "node:net";
+import { mkdir } from "node:fs/promises";
 const application = resolve("try/native-e2e-target/release/blocky-studio.exe");
+// Keep native Host and WebView data in the same explicit, repository-owned test profile.
+process.env.BLOCKY_PROFILE_DIR ??= resolve(`try/agent-capability-upgrade/final-gates/native-${process.env.BLOCKY_NATIVE_SUITE ?? "studio"}/profile`);
+await mkdir(process.env.BLOCKY_PROFILE_DIR, { recursive: true });
 // Test-process-only CDP. No registry change, production option or global browser launch.
 if (!process.env.BLOCKY_TEST_CDP_PORT) {
   const server = createServer();

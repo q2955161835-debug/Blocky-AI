@@ -79,7 +79,7 @@ export class TriggerScheduler {
     const timestamp = this.now();
     const prior = this.observations.get(triggerId);
     const observed: TriggerObservation = prior?.revision === config.revision
-      ? prior
+      ? {lastObservedAt:prior.lastObservedAt,...(prior.lastOccurrenceId===undefined?{}:{lastOccurrenceId:prior.lastOccurrenceId})}
       : { lastObservedAt: timestamp };
     const next: ObservationState = { ...observed, revision: config.revision, lastObservedAt: timestamp };
     this.observations.set(triggerId, next);

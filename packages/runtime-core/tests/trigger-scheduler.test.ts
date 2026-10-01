@@ -175,6 +175,24 @@ describe("shared trigger scheduler", () => {
     expect(createRuntime).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps private revision bookkeeping out of subsequent timer observations", async () => {
+    const project = durableProject();
+    const client = new MemoryTriggerClient(timerConfig(project.manifest.projectId));
+    let now = 500;
+    const createRuntime = vi.fn(() => ({project,runtime:new Runtime({adapters:{...localAdapters(),workflow:memoryWorkflowPorts()}}),dispose(){}}));
+    const scheduler = new TriggerScheduler({client,createRuntime,now:()=>now});
+    const signal = new AbortController().signal;
+    expect(await scheduler.runDue("timer-one",signal)).toMatchObject({kind:"skipped",reason:"not-due"});
+    now=750;
+    expect(await scheduler.runDue("timer-one",signal)).toMatchObject({kind:"skipped",reason:"not-due"});
+    now=1000;
+    expect(await scheduler.runDue("timer-one",signal)).toMatchObject({kind:"completed"});
+    now=1250;
+    expect(await scheduler.runDue("timer-one",signal)).toMatchObject({kind:"skipped",reason:"not-due"});
+    expect(createRuntime).toHaveBeenCalledTimes(1);
+    expect(client.records).toHaveLength(1);
+  });
+
   it("does not retry a prior claimed occurrence after an uncertain interruption", async () => {
     const project = durableProject();
     const client = new MemoryTriggerClient(timerConfig(project.manifest.projectId));
