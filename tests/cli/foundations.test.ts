@@ -124,7 +124,8 @@ it("creates and renames modules, roundtrips project settings, and preserves outp
   ).toBe(3);
   await expect(readFile(join(directory, "denied.blocky"))).rejects.toThrow();
 });
-it("stores scoped configuration outside projects and protects conflicts and secrets", async () => {
+// This integration scenario starts multiple real CLI and native helper processes.
+it("stores scoped configuration outside projects and protects conflicts and secrets", { timeout: 30_000 }, async () => {
   expect(
     cli("settings", "set", "--id", "ui.view", "--value", '"beginner"').code,
   ).toBe(0);
