@@ -3,6 +3,9 @@ import {
   emptyRegistry,
   parseRegistry,
   upsertUserResource,
+  upsertModelProvider,
+  removeModelProvider,
+  resolveRegistryResources,
 } from "@blocky/resource-registry";
 import { readUserState, writeUserState } from "./userState";
 export function useResources(report: (text: string) => void) {
@@ -10,6 +13,7 @@ export function useResources(report: (text: string) => void) {
     [ready, setReady] = useState(false),
     [error, setError] = useState("");
   const queue = useRef(Promise.resolve());
+  const current = useRef(registry);
   useEffect(() => {
     let active = true;
     void readUserState("resources", "app")
@@ -17,6 +21,7 @@ export function useResources(report: (text: string) => void) {
         const doc = raw === null ? emptyRegistry() : parseRegistry(raw);
         if (active) {
           setRegistry(doc);
+          current.current = doc;
           setReady(true);
         }
       })
@@ -27,16 +32,36 @@ export function useResources(report: (text: string) => void) {
       active = false;
     };
   }, []);
-  const persist = (next: ReturnType<typeof emptyRegistry>) => {
+  const persist = (mutate: (doc: ReturnType<typeof emptyRegistry>) => ReturnType<typeof emptyRegistry>) => {
     if (!ready) throw Error("资源存储未就绪");
-    setRegistry(next);
-    queue.current = queue.current
+    const operation = queue.current
       .catch(() => {})
-      .then(() => writeUserState("resources", "app", next));
-    void queue.current.catch(() => report("本机资源未能保存。"));
+      .then(async () => {
+        try {
+          const next = mutate(current.current);
+          await writeUserState("resources", "app", next);
+          current.current = next;
+          setRegistry(next);
+          setError("");
+        } catch (cause) {
+          const conflict = String(cause).includes("BLK-RESOURCE-CONFLICT");
+          if (conflict) {
+            const raw = await readUserState("resources", "app");
+            const fresh = raw === null ? emptyRegistry() : parseRegistry(raw);
+            current.current = fresh;
+            setRegistry(fresh);
+          }
+          report(conflict ? "资源已被其他写入修改；草稿保留，请审查后重试。" : "本机资源未能保存，原配置保留。");
+          throw conflict ? Error("BLK-RESOURCE-CONFLICT") : cause;
+        }
+      });
+    queue.current = operation;
+    // Callers can await/reject the original promise; also avoid unhandled rejection for old fire-and-forget consumers.
+    void operation.catch(() => {});
+    return operation;
   };
   const map = useMemo(
-    () => new Map(registry.resources.map((r) => [r.resourceId, r])),
+    () => resolveRegistryResources(registry),
     [registry],
   );
   return {
@@ -44,12 +69,15 @@ export function useResources(report: (text: string) => void) {
     map,
     ready,
     error,
-    upsert: (value: unknown) => persist(upsertUserResource(registry, value)),
+    upsert: (value: unknown) => { const input=structuredClone(value); return persist(doc => upsertUserResource(doc, input)); },
+    upsertProvider: (value: unknown) => { const input=structuredClone(value); return persist(doc => upsertModelProvider(doc, input)); },
+    removeProvider: (id: string) => persist(doc => removeModelProvider(doc, id)),
     remove: (id: string) =>
       persist(
-        parseRegistry({
-          ...registry,
-          resources: registry.resources.filter((r) => r.resourceId !== id),
+        doc => parseRegistry({
+          ...doc,
+          revision: doc.revision + 1,
+          resources: doc.resources.filter((r) => r.resourceId !== id),
         }),
       ),
     flush: () => queue.current,

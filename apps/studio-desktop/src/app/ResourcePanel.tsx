@@ -36,6 +36,9 @@ import {SkillPanel} from './SkillPanel';
 import {MediaPanel} from './MediaPanel';
 import {EvaluationWorkspace} from './EvaluationWorkspace';
 import {TriggerPanel} from './TriggerPanel';
+import { ModelManagerPanel } from "./ModelManagerPanel";
+import { ConnectedModelEditor } from "./ConnectedModelEditor";
+import { resolveSetting } from "@blocky/settings-core";
 import { knowledgeNative } from "../composition/knowledge";
 import {
   knowledgeResource,
@@ -214,7 +217,8 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   const [managedBusy, setManagedBusy] = useState(false);
   const [toolOperationsBusy, setToolOperationsBusy] = useState(false);
   const [operationResourceId, setOperationResourceId] = useState("");
-  const panelBusy = managedBusy || toolOperationsBusy;
+  const [saving, setSaving] = useState(false);
+  const panelBusy = managedBusy || toolOperationsBusy || saving;
   const [scope, setScope] = useState<"project" | "user">("project");
   const project = s.snapshot.project;
   const operationResources = s.resources.registry.resources.filter(supportsHostOperation);
@@ -230,12 +234,13 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   const editableMcp =
     draft?.kind === "mcp" &&
     (isPresetMcp(draft) || !mcpResourceAdapter(draft));
-  const modelError = editableModel ? modelResourceError(draft!) : "";
+  const connectedModel = draft?.kind === "model" && typeof draft.definition.connectionRef === "string";
+  const modelError = editableModel && !connectedModel ? modelResourceError(draft!) : "";
   const toolSchemaError =
     editableTool && isPresetTool(draft!)
       ? toolResourceSchemaError(draft!, project)
       : "";
-  const secretFields = editableModel
+  const secretFields = connectedModel ? [] : editableModel
     ? [
         ...new Set([
           ...modelSecretFields(draft!),
@@ -302,8 +307,8 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
     setDraft(structuredClone(resource));
     setError("");
   };
-  const save = () => {
-    if (managedBusy || toolOperationsBusy) return;
+  const save = async () => {
+    if (panelBusy) return;
     try {
       if (modelError) {
         setError(modelError);
@@ -314,7 +319,8 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         return;
       }
       const resource = validateResource(draft);
-      if (resource.scope === "user") s.resources.upsert(resource);
+      setSaving(true);
+      if (resource.scope === "user") await s.resources.upsert(resource);
       else {
         const next = upsertProjectResource(project, resource);
         s.controller.edit((p) => Object.assign(p, next));
@@ -322,11 +328,15 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       setDraft(undefined);
       setError("");
     } catch {
-      setError("资源字段、公开地址或秘密引用无效，原资源未改变。");
-    }
+      setError("资源未保存，请检查字段、秘密引用或并发修改；原资源与草稿保留。");
+    } finally { setSaving(false); }
   };
   return (
     <div className="settings resource-panel">
+      <details><summary>厂商与模型</summary><ModelManagerPanel resources={s.resources}
+        defaultModelId={s.settings ? String(resolveSetting("models.defaultResourceId",s.settings.layers).value) : ""}
+        setDefault={async id=>{s.settings.change("app","models.defaultResourceId",id);await s.settings.flush();}}
+        reference={resource=>{try{const next=referenceUserResource(project,resource);s.controller.edit(p=>Object.assign(p,next));s.setMessage("已添加模型引用。");}catch{setError("模型引用无法添加，请检查同名资源。");}}}/></details>
       <details><summary>项目媒体</summary><MediaPanel key={project.manifest.projectId} projectId={project.manifest.projectId}/></details>
       <details><summary>评估工作台</summary><EvaluationWorkspace key={project.manifest.projectId} studio={s}/></details>
       <details><summary>项目触发器</summary><TriggerPanel key={project.manifest.projectId} studio={s}/></details>
@@ -403,8 +413,9 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
                 void s
                   .confirm("删除本机资源后，引用它的项目将报告资源缺失。继续？")
                   .then((yes) => {
-                    if (yes) s.resources.remove(r.resourceId);
+                    if (yes) return s.resources.remove(r.resourceId);
                   })
+                  .catch(() => setError("资源未删除，原配置保留。"))
               }
             >
               删除
@@ -485,7 +496,8 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             {draft.resourceId} ·{" "}
             {draft.scope === "project" ? "项目配置" : "本机用户配置"}
           </small>
-          {editableModel && (
+          {connectedModel && <ConnectedModelEditor resource={draft} providers={s.resources.registry.providers} change={setDraft}/>}
+          {editableModel && !connectedModel && (
             <ModelResourceEditor
               resource={draft}
               change={setDraft}
@@ -503,7 +515,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           {editableMcp && <McpResourceEditor resource={draft} change={setDraft} />}
           {typeof draft.definition.implementationRef === "string" ? (
             <p>此资源使用本地确定性适配器。</p>
-          ) : !editableTool && !editableMcp ? (
+          ) : !editableTool && !editableMcp && !connectedModel ? (
             <details>
               <summary>资源高级配置</summary>
               <fieldset disabled={managedBusy}>

@@ -55,11 +55,11 @@ export function useSettings(
     view: resolveSetting("ui.view", layers).value,
     minimizeToTray: resolveSetting("window.minimizeToTray", layers).value,
   };
-  function persist(next: SettingsDocument) {
-    setApp(next);
+  function persist(next: SettingsDocument, defer = false) {
+    if (!defer) setApp(next);
     queue.current = queue.current
       .catch(() => {})
-      .then(() => writeUserState("settings", "app", next));
+      .then(async () => { await writeUserState("settings", "app", next); if (defer) setApp(next); });
     void queue.current.catch(() => report("应用设置未能保存，原配置仍保留。"));
   }
   const setPreferences = (action: SetStateAction<Preferences>) => {
@@ -88,7 +88,7 @@ export function useSettings(
     const next = reset
       ? resetSetting(current, id)
       : updateSetting(current, id, value);
-    if (scope === "app") persist(next);
+    if (scope === "app") persist(next, id === "models.defaultResourceId");
     else
       controller.edit((p) => {
         p.manifest.settingsRef = "settings.json";

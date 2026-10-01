@@ -94,7 +94,10 @@ export function SettingsPanel({ studio: s }: { studio: Studio }) {
                   <option value="">使用本地默认</option>
                   {resolved.value && !models.some(model => model.resourceId === resolved.value) &&
                     <option value={String(resolved.value)} disabled>默认模型不可用</option>}
-                  {models.map(model => <option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}
+                  {(s.resources.registry.providers ?? []).map(provider=><optgroup key={provider.providerId} label={provider.displayName}>
+                    {models.filter(model=>model.definition.connectionRef===provider.providerId).map(model=><option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}
+                  </optgroup>)}
+                  <optgroup label="独立与本机模型">{models.filter(model=>!model.definition.connectionRef).map(model => <option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}</optgroup>
                 </select>
               ) : def.valueType === "enum" ? (
                 <select

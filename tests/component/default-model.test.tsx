@@ -17,7 +17,7 @@ afterEach(() => { cleanup(); localStorage.clear(); });
 async function configuredStudio() {
   const hook = renderHook(() => useStudio());
   await waitFor(() => expect(hook.result.current.settings.ready && hook.result.current.resources.ready).toBe(true));
-  act(() => hook.result.current.resources.upsert(modelResource()));
+  await act(() => hook.result.current.resources.upsert(modelResource()));
   await act(() => hook.result.current.resources.flush());
   act(() => hook.result.current.settings.change("app", "models.defaultResourceId", "saved-model"));
   await act(() => hook.result.current.settings.flush());
@@ -58,7 +58,7 @@ it("uses the default only when creating a new project, without rewriting an exis
 
 it("shows a missing default and prevents an implicit switch to another online model", async () => {
   const hook = await configuredStudio();
-  act(() => hook.result.current.resources.remove("saved-model"));
+  await act(() => hook.result.current.resources.remove("saved-model"));
   await act(() => hook.result.current.resources.flush());
   const builder = renderHook(() => useBuilder(hook.result.current));
   render(<BuilderPanel studio={hook.result.current} builder={builder.result.current} createSurface={false} review={() => {}} setCreateSurface={() => {}} />);
@@ -72,6 +72,7 @@ it("offers configured user models in settings and resets the preference to local
   const panel = render(<SettingsPanel studio={hook.result.current} />);
   expect((screen.getByLabelText("默认模型") as HTMLSelectElement).value).toBe("saved-model");
   fireEvent.change(screen.getByLabelText("默认模型"), { target: { value: "" } });
+  await act(() => hook.result.current.settings.flush());
   panel.rerender(<SettingsPanel studio={hook.result.current} />);
   expect((screen.getByLabelText("默认模型") as HTMLSelectElement).value).toBe("");
 });
