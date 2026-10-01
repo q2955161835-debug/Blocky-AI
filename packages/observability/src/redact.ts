@@ -2,8 +2,9 @@ import type { Json } from "@blocky/language-schema";
 const sensitiveKey =
   /authorization|cookie|password|api[_-]?key|token|secret|^(?:prompt|body|stdout|stderr|environment)$/i;
 const tokenCounters = new Set(["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens", "maxOutputTokensPerTurn", "contextTokens"]);
-/** Only known, bounded numeric counters are safe under otherwise sensitive token keys. */
-export function isPublicTokenCounter(key: string, value: unknown): value is number {
+/** Known bounded counters and explicitly unavailable usage carry no credential text. */
+export function isPublicTokenCounter(key: string, value: unknown): value is number | null {
+  if (value === null && ["inputTokens", "outputTokens", "totalTokens"].includes(key)) return true;
   return tokenCounters.has(key) && typeof value === "number" &&
     Number.isSafeInteger(value) && value >= 0 && value <= 10_000_000;
 }

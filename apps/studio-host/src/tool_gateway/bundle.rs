@@ -186,6 +186,7 @@ impl Launch {
         expected: &str,
         timeout: u64,
         cancel: &dyn Fn() -> Result<(), String>,
+        may_have_started:&std::sync::atomic::AtomicBool,
     ) -> Result<crate::mcp_client::stdio::StdioTransport, String> {
         let sessions = root.join("tool-sessions");
         std::fs::create_dir_all(&sessions).map_err(|_| ERROR)?;
@@ -223,11 +224,12 @@ impl Launch {
             });
         }
         drop(copying);
-        crate::mcp_client::stdio::StdioTransport::spawn(
+        crate::mcp_client::stdio::StdioTransport::spawn_tracked(
             directory,
             &bundle.join(&self.executable),
             &args,
             timeout,
+            may_have_started,
         )
     }
 }

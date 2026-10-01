@@ -186,11 +186,14 @@ impl ToolOperation {
             return Err("BLK-PERM-001".into());
         }
         let mut receipt = receipts::Receipt::begin(root, r, digest)?;
+        let may_have_started=std::sync::atomic::AtomicBool::new(false);
         let result = (|| {
             cancel()?;
             let result = if bound.adapter.starts_with("mcp-") {
-                mcp::execute(root, &bound, r, &cancel)?
+                mcp::execute(root, &bound, r, &cancel,&may_have_started)?
             } else {
+                // HTTP dispatch keeps the conservative unknown result policy.
+                may_have_started.store(true,Ordering::SeqCst);
                 http::execute(
                     bound.endpoint.clone().ok_or("BLK-TOOL-CONFIG")?,
                     bound.headers.clone(),
@@ -210,7 +213,7 @@ impl ToolOperation {
             }
             Ok(result)
         })();
-        receipt.finish(&result)?;
+        receipt.finish(&result,if may_have_started.load(Ordering::SeqCst){receipts::EffectState::MayHaveStarted}else{receipts::EffectState::NotStarted})?;
         result
     }
 }

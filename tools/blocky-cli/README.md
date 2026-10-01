@@ -289,3 +289,13 @@ Host 原生确认全部计划和网址后才启动已安装的 Microsoft Edge，
 ```
 
 导出先核对图片摘要，既有文件拒绝覆盖；导出的 PNG 由调用者保留，不受内部有效期控制。删除仅作用于当前资料目录对应的图片记录。`BLK-RPA-CAPTURE-003` 表示尺寸/容量超限，`004` 表示过期，`005` 表示目标变化或无法可靠遮盖。截图/保留局部复核与普通包状态以任务验收为准。
+
+## 能力补全共享接口
+
+使用 `command list --query trigger|evaluation|media|memory|skill` 查询对应命令（query 每次传一个关键词），使用 `schema list/show` 导出实际请求结构。媒体、记忆、技能、决策和评估资产的 `preflight/execute` 绑定同次请求摘要；文件路径只进入 Host。完整边界见[契约 16](../../doc/技术设计/正式契约/16-Agent能力补全.md)，普通包交付状态以本次任务验收为准。
+
+`trigger create/list/pause/run/watch/listen` 管理项目持久工作流触发器。配置需显式启用，运行需选择 `--simulate` 或 `--live`；模型及工具仍需各自批准。定时使用 UTC 毫秒起点及 UTC/固定偏移；不支持 IANA 夏令时。外部监听仅开 loopback `/events`，`--secret-ref` 引用本机安全存储中的 Bearer。相同 occurrence/eventId 不重复运行；claimed 表示需要核验既有工作流，重启不自动重投。Ctrl+C 请求停止并等待端口及原生辅助进程结算。
+
+`evaluation create` 从案例 JSON 创建绑定当前项目和模型配置的数据集；`freeze` 保存冻结版本，`fork` 在当前配置下创建新草案，`run` 执行当前项目真实入口，`list/read` 查询资产，`compare` 对比同语料报告。`--dataset-key` 使用返回的 `id:vN`；恢复使用 `--checkpoint-key` 并核对原配置。批次取消先结算当前案例，再保存部分报告，不能自动重试未知副作用。默认报告只含摘要、分数、用量和版本；原始回答不会默认持久化。
+
+`media import-preflight/import` 显式导入 PNG/JPEG/WAV，执行时传预检返回的摘要。后续使用 `blocky.media-request/v1` 查询、转写或删除，不向模型暴露路径。媒体按用户手动删除保留；删除或来源版本变化使相关结果不可复用。图片理解需要可用视觉资源；本地 whisper 语音转写不属于外部大模型 API 调用。

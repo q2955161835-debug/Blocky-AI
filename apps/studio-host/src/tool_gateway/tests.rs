@@ -260,7 +260,7 @@ fn a_stale_running_receipt_is_unknown_and_foreign_receipt_files_fail_closed() {
         "running"
     );
     // Simulate process death without the normal receipt guard finalization.
-    receipt.finish(&Err("BLK-TOOL-INTERRUPTED".into())).unwrap();
+    receipt.finish(&Err("BLK-TOOL-INTERRUPTED".into()),receipts::EffectState::MayHaveStarted).unwrap();
     drop(receipt);
     let file = std::fs::read_dir(root.path().join("tool-runs"))
         .unwrap()
@@ -285,6 +285,18 @@ fn a_stale_running_receipt_is_unknown_and_foreign_receipt_files_fail_closed() {
             .unwrap_err(),
         "BLK-TOOL-RECEIPT"
     );
+}
+#[test]
+fn known_prelaunch_failure_allows_only_a_new_request_and_old_unknown_stays_blocked(){
+    let root=profile();let digest="a".repeat(64);let first=request("not-started");
+    let mut receipt=receipts::Receipt::begin(root.path(),&first,&digest).unwrap();
+    receipt.finish(&Err("BLK-TOOL-OWNERSHIP-SCHEMA".into()),receipts::EffectState::NotStarted).unwrap();drop(receipt);
+    assert_eq!(ToolHost::default().status(root.path(),"project-test").unwrap()["receipts"][0]["status"],"failed");
+    assert!(receipts::Receipt::begin(root.path(),&first,&digest).is_err());
+    let second=request("new-request");let mut second_receipt=receipts::Receipt::begin(root.path(),&second,&digest).unwrap();
+    second_receipt.finish(&Err("BLK-MCP-CLOSED".into()),receipts::EffectState::MayHaveStarted).unwrap();drop(second_receipt);
+    let error=receipts::Receipt::begin(root.path(),&request("after-unknown"),&digest).err().unwrap();
+    assert_eq!(error,"BLK-TOOL-RECOVERY-REQUIRED");
 }
 #[test]
 fn tool_request_only_contains_resource_references_and_bounded_business_input() {

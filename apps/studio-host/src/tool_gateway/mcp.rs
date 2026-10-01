@@ -82,6 +82,7 @@ pub(crate) fn execute(
     bound: &Binding,
     r: &ToolRequest,
     cancel: &dyn Fn() -> Result<(), String>,
+    may_have_started:&std::sync::atomic::AtomicBool,
 ) -> Result<Value, String> {
     if let Some(launch) = &bound.launch {
         #[cfg(windows)]
@@ -91,6 +92,7 @@ pub(crate) fn execute(
                 bound.bundle_digest.as_deref().ok_or("BLK-TOOL-CONFIG")?,
                 r.timeout_ms,
                 cancel,
+                may_have_started,
             )?;
             return operation(transport, bound, r, cancel);
         }
@@ -106,5 +108,7 @@ pub(crate) fn execute(
         bound.mode,
         r.timeout_ms,
     )?;
+    // Even initialization can have side effects in a remote server.
+    may_have_started.store(true,std::sync::atomic::Ordering::SeqCst);
     operation(transport, bound, r, cancel)
 }

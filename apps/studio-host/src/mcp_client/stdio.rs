@@ -38,12 +38,10 @@ fn fail(fault: &Mutex<Option<String>>, code: &str) {
     }
 }
 impl StdioTransport {
-    pub(crate) fn spawn(
-        directory: tempfile::TempDir,
-        executable: &Path,
-        args: &[OsString],
-        timeout_ms: u64,
-    ) -> Result<Self, String> {
+    pub(crate) fn spawn_tracked(
+        directory:tempfile::TempDir,executable:&Path,args:&[OsString],timeout_ms:u64,
+        may_have_started:&std::sync::atomic::AtomicBool,
+    )->Result<Self,String>{
         if !(1..=120000).contains(&timeout_ms) {
             return Err("BLK-MCP-LIMIT".into());
         }
@@ -183,6 +181,9 @@ impl StdioTransport {
             timeout: Duration::from_millis(timeout_ms),
             closed: false,
         };
+        // The suspended worker cannot execute server initialization beforehand.
+        // Set conservatively before resume, including an uncertain resume error.
+        may_have_started.store(true,std::sync::atomic::Ordering::SeqCst);
         if let Err(error) = session.worker.resume() {
             session.close()?;
             return Err(error);

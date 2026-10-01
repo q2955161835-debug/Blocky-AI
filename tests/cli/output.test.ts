@@ -9,7 +9,7 @@ it("preserves the same bounded numeric token counters in event and CLI transport
       expect(redact(payload)).toMatchObject({ value: payload, redaction: { applied: false } });
       expect(JSON.parse(output(payload))).toEqual(payload);
     }
-    for (const value of ["SYNTHETIC_SECRET", null, true, -1, 1.5, 10_000_001, Number.MAX_SAFE_INTEGER + 1, Infinity, { value: 1 }]) {
+    for (const value of ["SYNTHETIC_SECRET", true, -1, 1.5, 10_000_001, Number.MAX_SAFE_INTEGER + 1, Infinity, { value: 1 }]) {
       const payload = { budget: { [key]: value } };
       expect(redact(payload)).toMatchObject({ value: { budget: { [key]: "[已脱敏]" } }, redaction: { applied: true } });
       expect(JSON.parse(output(payload))).toEqual({ budget: { [key]: "[已脱敏]" } });
@@ -19,4 +19,14 @@ it("preserves the same bounded numeric token counters in event and CLI transport
   const expected = { token: "[已脱敏]", accessToken: "[已脱敏]", inputTokensExtra: "[已脱敏]" };
   expect(redact(unknown).value).toEqual(expected);
   expect(JSON.parse(output(unknown))).toEqual(expected);
+});
+
+it("keeps unavailable usage null while retaining secret and budget validation", () => {
+  const usage={inputTokens:null,outputTokens:null,totalTokens:null};
+  expect(redact({usage}).value).toEqual({usage});
+  expect(JSON.parse(output({usage}))).toEqual({usage});
+  const invalid={apiKey:null,accessToken:null,maxOutputTokens:null,inputTokens:"SYNTHETIC_SECRET"};
+  const hidden=Object.fromEntries(Object.keys(invalid).map(key=>[key,"[已脱敏]"]));
+  expect(redact(invalid).value).toEqual(hidden);
+  expect(JSON.parse(output(invalid))).toEqual(hidden);
 });

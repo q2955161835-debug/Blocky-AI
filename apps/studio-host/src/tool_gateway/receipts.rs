@@ -9,6 +9,8 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 const ERROR: &str = "BLK-TOOL-RECEIPT";
+/// Trusted Host execution boundary; never supplied by a tool or IPC caller.
+pub(crate) enum EffectState { NotStarted, MayHaveStarted }
 fn root(profile: &Path) -> Result<PathBuf, String> {
     let path = profile.join("tool-runs");
     std::fs::create_dir_all(&path).map_err(|_| ERROR)?;
@@ -224,11 +226,11 @@ impl Receipt {
             finished: false,
         })
     }
-    pub(crate) fn finish(&mut self, result: &Result<Value, String>) -> Result<(), String> {
+    pub(crate) fn finish(&mut self, result: &Result<Value, String>, effects:EffectState) -> Result<(), String> {
         let _guard = global(&self.root)?;
         self.value["status"] = if result.is_ok() {
             "completed"
-        } else if self.value["action"] == "call" {
+        } else if self.value["action"] == "call" && matches!(effects,EffectState::MayHaveStarted) {
             "unknown"
         } else {
             "failed"

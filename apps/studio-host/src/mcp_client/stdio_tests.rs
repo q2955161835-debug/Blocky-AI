@@ -21,7 +21,19 @@ fn server(code: &str, timeout: u64) -> StdioTransport {
         "--preserve-symlinks".into(),
         script.into_os_string(),
     ];
-    StdioTransport::spawn(directory, &node, &args, timeout).unwrap()
+    let resumed=std::sync::atomic::AtomicBool::new(false);
+    let transport=StdioTransport::spawn_tracked(directory,&node,&args,timeout,&resumed).unwrap();
+    assert!(resumed.load(std::sync::atomic::Ordering::SeqCst));
+    transport
+}
+#[test]
+fn malformed_ownership_manifest_fails_before_the_execution_boundary(){
+    let base=std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/agent-capability-upgrade/stdio-tests");std::fs::create_dir_all(&base).unwrap();
+    let directory=tempfile::tempdir_in(base).unwrap();let bundle=directory.path().join("bundle");std::fs::create_dir(&bundle).unwrap();let executable=bundle.join("server.exe");std::fs::write(&executable,b"not launched").unwrap();
+    std::fs::write(directory.path().join("sandbox.json"),serde_json::to_vec(&json!({"schemaVersion":"incorrect","profileName":"","bundleFiles":["bundle/server.exe"]})).unwrap()).unwrap();
+    let boundary=std::sync::atomic::AtomicBool::new(false);
+    let error=StdioTransport::spawn_tracked(directory,&executable,&[],3000,&boundary).err().unwrap();
+    assert_eq!(error,"BLK-TOOL-OWNERSHIP-SCHEMA");assert!(!boundary.load(std::sync::atomic::Ordering::SeqCst));
 }
 #[test]
 #[ignore = "real Windows sandbox with the pinned Node runtime"]

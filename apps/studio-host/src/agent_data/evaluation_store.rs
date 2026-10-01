@@ -1,7 +1,7 @@
 //! Atomic profile/project evaluation assets. Caller holds the AgentData grant and
 //! cancellation lock through `manage`. Keys are opaque JSON strings, never paths.
-//! This Host boundary validates storage/state invariants; the typed TS adapter remains
-//! responsible for the complete evaluation/scoring schemas and semantic checks.
+//! Host independently enforces strict evaluation metadata schemas before preflight
+//! and persistence. Explicit structured detail follows the redaction boundary.
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -58,7 +58,7 @@ fn identity(v: &Value) -> bool {
 }
 fn text(v: &Value, limit: usize) -> bool {
     v.as_str()
-        .is_some_and(|s| !s.is_empty() && s.encode_utf16().count() <= limit && !s.contains('\0'))
+        .is_some_and(|s| !s.is_empty() && s.encode_utf16().count() <= limit)
 }
 fn present_revision<'de, D: serde::Deserializer<'de>>(
     d: D,
@@ -127,150 +127,420 @@ impl Request {
         )
     }
 }
-fn validate_binding(value: &Value) -> bool {
-    let model = &value["model"];
-    value.is_object()
-        && hash(&value["configurationHash"])
-        && model.is_object()
-        && identity(&model["resourceId"])
-        && text(&model["provider"], 128)
-        && text(&model["modelId"], 256)
-        && text(&model["version"], 128)
+fn exact(v: &Value, required: &[&str], optional: &[&str]) -> bool {
+    v.as_object().is_some_and(|o| {
+        required.iter().all(|k| o.contains_key(*k))
+            && o.keys()
+                .all(|k| required.contains(&k.as_str()) || optional.contains(&k.as_str()))
+    })
+}
+fn array(v: &Value, min: usize, max: usize, check: impl Fn(&Value) -> bool) -> bool {
+    v.as_array()
+        .is_some_and(|a| a.len() >= min && a.len() <= max && a.iter().all(check))
+}
+fn optional(v: &Value, k: &str, check: impl Fn(&Value) -> bool) -> bool {
+    v.get(k).is_none_or(check)
+}
+fn nullable(v: &Value, check: impl Fn(&Value) -> bool) -> bool {
+    v.is_null() || check(v)
+}
+fn choice(v: &Value, choices: &[&str]) -> bool {
+    v.as_str().is_some_and(|s| choices.contains(&s))
+}
+fn integer(v: &Value) -> bool {
+    v.as_u64().is_some_and(|n| n <= MAX_REVISION)
+}
+fn finite(v: &Value) -> bool {
+    v.as_f64().is_some_and(|n| n.is_finite() && n >= 0.0)
+}
+fn score(v: &Value) -> bool {
+    v.as_f64()
+        .is_some_and(|n| n.is_finite() && (0.0..=1.0).contains(&n))
+}
+fn bool_null(v: &Value) -> bool {
+    v.is_null() || v.is_boolean()
+}
+fn code(v: &Value) -> bool {
+    v.as_str().is_some_and(|s| {
+        s.starts_with("BLK-")
+            && (3..=64).contains(&s[4..].len())
+            && s[4..]
+                .bytes()
+                .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'-')
+    })
+}
+fn model(v: &Value) -> bool {
+    exact(v, &["resourceId", "provider", "modelId", "version"], &[])
+        && identity(&v["resourceId"])
+        && text(&v["provider"], 128)
+        && text(&v["modelId"], 256)
+        && text(&v["version"], 128)
+}
+fn validate_binding(v: &Value) -> bool {
+    exact(v, &["configurationHash", "model"], &[])
+        && hash(&v["configurationHash"])
+        && model(&v["model"])
+}
+fn usage(v: &Value) -> bool {
+    exact(v, &["inputTokens", "outputTokens", "totalTokens"], &[])
+        && ["inputTokens", "outputTokens", "totalTokens"]
+            .iter()
+            .all(|k| integer(&v[*k]))
+}
+fn generation(v: &Value) -> bool {
+    exact(
+        v,
+        &["provider", "model", "transport", "requestId", "usage"],
+        &[],
+    ) && text(&v["provider"], 128)
+        && text(&v["model"], 256)
+        && choice(&v["transport"], &["local", "remote"])
+        && text(&v["requestId"], 256)
+        && nullable(&v["usage"], usage)
+}
+// Mirrors observability's structured redaction boundary. Ordinary business keys
+// (including answer/input) remain legal only in explicitly selected structured detail.
+fn safe_detail(v: &Value) -> bool {
+    static SENSITIVE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r"(?i)authorization|cookie|password|api[_-]?key|token|secret|^(?:prompt|body|stdout|stderr|environment)$").unwrap()
+    });
+    static CREDENTIAL: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r"(?i)\bBearer\s+\S+|(?:password|token|api[_-]?key)\s*[=:]\s*[^\s,;]+|<fixture-invalid-[^>]+>").unwrap()
+    });
+    static PRIVATE_PATH: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"(?:^|[^A-Za-z0-9+.-])[A-Za-z]:[\\/][^\s"<>]+"#).unwrap()
+    });
+    fn visit(v: &Value, depth: usize) -> bool {
+        if depth > 30 {
+            return false;
+        }
+        match v {
+            Value::Object(o) => {
+                o.len() <= 1000
+                    && o.iter().all(|(k, v)| {
+                        let counter = [
+                            "inputTokens",
+                            "outputTokens",
+                            "totalTokens",
+                            "reservedOutputTokens",
+                            "maxOutputTokens",
+                            "maxOutputTokensPerTurn",
+                            "contextTokens",
+                        ]
+                        .contains(&k.as_str())
+                            && v.as_u64().is_some_and(|n| n <= 10_000_000);
+                        if !counter && SENSITIVE.is_match(k) {
+                            return v == "[已脱敏]";
+                        }
+                        visit(v, depth + 1)
+                    })
+            }
+            Value::Array(a) => a.len() <= 1000 && a.iter().all(|v| visit(v, depth + 1)),
+            Value::String(s) => {
+                s.len() <= 16000 && !CREDENTIAL.is_match(s) && !PRIVATE_PATH.is_match(s)
+            }
+            _ => true,
+        }
+    }
+    visit(v, 0)
+}
+fn row(v: &Value, structured: bool) -> bool {
+    exact(
+        v,
+        &[
+            "caseId",
+            "status",
+            "passed",
+            "checks",
+            "answerHash",
+            "structuredHash",
+            "citationIds",
+            "retrievalHitIds",
+            "generations",
+            "latencyMs",
+        ],
+        &["structuredResult", "errorCode"],
+    ) && identity(&v["caseId"])
+        && choice(&v["status"], &["completed", "failed", "uncertain"])
+        && bool_null(&v["passed"])
+        && exact(
+            &v["checks"],
+            &["correctness", "citations", "retrieval"],
+            &[],
+        )
+        && ["correctness", "citations", "retrieval"]
+            .iter()
+            .all(|k| bool_null(&v["checks"][*k]))
+        && nullable(&v["answerHash"], hash)
+        && nullable(&v["structuredHash"], hash)
+        && optional(v, "structuredResult", |r| structured && safe_detail(r))
+        && array(&v["citationIds"], 0, 256, identity)
+        && array(&v["retrievalHitIds"], 0, 256, identity)
+        && array(&v["generations"], 0, 64, generation)
+        && nullable(&v["latencyMs"], finite)
+        && optional(v, "errorCode", code)
+}
+fn accuracy(v: &Value) -> bool {
+    if !exact(v, &["scored", "passed", "accuracy"], &[])
+        || !integer(&v["scored"])
+        || !integer(&v["passed"])
+    {
+        return false;
+    }
+    let scored = v["scored"].as_u64().unwrap();
+    let passed = v["passed"].as_u64().unwrap();
+    passed <= scored
+        && if scored == 0 {
+            v["accuracy"].is_null()
+        } else {
+            score(&v["accuracy"]) && v["accuracy"].as_f64() == Some(passed as f64 / scored as f64)
+        }
+}
+fn metrics(v: &Value) -> bool {
+    if !exact(
+        v,
+        &[
+            "cases",
+            "correctness",
+            "citations",
+            "retrieval",
+            "averageLatencyMs",
+            "usage",
+        ],
+        &[],
+    ) || !exact(
+        &v["cases"],
+        &["total", "completed", "failed", "uncertain"],
+        &[],
+    ) || !["total", "completed", "failed", "uncertain"]
+        .iter()
+        .all(|k| integer(&v["cases"][*k]))
+        || !["correctness", "citations", "retrieval"]
+            .iter()
+            .all(|k| accuracy(&v[*k]))
+        || !nullable(&v["averageLatencyMs"], finite)
+        || !exact(
+            &v["usage"],
+            &["status", "inputTokens", "outputTokens", "totalTokens"],
+            &[],
+        )
+    {
+        return false;
+    }
+    let c = &v["cases"];
+    if c["completed"].as_u64().unwrap()
+        + c["failed"].as_u64().unwrap()
+        + c["uncertain"].as_u64().unwrap()
+        > c["total"].as_u64().unwrap()
+    {
+        return false;
+    }
+    let u = &v["usage"];
+    if u["status"] == "reported" {
+        usage(
+            &json!({"inputTokens":u["inputTokens"],"outputTokens":u["outputTokens"],"totalTokens":u["totalTokens"]}),
+        ) && u["totalTokens"].as_u64()
+            == u["inputTokens"]
+                .as_u64()
+                .zip(u["outputTokens"].as_u64())
+                .map(|(a, b)| a + b)
+    } else {
+        choice(&u["status"], &["unavailable", "not-reported"])
+            && ["inputTokens", "outputTokens", "totalTokens"]
+                .iter()
+                .all(|k| u[*k].is_null())
+    }
+}
+fn model_score(v: &Value) -> bool {
+    exact(v, &["caseId"], &["score", "errorCode", "generation"])
+        && identity(&v["caseId"])
+        && (v.get("score").is_some() != v.get("errorCode").is_some())
+        && optional(v, "score", score)
+        && optional(v, "errorCode", code)
+        && optional(v, "generation", generation)
+}
+fn model_scoring(v: &Value) -> bool {
+    exact(v, &["status", "rows"], &["binding"])
+        && choice(&v["status"], &["not-run", "completed", "partial", "failed"])
+        && optional(v, "binding", model)
+        && array(&v["rows"], 0, 10000, model_score)
+}
+fn human(v: &Value) -> bool {
+    exact(v, &["caseId", "score", "ratedAt"], &["reviewerId"])
+        && identity(&v["caseId"])
+        && score(&v["score"])
+        && stamp(&v["ratedAt"])
+        && optional(v, "reviewerId", identity)
+}
+fn unique(v: &Value) -> bool {
+    let mut ids = std::collections::HashSet::new();
+    v.as_array()
+        .is_some_and(|a| a.iter().all(|r| ids.insert(r["caseId"].as_str())))
+}
+fn dataset_case(v: &Value) -> bool {
+    exact(v, &["caseId", "input"], &["expected", "tags"])
+        && identity(&v["caseId"])
+        && optional(v, "tags", |v| array(v, 0, 32, |v| text(v, 64)))
+        && optional(v, "expected", |e| {
+            exact(
+                e,
+                &[],
+                &["answer", "structured", "citationIds", "retrievalHitIds"],
+            ) && e.as_object().is_some_and(|o| !o.is_empty())
+                && optional(e, "answer", |v| {
+                    v.as_str()
+                        .is_some_and(|s| s.encode_utf16().count() <= 65536)
+                })
+                && optional(e, "citationIds", |v| array(v, 0, 256, identity))
+                && optional(e, "retrievalHitIds", |v| array(v, 0, 256, identity))
+        })
 }
 fn validate_value(asset_kind: &str, v: &Value) -> Result<(), String> {
     if serde_json::to_vec(v).map_err(|_| INVALID)?.len() > MAX_ASSET {
         return Err(LIMIT.into());
     }
-    let object = v.as_object().ok_or(INVALID)?;
     if v["schemaVersion"] != format!("blocky.evaluation-{asset_kind}/v1")
         || !validate_binding(&v["binding"])
         || !stamp(&v["createdAt"])
     {
         return Err(INVALID.into());
     }
-    let allowed: &[&str] = match asset_kind {
-        "dataset" => &[
-            "schemaVersion",
-            "datasetId",
-            "version",
-            "name",
-            "createdAt",
-            "frozenAt",
-            "status",
-            "binding",
-            "cases",
-            "contentHash",
-            "bindingHash",
-        ],
-        "report" => &[
-            "schemaVersion",
-            "reportId",
-            "checkpointId",
-            "datasetId",
-            "datasetVersion",
-            "datasetContentHash",
-            "binding",
-            "candidate",
-            "resultDetailPolicy",
-            "status",
-            "createdAt",
-            "updatedAt",
-            "completedAt",
-            "rows",
-            "metrics",
-            "scoring",
-        ],
-        "checkpoint" => &[
-            "schemaVersion",
-            "checkpointId",
-            "reportId",
-            "datasetId",
-            "datasetVersion",
-            "datasetContentHash",
-            "binding",
-            "candidate",
-            "resultDetailPolicy",
-            "status",
-            "createdAt",
-            "updatedAt",
-            "cases",
-            "modelScoring",
-        ],
-        _ => return Err(INVALID.into()),
-    };
-    if object.keys().any(|k| !allowed.contains(&k.as_str())) {
-        return Err(INVALID.into());
-    }
     if asset_kind == "dataset" {
-        let cases = v["cases"].as_array().ok_or(INVALID)?;
-        if !identity(&v["datasetId"])
+        if !exact(
+            v,
+            &[
+                "schemaVersion",
+                "datasetId",
+                "version",
+                "name",
+                "createdAt",
+                "status",
+                "binding",
+                "cases",
+            ],
+            &["frozenAt", "contentHash", "bindingHash"],
+        ) || !identity(&v["datasetId"])
             || !v["version"]
                 .as_u64()
                 .is_some_and(|n| (1..=65535).contains(&n))
             || !v["name"]
                 .as_str()
-                .is_some_and(|s| !s.trim().is_empty() && s.encode_utf16().count() <= 128)
-            || cases.is_empty()
-            || cases.len() > 10000
-            || cases.iter().any(|c| {
-                !identity(&c["caseId"]) || !c.as_object().is_some_and(|o| o.contains_key("input"))
-            })
+                .is_some_and(|s| !s.trim().is_empty() && s.trim().encode_utf16().count() <= 128)
+            || !array(&v["cases"], 1, 10000, dataset_case)
+            || !unique(&v["cases"])
         {
             return Err(INVALID.into());
         }
-        match v["status"].as_str() {
-            Some("draft")
-                if !object.contains_key("contentHash")
-                    && !object.contains_key("bindingHash")
-                    && !object.contains_key("frozenAt") => {}
-            Some("frozen")
-                if hash(&v["contentHash"]) && hash(&v["bindingHash"]) && stamp(&v["frozenAt"]) => {}
-            _ => return Err(INVALID.into()),
+        let frozen = v["status"] == "frozen";
+        if !(frozen && hash(&v["contentHash"]) && hash(&v["bindingHash"]) && stamp(&v["frozenAt"])
+            || v["status"] == "draft"
+                && ["contentHash", "bindingHash", "frozenAt"]
+                    .iter()
+                    .all(|k| v.get(*k).is_none()))
+        {
+            return Err(INVALID.into());
+        }
+        return Ok(());
+    }
+    let common = &[
+        "schemaVersion",
+        "reportId",
+        "checkpointId",
+        "datasetId",
+        "datasetVersion",
+        "datasetContentHash",
+        "binding",
+        "candidate",
+        "resultDetailPolicy",
+        "status",
+        "createdAt",
+        "updatedAt",
+    ][..];
+    let mut required = common.to_vec();
+    required.extend(if asset_kind == "report" {
+        vec!["rows", "metrics", "scoring"]
+    } else {
+        vec!["cases", "modelScoring"]
+    });
+    if !["report", "checkpoint"].contains(&asset_kind)
+        || !exact(
+            v,
+            &required,
+            if asset_kind == "report" {
+                &["completedAt"]
+            } else {
+                &[]
+            },
+        )
+        || !["reportId", "checkpointId", "datasetId"]
+            .iter()
+            .all(|k| identity(&v[*k]))
+        || !v["datasetVersion"]
+            .as_u64()
+            .is_some_and(|n| (1..=65535).contains(&n))
+        || !hash(&v["datasetContentHash"])
+        || !exact(&v["candidate"], &["id", "version", "contentHash"], &[])
+        || !identity(&v["candidate"]["id"])
+        || !text(&v["candidate"]["version"], 128)
+        || !hash(&v["candidate"]["contentHash"])
+        || !choice(&v["resultDetailPolicy"], &["summary", "structured"])
+        || !stamp(&v["updatedAt"])
+    {
+        return Err(INVALID.into());
+    }
+    let structured = v["resultDetailPolicy"] == "structured";
+    if asset_kind == "report" {
+        if !array(&v["rows"], 0, 10000, |r| row(r, structured))
+            || !unique(&v["rows"])
+            || !metrics(&v["metrics"])
+            || !exact(&v["scoring"], &["deterministic", "model", "human"], &[])
+            || !metrics(&v["scoring"]["deterministic"])
+            || !model_scoring(&v["scoring"]["model"])
+            || !array(&v["scoring"]["human"], 0, 10000, human)
+        {
+            return Err(INVALID.into());
+        }
+        let rows = v["rows"].as_array().unwrap();
+        let c = &v["metrics"]["cases"];
+        if ["completed", "failed", "uncertain"].iter().any(|k| {
+            c[*k].as_u64() != Some(rows.iter().filter(|r| r["status"] == *k).count() as u64)
+        }) || c["total"].as_u64().unwrap() < rows.len() as u64
+        {
+            return Err(INVALID.into());
+        }
+        if !(v["status"] == "partial" && v.get("completedAt").is_none()
+            || v["status"] == "completed"
+                && stamp(&v["completedAt"])
+                && v["completedAt"].as_u64() >= v["createdAt"].as_u64()
+                && rows.len() as u64 == c["total"].as_u64().unwrap())
+        {
+            return Err(INVALID.into());
         }
     } else {
-        if !identity(&v["reportId"])
-            || !identity(&v["checkpointId"])
-            || !identity(&v["datasetId"])
-            || !v["datasetVersion"]
-                .as_u64()
-                .is_some_and(|n| (1..=65535).contains(&n))
-            || !hash(&v["datasetContentHash"])
-            || !v["candidate"].is_object()
-            || !identity(&v["candidate"]["id"])
-            || !text(&v["candidate"]["version"], 128)
-            || !hash(&v["candidate"]["contentHash"])
-            || !v["resultDetailPolicy"]
-                .as_str()
-                .is_some_and(|s| ["summary", "structured"].contains(&s))
-            || !stamp(&v["updatedAt"])
+        if !choice(&v["status"], &["running", "cancelled", "completed"])
+            || !model_scoring(&v["modelScoring"])
+            || !array(&v["cases"], 1, 10000, |c| {
+                exact(c, &["caseId", "status"], &["result"])
+                    && identity(&c["caseId"])
+                    && choice(
+                        &c["status"],
+                        &["pending", "started", "settled", "uncertain"],
+                    )
+                    && (choice(&c["status"], &["settled", "uncertain"])
+                        == c.get("result").is_some())
+                    && optional(c, "result", |r| {
+                        row(r, structured) && r["caseId"] == c["caseId"]
+                    })
+            })
+            || !unique(&v["cases"])
+            || v["status"] == "completed"
+                && v["cases"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|c| choice(&c["status"], &["pending", "started"]))
         {
             return Err(INVALID.into());
-        }
-        if asset_kind == "report" {
-            if !v["rows"].as_array().is_some_and(|a| a.len() <= 10000)
-                || !v["metrics"].is_object()
-                || !v["scoring"].is_object()
-            {
-                return Err(INVALID.into());
-            }
-            match v["status"].as_str() {
-                Some("partial") if !object.contains_key("completedAt") => {}
-                Some("completed")
-                    if stamp(&v["completedAt"])
-                        && v["completedAt"].as_u64() >= v["createdAt"].as_u64() => {}
-                _ => return Err(INVALID.into()),
-            }
-        } else {
-            if !v["status"]
-                .as_str()
-                .is_some_and(|s| ["running", "cancelled", "completed"].contains(&s))
-                || !v["cases"]
-                    .as_array()
-                    .is_some_and(|a| !a.is_empty() && a.len() <= 10000)
-                || !v["modelScoring"].is_object()
-            {
-                return Err(INVALID.into());
-            }
         }
     }
     Ok(())
@@ -494,12 +764,32 @@ mod tests {
         if asset_kind == "report" {
             v["status"] = json!("partial");
             v["rows"] = json!([]);
-            v["metrics"] = json!({});
-            v["scoring"] = json!({});
+            v["metrics"] = metrics_fixture(0, 0);
+            v["scoring"] = json!({"deterministic":v["metrics"],"model":{"status":"not-run","rows":[]},"human":[]});
         } else {
             v["status"] = json!("running");
             v["cases"] = json!([{"caseId":"case-one","status":"pending"}]);
             v["modelScoring"] = json!({"status":"not-run","rows":[]});
+        }
+        v
+    }
+    fn metrics_fixture(total: u64, completed: u64) -> Value {
+        let accuracy = json!({"scored":0,"passed":0,"accuracy":null});
+        json!({"cases":{"total":total,"completed":completed,"failed":0,"uncertain":0},"correctness":accuracy,"citations":accuracy,"retrieval":accuracy,"averageLatencyMs":null,"usage":{"status":"not-reported","inputTokens":null,"outputTokens":null,"totalTokens":null}})
+    }
+    fn row_fixture() -> Value {
+        json!({"caseId":"case-one","status":"completed","passed":true,"checks":{"correctness":true,"citations":null,"retrieval":null},"answerHash":"a".repeat(64),"structuredHash":null,"citationIds":[],"retrievalHitIds":[],"generations":[{"provider":"local","model":"model-one","transport":"local","requestId":"opaque/Provider:request-id","usage":{"inputTokens":1,"outputTokens":2,"totalTokens":3}}],"latencyMs":1})
+    }
+    fn populated(kind: &str) -> Value {
+        let mut v = value(kind);
+        let scoring = json!({"status":"completed","binding":binding()["model"],"rows":[{"caseId":"case-one","score":0.5,"generation":row_fixture()["generations"][0]}]});
+        if kind == "report" {
+            v["rows"] = json!([row_fixture()]);
+            v["metrics"] = metrics_fixture(2, 1);
+            v["scoring"] = json!({"deterministic":v["metrics"],"model":scoring,"human":[{"caseId":"case-one","score":0.8,"reviewerId":"reviewer-one","ratedAt":1}]});
+        } else {
+            v["cases"] = json!([{"caseId":"case-one","status":"settled","result":row_fixture()}]);
+            v["modelScoring"] = scoring;
         }
         v
     }
@@ -654,5 +944,176 @@ mod tests {
         drop(held);
         assert_eq!(manage(temp.path(), &read(r)).unwrap()["revision"], 1);
         assert_eq!(fs::read_dir(folder).unwrap().count(), 2);
+    }
+    #[test]
+    fn strict_nested_report_and_checkpoint_cannot_persist_canaries_or_unknown_fields() {
+        for asset_kind in ["report", "checkpoint"] {
+            let temp = fixture();
+            let mut valid = request(asset_kind, "valid", None);
+            valid.value = Some(populated(asset_kind));
+            manage(temp.path(), &valid).unwrap();
+            let file = scope(temp.path(), "project-one")
+                .unwrap()
+                .join("assets.json");
+            let before = fs::read(&file).unwrap();
+            let paths: Vec<&str> = if asset_kind == "report" {
+                vec![
+                    "",
+                    "/binding",
+                    "/binding/model",
+                    "/candidate",
+                    "/rows/0",
+                    "/rows/0/checks",
+                    "/rows/0/generations/0",
+                    "/rows/0/generations/0/usage",
+                    "/metrics",
+                    "/metrics/cases",
+                    "/metrics/correctness",
+                    "/metrics/usage",
+                    "/scoring",
+                    "/scoring/deterministic",
+                    "/scoring/deterministic/cases",
+                    "/scoring/deterministic/citations",
+                    "/scoring/deterministic/usage",
+                    "/scoring/model",
+                    "/scoring/model/binding",
+                    "/scoring/model/rows/0",
+                    "/scoring/model/rows/0/generation",
+                    "/scoring/model/rows/0/generation/usage",
+                    "/scoring/human/0",
+                ]
+            } else {
+                vec![
+                    "",
+                    "/binding",
+                    "/binding/model",
+                    "/candidate",
+                    "/cases/0",
+                    "/cases/0/result",
+                    "/cases/0/result/checks",
+                    "/cases/0/result/generations/0",
+                    "/cases/0/result/generations/0/usage",
+                    "/modelScoring",
+                    "/modelScoring/binding",
+                    "/modelScoring/rows/0",
+                    "/modelScoring/rows/0/generation",
+                    "/modelScoring/rows/0/generation/usage",
+                ]
+            };
+            for path in paths {
+                for (field, canary) in [
+                    ("answer", "SYNTHETIC_PRIVATE_BODY"),
+                    ("apiKey", "SYNTHETIC_CREDENTIAL_CANARY"),
+                    ("unknown", "unknown"),
+                ] {
+                    let mut bad = valid.clone();
+                    bad.expected_revision = Some(Some(1));
+                    bad.value
+                        .as_mut()
+                        .unwrap()
+                        .pointer_mut(path)
+                        .unwrap()
+                        .as_object_mut()
+                        .unwrap()
+                        .insert(field.into(), json!(canary));
+                    assert_eq!(
+                        bad.preflight().unwrap_err(),
+                        INVALID,
+                        "{asset_kind} {path} {field}"
+                    );
+                    assert_eq!(manage(temp.path(), &bad).unwrap_err(), INVALID);
+                    assert_eq!(fs::read(&file).unwrap(), before);
+                    bad.key = Some("rejected-new-asset".into());
+                    bad.expected_revision = Some(None);
+                    assert_eq!(manage(temp.path(), &bad).unwrap_err(), INVALID);
+                    assert!(manage(temp.path(), &read(bad)).unwrap().is_null());
+                }
+            }
+            assert_eq!(manage(temp.path(), &read(valid)).unwrap()["revision"], 1);
+        }
+    }
+    #[test]
+    fn legitimate_metadata_states_and_structured_business_json_roundtrip() {
+        let temp = fixture();
+        for asset_kind in ["report", "checkpoint"] {
+            let mut r = request(asset_kind, asset_kind, None);
+            let mut v = populated(asset_kind);
+            if asset_kind == "report" {
+                v["status"] = json!("completed");
+                v["completedAt"] = json!(1);
+                v["metrics"]["cases"]["total"] = json!(1);
+            } else {
+                v["status"] = json!("completed");
+            }
+            v["resultDetailPolicy"] = json!("structured");
+            let row = if asset_kind == "report" {
+                &mut v["rows"][0]
+            } else {
+                &mut v["cases"][0]["result"]
+            };
+            row["structuredResult"] = json!({"answer":"business answer","input":{"value":5},"apiKey":"[已脱敏]","inputTokens":5});
+            r.value = Some(v.clone());
+            r.preflight().unwrap();
+            let result = manage(temp.path(), &r).unwrap();
+            assert_eq!(result["value"], v);
+            assert_eq!(manage(temp.path(), &read(r)).unwrap(), result);
+        }
+        let mut dataset = request("dataset", "user-input", None);
+        dataset.value.as_mut().unwrap()["cases"][0]["input"] =
+            json!({"apiKey":"synthetic user input","answer":"expected legitimate input"});
+        dataset.value.as_mut().unwrap()["cases"][0]["expected"] =
+            json!({"answer":"","structured":{"arbitrary":"user expected material"}});
+        manage(temp.path(), &dataset).unwrap();
+    }
+    #[test]
+    fn invalid_types_summaries_hashes_and_result_bindings_fail_before_creation() {
+        let temp = fixture();
+        let base = populated("report");
+        for (path, value) in [
+            ("/rows/0/checks/correctness", json!("true")),
+            ("/rows/0/answerHash", json!("invalid")),
+            ("/rows/0/latencyMs", json!(-1)),
+            ("/rows/0/generations/0/usage/inputTokens", json!(1.5)),
+            (
+                "/metrics/correctness",
+                json!({"scored":1,"passed":0,"accuracy":1}),
+            ),
+            ("/metrics/cases/completed", json!(0)),
+            (
+                "/metrics/usage",
+                json!({"status":"reported","inputTokens":1,"outputTokens":2,"totalTokens":5}),
+            ),
+            ("/scoring/model/rows/0/score", json!(2)),
+            ("/scoring/human/0/ratedAt", json!(-1)),
+        ] {
+            let mut bad = request("report", "invalid", None);
+            let mut v = base.clone();
+            *v.pointer_mut(path).unwrap() = value;
+            bad.value = Some(v);
+            assert_eq!(bad.preflight().unwrap_err(), INVALID);
+            assert_eq!(manage(temp.path(), &bad).unwrap_err(), INVALID);
+        }
+        let mut v = base.clone();
+        v["rows"][0]["structuredResult"] = json!({"answer":"business"});
+        assert!(validate_value("report", &v).is_err());
+        v["resultDetailPolicy"] = json!("structured");
+        for detail in [
+            json!({"apiKey":"SYNTHETIC_CREDENTIAL_CANARY"}),
+            json!({"nested":["Bearer synthetic-secret"]}),
+            json!({"nested":{"password":"synthetic-secret"}}),
+        ] {
+            v["rows"][0]["structuredResult"] = detail;
+            assert!(validate_value("report", &v).is_err());
+        }
+        let mut cp = populated("checkpoint");
+        cp["cases"][0]["result"]["caseId"] = json!("case-other");
+        assert!(validate_value("checkpoint", &cp).is_err());
+        cp = populated("checkpoint");
+        cp["inFlight"] = json!({});
+        assert!(validate_value("checkpoint", &cp).is_err());
+        cp = value("checkpoint");
+        cp["status"] = json!("completed");
+        assert!(validate_value("checkpoint", &cp).is_err());
+        assert_eq!(fs::read_dir(temp.path()).unwrap().count(), 0);
     }
 }
