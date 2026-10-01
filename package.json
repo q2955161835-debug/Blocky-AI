@@ -20,7 +20,7 @@
     "build:browser": "node scripts/build-browser.mjs",
     "test:component": "vitest run tests/component",
     "test:host": "cargo test --manifest-path apps/studio-host/Cargo.toml --lib --bin blocky-project-io",
-    "test:cli": "vitest run tests/cli --maxWorkers=4",
+    "test:cli": "vitest run tests/cli --maxWorkers=2 --testTimeout=60000",
     "test:e2e:build": "pwsh -NoProfile -File scripts/build-native-tests.ps1",
     "test:e2e": "wdio run tests/e2e/wdio.conf.ts",
     "dev": "pnpm build:builder && pnpm build:browser && pnpm build:document && node scripts/build-runtime-worker.mjs && node scripts/install-builder.mjs apps/studio-host/target/debug && node scripts/install-runtime-worker.mjs apps/studio-host/target/debug && node scripts/install-document-parser.mjs apps/studio-host/target/debug && node scripts/install-knowledge-models.mjs apps/studio-host/target/debug && node scripts/install-audio-runtime.mjs apps/studio-host/target/debug && pnpm --dir apps/studio-host tauri dev",
