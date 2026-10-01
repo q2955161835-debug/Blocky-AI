@@ -69,6 +69,40 @@ it("previews real parsing and splitting without publishing or exposing source pa
   });
   expect(f.writes).toEqual([]);
 });
+it("previews a newly added source before sync when Host initializes its snapshot revision", async () => {
+  const f = fixture();
+  let revision = "";
+  const call: KnowledgeCall = async (op, fields) => {
+    const value = await f.call(op, fields);
+    if (op === "knowledge-sources") {
+      const head = value as { sources: { revision: string }[] };
+      head.sources[0].revision = revision;
+    }
+    if (op === "knowledge-read-source") revision = "v1";
+    return value;
+  };
+  await expect(knowledgeOperation(call, "p", "c", "chunk")).resolves.toMatchObject({
+    preview: true,
+    documents: 1,
+    samples: [expect.objectContaining({ text: "Water evaporates." })],
+  });
+  expect(f.writes).toEqual([]);
+});
+it("discards a preview when the source revision changes after its snapshot was read", async () => {
+  const f = fixture();
+  let read = false;
+  const call: KnowledgeCall = async (op, fields) => {
+    const value = await f.call(op, fields);
+    if (op === "knowledge-read-source") read = true;
+    if (op === "knowledge-sources" && read) {
+      (value as { sources: { revision: string }[] }).sources[0].revision = "v2";
+    }
+    return value;
+  };
+  await expect(knowledgeOperation(call, "p", "c", "parse")).rejects.toThrow(
+    "BLK-KNOWLEDGE-CONFLICT",
+  );
+});
 it("discards previews after permission changes during parsing", async () => {
   const f = fixture();
   const call: KnowledgeCall = async (op, fields) => {

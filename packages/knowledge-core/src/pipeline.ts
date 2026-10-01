@@ -91,6 +91,7 @@ export async function knowledgeOperation(
           })),
       };
     const samples: Json[] = [];
+    const snapshotRevisions = new Map<string, string>();
     let documents = 0,
       fragments = 0;
     // Preview samples only: full ingestion remains in sync, with durable checkpoints.
@@ -102,6 +103,9 @@ export async function knowledgeOperation(
         page.generation !== head.generation
       )
         throw Error("BLK-KNOWLEDGE-CONFLICT");
+      // Host initializes or refreshes the cached source revision during this read.
+      // Validate against that snapshot while retaining every other source field.
+      snapshotRevisions.set(source.sourceId, page.revision);
       for (const document of page.documents.slice(0, 20)) {
         signal.throwIfAborted();
         documents++;
@@ -139,9 +143,13 @@ export async function knowledgeOperation(
     }
     signal.throwIfAborted();
     const after = await port.sources();
+    const expectedSources = head.sources.map((source) => ({
+      ...source,
+      revision: snapshotRevisions.get(source.sourceId) ?? source.revision,
+    }));
     if (
       after.generation !== head.generation ||
-      JSON.stringify(after.sources) !== JSON.stringify(head.sources)
+      JSON.stringify(after.sources) !== JSON.stringify(expectedSources)
     )
       throw Error("BLK-KNOWLEDGE-CONFLICT");
     return {

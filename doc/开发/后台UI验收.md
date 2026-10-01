@@ -12,14 +12,14 @@
 
 ## 使用约定
 
-原生驱动支持inspect/capture/set-value/invoke/file-select/file-cancel。file-select只接受项目try下的绝对.blocky路径，打开必须已存在，保存必须不存在；祖先reparse、覆盖保存和凭据控件均排除。WindowsPowerShell 5子进程须继承launcher桌面；后台UIA缺失模式时，文件选择只按本机观测到的两种Win32控件树定位，不使用全局输入。
+原生驱动支持inspect/capture/set-value/invoke/file-select/file-cancel，以及类型化approve/reject。审批仅支持media-store与local-capability：固定标题/公开正文/根直属Button6/7严格匹配并在点击前重新读取；local-capability必须绑定ExpectedProjectId与ExpectedSessionId及30分钟期限，不能提供通用标题/控件/Value。原生UIA观察缺失模式时只按已观测Win32树操作，不能跳过真实产品审批。file-select通过FileKind明确限定类型：project为.blocky，media为.png/.jpg/.jpeg/.webp/.wav，knowledge为.txt/.pdf/.docx/.md；均只接受项目try下的绝对本地盘路径。媒体和知识必须已存在且只允许打开，project打开必须存在、保存必须不存在；祖先reparse、覆盖保存和凭据控件均排除。WindowsPowerShell 5子进程须继承launcher桌面；后台UIA缺失模式时，文件选择只按本机观测到的两种Win32控件树定位，不使用全局输入。
 
 launcher必填Application和RunDirectory，支持Arguments、TimeoutSeconds、ChildEnvironment、ControllerScript和CdpPort。RunDirectory限定在仓库try下，不能覆盖已有background-result.json。
 
 ```powershell
 # GUI controller参数依次为port、RunDirectory，脚本必须属于本项目。
 & ./scripts/run-background-desktop.ps1 `
-  -Application './dist/Blocky-Studio-0.8.0-candidate1/Blocky Studio.exe' `
+  -Application './dist/Blocky-Studio-0.8.0-candidate2/Blocky Studio.exe' `
   -RunDirectory 'try/agent-capability-upgrade/background-ui/new-gui-run' `
   -ControllerScript './try/agent-capability-upgrade/background-ui/capture.mjs' `
   -CdpPort 19389 -TimeoutSeconds 120
