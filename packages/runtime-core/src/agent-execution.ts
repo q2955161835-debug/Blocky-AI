@@ -28,6 +28,7 @@ import {
   type KnowledgeJudgmentInput,
 } from "@blocky/knowledge-core";
 import { executeControlFlow } from "./control-flow";
+import { ProjectMemory } from "./memory";
 
 const valueType = (value: Json) =>
   value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
@@ -443,6 +444,38 @@ export class AgentExecution {
         if (Array.isArray(child)) throw Error("BLK-TYPE-009");
         if (child) await execute(child);
         break;
+      }
+      case "core.memory.search":
+      case "core.memory.update":
+      case "core.memory.revoke_source": {
+        const query=String(f.QUERY??this.question),limit=integer(f.LIMIT??20,1,100);
+        if(node.blockType==="core.memory.search" && f.SCOPE==="session") {
+          const terms=query.toLowerCase().split(/\s+/).filter(Boolean);
+          const entries=[...this.sessionMemory].flatMap(([encoded,value])=>{
+            const [project,session,key]=JSON.parse(encoded) as string[];
+            if(project!==this.project.manifest.projectId || session!==this.sessionId) return [];
+            const text=canonicalJson(value);return terms.every(t=>(key+' '+text).toLowerCase().includes(t)) ? [{key,value,summary:text.slice(0,256),summaryKind:'extract'}] : [];
+          }).slice(0,limit);
+          this.value={entries};break;
+        }
+        const resource=resolveResource(this.project,String(f.RESOURCE),"memory",this.registry);
+        if(!this.services.memoryEntries)throw Error("BLK-MEMORY-001");
+        const port=this.services.memoryEntries;
+        const memory=new ProjectMemory(async(request,signal)=>{this.budget.call();return abortable(port(request,signal),signal);},this.project.manifest.projectId,this.sessionId);
+        if(node.blockType==="core.memory.search") {
+          this.memory=await memory.request({action:'search',query,limit},this.budget.signal) as unknown as Json;
+          this.value=this.memory;
+        } else if(node.blockType==="core.memory.revoke_source") {
+          this.value=await memory.request({action:'revoke-source',sourceRef:String(f.SOURCE_REF)},this.budget.signal) as unknown as Json;
+        } else {
+          const key=String(f.KEY),current=await memory.request({action:'read',key},this.budget.signal);
+          const source=resource.definition.sourceRef;
+          const sourceRef=typeof source==='string'?source:source&&typeof source==='object'&&!Array.isArray(source)&&typeof source.id==='string'?source.id:undefined;
+          const result=await memory.request({action:'upsert',key,value:f.SOURCE==='input'?this.question:this.value,expectedVersion:current.version!,conflictPolicy:f.POLICY as 'replace'|'merge'|'reject',
+            ttlSeconds:Number(resource.definition.retentionDays??0)*86400,...(sourceRef?{sourceRef}: {})},this.budget.signal);
+          this.memory=result as unknown as Json;
+        }
+        this.budget.check();break;
       }
       case "core.memory.read":
       case "core.memory.write":

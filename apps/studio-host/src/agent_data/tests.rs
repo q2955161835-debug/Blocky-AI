@@ -1,5 +1,5 @@
 use super::*;
-fn fixture() -> (tempfile::TempDir, AgentData) {
+pub(super) fn fixture() -> (tempfile::TempDir, AgentData) {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/stage4/agent-data-tests");
     std::fs::create_dir_all(&root).unwrap();
     let tmp = tempfile::tempdir_in(root).unwrap();
@@ -65,7 +65,7 @@ fn forged_cross_project_expired_revoked_and_stopped_grants_do_not_write() {
         .grants
         .get_mut(&token)
         .unwrap()
-        .created = Instant::now() - Duration::from_secs(1801);
+        .lifetime = Duration::ZERO;
     assert_eq!(host.memory(&token, &r).unwrap_err(), PERMISSION);
     let token = host.authorize("project-one", "run-one").unwrap();
     host.revoke(&token).unwrap();

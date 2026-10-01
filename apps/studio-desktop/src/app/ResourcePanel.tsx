@@ -31,6 +31,7 @@ import {
 } from "./McpResourceEditor";
 import { ToolOperationsPanel } from "./ToolOperationsPanel";
 import { KnowledgePanel } from "./KnowledgePanel";
+import { MemoryPanel } from "./MemoryPanel";
 import { knowledgeNative } from "../composition/knowledge";
 import {
   knowledgeResource,
@@ -556,6 +557,8 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
               />
             )}
           {error && <p role="alert">{error}</p>}
+          {draft.kind === "memory" && <MemoryPanel key={`${project.manifest.projectId}/${draft.resourceId}`} projectId={project.manifest.projectId}
+            retentionDays={Number(draft.definition.retentionDays ?? 0)} sourceRef={typeof draft.definition.sourceRef === "string" ? draft.definition.sourceRef : draft.definition.sourceRef && typeof draft.definition.sourceRef === "object" && !Array.isArray(draft.definition.sourceRef) ? String(draft.definition.sourceRef.id ?? "") : ""}/>} 
           <button onClick={save} disabled={managedBusy || !!modelError || !!toolSchemaError}>
             保存资源
           </button>

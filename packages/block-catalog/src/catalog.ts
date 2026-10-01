@@ -7,7 +7,7 @@ import flowPrimitives from "./flow-primitives.json";
 import workflowPrimitives from "./workflow-primitives.json";
 import rpaPrimitives from "./rpa-primitives.json";
 import version from "./version.json";
-export type ResourceFieldKind = "knowledge" | "model" | "tool";
+export type ResourceFieldKind = "knowledge" | "model" | "tool" | "memory" | "skill";
 export type BlockDefinition = {
   type: string;
   label: string;
@@ -59,7 +59,7 @@ export const catalog: BlockDefinition[] = [
   ...flowPrimitives,
   ...workflowPrimitives,
   ...rpaPrimitives,
-  ...agentPrimitives,
+  ...(agentPrimitives as BlockDefinition[]),
 ];
 export const catalogVersion = version.catalogVersion;
 export const getBlock = (type: string) => catalog.find((b) => b.type === type);

@@ -1,6 +1,7 @@
 const captureHint =
   "运行 rpa captures 查询当前资料目录的截图；用 capture-delete 删除不再需要的记录，capture-export 导出到新文件。";
 const guidance: Record<string, { message: string; hint: string }> = {
+  "BLK-MEMORY-CONFLICT": { message: "记忆已被其他写入修改，原内容保留。", hint: "读取当前版本，审查差异后用新的 expectedVersion 重试；merge 只合并对象顶层字段，reject 保留已有条目。" },
   ...Object.fromEntries(
     [
       "CONFIG",

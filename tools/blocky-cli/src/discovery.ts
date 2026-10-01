@@ -21,6 +21,7 @@ import {
   rpaRecordingControlSchema,
 } from "@blocky/rpa-core/recording";
 import { allow, required, type Args } from "./arguments";
+import { memoryRequestSchema } from "@blocky/runtime-core";
 import { CliError, envelope } from "./protocol";
 import { errorGuidance } from "./error-guidance";
 import { runInputsSchema } from "./run-inputs";
@@ -38,6 +39,7 @@ import {
 } from "@blocky/knowledge-core";
 export const operationsInput = builderOperationSchema.array().min(1).max(500);
 const schemas = {
+  "blocky.memory-request/v1": memoryRequestSchema,
   "blocky.knowledge-ingestion/v1": ingestionOptionsSchema,
   "blocky.knowledge-judgment/v1": knowledgeJudgmentSchema,
   "blocky.knowledge-retrieval/v1": retrievalOptionsSchema,

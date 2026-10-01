@@ -4,7 +4,9 @@
     "label": "补充指令",
     "category": 2,
     "color": "#8863b2",
-    "fields": ["TEXT"],
+    "fields": [
+      "TEXT"
+    ],
     "inputs": [],
     "statement": true
   },
@@ -13,7 +15,12 @@
     "label": "运行预算",
     "category": 9,
     "color": "#ba6f4c",
-    "fields": ["STEPS", "CALLS", "OUTPUT_TOKENS", "TIMEOUT_MS"],
+    "fields": [
+      "STEPS",
+      "CALLS",
+      "OUTPUT_TOKENS",
+      "TIMEOUT_MS"
+    ],
     "inputs": [],
     "statement": true
   },
@@ -22,7 +29,9 @@
     "label": "设置结果",
     "category": 10,
     "color": "#6384b8",
-    "fields": ["VALUE"],
+    "fields": [
+      "VALUE"
+    ],
     "inputs": [],
     "statement": true
   },
@@ -31,13 +40,30 @@
     "label": "如果",
     "category": 10,
     "color": "#6384b8",
-    "fields": ["SOURCE", "OP", "VALUE"],
+    "fields": [
+      "SOURCE",
+      "OP",
+      "VALUE"
+    ],
     "fieldOptions": {
-      "SOURCE": ["input", "result", "memory"],
-      "OP": ["equals", "contains", "truthy"]
+      "SOURCE": [
+        "input",
+        "result",
+        "memory"
+      ],
+      "OP": [
+        "equals",
+        "contains",
+        "truthy"
+      ]
     },
-    "optionalFields": ["VALUE"],
-    "inputs": ["THEN", "ELSE"],
+    "optionalFields": [
+      "VALUE"
+    ],
+    "inputs": [
+      "THEN",
+      "ELSE"
+    ],
     "statement": true
   },
   {
@@ -45,8 +71,16 @@
     "label": "读取记忆",
     "category": 5,
     "color": "#9971b5",
-    "fields": ["SCOPE", "KEY"],
-    "fieldOptions": { "SCOPE": ["session", "project"] },
+    "fields": [
+      "SCOPE",
+      "KEY"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
     "inputs": [],
     "statement": true
   },
@@ -55,10 +89,20 @@
     "label": "保存记忆",
     "category": 5,
     "color": "#9971b5",
-    "fields": ["SCOPE", "KEY", "SOURCE"],
+    "fields": [
+      "SCOPE",
+      "KEY",
+      "SOURCE"
+    ],
     "fieldOptions": {
-      "SCOPE": ["session", "project"],
-      "SOURCE": ["input", "result"]
+      "SCOPE": [
+        "session",
+        "project"
+      ],
+      "SOURCE": [
+        "input",
+        "result"
+      ]
     },
     "inputs": [],
     "statement": true
@@ -68,8 +112,16 @@
     "label": "删除记忆",
     "category": 5,
     "color": "#9971b5",
-    "fields": ["SCOPE", "KEY"],
-    "fieldOptions": { "SCOPE": ["session", "project"] },
+    "fields": [
+      "SCOPE",
+      "KEY"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
     "inputs": [],
     "statement": true
   },
@@ -78,9 +130,19 @@
     "label": "调用工具",
     "category": 6,
     "color": "#418eac",
-    "fields": ["RESOURCE", "SOURCE"],
-    "resourceFields": { "RESOURCE": "tool" },
-    "fieldOptions": { "SOURCE": ["input", "result"] },
+    "fields": [
+      "RESOURCE",
+      "SOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "tool"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    },
     "inputs": [],
     "statement": true
   },
@@ -89,8 +151,15 @@
     "label": "引用护栏",
     "category": 9,
     "color": "#ba6f4c",
-    "fields": ["POLICY"],
-    "fieldOptions": { "POLICY": ["require", "optional"] },
+    "fields": [
+      "POLICY"
+    ],
+    "fieldOptions": {
+      "POLICY": [
+        "require",
+        "optional"
+      ]
+    },
     "inputs": [],
     "statement": true
   },
@@ -99,7 +168,9 @@
     "label": "结构化输出",
     "category": 11,
     "color": "#45997e",
-    "fields": ["SCHEMA"],
+    "fields": [
+      "SCHEMA"
+    ],
     "inputs": [],
     "statement": true
   },
@@ -108,8 +179,93 @@
     "label": "文件输出",
     "category": 11,
     "color": "#45997e",
-    "fields": ["NAME", "FORMAT"],
-    "fieldOptions": { "FORMAT": ["text", "json"] },
+    "fields": [
+      "NAME",
+      "FORMAT"
+    ],
+    "fieldOptions": {
+      "FORMAT": [
+        "text",
+        "json"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.search",
+    "label": "搜索记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "RESOURCE",
+      "QUERY",
+      "LIMIT"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
+    "optionalFields": [
+      "RESOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
+    "defaultFields": {
+      "QUERY": "",
+      "LIMIT": "20"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.update",
+    "label": "保存有来源的记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "RESOURCE",
+      "KEY",
+      "SOURCE",
+      "POLICY"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ],
+      "POLICY": [
+        "reject",
+        "replace",
+        "merge"
+      ]
+    },
+    "defaultFields": {
+      "KEY": "note",
+      "POLICY": "reject"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.revoke_source",
+    "label": "撤销来源记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "RESOURCE",
+      "SOURCE_REF"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
     "inputs": [],
     "statement": true
   }

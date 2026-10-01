@@ -157,6 +157,7 @@ fn main() {
             rpa_commands::rpa_stop,
             agent_data_commands::agent_memory_authorize,
             agent_data_commands::agent_memory,
+            agent_data_commands::agent_memory_manage,
             agent_data_commands::agent_memory_cancel,
             agent_data_commands::agent_tool_preflight,
             agent_data_commands::agent_tool_call,

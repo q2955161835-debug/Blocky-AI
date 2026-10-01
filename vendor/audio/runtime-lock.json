@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "blocky.audio-runtime/v1",
+  "platform": "windows-x64",
+  "backend": {
+    "name": "whisper.cpp",
+    "version": "1.8.2",
+    "revision": "4979e04f5dcaccb36057e059bbaed8a2f5288315",
+    "license": "MIT",
+    "source": "https://github.com/ggml-org/whisper.cpp/releases/tag/v1.8.2"
+  },
+  "model": {
+    "name": "Whisper tiny multilingual",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "license": "MIT"
+  },
+  "archive": {
+    "name": "whisper-bin-x64.zip",
+    "bytes": 3832432,
+    "sha256": "b1514ebc099765e39fa37eb780b92a140a94c86bb0b3b3d98226b38825979732",
+    "url": "https://github.com/ggml-org/whisper.cpp/releases/download/v1.8.2/whisper-bin-x64.zip"
+  },
+  "files": [
+    {
+      "name": "ggml-base.dll",
+      "archiveEntry": "Release/ggml-base.dll",
+      "bytes": 528384,
+      "sha256": "3eefa9a256a7ef4774ec07d553ccecb771498a92000d0db7ab3443d79b795e86"
+    },
+    {
+      "name": "ggml-cpu.dll",
+      "archiveEntry": "Release/ggml-cpu.dll",
+      "bytes": 603648,
+      "sha256": "91240f9a352783312430e3b5d816621675afd2dfb9df28161bea235c4b7f1ce3"
+    },
+    {
+      "name": "ggml.dll",
+      "archiveEntry": "Release/ggml.dll",
+      "bytes": 67584,
+      "sha256": "4f681cca3014879e623b9b44f69b0864a9ddd530c32ce05c106105f4eec0897a"
+    },
+    {
+      "name": "whisper-cli.exe",
+      "archiveEntry": "Release/whisper-cli.exe",
+      "bytes": 481280,
+      "sha256": "dc1648751878e91acb5cfaa69bd85cff64ede44497a108844ad9d4f106cb14e8"
+    },
+    {
+      "name": "whisper.dll",
+      "archiveEntry": "Release/whisper.dll",
+      "bytes": 483840,
+      "sha256": "4155edb6868810b56423cb0089fee85f4e8739fb86053b269f4e7c6350ec61ff"
+    },
+    {
+      "name": "ggml-tiny.bin",
+      "bytes": 77691713,
+      "sha256": "be07e048e1e599ad46341c8d2a135645097a538221678b7acdd1b1919c6e1b21",
+      "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-tiny.bin"
+    },
+    {
+      "name": "licenses/LICENSE.whisper.cpp",
+      "vendorFile": "LICENSE.whisper.cpp",
+      "bytes": 1078,
+      "sha256": "e562a2ddfaf8280537795ac5ecd34e3012b6582a147ef69ba6a6a5c08c84757d"
+    },
+    {
+      "name": "licenses/LICENSE.Whisper",
+      "vendorFile": "LICENSE.Whisper",
+      "bytes": 1063,
+      "sha256": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d"
+    }
+  ]
+}

@@ -23,6 +23,7 @@ export function nativeAgentServices(
   } = { mode: "desktop" },
 ): AgentServices {
   const tokens = new Map<AbortSignal, string>();
+  const authorizations = new Map<AbortSignal, Promise<string>>();
   const active = new Map<AbortSignal, Set<Promise<unknown>>>();
   const native = call;
   call = async (operation, fields, signal) => {
@@ -66,6 +67,20 @@ export function nativeAgentServices(
     }
     return { approved: true, requestDigest: preview.requestDigest };
   }
+  async function tokenFor(projectId: string, sessionId: string, signal: AbortSignal): Promise<string> {
+    const token = tokens.get(signal);
+    if (token) return token;
+    let pending = authorizations.get(signal);
+    if (!pending) {
+      pending = (async () => {
+        const result = await call("agent-memory-authorize", { projectId, sessionId }, signal) as {token:string};
+        if (signal.aborted) { await call("agent-memory-cancel", {token:result.token}); signal.throwIfAborted(); }
+        tokens.set(signal,result.token); return result.token;
+      })();
+      authorizations.set(signal,pending);
+    }
+    try { return await pending; } finally { if (authorizations.get(signal) === pending) authorizations.delete(signal); }
+  }
   return {
     async generate(input, signal) {
       if (options.live === false) throw Error("BLK-PROVIDER-DISABLED");
@@ -93,6 +108,12 @@ export function nativeAgentServices(
         signal.removeEventListener("abort", cancel);
       }
     },
+    async memoryEntries(request, signal) {
+      const approval = options.mode === "cli" ? await approved("memory", "agent-memory-manage-preflight", request, signal) : undefined;
+      const token = options.mode === "desktop" ? await tokenFor(request.projectId, request.sessionId, signal) : undefined;
+      signal.throwIfAborted();
+      return await call("agent-memory-manage", {request, ...(approval ? {approval} : {token})},signal) as Json;
+    },
     async memory(request, signal) {
       if (options.mode === "cli") {
         const approval = await approved(
@@ -109,20 +130,7 @@ export function nativeAgentServices(
         )) as { value?: Json };
         return value.value ?? null;
       }
-      let token = tokens.get(signal);
-      if (!token) {
-        const result = (await call(
-          "agent-memory-authorize",
-          { projectId: request.projectId, sessionId: request.sessionId },
-          signal,
-        )) as { token: string };
-        token = result.token;
-        if (signal.aborted) {
-          await call("agent-memory-cancel", { token });
-          signal.throwIfAborted();
-        }
-        tokens.set(signal, token);
-      }
+      const token = await tokenFor(request.projectId, request.sessionId, signal);
       signal.throwIfAborted();
       const value = (await call(
         "agent-memory",

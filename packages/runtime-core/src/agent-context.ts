@@ -44,6 +44,7 @@ export type Generation = {
   } | null;
 };
 export type AgentServices = {
+  memoryEntries?: import("./memory").MemoryPort;
   close?: (signal: AbortSignal) => Promise<void>;
   validateCitations?: (
     projectId: string,

@@ -5,18 +5,27 @@ import { resolve, basename } from "node:path";
 import { KnowledgeTransport } from "../tools/blocky-cli/src/knowledge-transport";
 import {
   KnowledgeSearch,
+  correctedQuery,
   scoreKnowledgeQuality,
   type QualityCase,
   knowledgePort,
   synchronize,
 } from "../packages/knowledge-core/src/index";
 import { renderAnswer } from "../packages/runtime-core/src/adapters";
-import { Runtime, hostAdapters } from "../packages/runtime-core/src/index";
+import { Runtime, hostAdapters, nativeAgentServices } from "../packages/runtime-core/src/index";
 import { createStarter } from "../packages/test-fixtures/src/index";
 import { knowledgeResource } from "../packages/knowledge-core/src/resource";
 import { upsertProjectResource } from "../packages/resource-registry/src/index";
 
+import { AgentExecution } from '../packages/runtime-core/src/agent-execution';
+import { RunBudget } from '../packages/runtime-core/src/budget';
+import { userRegistryMap } from '../tools/blocky-cli/src/user-config';
+import { nativeUserOperation } from '../tools/blocky-cli/src/native-store';
+const option = (name: string) => { const at=process.argv.indexOf(name); return at<0 ? undefined : process.argv[at+1]; };
+if (option('--profile-dir')) process.env.BLOCKY_PROFILE_DIR=resolve(option('--profile-dir')!);
+const judgeId=option('--judge-model');
 const capabilityMode = process.argv.includes("--capability");
+if (capabilityMode && !judgeId) throw Error('BLK-KNOWLEDGE-JUDGMENT: capability quality requires --judge-model <configured-resource-id> through the real Host');
 const fixturePath = resolve("packages/knowledge-core/fixtures/quality-v1.json");
 const bytes = await readFile(fixturePath);
 if (process.platform !== "win32")
@@ -56,7 +65,7 @@ const transport = new KnowledgeTransport(
   resolve("tools/blocky-cli/dist/bin/blocky-project-io.exe"),
 );
 const fields = {
-  projectId: "quality-evaluation",
+  projectId: `quality-evaluation-${Date.now()}`,
   collectionId: "frozen-corpus",
 };
 const call = async (operation: string, value: Record<string, unknown>) => {
@@ -68,6 +77,14 @@ const call = async (operation: string, value: Record<string, unknown>) => {
   if (!reply.ok) throw Error(reply.code ?? "Host failed");
   return reply.value;
 };
+const registry = judgeId ? await userRegistryMap() : undefined;
+const judgeModel = judgeId ? registry?.get(judgeId) : undefined;
+if (judgeId && (!judgeModel || judgeModel.kind !== "model")) throw Error("BLK-MODEL-DEFAULT-001");
+const services = nativeAgentServices(
+  (operation, fields, signal) => nativeUserOperation(operation, fields, signal),
+  { mode: "cli", live: true, approve: async () => true },
+);
+const judgmentReceipts: { caseId: string; strategy: string; provider: string; transport: string; model: string; requestId: string; usage: unknown; usageStatus: string }[] = [];
 try {
   await call("knowledge-source-add", {
     ...fields,
@@ -101,11 +118,14 @@ try {
     embedding,
     repeatedEmbedding,
     externalModelApi: false,
+    judgmentReceipts,
+    rawSearch: {},
     strategies: {},
   };
   let passed = true;
   for (const strategy of ["keyword", "vector", "hybrid"] as const) {
     const cases = [];
+    const rawCases = [];
     let hits = 0,
       reciprocalRanks = 0,
       citationCount = 0,
@@ -113,7 +133,18 @@ try {
       leakage = 0;
     const timings: number[] = [];
     for (const item of fixture.cases) {
-      const result = await search.query(item.query, { strategy, topK: 5 });
+      const raw=await search.query(item.query,{strategy,topK:5});
+      rawCases.push({id:item.id,status:raw.status,retrieved:raw.citations.map(c=>basename(c.locator.path,'.txt'))});
+      let result=raw;
+      if(judgeModel) {
+        const budget=new RunBudget();
+        const execution=new AgentExecution(createStarter(),item.query,'quality-'+crypto.randomUUID(),'quality-session',budget,services);
+        execution.project.manifest.projectId=fields.projectId;
+        try {
+          result=await correctedQuery(search,item.query,{strategy,topK:5},(input)=>execution.judgeKnowledge(judgeModel,input),1,budget.signal);
+          judgmentReceipts.push(...execution.generations.map(g=>({caseId:item.id,strategy,provider:g.provider,transport:g.transport,model:g.model,requestId:g.requestId,usage:g.usage,usageStatus:g.usageStatus??(g.usage?'reported':'unavailable')})));
+        } finally { await services.close?.(budget.signal); budget.dispose(); }
+      }
       timings.push(result.elapsedMs);
       const ids = result.citations.map((c) => basename(c.locator.path, ".txt"));
       const recall =
@@ -145,10 +176,13 @@ try {
         retrieved: ids,
         recallAt5: recall,
         status: result.status,
+        ...("correction" in result ? { correction: result.correction } : {}),
         clarification,
         elapsedMs: result.elapsedMs,
       });
     }
+    (report.rawSearch as Record<string,unknown>)[strategy]=capabilityMode ? scoreKnowledgeQuality(fixture.cases,rawCases) : rawCases;
+    report.externalModelApi=judgmentReceipts.some((g:any)=>g.transport==='remote');
     const warm = timings.slice(1).sort((a, b) => a - b);
     const recallAt5 =
       hits / fixture.cases.filter((c) => c.kind === "answer").length;
@@ -208,7 +242,7 @@ try {
   passed &&= runtimePassed;
   report.passed = passed;
   report.outputMode =
-    "quoted-excerpts-with-clarification; no generated answer or entailment assertion";
+    judgeModel ? "real-model-evidence-judgment-and-bounded-rewrite; excerpts-only-answer" : "raw-search-excerpts; no evidence-sufficiency-judgment";
   await writeFile(
     resolve(directory, "report.json"),
     JSON.stringify(report, null, 2),

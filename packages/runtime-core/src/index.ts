@@ -10,6 +10,7 @@ export type { RunResult } from "./runtime";
 export type { AgentServices, Generation, Message, OutputFile } from './agent-context';
 export { nativeAgentServices } from './native-agent';
 export type { NativeAgentCall, PendingApproval } from './native-agent';
+export * from './memory';
 export { createWorkflow, parseWorkflow, workflowSummary, transitionWorkflow, advanceWorkflow, assertWorkflowBinding } from './workflow';
 export type { WorkflowDefinition, WorkflowRecord, WorkflowTransition, WorkflowStore, WorkflowDriver } from './workflow';
 export type { WorkflowPorts,WorkflowSummary } from './workflow/runtime';

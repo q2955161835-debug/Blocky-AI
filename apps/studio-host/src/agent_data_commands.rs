@@ -1,4 +1,5 @@
 use blocky_studio::agent_data::{AgentData, MemoryRequest, ToolRequest};
+use blocky_studio::agent_data::ManageRequest;
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::io::Write;
@@ -29,6 +30,16 @@ pub fn agent_memory(
 ) -> Result<Value, String> {
     guard(&window)?;
     host.memory(&token, &request)
+}
+#[tauri::command]
+pub fn agent_memory_manage(
+    window: tauri::WebviewWindow,
+    host: tauri::State<'_, AgentData>,
+    token: String,
+    request: ManageRequest,
+) -> Result<Value, String> {
+    guard(&window)?;
+    host.manage_memory(&token, &request)
 }
 #[tauri::command]
 pub fn agent_memory_cancel(

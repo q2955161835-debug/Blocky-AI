@@ -1,4 +1,5 @@
 import { knowledgeStages } from "@blocky/knowledge-core";
+import { memoryRequestSchema } from "./memory";
 import { validateResource } from "@blocky/resource-registry";
 import type { Adapters, Citation } from "./adapters";
 import type { AgentServices } from "./agent-context";
@@ -57,6 +58,7 @@ const methods = {
   "knowledge.query": ["question", "collection", "context"],
   "agent.generate": ["input"],
   "agent.memory": ["input"],
+  "agent.memoryEntries": ["input"],
   "agent.tool": ["input"],
   "agent.validate-citations": ["projectId", "citations"],
   "agent.close": [],
@@ -211,6 +213,13 @@ export class RuntimeServiceHost {
             Parameters<NonNullable<AgentServices["tool"]>>[0],
           signal,
         );
+      }
+      case "agent.memoryEntries": {
+        project(v.input);
+        const method = this.adapters.agent?.memoryEntries;
+        if (!method) throw invalid();
+        const request = memoryRequestSchema.parse(v.input);
+        return method(request, signal);
       }
       case "agent.validate-citations":
         if (v.projectId !== this.projectId || !Array.isArray(v.citations))

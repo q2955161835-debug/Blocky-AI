@@ -23,6 +23,7 @@ const SERVICES: &[&str] = &[
     "knowledge.operation",
     "agent.generate",
     "agent.memory",
+    "agent.memoryEntries",
     "agent.tool",
     "agent.validate-citations",
     "agent.close",

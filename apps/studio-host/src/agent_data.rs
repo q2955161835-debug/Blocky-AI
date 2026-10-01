@@ -1,4 +1,6 @@
 //! Project memory and one registered pure tool. No client-controlled filesystem paths.
+mod memory_store;
+pub use memory_store::ManageRequest;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
@@ -111,6 +113,7 @@ struct Grant {
     project: String,
     session: String,
     created: Instant,
+    lifetime: Duration,
 }
 #[derive(Default)]
 struct State {
@@ -138,7 +141,7 @@ impl AgentData {
         let mut state = self.state.lock().map_err(|_| INVALID)?;
         state
             .grants
-            .retain(|_, g| g.created.elapsed() < Duration::from_secs(1800));
+            .retain(|_, g| g.created.elapsed() < g.lifetime);
         if state.closed || state.grants.len() >= 128 {
             return Err(PERMISSION.into());
         }
@@ -149,6 +152,7 @@ impl AgentData {
                 project: project.into(),
                 session: session.into(),
                 created: Instant::now(),
+                lifetime: Duration::from_secs(1800),
             },
         );
         Ok(token)
@@ -167,7 +171,7 @@ impl AgentData {
                 !state.closed
                     && g.project == request.project_id
                     && g.session == request.session_id
-                    && g.created.elapsed() < Duration::from_secs(1800)
+                    && g.created.elapsed() < g.lifetime
             })
             .ok_or(PERMISSION)?;
         let _ = grant;
@@ -175,68 +179,14 @@ impl AgentData {
         self.memory_inner(request)
     }
     fn memory_inner(&self, r: &MemoryRequest) -> Result<Value, String> {
-        std::fs::create_dir_all(&self.root).map_err(|_| "BLK-AGENT-IO")?;
-        let lock = std::fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(self.root.join("memory.lock"))
-            .map_err(|_| "BLK-AGENT-IO")?;
-        lock.try_lock().map_err(|_| "BLK-AGENT-BUSY")?;
-        let file = self.root.join(format!("{}.json", r.project_id));
-        let mut map: Map<String, Value> = if file.exists() {
-            if std::fs::symlink_metadata(&file)
-                .map_err(|_| "BLK-AGENT-IO")?
-                .file_type()
-                .is_symlink()
-            {
-                return Err(PERMISSION.into());
-            }
-            if std::fs::metadata(&file).map_err(|_| "BLK-AGENT-IO")?.len() > 1024 * 1024 {
-                return Err("BLK-AGENT-LIMIT".into());
-            }
-            let mut bytes = Vec::new();
-            use std::io::Read;
-            std::fs::File::open(&file)
-                .map_err(|_| "BLK-AGENT-IO")?
-                .take(1024 * 1024 + 1)
-                .read_to_end(&mut bytes)
-                .map_err(|_| "BLK-AGENT-IO")?;
-            if bytes.len() > 1024 * 1024 {
-                return Err("BLK-AGENT-LIMIT".into());
-            }
-            let data = crate::strict_json::parse(&bytes).map_err(|_| "BLK-AGENT-IO")?;
-            data.as_object().cloned().ok_or("BLK-AGENT-IO")?
-        } else {
-            Map::new()
-        };
-        if map.iter().any(|(key, value)| {
-            !stable(key) || serde_json::to_vec(value).map_or(true, |v| v.len() > 32768)
-        }) {
-            return Err("BLK-AGENT-IO".into());
-        }
-        match r.action.as_str() {
-            "read" => return Ok(json!({"found":map.contains_key(&r.key),"value":map.get(&r.key)})),
-            "write" => {
-                map.insert(r.key.clone(), r.value.clone().ok_or(INVALID)?);
-            }
-            "delete" => {
-                map.remove(&r.key);
-            }
-            _ => return Err(INVALID.into()),
-        }
-        let bytes = serde_json::to_vec(&map).map_err(|_| INVALID)?;
-        if bytes.len() > 1024 * 1024 {
-            return Err("BLK-AGENT-LIMIT".into());
-        }
-        std::fs::create_dir_all(&self.root).map_err(|_| "BLK-AGENT-IO")?;
-        let mut temp = tempfile::NamedTempFile::new_in(&self.root).map_err(|_| "BLK-AGENT-IO")?;
-        temp.write_all(&bytes)
-            .and_then(|_| temp.as_file().sync_all())
-            .map_err(|_| "BLK-AGENT-IO")?;
-        temp.persist(&file).map_err(|_| "BLK-AGENT-IO")?;
-        Ok(json!({"ok":true}))
+        memory_store::legacy(&self.root, r)
+    }
+    pub fn manage_memory(&self, token: &str, r: &ManageRequest) -> Result<Value, String> {
+        r.validate()?;
+        let state = self.state.lock().map_err(|_| INVALID)?;
+        state.grants.get(token).filter(|g| !state.closed && g.project == r.project_id
+            && g.session == r.session_id && g.created.elapsed() < g.lifetime).ok_or(PERMISSION)?;
+        memory_store::manage(&self.root, r)
     }
     pub fn tool(&self, r: &ToolRequest, approved_digest: &str) -> Result<Value, String> {
         r.validate()?;
@@ -294,6 +244,23 @@ pub fn dispatch(root: PathBuf, v: &Value) -> Result<Value, String> {
     let approvals = root.join("approvals");
     let host = AgentData::new(root);
     match e.operation.as_str() {
+        "agent-memory-manage-preflight" | "agent-memory-manage" => {
+            let r: ManageRequest = serde_json::from_value(e.request).map_err(|_| INVALID)?;
+            if e.operation.ends_with("preflight") {
+                if e.approval.is_some() { return Err(INVALID.into()); }
+                let mut preview=r.preflight()?;
+                preview["approvalExpiresAt"]=crate::approval_ledger::issue(&approvals,
+                    &format!("memory/{}/{}",r.project_id,r.request_id),&digest(&r)?)?.into();
+                return Ok(preview);
+            }
+            r.validate()?;
+            let a=e.approval.filter(|a|a.approved).ok_or(PERMISSION)?;
+            if a.request_digest != digest(&r)? { return Err(PERMISSION.into()); }
+            crate::approval_ledger::consume(&approvals,&format!("memory/{}/{}",r.project_id,r.request_id),&a.request_digest)?;
+            let token=host.authorize(&r.project_id,&r.session_id)?;
+            host.manage_memory(&token,&r)
+        }
+
         "agent-memory-preflight" | "agent-memory" => {
             let r: MemoryRequest = serde_json::from_value(e.request).map_err(|_| INVALID)?;
             if e.operation.ends_with("preflight") {

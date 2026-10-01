@@ -46,6 +46,7 @@ import { foundationsCommand, foundationsHelp } from "./foundations";
 import { knowledgeCommand, knowledgeHelp } from "./knowledge";
 import { modelCommand, modelHelp } from "./models";
 import { toolCommand, toolHelp } from "./tools";
+import { memoryCommand, memoryHelp } from "./memory";
 import {
   userConfigCommand,
   userConfigHelp,
@@ -67,6 +68,7 @@ export const help = {
     ...knowledgeHelp,
     ...modelHelp,
     ...toolHelp,
+    ...memoryHelp,
     ...foundationsHelp,
     ...userConfigHelp,
     "project migrate <old.blocky> --output <new.blocky> --json",
@@ -115,6 +117,8 @@ export async function dispatch(
   if (model) return model;
   const tool = await toolCommand(args, signal);
   if (tool) return tool;
+  const memory = await memoryCommand(args, signal);
+  if (memory) return memory;
   const blocks = await blockQueryCommand(args);
   if (blocks) return blocks;
   const productivity = await productivityCommand(args, signal);

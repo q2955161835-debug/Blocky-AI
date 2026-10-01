@@ -66,23 +66,21 @@ pub(super) fn record(root: &Path, profile: &str) -> Result<(), String> {
             &std::fs::read(root.join("sandbox.json")).map_err(|_| OWNERSHIP)?,
         )?)
         .map_err(|_| OWNERSHIP)?;
-        if previous.schema_version != manifest.schema_version
-            || !previous.profile_name.is_empty()
-            || previous.bundle_files.into_iter().collect::<BTreeSet<_>>()
-                != manifest.bundle_files.iter().cloned().collect()
-        {
-            return Err(OWNERSHIP.into());
+        if previous.schema_version != manifest.schema_version { return Err("BLK-TOOL-OWNERSHIP-SCHEMA".into()); }
+        if !previous.profile_name.is_empty() { return Err("BLK-TOOL-OWNERSHIP-ACTIVE".into()); }
+        if previous.bundle_files.into_iter().collect::<BTreeSet<_>>() != manifest.bundle_files.iter().cloned().collect() {
+            return Err("BLK-TOOL-OWNERSHIP-BUNDLE".into());
         }
     }
     save(root, &manifest)
 }
 fn save(root: &Path, manifest: &Manifest) -> Result<(), String> {
-    let mut file = tempfile::NamedTempFile::new_in(root).map_err(|_| OWNERSHIP)?;
+    let mut file = tempfile::NamedTempFile::new_in(root).map_err(|_| "BLK-TOOL-OWNERSHIP-CREATE")?;
     file.write_all(&serde_json::to_vec(&manifest).map_err(|_| OWNERSHIP)?)
         .and_then(|_| file.as_file().sync_all())
-        .map_err(|_| OWNERSHIP)?;
+        .map_err(|_| "BLK-TOOL-OWNERSHIP-WRITE")?;
     file.persist(root.join("sandbox.json"))
-        .map_err(|_| OWNERSHIP)?;
+        .map_err(|_| "BLK-TOOL-OWNERSHIP-COMMIT")?;
     Ok(())
 }
 pub(crate) fn record_pending(root: &Path, files: Vec<String>) -> Result<File, String> {
