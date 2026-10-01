@@ -1,0 +1,965 @@
+[
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "model",
+    "title": "模型",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "format": "id"
+        },
+        "connectionRef": {
+          "type": "string",
+          "format": "id"
+        },
+        "connectionRevision": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2147483647,
+          "integer": true
+        },
+        "baseUrl": {
+          "type": "string",
+          "format": "public-https"
+        },
+        "modelId": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string",
+          "enum": [
+            "openai-chat",
+            "openai-responses",
+            "native",
+            "local"
+          ]
+        },
+        "timeoutMs": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3600000,
+          "integer": true
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "audio",
+              "tools",
+              "structured-output",
+              "embedding",
+              "rerank"
+            ]
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2,
+              "integer": false
+            },
+            "topP": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "integer": false
+            },
+            "maxOutputTokens": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 10000000,
+              "integer": true
+            },
+            "retries": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "integer": true
+            },
+            "concurrency": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 128,
+              "integer": true
+            },
+            "contextLength": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 10000000,
+              "integer": true
+            }
+          },
+          "required": []
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "localRuntime": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "type": "string",
+              "enum": [
+                "cpu",
+                "vulkan"
+              ]
+            },
+            "device": {
+              "type": "string",
+              "format": "id"
+            },
+            "contextTokens": {
+              "type": "number",
+              "minimum": 1024,
+              "maximum": 8192,
+              "integer": true
+            },
+            "threads": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 16,
+              "integer": true
+            },
+            "memoryMb": {
+              "type": "number",
+              "minimum": 2048,
+              "maximum": 32768,
+              "integer": true
+            }
+          },
+          "required": [
+            "backend"
+          ]
+        }
+      },
+      "required": [
+        "provider",
+        "modelId",
+        "protocol",
+        "timeoutMs",
+        "capabilities"
+      ]
+    },
+    "secretFields": [
+      "apiKey",
+      "baseUrl",
+      "authorization",
+      "headers",
+      "proxy"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "knowledge",
+    "title": "知识库",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "collection": {
+          "type": "string",
+          "format": "id"
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "sourceRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "resource",
+                  "artifact",
+                  "schema"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "format": "id"
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ]
+          }
+        },
+        "chunking": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "paragraph",
+                "semantic"
+              ]
+            },
+            "size": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000000,
+              "integer": true
+            },
+            "overlap": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 999999,
+              "integer": true
+            }
+          },
+          "required": [
+            "strategy",
+            "size",
+            "overlap"
+          ]
+        },
+        "index": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": [
+                "keyword",
+                "vector",
+                "hybrid"
+              ]
+            },
+            "embeddingResourceId": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "strategy"
+          ]
+        },
+        "retrieval": {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "enum": [
+                "keyword",
+                "vector",
+                "hybrid"
+              ]
+            },
+            "topK": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 20,
+              "integer": true
+            },
+            "rerankResourceId": {
+              "type": "string",
+              "format": "id"
+            },
+            "rerankModelId": {
+              "type": "string",
+              "enum": [
+                "ms-marco-minilm-l6-v2-int8-v1"
+              ]
+            },
+            "maxCandidates": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 200,
+              "integer": true
+            },
+            "minScore": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "integer": false
+            },
+            "contextBudget": {
+              "type": "number",
+              "minimum": 64,
+              "maximum": 64000,
+              "integer": true
+            },
+            "rerank": {
+              "type": "boolean"
+            },
+            "timeoutMs": {
+              "type": "number",
+              "minimum": 50,
+              "maximum": 120000,
+              "integer": true
+            },
+            "fallback": {
+              "type": "string",
+              "enum": [
+                "error",
+                "keyword"
+              ]
+            },
+            "modelId": {
+              "type": "string",
+              "format": "id"
+            },
+            "filters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ]
+              }
+            }
+          },
+          "required": [
+            "strategy",
+            "topK"
+          ]
+        }
+      },
+      "required": [
+        "chunking",
+        "retrieval"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "memory",
+    "title": "记忆",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "conversation",
+            "key-value",
+            "episodic"
+          ]
+        },
+        "sourceRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "retentionDays": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 36500,
+          "integer": true
+        }
+      },
+      "required": [
+        "type",
+        "sourceRef"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "tool",
+    "title": "工具",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "inputSchemaRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "outputSchemaRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "inputSchemaJson": {
+          "type": "string",
+          "format": "json-schema",
+          "maxLength": 16384
+        },
+        "outputSchemaJson": {
+          "type": "string",
+          "format": "json-schema",
+          "maxLength": 16384
+        },
+        "timeoutMs": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 120000,
+          "integer": true
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "networkMode": {
+          "type": "string",
+          "enum": [
+            "remote",
+            "loopback"
+          ]
+        },
+        "mcpResourceId": {
+          "type": "string",
+          "format": "id"
+        },
+        "toolName": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "moduleId": {
+          "type": "string",
+          "format": "id"
+        },
+        "exportId": {
+          "type": "string",
+          "format": "id"
+        }
+      },
+      "required": [
+        "version",
+        "permissions",
+        "implementationRef"
+      ]
+    },
+    "secretFields": [
+      "endpoint",
+      "headers",
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "skill",
+    "title": "技能",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "sourceRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "contentDigest": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "permissions",
+        "implementationRef"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "mcp",
+    "title": "MCP",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "transport": {
+          "type": "string",
+          "enum": [
+            "stdio",
+            "streamable-http",
+            "sse"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "public-https"
+        },
+        "timeoutMs": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 120000,
+          "integer": true
+        },
+        "networkMode": {
+          "type": "string",
+          "enum": [
+            "remote",
+            "loopback"
+          ]
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "permissions",
+        "implementationRef",
+        "transport"
+      ]
+    },
+    "secretFields": [
+      "endpoint",
+      "authorization",
+      "headers",
+      "access",
+      "launch"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "guardrail",
+    "title": "护栏",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string",
+          "enum": [
+            "input",
+            "output",
+            "both"
+          ]
+        },
+        "policy": {
+          "type": "string",
+          "enum": [
+            "block",
+            "warn",
+            "redact"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        }
+      },
+      "required": [
+        "stage",
+        "policy",
+        "rules"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "data",
+    "title": "数据",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "json",
+            "text",
+            "table",
+            "binary"
+          ]
+        },
+        "sourceRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "schemaRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sourceRef"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  },
+  {
+    "schemaVersion": "blocky.resource-definition/v1",
+    "kind": "task",
+    "title": "任务",
+    "definitionSchema": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "id"
+          }
+        },
+        "implementationRef": {
+          "type": "object",
+          "format": "implementation-ref",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "adapter",
+                "package",
+                "task"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "timeoutMs": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3600000,
+          "integer": true
+        },
+        "inputSchemaRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        },
+        "outputSchemaRef": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "resource",
+                "artifact",
+                "schema"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "format": "id"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "permissions",
+        "implementationRef"
+      ]
+    },
+    "secretFields": [
+      "access"
+    ]
+  }
+]

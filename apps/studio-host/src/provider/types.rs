@@ -102,6 +102,7 @@ pub fn check_binding(registry: &Value, r: &ProviderRequest) -> Result<(), String
         .as_array()
         .ok_or("BLK-PROVIDER-CONFIG")?;
     if resource["kind"] != "model"
+        || d.get("connectionRef").is_some()
         || resource["scope"] != "user"
         || d["provider"] != r.provider_name()
         || d["protocol"] != "openai-chat"

@@ -1,4 +1,3 @@
-
 use super::*;
 use serde_json::{Value, json};
 use std::time::Duration;
@@ -70,6 +69,39 @@ fn provider_edits_require_a_new_connection_revision() {
     );
     bad["providers"][0]["revision"] = json!(2);
     store.write("resources", "app", bad).unwrap();
+}
+#[test]
+fn rollback_rejects_corrupt_resource_backups_before_replacing_current_state() {
+    let temp = profile();
+    let root = temp.path().join("user");
+    let store = crate::user_store::UserStore::new(root.clone());
+    store.write("resources", "app", registry()).unwrap();
+    let valid = json!({"schemaVersion":"blocky.resource/v1alpha1","resourceId":"old","kind":"model","scope":"user","displayName":"Old","definition":{"implementationRef":"adapter://deterministic/composer-v1"},"capabilityRequirements":[],"secretBindings":[]});
+    let mut wrong_scope = valid.clone();
+    wrong_scope["scope"] = json!("project");
+    let mut missing_definition = valid.clone();
+    missing_definition["definition"] = json!({});
+    for resources in [
+        json!([{}]),
+        json!([valid.clone(), valid.clone()]),
+        json!([wrong_scope]),
+        json!([missing_definition]),
+    ] {
+        std::fs::write(
+            root.join("resources/app.v1-backup.json"),
+            json!({"schemaVersion":"blocky.resource-registry/v1","resources":resources})
+                .to_string(),
+        )
+        .unwrap();
+        assert!(rollback(&root, 1).is_err());
+        assert_eq!(store.read("resources", "app").unwrap(), Some(registry()));
+    }
+    std::fs::write(
+        root.join("resources/app.v1-backup.json"),
+        json!({"schemaVersion":"blocky.resource-registry/v1","resources":[valid]}).to_string(),
+    )
+    .unwrap();
+    rollback(&root, 1).unwrap();
 }
 #[test]
 fn simultaneous_stores_cannot_silently_overwrite_each_other() {
@@ -149,8 +181,16 @@ fn connected_deepseek_builder_preflight_is_bound_to_connection_revision() {
     r["providers"][0]["adapter"] = json!("deepseek");
     r["providers"][0]["secretBindings"] = json!([{"fieldId":"apiKey","secretRef":"key1"}]);
     r["resources"][0]["definition"]["timeoutMs"] = json!(60000);
+    r["resources"][0]["definition"]["modelId"] = json!("deepseek-test");
     let store = crate::user_store::UserStore::new(root.join("user"));
     store.write("resources", "app", r.clone()).unwrap();
+    let legacy:crate::provider::ProviderRequest=serde_json::from_value(json!({"schemaVersion":"blocky.provider-request/v1","requestId":"legacy-attempt","projectId":"sample","resourceId":"model1","secretRef":"key1","modelId":"deepseek-test","messages":[{"role":"user","content":"Hello"}],"maxOutputTokens":32,"timeoutMs":30000})).unwrap();
+    legacy.validate().unwrap();
+    assert!(
+        crate::provider::ProviderHost::default()
+            .preflight(root, &legacy)
+            .is_err()
+    );
     let project = json!({"manifest":{"schemaVersion":"blocky.project/v1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.8.0","minimumReaderVersion":"0.8.0"}},"workspaces":{"main":{"blocks":{"languageVersion":0,"blocks":[]}}},"resources":{},"schemas":{},"surfaces":{}});
     let s:crate::builder::BuilderStart=serde_json::from_value(json!({"request":{"schemaVersion":"blocky.builder-request/v1","requestId":"explain-empty","projectId":"sample","intent":"explain","prompt":"解释当前选择","moduleId":"main","selection":[],"createSurface":false},"originalJson":project.to_string(),"mode":"live","resourceId":"model1","maxTurns":1})).unwrap();
     let host = crate::builder::BuilderHost::default();
@@ -181,6 +221,7 @@ fn two_profiles_send_distinct_models_to_one_shared_local_connection() {
         .import_env("endpoint1", &env, "ENDPOINT")
         .unwrap();
     let mut r = registry();
+    r["resources"][0]["definition"]["parameters"] = json!({"topP":0.5,"temperature":0.7});
     let mut second = r["resources"][0].clone();
     second["resourceId"] = json!("model2");
     second["definition"]["modelId"] = json!("other:latest");
@@ -212,6 +253,8 @@ fn two_profiles_send_distinct_models_to_one_shared_local_connection() {
                     if bytes.len() >= i + 4 + len {
                         let body: Value =
                             serde_json::from_slice(&bytes[i + 4..i + 4 + len]).unwrap();
+                        assert_eq!(body["top_p"], json!(0.5));
+                        assert_eq!(body["temperature"], json!(0.7));
                         models.push(body["model"].clone());
                         break;
                     }

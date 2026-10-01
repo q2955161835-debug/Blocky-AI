@@ -109,6 +109,7 @@ export const modelRequestSchema = z
     maxOutputTokens: z.number().int().min(1).max(32768),
     timeoutMs: z.number().int().min(1).max(120000),
     temperature: z.number().min(0).max(2).optional(),
+    topP: z.number().min(0).max(1).optional(),
     outputSchema: modelOutputSchema.optional(),
     toolChoice: z.enum(["auto", "required", "none"]).optional(),
   })

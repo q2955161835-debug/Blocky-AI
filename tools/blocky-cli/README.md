@@ -21,6 +21,23 @@ $LASTEXITCODE
 
 ## 阶段 6–7 开发命令
 
+### 厂商连接与自定义模型
+
+`provider list/set/delete` 管理本机厂商连接；`model-profile list/set/delete/default` 管理连接下的具体模型。`set --definition <json>` 的结构通过 `schema show blocky.model-provider/v1` 或 `schema show blocky.connected-model/v1` 查询。厂商保存连接类型、名称、修订号与秘密引用；关联模型保存稳定资源ID、connectionRef、真实模型ID、显示名、能力、超时和参数，secretBindings必须为空。真实地址/Key/额外请求头仍通过既有 `secret import` 导入Host，不能写进定义。DeepSeek/息壤需要apiKey引用；自定义OpenAI Chat兼容与Ollama需要baseUrl引用，可带apiKey/headers。
+
+厂商定义的revision必须使用最新list返回值，修改成功后自动递增。两个模型引用同一连接时共享端点/凭据；同一厂商不同账号建立不同providerId。删除有下属模型的厂商会拒绝并列出模型ID。`model-profile default --id <模型资源ID>` 影响新作品和默认构建助手，旧作品的模型引用不自动替换；删除默认模型后明确报缺失。
+
+```powershell
+.\blocky.cmd provider list --json
+.\blocky.cmd provider set --definition .\try\provider.json --json
+.\blocky.cmd model-profile set --definition .\try\model.json --json
+.\blocky.cmd model-profile list --json
+.\blocky.cmd model-profile default --id my-model --json
+.\blocky.cmd resource migrate --json
+```
+
+读取旧v1账本时先内存迁移；首次保存v2或明确migrate时，在同一资料根的user/resources/app.v1-backup.json保存迁移前副本。`resource rollback --json` 明确恢复该旧副本，迁移后的新增/修改不包含在旧状态中，不自动回退。写入冲突返回BLK-RESOURCE-CONFLICT；保留草稿并重新list审查当前修订。能力声明必须与服务实际支持一致，构建助手需要工具调用能力与对应输出预算；配置存在不表示已真实调用API。
+
 ### 独立资料目录
 
 启动环境中的 `BLOCKY_PROFILE_DIR` 可指定绝对本地资料目录；桌面另支持 `Blocky Studio.exe --profile-dir <目录>`，参数优先于环境变量。用 `profile show --json` 读回 CLI 资料目录的稳定 `profileId` 和是否显式指定（`custom`）；输出不披露本机路径。路径无效、包含上级跳转、网络路径或目录链接时明确失败，不回落默认目录；`.env` 不自动加载此变量。

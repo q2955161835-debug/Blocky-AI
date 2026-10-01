@@ -115,12 +115,6 @@ pub fn rollback(root: &Path, expected_revision: u64) -> Result<(), String> {
     }
     let old =
         read(&root.join("resources/app.v1-backup.json"))?.ok_or("BLK-RESOURCE-BACKUP-MISSING")?;
-    if old["schemaVersion"] != "blocky.resource-registry/v1"
-        || old.as_object().is_none_or(|v| v.len() != 2)
-        || old["resources"].as_array().is_none_or(|r| r.len() > 256)
-    {
-        return Err(ERROR.into());
-    }
-    crate::project_store::check_secrets(&old, 0)?;
+    super::legacy::validate(&old)?;
     atomic(&path, &old)
 }

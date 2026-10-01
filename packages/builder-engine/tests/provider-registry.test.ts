@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { readBuilderRegistry } from "../src/provider-registry";
-import { emptyRegistry, upsertModelProvider, upsertUserResource, referenceUserResource, resolveResource, resolveRegistryResources } from "../../resource-registry/src";
+import { emptyRegistry, parseRegistry, upsertModelProvider, upsertUserResource, referenceUserResource, resolveResource, resolveRegistryResources } from "../../resource-registry/src";
 import { modelResource } from "../../../tests/fixtures/model-resource";
 import { createStarter } from "../../test-fixtures/src";
 it("resolves the IPC provider ledger into authorized user model references", () => {
@@ -11,4 +11,10 @@ it("resolves the IPC provider ledger into authorized user model references", () 
   expect(resolveResource(project,"online","model",map).definition.provider).toBe("xirang");
   expect(readBuilderRegistry([modelResource()]).size).toBe(1);
   expect(()=>readBuilderRegistry({ ...r, providers:[] })).toThrow();
+});
+it("migrates legacy resource arrays consistently before a first persistent write",()=>{
+  const raw=[modelResource()];
+  const resource=resolveRegistryResources(parseRegistry({schemaVersion:"blocky.resource-registry/v1",resources:raw})).get("saved-model")!;
+  const project=referenceUserResource(createStarter(),resource);
+  expect(()=>resolveResource(project,"saved-model","model",readBuilderRegistry(raw))).not.toThrow();
 });

@@ -21,6 +21,8 @@ export function useSettings(
   const [ready, setReady] = useState(false),
     [error, setError] = useState("");
   const queue = useRef(Promise.resolve());
+  const committed = useRef(app);
+  const pending = useRef<{ apply(doc: SettingsDocument): SettingsDocument; defer: boolean }[]>([]);
   useEffect(() => {
     let active = true;
     void readUserState("settings", "app")
@@ -34,6 +36,7 @@ export function useSettings(
         if (document.scope !== "app") throw Error();
         if (raw === null) await writeUserState("settings", "app", document);
         if (active) {
+          committed.current = document;
           setApp(document);
           setReady(true);
         }
@@ -55,20 +58,34 @@ export function useSettings(
     view: resolveSetting("ui.view", layers).value,
     minimizeToTray: resolveSetting("window.minimizeToTray", layers).value,
   };
-  function persist(next: SettingsDocument, defer = false) {
-    if (!defer) setApp(next);
-    queue.current = queue.current
-      .catch(() => {})
-      .then(async () => { await writeUserState("settings", "app", next); if (defer) setApp(next); });
+  function publish() {
+    setApp(pending.current.filter(op => !op.defer).reduce((doc, op) => op.apply(doc), committed.current));
+  }
+  function persist(apply: (doc: SettingsDocument) => SettingsDocument, defer = false) {
+    // Validate synchronously, but compute the persisted document against the last successful write.
+    apply(pending.current.reduce((doc, op) => op.apply(doc), committed.current));
+    const operation = { apply, defer };
+    pending.current.push(operation);
+    if (!defer) publish();
+    queue.current = queue.current.catch(() => {}).then(async () => {
+      try {
+        const next = apply(committed.current);
+        await writeUserState("settings", "app", next);
+        committed.current = next;
+      } finally {
+        pending.current = pending.current.filter(op => op !== operation);
+        publish();
+      }
+    });
     void queue.current.catch(() => report("应用设置未能保存，原配置仍保留。"));
   }
   const setPreferences = (action: SetStateAction<Preferences>) => {
     if (!ready) return;
     const next = typeof action === "function" ? action(preferences) : action;
-    persist(
+    persist(doc =>
       updateSetting(
         updateSetting(
-          updateSetting(app, "ui.reduceMotion", next.reduceMotion),
+          updateSetting(doc, "ui.reduceMotion", next.reduceMotion),
           "ui.view",
           next.view,
         ),
@@ -88,7 +105,7 @@ export function useSettings(
     const next = reset
       ? resetSetting(current, id)
       : updateSetting(current, id, value);
-    if (scope === "app") persist(next, id === "models.defaultResourceId");
+    if (scope === "app") persist(doc => reset ? resetSetting(doc, id) : updateSetting(doc, id, value), id === "models.defaultResourceId");
     else
       controller.edit((p) => {
         p.manifest.settingsRef = "settings.json";
@@ -105,7 +122,7 @@ export function useSettings(
     setPreferences,
     change,
     recover: () => {
-      persist(createSettings("app"));
+      persist(() => createSettings("app"));
       setError("");
       setReady(true);
     },

@@ -16,6 +16,7 @@ import {
 import { makePatch, previewPatch } from "./preview";
 import { parsePatch } from "./validate";
 import { draftGeneratedSurface, surfaceSpecSchema } from "@blocky/app-surface";
+import { resolveRegistryResources, serializeRegistryResources } from "@blocky/resource-registry";
 
 export type BuilderResult = {
   requestId: string;
@@ -36,7 +37,7 @@ export async function createBuilderSession(
   const request = parseBuilderRequest(input),
     project = structuredClone(inputProject);
   const registry = options.registry
-    ? structuredClone(options.registry)
+    ? resolveRegistryResources(serializeRegistryResources(options.registry))
     : undefined;
   const inspected = await inspectBuilder(project, request, registry);
   let cancelled = false,

@@ -20,8 +20,7 @@ export const connectedModelSchema = z.object({schemaVersion:z.literal("blocky.re
     timeoutMs:z.number().int().min(1).max(3600000),
     capabilities:z.array(z.enum(["text","image","audio","tools","structured-output","embedding","rerank"])).min(1).max(7),
     parameters:z.object({temperature:z.number().min(0).max(2).optional(),topP:z.number().min(0).max(1).optional(),
-      maxOutputTokens:z.number().int().min(1).max(10000000).optional(),contextLength:z.number().int().min(1).max(10000000).optional(),
-      retries:z.number().int().min(0).max(10).optional(),concurrency:z.number().int().min(1).max(128).optional()}).strict().optional(),
+      maxOutputTokens:z.number().int().min(1).max(10000000).optional()}).strict().optional(),
   }).strict()}).strict();
 export const modelProfilesHelp = [
   "provider list --json", "provider set --definition <provider.json> --json", "provider delete --id <id> --json",

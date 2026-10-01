@@ -37,6 +37,7 @@ it("configures shared models across real processes and preserves existing projec
   const preflight=cli("builder","draft",next,"--module","research-agent","--prompt","Explain project","--live","--request-id","shared-preview","--output",join(root,"draft.json"));
   expect(preflight.code).toBe(4);
   expect(preflight.value.data.pendingApproval.modelId).toBe("model-two");
+  expect(cli("builder","draft",next,"--module","research-agent","--prompt","Answer briefly","--output",join(root,"offline-draft.json")).code).toBe(0);
   const registryFile=join(f.profile,"user/resources/app.json"),before=await readFile(registryFile);
   const blocked=cli("provider","delete","--id","shared");
   expect(blocked.value.error.code).toBe("BLK-PROVIDER-IN-USE");
@@ -53,11 +54,17 @@ it("configures shared models across real processes and preserves existing projec
   expect(f.outputs.join("\n")).not.toContain("synthetic-shared-private-value");
 },60000);
 it("explicitly migrates v1 once and rolls back through the Host without merging separate accounts",async()=>{
-  const {cli,profile}=await fixture();
+  const {cli,profile,root}=await fixture();
   const dir=join(profile,"user/resources");await mkdir(dir,{recursive:true});
   const a=modelResource("a"),b=modelResource("b"),c={...modelResource("c"),secretBindings:[{fieldId:"apiKey",secretRef:"other-account"}]};
   const original=JSON.stringify({schemaVersion:"blocky.resource-registry/v1",resources:[a,b,c]});
   await writeFile(join(dir,"app.json"),original);
+  expect(cli("model-profile","default","--id","a").code).toBe(0);
+  const unpersisted=join(root,"unpersisted.blocky");
+  expect(cli("project","create","--template","research-companion","--output",unpersisted).code).toBe(0);
+  const offline = cli("builder","draft",unpersisted,"--module","research-agent","--prompt","Answer briefly","--output",join(root,"unpersisted-draft.json"));
+  expect(offline.code, JSON.stringify(offline.value.error)).toBe(0);
+  expect(JSON.parse(await readFile(join(dir,"app.json"),"utf8")).schemaVersion).toBe("blocky.resource-registry/v1");
   expect(cli("resource","migrate").code).toBe(0);
   expect(cli("resource","list").value.data.providers).toHaveLength(2);
   expect(JSON.parse(await readFile(join(dir,"app.v1-backup.json"),"utf8"))).toEqual(JSON.parse(original));

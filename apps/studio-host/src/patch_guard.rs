@@ -330,15 +330,14 @@ fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Res
                 // An unresolved old reference grants no capabilities. The repaired
                 // project is checked strictly, and new capabilities still need approval.
                 if let Some(reference) = reference {
+                let resolved;
                 let resource = if reference["scope"] == "project" {
                     &p["resources"][resource_id]
                 } else if reference["scope"] == "user"
                     && matches!(registry["schemaVersion"].as_str(),Some("blocky.resource-registry/v1"|"blocky.resource-registry/v2"))
                 {
-                    array(&registry["resources"])?
-                        .iter()
-                        .find(|r| r["resourceId"] == reference["definitionRef"])
-                        .ok_or(INVALID)?
+                    resolved = crate::model_registry::resolve_resource(registry, text(&reference["definitionRef"])?)?;
+                    &resolved
                 } else {
                     return Err(INVALID.into());
                 };
@@ -348,7 +347,11 @@ fn permissions(project: &Value, registry: &Value, allow_unresolved: bool) -> Res
                 {
                     return Err(INVALID.into());
                 }
+                let connected = expected == "model" && reference["scope"] == "user"
+                    && resource["definition"]["connectionRef"].is_string()
+                    && resource["definition"]["connectionRevision"].is_u64();
                 for binding in array(&resource["secretBindings"])? {
+                    if connected { continue; }
                     if !array(&reference["secretRefs"])?.contains(&binding["secretRef"]) {
                         return Err(INVALID.into());
                     }

@@ -129,7 +129,7 @@ pub(crate) fn execute(
             let bytes = super::transport::exchange_headers_using(
                 client,
                 endpoint.as_str(),
-                &images::body(root,request,&bound.model,&bound.provider)?,
+                &bound.body(root,request)?,
                 remaining,
                 std::str::from_utf8(key).map_err(|_| "BLK-MODEL-CONFIG")?,
                 Some(&bound.headers),

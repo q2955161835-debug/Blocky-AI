@@ -9,7 +9,9 @@ export function nativeModelRequest(input: GenerationRequest) {
     d = resource.definition;
   const legacy = ["deepseek", "xirang"].includes(String(d.provider));
   const v2 =
+    d.connectionRef !== undefined ||
     !legacy ||
+    (d.parameters !== undefined && d.parameters !== null && typeof d.parameters === "object" && !Array.isArray(d.parameters) && d.parameters.topP !== undefined) ||
     !!input.tools?.length ||
     input.outputSchema !== undefined ||
     input.messages.some((m) => m.role === "tool" || m.toolCalls?.length || m.imageRefs?.length);
@@ -24,7 +26,7 @@ export function nativeModelRequest(input: GenerationRequest) {
   const p = d.parameters as Record<string, Json> | undefined;
   if (
     p &&
-    Object.keys(p).some((k) => !["temperature", "maxOutputTokens"].includes(k))
+    Object.keys(p).some((k) => !["temperature", "topP", "maxOutputTokens"].includes(k))
   )
     throw Error("BLK-PROVIDER-CONFIG");
   const common = {
@@ -43,6 +45,7 @@ export function nativeModelRequest(input: GenerationRequest) {
       request: {
         schemaVersion: "blocky.model-request/v2",
         ...common,
+        ...(p?.topP !== undefined ? { topP: p.topP } : {}),
         ...(input.tools?.length ? { tools: input.tools } : {}),
         ...(input.outputSchema !== undefined
           ? { outputSchema: input.outputSchema }

@@ -13,6 +13,7 @@ pub(crate) struct Binding {
     pub key: Vec<u8>,
     pub headers: reqwest::header::HeaderMap,
     pub digest: String,
+    pub parameters: Value,
 }
 impl Drop for Binding {
     fn drop(&mut self) {
@@ -123,6 +124,7 @@ impl Binding {
                 headers: reqwest::header::HeaderMap::new(),
                 digest,
                 managed: Some(options),
+                parameters: d.get("parameters").cloned().unwrap_or(json!({})),
             });
         }
         let local = provider == "ollama";
@@ -221,9 +223,20 @@ impl Binding {
             headers,
             digest,
             managed: None,
+            parameters: d.get("parameters").cloned().unwrap_or(json!({})),
         })
     }
     pub fn preview(&self, r: &GatewayRequest) -> Value {
         json!({"requestDigest":self.digest,"provider":self.provider,"transport":if self.local{"local"}else{"remote"},"projectId":r.project_id,"resourceId":r.resource_id,"modelId":self.model,"inputBytes":r.messages.iter().map(|m|m.content.len()).sum::<usize>(),"imageCount":r.messages.iter().map(|m|m.image_refs.len()).sum::<usize>(),"toolNames":r.tools.iter().map(|t|&t.name).collect::<Vec<_>>(),"maxOutputTokens":r.max_output_tokens,"timeoutMs":r.timeout_ms})
+    }
+    pub fn body(&self, root:&Path, request:&GatewayRequest)->Result<Value,String>{
+        let mut body=super::images::body(root,request,&self.model,&self.provider)?;
+        for(key,wire,explicit,max)in [("temperature","temperature",request.temperature,2.0),("topP","top_p",request.top_p,1.0)] {
+            if explicit.is_none() {if let Some(value)=self.parameters.get(key){
+                let n=value.as_f64().filter(|n|n.is_finite()&&(0.0..=max).contains(n)).ok_or(ERROR)?;
+                body[wire]=json!(n);
+            }}
+        }
+        Ok(body)
     }
 }

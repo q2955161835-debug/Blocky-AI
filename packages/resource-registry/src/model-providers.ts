@@ -64,6 +64,7 @@ export function migrateModelProviders(resources: Resource[]): { providers: Model
   const migrated = resources.map(r => {
     const d = r.definition;
     if (r.kind !== "model" || !providerAdapters.includes(d.provider as ModelProvider["adapter"]) || d.protocol !== "openai-chat" ||
+      (d.parameters !== undefined && Object.keys(d.parameters as object).some(k=>!["temperature","topP","maxOutputTokens"].includes(k))) ||
       d.baseUrl !== undefined || canonicalJson(d.implementationRef) !== canonicalJson({ kind: "adapter", id: `${d.provider}-v1` })) return r;
     let candidate: ModelProvider;
     try { candidate = parseModelProvider({ schemaVersion: "blocky.model-provider/v1", providerId: `provider-${r.resourceId}`,

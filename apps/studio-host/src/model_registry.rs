@@ -2,6 +2,8 @@ use serde_json::{Value, json};
 use std::collections::HashSet;
 const ERROR: &str = "BLK-MODEL-CONFIG";
 const VERSION: &str = "blocky.resource-registry/v2";
+mod legacy;
+mod legacy_rules;
 fn exact(value: &Value, fields: &[&str]) -> Result<(), String> {
     let m = value.as_object().ok_or(ERROR)?;
     if m.len() != fields.len() || m.keys().any(|k| !fields.contains(&k.as_str())) {
@@ -167,11 +169,9 @@ fn connected_model(r: &Value) -> Result<(), String> {
             let valid = match k.as_str() {
                 "temperature" => (0.0..=2.0).contains(&n),
                 "topP" => (0.0..=1.0).contains(&n),
-                "maxOutputTokens" | "contextLength" => {
+                "maxOutputTokens" => {
                     (1.0..=10000000.0).contains(&n) && v.is_u64()
                 }
-                "retries" => (0.0..=10.0).contains(&n) && v.is_u64(),
-                "concurrency" => (1.0..=128.0).contains(&n) && v.is_u64(),
                 _ => false,
             };
             if !valid {
@@ -227,6 +227,8 @@ pub fn resolve_resource(registry: &Value, resource_id: &str) -> Result<Value, St
         .ok_or(ERROR)?;
     if registry["schemaVersion"] == VERSION {
         validate_registry(registry)?;
+    } else if registry["schemaVersion"] == "blocky.resource-registry/v1" {
+        return legacy::resolve(registry,r);
     } else if r["definition"].get("connectionRef").is_some() {
         return Err(ERROR.into());
     }

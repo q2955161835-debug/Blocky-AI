@@ -69,3 +69,11 @@ it("rejects malformed connections, cross-scope bindings, dangling models and dup
   }
   expect(() => parseRegistry({ ...r, providers: [provider(), provider()] })).toThrow();
 });
+it("rejects unused online connection parameters and preserves advanced old profiles separately",()=>{
+  const registry=upsertModelProvider(emptyRegistry(),provider());
+  const connected={...model("unsupported"),definition:{...model("unsupported").definition,parameters:{contextLength:8192}}};
+  expect(()=>upsertUserResource(registry,connected)).toThrow();
+  const advanced=modelResource();advanced.definition.parameters={contextLength:8192};
+  const migrated=parseRegistry({schemaVersion:"blocky.resource-registry/v1",resources:[advanced]});
+  expect(migrated.providers).toEqual([]);expect(migrated.resources[0]).toEqual(advanced);
+});

@@ -19,6 +19,8 @@ pub struct GatewayRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub temperature: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub top_p: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_schema: Option<Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_choice: Option<String>,
@@ -182,6 +184,7 @@ impl GatewayRequest {
             || self
                 .temperature
                 .is_some_and(|t| !t.is_finite() || !(0.0..=2.0).contains(&t))
+            || self.top_p.is_some_and(|p| !p.is_finite() || !(0.0..=1.0).contains(&p))
             || self.messages.is_empty()
             || self.messages.len() > 128
             || self.tools.len() > 32
@@ -267,6 +270,7 @@ impl GatewayRequest {
         if let Some(t) = self.temperature {
             value["temperature"] = json!(t);
         }
+        if let Some(p) = self.top_p { value["top_p"] = json!(p); }
         if !self.tools.is_empty() {
             value["tools"] = json!(self
                 .tools

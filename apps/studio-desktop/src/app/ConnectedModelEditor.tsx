@@ -1,7 +1,7 @@
 import type { Resource } from "@blocky/language-schema";
 import type { ModelProvider } from "@blocky/resource-registry";
 const capabilities=[ ["text","文本"],["image","图片"],["tools","工具调用"],["structured-output","结构化输出"] ] as const;
-const parameters=[ ["temperature","温度",0,2,false],["topP","Top P",0,1,false],["maxOutputTokens","输出 Token 上限",1,10000000,true],["contextLength","上下文长度",1,10000000,true] ] as const;
+const parameters=[ ["temperature","温度",0,2,false],["topP","Top P",0,1,false],["maxOutputTokens","输出 Token 上限",1,10000000,true] ] as const;
 export function ConnectedModelEditor({resource,providers,change}:{resource:Resource;providers:ModelProvider[];change(value:Resource):void}) {
   const d=resource.definition, caps=Array.isArray(d.capabilities)?d.capabilities:[];
   const params=(d.parameters??{}) as Record<string,number>;
