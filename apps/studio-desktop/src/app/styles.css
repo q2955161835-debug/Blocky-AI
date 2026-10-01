@@ -1079,10 +1079,14 @@ dialog.popup p {
 }
 .popup:has(.resource-panel) {
   width: min(780px, calc(100vw - 32px));
+}
+.popup:has(.resource-panel),
+.popup:has(.settings-panel) {
   max-height: calc(100dvh - 140px);
   overflow-y: auto;
 }
-.popup:has(.resource-panel) > header {
+.popup:has(.resource-panel) > header,
+.popup:has(.settings-panel) > header {
   position: sticky;
   top: -12px;
   z-index: 1;
