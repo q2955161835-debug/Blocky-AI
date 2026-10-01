@@ -160,7 +160,12 @@ fn chunked_sse_multiline_utf8_and_reverse_request_denial() {
             s.write_all(&[*byte]).unwrap();
             s.write_all(b"\r\n").unwrap();
         }
-        s.write_all(b"0\r\n\r\n").unwrap();
+        // The client may close as soon as the complete SSE reply is parsed.
+        // Only the trailing HTTP terminator can lose that close race.
+        if let Err(error) = s.write_all(b"0\r\n\r\n") {
+            assert!(matches!(error.kind(), std::io::ErrorKind::ConnectionAborted
+                | std::io::ErrorKind::ConnectionReset | std::io::ErrorKind::BrokenPipe));
+        }
     });
     let mut t = transport(url);
     assert_eq!(
