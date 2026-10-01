@@ -3,7 +3,7 @@ import {digest,type Json} from '@blocky/language-schema';
 import {projectDigest} from '@blocky/project-model';
 import {compileProject} from '@blocky/compiler';
 import {resolveResource} from '@blocky/resource-registry';
-import {Runtime,hostAdapters,nativeAgentServices,NativeEvaluationStore,createRuntimeEvaluationExecutor,runEvaluation,createEvaluationDataset,forkEvaluationDataset,saveEvaluationAsset,importEvaluationDataset,evaluationCheckpointSchema,type PendingApproval} from '@blocky/runtime-core';
+import {Runtime,hostAdapters,nativeAgentServices,NativeEvaluationStore,createRuntimeEvaluationExecutor,createEvaluationModelBinding,runEvaluation,createEvaluationDataset,forkEvaluationDataset,saveEvaluationAsset,importEvaluationDataset,evaluationCheckpointSchema,type PendingApproval} from '@blocky/runtime-core';
 import {evaluationCommand,evaluationHelp} from './evaluation';
 import {readJsonArtifact} from './artifacts';
 import {readProject,nativeUserOperation} from './native-store';
@@ -35,13 +35,13 @@ export async function evaluationWorkspaceCommand(args:Args,write:(v:unknown)=>vo
   signal.throwIfAborted();
   const store=new NativeEvaluationStore(services.evaluation!,project.manifest.projectId,`evaluation-cli-${crypto.randomUUID()}`,assetLifetime.signal);
   if(action==='create'||action==='fork'){
-   const modelId=typeof clean.options.get('model')==='string'?String(clean.options.get('model')):project.manifest.resources.find(r=>r.kind==='model')?.resourceId;if(!modelId)throw Error('BLK-EVAL-MODEL-BINDING');const model=resolveResource(project,modelId,'model',registry),modelHash=await digest(model as unknown as Json);
-   const binding={configurationHash,model:{resourceId:model.resourceId,provider:String(model.definition.provider),modelId:String(model.definition.modelId),version:`configuration-${modelHash.slice(0,16)}`}};
+   const modelId=typeof clean.options.get('model')==='string'?String(clean.options.get('model')):project.manifest.resources.find(r=>r.kind==='model')?.resourceId;if(!modelId)throw Error('BLK-EVAL-MODEL-BINDING');const model=resolveResource(project,modelId,'model',registry);
+   const binding={configurationHash,model:await createEvaluationModelBinding(model)};
    let dataset;if(action==='fork'){const old=await store.read('dataset',required(clean,'dataset-key'));if(!old||old.kind!=='dataset')throw Error('BLK-EVAL-DATASET-NOT-FOUND');dataset=await forkEvaluationDataset(old.value,{binding},Date.now());}else{const cases=await readJsonArtifact(required(clean,'input'),8*1024*1024);dataset=createEvaluationDataset({datasetId:`dataset-${crypto.randomUUID()}`,name:typeof clean.options.get('name')==='string'?String(clean.options.get('name')):'项目评估集',createdAt:Date.now(),binding,cases:cases as never});}
    const saved=await saveEvaluationAsset(store,'dataset',dataset,null);return {code:0,result:envelope(`evaluation.${action}`,{key:saved.key,revision:saved.revision,dataset})};
   }
   const asset=await store.read('dataset',required(clean,'dataset-key'));if(!asset||asset.kind!=='dataset')throw Error('BLK-EVAL-DATASET-NOT-FOUND');const dataset=await importEvaluationDataset(asset.value);if(dataset.binding.configurationHash!==configurationHash)throw Error('BLK-EVAL-MODEL-BINDING');
-  const bound=resolveResource(project,dataset.binding.model.resourceId,'model',registry);if(bound.definition.provider!==dataset.binding.model.provider||bound.definition.modelId!==dataset.binding.model.modelId||`configuration-${(await digest(bound as unknown as Json)).slice(0,16)}`!==dataset.binding.model.version)throw Error('BLK-EVAL-MODEL-BINDING');
+  const bound=await createEvaluationModelBinding(resolveResource(project,dataset.binding.model.resourceId,'model',registry));if(bound.provider!==dataset.binding.model.provider||bound.modelId!==dataset.binding.model.modelId||bound.version!==dataset.binding.model.version)throw Error('BLK-EVAL-MODEL-BINDING');
   const compiled=await compileProject(project,registry),entries=compiled.interaction.entries.filter(e=>(!clean.options.has('entry')||e.interactionId===clean.options.get('entry'))&&(!clean.options.has('module')||e.moduleId===clean.options.get('module')));if(entries.length!==1)throw Error('BLK-EVAL-RUN-ENTRY');const entry=entries[0];
   const candidateHash=await projectDigest(project),candidate={id:project.manifest.projectId,version:`configuration-${candidateHash.slice(0,16)}`,contentHash:candidateHash};let checkpoint;
   if(clean.options.has('checkpoint-key')){const old=await store.read('checkpoint',required(clean,'checkpoint-key'));if(!old||old.kind!=='checkpoint')throw Error('BLK-EVAL-CHECKPOINT');checkpoint={value:evaluationCheckpointSchema.parse(old.value),revision:old.revision};}
