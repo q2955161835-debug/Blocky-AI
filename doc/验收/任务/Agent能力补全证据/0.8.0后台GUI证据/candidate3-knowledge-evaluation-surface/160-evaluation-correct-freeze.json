@@ -1,0 +1,99 @@
+{
+    "pid":  143884,
+    "desktop":  "BlockyTest-5ba2bccbd0504718985f796b74b8345d",
+    "hwnd":  95621202,
+    "action":  "approve",
+    "fileKind":  "project",
+    "controls":  [
+                     {
+                         "automationId":  "6",
+                         "name":  "是(Y)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "7",
+                         "name":  "否(N)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "20",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "65535",
+                         "name":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：project-2cc1085f-0afc-4d1d-98dc-4d28d13060fe\n会话：evaluation-ui-818af3c8-9c63-44d7-b523-a8488f782a60\n授权在运行结束或取消时撤销，最长30分钟。",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "nativeControls":  [
+                           {
+                               "hwnd":  204082712,
+                               "parent":  95621202,
+                               "id":  6,
+                               "cls":  "Button",
+                               "text":  "是(\u0026Y)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  248256290,
+                               "parent":  95621202,
+                               "id":  7,
+                               "cls":  "Button",
+                               "text":  "否(\u0026N)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  7610954,
+                               "parent":  95621202,
+                               "id":  20,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  3744506,
+                               "parent":  95621202,
+                               "id":  65535,
+                               "cls":  "Static",
+                               "text":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：project-2cc1085f-0afc-4d1d-98dc-4d28d13060fe\n会话：evaluation-ui-818af3c8-9c63-44d7-b523-a8488f782a60\n授权在运行结束或取消时撤销，最长30分钟。",
+                               "enabled":  true,
+                               "visible":  true
+                           }
+                       ],
+    "time":  "2026-10-01T14:26:23.3695604Z",
+    "approvalKind":  "local-capability",
+    "mime":  null,
+    "mediaBytes":  null,
+    "clickedButtonId":  6,
+    "expectedProjectId":  "project-2cc1085f-0afc-4d1d-98dc-4d28d13060fe",
+    "expectedSessionId":  "evaluation-ui-818af3c8-9c63-44d7-b523-a8488f782a60",
+    "dialogClosed":  true
+}

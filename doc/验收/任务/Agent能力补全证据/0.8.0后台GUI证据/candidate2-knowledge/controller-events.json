@@ -1,0 +1,42 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:15:55.793Z",
+    "pid": 143536,
+    "desktop": "BlockyTest-a61d1c9e2a604c199f50e30c6a18abdc",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:15:59.168Z",
+    "action": "capture",
+    "hwnd": 14360364
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:16:01.614Z",
+    "action": "file-select",
+    "hwnd": 14360364,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "60-knowledge-file-dialog",
+    "at": "2026-10-01T11:16:06.197Z",
+    "action": "capture",
+    "hwnd": 5971106
+  },
+  {
+    "name": "61-knowledge-file-select",
+    "at": "2026-10-01T11:16:08.633Z",
+    "action": "file-select",
+    "hwnd": 5971106,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:16:38.763Z",
+    "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.resource-panel').locator('.knowledge-panel').getByText(/青叶课堂的作业提交截止/).first() to be visible\u001b[22m\n"
+  }
+]

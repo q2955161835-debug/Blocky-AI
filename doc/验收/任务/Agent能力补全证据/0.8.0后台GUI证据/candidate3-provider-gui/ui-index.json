@@ -1,0 +1,98 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T14:29:22.599Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T14:29:22.827Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "200-provider-two-models",
+    "time": "2026-10-01T14:29:23.246Z",
+    "screenshot": "200-provider-two-models.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "201-provider-delete-in-use-rejected",
+    "time": "2026-10-01T14:29:23.361Z",
+    "screenshot": "201-provider-delete-in-use-rejected.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "202-provider-shared-revision",
+    "time": "2026-10-01T14:29:23.559Z",
+    "screenshot": "202-provider-shared-revision.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "203-provider-grouped-default",
+    "time": "2026-10-01T14:29:23.761Z",
+    "screenshot": "203-provider-grouped-default.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "204-provider-builder-default-consumer",
+    "time": "2026-10-01T14:29:23.877Z",
+    "screenshot": "204-provider-builder-default-consumer.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T14:29:24.020Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  }
+]

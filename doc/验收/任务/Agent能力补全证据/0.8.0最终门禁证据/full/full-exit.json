@@ -1,0 +1,12 @@
+{
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "suite": "full",
+  "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+  "startedAt": "2026-10-01T14:26:14.7074641Z",
+  "binarySha256": "a414893263cad0c9551b0117fff8cedb22f6eadeab08365fca9c6ab78b3bcb1a",
+  "binaryBytes": 52579840,
+  "profileIsExplicit": true,
+  "desktop": "BlockyTest-fde6d64bb8c94fef884736647a697887",
+  "exitCode": 0,
+  "endedAt": "2026-10-01T14:57:45.5208162Z"
+}

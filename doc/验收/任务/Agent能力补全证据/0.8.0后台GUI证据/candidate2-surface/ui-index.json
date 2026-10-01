@@ -1,0 +1,26 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:27:44.580Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "failed-stage",
+    "time": "2026-10-01T11:28:14.685Z",
+    "screenshot": "failed-stage.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  }
+]

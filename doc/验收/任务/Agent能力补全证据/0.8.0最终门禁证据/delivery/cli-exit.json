@@ -1,0 +1,9 @@
+{
+  "command": "pnpm test:cli",
+  "filesPassed": 39,
+  "observedAt": "2026-10-01T23:04:04.6043578+08:00",
+  "logSha256": "03e42b5fe44c1ac1f2581ce19c64bbbc0d8ebfcf245afbcb638debee1d81669b",
+  "testsPassed": 128,
+  "exitCode": 0,
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5"
+}

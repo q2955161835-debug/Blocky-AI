@@ -1,0 +1,28 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:35:38.246Z",
+    "pid": 144664,
+    "desktop": "BlockyTest-ac2fcd6b817f4387bd5912d0b0af8916",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:35:40.401Z",
+    "action": "capture",
+    "hwnd": 26091268
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:35:42.163Z",
+    "action": "file-select",
+    "hwnd": 26091268,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:36:12.727Z",
+    "message": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.builder-panel').getByRole('button', { name: '审阅候选差异', exact: true })\u001b[22m\n"
+  }
+]

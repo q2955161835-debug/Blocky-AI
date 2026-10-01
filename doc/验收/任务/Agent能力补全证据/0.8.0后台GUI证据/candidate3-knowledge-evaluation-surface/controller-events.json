@@ -1,0 +1,70 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:26:09.475Z",
+    "pid": 143884,
+    "desktop": "BlockyTest-5ba2bccbd0504718985f796b74b8345d",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:26:12.079Z",
+    "action": "capture",
+    "hwnd": 1379516
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:26:14.248Z",
+    "action": "file-select",
+    "hwnd": 1379516,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "60-knowledge-file-dialog",
+    "at": "2026-10-01T14:26:17.436Z",
+    "action": "capture",
+    "hwnd": 43982496
+  },
+  {
+    "name": "61-knowledge-file-select",
+    "at": "2026-10-01T14:26:19.629Z",
+    "action": "file-select",
+    "hwnd": 43982496,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "first-preview-before-any-sync-or-cli-read",
+    "at": "2026-10-01T14:26:20.039Z"
+  },
+  {
+    "name": "evaluation-real-binding",
+    "at": "2026-10-01T14:26:21.104Z",
+    "model": {
+      "resourceId": "local-composer",
+      "provider": "deterministic",
+      "modelId": "adapter://deterministic/composer-v1",
+      "version": "configuration-869a350ea72b6e1d"
+    }
+  },
+  {
+    "name": "160-evaluation-correct-freeze-before",
+    "at": "2026-10-01T14:26:22.288Z",
+    "action": "capture",
+    "hwnd": 95621202
+  },
+  {
+    "name": "160-evaluation-correct-freeze",
+    "at": "2026-10-01T14:26:23.495Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 95621202,
+    "dialogClosed": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T14:26:55.913Z",
+    "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('iframe[title=\"资料问答\"]').contentFrame().getByText(/已完成/) to be visible\u001b[22m\n"
+  }
+]

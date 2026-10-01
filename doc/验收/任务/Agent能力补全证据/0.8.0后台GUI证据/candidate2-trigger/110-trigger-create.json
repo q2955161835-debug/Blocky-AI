@@ -1,0 +1,99 @@
+{
+    "pid":  139704,
+    "desktop":  "BlockyTest-ef7909058936469faa9b0cecf63de903",
+    "hwnd":  7020602,
+    "action":  "approve",
+    "fileKind":  "project",
+    "controls":  [
+                     {
+                         "automationId":  "6",
+                         "name":  "是(Y)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "7",
+                         "name":  "否(N)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "20",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "65535",
+                         "name":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：trigger-independent\n会话：trigger-ui-b060691e-c51f-4cb6-97b2-a9ffe80ba25a\n授权在运行结束或取消时撤销，最长30分钟。",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "nativeControls":  [
+                           {
+                               "hwnd":  15602026,
+                               "parent":  7020602,
+                               "id":  6,
+                               "cls":  "Button",
+                               "text":  "是(\u0026Y)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  148903728,
+                               "parent":  7020602,
+                               "id":  7,
+                               "cls":  "Button",
+                               "text":  "否(\u0026N)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  28712074,
+                               "parent":  7020602,
+                               "id":  20,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  22945472,
+                               "parent":  7020602,
+                               "id":  65535,
+                               "cls":  "Static",
+                               "text":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：trigger-independent\n会话：trigger-ui-b060691e-c51f-4cb6-97b2-a9ffe80ba25a\n授权在运行结束或取消时撤销，最长30分钟。",
+                               "enabled":  true,
+                               "visible":  true
+                           }
+                       ],
+    "time":  "2026-10-01T11:38:24.7222748Z",
+    "approvalKind":  "local-capability",
+    "mime":  null,
+    "mediaBytes":  null,
+    "clickedButtonId":  6,
+    "expectedProjectId":  "trigger-independent",
+    "expectedSessionId":  "trigger-ui-b060691e-c51f-4cb6-97b2-a9ffe80ba25a",
+    "dialogClosed":  true
+}

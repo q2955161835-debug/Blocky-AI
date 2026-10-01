@@ -1,0 +1,98 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:11:34.062Z",
+    "pid": 144624,
+    "desktop": "BlockyTest-78e48a700fa64f839bd59b06a2fc258b",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "10-old-open-dialog",
+    "at": "2026-10-01T11:11:36.592Z",
+    "action": "capture",
+    "hwnd": 335794
+  },
+  {
+    "name": "10-old-open-selected",
+    "at": "2026-10-01T11:11:38.190Z",
+    "action": "file-select",
+    "hwnd": 335794,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "11-save-cancel-dialog",
+    "at": "2026-10-01T11:11:41.409Z",
+    "action": "capture",
+    "hwnd": 991182
+  },
+  {
+    "name": "11-save-cancel-decision",
+    "at": "2026-10-01T11:11:43.882Z",
+    "action": "file-cancel",
+    "hwnd": 991182,
+    "dialogClosed": true
+  },
+  {
+    "name": "12-save-new-dialog",
+    "at": "2026-10-01T11:11:46.204Z",
+    "action": "capture",
+    "hwnd": 3350512
+  },
+  {
+    "name": "12-save-new-decision",
+    "at": "2026-10-01T11:11:48.388Z",
+    "action": "file-select",
+    "hwnd": 3350512,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "12-save-new",
+    "at": "2026-10-01T11:11:48.493Z",
+    "bytes": 3236
+  },
+  {
+    "name": "13-old-reopen-dialog",
+    "at": "2026-10-01T11:11:50.277Z",
+    "action": "capture",
+    "hwnd": 5512692
+  },
+  {
+    "name": "13-old-reopen-selected",
+    "at": "2026-10-01T11:11:51.934Z",
+    "action": "file-select",
+    "hwnd": 5512692,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "30-media-file-dialog",
+    "at": "2026-10-01T11:11:54.256Z",
+    "action": "capture",
+    "hwnd": 14292806
+  },
+  {
+    "name": "31-media-file-selected",
+    "at": "2026-10-01T11:11:55.931Z",
+    "action": "file-select",
+    "hwnd": 14292806,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "32-media-approval-schema",
+    "at": "2026-10-01T11:11:56.990Z",
+    "action": "capture",
+    "hwnd": 925634
+  },
+  {
+    "name": "awaiting-typed-approval-driver",
+    "at": "2026-10-01T11:11:56.991Z"
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:11:56.993Z",
+    "message": "Native media approval requires observed typed driver"
+  }
+]

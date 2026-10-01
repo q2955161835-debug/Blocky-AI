@@ -1,0 +1,160 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:14:00.182Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "15-minimap-expanded",
+    "time": "2026-10-01T11:14:00.270Z",
+    "screenshot": "15-minimap-expanded.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "16-canvas-pan",
+    "time": "2026-10-01T11:14:00.420Z",
+    "screenshot": "16-canvas-pan.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    },
+    "before": "translate(0, 0) scale(0.85)",
+    "after": "translate(-40, -30) scale(0.85)"
+  },
+  {
+    "name": "40-builder-first",
+    "time": "2026-10-01T11:14:01.912Z",
+    "screenshot": "40-builder-first.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "40-builder-first-review",
+    "time": "2026-10-01T11:14:02.069Z",
+    "screenshot": "40-builder-first-review.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "40-builder-first-rejected",
+    "time": "2026-10-01T11:14:02.161Z",
+    "screenshot": "40-builder-first-rejected.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "41-builder-second",
+    "time": "2026-10-01T11:14:03.110Z",
+    "screenshot": "41-builder-second.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "41-builder-second-review",
+    "time": "2026-10-01T11:14:03.225Z",
+    "screenshot": "41-builder-second-review.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "41-builder-second-accepted",
+    "time": "2026-10-01T11:14:03.461Z",
+    "screenshot": "41-builder-second-accepted.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "42-builder-undo",
+    "time": "2026-10-01T11:14:03.573Z",
+    "screenshot": "42-builder-undo.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "43-project-switch",
+    "time": "2026-10-01T11:14:08.667Z",
+    "screenshot": "43-project-switch.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "44-builder-project-isolation",
+    "time": "2026-10-01T11:14:08.761Z",
+    "screenshot": "44-builder-project-isolation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T11:14:08.941Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  }
+]

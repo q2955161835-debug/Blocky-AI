@@ -1,0 +1,39 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:35:06.957Z",
+    "pid": 162756,
+    "desktop": "BlockyTest-fe706f41b30f4e8c932d8dac68140bc4",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:35:09.238Z",
+    "action": "capture",
+    "hwnd": 194910434
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:35:11.003Z",
+    "action": "file-select",
+    "hwnd": 194910434,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T14:35:19.331Z",
+    "pid": 162756,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T14:35:15.1886903Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T14:35:19.332Z",
+    "apiCalled": false
+  }
+]

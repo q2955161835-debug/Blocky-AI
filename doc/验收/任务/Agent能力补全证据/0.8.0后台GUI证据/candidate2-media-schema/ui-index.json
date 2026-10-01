@@ -1,0 +1,50 @@
+[
+  {
+    "name": "10-old-open",
+    "time": "2026-10-01T11:11:38.617Z",
+    "screenshot": "10-old-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 687,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "13-old-reopen",
+    "time": "2026-10-01T11:11:52.042Z",
+    "screenshot": "13-old-reopen.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 687,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:11:52.239Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 687,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "failed-stage",
+    "time": "2026-10-01T11:11:57.080Z",
+    "screenshot": "failed-stage.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 687,
+      "visibility": "visible"
+    }
+  }
+]

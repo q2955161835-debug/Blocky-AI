@@ -1,0 +1,86 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:19:24.686Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:19:24.938Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "62a-knowledge-sync",
+    "time": "2026-10-01T11:19:25.415Z",
+    "screenshot": "62a-knowledge-sync.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "62b-knowledge-segment-preview",
+    "time": "2026-10-01T11:19:25.732Z",
+    "screenshot": "62b-knowledge-segment-preview.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "63-knowledge-query-citation",
+    "time": "2026-10-01T11:19:25.975Z",
+    "screenshot": "63-knowledge-query-citation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "64-knowledge-source-opened",
+    "time": "2026-10-01T11:19:26.134Z",
+    "screenshot": "64-knowledge-source-opened.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T11:19:26.314Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  }
+]

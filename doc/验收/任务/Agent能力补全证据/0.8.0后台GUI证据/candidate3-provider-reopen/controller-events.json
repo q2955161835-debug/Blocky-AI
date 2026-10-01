@@ -1,0 +1,47 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:32:26.661Z",
+    "pid": 166320,
+    "desktop": "BlockyTest-3b398986eefe4580bfe8883ce9134edd",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:32:28.700Z",
+    "action": "capture",
+    "hwnd": 76028660
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:32:30.503Z",
+    "action": "file-select",
+    "hwnd": 76028660,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "provider-invalid-default-no-fallback",
+    "at": "2026-10-01T14:32:31.565Z",
+    "missingResourceId": "model-e6b3df26-5150-423e-9f90-f53f9ef3cb89",
+    "remainingModelIds": [
+      "model-9333af84-beb5-4635-b575-8dcd32703e48"
+    ]
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T14:32:38.325Z",
+    "pid": 166320,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T14:32:34.0470007Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T14:32:38.326Z",
+    "apiCalled": false
+  }
+]

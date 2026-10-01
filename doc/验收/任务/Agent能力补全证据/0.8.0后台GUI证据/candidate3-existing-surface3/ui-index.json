@@ -1,0 +1,62 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T14:35:11.259Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "120-existing-surface-answer",
+    "time": "2026-10-01T14:35:12.792Z",
+    "screenshot": "120-existing-surface-answer.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "121-existing-surface-mobile",
+    "time": "2026-10-01T14:35:12.864Z",
+    "screenshot": "121-existing-surface-mobile.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "122-existing-surface-stopped",
+    "time": "2026-10-01T14:35:12.949Z",
+    "screenshot": "122-existing-surface-stopped.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T14:35:13.102Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  }
+]

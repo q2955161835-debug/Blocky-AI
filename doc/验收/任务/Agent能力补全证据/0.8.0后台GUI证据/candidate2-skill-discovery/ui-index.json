@@ -1,0 +1,62 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:45:36.008Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:45:36.294Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "141-skill-discovery-rejection",
+    "time": "2026-10-01T11:45:38.689Z",
+    "screenshot": "141-skill-discovery-rejection.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "143-skill-discovery-empty-new-profile",
+    "time": "2026-10-01T11:45:41.049Z",
+    "screenshot": "143-skill-discovery-empty-new-profile.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T11:45:41.231Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  }
+]

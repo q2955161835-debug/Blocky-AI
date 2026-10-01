@@ -1,0 +1,1350 @@
+{
+    "pid":  146600,
+    "desktop":  "BlockyTest-0cb9e0391b5e4bb8a9e507d7c721acc3",
+    "hwnd":  27140260,
+    "action":  "file-select",
+    "fileKind":  "media",
+    "controls":  [
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "FolderBandModuleInner",
+                         "name":  "命令模块",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ToolBar",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "HelpButton",
+                         "name":  "帮助(\u0026H)",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "PreviewButton",
+                         "name":  "预览窗格",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "TogglePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.CheckBox",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "ViewControl",
+                         "name":  "详细信息",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.SplitButton",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "SplitMenuButton",
+                         "name":  "视图滑块",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "{7DDC1264-7E4D-4F74-BBC0-D191987C8D0F}",
+                         "name":  "组织​​",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "{E44616AD-6DF1-4B94-85A4-E465AE8A19DB}",
+                         "name":  "新建​​文件夹​​",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "ProperTreeHost",
+                         "name":  "控制项宿主",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "100",
+                         "name":  "导航窗格",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "listview",
+                         "name":  "Shell 文件夹视图",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "项目视图",
+                         "patterns":  [
+                                          "SelectionPatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "ScrollPatternIdentifiers.Pattern",
+                                          "GridPatternIdentifiers.Pattern",
+                                          "MultipleViewPatternIdentifiers.Pattern",
+                                          "TablePatternIdentifiers.Pattern",
+                                          "ItemContainerPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.List",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "标题",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Header",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "ExpandCollapsePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.SplitButton",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "DropDown",
+                         "name":  "筛选器下拉列表",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "ExpandCollapsePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.SplitButton",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "DropDown",
+                         "name":  "筛选器下拉列表",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "ExpandCollapsePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.SplitButton",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "DropDown",
+                         "name":  "筛选器下拉列表",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "ExpandCollapsePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.SplitButton",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "DropDown",
+                         "name":  "筛选器下拉列表",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "0",
+                         "name":  "background-acceptance",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "SelectionItemPatternIdentifiers.Pattern",
+                                          "ScrollItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ListItem",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1",
+                         "name":  "cli-profile",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "SelectionItemPatternIdentifiers.Pattern",
+                                          "ScrollItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ListItem",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "2",
+                         "name":  "gui-resumed",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "SelectionItemPatternIdentifiers.Pattern",
+                                          "ScrollItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ListItem",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "3",
+                         "name":  "legacy-profile",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "SelectionItemPatternIdentifiers.Pattern",
+                                          "ScrollItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ListItem",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "4",
+                         "name":  "profile",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "SelectionItemPatternIdentifiers.Pattern",
+                                          "ScrollItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.ListItem",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemNameDisplay",
+                         "name":  "名称",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.DateModified",
+                         "name":  "修改日期",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.ItemTypeText",
+                         "name":  "类型",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "System.Size",
+                         "name":  "大小",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "GridItemPatternIdentifiers.Pattern",
+                                          "TableItemPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "AppControlsModuleInner",
+                         "name":  "应用程序控件",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  true,
+                         "controlType":  "ControlType.Tree",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1090",
+                         "name":  "文件名(N):",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1148",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1148",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1148",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1136",
+                         "name":  "媒体 (*.png;*.jpg;*.jpeg;*.wav)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1",
+                         "name":  "打开(O)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "2",
+                         "name":  "取消",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "40965",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "导航按钮",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "上区段",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "41477",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "1001",
+                         "name":  "地址: D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "地址区段",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "SearchEditBox",
+                         "name":  "搜索框",
+                         "patterns":  [
+                                          "ValuePatternIdentifiers.Pattern",
+                                          "TextPatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Edit",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "SearchBoxSearchButton",
+                         "name":  "搜索",
+                         "patterns":  [
+                                          "InvokePatternIdentifiers.Pattern",
+                                          "ValuePatternIdentifiers.Pattern"
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Button",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "nativeControls":  [
+                           {
+                               "hwnd":  27138838,
+                               "parent":  27140260,
+                               "id":  0,
+                               "cls":  "DUIViewWndClassName",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  70193276,
+                               "parent":  27138838,
+                               "id":  0,
+                               "cls":  "DirectUIHWND",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  24125012,
+                               "parent":  70193276,
+                               "id":  0,
+                               "cls":  "CtrlNotifySink",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  25042946,
+                               "parent":  24125012,
+                               "id":  0,
+                               "cls":  "NamespaceTreeControl",
+                               "text":  "命名空间树状控制项",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  23469898,
+                               "parent":  25042946,
+                               "id":  0,
+                               "cls":  "Static",
+                               "text":  "命名空间树状控制项",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  23076340,
+                               "parent":  25042946,
+                               "id":  100,
+                               "cls":  "SysTreeView32",
+                               "text":  "导航窗格",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  26746966,
+                               "parent":  70193276,
+                               "id":  0,
+                               "cls":  "CtrlNotifySink",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  42012188,
+                               "parent":  26746966,
+                               "id":  0,
+                               "cls":  "Shell Preview Extension Host",
+                               "text":  "Shell Preview Extension Host",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  19142622,
+                               "parent":  70193276,
+                               "id":  0,
+                               "cls":  "CtrlNotifySink",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  127604882,
+                               "parent":  19142622,
+                               "id":  1121,
+                               "cls":  "SHELLDLL_DefView",
+                               "text":  "ShellView",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  235540642,
+                               "parent":  127604882,
+                               "id":  0,
+                               "cls":  "DirectUIHWND",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  42932264,
+                               "parent":  235540642,
+                               "id":  0,
+                               "cls":  "CtrlNotifySink",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  30285316,
+                               "parent":  42932264,
+                               "id":  0,
+                               "cls":  "ScrollBar",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  9379666,
+                               "parent":  235540642,
+                               "id":  0,
+                               "cls":  "CtrlNotifySink",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  43786038,
+                               "parent":  9379666,
+                               "id":  0,
+                               "cls":  "ScrollBar",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  24911780,
+                               "parent":  27140260,
+                               "id":  1090,
+                               "cls":  "Static",
+                               "text":  "文件名(\u0026N):",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  22221178,
+                               "parent":  27140260,
+                               "id":  1148,
+                               "cls":  "ComboBoxEx32",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  26156974,
+                               "parent":  22221178,
+                               "id":  1148,
+                               "cls":  "ComboBox",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  1449950,
+                               "parent":  26156974,
+                               "id":  1148,
+                               "cls":  "Edit",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  25108610,
+                               "parent":  27140260,
+                               "id":  1089,
+                               "cls":  "Static",
+                               "text":  "文件类型(\u0026T):",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  188420298,
+                               "parent":  27140260,
+                               "id":  1136,
+                               "cls":  "ComboBox",
+                               "text":  "媒体 (*.png;*.jpg;*.jpeg;*.wav)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  209393788,
+                               "parent":  27140260,
+                               "id":  1,
+                               "cls":  "Button",
+                               "text":  "打开(\u0026O)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  30547764,
+                               "parent":  27140260,
+                               "id":  2,
+                               "cls":  "Button",
+                               "text":  "取消",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  7741294,
+                               "parent":  27140260,
+                               "id":  -1,
+                               "cls":  "ScrollBar",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  29433800,
+                               "parent":  27140260,
+                               "id":  1092,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  5250640,
+                               "parent":  27140260,
+                               "id":  1091,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  10296396,
+                               "parent":  27140260,
+                               "id":  1093,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  22943688,
+                               "parent":  27140260,
+                               "id":  1120,
+                               "cls":  "ListBox",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  17440664,
+                               "parent":  27140260,
+                               "id":  1095,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  33364618,
+                               "parent":  27140260,
+                               "id":  1038,
+                               "cls":  "Button",
+                               "text":  "帮助(\u0026H)",
+                               "enabled":  false,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  7675582,
+                               "parent":  27140260,
+                               "id":  0,
+                               "cls":  "WorkerW",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  5774828,
+                               "parent":  7675582,
+                               "id":  40965,
+                               "cls":  "ReBarWindow32",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  19341502,
+                               "parent":  5774828,
+                               "id":  0,
+                               "cls":  "TravelBand",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  27991920,
+                               "parent":  19341502,
+                               "id":  0,
+                               "cls":  "ToolbarWindow32",
+                               "text":  "导航按钮",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  42015890,
+                               "parent":  5774828,
+                               "id":  0,
+                               "cls":  "UpBand",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  26615710,
+                               "parent":  42015890,
+                               "id":  0,
+                               "cls":  "ToolbarWindow32",
+                               "text":  "上区段",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  90969014,
+                               "parent":  5774828,
+                               "id":  41477,
+                               "cls":  "Address Band Root",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  43261824,
+                               "parent":  90969014,
+                               "id":  0,
+                               "cls":  "msctls_progress32",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  15998962,
+                               "parent":  43261824,
+                               "id":  0,
+                               "cls":  "Breadcrumb Parent",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  28974928,
+                               "parent":  15998962,
+                               "id":  1001,
+                               "cls":  "ToolbarWindow32",
+                               "text":  "地址: D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  16129222,
+                               "parent":  43261824,
+                               "id":  0,
+                               "cls":  "ToolbarWindow32",
+                               "text":  "地址区段",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  22093998,
+                               "parent":  43261824,
+                               "id":  41477,
+                               "cls":  "ComboBoxEx32",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  19144346,
+                               "parent":  22093998,
+                               "id":  41477,
+                               "cls":  "ComboBox",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  9575594,
+                               "parent":  19144346,
+                               "id":  41477,
+                               "cls":  "Edit",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  false
+                           },
+                           {
+                               "hwnd":  19210360,
+                               "parent":  5774828,
+                               "id":  0,
+                               "cls":  "SeparatorBand",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  36051494,
+                               "parent":  5774828,
+                               "id":  0,
+                               "cls":  "UniversalSearchBand",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  28516358,
+                               "parent":  36051494,
+                               "id":  0,
+                               "cls":  "Search Box",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  21962598,
+                               "parent":  28516358,
+                               "id":  0,
+                               "cls":  "SearchEditBoxWrapperClass",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  31334002,
+                               "parent":  21962598,
+                               "id":  0,
+                               "cls":  "DirectUIHWND",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  23011208,
+                               "parent":  5774828,
+                               "id":  0,
+                               "cls":  "SeparatorBand",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           }
+                       ],
+    "time":  "2026-10-01T11:20:18.8407895Z",
+    "fileDialogSchema":  "open-comboboxex-1148",
+    "valueReadBackMatches":  true,
+    "clickedButtonId":  1,
+    "dialogClosed":  true
+}

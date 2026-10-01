@@ -1,0 +1,19 @@
+{
+  "shortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "before": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1",
+    "arguments": "",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.7.1\\Blocky Studio.exe,0"
+  },
+  "after": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0",
+    "arguments": "",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0\\Blocky Studio.exe,0",
+    "targetExists": true,
+    "version": "0.8.0"
+  },
+  "previousAcceptedPackageRetained": true,
+  "at": "2026-10-01T23:04:04.5764888+08:00"
+}

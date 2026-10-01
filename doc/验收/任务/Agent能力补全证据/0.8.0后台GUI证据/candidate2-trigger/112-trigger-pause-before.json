@@ -1,0 +1,94 @@
+{
+    "pid":  139704,
+    "desktop":  "BlockyTest-ef7909058936469faa9b0cecf63de903",
+    "hwnd":  10952020,
+    "action":  "capture",
+    "fileKind":  "project",
+    "controls":  [
+                     {
+                         "automationId":  "6",
+                         "name":  "是(Y)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "7",
+                         "name":  "否(N)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "20",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "65535",
+                         "name":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：trigger-independent\n会话：trigger-ui-54c4afbc-fe56-43a7-b5b5-7873af749d26\n授权在运行结束或取消时撤销，最长30分钟。",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "nativeControls":  [
+                           {
+                               "hwnd":  10098498,
+                               "parent":  10952020,
+                               "id":  6,
+                               "cls":  "Button",
+                               "text":  "是(\u0026Y)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  23077018,
+                               "parent":  10952020,
+                               "id":  7,
+                               "cls":  "Button",
+                               "text":  "否(\u0026N)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  12197372,
+                               "parent":  10952020,
+                               "id":  20,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  26157088,
+                               "parent":  10952020,
+                               "id":  65535,
+                               "cls":  "Static",
+                               "text":  "本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：trigger-independent\n会话：trigger-ui-54c4afbc-fe56-43a7-b5b5-7873af749d26\n授权在运行结束或取消时撤销，最长30分钟。",
+                               "enabled":  true,
+                               "visible":  true
+                           }
+                       ],
+    "time":  "2026-10-01T11:38:25.9793038Z",
+    "screenshot":  "112-trigger-pause-before.png",
+    "sampledDistinctColors":  10
+}

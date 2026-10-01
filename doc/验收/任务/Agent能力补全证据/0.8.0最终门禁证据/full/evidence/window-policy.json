@@ -1,0 +1,18 @@
+{
+  "runId": "c1ca4cd2-88f8-42b3-a9f3-66f8af919c86",
+  "hidden": {
+    "status": "not-started",
+    "hostAllowsNewRun": false
+  },
+  "restored": {
+    "cycle": 12,
+    "blocks": 100,
+    "nodes": 100,
+    "roundTrip": true,
+    "viewEvents": 22,
+    "logRecords": 62,
+    "dropped": 0,
+    "droppedImportant": 0
+  },
+  "passed": true
+}

@@ -1,0 +1,104 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:29:17.584Z",
+    "pid": 163224,
+    "desktop": "BlockyTest-2637e807a59a4bcc8e2f1be51749d792",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:29:20.098Z",
+    "action": "capture",
+    "hwnd": 109452500
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:29:22.229Z",
+    "action": "file-select",
+    "hwnd": 109452500,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "provider-gui-persisted",
+    "at": "2026-10-01T14:29:23.466Z",
+    "provider": {
+      "adapter": "deepseek",
+      "displayName": "GUI共享厂商更新",
+      "protocol": "openai-chat",
+      "providerId": "provider-370f73d2-3e65-4372-b4f0-85ee336336e8",
+      "revision": 2,
+      "schemaVersion": "blocky.model-provider/v1",
+      "secretBindings": [
+        {
+          "fieldId": "apiKey",
+          "secretRef": "gui-synthetic-reference-updated"
+        }
+      ]
+    },
+    "models": [
+      {
+        "capabilityRequirements": [],
+        "definition": {
+          "capabilities": [
+            "text"
+          ],
+          "connectionRef": "provider-370f73d2-3e65-4372-b4f0-85ee336336e8",
+          "modelId": "custom-alpha",
+          "parameters": {
+            "maxOutputTokens": 1024
+          },
+          "timeoutMs": 45000
+        },
+        "displayName": "GUI模型甲",
+        "kind": "model",
+        "resourceId": "model-9333af84-beb5-4635-b575-8dcd32703e48",
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "scope": "user",
+        "secretBindings": []
+      },
+      {
+        "capabilityRequirements": [],
+        "definition": {
+          "capabilities": [
+            "text"
+          ],
+          "connectionRef": "provider-370f73d2-3e65-4372-b4f0-85ee336336e8",
+          "modelId": "custom-beta",
+          "parameters": {
+            "maxOutputTokens": 1024
+          },
+          "timeoutMs": 45000
+        },
+        "displayName": "GUI模型乙",
+        "kind": "model",
+        "resourceId": "model-e6b3df26-5150-423e-9f90-f53f9ef3cb89",
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "scope": "user",
+        "secretBindings": []
+      }
+    ]
+  },
+  {
+    "name": "provider-gui-default-consumer",
+    "at": "2026-10-01T14:29:23.878Z",
+    "defaultResourceId": "model-e6b3df26-5150-423e-9f90-f53f9ef3cb89"
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T14:29:30.521Z",
+    "pid": 163224,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T14:29:26.3525561Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T14:29:30.523Z",
+    "apiCalled": false
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:37:15.057Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:37:15.334Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "102-memory-readback",
+    "time": "2026-10-01T11:37:19.945Z",
+    "screenshot": "102-memory-readback.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "104-memory-deleted",
+    "time": "2026-10-01T11:37:22.069Z",
+    "screenshot": "104-memory-deleted.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "106-evaluation-frozen",
+    "time": "2026-10-01T11:37:24.302Z",
+    "screenshot": "106-evaluation-frozen.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "107-evaluation-next-version",
+    "time": "2026-10-01T11:37:24.408Z",
+    "screenshot": "107-evaluation-next-version.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T11:37:24.563Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  }
+]

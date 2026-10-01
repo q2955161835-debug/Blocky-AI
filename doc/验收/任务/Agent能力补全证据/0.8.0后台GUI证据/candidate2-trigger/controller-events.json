@@ -1,0 +1,67 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:38:17.868Z",
+    "pid": 139704,
+    "desktop": "BlockyTest-ef7909058936469faa9b0cecf63de903",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:38:20.053Z",
+    "action": "capture",
+    "hwnd": 35921566
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:38:21.939Z",
+    "action": "file-select",
+    "hwnd": 35921566,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "110-trigger-create-before",
+    "at": "2026-10-01T11:38:23.718Z",
+    "action": "capture",
+    "hwnd": 7020602
+  },
+  {
+    "name": "110-trigger-create",
+    "at": "2026-10-01T11:38:24.827Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 7020602,
+    "dialogClosed": true
+  },
+  {
+    "name": "112-trigger-pause-before",
+    "at": "2026-10-01T11:38:26.096Z",
+    "action": "capture",
+    "hwnd": 10952020
+  },
+  {
+    "name": "112-trigger-pause",
+    "at": "2026-10-01T11:38:27.200Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 10952020,
+    "dialogClosed": true
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:38:33.746Z",
+    "pid": 139704,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:38:29.4954235Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:38:33.748Z",
+    "apiCalled": false
+  }
+]

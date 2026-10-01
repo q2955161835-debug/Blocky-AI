@@ -1,0 +1,25 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:10:52.964Z",
+    "pid": 144360,
+    "desktop": "BlockyTest-6adc0a9fa63c4893ad568fab49015589",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:10:59.982Z",
+    "pid": 144360,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:10:55.3333543Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:10:59.983Z",
+    "apiCalled": false
+  }
+]

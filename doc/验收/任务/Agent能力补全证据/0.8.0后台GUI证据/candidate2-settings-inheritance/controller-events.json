@@ -1,0 +1,28 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:40:48.004Z",
+    "pid": 145576,
+    "desktop": "BlockyTest-282cd21b6f4c4bea9f3d693a48d1d2cf",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:40:50.467Z",
+    "action": "capture",
+    "hwnd": 88936430
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:40:52.126Z",
+    "action": "file-select",
+    "hwnd": 88936430,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:41:26.028Z",
+    "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '会思考', exact: true }) to be visible\u001b[22m\n"
+  }
+]

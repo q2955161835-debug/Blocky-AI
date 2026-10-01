@@ -1,0 +1,95 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:37:08.341Z",
+    "pid": 149392,
+    "desktop": "BlockyTest-5edf922dd6974ff690020589a4aa17f1",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:37:12.009Z",
+    "action": "capture",
+    "hwnd": 28713152
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:37:14.603Z",
+    "action": "file-select",
+    "hwnd": 28713152,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "100-memory-save-before",
+    "at": "2026-10-01T11:37:16.520Z",
+    "action": "capture",
+    "hwnd": 8724416
+  },
+  {
+    "name": "100-memory-save",
+    "at": "2026-10-01T11:37:17.671Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 8724416,
+    "dialogClosed": true
+  },
+  {
+    "name": "101-memory-read-before",
+    "at": "2026-10-01T11:37:18.806Z",
+    "action": "capture",
+    "hwnd": 36052788
+  },
+  {
+    "name": "101-memory-read",
+    "at": "2026-10-01T11:37:19.849Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 36052788,
+    "dialogClosed": true
+  },
+  {
+    "name": "103-memory-delete-before",
+    "at": "2026-10-01T11:37:20.959Z",
+    "action": "capture",
+    "hwnd": 7610016
+  },
+  {
+    "name": "103-memory-delete",
+    "at": "2026-10-01T11:37:21.974Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 7610016,
+    "dialogClosed": true
+  },
+  {
+    "name": "105-evaluation-freeze-before",
+    "at": "2026-10-01T11:37:23.198Z",
+    "action": "capture",
+    "hwnd": 3673240
+  },
+  {
+    "name": "105-evaluation-freeze",
+    "at": "2026-10-01T11:37:24.176Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 3673240,
+    "dialogClosed": true
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:37:31.470Z",
+    "pid": 149392,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:37:26.6149368Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:37:31.471Z",
+    "apiCalled": false
+  }
+]

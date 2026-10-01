@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-10-01T15:06:45.157Z",
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "finalDirectory": "dist/Blocky-Studio-0.8.0",
+  "files": 2595,
+  "bytes": 768101724,
+  "missing": [],
+  "extra": [],
+  "changedFromAcceptedCandidate": [],
+  "shortcutReadback": {
+    "observedAt": "2026-10-01T23:06:04.4779867+08:00",
+    "shortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0",
+    "arguments": "",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0\\Blocky Studio.exe,0",
+    "targetExists": true,
+    "version": "0.8.0",
+    "previousAcceptedPackageRetained": true
+  },
+  "cliExit": {
+    "command": "pnpm test:cli",
+    "filesPassed": 39,
+    "observedAt": "2026-10-01T23:04:04.6043578+08:00",
+    "logSha256": "03e42b5fe44c1ac1f2581ce19c64bbbc0d8ebfcf245afbcb638debee1d81669b",
+    "testsPassed": 128,
+    "exitCode": 0,
+    "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5"
+  },
+  "passed": true
+}

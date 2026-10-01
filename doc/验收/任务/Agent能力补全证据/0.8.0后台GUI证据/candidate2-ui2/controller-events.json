@@ -1,0 +1,80 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:06:34.363Z",
+    "pid": 136512,
+    "desktop": "BlockyTest-84e4a6ff046f4753a8b4efbf572c78b6",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "10-old-open-dialog",
+    "at": "2026-10-01T11:06:36.812Z",
+    "action": "capture",
+    "hwnd": 27205052
+  },
+  {
+    "name": "10-old-open-selected",
+    "at": "2026-10-01T11:06:38.364Z",
+    "action": "file-select",
+    "hwnd": 27205052,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "11-save-cancel-dialog",
+    "at": "2026-10-01T11:06:40.963Z",
+    "action": "capture",
+    "hwnd": 15341396
+  },
+  {
+    "name": "11-save-cancel-decision",
+    "at": "2026-10-01T11:06:42.367Z",
+    "action": "file-cancel",
+    "hwnd": 15341396,
+    "dialogClosed": true
+  },
+  {
+    "name": "12-save-new-dialog",
+    "at": "2026-10-01T11:06:44.140Z",
+    "action": "capture",
+    "hwnd": 167711602
+  },
+  {
+    "name": "12-save-new-decision",
+    "at": "2026-10-01T11:06:45.677Z",
+    "action": "file-select",
+    "hwnd": 167711602,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "12-save-new",
+    "at": "2026-10-01T11:06:45.788Z",
+    "bytes": 2735
+  },
+  {
+    "name": "13-old-reopen-dialog",
+    "at": "2026-10-01T11:06:47.424Z",
+    "action": "capture",
+    "hwnd": 30348968
+  },
+  {
+    "name": "13-old-reopen-selected",
+    "at": "2026-10-01T11:06:48.842Z",
+    "action": "file-select",
+    "hwnd": 30348968,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "product-exited",
+    "at": "2026-10-01T11:06:49.906Z",
+    "pid": 136512,
+    "naturallyObservedBeforeLauncherCleanup": true
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:06:49.908Z",
+    "apiCalled": false
+  }
+]

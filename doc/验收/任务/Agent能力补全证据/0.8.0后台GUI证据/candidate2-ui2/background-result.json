@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-01T11:06:26.0259932Z",
+  "application": "Blocky Studio.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate2-ui2",
+  "timeoutSeconds": 180,
+  "focusViolation": false,
+  "foregroundBefore": 7347406,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-84e4a6ff046f4753a8b4efbf572c78b6",
+  "pid": 136512,
+  "cdpPort": 19432,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": false,
+  "ownedWindowsBeforeCleanup": [
+    "5773378:138884:False:False",
+    "22421082:138884:True:False",
+    "26219892:138884:False:False",
+    "16718624:138884:False:False",
+    "9314022:138812:False:False",
+    "14031916:138812:True:False",
+    "4332806:138812:True:False",
+    "12652926:141852:False:False",
+    "11804052:141292:False:False",
+    "5183384:141292:False:False",
+    "9772252:141292:False:False",
+    "7872194:138812:False:False",
+    "7673898:141292:False:False",
+    "4333348:138812:False:False",
+    "2105096:138812:False:False",
+    "13768760:141292:False:False",
+    "5445792:141292:False:False",
+    "10362124:141292:False:False",
+    "3940128:141292:False:False",
+    "29360502:141292:False:False",
+    "82777608:141852:False:False",
+    "5314914:140144:False:False",
+    "23140396:140144:False:False",
+    "5250028:142184:False:False",
+    "8526840:142184:False:False"
+  ],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "pid": 136512,
+      "exited": true,
+      "role": "application",
+      "processHandleClosed": true,
+      "threadHandleClosed": true
+    },
+    {
+      "pid": 141656,
+      "exited": true,
+      "role": "controller",
+      "processHandleClosed": true,
+      "threadHandleClosed": true
+    }
+  ],
+  "desktopHandleClosed": true,
+  "cdpPortClosed": true,
+  "foregroundFinally": 6888728,
+  "endedAt": "2026-10-01T11:06:54.1003040Z"
+}

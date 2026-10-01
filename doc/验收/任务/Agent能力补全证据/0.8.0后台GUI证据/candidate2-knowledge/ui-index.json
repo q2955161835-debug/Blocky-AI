@@ -1,0 +1,98 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T11:16:02.096Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:16:02.373Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "50-resource-memory",
+    "time": "2026-10-01T11:16:02.584Z",
+    "screenshot": "50-resource-memory.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "50-resource-skill",
+    "time": "2026-10-01T11:16:02.766Z",
+    "screenshot": "50-resource-skill.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "50-resource-mcp",
+    "time": "2026-10-01T11:16:02.926Z",
+    "screenshot": "50-resource-mcp.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "50-resource-model",
+    "time": "2026-10-01T11:16:03.107Z",
+    "screenshot": "50-resource-model.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T11:16:03.328Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "failed-stage",
+    "time": "2026-10-01T11:16:38.882Z",
+    "screenshot": "failed-stage.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1125,
+      "height": 810,
+      "visibility": "visible"
+    }
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:04:49.276Z",
+    "pid": 139120,
+    "desktop": "BlockyTest-8b1f6adcec5b42fbafa03c4e74b13bb9",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "10-old-open-dialog",
+    "at": "2026-10-01T11:04:59.957Z",
+    "action": "capture",
+    "hwnd": 8593196
+  },
+  {
+    "name": "10-old-open-selected",
+    "at": "2026-10-01T11:05:02.190Z",
+    "action": "file-select",
+    "hwnd": 8593196,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "11-save-cancel-dialog",
+    "at": "2026-10-01T11:05:06.423Z",
+    "action": "capture",
+    "hwnd": 10690072
+  },
+  {
+    "name": "11-save-cancel-decision",
+    "at": "2026-10-01T11:05:09.400Z",
+    "action": "file-cancel",
+    "hwnd": 10690072,
+    "dialogClosed": true
+  },
+  {
+    "name": "12-save-new-dialog",
+    "at": "2026-10-01T11:05:12.474Z",
+    "action": "capture",
+    "hwnd": 4721774
+  },
+  {
+    "name": "12-save-new-decision",
+    "at": "2026-10-01T11:05:15.902Z",
+    "action": "file-select",
+    "hwnd": 4721774,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "12-save-new",
+    "at": "2026-10-01T11:05:16.008Z",
+    "bytes": 2735
+  },
+  {
+    "name": "13-old-reopen-dialog",
+    "at": "2026-10-01T11:05:18.440Z",
+    "action": "capture",
+    "hwnd": 26154356
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:05:19.555Z",
+    "message": "Command failed: C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -File D:\\1Folder\\Blocky-AI\\scripts\\background-native-dialog.ps1 -RunDirectory D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate2-ui1 -Action file-select -EvidenceName 13-old-reopen-selected -Value D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate2-ui1\\old-native-resaved.blocky\nD:\\1Folder\\Blocky-AI\\scripts\\background-native-dialog.ps1 : ʹ�á�2�����������á�FindAll��ʱ�����쳣:���޷�ʶ��Ĵ��󡣡�\r\n    + CategoryInfo          : NotSpecified: (:) [background-native-dialog.ps1], MethodInvocationException\r\n    + FullyQualifiedErrorId : ElementNotAvailableException,background-native-dialog.ps1\r\n \r\n"
+  }
+]

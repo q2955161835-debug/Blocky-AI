@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-01T14:26:13.6494096Z",
+  "application": "pwsh.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-gates\\candidate3\\full-background-20261001-2225",
+  "timeoutSeconds": 2400,
+  "focusViolation": false,
+  "foregroundBefore": 6888728,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-fde6d64bb8c94fef884736647a697887",
+  "pid": 160880,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [
+    "11412078:159020:False:False",
+    "32121594:159020:False:False",
+    "33301134:159020:False:False",
+    "2827050:159068:False:False",
+    "2171410:159068:False:False"
+  ],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "processHandleClosed": true,
+      "role": "application",
+      "threadHandleClosed": true,
+      "exited": true,
+      "pid": 160880
+    }
+  ],
+  "desktopHandleClosed": true,
+  "foregroundFinally": 6888728,
+  "endedAt": "2026-10-01T14:57:47.5988132Z"
+}

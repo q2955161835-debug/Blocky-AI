@@ -1,0 +1,28 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:33:21.026Z",
+    "pid": 165408,
+    "desktop": "BlockyTest-ea5067ab3b8b4655b06b10f4a7b6bbe0",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:33:23.831Z",
+    "action": "capture",
+    "hwnd": 177084874
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:33:26.096Z",
+    "action": "file-select",
+    "hwnd": 177084874,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T14:33:27.840Z",
+    "message": "locator.waitFor: Error: strict mode violation: getByText(/已完成/) resolved to 6 elements:\n    1) <p id=\"status\">已完成</p> aka locator('#status')\n    2) <li>已完成</li> aka getByText('已完成').nth(1)\n    3) <li>已完成</li> aka getByText('已完成').nth(2)\n    4) <li>已完成</li> aka getByText('已完成').nth(3)\n    5) <li>已完成</li> aka getByText('已完成').nth(4)\n    6) <li>已完成</li> aka getByText('已完成').nth(5)\n\nCall log:\n\u001b[2m  - waiting for locator('iframe[title=\"资料问答\"]').contentFrame().getByText(/已完成/) to be visible\u001b[22m\n\u001b[2m    2 × locator resolved to hidden <li>已完成</li>\u001b[22m\n"
+  }
+]

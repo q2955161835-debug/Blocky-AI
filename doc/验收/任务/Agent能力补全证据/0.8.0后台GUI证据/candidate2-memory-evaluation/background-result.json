@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-01T11:37:02.1118462Z",
+  "application": "Blocky Studio.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate2-memory-evaluation",
+  "timeoutSeconds": 180,
+  "focusViolation": false,
+  "foregroundBefore": 6888728,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-5edf922dd6974ff690020589a4aa17f1",
+  "pid": 149392,
+  "cdpPort": 19443,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "processHandleClosed": true,
+      "threadHandleClosed": true,
+      "exited": true,
+      "pid": 149392,
+      "role": "application"
+    },
+    {
+      "processHandleClosed": true,
+      "threadHandleClosed": true,
+      "exited": true,
+      "pid": 150304,
+      "role": "controller"
+    }
+  ],
+  "desktopHandleClosed": true,
+  "cdpPortClosed": true,
+  "foregroundFinally": 6888728,
+  "endedAt": "2026-10-01T11:37:35.3763618Z"
+}

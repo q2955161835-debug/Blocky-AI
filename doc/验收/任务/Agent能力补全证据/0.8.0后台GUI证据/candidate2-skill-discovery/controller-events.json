@@ -1,0 +1,67 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:45:30.353Z",
+    "pid": 148116,
+    "desktop": "BlockyTest-a1ad1d8f205747dca25c0937a8b0681d",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:45:33.344Z",
+    "action": "capture",
+    "hwnd": 8331002
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:45:35.577Z",
+    "action": "file-select",
+    "hwnd": 8331002,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "140-skill-discovery-rejected-before",
+    "at": "2026-10-01T11:45:37.450Z",
+    "action": "capture",
+    "hwnd": 35856464
+  },
+  {
+    "name": "140-skill-discovery-rejected",
+    "at": "2026-10-01T11:45:38.587Z",
+    "action": "reject",
+    "kind": "local-capability",
+    "hwnd": 35856464,
+    "dialogClosed": true
+  },
+  {
+    "name": "142-skill-discovery-approved-before",
+    "at": "2026-10-01T11:45:39.883Z",
+    "action": "capture",
+    "hwnd": 2694268
+  },
+  {
+    "name": "142-skill-discovery-approved",
+    "at": "2026-10-01T11:45:40.947Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 2694268,
+    "dialogClosed": true
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:45:47.372Z",
+    "pid": 148116,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:45:43.2461377Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:45:47.373Z",
+    "apiCalled": false
+  }
+]

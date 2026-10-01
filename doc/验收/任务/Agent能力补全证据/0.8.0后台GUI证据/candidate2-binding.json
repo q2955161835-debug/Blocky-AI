@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "6d9b7e76779e266473fb2764f261258ef7fa04ac",
+  "files": 2595,
+  "bytes": 767921068,
+  "changedSinceCandidate1": [
+    {
+      "path": "Blocky Studio.exe",
+      "bytes": 49803776,
+      "sha256": "e474a3167add3c614915f35b14999f4e07920e9a6329f77911b456e5c6526a42"
+    },
+    {
+      "path": "cli/bin/blocky-project-io.exe",
+      "bytes": 37694976,
+      "sha256": "e5d2534f19cfdf9c4912653286552cd37f282c032ce363525f2cfb1abd96fae0"
+    }
+  ],
+  "missing": [],
+  "extra": [],
+  "mismatches": [],
+  "at": "2026-10-01T11:07:01.691Z"
+}

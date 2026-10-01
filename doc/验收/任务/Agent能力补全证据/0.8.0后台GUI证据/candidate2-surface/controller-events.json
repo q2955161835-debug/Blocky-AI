@@ -1,0 +1,28 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:27:40.538Z",
+    "pid": 141040,
+    "desktop": "BlockyTest-4c50b2df756d433e97edf0e6e9d2b00e",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:27:42.640Z",
+    "action": "capture",
+    "hwnd": 18030684
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:27:44.215Z",
+    "action": "file-select",
+    "hwnd": 18030684,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:28:14.624Z",
+    "message": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: '审阅变更', exact: true }) to be visible\u001b[22m\n"
+  }
+]

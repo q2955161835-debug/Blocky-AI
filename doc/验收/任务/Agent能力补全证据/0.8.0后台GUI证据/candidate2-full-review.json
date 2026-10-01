@@ -1,0 +1,55 @@
+{
+  "reviewedAt": "2026-10-01T11:49:07.524Z",
+  "scope": "candidate2 source only; excludes pending knowledge/evaluation product fixes",
+  "start": {
+    "sourceCommit": "75bf1873b44232bb5c966c06a4dadd0fe05f8997",
+    "suite": "full",
+    "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+    "startedAt": "2026-10-01T11:06:41.9484149Z",
+    "binarySha256": "3bb8fc5eaa3f0e2d3b71c04abf5aaaf6885738629700e7975a29c4cc4a1a5ad2",
+    "binaryBytes": 52512768,
+    "profileIsExplicit": true,
+    "desktop": "BlockyTest-abc5053e8f85448587f84db0dcff9536"
+  },
+  "exit": {
+    "sourceCommit": "75bf1873b44232bb5c966c06a4dadd0fe05f8997",
+    "suite": "full",
+    "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+    "startedAt": "2026-10-01T11:06:41.9484149Z",
+    "binarySha256": "3bb8fc5eaa3f0e2d3b71c04abf5aaaf6885738629700e7975a29c4cc4a1a5ad2",
+    "binaryBytes": 52512768,
+    "profileIsExplicit": true,
+    "desktop": "BlockyTest-abc5053e8f85448587f84db0dcff9536",
+    "exitCode": 0,
+    "endedAt": "2026-10-01T11:37:16.2031666Z"
+  },
+  "report": {
+    "runId": "c22c7320-6fb8-499e-8a8b-f98915872bbc",
+    "passed": true,
+    "schemaVersion": "blocky.soak/v1",
+    "startedAt": "2026-10-01T11:07:12.565Z",
+    "cycles": 360,
+    "roundTrips": 30,
+    "binary": {
+      "bytes": 52512768,
+      "sha256": "3bb8fc5eaa3f0e2d3b71c04abf5aaaf6885738629700e7975a29c4cc4a1a5ad2"
+    },
+    "preparation": {
+      "baseline": "395826535f4f31a0d88d58e059a1a2cff92e713f497cc3c8ba463a9d84c8f92a",
+      "blocks": 100,
+      "nodes": 100
+    },
+    "elapsedMs": 1802948,
+    "warmHeap": 20966156,
+    "finalHeap": 21467640,
+    "heapDelta": 501484,
+    "trustedInput": [],
+    "errors": [],
+    "outbound": [],
+    "endedAt": "2026-10-01T11:37:15.513Z"
+  },
+  "actualCycleRecords": 360,
+  "sequenceExact": true,
+  "nativeRoundTrips": 30,
+  "cyclesSha256": "0e46742283cc27998e241597a260ef5acba0adf2b730f81ddd05cf981bbd2e62"
+}

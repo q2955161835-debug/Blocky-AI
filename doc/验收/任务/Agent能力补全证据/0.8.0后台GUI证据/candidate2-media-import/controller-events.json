@@ -1,0 +1,66 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:20:07.958Z",
+    "pid": 146600,
+    "desktop": "BlockyTest-0cb9e0391b5e4bb8a9e507d7c721acc3",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:20:12.164Z",
+    "action": "capture",
+    "hwnd": 22290464
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:20:14.429Z",
+    "action": "file-select",
+    "hwnd": 22290464,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "30-media-file-dialog",
+    "at": "2026-10-01T11:20:17.078Z",
+    "action": "capture",
+    "hwnd": 27140260
+  },
+  {
+    "name": "31-media-file-selected",
+    "at": "2026-10-01T11:20:18.984Z",
+    "action": "file-select",
+    "hwnd": 27140260,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "32-media-approval-schema",
+    "at": "2026-10-01T11:20:20.129Z",
+    "action": "capture",
+    "hwnd": 45946704
+  },
+  {
+    "name": "33-media-store-approved",
+    "at": "2026-10-01T11:20:21.261Z",
+    "action": "approve",
+    "kind": "media-store",
+    "hwnd": 45946704,
+    "dialogClosed": true
+  },
+  {
+    "name": "35-local-capability-schema",
+    "at": "2026-10-01T11:20:22.474Z",
+    "action": "capture",
+    "hwnd": 24908154
+  },
+  {
+    "name": "awaiting-typed-local-capability-driver",
+    "at": "2026-10-01T11:20:22.476Z"
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T11:20:22.477Z",
+    "message": "Native local capability approval requires observed typed driver"
+  }
+]

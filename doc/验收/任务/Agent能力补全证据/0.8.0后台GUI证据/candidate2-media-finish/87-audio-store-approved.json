@@ -1,0 +1,97 @@
+{
+    "pid":  148852,
+    "desktop":  "BlockyTest-215e2cf649934436a4da1987e52e0322",
+    "hwnd":  193990858,
+    "action":  "approve",
+    "fileKind":  "project",
+    "controls":  [
+                     {
+                         "automationId":  "6",
+                         "name":  "是(Y)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "7",
+                         "name":  "否(N)",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "20",
+                         "name":  "",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     },
+                     {
+                         "automationId":  "65535",
+                         "name":  "格式：\"audio/wav\"\n大小：352078 bytes\n文件会保存为此项目的本机媒体引用。",
+                         "patterns":  [
+
+                                      ],
+                         "offscreen":  false,
+                         "controlType":  "ControlType.Pane",
+                         "password":  false,
+                         "enabled":  true
+                     }
+                 ],
+    "nativeControls":  [
+                           {
+                               "hwnd":  129243282,
+                               "parent":  193990858,
+                               "id":  6,
+                               "cls":  "Button",
+                               "text":  "是(\u0026Y)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  14295154,
+                               "parent":  193990858,
+                               "id":  7,
+                               "cls":  "Button",
+                               "text":  "否(\u0026N)",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  37494892,
+                               "parent":  193990858,
+                               "id":  20,
+                               "cls":  "Static",
+                               "text":  "",
+                               "enabled":  true,
+                               "visible":  true
+                           },
+                           {
+                               "hwnd":  21503954,
+                               "parent":  193990858,
+                               "id":  65535,
+                               "cls":  "Static",
+                               "text":  "格式：\"audio/wav\"\n大小：352078 bytes\n文件会保存为此项目的本机媒体引用。",
+                               "enabled":  true,
+                               "visible":  true
+                           }
+                       ],
+    "time":  "2026-10-01T11:34:22.2609869Z",
+    "approvalKind":  "media-store",
+    "mime":  "audio/wav",
+    "mediaBytes":  352078,
+    "clickedButtonId":  6,
+    "dialogClosed":  true
+}

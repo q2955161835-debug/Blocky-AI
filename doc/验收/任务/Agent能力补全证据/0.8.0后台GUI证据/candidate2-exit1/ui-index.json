@@ -1,0 +1,14 @@
+[
+  {
+    "name": "90-product-exit-confirmation",
+    "time": "2026-10-01T11:10:53.184Z",
+    "screenshot": "90-product-exit-confirmation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 858,
+      "height": 725,
+      "visibility": "visible"
+    }
+  }
+]

@@ -1,0 +1,1417 @@
+{
+  "at": "2026-10-01T14:24:39.784Z",
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "package": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3",
+  "ordinaryExeSha256": "b7eb914e75c3fd474791636a70c6cf5c5143b52ecd7753686e0c16b616cafea7",
+  "externalModelApi": false,
+  "rows": [
+    {
+      "name": "schema-provider",
+      "args": [
+        "schema",
+        "show",
+        "blocky.model-provider/v1"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "schema.show",
+        "data": {
+          "schemaId": "blocky.model-provider/v1",
+          "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "schemaVersion": {
+                "type": "string",
+                "const": "blocky.model-provider/v1"
+              },
+              "providerId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "adapter": {
+                "type": "string",
+                "enum": [
+                  "deepseek",
+                  "xirang",
+                  "openai-compatible",
+                  "ollama"
+                ]
+              },
+              "protocol": {
+                "type": "string",
+                "const": "openai-chat"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 2147483647
+              },
+              "secretBindings": {
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fieldId": {
+                      "type": "string",
+                      "enum": [
+                        "apiKey",
+                        "baseUrl",
+                        "headers"
+                      ]
+                    },
+                    "secretRef": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128,
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "secretRef"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "schemaVersion",
+              "providerId",
+              "displayName",
+              "adapter",
+              "protocol",
+              "revision",
+              "secretBindings"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "schema-model",
+      "args": [
+        "schema",
+        "show",
+        "blocky.connected-model/v1"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "schema.show",
+        "data": {
+          "schemaId": "blocky.connected-model/v1",
+          "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "schemaVersion": {
+                "type": "string",
+                "const": "blocky.resource/v1alpha1"
+              },
+              "resourceId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "kind": {
+                "type": "string",
+                "const": "model"
+              },
+              "scope": {
+                "type": "string",
+                "const": "user"
+              },
+              "capabilityRequirements": {
+                "maxItems": 256,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+                }
+              },
+              "secretBindings": {
+                "maxItems": 0,
+                "type": "array",
+                "items": {
+                  "not": {}
+                }
+              },
+              "definition": {
+                "type": "object",
+                "properties": {
+                  "connectionRef": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9._:/@-]+$"
+                  },
+                  "timeoutMs": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3600000
+                  },
+                  "capabilities": {
+                    "minItems": 1,
+                    "maxItems": 7,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "image",
+                        "audio",
+                        "tools",
+                        "structured-output",
+                        "embedding",
+                        "rerank"
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "temperature": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 2
+                      },
+                      "topP": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "maxOutputTokens": "[已脱敏]"
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "connectionRef",
+                  "modelId",
+                  "timeoutMs",
+                  "capabilities"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "schemaVersion",
+              "resourceId",
+              "displayName",
+              "kind",
+              "scope",
+              "capabilityRequirements",
+              "secretBindings",
+              "definition"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "warnings": [
+          "输出中的敏感文本已脱敏；摘要仍对应原始项目语义。"
+        ],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "save-provider",
+      "args": [
+        "provider",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\provider.json"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "provider.set",
+        "data": {
+          "saved": true,
+          "revision": 1
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "save-acceptance-model-one",
+      "args": [
+        "model-profile",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\acceptance-model-one.json"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.set",
+        "data": {
+          "saved": true,
+          "revision": 2
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "save-acceptance-model-two",
+      "args": [
+        "model-profile",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\acceptance-model-two.json"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.set",
+        "data": {
+          "saved": true,
+          "revision": 3
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "fresh-process-models",
+      "args": [
+        "model-profile",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.list",
+        "data": {
+          "models": [
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text"
+                ],
+                "connectionRef": "acceptance-shared",
+                "modelId": "custom-one",
+                "parameters": {
+                  "maxOutputTokens": 512
+                },
+                "timeoutMs": 30000
+              },
+              "displayName": "acceptance-model-one",
+              "kind": "model",
+              "resourceId": "acceptance-model-one",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": []
+            },
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text"
+                ],
+                "connectionRef": "acceptance-shared",
+                "modelId": "custom-two",
+                "parameters": {
+                  "maxOutputTokens": 512
+                },
+                "timeoutMs": 30000
+              },
+              "displayName": "acceptance-model-two",
+              "kind": "model",
+              "resourceId": "acceptance-model-two",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": []
+            }
+          ],
+          "revision": 3
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reject-provider-in-use",
+      "args": [
+        "provider",
+        "delete",
+        "--id",
+        "acceptance-shared"
+      ],
+      "exitCode": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-PROVIDER-IN-USE",
+          "message": "厂商连接仍被模型引用。",
+          "path": "",
+          "hint": "先修改或删除这些模型：acceptance-model-one, acceptance-model-two。"
+        }
+      }
+    },
+    {
+      "name": "reject-protocol",
+      "args": [
+        "provider",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\invalid-protocol.json"
+      ],
+      "exitCode": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-CONFIG",
+          "message": "模型资源或秘密绑定缺失、不兼容。",
+          "path": "",
+          "hint": "运行 resource list 和 secret status 核对本机用户模型；自定义/Ollama 端点通过 baseUrl 秘密引用导入。"
+        }
+      }
+    },
+    {
+      "name": "shared-revision-update",
+      "args": [
+        "provider",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\provider-updated.json"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "provider.set",
+        "data": {
+          "saved": true,
+          "revision": 4
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "fresh-process-updated-provider",
+      "args": [
+        "provider",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "provider.list",
+        "data": {
+          "providers": [
+            {
+              "adapter": "deepseek",
+              "displayName": "验收共享厂商更新",
+              "protocol": "openai-chat",
+              "providerId": "acceptance-shared",
+              "revision": 2,
+              "schemaVersion": "blocky.model-provider/v1",
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "synthetic-reference-only"
+                }
+              ]
+            }
+          ],
+          "revision": 4
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "reject-stale-provider-write",
+      "args": [
+        "provider",
+        "set",
+        "--definition",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\stale-provider.json"
+      ],
+      "exitCode": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-RESOURCE-CONFLICT",
+          "message": "本机资源已被其他写入修改，原配置保留。",
+          "path": "",
+          "hint": "重新查询 provider list 和 resource list，保留草稿，审查差异后使用当前修订重试。"
+        }
+      }
+    },
+    {
+      "name": "default-specific-model",
+      "args": [
+        "model-profile",
+        "default",
+        "--id",
+        "acceptance-model-two"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.default",
+        "data": {
+          "saved": true,
+          "defaultResourceId": "acceptance-model-two"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "new-project-inherits",
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\inherited.blocky"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.create",
+        "data": {
+          "projectId": "project-af880253-5e1b-4df1-bae7-dbf625745300",
+          "digest": "ea89369bbde531a61edd04c80f4a5ccf394a1ca41dc6961c35635ecf62337d11",
+          "modelApiCalled": false
+        },
+        "warnings": [],
+        "artifacts": [
+          {
+            "path": "inherited.blocky",
+            "bytes": 3268,
+            "sha256": "d8a876ead8432c47a3d27af905d504c1ea03a521a9aa21004532f1102674eda8"
+          }
+        ],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "inherited-blocks",
+      "args": [
+        "project",
+        "block",
+        "list",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\inherited.blocky",
+        "--module",
+        "research-agent"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "project.block.list",
+        "data": {
+          "digest": "ea89369bbde531a61edd04c80f4a5ccf394a1ca41dc6961c35635ecf62337d11",
+          "total": 5,
+          "blocks": [
+            {
+              "moduleId": "research-agent",
+              "blockId": "research-root",
+              "type": "core.agent",
+              "parentId": null,
+              "connection": "root",
+              "fields": {
+                "ROLE": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。"
+              },
+              "disabled": false,
+              "position": {
+                "x": 80,
+                "y": 70
+              }
+            },
+            {
+              "moduleId": "research-agent",
+              "blockId": "on-question",
+              "type": "core.interaction.chat",
+              "parentId": "research-root",
+              "connection": "input:BODY",
+              "fields": {
+                "NAME": "资料问答伙伴"
+              },
+              "disabled": false,
+              "position": {}
+            },
+            {
+              "moduleId": "research-agent",
+              "blockId": "call-citation",
+              "type": "core.knowledge.retrieve",
+              "parentId": "on-question",
+              "connection": "next",
+              "fields": {
+                "RESOURCE": "product-handbook"
+              },
+              "disabled": false,
+              "position": {}
+            },
+            {
+              "moduleId": "research-agent",
+              "blockId": "compose-answer",
+              "type": "core.model.compose",
+              "parentId": "call-citation",
+              "connection": "next",
+              "fields": {
+                "RESOURCE": "acceptance-model-two"
+              },
+              "disabled": false,
+              "position": {}
+            },
+            {
+              "moduleId": "research-agent",
+              "blockId": "reply-answer",
+              "type": "core.output.answer",
+              "parentId": "compose-answer",
+              "connection": "next",
+              "fields": {
+                "STYLE": "条目"
+              },
+              "disabled": false,
+              "position": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "delete-default-model",
+      "args": [
+        "model-profile",
+        "delete",
+        "--id",
+        "acceptance-model-two"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.delete",
+        "data": {
+          "saved": true,
+          "revision": 5
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "missing-default-refused",
+      "args": [
+        "project",
+        "create",
+        "--template",
+        "research-companion",
+        "--output",
+        "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-delivery\\background-acceptance\\candidate3-provider-cli\\must-not-create.blocky"
+      ],
+      "exitCode": 3,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": false,
+        "command": "cli",
+        "data": null,
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null,
+        "error": {
+          "code": "BLK-MODEL-DEFAULT-001",
+          "message": "本机模型未配置或不可用。",
+          "path": "",
+          "hint": "运行 resource list 选择已配置的模型；在设置中更换默认模型，或用 settings reset --id models.defaultResourceId 恢复本地默认。"
+        }
+      }
+    },
+    {
+      "name": "reset-default",
+      "args": [
+        "settings",
+        "reset",
+        "--id",
+        "models.defaultResourceId"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.reset",
+        "data": {
+          "saved": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "legacy-default-specific-id",
+      "args": [
+        "model-profile",
+        "default",
+        "--id",
+        "legacy-two"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "model-profile.default",
+        "data": {
+          "saved": true,
+          "defaultResourceId": "legacy-two"
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "v1-memory-migration-read",
+      "args": [
+        "provider",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "provider.list",
+        "data": {
+          "providers": [
+            {
+              "schemaVersion": "blocky.model-provider/v1",
+              "providerId": "provider-legacy-one",
+              "displayName": "deepseek",
+              "adapter": "deepseek",
+              "protocol": "openai-chat",
+              "revision": 1,
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "account-a"
+                }
+              ]
+            },
+            {
+              "schemaVersion": "blocky.model-provider/v1",
+              "providerId": "provider-legacy-three",
+              "displayName": "deepseek",
+              "adapter": "deepseek",
+              "protocol": "openai-chat",
+              "revision": 1,
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "account-b"
+                }
+              ]
+            }
+          ],
+          "revision": 0
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "v1-explicit-migrate",
+      "args": [
+        "resource",
+        "migrate"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.migrate",
+        "data": {
+          "migrated": true,
+          "providers": 2,
+          "models": 3
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "migration-readback",
+      "args": [
+        "resource",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.list",
+        "data": {
+          "schemaVersion": "blocky.resource-registry/v2",
+          "revision": 1,
+          "resources": [
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text"
+                ],
+                "connectionRef": "provider-legacy-one",
+                "modelId": "legacy-one",
+                "timeoutMs": 30000
+              },
+              "displayName": "legacy-one",
+              "kind": "model",
+              "resourceId": "legacy-one",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": []
+            },
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text"
+                ],
+                "connectionRef": "provider-legacy-one",
+                "modelId": "legacy-two",
+                "timeoutMs": 30000
+              },
+              "displayName": "legacy-two",
+              "kind": "model",
+              "resourceId": "legacy-two",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": []
+            },
+            {
+              "capabilityRequirements": [],
+              "definition": {
+                "capabilities": [
+                  "text"
+                ],
+                "connectionRef": "provider-legacy-three",
+                "modelId": "legacy-three",
+                "timeoutMs": 30000
+              },
+              "displayName": "legacy-three",
+              "kind": "model",
+              "resourceId": "legacy-three",
+              "schemaVersion": "blocky.resource/v1alpha1",
+              "scope": "user",
+              "secretBindings": []
+            }
+          ],
+          "providers": [
+            {
+              "adapter": "deepseek",
+              "displayName": "deepseek",
+              "protocol": "openai-chat",
+              "providerId": "provider-legacy-one",
+              "revision": 1,
+              "schemaVersion": "blocky.model-provider/v1",
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "account-a"
+                }
+              ]
+            },
+            {
+              "adapter": "deepseek",
+              "displayName": "deepseek",
+              "protocol": "openai-chat",
+              "providerId": "provider-legacy-three",
+              "revision": 1,
+              "schemaVersion": "blocky.model-provider/v1",
+              "secretBindings": [
+                {
+                  "fieldId": "apiKey",
+                  "secretRef": "account-b"
+                }
+              ]
+            }
+          ]
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "migrated-default-preserved",
+      "args": [
+        "settings",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "models.defaultResourceId": "legacy-two"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "explicit-rollback",
+      "args": [
+        "resource",
+        "rollback"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "resource.rollback",
+        "data": {
+          "restored": true
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "name": "rollback-default-preserved",
+      "args": [
+        "settings",
+        "list"
+      ],
+      "exitCode": 0,
+      "value": {
+        "schemaVersion": "blocky.cli/v1",
+        "ok": true,
+        "command": "settings.list",
+        "data": {
+          "definitions": [
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "models.defaultResourceId.reference",
+                  "kind": "resource-id",
+                  "code": "BLK-SET-RESOURCE",
+                  "message": "请选择已配置的本机模型"
+                }
+              ],
+              "id": "models.defaultResourceId",
+              "title": "默认模型",
+              "description": "用于构建助手和新建项目；已有项目保留所选模型",
+              "category": "模型",
+              "valueType": "model-resource",
+              "defaultValue": ""
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "ui.reduceMotion",
+              "title": "减少动态效果",
+              "description": "关闭呼吸动画，保留状态轮廓和文字",
+              "category": "外观与无障碍",
+              "valueType": "boolean",
+              "defaultValue": false
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "ui.view.options",
+                  "kind": "one-of",
+                  "argument": [
+                    "beginner",
+                    "professional"
+                  ],
+                  "code": "BLK-SET-ENUM",
+                  "message": "请选择入门或专业视图"
+                }
+              ],
+              "id": "ui.view",
+              "title": "积木视图",
+              "description": "选择入门或专业积木分类，不改变项目语义",
+              "category": "编辑器与画布",
+              "valueType": "enum",
+              "defaultValue": "professional"
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [],
+              "id": "window.minimizeToTray",
+              "title": "最小化到通知区域",
+              "description": "关闭时最小化到任务栏，不改变运行状态",
+              "category": "窗口与后台",
+              "valueType": "boolean",
+              "defaultValue": true
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app",
+                "project"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "terminal.outputBudgetBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 256,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 256"
+                },
+                {
+                  "ruleId": "terminal.outputBudgetBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 16777216,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 16777216"
+                }
+              ],
+              "id": "terminal.outputBudgetBytes",
+              "title": "终端输出预算",
+              "description": "新建终端生效；用户终端实际范围 4 KiB–4 MiB，类型化任务采用各自更严格的上限",
+              "category": "底部面板与终端",
+              "valueType": "number",
+              "defaultValue": 65536
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.retentionDays.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.retentionDays.minimum",
+                  "kind": "minimum",
+                  "argument": 0,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 0"
+                },
+                {
+                  "ruleId": "logs.retentionDays.maximum",
+                  "kind": "maximum",
+                  "argument": 365,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 365"
+                }
+              ],
+              "id": "logs.retentionDays",
+              "title": "日志保留天数",
+              "description": "本机诊断日志最长保留时间，0 表示不保留历史；不影响审计底线",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 7
+            },
+            {
+              "schemaVersion": "blocky.setting/v1alpha1",
+              "scope": "app",
+              "allowedScopes": [
+                "app"
+              ],
+              "sensitive": false,
+              "requiresRestart": false,
+              "dependsOn": [],
+              "conflictsWith": [],
+              "migrationVersion": 1,
+              "validationRules": [
+                {
+                  "ruleId": "logs.maxStoredBytes.integer",
+                  "kind": "integer",
+                  "code": "BLK-SET-INTEGER",
+                  "message": "必须为整数"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.minimum",
+                  "kind": "minimum",
+                  "argument": 1024,
+                  "code": "BLK-SET-MINIMUM",
+                  "message": "不能小于 1024"
+                },
+                {
+                  "ruleId": "logs.maxStoredBytes.maximum",
+                  "kind": "maximum",
+                  "argument": 1073741824,
+                  "code": "BLK-SET-MAXIMUM",
+                  "message": "不能大于 1073741824"
+                }
+              ],
+              "id": "logs.maxStoredBytes",
+              "title": "日志存储上限",
+              "description": "同时受 100000 条与 25601024 字节保护上限约束；优先回收普通记录，保留丢弃计数和清除审计",
+              "category": "日志与诊断",
+              "valueType": "number",
+              "defaultValue": 10485760
+            }
+          ],
+          "settings": {
+            "schemaVersion": "blocky.settings/v1",
+            "scope": "app",
+            "values": {
+              "models.defaultResourceId": "legacy-two"
+            }
+          }
+        },
+        "warnings": [],
+        "artifacts": [],
+        "nextCursor": null
+      }
+    }
+  ]
+}

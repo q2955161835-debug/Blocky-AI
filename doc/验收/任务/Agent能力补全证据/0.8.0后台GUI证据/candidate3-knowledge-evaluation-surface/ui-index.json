@@ -1,0 +1,134 @@
+[
+  {
+    "name": "14-project-open",
+    "time": "2026-10-01T14:26:14.720Z",
+    "screenshot": "14-project-open.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T14:26:14.988Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "62b-knowledge-segment-preview",
+    "time": "2026-10-01T14:26:20.038Z",
+    "screenshot": "62b-knowledge-segment-preview.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "62c-sync-after-first-preview",
+    "time": "2026-10-01T14:26:20.458Z",
+    "screenshot": "62c-sync-after-first-preview.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "63-knowledge-query-citation",
+    "time": "2026-10-01T14:26:20.679Z",
+    "screenshot": "63-knowledge-query-citation.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "64-knowledge-source-opened",
+    "time": "2026-10-01T14:26:20.853Z",
+    "screenshot": "64-knowledge-source-opened.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "05-resources",
+    "time": "2026-10-01T14:26:21.052Z",
+    "screenshot": "05-resources.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "161-evaluation-real-bound-freeze",
+    "time": "2026-10-01T14:26:23.587Z",
+    "screenshot": "161-evaluation-real-bound-freeze.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "162-evaluation-actual-completed-batch",
+    "time": "2026-10-01T14:26:25.545Z",
+    "screenshot": "162-evaluation-actual-completed-batch.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "163-evaluation-new-version",
+    "time": "2026-10-01T14:26:25.655Z",
+    "screenshot": "163-evaluation-new-version.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  },
+  {
+    "name": "failed-stage",
+    "time": "2026-10-01T14:26:55.975Z",
+    "screenshot": "failed-stage.png",
+    "layout": {
+      "url": "http://tauri.localhost/",
+      "title": "Blocky Studio",
+      "width": 1372,
+      "height": 858,
+      "visibility": "visible"
+    }
+  }
+]

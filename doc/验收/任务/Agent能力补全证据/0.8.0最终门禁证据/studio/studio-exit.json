@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-10-01T14:31:12.7186589Z",
+  "command": "pnpm test:e2e",
+  "endedAt": "2026-10-01T14:32:58.0461357Z",
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "exitCode": 0,
+  "externalModelApiCalled": false
+}

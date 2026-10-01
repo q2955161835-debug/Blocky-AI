@@ -1,0 +1,117 @@
+{
+  "reviewedAt": "2026-10-01T15:01:25.092Z",
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "start": {
+    "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+    "suite": "full",
+    "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+    "startedAt": "2026-10-01T14:26:14.7074641Z",
+    "binarySha256": "a414893263cad0c9551b0117fff8cedb22f6eadeab08365fca9c6ab78b3bcb1a",
+    "binaryBytes": 52579840,
+    "profileIsExplicit": true,
+    "desktop": "BlockyTest-fde6d64bb8c94fef884736647a697887"
+  },
+  "exit": {
+    "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+    "suite": "full",
+    "command": "pwsh -NoProfile -File scripts/check-native-core.ps1 full",
+    "startedAt": "2026-10-01T14:26:14.7074641Z",
+    "binarySha256": "a414893263cad0c9551b0117fff8cedb22f6eadeab08365fca9c6ab78b3bcb1a",
+    "binaryBytes": 52579840,
+    "profileIsExplicit": true,
+    "desktop": "BlockyTest-fde6d64bb8c94fef884736647a697887",
+    "exitCode": 0,
+    "endedAt": "2026-10-01T14:57:45.5208162Z"
+  },
+  "report": {
+    "runId": "c1ca4cd2-88f8-42b3-a9f3-66f8af919c86",
+    "passed": true,
+    "schemaVersion": "blocky.soak/v1",
+    "startedAt": "2026-10-01T14:27:42.329Z",
+    "cycles": 360,
+    "roundTrips": 30,
+    "binary": {
+      "bytes": 52579840,
+      "sha256": "a414893263cad0c9551b0117fff8cedb22f6eadeab08365fca9c6ab78b3bcb1a"
+    },
+    "preparation": {
+      "baseline": "fdf394098086a46500468f7ba4dfc82ff1005d0fe7ae9dc19c86cf3f7009170c",
+      "blocks": 100,
+      "nodes": 100
+    },
+    "elapsedMs": 1802542,
+    "warmHeap": 38272920,
+    "finalHeap": 21466596,
+    "heapDelta": -16806324,
+    "trustedInput": [],
+    "errors": [],
+    "outbound": [],
+    "endedAt": "2026-10-01T14:57:44.871Z"
+  },
+  "actualCycleRecords": 360,
+  "sequenceExact": true,
+  "nativeRoundTrips": 30,
+  "cyclesSha256": "259007ac3c777ddff15c111152ef71756b2adc6da6c740d3ce9f1259fbf32fda",
+  "finalCycleElapsedMs": 1802538,
+  "ordinaryExitEvidence": "Separate held-handle ordinary candidate3 GUI runs; harness hidden windows are not ordinary exit proof",
+  "background": {
+    "focusViolation": false,
+    "runnerExitedNaturally": true,
+    "ownedWindowsBeforeCleanup": [
+      "11412078:159020:False:False",
+      "32121594:159020:False:False",
+      "33301134:159020:False:False",
+      "2827050:159068:False:False",
+      "2171410:159068:False:False"
+    ],
+    "jobHandleClosed": true,
+    "desktopHandleClosed": true
+  },
+  "studioE2e": {
+    "exit": {
+      "startedAt": "2026-10-01T14:31:12.7186589Z",
+      "command": "pnpm test:e2e",
+      "endedAt": "2026-10-01T14:32:58.0461357Z",
+      "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+      "exitCode": 0,
+      "externalModelApiCalled": false
+    },
+    "passing": 15,
+    "background": {
+      "schemaVersion": "blocky.background-ui/v1",
+      "startedAt": "2026-10-01T14:31:11.6881962Z",
+      "application": "pwsh.exe",
+      "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\final-gates\\candidate3\\studio-background-20261001-2231",
+      "timeoutSeconds": 1200,
+      "focusViolation": false,
+      "foregroundBefore": 6888728,
+      "callerDesktop": "Default",
+      "desktop": "BlockyTest-e0dece0d0950426d87beb8f35580276c",
+      "pid": 162368,
+      "controllerOrRunnerExitCode": 0,
+      "applicationExitedNaturally": true,
+      "ownedWindowsBeforeCleanup": [
+        "36446712:162140:False:False",
+        "178788148:162140:False:False",
+        "16064988:162140:False:False",
+        "75309374:155100:False:False",
+        "50995724:155100:False:False"
+      ],
+      "jobHandleClosed": true,
+      "processes": [
+        {
+          "exited": true,
+          "role": "application",
+          "threadHandleClosed": true,
+          "processHandleClosed": true,
+          "pid": 162368
+        }
+      ],
+      "desktopHandleClosed": true,
+      "foregroundFinally": 6888728,
+      "endedAt": "2026-10-01T14:33:00.1213171Z"
+    },
+    "binaryBinding": "Same unchanged native target verified by actual file SHA at review and Full start/exit; studio exit receipt has no binary SHA field"
+  },
+  "passed": true
+}

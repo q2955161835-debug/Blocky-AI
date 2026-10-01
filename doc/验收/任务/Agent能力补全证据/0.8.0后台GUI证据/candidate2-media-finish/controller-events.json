@@ -1,0 +1,140 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:34:04.617Z",
+    "pid": 148852,
+    "desktop": "BlockyTest-215e2cf649934436a4da1987e52e0322",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:34:07.071Z",
+    "action": "capture",
+    "hwnd": 14819476
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:34:08.955Z",
+    "action": "file-select",
+    "hwnd": 14819476,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "80-media-list-approved-before",
+    "at": "2026-10-01T11:34:10.722Z",
+    "action": "capture",
+    "hwnd": 18096264
+  },
+  {
+    "name": "80-media-list-approved",
+    "at": "2026-10-01T11:34:11.737Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 18096264,
+    "dialogClosed": true
+  },
+  {
+    "name": "81-media-preview-approved-before",
+    "at": "2026-10-01T11:34:12.864Z",
+    "action": "capture",
+    "hwnd": 18292872
+  },
+  {
+    "name": "81-media-preview-approved",
+    "at": "2026-10-01T11:34:13.987Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 18292872,
+    "dialogClosed": true
+  },
+  {
+    "name": "83-media-delete-approved-before",
+    "at": "2026-10-01T11:34:15.221Z",
+    "action": "capture",
+    "hwnd": 50405536
+  },
+  {
+    "name": "83-media-delete-approved",
+    "at": "2026-10-01T11:34:16.468Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 50405536,
+    "dialogClosed": true
+  },
+  {
+    "name": "85-audio-file-dialog",
+    "at": "2026-10-01T11:34:19.085Z",
+    "action": "capture",
+    "hwnd": 31071428
+  },
+  {
+    "name": "86-audio-file-selected",
+    "at": "2026-10-01T11:34:21.290Z",
+    "action": "file-select",
+    "hwnd": 31071428,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "87-audio-store-approved",
+    "at": "2026-10-01T11:34:22.364Z",
+    "action": "approve",
+    "kind": "media-store",
+    "hwnd": 193990858,
+    "dialogClosed": true
+  },
+  {
+    "name": "88-audio-transcribe-approved-before",
+    "at": "2026-10-01T11:34:23.526Z",
+    "action": "capture",
+    "hwnd": 25436044
+  },
+  {
+    "name": "88-audio-transcribe-approved",
+    "at": "2026-10-01T11:34:24.605Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 25436044,
+    "dialogClosed": true
+  },
+  {
+    "name": "audio-stop-clicked",
+    "at": "2026-10-01T11:34:24.757Z"
+  },
+  {
+    "name": "89a-audio-delete-approved-before",
+    "at": "2026-10-01T11:34:26.081Z",
+    "action": "capture",
+    "hwnd": 22749282
+  },
+  {
+    "name": "89a-audio-delete-approved",
+    "at": "2026-10-01T11:34:27.378Z",
+    "action": "approve",
+    "kind": "local-capability",
+    "hwnd": 22749282,
+    "dialogClosed": true
+  },
+  {
+    "name": "media-deletion-disk-readback",
+    "at": "2026-10-01T11:34:27.480Z",
+    "remainingPayloads": []
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:34:34.168Z",
+    "pid": 148852,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:34:29.9652180Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:34:34.169Z",
+    "apiCalled": false
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "sourceCommit": "826bda2161eba41494b5665aee4ff97c7fb182e5",
+  "files": 2595,
+  "bytes": 768101724,
+  "changedSinceCandidate2": [
+    {
+      "path": "Blocky Studio.exe",
+      "bytes": 49871360,
+      "sha256": "b7eb914e75c3fd474791636a70c6cf5c5143b52ecd7753686e0c16b616cafea7"
+    },
+    {
+      "path": "builder/builder.mjs",
+      "bytes": 620776,
+      "sha256": "96cd35eeb0892f9f9f66638126bf28834d0d73ff4ad4d6b9b74ee565429ad16a"
+    },
+    {
+      "path": "builder/manifest.json",
+      "bytes": 416,
+      "sha256": "3f44efb46d880da40cb4ad8907307d6ab14557e503b611ba3c09550ffd270658"
+    },
+    {
+      "path": "cli/bin/blocky-project-io.exe",
+      "bytes": 37768192,
+      "sha256": "1b5f3d6734b750de0ffb821790faf00aac20eb2cb213647f42d33dff2fd8a46b"
+    },
+    {
+      "path": "cli/main.mjs",
+      "bytes": 2024339,
+      "sha256": "c9785e03cc98900f9833b5443ec4253ee1ac33010039f416fc30c29b49f580ee"
+    },
+    {
+      "path": "cli/runtime-worker.mjs",
+      "bytes": 2029708,
+      "sha256": "50afafb3d29a68d7741a906c34203fc57f107c98a6634c4a8500922b27893e6d"
+    }
+  ],
+  "missing": [],
+  "extra": [],
+  "mismatches": [],
+  "at": "2026-10-01T14:25:15.673Z"
+}

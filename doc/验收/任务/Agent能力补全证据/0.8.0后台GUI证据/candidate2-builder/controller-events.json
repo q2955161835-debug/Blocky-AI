@@ -1,0 +1,53 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T11:13:56.156Z",
+    "pid": 139900,
+    "desktop": "BlockyTest-d6142e1bda1e478fb99808c0facb3d83",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate2\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T11:13:58.064Z",
+    "action": "capture",
+    "hwnd": 10425966
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T11:13:59.746Z",
+    "action": "file-select",
+    "hwnd": 10425966,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "43-project-switch-dialog",
+    "at": "2026-10-01T11:14:06.030Z",
+    "action": "capture",
+    "hwnd": 5775392
+  },
+  {
+    "name": "43-project-switch-selected",
+    "at": "2026-10-01T11:14:08.510Z",
+    "action": "file-select",
+    "hwnd": 5775392,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "product-exit-windows-handle",
+    "at": "2026-10-01T11:14:15.365Z",
+    "pid": 139900,
+    "exited": true,
+    "hasExited": true,
+    "time": "2026-10-01T11:14:11.1388934Z",
+    "exitCode": 0,
+    "familyStillRunning": [],
+    "listeningPorts": []
+  },
+  {
+    "name": "complete",
+    "at": "2026-10-01T11:14:15.366Z",
+    "apiCalled": false
+  }
+]

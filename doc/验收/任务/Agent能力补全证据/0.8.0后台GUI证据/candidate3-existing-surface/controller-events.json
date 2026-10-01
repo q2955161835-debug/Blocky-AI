@@ -1,0 +1,28 @@
+[
+  {
+    "name": "bound",
+    "at": "2026-10-01T14:30:28.010Z",
+    "pid": 154332,
+    "desktop": "BlockyTest-ba3dbd31894047889d4d5425432d7a14",
+    "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-candidate3\\Blocky Studio.exe"
+  },
+  {
+    "name": "14-project-open-dialog",
+    "at": "2026-10-01T14:30:31.407Z",
+    "action": "capture",
+    "hwnd": 74851016
+  },
+  {
+    "name": "14-project-open-selected",
+    "at": "2026-10-01T14:30:33.929Z",
+    "action": "file-select",
+    "hwnd": 74851016,
+    "dialogClosed": true,
+    "valueReadBackMatches": true
+  },
+  {
+    "name": "error",
+    "at": "2026-10-01T14:30:34.188Z",
+    "message": "locator.click: Error: strict mode violation: getByRole('button', { name: '◉ 资料问答', exact: true }) resolved to 2 elements:\n    1) <button>◉ 资料问答</button> aka getByRole('button', { name: '◉ 资料问答' }).first()\n    2) <button>◉ 资料问答</button> aka getByRole('button', { name: '◉ 资料问答' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '◉ 资料问答', exact: true })\u001b[22m\n"
+  }
+]
