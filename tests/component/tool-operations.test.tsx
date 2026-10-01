@@ -64,7 +64,8 @@ const mcpServer: Resource = {
 function studio(resources: Resource[] = [httpTool]) {
   const value = {
     snapshot: { project: createStarter() },
-    resources: { ready: true, error: "", registry: { resources }, upsert: vi.fn() },
+    resources: { ready: true, error: "", registry: { resources }, map:new Map(resources.map(resource=>[resource.resourceId,resource])), upsert: vi.fn() },
+    rpaInput:{request:vi.fn()},
     controller: { edit: vi.fn() },
     confirm: vi.fn(),
     setMessage: vi.fn(),

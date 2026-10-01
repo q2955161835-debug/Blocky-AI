@@ -17,7 +17,8 @@ function studio(userResources: ReturnType<typeof mcpHttpResource>[] = []) {
   const edit = vi.fn();
   const value = {
     snapshot: { project: createStarter() },
-    resources: { ready: true, error: "", registry: { resources: userResources }, upsert },
+    resources: { ready: true, error: "", registry: { resources: userResources }, map:new Map(userResources.map(resource=>[resource.resourceId,resource])), upsert },
+    rpaInput:{request:vi.fn()},
     controller: { edit },
     confirm: vi.fn(),
     setMessage: vi.fn(),

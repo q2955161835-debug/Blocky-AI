@@ -41,9 +41,11 @@ function studio() {
       ready: true,
       error: "",
       registry: { resources: [modelResource()] },
+      map:new Map([[modelResource().resourceId,modelResource()]]),
       upsert,
     },
     controller: { edit: vi.fn() },
+    rpaInput:{request:vi.fn()},
     confirm: vi.fn(),
     setMessage: vi.fn(),
   } as unknown as Studio;
