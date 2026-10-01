@@ -5,6 +5,8 @@ vendor/models/** -text
 vendor/node/LICENSE -text
 # The parser manifest verifies the exact source bytes after checkout.
 packages/document-parser/*.mjs -text
+# Frozen evaluation corpus is hashed before execution on every platform.
+packages/knowledge-core/fixtures/quality-v1.json -text
 tests/document-parser/fixtures/OFL.txt -text whitespace=-trailing-space
 # Locked upstream licenses retain their original whitespace and checksums.
 vendor/models/licenses/** whitespace=-trailing-space
