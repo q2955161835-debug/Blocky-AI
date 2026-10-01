@@ -1,0 +1,5 @@
+{
+  "sourceCommit": "6d9b7e76779e266473fb2764f261258ef7fa04ac",
+  "command": "pnpm build:release",
+  "startedAt": "2026-10-01T10:58:48.5484840Z"
+}

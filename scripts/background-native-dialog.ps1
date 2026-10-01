@@ -8,6 +8,7 @@ param(
  [string]$Name,
  [string]$ControlType,
  [string]$Value,
+ [ValidateSet('project','media','knowledge')][string]$FileKind='project',
  [ValidateRange(1,60)][int]$WaitSeconds=15,
  [string]$EvidenceName='native-dialog'
 )
@@ -23,9 +24,12 @@ if($currentDesktop-ne $binding.desktop -or $currentDesktop-notmatch '^BlockyTest
 if($Action-in @('set-value','invoke') -and -not ($AutomationId-or $Name)){throw 'An exact selector is required'}
 if($Value-match 'sk-[a-zA-Z0-9_-]{20,}' -or $Name-match '\u5bc6\u7801|\u5bc6\u94a5|Cookie|Token'){throw 'Credentials are excluded from this test driver'}
 if($Action-eq 'file-select'){
+ if($Value-notmatch '^[a-zA-Z]:[\\/]'){throw 'Selected test file path must be an absolute local drive path'}
  $testPath=[IO.Path]::GetFullPath($Value)
  if(-not $testPath.StartsWith([IO.Path]::GetFullPath((Join-Path $taskRoot 'try')).TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Selected file must be in project try'}
- if($testPath-notmatch '\.blocky$'){throw 'Only project test .blocky files are allowed'}
+ $allowedExtensions=@{project=@('.blocky');media=@('.png','.jpg','.jpeg','.webp','.wav');knowledge=@('.txt','.pdf','.docx','.md')}
+ if($allowedExtensions[$FileKind]-notcontains [IO.Path]::GetExtension($testPath).ToLowerInvariant()){throw 'File extension is excluded for selected test file kind'}
+ if($FileKind-ne 'project'-and -not [IO.File]::Exists($testPath)){throw 'Media and knowledge tests require an existing open-only file'}
  $pathToCheck=$testPath
  while($pathToCheck-and $pathToCheck.StartsWith([IO.Path]::GetFullPath((Join-Path $taskRoot 'try')),[StringComparison]::OrdinalIgnoreCase)){
   if(Test-Path -LiteralPath $pathToCheck){if(((Get-Item -LiteralPath $pathToCheck -Force).Attributes-band [IO.FileAttributes]::ReparsePoint)-ne 0){throw 'Reparse points are excluded from test file selection'}}
@@ -74,7 +78,7 @@ $root=[Windows.Automation.AutomationElement]::FromHandle($window)
 $elements=$root.FindAll([Windows.Automation.TreeScope]::Descendants,[Windows.Automation.Condition]::TrueCondition)
 $controls=@(foreach($element in $elements){$current=$element.Current;@{automationId=$current.AutomationId;name=$current.Name;controlType=$current.ControlType.ProgrammaticName;password=$current.IsPassword;enabled=$current.IsEnabled;offscreen=$current.IsOffscreen;patterns=@($element.GetSupportedPatterns()|ForEach-Object{$_.ProgrammaticName})}})
 $nativeControls=[BoundNativeDialog]::Children($window,[uint32]$binding.pid)
-$receipt=[ordered]@{pid=$binding.pid;desktop=$currentDesktop;hwnd=$window.ToInt64();action=$Action;controls=$controls;nativeControls=$nativeControls;time=[DateTime]::UtcNow.ToString('o')}
+$receipt=[ordered]@{pid=$binding.pid;desktop=$currentDesktop;hwnd=$window.ToInt64();action=$Action;fileKind=$FileKind;controls=$controls;nativeControls=$nativeControls;time=[DateTime]::UtcNow.ToString('o')}
 if($Action-in @('file-select','file-cancel')){
  if(-not [BoundNativeDialog]::Owned($window,[uint32]$binding.pid)){throw 'Dialog ownership changed'}
  if($Action-eq 'file-select'){
@@ -86,6 +90,7 @@ if($Action-in @('file-select','file-cancel')){
    if($combos.Count-ne 1){throw 'No unique observed filename ComboBox 1148'}
    $edits=@($nativeControls|Where-Object{$_.cls-eq 'Edit'-and $_.id-eq 1148-and $_.parent-eq $combos[0].hwnd-and $_.enabled})
   }elseif($comboRoots.Count-eq 0){
+   if($FileKind-ne 'project'){throw 'Save dialogs are excluded for media and knowledge tests'}
    $receipt.fileDialogSchema='save-directui-edit-1001'
    if([IO.File]::Exists($Value)){throw 'Save test must use a new file; overwrite is excluded'}
    $views=@($nativeControls|Where-Object{$_.cls-eq 'DUIViewWndClassName'-and $_.parent-eq $window.ToInt64()})
