@@ -385,5 +385,88 @@
     "sha256": [
       "8802fecf9da4367bc23bcf20b21cc143785fc6c92b152f3fa7fbe6ce08d344d6"
     ]
+  },
+  {
+    "name": "isarray",
+    "version": "1.0.0",
+    "files": [
+      "isarray-1.0.0/LICENSE"
+    ],
+    "sources": [
+      "https://raw.githubusercontent.com/juliangruber/isarray/2a23a281f369e9ae06394c0fb4d2381355a6ba33/README.md"
+    ],
+    "sha256": [
+      "66aa9feab8bb39aceebd69f2a357015d57ceab486d3c7a19ff8d3d4110a6d101"
+    ]
+  },
+  {
+    "name": "saxes",
+    "version": "5.0.1",
+    "files": [
+      "saxes-5.0.1/LICENSE"
+    ],
+    "sources": [
+      "https://raw.githubusercontent.com/lddubeau/saxes/6ef6a275b20f19cb67808daf0d8f64e06aaf5b0e/LICENSE"
+    ],
+    "sha256": [
+      "0fac2374380621b22e6b50451057721a9c52935b02d16d106a9f04897f061d0e"
+    ]
+  },
+  {
+    "name": "tr46",
+    "version": "0.0.3",
+    "files": [
+      "tr46-0.0.3/LICENSE"
+    ],
+    "sources": [
+      "https://raw.githubusercontent.com/jsdom/tr46/3a6f29721e7063b9ffd421e461a54beae6170001/LICENSE.md"
+    ],
+    "sha256": [
+      "eeed1ca176eebad5c73870e233cfff03981fecd319c969475dfa3633036c336b"
+    ]
+  },
+  {
+    "name": "binary",
+    "version": "0.3.0",
+    "files": [
+      "binary-0.3.0/LICENSE"
+    ],
+    "sources": [
+      "https://registry.npmjs.org/binary/0.3.0",
+      "https://spdx.org/licenses/MIT.html"
+    ],
+    "sha256": [
+      "db498620b66385ffd5e75bd6dcdeb584c47aabc0f592cdcb7d9688ae6886c698"
+    ]
+  },
+  {
+    "name": "buffers",
+    "version": "0.1.1",
+    "files": [
+      "buffers-0.1.1/LICENSE",
+      "buffers-0.1.1/COPYRIGHT.source"
+    ],
+    "sources": [
+      "https://sources.debian.org/data/main/n/node-buffers/0.1.1-2/debian/copyright"
+    ],
+    "sha256": [
+      "a6b6a5cc5011b404c0323e8639ed4907eda0548ae96ebefcfa91f0c9fa31b940",
+      "97423a03bc4476a98de2bf3fa7efff55b3f338da76a7b3cbf747b4dc6f52a056"
+    ]
+  },
+  {
+    "name": "chainsaw",
+    "version": "0.1.0",
+    "files": [
+      "chainsaw-0.1.0/LICENSE",
+      "chainsaw-0.1.0/COPYRIGHT.source"
+    ],
+    "sources": [
+      "https://sources.debian.org/data/main/n/node-chainsaw/0.1.0-1/debian/copyright"
+    ],
+    "sha256": [
+      "873bd4c9ad990b2aab83ec62d4ff12caa252d19eb758a26d43433216a3b7ae9d",
+      "50052e6460b658e38cb910e62ea03580f60627b6b4909142eedff10ad7132987"
+    ]
   }
 ]
