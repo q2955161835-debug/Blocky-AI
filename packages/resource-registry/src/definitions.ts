@@ -83,6 +83,8 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
     object(
       {
         provider: id,
+        connectionRef: id,
+        connectionRevision: number(1, 2147483647),
         baseUrl: https,
         modelId: text,
         protocol: enumeration(

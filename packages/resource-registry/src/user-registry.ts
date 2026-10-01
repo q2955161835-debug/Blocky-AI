@@ -1,31 +1,43 @@
 import type { Project, Resource } from "@blocky/language-schema";
 import { canonicalJson } from "@blocky/language-schema";
 import { validateResource, invalidResource } from "./validate";
+import { migrateModelProviders, parseModelProvider, resolveRegistryResources, type ModelProvider } from "./model-providers";
 export type UserRegistry = {
-  schemaVersion: "blocky.resource-registry/v1";
+  schemaVersion: "blocky.resource-registry/v2";
+  revision: number;
+  providers: ModelProvider[];
   resources: Resource[];
 };
 export const emptyRegistry = (): UserRegistry => ({
-  schemaVersion: "blocky.resource-registry/v1",
+  schemaVersion: "blocky.resource-registry/v2",
+  revision: 0,
+  providers: [],
   resources: [],
 });
 export function parseRegistry(value: unknown): UserRegistry {
-  const doc = value as UserRegistry;
+  const doc = value as UserRegistry & { schemaVersion: string };
+  const legacy = (value as { schemaVersion?: unknown })?.schemaVersion === "blocky.resource-registry/v1";
   if (
     !doc ||
-    doc.schemaVersion !== "blocky.resource-registry/v1" ||
+    (!legacy && doc.schemaVersion !== "blocky.resource-registry/v2") ||
     !Array.isArray(doc.resources) ||
     doc.resources.length > 256 ||
-    Object.keys(doc).some((k) => !["schemaVersion", "resources"].includes(k))
+    Object.keys(doc).some((k) => !(legacy ? ["schemaVersion", "resources"] : ["schemaVersion", "revision", "providers", "resources"]).includes(k)) ||
+    (!legacy && (!Number.isInteger(doc.revision) || doc.revision < 0 || doc.revision > 2147483647 || !Array.isArray(doc.providers) || doc.providers.length > 256))
   )
     invalidResource();
   const resources = doc.resources.map(validateResource);
+  if (resources.some(r => r.definition.connectionRevision !== undefined || (legacy && r.definition.connectionRef !== undefined))) invalidResource();
   if (
     resources.some((r) => r.scope !== "user") ||
     new Set(resources.map((r) => r.resourceId)).size !== resources.length
   )
     invalidResource();
-  return { schemaVersion: doc.schemaVersion, resources };
+  const merged = legacy ? migrateModelProviders(resources) : { resources, providers: doc.providers.map(parseModelProvider) };
+  if (new Set(merged.providers.map(p => p.providerId)).size !== merged.providers.length) invalidResource();
+  const result: UserRegistry = { schemaVersion: "blocky.resource-registry/v2", revision: legacy ? 0 : doc.revision, ...merged };
+  resolveRegistryResources(result);
+  return result;
 }
 export function upsertUserResource(
   registry: UserRegistry,
@@ -41,6 +53,7 @@ export function upsertUserResource(
     invalidResource();
   return parseRegistry({
     ...registry,
+    revision: registry.revision + 1,
     resources: [
       ...registry.resources.filter((r) => r.resourceId !== resource.resourceId),
       resource,
@@ -93,7 +106,7 @@ export function referenceUserResource(
       kind: resource.kind,
       scope: "user",
       definitionRef: resource.resourceId,
-      secretRefs: [...new Set(resource.secretBindings.map((b) => b.secretRef))],
+      secretRefs: resource.definition.connectionRef === undefined ? [...new Set(resource.secretBindings.map((b) => b.secretRef))] : [],
     },
   ];
   return result;

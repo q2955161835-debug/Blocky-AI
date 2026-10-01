@@ -358,6 +358,14 @@ export function validateResource(input: unknown): Resource {
     if (Object.hasOwn(input.definition, binding.fieldId)) invalidResource();
   }
   const config = input.definition;
+  if (config.connectionRef !== undefined) {
+    if (input.kind !== "model" || input.scope !== "user" || !validResourceId(config.connectionRef)) invalidResource();
+    if (config.connectionRevision === undefined) {
+      if (input.secretBindings.length || Object.keys(config).some(k => !["connectionRef", "modelId", "timeoutMs", "capabilities", "parameters"].includes(k))) invalidResource();
+      check({ ...config, provider: "deepseek", protocol: "openai-chat", implementationRef: { kind: "adapter", id: "deepseek-v1" } }, metadata.definitionSchema);
+      return structuredClone(input) as Resource;
+    }
+  }
   // Exact stage-one adapters remain wire compatible; other implementations use typed refs.
   const legacy =
     (input.kind === "model" &&

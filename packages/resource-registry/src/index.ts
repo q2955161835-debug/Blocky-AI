@@ -1,5 +1,7 @@
 import type { Project, Resource } from "@blocky/language-schema";
 import { validateResource } from "./validate";
+import { isResolvedConnection } from "./model-providers";
+export * from "./model-providers";
 export { validateResource } from "./validate";
 export { implementationKey } from "./implementation";
 export * from "./user-registry";
@@ -38,7 +40,7 @@ export function resolveResource(
   )
     throw Error("BLK-RESOURCE-001");
   if (
-    resource.secretBindings.some(
+    !isResolvedConnection(resource) && resource.secretBindings.some(
       (b) => !reference.secretRefs.includes(b.secretRef),
     )
   )
