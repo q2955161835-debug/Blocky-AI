@@ -254,3 +254,43 @@ it("loads and serializes real Blockly blocks with editable role and stable IDs",
     workspace.dispose();
   }
 });
+it.each(["knowledge-ingestion", "knowledge-correction"])(
+  "%s preserves edited ingestion and judgment fields through real Blockly save/reload",
+  async (id) => {
+    registerBlocks();
+    const project = await createBlueprintProject(id),
+      source = project.workspaces["research-agent"];
+    const workspace = new Blockly.Workspace(),
+      reopened = new Blockly.Workspace();
+    try {
+      Blockly.serialization.workspaces.load(source, workspace);
+      const target = workspace.getBlockById(
+        id === "knowledge-ingestion" ? "ingest-chunk" : "check-evidence",
+      )!;
+      expect(target).toBeDefined();
+      target.setFieldValue(
+        id === "knowledge-ingestion" ? "320" : "2",
+        id === "knowledge-ingestion" ? "SIZE" : "MAX_REWRITES",
+      );
+      if (id === "knowledge-correction")
+        expect(target.getFieldValue("MODEL")).toBe("agent-model");
+      const saved = JSON.parse(
+        JSON.stringify(Blockly.serialization.workspaces.save(workspace)),
+      ) as Workspace;
+      Blockly.serialization.workspaces.load(saved, reopened);
+      expect(
+        reopened
+          .getBlockById(target.id)!
+          .getFieldValue(
+            id === "knowledge-ingestion" ? "SIZE" : "MAX_REWRITES",
+          ),
+      ).toBe(id === "knowledge-ingestion" ? "320" : "2");
+      project.workspaces["research-agent"] =
+        Blockly.serialization.workspaces.save(reopened) as Workspace;
+      expect((await compileProject(project)).diagnostics).toEqual([]);
+    } finally {
+      workspace.dispose();
+      reopened.dispose();
+    }
+  },
+);

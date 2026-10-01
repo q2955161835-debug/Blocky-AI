@@ -5,6 +5,8 @@ import { resolve, basename } from "node:path";
 import { KnowledgeTransport } from "../tools/blocky-cli/src/knowledge-transport";
 import {
   KnowledgeSearch,
+  scoreKnowledgeQuality,
+  type QualityCase,
   knowledgePort,
   synchronize,
 } from "../packages/knowledge-core/src/index";
@@ -14,8 +16,13 @@ import { createStarter } from "../packages/test-fixtures/src/index";
 import { knowledgeResource } from "../packages/knowledge-core/src/resource";
 import { upsertProjectResource } from "../packages/resource-registry/src/index";
 
+const capabilityMode = process.argv.includes("--capability");
 const fixturePath = resolve("packages/knowledge-core/fixtures/quality-v1.json");
 const bytes = await readFile(fixturePath);
+if (process.platform !== "win32")
+  throw Error(
+    "BLK-KNOWLEDGE-PLATFORM: this evaluator requires the real Windows Host and pinned models",
+  );
 const sha256 = createHash("sha256").update(bytes).digest("hex");
 // Keep the frozen corpus identity explicit; do not silently accept edited cases.
 if (
@@ -24,9 +31,12 @@ if (
   throw Error(`Frozen quality corpus mismatch: ${sha256}`);
 const fixture = JSON.parse(bytes.toString("utf8")) as {
   documents: { id: string; text: string; acl: string }[];
-  cases: { id: string; kind: string; query: string; relevant: string[] }[];
+  cases: (QualityCase & { query: string })[];
 };
-const directory = resolve("try/stage3", `quality-${Date.now()}`);
+const directory = resolve(
+  capabilityMode ? "try/agent-capability-upgrade" : "try/stage3",
+  `quality-${Date.now()}`,
+);
 await mkdir(resolve(directory, "allowed"), { recursive: true });
 await mkdir(resolve(directory, "denied"), { recursive: true });
 for (const doc of fixture.documents)
@@ -143,13 +153,18 @@ try {
     const recallAt5 =
       hits / fixture.cases.filter((c) => c.kind === "answer").length;
     const citationValidity = citationCount ? validCitations / citationCount : 0;
+    const capabilityQuality = capabilityMode
+      ? scoreKnowledgeQuality(fixture.cases, cases)
+      : undefined;
+    if (capabilityQuality) passed &&= capabilityQuality.passed;
     passed &&=
-      recallAt5 >= 0.85 &&
+      recallAt5 >= (capabilityMode ? 0.9 : 0.85) &&
       citationValidity === 1 &&
       leakage === 0 &&
       cases.filter((c) => c.kind !== "answer").every((c) => c.clarification);
     (report.strategies as Record<string, unknown>)[strategy] = {
       recallAt5,
+      ...(capabilityQuality ? { capabilityQuality } : {}),
       mrr:
         reciprocalRanks /
         fixture.cases.filter((c) => c.kind === "answer").length,

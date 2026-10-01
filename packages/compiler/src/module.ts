@@ -123,6 +123,29 @@ export function compileWorkspace(
         diagnostics.push(
           diagnostic("BLK-TYPE-009", `${field} 的选项无效`, source),
         );
+    if (b.type === "core.knowledge.correct") {
+      try {
+        boundedField(fields.MAX_REWRITES, 0, 2);
+      } catch {
+        diagnostics.push(
+          diagnostic("BLK-KNOWLEDGE-BUDGET", "最多改写次数须在 0–2 内", source),
+        );
+      }
+    }
+    if (["core.knowledge.chunk", "core.knowledge.sync"].includes(b.type)) {
+      try {
+        const size = boundedField(fields.SIZE, 1, 16000);
+        boundedField(fields.OVERLAP, 0, size - 1);
+      } catch {
+        diagnostics.push(
+          diagnostic(
+            "BLK-KNOWLEDGE-BUDGET",
+            "分段长度和重叠必须在支持范围内",
+            source,
+          ),
+        );
+      }
+    }
     if (b.type === "core.data.set") {
       try {
         if (

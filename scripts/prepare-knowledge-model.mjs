@@ -1,22 +1,28 @@
 import { createReadStream } from "node:fs";
-import { mkdir, stat, open, rename, unlink, readFile } from "node:fs/promises";
+import { lstat, realpath, open, rename, unlink, readFile } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { safeDirectory } from "./build-document-parser.mjs";
+
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const registry = JSON.parse(await readFile(resolve(root, "vendor/models/registry.json"), "utf8"));
 export async function verifyAsset(path, asset) {
-  const info = await stat(path);
+  const info = await lstat(path);
+  if (!info.isFile() || info.isSymbolicLink() || info.nlink > 1 || await realpath(path) !== resolve(path)) throw Error("Model asset must not contain links");
   if (!info.isFile() || info.size !== asset.bytes) throw Error(`Asset size mismatch: ${asset.name ?? "archive"}`);
   const hash = createHash("sha256");
   for await (const bytes of createReadStream(path)) hash.update(bytes);
   if (hash.digest("hex") !== asset.sha256) throw Error(`Asset checksum mismatch: ${asset.name ?? "archive"}`);
 }
 export async function ensureAsset(path, asset, downloader = fetch) {
+  path = resolve(path);
+  // Validate every ancestor before verifying or preparing a missing asset.
+  // All entry points (E5, extra models and native runtime) share this boundary.
+  await safeDirectory(dirname(path));
   try { await verifyAsset(path, asset); return "verified"; }
   catch (error) { if (error.code !== "ENOENT") throw error; }
-  await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${randomUUID()}.partial`;
   let file;
   try {

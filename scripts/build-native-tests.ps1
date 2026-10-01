@@ -9,6 +9,12 @@ try {
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/build-builder.mjs
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+    & node scripts/build-document-parser.mjs
+    if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+    & node scripts/install-document-parser.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
+    if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+    & node scripts/install-knowledge-models.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
+    if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/install-builder.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')
     if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
     & node scripts/install-runtime-worker.mjs (Join-Path $env:CARGO_TARGET_DIR 'release')

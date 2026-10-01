@@ -1,3 +1,4 @@
+import knowledgePrimitives from "./knowledge-primitives.json";
 import definitions from "./definitions.json";
 import textPrimitives from "./text-primitives.json";
 import agentPrimitives from "./agent-primitives.json";
@@ -52,6 +53,7 @@ export const beginnerCategories = [
 ];
 export const catalog: BlockDefinition[] = [
   ...definitions,
+  ...(knowledgePrimitives as BlockDefinition[]),
   ...textPrimitives,
   ...eventPrimitives,
   ...flowPrimitives,

@@ -1,0 +1,128 @@
+[
+  {
+    "type": "core.knowledge.source",
+    "label": "查看资料来源",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.knowledge.parse",
+    "label": "预览解析片段",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.knowledge.chunk",
+    "label": "预览资料分段",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE",
+      "SIZE",
+      "OVERLAP"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true,
+    "defaultFields": {
+      "SIZE": "768",
+      "OVERLAP": "64"
+    }
+  },
+  {
+    "type": "core.knowledge.sync",
+    "label": "同步资料",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE",
+      "SIZE",
+      "OVERLAP"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true,
+    "defaultFields": {
+      "SIZE": "768",
+      "OVERLAP": "64"
+    }
+  },
+  {
+    "type": "core.knowledge.embed",
+    "label": "建立向量索引",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE",
+      "MODEL"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true,
+    "fieldOptions": {
+      "MODEL": [
+        "multilingual-e5-small-int8-v1",
+        "minilm-l6-v2-int8-v1"
+      ]
+    },
+    "defaultFields": {
+      "MODEL": "multilingual-e5-small-int8-v1"
+    }
+  },
+  {
+    "type": "core.knowledge.index",
+    "label": "查看索引状态",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.knowledge.correct",
+    "label": "检查并纠正检索",
+    "category": 4,
+    "color": "#4f9c86",
+    "fields": [
+      "RESOURCE",
+      "MODEL",
+      "MAX_REWRITES"
+    ],
+    "resourceFields": {
+      "RESOURCE": "knowledge",
+      "MODEL": "model"
+    },
+    "defaultFields": {
+      "MAX_REWRITES": "1"
+    },
+    "inputs": [],
+    "statement": true
+  }
+]

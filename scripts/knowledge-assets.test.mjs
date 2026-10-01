@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile, readdir, rm, mkdir } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile, readdir, rm, mkdir, symlink } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { ensureAsset, root, registry } from "./prepare-knowledge-model.mjs";
@@ -40,3 +40,13 @@ test("model lock fixes immutable URLs and runtime licenses", () => {
   assert.equal(registry.directml.version, "1.15.4");
   assert.equal(registry.vcRuntime.redistribution, "not bundled; installed system prerequisite");
 });
+
+test("linked model cache directories fail before network or publication", () => temporary(async dir => {
+  const external=join(dir,"external"), linked=join(dir,"linked");
+  await mkdir(external);
+  await symlink(external,linked,process.platform==="win32" ? "junction" : "dir");
+  let downloads=0;
+  await assert.rejects(ensureAsset(join(linked,"model.bin"),asset,async()=>{downloads++;return new Response(text);}),/links/);
+  assert.equal(downloads,0);
+  assert.deepEqual(await readdir(external),[]);
+}));

@@ -94,6 +94,9 @@ async function fixture() {
     get loads() {
       return loadCount;
     },
+    denyOnNextHead() {
+      denyAt = heads + 1;
+    },
     denyOnFinal() {
       denyAt = heads + 2;
     },
@@ -170,4 +173,71 @@ it("requires explicit fallback and identifies genuine vector result provenance",
     (await f.search.query("cache", { filters: { sourceId: "other" } }))
       .citations,
   ).toHaveLength(0);
+});
+
+it("corrects weak retrieval within a fixed rewrite bound and never returns rejected evidence", async () => {
+  const { correctedQuery } = await import("../src/correction");
+  const f = await fixture();
+  const original = "unrelated-input";
+  const decisions: string[] = [];
+  const result = await correctedQuery(
+    f.search,
+    original,
+    {},
+    async (input) => {
+      decisions.push(input.query);
+      expect(input.originalQuestion).toBe(original);
+      return input.citations.length
+        ? { action: "accept" }
+        : { action: "rewrite", query: "Cache entries expire" };
+    },
+    1,
+  );
+  expect(result.status).toBe("found");
+  expect(result.citations.length).toBeGreaterThan(0);
+  expect(result.correction).toMatchObject({ rewrites: 1, judgments: 2 });
+  expect(decisions).toEqual([original, "Cache entries expire"]);
+  const rejected = await correctedQuery(
+    f.search,
+    "Cache entries expire",
+    {},
+    async () => ({ action: "clarify" }),
+    1,
+  );
+  expect(rejected.status).toBe("no-evidence");
+  expect(rejected.citations).toEqual([]);
+});
+it("rejects repeated rewrites, malformed judgments and results revoked while the model judges", async () => {
+  const { correctedQuery } = await import("../src/correction");
+  const f = await fixture();
+  const exhausted = await correctedQuery(
+    f.search,
+    "Cache",
+    {},
+    async () => ({ action: "rewrite", query: "Cache" }),
+    2,
+  );
+  expect(exhausted.citations).toEqual([]);
+  expect(exhausted.correction.judgments).toBe(1);
+  await expect(
+    correctedQuery(
+      f.search,
+      "Cache",
+      {},
+      async () => ({ action: "accept", execute: "shell" }),
+      1,
+    ),
+  ).rejects.toThrow("BLK-KNOWLEDGE-JUDGMENT");
+  await expect(
+    correctedQuery(
+      f.search,
+      "Cache",
+      {},
+      async () => {
+        f.denyOnNextHead();
+        return { action: "accept" };
+      },
+      1,
+    ),
+  ).rejects.toThrow("BLK-KNOWLEDGE-CONFLICT");
 });

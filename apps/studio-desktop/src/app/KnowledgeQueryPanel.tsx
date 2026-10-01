@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import {
   KnowledgeSearch,
   retrievalOptions,
-  LOCAL_EMBEDDING_MODEL,
   type KnowledgeCall,
   type RetrievalOptions,
   type SearchResult,
 } from "@blocky/knowledge-core";
 import { KnowledgeCitations } from "./KnowledgeCitations";
+import { KnowledgeModelsPanel } from "./KnowledgeModelsPanel";
 export function KnowledgeQueryPanel({
   call,
   projectId,
@@ -36,7 +36,6 @@ export function KnowledgeQueryPanel({
   const [query, setQuery] = useState(""),
     [options, setOptions] = useState(initialOptions ?? retrievalOptions()),
     [result, setResult] = useState<SearchResult>(),
-    [model, setModel] = useState("尚未检查本地模型"),
     [filterKey, setFilterKey] = useState(""),
     [filterValue, setFilterValue] = useState("");
   useEffect(() => {
@@ -124,15 +123,6 @@ export function KnowledgeQueryPanel({
           />
         </label>
         <label>
-          <input
-            type="checkbox"
-            checked={options.rerank}
-            disabled={busy}
-            onChange={(e) => change("rerank", e.target.checked)}
-          />
-          按正文和标题重排
-        </label>
-        <label>
           语义查询超时（毫秒）
           <input
             aria-label="语义查询超时"
@@ -189,58 +179,15 @@ export function KnowledgeQueryPanel({
           />
         </label>
       </details>
-      {options.strategy !== "keyword" && (
-        <div>
-          <p>{model}</p>
-          <button
-            disabled={busy}
-            onClick={() =>
-              void run(async () => {
-                setModel("正在校验并加载本地模型…");
-                try {
-                  const value = (await call("knowledge-model-install", {
-                    projectId,
-                    collectionId,
-                    modelId: LOCAL_EMBEDDING_MODEL,
-                  })) as { verified: boolean; dimension: number };
-                  setModel(
-                    value.verified
-                      ? `本地模型已就绪 · ${value.dimension} 维`
-                      : "本地模型未通过校验",
-                  );
-                } catch (error) {
-                  setModel("模型准备未完成，可检查配置后重试。");
-                  throw error;
-                }
-              })
-            }
-          >
-            准备本地模型
-          </button>
-          <button
-            disabled={busy}
-            onClick={() =>
-              void run(async () => {
-                setModel("正在计算向量；可停止，随后继续未完成的部分。");
-                try {
-                  const value = (await search.embed()) as {
-                    embedded: number;
-                    reused: number;
-                  };
-                  setModel(
-                    `向量索引已更新 · 新计算 ${value.embedded} · 复用 ${value.reused}`,
-                  );
-                } catch (error) {
-                  setModel("向量更新未完成；再次更新将复用已完成的计算。");
-                  throw error;
-                }
-              })
-            }
-          >
-            建立 / 更新向量索引
-          </button>
-        </div>
-      )}
+      <KnowledgeModelsPanel
+        call={call}
+        search={search}
+        options={options}
+        setOptions={setOptions}
+        busy={busy}
+        version={version}
+        run={run}
+      />
       <label>
         问题
         <input
@@ -255,7 +202,9 @@ export function KnowledgeQueryPanel({
         onClick={() =>
           void run(async (signal) => {
             setResult(undefined);
-            setResult(await search.query(query, settings(), signal));
+            const found = await search.query(query, settings(), signal);
+            signal.throwIfAborted();
+            setResult(found);
           })
         }
       >

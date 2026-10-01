@@ -1,3 +1,9 @@
+import {
+  ingestionOptionsSchema,
+  correctedQuery,
+  resourceRetrieval,
+  type SearchResult,
+} from "@blocky/knowledge-core";
 import { resolveResource, implementationKey } from "@blocky/resource-registry";
 import { compileProject } from "@blocky/compiler";
 import {
@@ -575,6 +581,165 @@ export class Runtime {
                 );
                 if (!target || !root) throw Error("BLK-LINK-002");
                 await execute(root, target.moduleId, state);
+                break;
+              }
+              case "core.knowledge.source":
+              case "core.knowledge.parse":
+              case "core.knowledge.chunk":
+              case "core.knowledge.sync":
+              case "core.knowledge.embed":
+              case "core.knowledge.index": {
+                const resource = resolveResource(
+                  project,
+                  String(node.fields.RESOURCE),
+                  "knowledge",
+                  options.userRegistry,
+                );
+                if (
+                  !["knowledge.read", ...resource.capabilityRequirements].every(
+                    (permission) => capabilities.includes(permission),
+                  )
+                )
+                  throw Error("BLK-TOOL-001");
+                if (!adapters.knowledgeOperation) throw Error("BLK-TOOL-002");
+                runBudget.call();
+                const stage = node.blockType
+                  .split(".")
+                  .at(-1) as import("@blocky/knowledge-core").KnowledgeStage;
+                emit("tool.started", moduleId, node.nodeId, {
+                  summary: "正在处理知识来源",
+                  stage,
+                });
+                state.value = await abortable(
+                  adapters.knowledgeOperation(
+                    {
+                      projectId: project.manifest.projectId,
+                      resource,
+                      stage,
+                      options: ingestionOptionsSchema.parse({
+                        ...(["chunk", "sync"].includes(stage)
+                          ? {
+                              size: Number(node.fields.SIZE),
+                              overlap: Number(node.fields.OVERLAP),
+                            }
+                          : {}),
+                        ...(stage === "embed"
+                          ? { modelId: String(node.fields.MODEL) }
+                          : {}),
+                      }),
+                    },
+                    signal,
+                  ),
+                  signal,
+                );
+                signal.throwIfAborted();
+                if (utf8(canonicalJson(state.value)) > 32768)
+                  throw Error("BLK-KNOWLEDGE-BUDGET");
+                emit("tool.completed", moduleId, node.nodeId, {
+                  summary: "知识处理阶段完成",
+                  stage,
+                });
+                break;
+              }
+              case "core.knowledge.correct": {
+                const resource = resolveResource(
+                  project,
+                  String(node.fields.RESOURCE),
+                  "knowledge",
+                  options.userRegistry,
+                );
+                const model = resolveResource(
+                  project,
+                  String(node.fields.MODEL),
+                  "model",
+                  options.userRegistry,
+                );
+                if (
+                  ![
+                    "knowledge.read",
+                    ...resource.capabilityRequirements,
+                    ...model.capabilityRequirements,
+                  ].every((permission) => capabilities.includes(permission))
+                )
+                  throw Error("BLK-TOOL-001");
+                const adapter = adapters.knowledge.get(
+                  implementationKey(resource.definition.implementationRef),
+                );
+                if (!adapter) throw Error("BLK-TOOL-002");
+                let lastQuery = state.question;
+                const query = async (
+                  question: string,
+                  _options: unknown,
+                  operationSignal = signal,
+                ) => {
+                  operationSignal.throwIfAborted();
+                  runBudget.call();
+                  lastQuery = question;
+                  const reply = await adapter(
+                    question,
+                    String(resource.definition.collection),
+                    operationSignal,
+                    { projectId: project.manifest.projectId, resource },
+                  );
+                  if (
+                    Array.isArray(reply) ||
+                    !reply.searchResult ||
+                    reply.searchResult.citations.some(
+                      (citation) =>
+                        citation.collectionId !==
+                        resource.definition.collection,
+                    )
+                  )
+                    throw Error("BLK-KNOWLEDGE-QUERY");
+                  return reply.searchResult;
+                };
+                const retrieved = await abortable(
+                  correctedQuery(
+                    {
+                      query,
+                      assertCurrent: async (
+                        result: SearchResult,
+                        operationSignal: AbortSignal,
+                      ) => {
+                        const current = await query(
+                          lastQuery,
+                          {},
+                          operationSignal,
+                        );
+                        if (
+                          current.indexRevision !== result.indexRevision ||
+                          current.generation !== result.generation
+                        )
+                          throw Error("BLK-KNOWLEDGE-CONFLICT");
+                      },
+                    },
+                    state.question,
+                    resourceRetrieval(resource.definition),
+                    async (input, operationSignal) => {
+                      operationSignal.throwIfAborted();
+                      const judgment = await state.judgeKnowledge(model, input);
+                      emit("model.completed", moduleId, node.nodeId, {
+                        summary: "证据相关性检查完成",
+                        transport: state.generations.at(-1)!.transport,
+                        model: state.generations.at(-1)!.model,
+                      });
+                      return judgment;
+                    },
+                    Number(node.fields.MAX_REWRITES),
+                    signal,
+                  ),
+                  signal,
+                );
+                scope.citations = retrieved.citations;
+                state.value = {
+                  status: retrieved.status,
+                  ...retrieved.correction,
+                };
+                if (!scope.citations.length)
+                  emit("block.warning", moduleId, node.nodeId, {
+                    code: "BLK-RUN-101",
+                    summary: "证据不足，请补充资料或澄清问题",
+                  });
                 break;
               }
               case "core.knowledge.retrieve": {

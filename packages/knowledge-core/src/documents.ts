@@ -117,7 +117,12 @@ export const estimateTokens = (text: string) =>
 export async function chunkDocument(
   sourceId: string,
   input: ParsedDocument,
-  options: { size: number; overlap: number },
+  options: {
+    size: number;
+    overlap: number;
+    signal?: AbortSignal;
+    maxChunks?: number;
+  },
 ): Promise<Chunk[]> {
   if (
     !Number.isInteger(options.size) ||
@@ -126,6 +131,12 @@ export async function chunkDocument(
     !Number.isInteger(options.overlap) ||
     options.overlap < 0 ||
     options.overlap >= options.size
+  )
+    throw Error("BLK-KNOWLEDGE-BUDGET");
+  options.signal?.throwIfAborted();
+  if (
+    options.maxChunks !== undefined &&
+    (!Number.isSafeInteger(options.maxChunks) || options.maxChunks < 1)
   )
     throw Error("BLK-KNOWLEDGE-BUDGET");
   const groups: (typeof input.lines)[] = [];
@@ -140,22 +151,35 @@ export async function chunkDocument(
   const chunks: Chunk[] = [],
     occurrences = new Map<string, number>();
   for (const group of groups) {
-    const points: { char: string; line: number }[] = [];
-    group.forEach((l, i) => {
-      if (i) points.push({ char: "\n", line: l.line });
-      for (const char of l.text) points.push({ char, line: l.line });
-    });
-    for (
-      let offset = 0;
-      offset < points.length;
-      offset += options.size - options.overlap
-    ) {
-      const slice = points.slice(offset, offset + options.size);
+    function* points() {
+      for (let i = 0; i < group.length; i++) {
+        options.signal?.throwIfAborted();
+        const line = group[i];
+        if (i) yield { char: "\n", line: line.line };
+        for (const char of line.text) yield { char, line: line.line };
+      }
+    }
+    const iterator = points(),
+      window: { char: string; line: number }[] = [];
+    let done = false;
+    while (true) {
+      options.signal?.throwIfAborted();
+      while (!done && window.length <= options.size) {
+        const point = iterator.next();
+        done = !!point.done;
+        if (!point.done) window.push(point.value);
+      }
+      if (!window.length) break;
+      const slice = window.slice(0, options.size);
       const text = slice
         .map((p) => p.char)
         .join("")
         .trim();
-      if (!text) continue;
+      if (!text) {
+        if (done && window.length <= options.size) break;
+        window.splice(0, options.size - options.overlap);
+        continue;
+      }
       const contentDigest = await digest(text);
       const occurrence = occurrences.get(contentDigest) ?? 0;
       occurrences.set(contentDigest, occurrence + 1);
@@ -175,7 +199,11 @@ export async function chunkDocument(
         metadata: input.metadata,
         tokens: estimateTokens(text),
       });
-      if (offset + options.size >= points.length) break;
+      options.signal?.throwIfAborted();
+      if (options.maxChunks !== undefined && chunks.length >= options.maxChunks)
+        return chunks;
+      if (done && window.length <= options.size) break;
+      window.splice(0, options.size - options.overlap);
     }
   }
   return chunks;

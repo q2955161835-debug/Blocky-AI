@@ -372,5 +372,18 @@
     "sha256": [
       "5ec8c7b26b64d881a6706617bed25c049f97f2f35de034c756de8546fd6dbe27"
     ]
+  },
+  {
+    "name": "@napi-rs/canvas-win32-x64-msvc",
+    "version": "0.1.88",
+    "files": [
+      "document-runtime/LICENSE.Canvas.LICENSE"
+    ],
+    "sources": [
+      "https://github.com/Brooooooklyn/canvas/blob/ff23f49ae5dace2cd44a8ac6318a22768bb7f02e/LICENSE"
+    ],
+    "sha256": [
+      "8802fecf9da4367bc23bcf20b21cc143785fc6c92b152f3fa7fbe6ce08d344d6"
+    ]
   }
 ]

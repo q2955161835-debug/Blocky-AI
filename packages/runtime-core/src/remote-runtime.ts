@@ -133,6 +133,10 @@ export class RemoteRuntime {
           operationSignal,
         ) as ReturnType<NonNullable<ReturnType<Adapters["knowledge"]["get"]>>>,
     );
+    adapters.knowledgeOperation = (input, signal) =>
+      service("knowledge.operation", { input }, signal) as ReturnType<
+        NonNullable<Adapters["knowledgeOperation"]>
+      >;
     const agent: AgentServices = {
       generate: (input, signal) =>
         service("agent.generate", { input }, signal) as ReturnType<

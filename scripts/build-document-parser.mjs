@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {readFile,writeFile,readdir,mkdir,lstat,realpath,rm} from 'node:fs/promises';
 import {resolve,dirname,relative,sep} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
+import {loadDocumentLicenses,documentLicenseDirectory} from './document-runtime-licenses.mjs';
 import {writeGenerated} from './write-generated.mjs';
 export const projectRoot=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export const runtimeSource=resolve(projectRoot,'try/agent-capability-upgrade/document-runtime');
@@ -25,6 +26,10 @@ export async function inventory(directory){const files=[];let directories=0;
 export async function verifyRuntime(directory,lock){
   if(lock.schemaVersion!==schemaVersion||!Array.isArray(lock.files)||!lock.files.length)throw Error('Invalid document runtime manifest');
   const names=new Set();for(const item of lock.files){if(typeof item.name!=='string'||!/^[a-zA-Z0-9@_.\/-]+$/.test(item.name)||item.name.split('/').some(v=>!v||v==='.'||v==='..')||item.name==='runtime-lock.json'||names.has(item.name.toLowerCase())||!Number.isSafeInteger(item.bytes)||item.bytes<0||!/^[a-f0-9]{64}$/.test(item.sha256))throw Error('Invalid document runtime manifest');names.add(item.name.toLowerCase());}
+  for (const item of lock.files) {
+    if ((item.name.includes('/@napi-rs/canvas-') && !item.name.includes('/@napi-rs/canvas-win32-x64-msvc/')) || (item.name.endsWith('.node') && !item.name.endsWith('/@napi-rs/canvas-win32-x64-msvc/skia.win32-x64-msvc.node'))) throw Error('Document runtime requires Windows x64 native canvas');
+  }
+  if (names.has('node_modules/@napi-rs/canvas/package.json') && (!names.has('node_modules/@napi-rs/canvas-win32-x64-msvc/skia.win32-x64-msvc.node') || !names.has('node_modules/@napi-rs/canvas-win32-x64-msvc/icudtl.dat'))) throw Error('Document runtime requires Windows x64 native canvas and ICU data');
   const actual=await inventory(directory);if(JSON.stringify(actual.files)!==JSON.stringify([...lock.files].sort((a,b)=>a.name.localeCompare(b.name,'en'))))throw Error('Document runtime failed verification');
   if(actual.files.length+1>3500||actual.files.length+actual.directories+1>4096||actual.files.reduce((n,f)=>n+f.bytes,0)>256*1024*1024)throw Error('Document runtime exceeds bounds');
   return actual;
@@ -44,6 +49,9 @@ function retain(name,pkg){
   return /\.(js|cjs|mjs|json|node|wasm|dat|xml|txt|bin)$/.test(lower);
 }
 export async function buildDocumentParser(output=runtimeSource){
+  // This runtime embeds pinned Windows Node and native Skia. Never rewrite its
+  // committed manifest using a Linux/macOS optional-dependency graph.
+  if (process.platform !== 'win32' || process.arch !== 'x64') throw Error('Document runtime build requires Windows x64');
   output=await safeDirectory(output);
   const old=await readdir(output);
   if(old.length){const lock=JSON.parse(await readFile(resolve(output,'runtime-lock.json'),'utf8'));await verifyRuntime(output,lock);await rm(output,{recursive:true});await safeDirectory(output);}
@@ -51,7 +59,7 @@ export async function buildDocumentParser(output=runtimeSource){
   async function visit(name,from){const source=await packagePath(name,from);if(graph.has(source))return graph.get(source);
     const metadata=JSON.parse(await readFile(resolve(source,'package.json'))),node={source,metadata,dependencies:new Map()};graph.set(source,node);if(!globals.has(name))globals.set(name,node);
     for(const dependency of Object.keys(metadata.dependencies??{}))node.dependencies.set(dependency,await visit(dependency,source));
-    for(const dependency of Object.keys(metadata.optionalDependencies??{})){try{node.dependencies.set(dependency,await visit(dependency,source));}catch{}}
+    for(const dependency of Object.keys(metadata.optionalDependencies??{})){if(dependency.startsWith('@napi-rs/canvas-')&&dependency!=='@napi-rs/canvas-win32-x64-msvc')continue;try{node.dependencies.set(dependency,await visit(dependency,source));}catch{}}
     return node;
   }
   for(const [name,version] of Object.entries(pkg.dependencies)){const node=await visit(name,packageRoot);if(node.metadata.version!==version)throw Error('Document dependency version mismatch');}
@@ -77,6 +85,9 @@ export async function buildDocumentParser(output=runtimeSource){
   for(const [lang,hash] of Object.entries(languageHashes)){const from=await packagePath('@tesseract.js-data/'+lang,packageRoot),bytes=await readFile(resolve(from,'4.0.0_best_int',lang+'.traineddata.gz'));if(digest(bytes)!==hash)throw Error('Pinned language asset failed verification');await writeFile(resolve(output,'runtime/langs',lang+'.traineddata.gz'),bytes);
     for(const file of await readdir(from))if(/^license/i.test(file))await writeFile(resolve(output,'runtime/langs',lang+'-'+file),await readFile(resolve(from,file)));
   }
+  await mkdir(resolve(output,'licenses/document-runtime'),{recursive:true});
+  for (const license of await loadDocumentLicenses()) await writeFile(resolve(output,'licenses/document-runtime',license.file),await readFile(resolve(documentLicenseDirectory,license.file)));
+  await writeFile(resolve(output,'licenses/document-runtime/registry.json'),await readFile(resolve(documentLicenseDirectory,'registry.json')));
   const actual=await inventory(output),lock={schemaVersion,files:actual.files};
   await writeFile(resolve(output,'runtime-lock.json'),JSON.stringify(lock,null,2)+'\n');await verifyRuntime(output,lock);
   await writeGenerated(resolve(packageRoot,'runtime-lock.json'),JSON.stringify(lock,null,2)+'\n');

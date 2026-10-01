@@ -321,6 +321,16 @@ export class KnowledgeSearch {
       throw Error("BLK-KNOWLEDGE-CITATION");
     return raw;
   }
+  async assertCurrent(result: SearchResult, signal: AbortSignal) {
+    signal.throwIfAborted();
+    const head = (await this.invoke("knowledge-sources")) as Head;
+    signal.throwIfAborted();
+    if (
+      head.revision !== result.indexRevision ||
+      head.generation !== result.generation
+    )
+      throw Error("BLK-KNOWLEDGE-CONFLICT");
+  }
   async embed(modelId = LOCAL_EMBEDDING_MODEL) {
     const head = (await this.invoke("knowledge-sources")) as Head;
     return this.invoke("knowledge-embed-index", {

@@ -3,6 +3,9 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { join, relative, resolve } from "node:path";
 import { registry, verifyAsset } from "./prepare-knowledge-model.mjs";
+import { documentRuntimeFiles } from "./install-document-parser.mjs";
+import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
+import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 import { checkSystemRuntime } from "./prepare-native-runtime.mjs";
 const root = process.cwd();
 const files = [
@@ -64,6 +67,26 @@ for(const item of browserLock.files){
   } else vendorFiles.push({path,asset:item});
 }
 files.push("try/stage7/browser-runtime/manifest.json");
+for (const model of extraKnowledgeModels.models)
+  for (const asset of model.files) vendorFiles.push({ path: `try/agent-capability-upgrade/knowledge-models/${model.directory}/${asset.name}`, asset });
+for (const license of extraKnowledgeModels.licenses) vendorFiles.push({ path: `vendor/models/${license.file}`, asset: license });
+const documentSource = "try/agent-capability-upgrade/document-runtime";
+const documentFiles = await documentRuntimeFiles();
+// Validate the deployed layouts as well as the canonical package source.
+for (const directory of ["try/release-native-target/release/document-parser", "tools/blocky-cli/dist/bin/document-parser"])
+  await documentRuntimeFiles(directory);
+await loadDocumentLicenses();
+const documentLock = JSON.parse(await readFile("packages/document-parser/runtime-lock.json", "utf8"));
+for (const name of documentFiles) {
+  const path = `${documentSource}/${name}`;
+  if (name.startsWith("node_modules/") || name.startsWith("runtime/") || name.startsWith("licenses/") || name === "node.exe")
+    vendorFiles.push({ path, asset: documentLock.files.find(asset => asset.name === name) });
+  else files.push(path);
+}
+for (const model of extraKnowledgeModels.models)
+  for (const asset of model.files)
+    for (const directory of ["try/release-native-target/release", "tools/blocky-cli/dist/bin"])
+      await verifyAsset(`${directory}/models/${model.directory}/${asset.name}`, asset);
 for (const { path, asset } of vendorFiles) {
   const bytes = await readFile(path);
   if (
@@ -147,9 +170,11 @@ const report = {
   }).trim(),
   positiveControl,
   modelId: registry.model.id,
+  additionalModelIds: extraKnowledgeModels.models.map(model => model.id),
+  documentFiles: documentFiles.length,
   vcRuntime,
   scope:
-    "ordinary binaries, CLI bundle and production browser assets; pattern checks are not a general secret detector",
+    "ordinary binaries, CLI bundle, production browser/document runtimes and pinned knowledge models; pattern checks are not a general secret detector",
   artifacts,
   passed: positiveControl && artifacts.every((a) => !a.failures.length),
 };

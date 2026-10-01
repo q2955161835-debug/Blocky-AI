@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { blueprintInstance, officialStarters } from "@blocky/block-catalog";
+import {
+  blueprintInstance,
+  officialStarters,
+  knowledgeBlueprintStarters,
+} from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
 export function StarterGuide({
   studio: s,
@@ -14,7 +18,7 @@ export function StarterGuide({
     .flatMap((w) => w.blocks.blocks)
     .find((b) => blueprintInstance(b)?.blueprintId.startsWith("official-"));
   const origin = root && blueprintInstance(root);
-  const starter = officialStarters.find(
+  const starter = [...officialStarters, ...knowledgeBlueprintStarters].find(
     (t) => `official-${t.id}` === origin?.blueprintId,
   );
   if (!starter || closedFor === project.manifest.projectId) return null;

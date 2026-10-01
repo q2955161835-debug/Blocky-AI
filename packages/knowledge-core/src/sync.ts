@@ -172,11 +172,10 @@ export async function synchronize(
           const chunks =
             cached?.document.contentDigest === contentDigest
               ? cached.chunks
-              : await chunkDocument(
-                  source.sourceId,
-                  parseDocument(document),
-                  chunking,
-                );
+              : await chunkDocument(source.sourceId, parseDocument(document), {
+                  ...chunking,
+                  signal,
+                });
           const record = {
             sourceId: source.sourceId,
             documentId: document.documentId,
@@ -224,7 +223,8 @@ export async function synchronize(
       pending.failures.push({
         sourceId: source.sourceId,
         code:
-          error instanceof Error && /^BLK-KNOWLEDGE-[A-Z]+$/.test(error.message)
+          error instanceof Error &&
+          /^BLK-(?:KNOWLEDGE|DOCUMENT|EMBED)-[A-Z-]+$/.test(error.message)
             ? error.message
             : "BLK-KNOWLEDGE-SOURCE",
       });

@@ -15,6 +15,7 @@ export {
 } from "./starters";
 export {
   officialBlueprint,
+  knowledgeBlueprintStarters,
   createBlueprintProject,
 } from "./blueprints/official";
 export {

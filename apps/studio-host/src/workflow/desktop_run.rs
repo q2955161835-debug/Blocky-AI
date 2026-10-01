@@ -20,6 +20,7 @@ use std::{
 
 const SERVICES: &[&str] = &[
     "knowledge.query",
+    "knowledge.operation",
     "agent.generate",
     "agent.memory",
     "agent.tool",

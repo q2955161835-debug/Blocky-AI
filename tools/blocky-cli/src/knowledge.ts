@@ -2,6 +2,9 @@ import { resolve } from "node:path";
 import { open } from "node:fs/promises";
 import {
   knowledgePort,
+  knowledgeOperation,
+  knowledgeStages,
+  ingestionOptionsSchema,
   knowledgeResource,
   synchronize,
   readKnowledgeState,
@@ -18,6 +21,7 @@ import {
 import { type Args, allow, required, integer } from "./arguments";
 import { CliError, envelope } from "./protocol";
 export const knowledgeHelp = [
+  "knowledge pipeline <file.blocky> --collection <id> --stage <source|parse|chunk|sync|embed|index> [--options <JSON>] --json",
   "knowledge add <file.blocky> --collection <id> --kind <file|directory|repository|url> [--path <source>] [--url <url>] [--ref <commit>] --json",
   "knowledge sources <file.blocky> --collection <id> --json",
   "knowledge sync <file.blocky> --collection <id> [--size 768] [--overlap 64] --json",
@@ -26,7 +30,8 @@ export const knowledgeHelp = [
   "knowledge access <file.blocky> --collection <id> --source <id> --access <local|deny> --json",
   "knowledge bind <file.blocky> --collection <resource-id> --output <new.blocky> --json",
   "knowledge model-status|model-install|embed <file.blocky> --collection <id> [--model <id>] --json",
-  "knowledge embedding-status|activate-index <file.blocky> --collection <id> [--model <id>] --json",
+  "knowledge embedding-status <file.blocky> --collection <id> --json",
+  "knowledge activate-index <file.blocky> --collection <id> --model <id> --json",
   "knowledge query <file.blocky> --collection <id> --query <question> [--options <JSON>] --json",
   "knowledge query <file.blocky> --collection <id> --queries <questions.json> [--options <JSON>] --json",
 ];
@@ -35,6 +40,7 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
   const action = args.words[1],
     command = `knowledge.${action}`;
   const flags: Record<string, string[]> = {
+    pipeline: ["stage", "options"],
     add: ["kind", "path", "url", "ref"],
     sources: [],
     sync: ["size", "overlap"],
@@ -64,7 +70,29 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
   signal.addEventListener("abort", cancel, { once: true });
   try {
     let data: unknown;
-    if (action === "add") {
+    if (action === "pipeline") {
+      const stage = required(args, "stage");
+      if (!knowledgeStages.includes(stage as (typeof knowledgeStages)[number]))
+        throw new CliError(2, "BLK-CLI-002", "未知知识摄取阶段。");
+      let options: unknown;
+      try {
+        options = args.options.has("options")
+          ? JSON.parse(required(args, "options"))
+          : {};
+      } catch {
+        throw new CliError(2, "BLK-CLI-002", "摄取选项必须是有效 JSON。");
+      }
+      const parsed = ingestionOptionsSchema.safeParse(options);
+      if (!parsed.success) throw Error("BLK-KNOWLEDGE-BUDGET");
+      data = await knowledgeOperation(
+        nativeUserOperation,
+        projectId,
+        collectionId,
+        stage as (typeof knowledgeStages)[number],
+        parsed.data,
+        signal,
+      );
+    } else if (action === "add") {
       const kind = required(args, "kind");
       if (!["file", "directory", "repository", "url"].includes(kind))
         throw new CliError(2, "BLK-CLI-002", "来源类型无效。");
@@ -233,7 +261,7 @@ export async function knowledgeCommand(args: Args, signal: AbortSignal) {
       throw new CliError(7, "BLK-RUN-005", "资料操作已取消。");
     const code =
       error instanceof Error &&
-      /^BLK-(?:KNOWLEDGE|EMBED)-[A-Z-]+$/.test(error.message)
+      /^BLK-(?:KNOWLEDGE|DOCUMENT|EMBED)-[A-Z-]+$/.test(error.message)
         ? error.message
         : "BLK-KNOWLEDGE-SOURCE";
     throw new CliError(

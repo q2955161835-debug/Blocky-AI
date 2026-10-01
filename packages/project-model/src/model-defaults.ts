@@ -11,13 +11,17 @@ export function applyDefaultModel(
   id: string,
   registry: ReadonlyMap<string, Resource>,
 ): Project {
-  const modelBlock = (type: string) =>
-    ["core.model.compose", "core.reason.tool_loop"].includes(type);
+  const modelField = (type: string) =>
+    type === "core.knowledge.correct"
+      ? "MODEL"
+      : ["core.model.compose", "core.reason.tool_loop"].includes(type)
+        ? "RESOURCE"
+        : undefined;
   if (
     !id ||
     !Object.values(project.workspaces).some((workspace) =>
       [...walkBlocks(workspace.blocks.blocks)].some((block) =>
-        modelBlock(block.type),
+        modelField(block.type),
       ),
     )
   )
@@ -26,8 +30,8 @@ export function applyDefaultModel(
   const result = referenceUserResource(project, resource);
   for (const workspace of Object.values(result.workspaces)) {
     for (const block of walkBlocks(workspace.blocks.blocks)) {
-      if (modelBlock(block.type))
-        block.fields = { ...block.fields, RESOURCE: id };
+      const field = modelField(block.type);
+      if (field) block.fields = { ...block.fields, [field]: id };
     }
   }
   return result;

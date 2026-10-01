@@ -1,6 +1,9 @@
 import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
 import { createHash } from "node:crypto";
+import { documentRuntimeFiles, documentRuntimePackages } from "./install-document-parser.mjs";
+import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
+import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 const json = async (path) =>
   JSON.parse((await readFile(path, "utf8")).replace(/^\uFEFF/, ""));
 const js = Object.values(await json("try/production-js-licenses.json")).flat();
@@ -35,6 +38,9 @@ const entries = [
     file: p.license_file,
   })),
 ];
+const documentSource = resolve("try/agent-capability-upgrade/document-runtime");
+const documentFiles = await documentRuntimeFiles();
+entries.push(...await documentRuntimePackages());
 const seen = new Set(),
   missing = [],
   sections = [];
@@ -93,6 +99,21 @@ for (const entry of modelRegistry.licenses) {
   sections.push(
     `\n${"=".repeat(72)}\n${entry.name}\nDeclared license: ${entry.license}\nSource: ${entry.source}\n${"=".repeat(72)}\n${bytes.toString("utf8")}`,
   );
+}
+for (const entry of await loadDocumentLicenses()) {
+  seen.add(`document-runtime/${entry.name}/${entry.file}`);
+  sections.push(`\n${"=".repeat(72)}\n${entry.name}\nDeclared license: ${entry.license}\nSource: ${entry.source}\n${"=".repeat(72)}\n${entry.text}`);
+}
+// PDF.js bundles codecs with their own notices below its package root.
+for (const name of documentFiles.filter(name => /^node_modules\/pdfjs-dist\/(wasm|standard_fonts)\/LICENSE/.test(name) || /^runtime\/langs\/[^/]*LICENSE/i.test(name))) {
+  seen.add(`document-runtime/${name}`);
+  sections.push(`\n${"=".repeat(72)}\nDocument codec/font/OCR data: ${name.split("/").at(-1)}\n${"=".repeat(72)}\n${await readFile(join(documentSource, name), "utf8")}`);
+}
+for (const entry of extraKnowledgeModels.licenses) {
+  const bytes = await readFile(resolve("vendor/models", entry.file));
+  if (bytes.length !== entry.bytes || createHash("sha256").update(bytes).digest("hex") !== entry.sha256) throw Error("Additional model license checksum mismatch");
+  seen.add(`additional-models/${entry.file}`);
+  sections.push(`\n${"=".repeat(72)}\nMiniLM embeddings and MS MARCO cross-encoder\nDeclared license: Apache-2.0\n${"=".repeat(72)}\n${bytes.toString("utf8")}`);
 }
 await mkdir("try/stage3-release", { recursive: true });
 await writeFile(

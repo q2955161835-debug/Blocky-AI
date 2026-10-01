@@ -53,7 +53,7 @@ function useEditor() {
 it("starts each official project and previews a restore without losing user edits before acceptance", async () => {
   const hook = renderHook(useEditor);
   await waitFor(() =>
-    expect(hook.result.current.construction.official).toHaveLength(4),
+    expect(hook.result.current.construction.official).toHaveLength(6),
   );
   for (const id of [
     "research-companion",
@@ -111,7 +111,7 @@ it("keeps an unreadable personal library intact while official starters remain u
   localStorage.setItem("blocky.blueprints.v1", "broken library");
   const hook = renderHook(useEditor);
   await waitFor(() =>
-    expect(hook.result.current.construction.official).toHaveLength(4),
+    expect(hook.result.current.construction.official).toHaveLength(6),
   );
   act(() => hook.result.current.studio.setSelectedRoots(["research-root"]));
   await act(() => hook.result.current.construction.capture());

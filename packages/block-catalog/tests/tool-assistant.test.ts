@@ -61,3 +61,41 @@ it("requires a real tool-capable model and exposes tool declarations to the shar
   });
   expect(JSON.stringify(result)).not.toContain("key-reference");
 });
+it("applies the local default model to a newly created correction starter without copying secrets", async () => {
+  const starter = createCapabilityStarter(
+    "knowledge-correction",
+    "default-correction",
+  );
+  const model: Resource = {
+    ...starter.resources["agent-model"],
+    resourceId: "default-model",
+    scope: "user",
+    secretBindings: [{ fieldId: "apiKey", secretRef: "private-key-reference" }],
+    definition: {
+      provider: "deepseek",
+      modelId: "deepseek-chat",
+      protocol: "openai-chat",
+      capabilities: ["text"],
+      timeoutMs: 60000,
+      implementationRef: { kind: "adapter", id: "deepseek-v1" },
+    },
+  };
+  const registry = new Map([[model.resourceId, model]]);
+  const project = applyDefaultModel(starter, model.resourceId, registry);
+  expect(
+    [...walkBlocks(project.workspaces["research-agent"].blocks.blocks)].find(
+      (block) => block.type === "core.knowledge.correct",
+    )?.fields?.MODEL,
+  ).toBe(model.resourceId);
+  expect((await compileProject(project, registry)).diagnostics).toEqual([]);
+  expect(project.resources[model.resourceId]).toBeUndefined();
+  expect(
+    project.manifest.resources.find(
+      (resource) => resource.resourceId === model.resourceId,
+    ),
+  ).toMatchObject({
+    scope: "user",
+    definitionRef: model.resourceId,
+    secretRefs: ["private-key-reference"],
+  });
+});

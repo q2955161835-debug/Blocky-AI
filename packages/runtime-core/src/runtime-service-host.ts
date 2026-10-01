@@ -1,3 +1,5 @@
+import { knowledgeStages } from "@blocky/knowledge-core";
+import { validateResource } from "@blocky/resource-registry";
 import type { Adapters, Citation } from "./adapters";
 import type { AgentServices } from "./agent-context";
 import {
@@ -51,6 +53,7 @@ function rpaInput(value: unknown, projectId: string): RpaModulePlan {
   }
 }
 const methods = {
+  "knowledge.operation": ["input"],
   "knowledge.query": ["question", "collection", "context"],
   "agent.generate": ["input"],
   "agent.memory": ["input"],
@@ -152,6 +155,28 @@ export class RuntimeServiceHost {
         throw invalid();
     };
     switch (v.service) {
+      case "knowledge.operation": {
+        project(v.input);
+        try {
+          workflowKeys(v.input, ["projectId", "resource", "stage", "options"]);
+        } catch {
+          throw invalid();
+        }
+        const request = v.input as Parameters<
+          NonNullable<Adapters["knowledgeOperation"]>
+        >[0];
+        const resource = validateResource(request.resource);
+        if (
+          resource.kind !== "knowledge" ||
+          !knowledgeStages.includes(request.stage) ||
+          !this.adapters.knowledgeOperation
+        )
+          throw invalid();
+        return this.adapters.knowledgeOperation(
+          { ...request, resource },
+          signal,
+        );
+      }
       case "knowledge.query": {
         project(v.context);
         const method = this.adapters.knowledge.get(

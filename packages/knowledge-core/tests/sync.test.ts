@@ -237,3 +237,15 @@ it("does not report published deletions when an existing source fails", async ()
   expect(result.counts.deleted).toBe(0);
   expect(readKnowledgeState(port.value).index?.documents).toHaveLength(2);
 });
+it("retains actionable parser failures while preserving the last published index", async () => {
+  const store = new Store();
+  await synchronize(store);
+  const published = readKnowledgeState(store.value).index;
+  store.readSource = async () => {
+    throw Error("BLK-DOCUMENT-ENCRYPTED");
+  };
+  expect((await synchronize(store)).status).toBe("failed");
+  const state = readKnowledgeState(store.value);
+  expect(state.index).toEqual(published);
+  expect(state.pending?.failures[0].code).toBe("BLK-DOCUMENT-ENCRYPTED");
+});

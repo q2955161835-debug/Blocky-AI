@@ -9,9 +9,18 @@ export type CompositionInput = {
   citations: Citation[];
 };
 export type Adapters = {
-  workflow?: import('./workflow/runtime').WorkflowPorts;
-  rpa?: import('@blocky/rpa-core').RpaModulePorts;
-  agent?: import('./agent-context').AgentServices;
+  knowledgeOperation?: (
+    request: {
+      projectId: string;
+      resource: Resource;
+      stage: import("@blocky/knowledge-core").KnowledgeStage;
+      options: import("@blocky/knowledge-core").IngestionOptions;
+    },
+    signal: AbortSignal,
+  ) => Promise<import("@blocky/language-schema").Json>;
+  workflow?: import("./workflow/runtime").WorkflowPorts;
+  rpa?: import("@blocky/rpa-core").RpaModulePorts;
+  agent?: import("./agent-context").AgentServices;
   knowledge: Map<
     string,
     (
@@ -19,7 +28,14 @@ export type Adapters = {
       collection: string,
       signal: AbortSignal,
       context: { projectId: string; resource: Resource },
-    ) => Promise<Citation[] | { citations: Citation[]; summary: string }>
+    ) => Promise<
+      | Citation[]
+      | {
+          citations: Citation[];
+          summary: string;
+          searchResult?: import("@blocky/knowledge-core").SearchResult;
+        }
+    >
   >;
   model: Map<
     string,

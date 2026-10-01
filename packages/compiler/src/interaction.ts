@@ -1,3 +1,4 @@
+import { knowledgeStages } from "@blocky/language-schema";
 import {
   diagnostic,
   type Project,
@@ -175,19 +176,34 @@ export function projectInteraction(
             executionRequirements: [],
           });
       }
+      if (node.blockType === "core.knowledge.correct") {
+        try {
+          resolveResource(
+            project,
+            String(node.fields.MODEL),
+            "model",
+            userRegistry,
+          );
+        } catch {
+          diagnostics.push(
+            diagnostic("BLK-RESOURCE-001", "请选择用于检索纠正的模型", source),
+          );
+        }
+      }
       if (
         [
           "core.knowledge.retrieve",
+          "core.knowledge.correct",
+          ...knowledgeStages.map((stage) => `core.knowledge.${stage}`),
           "core.model.compose",
           "core.tool.invoke",
         ].includes(node.blockType)
       ) {
-        const kind =
-          node.blockType === "core.knowledge.retrieve"
-            ? "knowledge"
-            : node.blockType === "core.tool.invoke"
-              ? "tool"
-              : "model";
+        const kind = node.blockType.startsWith("core.knowledge.")
+          ? "knowledge"
+          : node.blockType === "core.tool.invoke"
+            ? "tool"
+            : "model";
         try {
           const resource = resolveResource(
             project,

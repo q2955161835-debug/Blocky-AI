@@ -2,10 +2,26 @@ import {readFile,writeFile,readdir,mkdir,rm} from 'node:fs/promises';
 import {resolve,dirname,sep} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {projectRoot,runtimeSource,safeDirectory,verifyRuntime} from './build-document-parser.mjs';
-export async function installDocumentParser(target){
-  if(!target)throw Error('Document install requires a project target');
-  const source=await safeDirectory(runtimeSource),lock=JSON.parse(await readFile(resolve(projectRoot,'packages/document-parser/runtime-lock.json'),'utf8'));
+export async function documentRuntimeFiles(source=runtimeSource,lockPath=resolve(projectRoot,'packages/document-parser/runtime-lock.json')) {
+  source=await safeDirectory(source);
+  const lock=JSON.parse(await readFile(lockPath,'utf8'));
+  if(JSON.stringify(JSON.parse(await readFile(resolve(source,'runtime-lock.json'),'utf8')))!==JSON.stringify(lock))throw Error('Document runtime manifest mismatch');
   await verifyRuntime(source,lock);
+  return [...lock.files.map(file=>file.name),'runtime-lock.json'];
+}
+export async function documentRuntimePackages(source=runtimeSource,lockPath=resolve(projectRoot,'packages/document-parser/runtime-lock.json')) {
+  const files=await documentRuntimeFiles(source,lockPath),packages=[];
+  for(const name of files.filter(name=>/(?:^|\/)node_modules\/(?:@[^/]+\/)?[^/]+\/package\.json$/.test(name))){
+    const metadata=JSON.parse(await readFile(resolve(source,name),'utf8'));
+    if(typeof metadata.name!=='string'||typeof metadata.version!=='string')throw Error('Invalid document dependency metadata');
+    packages.push({name:metadata.name,version:metadata.version,license:metadata.license,path:dirname(resolve(source,name))});
+  }
+  return packages;
+}
+export async function installDocumentParser(target, {source=runtimeSource,lockPath=resolve(projectRoot,'packages/document-parser/runtime-lock.json')}={}){
+  if(!target)throw Error('Document install requires a project target');
+  source=await safeDirectory(source);const lock=JSON.parse(await readFile(lockPath,'utf8'));
+  await documentRuntimeFiles(source,lockPath);
   const output=await safeDirectory(resolve(target,'document-parser'));
   if(output===source||source.startsWith(output+sep)||output.startsWith(source+sep))throw Error('Document install target conflicts with source');
   if((await readdir(output)).length){const previous=JSON.parse(await readFile(resolve(output,'runtime-lock.json'),'utf8'));await verifyRuntime(output,previous);await rm(output,{recursive:true});await safeDirectory(output);}

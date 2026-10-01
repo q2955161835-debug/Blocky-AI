@@ -105,7 +105,9 @@ const state = z
             z
               .object({
                 sourceId: id,
-                code: z.string().regex(/^BLK-KNOWLEDGE-[A-Z]+$/),
+                code: z
+                  .string()
+                  .regex(/^BLK-(?:KNOWLEDGE|DOCUMENT|EMBED)-[A-Z-]+$/),
               })
               .strict(),
           )

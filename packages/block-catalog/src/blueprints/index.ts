@@ -232,6 +232,13 @@ export async function parseBlueprint(input: unknown): Promise<Blueprint> {
     }
     for (const b of walkBlocks(parsed.roots)) {
       if (
+        b.type === "core.knowledge.correct" &&
+        !parsed.resources.some(
+          (slot) => slot.slotId === b.fields?.MODEL && slot.kind === "model",
+        )
+      )
+        throw Error("BLK-BLUEPRINT-002");
+      if (
         b.fields?.RESOURCE &&
         !parsed.resources.some(
           (s) =>
@@ -326,6 +333,30 @@ export async function captureBlueprint(
   const resources: Blueprint["resources"] = [],
     modules: Blueprint["modules"] = [];
   for (const b of walkBlocks(roots)) {
+    if (b.type === "core.knowledge.correct" && b.fields?.MODEL) {
+      const resourceId = String(b.fields.MODEL);
+      if (
+        !project.manifest.resources.some(
+          (resource) =>
+            resource.resourceId === resourceId && resource.kind === "model",
+        )
+      )
+        throw Error("BLK-BLUEPRINT-002");
+      let slot = resources.find(
+        (resource) =>
+          resource.defaultResourceId === resourceId &&
+          resource.kind === "model",
+      );
+      if (!slot) {
+        slot = {
+          slotId: `resource-slot-${resources.length + 1}`,
+          kind: "model",
+          defaultResourceId: resourceId,
+        };
+        resources.push(slot);
+      }
+      b.fields.MODEL = slot.slotId;
+    }
     if (b.fields?.RESOURCE) {
       const resourceId = String(b.fields.RESOURCE),
         kind = b.type === "core.model.compose" ? "model" : "knowledge";
@@ -464,6 +495,8 @@ export async function instantiateBlueprint(
         throw Error("BLK-BLUEPRINT-002");
       b.fields![role.field] = value;
     }
+    if (b.type === "core.knowledge.correct")
+      b.fields!.MODEL = bindings.resources[String(b.fields!.MODEL)];
     if (b.fields?.RESOURCE)
       b.fields.RESOURCE = bindings.resources[String(b.fields.RESOURCE)];
     if (b.type === "core.module.call")

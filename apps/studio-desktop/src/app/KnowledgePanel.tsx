@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   knowledgePort,
+  knowledgeOperation,
+  formatLocator,
+  type Locator,
   readKnowledgeState,
   synchronize,
   type KnowledgeCall,
@@ -38,7 +41,8 @@ export function KnowledgePanel({
     ),
     [resumable, setResumable] = useState(false),
     [version, setVersion] = useState(""),
-    [url, setUrl] = useState("");
+    [url, setUrl] = useState(""),
+    [preview, setPreview] = useState<{ text: string; locator: Locator }[]>([]);
   const pending = useRef<AbortController | null>(null),
     epoch = useRef(0),
     lastVersion = useRef("");
@@ -49,8 +53,10 @@ export function KnowledgePanel({
     if (current !== epoch.current) return;
     const state = readKnowledgeState(stored.value);
     const stamp = `${stored.generation}/${stored.revision}`;
-    if (lastVersion.current && lastVersion.current !== stamp)
+    if (lastVersion.current && lastVersion.current !== stamp) {
+      setPreview([]);
       onSourcesChanged?.();
+    }
     lastVersion.current = stamp;
     setVersion(stamp);
     setSources(listed.sources);
@@ -62,6 +68,12 @@ export function KnowledgePanel({
   };
   useEffect(() => {
     const current = ++epoch.current;
+    pending.current = null;
+    setBusy(false);
+    setPreview([]);
+    setSources([]);
+    setError("");
+    lastVersion.current = "";
     void refresh().catch(() => {
       if (current === epoch.current)
         setError("资料状态无法读取，请检查来源权限后重试。");
@@ -102,7 +114,7 @@ export function KnowledgePanel({
         );
       }
     } finally {
-      pending.current = null;
+      if (pending.current === controller) pending.current = null;
       if (current === epoch.current) setBusy(false);
     }
   };
@@ -192,6 +204,49 @@ export function KnowledgePanel({
           ))}
         </ul>
       )}
+      <button
+        disabled={busy || !sources.some((source) => source.readable)}
+        onClick={() =>
+          void run(async (signal) => {
+            if (chunking && chunking.strategy !== "paragraph")
+              throw Error("BLK-KNOWLEDGE-CHUNKING");
+            setPreview([]);
+            const result = await knowledgeOperation(
+              call,
+              projectId,
+              collectionId,
+              "chunk",
+              chunking
+                ? { size: chunking.size, overlap: chunking.overlap }
+                : {},
+              signal,
+            );
+            signal.throwIfAborted();
+            setPreview(
+              (result as { samples: { text: string; locator: Locator }[] })
+                .samples,
+            );
+          })
+        }
+      >
+        预览解析与分段
+      </button>
+      {preview.length > 0 && (
+        <section aria-label="解析与分段预览">
+          <p>
+            只读样本：最多 3 个来源、20
+            个片段；采用当前知识积木的分段参数，不发布索引。
+          </p>
+          <ul>
+            {preview.map((sample, i) => (
+              <li key={i}>
+                <small>{formatLocator(sample.locator)}</small>
+                <p>{sample.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {resumable && (
         <p>
           继续同步将重试未完成的来源；已完成且快照未变的来源会复用。更新成功后统一发布。
@@ -232,6 +287,7 @@ export function KnowledgePanel({
         </button>
       )}
       <KnowledgeQueryPanel
+        key={JSON.stringify([projectId, collectionId])}
         call={call}
         projectId={projectId}
         collectionId={collectionId}

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "blocky.document-runtime-licenses/v1",
+  "canvasVersion": "0.1.88",
+  "ocrVersion": "6.1.2",
+  "licenses": [
+    {
+      "name": "Tesseract",
+      "license": "Apache-2.0",
+      "file": "LICENSE.Tesseract.LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source": "https://github.com/Balearica/tesseract/blob/5a21eebeacd77dd181eec17317de7e3a20b7b9fb/LICENSE",
+      "revision": "5a21eebeacd77dd181eec17317de7e3a20b7b9fb"
+    },
+    {
+      "name": "Leptonica",
+      "license": "BSD-2-Clause",
+      "file": "LICENSE.Leptonica.leptonica-license.txt",
+      "bytes": 1521,
+      "sha256": "87829abb5bbb00b55a107365da89e9a33f86c4250169e5a1e5588505be7d5806",
+      "source": "https://github.com/DanBloomberg/leptonica/blob/4af068b56a9674da915debea4ed7e1b9885b17e8/leptonica-license.txt",
+      "revision": "4af068b56a9674da915debea4ed7e1b9885b17e8"
+    },
+    {
+      "name": "JPEG",
+      "license": "IJG",
+      "file": "LICENSE.JPEG.README",
+      "bytes": 19110,
+      "sha256": "c791da525733040e622ed257c7b096b8f5191b332604ead0c6bc2b54cbd8e0d1",
+      "source": "https://github.com/LuaDist/libjpeg/blob/6c0fcb8ddee365e7abc4d332662b06900612e923/README",
+      "revision": "6c0fcb8ddee365e7abc4d332662b06900612e923"
+    },
+    {
+      "name": "GIF",
+      "license": "MIT",
+      "file": "LICENSE.GIF.COPYING",
+      "bytes": 1088,
+      "sha256": "0c9b7990ecdca88b676db232c226548ac408b279f550d424d996f0d83591dd8e",
+      "source": "https://github.com/mirrorer/giflib/blob/fa37672085ce4b3d62c51627ab3c8cf2dda8009a/COPYING",
+      "revision": "fa37672085ce4b3d62c51627ab3c8cf2dda8009a"
+    },
+    {
+      "name": "PNG",
+      "license": "Libpng",
+      "file": "LICENSE.PNG.LICENSE",
+      "bytes": 5345,
+      "sha256": "33ba4e187d8b0c8d7ab2bc2e522bb095219e03089e9aa0122b4fb9eb2b7de82b",
+      "source": "https://github.com/glennrp/libpng/blob/a37d4836519517bdce6cb9d956092321eca3e73b/LICENSE",
+      "revision": "a37d4836519517bdce6cb9d956092321eca3e73b"
+    },
+    {
+      "name": "TIFF",
+      "license": "libtiff",
+      "file": "LICENSE.TIFF.COPYRIGHT",
+      "bytes": 1146,
+      "sha256": "fbd6fed7938541d2c809c0826225fc85e551fdbfa8732b10f0c87e0847acafd7",
+      "source": "https://github.com/libsdl-org/libtiff/blob/b51bb157123264e26d34c09cc673d213aea61fc7/COPYRIGHT",
+      "revision": "b51bb157123264e26d34c09cc673d213aea61fc7"
+    },
+    {
+      "name": "WebP",
+      "license": "BSD-3-Clause",
+      "file": "LICENSE.WebP.COPYING",
+      "bytes": 1496,
+      "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf",
+      "source": "https://github.com/webmproject/libwebp/blob/20ef03ee351d4ff03fc5ff3ec4804a879d1b9d5c/COPYING",
+      "revision": "20ef03ee351d4ff03fc5ff3ec4804a879d1b9d5c"
+    },
+    {
+      "name": "Zlib",
+      "license": "Zlib",
+      "file": "LICENSE.Zlib.README",
+      "bytes": 5368,
+      "sha256": "fc2c3368901700f0acdeb1d8afeaca5923296768ec6824ecdf627aac396001fd",
+      "source": "https://github.com/madler/zlib/blob/21767c654d31d2dccdde4330529775c6c5fd5389/README",
+      "revision": "21767c654d31d2dccdde4330529775c6c5fd5389"
+    },
+    {
+      "name": "OpenLibm",
+      "license": "MIT and BSD",
+      "file": "LICENSE.OpenLibm.LICENSE.md",
+      "bytes": 5857,
+      "sha256": "b1843fbf5b03f519a5f0a44fce751bdd1022ae7148614923f9d6293e17a18b17",
+      "source": "https://github.com/JuliaMath/openlibm/blob/ae2d91698508701c83cab83714d42a1146dccf85/LICENSE.md",
+      "revision": "ae2d91698508701c83cab83714d42a1146dccf85"
+    },
+    {
+      "name": "Skia",
+      "license": "BSD-3-Clause",
+      "file": "LICENSE.Skia.LICENSE",
+      "bytes": 1507,
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd",
+      "source": "https://github.com/google/skia/blob/ee20d565acb08dece4a32e3f209cdd41119015ca/LICENSE",
+      "revision": "ee20d565acb08dece4a32e3f209cdd41119015ca"
+    },
+    {
+      "name": "Canvas",
+      "license": "MIT",
+      "file": "LICENSE.Canvas.LICENSE",
+      "bytes": 1075,
+      "sha256": "8802fecf9da4367bc23bcf20b21cc143785fc6c92b152f3fa7fbe6ce08d344d6",
+      "source": "https://github.com/Brooooooklyn/canvas/blob/ff23f49ae5dace2cd44a8ac6318a22768bb7f02e/LICENSE",
+      "revision": "ff23f49ae5dace2cd44a8ac6318a22768bb7f02e"
+    },
+    {
+      "name": "OCR-WASM",
+      "license": "Apache-2.0",
+      "file": "LICENSE.OCR-WASM.LICENSE",
+      "bytes": 11358,
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+      "source": "https://github.com/naptha/tesseract.js-core/blob/3d12e9b2d4e0e9e64bd0793e2c55b2d8f6404884/LICENSE",
+      "revision": "3d12e9b2d4e0e9e64bd0793e2c55b2d8f6404884"
+    },
+    {
+      "name": "ICU",
+      "license": "Unicode-3.0 and bundled third-party notices",
+      "file": "LICENSE.ICU",
+      "bytes": 25185,
+      "sha256": "17510cf7a58b4879b887ec05a45d72cf1b73544dd9ec7e72f20110ed104229ee",
+      "source": "https://github.com/unicode-org/icu/blob/2d029329c82c7792b985024b2bdab5fc7278fbc8/LICENSE",
+      "revision": "2d029329c82c7792b985024b2bdab5fc7278fbc8",
+      "evidence": "Pinned canvas Windows icudtl.dat (9ae98c06cbb0ea43c5cd6b5725310c008c65e46072421a1118cb88e1de9a8b92) contains icudt74l. ICU 74.2 license includes data and third-party terms; this does not assert an upstream patch-level binary rebuild."
+    }
+  ]
+}

@@ -1,5 +1,5 @@
-import { readFile, mkdir, copyFile } from "node:fs/promises";
-import { resolve, dirname, join, sep } from "node:path";
+import { readFile } from "node:fs/promises";
+import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ensureAsset, verifyAsset } from "./prepare-knowledge-model.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -49,26 +49,13 @@ export async function prepareExtraKnowledgeModels() {
   return results;
 }
 export async function installExtraKnowledgeModels(target) {
-  const absolute = resolve(target);
-  if (!absolute.startsWith(root + sep))
-    throw Error("Knowledge model runtime must stay in the project");
+  const { safeDirectory } = await import("./build-document-parser.mjs");
+  const absolute = await safeDirectory(target);
   await prepareExtraKnowledgeModels();
-  for (const model of extraKnowledgeModels.models)
-    for (const asset of model.files) {
-      const destination = join(absolute, "models", model.directory, asset.name);
-      await mkdir(dirname(destination), { recursive: true });
-      await copyFile(
-        join(
-          root,
-          "try/agent-capability-upgrade/knowledge-models",
-          model.directory,
-          asset.name,
-        ),
-        destination,
-      );
-      await verifyAsset(destination, asset);
-    }
+  const { installModelAssets } = await import("./install-knowledge-models.mjs");
+  await installModelAssets(absolute, extraKnowledgeModels.models, join(root, "try/agent-capability-upgrade/knowledge-models"));
 }
+
 if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)

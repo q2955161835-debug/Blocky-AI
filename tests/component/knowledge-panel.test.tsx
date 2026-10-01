@@ -192,3 +192,130 @@ it("reports a revoked source without exposing raw failures or silently claiming 
   await screen.findByRole("alert");
   expect(document.body.textContent).not.toContain("private-path-canary");
 });
+it("shows parsed PDF page and editable chunk previews without publishing an index", async () => {
+  const operations: string[] = [];
+  const call = async (op: string) => {
+    operations.push(op);
+    if (op === "knowledge-sources")
+      return {
+        revision: 0,
+        generation: 1,
+        sources: [
+          {
+            sourceId: "s",
+            kind: "file",
+            title: "public.pdf",
+            revision: "v1",
+            readable: true,
+            allowedPrincipals: ["local-user"],
+            metadata: {},
+          },
+        ],
+      };
+    if (op === "knowledge-load-index")
+      return { revision: 0, generation: 1, value: null };
+    if (op === "knowledge-read-source")
+      return {
+        sourceId: "s",
+        revision: "v1",
+        generation: 1,
+        nextCursor: null,
+        excluded: [],
+        documents: [
+          {
+            documentId: "d",
+            title: "Plants",
+            format: "pdf",
+            text: "Plants need sunlight.",
+            revision: "v1",
+            locator: { path: "public.pdf", lineStart: 1, lineEnd: 1, page: 4 },
+            metadata: { parser: "blocky.document-result/v1" },
+          },
+        ],
+      };
+    throw Error(op);
+  };
+  render(
+    <KnowledgePanel
+      projectId="p"
+      collectionId="c"
+      call={call}
+      onBind={() => {}}
+      chunking={{ strategy: "paragraph", size: 768, overlap: 64 }}
+    />,
+  );
+  await screen.findByText("public.pdf");
+  fireEvent.click(screen.getByRole("button", { name: "预览解析与分段" }));
+  await screen.findByText("Plants need sunlight.");
+  expect(screen.getByText(/第 4 页/)).toBeTruthy();
+  expect(operations).not.toContain("knowledge-save-index");
+});
+it("removes an old preview when its source is revoked", async () => {
+  let generation = 1,
+    allowed = true;
+  const call = async (op: string) => {
+    if (op === "knowledge-sources")
+      return {
+        revision: 0,
+        generation,
+        sources: [
+          {
+            sourceId: "s",
+            kind: "file",
+            title: "public.txt",
+            revision: "v1",
+            readable: allowed,
+            allowedPrincipals: allowed ? ["local-user"] : [],
+            metadata: {},
+          },
+        ],
+      };
+    if (op === "knowledge-load-index")
+      return { revision: 0, generation, value: null };
+    if (op === "knowledge-read-source")
+      return {
+        sourceId: "s",
+        revision: "v1",
+        generation,
+        nextCursor: null,
+        excluded: [],
+        documents: [
+          {
+            documentId: "d",
+            title: "Public",
+            format: "text",
+            text: "preview-only-canary",
+            revision: "v1",
+            locator: { path: "public.txt", lineStart: 1, lineEnd: 1 },
+            metadata: {},
+          },
+        ],
+      };
+    if (op === "knowledge-source-acl") {
+      generation++;
+      allowed = false;
+      return {};
+    }
+    throw Error(op);
+  };
+  render(
+    <KnowledgePanel
+      projectId="p"
+      collectionId="c"
+      call={call}
+      onBind={() => {}}
+    />,
+  );
+  await screen.findByText("public.txt");
+  fireEvent.click(screen.getByRole("button", { name: "预览解析与分段" }));
+  await screen.findByText("preview-only-canary");
+  await waitFor(() =>
+    expect(
+      (screen.getByRole("button", { name: "禁止读取" }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(false),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "禁止读取" }));
+  await screen.findByText("已禁止读取");
+  expect(screen.queryByText("preview-only-canary")).toBeNull();
+});

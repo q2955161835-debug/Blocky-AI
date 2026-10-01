@@ -1,5 +1,12 @@
 name: Formal workspace
 on:
+  workflow_dispatch:
+    inputs:
+      knowledge_quality:
+        description: Run the frozen C quality corpus with the actual Windows Host and pinned E5 model
+        type: boolean
+        required: false
+        default: false
   push:
     branches: [main]
   pull_request:
@@ -8,6 +15,7 @@ permissions:
 jobs:
   contracts:
     runs-on: windows-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -24,3 +32,14 @@ jobs:
       - run: pnpm test:component
       - run: pnpm test:host
       - run: pnpm test:cli
+      - name: Frozen knowledge quality (actual Host/model)
+        if: github.event_name == 'workflow_dispatch' && inputs.knowledge_quality
+        run: pnpm evaluate:knowledge:capability
+      - name: Preserve validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-validation-${{ github.sha }}
+          if-no-files-found: ignore
+          path: |
+            try/agent-capability-upgrade/quality-*/report.json
