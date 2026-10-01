@@ -12,6 +12,76 @@
       "sha256": "b8387ce03dfa6b07bc4ac832d0311815ebfb201ac96269fc3a126b750de97130"
     },
     {
+      "name": "licenses/document-runtime/LICENSE.Canvas.LICENSE",
+      "bytes": 1075,
+      "sha256": "8802fecf9da4367bc23bcf20b21cc143785fc6c92b152f3fa7fbe6ce08d344d6"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.GIF.COPYING",
+      "bytes": 1088,
+      "sha256": "0c9b7990ecdca88b676db232c226548ac408b279f550d424d996f0d83591dd8e"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.ICU",
+      "bytes": 25185,
+      "sha256": "17510cf7a58b4879b887ec05a45d72cf1b73544dd9ec7e72f20110ed104229ee"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.JPEG.README",
+      "bytes": 19110,
+      "sha256": "c791da525733040e622ed257c7b096b8f5191b332604ead0c6bc2b54cbd8e0d1"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.Leptonica.leptonica-license.txt",
+      "bytes": 1521,
+      "sha256": "87829abb5bbb00b55a107365da89e9a33f86c4250169e5a1e5588505be7d5806"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.OCR-WASM.LICENSE",
+      "bytes": 11358,
+      "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.OpenLibm.LICENSE.md",
+      "bytes": 5857,
+      "sha256": "b1843fbf5b03f519a5f0a44fce751bdd1022ae7148614923f9d6293e17a18b17"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.PNG.LICENSE",
+      "bytes": 5345,
+      "sha256": "33ba4e187d8b0c8d7ab2bc2e522bb095219e03089e9aa0122b4fb9eb2b7de82b"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.Skia.LICENSE",
+      "bytes": 1507,
+      "sha256": "5f787c1dee3c56547f09ccc2906ab5f5293c4d8dd6c8654e573216c38e908dbd"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.Tesseract.LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.TIFF.COPYRIGHT",
+      "bytes": 1146,
+      "sha256": "fbd6fed7938541d2c809c0826225fc85e551fdbfa8732b10f0c87e0847acafd7"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.WebP.COPYING",
+      "bytes": 1496,
+      "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+    },
+    {
+      "name": "licenses/document-runtime/LICENSE.Zlib.README",
+      "bytes": 5368,
+      "sha256": "fc2c3368901700f0acdeb1d8afeaca5923296768ec6824ecdf627aac396001fd"
+    },
+    {
+      "name": "licenses/document-runtime/registry.json",
+      "bytes": 5399,
+      "sha256": "eba12a9e5651fd9380fb07da8201875c135ff41e7a6ff6f86287c474505608c3"
+    },
+    {
       "name": "limits.mjs",
       "bytes": 1210,
       "sha256": "899dce8d6a7e377d0160a483c4bd53e3e289876eb84711edfe4abeeba368a05a"
