@@ -1,5 +1,23 @@
 use super::*;
 use std::fs;
+#[cfg(windows)]
+#[test]
+fn windows_grant_allows_child_publication_but_keeps_directory_identity_pinned() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path().join("workspace");
+    fs::create_dir(&root).unwrap();
+    let scope = files::Scope::new(&root).unwrap();
+    assert!(fs::rename(&root, directory.path().join("replaced")).is_err());
+    let created = scope.write("new.txt", "中文😀", None).unwrap();
+    assert_eq!(scope.read("new.txt").unwrap()["text"], "中文😀");
+    fs::hard_link(root.join("new.txt"), root.join("alias.txt")).unwrap();
+    assert!(scope.read("new.txt").is_err());
+    assert!(scope.undo(&created).is_err());
+    fs::remove_file(root.join("alias.txt")).unwrap();
+    scope.undo(&created).unwrap();
+    assert!(!root.join("new.txt").exists());
+    assert!(fs::rename(&root, directory.path().join("replaced")).is_err());
+}
 #[test]
 fn opaque_workspace_and_file_edit_create_conflict_undo() {
     let dir = tempfile::tempdir().unwrap();
