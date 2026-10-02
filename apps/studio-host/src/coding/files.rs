@@ -5,6 +5,8 @@ use std::{
     io::{Read, Write},
     path::{Path, PathBuf},
 };
+#[cfg(windows)]
+mod windows;
 const ERROR: &str = "BLK-CODING-FILE";
 pub(super) const LIMIT: usize = 1024 * 1024;
 pub(super) fn digest(text: &str) -> String {
@@ -76,7 +78,9 @@ fn options(_directory: bool, write: bool) -> OpenOptions {
     #[cfg(windows)]
     {
         use std::os::windows::fs::OpenOptionsExt;
-        o.share_mode(1)
+        // Directories permit child publication but remain pinned against deletion.
+        // Child access is relative to these handles, never through their paths.
+        o.share_mode(if _directory { 3 } else { 1 })
             .custom_flags(0x00200000 | if _directory { 0x02000000 } else { 0 });
     }
     #[cfg(unix)]
@@ -106,8 +110,8 @@ fn verify(file: &File, directory: bool) -> Result<(), String> {
     }
     Ok(())
 }
-/// Holding each ancestor with no write/delete sharing prevents Windows directory
-/// replacement while a checked child is opened and used. Final opens do not follow links.
+/// Ancestor handles prohibit deletion/replacement. Windows child operations are
+/// anchored to those handles, so an in-place reparse change cannot redirect access.
 pub(super) struct Scope {
     pub root: PathBuf,
     _root: File,
@@ -180,11 +184,13 @@ impl Scope {
         if !permitted(relative) {
             return Err(ERROR.into());
         }
+        verify(&self._root, true)?;
         let mut path = self.root.clone();
         let mut locks = Vec::new();
         let parts: Vec<_> = relative.split('/').collect();
         for part in &parts[..parts.len() - 1] {
             path.push(part);
+            #[cfg(not(windows))]
             if create {
                 match std::fs::create_dir(&path) {
                     Ok(()) => {}
@@ -192,6 +198,16 @@ impl Scope {
                     Err(_) => return Err(ERROR.into()),
                 }
             }
+            #[cfg(windows)]
+            let f = windows::open(
+                locks.last().unwrap_or(&self._root),
+                std::ffi::OsStr::new(part),
+                true,
+                false,
+                create,
+            )
+            .map_err(|_| ERROR)?;
+            #[cfg(not(windows))]
             let f = options(true, false).open(&path).map_err(|_| ERROR)?;
             verify(&f, true)?;
             locks.push(f);
@@ -201,6 +217,16 @@ impl Scope {
     }
     fn read_file(&self, relative: &str, write: bool) -> Result<(File, Vec<File>), String> {
         let (path, locks) = self.parents(relative)?;
+        #[cfg(windows)]
+        let file = windows::open(
+            locks.last().unwrap_or(&self._root),
+            path.file_name().ok_or(ERROR)?,
+            false,
+            write,
+            false,
+        )
+        .map_err(|_| ERROR)?;
+        #[cfg(not(windows))]
         let file = options(false, write).open(path).map_err(|_| ERROR)?;
         verify(&file, false)?;
         Ok((file, locks))
@@ -228,6 +254,10 @@ impl Scope {
         safe_text(text)?;
         let (target, _locks) = self.parents_for_write(path, expected.is_none())?;
         let parent = target.parent().ok_or(ERROR)?;
+        let parent_handle = _locks.last().unwrap_or(&self._root);
+        #[cfg(windows)]
+        let mut temporary = windows::StagedFile::new(parent_handle).map_err(|_| ERROR)?;
+        #[cfg(not(windows))]
         let mut temporary = tempfile::Builder::new()
             .prefix(".blocky-coding-")
             .tempfile_in(parent)
@@ -237,13 +267,19 @@ impl Scope {
             .and_then(|_| temporary.as_file().sync_all())
             .map_err(|_| ERROR)?;
         if let Some(expected) = expected {
+            #[cfg(not(windows))]
             #[allow(unused_mut)]
             let mut opts = options(false, true);
             #[cfg(windows)]
-            {
-                use std::os::windows::fs::OpenOptionsExt;
-                opts.access_mode(0x80000000 | 0x40000000 | 0x10000);
-            }
+            let mut original = windows::open(
+                parent_handle,
+                target.file_name().ok_or(ERROR)?,
+                false,
+                true,
+                false,
+            )
+            .map_err(|_| ERROR)?;
+            #[cfg(not(windows))]
             let mut original = opts.open(&target).map_err(|_| ERROR)?;
             verify(&original, false)?;
             let before = content(&mut original)?;
@@ -251,7 +287,7 @@ impl Scope {
                 return Err("BLK-CODING-CONFLICT".into());
             }
             let backup = parent.join(format!(".blocky-coding-backup-{}", uuid::Uuid::new_v4()));
-            rename_checked(&original, &target, &backup)?;
+            rename_checked(&original, &target, &backup, parent_handle)?;
             #[cfg(test)]
             let failure = self
                 .publish_failure
@@ -265,7 +301,7 @@ impl Scope {
             #[cfg(not(test))]
             let publish_target = &target;
             if let Err(error) = temporary.persist_noclobber(publish_target) {
-                let restored = rename_checked(&original, &backup, &target).is_ok();
+                let restored = rename_checked(&original, &backup, &target, parent_handle).is_ok();
                 drop(error);
                 if !restored {
                     on_failure(change(path, Some(&before), None));
@@ -299,13 +335,19 @@ impl Scope {
         }
         let after = after.ok_or(ERROR)?;
         let (target, _locks) = self.parents(path)?;
+        #[cfg(not(windows))]
         #[allow(unused_mut)]
         let mut o = options(false, true);
         #[cfg(windows)]
-        {
-            use std::os::windows::fs::OpenOptionsExt;
-            o.access_mode(0x80000000 | 0x40000000 | 0x10000);
-        }
+        let mut f = windows::open(
+            _locks.last().unwrap_or(&self._root),
+            target.file_name().ok_or(ERROR)?,
+            false,
+            true,
+            false,
+        )
+        .map_err(|_| ERROR)?;
+        #[cfg(not(windows))]
         let mut f = o.open(&target).map_err(|_| ERROR)?;
         verify(&f, false)?;
         let current = content(&mut f)?;
@@ -316,40 +358,80 @@ impl Scope {
         Ok(self::change(path, Some(&current), None))
     }
     pub fn list(&self, relative: Option<&str>) -> Result<Vec<Value>, String> {
+        verify(&self._root, true)?;
         let prefix = relative.unwrap_or("");
-        let (path, _locks) = if prefix.is_empty() {
+        let (_path, _locks) = if prefix.is_empty() {
             (self.root.clone(), Vec::new())
         } else {
             let (p, mut l) = self.parents(prefix)?;
+            #[cfg(windows)]
+            let f = windows::open(
+                l.last().unwrap_or(&self._root),
+                p.file_name().ok_or(ERROR)?,
+                true,
+                false,
+                false,
+            )
+            .map_err(|_| ERROR)?;
+            #[cfg(not(windows))]
             let f = options(true, false).open(&p).map_err(|_| ERROR)?;
             verify(&f, true)?;
             l.push(f);
             (p, l)
         };
+        #[cfg(windows)]
+        let names = windows::names(_locks.last().unwrap_or(&self._root)).map_err(|error| {
+            if error
+                .get_ref()
+                .is_some_and(|cause| cause.is::<windows::EntryLimit>())
+            {
+                "BLK-CODING-BUDGET"
+            } else {
+                ERROR
+            }
+            .to_owned()
+        })?;
+        #[cfg(not(windows))]
+        let names = {
+            let mut names = Vec::new();
+            for entry in std::fs::read_dir(&_path).map_err(|_| ERROR)? {
+                let entry = entry.map_err(|_| ERROR)?;
+                let metadata = std::fs::symlink_metadata(entry.path()).map_err(|_| ERROR)?;
+                if metadata_safe(&metadata) {
+                    names.push((entry.file_name(), metadata.is_dir()));
+                }
+            }
+            names
+        };
         let mut entries = Vec::new();
-        for entry in std::fs::read_dir(path).map_err(|_| ERROR)? {
-            let e = entry.map_err(|_| ERROR)?;
-            let name = e.file_name().into_string().map_err(|_| ERROR)?;
+        for (name, directory) in names {
+            let name = name.into_string().map_err(|_| ERROR)?;
             let p = if prefix.is_empty() {
-                name
+                name.clone()
             } else {
                 format!("{prefix}/{name}")
             };
             if !permitted(&p) {
                 continue;
             }
-            let m = std::fs::symlink_metadata(e.path()).map_err(|_| ERROR)?;
-            if !metadata_safe(&m) {
-                continue;
-            }
             // Open entries before exposing them, also checking Windows hard links.
-            let f = options(m.is_dir(), false)
-                .open(e.path())
+            #[cfg(windows)]
+            let f = windows::open(
+                _locks.last().unwrap_or(&self._root),
+                std::ffi::OsStr::new(&name),
+                directory,
+                false,
+                false,
+            )
+            .map_err(|_| ERROR)?;
+            #[cfg(not(windows))]
+            let f = options(directory, false)
+                .open(_path.join(&name))
                 .map_err(|_| ERROR)?;
-            if verify(&f, m.is_dir()).is_err() {
+            if verify(&f, directory).is_err() {
                 continue;
             }
-            entries.push(json!({"path":p,"kind":if m.is_dir(){"directory"}else{"file"}}));
+            entries.push(json!({"path":p,"kind":if directory{"directory"}else{"file"}}));
             if entries.len() > 1000 {
                 return Err("BLK-CODING-BUDGET".into());
             }
@@ -444,34 +526,11 @@ fn change(path: &str, before: Option<&str>, after: Option<&str>) -> Value {
 }
 
 #[cfg(windows)]
-fn rename_checked(file: &File, _source: &Path, target: &Path) -> Result<(), String> {
-    use std::os::windows::{ffi::OsStrExt, io::AsRawHandle};
-    use windows_sys::Win32::Storage::FileSystem::{
-        FILE_RENAME_INFO, FileRenameInfo, SetFileInformationByHandle,
-    };
-    let name: Vec<u16> = target.as_os_str().encode_wide().collect();
-    let bytes = std::mem::offset_of!(FILE_RENAME_INFO, FileName) + name.len() * 2;
-    let mut storage = vec![0u64; bytes.div_ceil(8)];
-    let info = storage.as_mut_ptr() as *mut FILE_RENAME_INFO;
-    unsafe {
-        (*info).Anonymous.ReplaceIfExists = false;
-        (*info).RootDirectory = std::ptr::null_mut();
-        (*info).FileNameLength = (name.len() * 2) as u32;
-        std::ptr::copy_nonoverlapping(name.as_ptr(), (*info).FileName.as_mut_ptr(), name.len());
-        if SetFileInformationByHandle(
-            file.as_raw_handle() as _,
-            FileRenameInfo,
-            info as _,
-            bytes as u32,
-        ) == 0
-        {
-            return Err(ERROR.into());
-        }
-    }
-    Ok(())
+fn rename_checked(file: &File, _source: &Path, target: &Path, parent: &File) -> Result<(), String> {
+    windows::rename(file, parent, target.file_name().ok_or(ERROR)?).map_err(|_| ERROR.into())
 }
 #[cfg(not(windows))]
-fn rename_checked(file: &File, source: &Path, target: &Path) -> Result<(), String> {
+fn rename_checked(file: &File, source: &Path, target: &Path, _parent: &File) -> Result<(), String> {
     use std::os::unix::fs::MetadataExt;
     let held = file.metadata().map_err(|_| ERROR)?;
     let current = std::fs::symlink_metadata(source).map_err(|_| ERROR)?;
