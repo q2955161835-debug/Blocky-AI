@@ -1,0 +1,203 @@
+{
+  "manifest": {
+    "schemaVersion": "blocky.project/v1",
+    "projectId": "story-choice-teaching",
+    "displayName": "文本分析 Agent",
+    "modules": [
+      {
+        "moduleId": "research-agent",
+        "displayName": "文本分析",
+        "purpose": "agent",
+        "workspaceRef": "workspaces/research-agent.workspace.json",
+        "exports": [
+          {
+            "exportId": "analyze",
+            "displayName": "文本分析",
+            "kind": "agent",
+            "inputSchemaRef": "schemas/text-input.json",
+            "outputSchemaRef": "schemas/text-result.json"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "resourceId": "agent-model",
+        "kind": "model",
+        "scope": "project",
+        "definitionRef": "resources/agent-model.json",
+        "secretRefs": []
+      },
+      {
+        "resourceId": "text-tool",
+        "kind": "tool",
+        "scope": "project",
+        "definitionRef": "resources/text-tool.json",
+        "secretRefs": []
+      }
+    ],
+    "appSurfaces": [],
+    "format": {
+      "createdWith": "blocky-desktop/0.8.0",
+      "minimumReaderVersion": "0.4.0"
+    }
+  },
+  "workspaces": {
+    "research-agent": {
+      "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+          {
+            "type": "core.agent",
+            "id": "research-root",
+            "x": 80,
+            "y": 70,
+            "fields": {
+              "ROLE": "故事创作搭档"
+            },
+            "inputs": {
+              "BODY": {
+                "block": {
+                  "type": "core.interaction.chat",
+                  "id": "on-question",
+                  "fields": {
+                    "NAME": "输入待统计的文字"
+                  },
+                  "next": {
+                    "block": {
+                      "type": "core.logic.condition",
+                      "id": "story-choice",
+                      "fields": {
+                        "SOURCE": "input",
+                        "OP": "contains",
+                        "VALUE": "友善"
+                      },
+                      "inputs": {
+                        "THEN": {
+                          "block": {
+                            "type": "core.data.set",
+                            "id": "forest",
+                            "fields": {
+                              "VALUE": "\"到森林探险\""
+                            }
+                          }
+                        },
+                        "ELSE": {
+                          "block": {
+                            "type": "core.data.set",
+                            "id": "garden",
+                            "fields": {
+                              "VALUE": "\"去花园交朋友\""
+                            }
+                          }
+                        }
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.output.structured",
+                          "id": "story-result",
+                          "fields": {
+                            "SCHEMA": "schemas/story.json"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "resources": {
+    "agent-model": {
+      "schemaVersion": "blocky.resource/v1alpha1",
+      "resourceId": "agent-model",
+      "kind": "model",
+      "scope": "project",
+      "displayName": "本地整理",
+      "definition": {
+        "provider": "deterministic",
+        "modelId": "generator-v1",
+        "protocol": "local",
+        "timeoutMs": 30000,
+        "capabilities": [
+          "text"
+        ],
+        "parameters": {
+          "maxOutputTokens": 1024
+        },
+        "implementationRef": {
+          "kind": "adapter",
+          "id": "generator-v1"
+        }
+      },
+      "capabilityRequirements": [],
+      "secretBindings": []
+    },
+    "text-tool": {
+      "schemaVersion": "blocky.resource/v1alpha1",
+      "resourceId": "text-tool",
+      "kind": "tool",
+      "scope": "project",
+      "displayName": "文本统计",
+      "definition": {
+        "version": "1",
+        "permissions": [
+          "text.analyze"
+        ],
+        "implementationRef": {
+          "kind": "adapter",
+          "id": "text-analyze-v1"
+        },
+        "inputSchemaRef": {
+          "kind": "schema",
+          "id": "text-input"
+        },
+        "outputSchemaRef": {
+          "kind": "schema",
+          "id": "text-result"
+        }
+      },
+      "capabilityRequirements": [
+        "text.analyze"
+      ],
+      "secretBindings": []
+    }
+  },
+  "schemas": {
+    "schemas/text-input.json": {
+      "type": "string",
+      "maxLength": 16000
+    },
+    "schemas/text-result.json": {
+      "type": "object",
+      "properties": {
+        "characters": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "words": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "characters",
+        "lines",
+        "words"
+      ],
+      "additionalProperties": false
+    },
+    "schemas/story.json": {
+      "type": "string"
+    }
+  },
+  "surfaces": {}
+}

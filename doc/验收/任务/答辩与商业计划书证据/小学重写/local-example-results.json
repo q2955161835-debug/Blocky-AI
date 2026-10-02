@@ -1,0 +1,521 @@
+{
+  "boundary": "本地领域Runtime真实条件执行；非生成式故事、Windows普通包或学生试用；无外部模型请求",
+  "rows": [
+    {
+      "keyword": "勇敢",
+      "input": "勇敢的小猫",
+      "status": "completed",
+      "structured": "到森林探险",
+      "events": [
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "run.started",
+          "data": {
+            "summary": "开始运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.861Z",
+          "sequence": 1,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "research-root",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.agent",
+            "inputPorts": [
+              "BODY"
+            ]
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.868Z",
+          "sequence": 2,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "on-question",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.interaction.chat",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 3,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "on-question",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "null",
+            "budget": {
+              "steps": 2,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 4,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "story-choice",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.logic.condition",
+            "inputPorts": [
+              "ELSE",
+              "THEN"
+            ]
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 5,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "forest",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.data.set",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 6,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "forest",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 4,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 7,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "story-choice",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 4,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 8,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "story-result",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.output.structured",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.870Z",
+          "sequence": 9,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "story-result",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 5,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.871Z",
+          "sequence": 10,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "research-root",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 2,
+            "outputType": "string",
+            "budget": {
+              "steps": 5,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.871Z",
+          "sequence": 11,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-e7219ccc-7114-4ac8-8aa9-86deb16bb641",
+          "type": "run.completed",
+          "data": {
+            "summary": "运行完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.871Z",
+          "sequence": 12,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        }
+      ]
+    },
+    {
+      "keyword": "友善",
+      "input": "勇敢的小猫",
+      "status": "completed",
+      "structured": "去花园交朋友",
+      "events": [
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "run.started",
+          "data": {
+            "summary": "开始运行"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.872Z",
+          "sequence": 13,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "research-root",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.agent",
+            "inputPorts": [
+              "BODY"
+            ]
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 14,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "on-question",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.interaction.chat",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 15,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "on-question",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "null",
+            "budget": {
+              "steps": 2,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 16,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "story-choice",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.logic.condition",
+            "inputPorts": [
+              "ELSE",
+              "THEN"
+            ]
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 17,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "garden",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.data.set",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 18,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "garden",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 4,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 19,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "story-choice",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 4,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 20,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.started",
+          "moduleId": "research-agent",
+          "blockId": "story-result",
+          "data": {
+            "summary": "正在运行",
+            "blockType": "core.output.structured",
+            "inputPorts": []
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 21,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "story-result",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 5,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 22,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "block.completed",
+          "moduleId": "research-agent",
+          "blockId": "research-root",
+          "data": {
+            "summary": "已完成",
+            "elapsedMs": 0,
+            "outputType": "string",
+            "budget": {
+              "steps": 5,
+              "calls": 0,
+              "reservedOutputTokens": 0
+            }
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 23,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        },
+        {
+          "projectId": "story-choice-teaching",
+          "runId": "run-5ee37931-8b66-489f-9f16-bfeeeb1552c7",
+          "type": "run.completed",
+          "data": {
+            "summary": "运行完成"
+          },
+          "eventVersion": "blocky.event/v1alpha1",
+          "timestamp": "2026-10-02T18:36:41.878Z",
+          "sequence": 24,
+          "redaction": {
+            "applied": false,
+            "categories": []
+          }
+        }
+      ]
+    }
+  ]
+}
