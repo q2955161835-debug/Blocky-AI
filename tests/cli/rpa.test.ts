@@ -88,7 +88,7 @@ it("settles a real private recording Host without opening a prompt when its targ
 it("creates a reviewable RPA module patch, enforces native permission approval and keeps simulate inert",async()=>{
   const dir=await mkdtemp(resolve("try/stage7-rpa-module-"));
   try{
-    const env={...process.env,LOCALAPPDATA:dir},projectPath=join(dir,"original.blocky"),planPath=join(dir,"plan.json"),patchPath=join(dir,"patch.json"),output=join(dir,"changed.blocky");
+    const env={...process.env,LOCALAPPDATA:dir,BLOCKY_PROFILE_DIR:join(dir,"ai.blocky.studio")},projectPath=join(dir,"original.blocky"),planPath=join(dir,"plan.json"),patchPath=join(dir,"patch.json"),output=join(dir,"changed.blocky");
     await createProject(projectPath,createArchitectureStarter("rule-engine"));
     await writeFile(planPath,JSON.stringify({schemaVersion:"blocky.rpa/v1",planId:"owned",target:{kind:"browser",identity:"https://example.test"},steps:[{stepId:"read",action:"read",timeoutMs:1000,locator:{kind:"browser",role:"status",name:"Saved"}}]}));
     const original=await readFile(projectPath);
@@ -113,7 +113,7 @@ function run(args: string[], env = process.env) {
 it("discovers persisted receipt queries and refuses invalid checkpoint identities", async () => {
   const dir = await mkdtemp(resolve("try/stage7-rpa-query-"));
   try {
-    const env = { ...process.env, LOCALAPPDATA: dir };
+    const env = { ...process.env, LOCALAPPDATA: dir, BLOCKY_PROFILE_DIR: join(dir, "ai.blocky.studio") };
     const list = run(["rpa", "checkpoints", "--json"], env);
     expect(list.code).toBe(0);
     expect(list.result.data.checkpoints).toEqual([]);
@@ -170,7 +170,7 @@ it("discovers explicit checkpoint deletion and rejects stale or malformed refere
   expect(malformed.result.error.code).toBe("BLK-RPA-JOURNAL-002");
   const dir = await mkdtemp(resolve("try/stage7-rpa-delete-"));
   try {
-    const missing = run(["rpa", "checkpoint-delete", `checkpoint-${crypto.randomUUID()}`, "--revision", "1", "--json"], { ...process.env, LOCALAPPDATA: dir });
+    const missing = run(["rpa", "checkpoint-delete", `checkpoint-${crypto.randomUUID()}`, "--revision", "1", "--json"], { ...process.env, LOCALAPPDATA: dir, BLOCKY_PROFILE_DIR: join(dir, "ai.blocky.studio") });
     expect(missing.code).not.toBe(0);
     expect(missing.result.error.code).toBe("BLK-RPA-JOURNAL-001");
   } finally { await rm(dir, { recursive: true, force: true }); }

@@ -25,7 +25,7 @@ function cli(...args: string[]) {
       encoding: "utf8",
       windowsHide: true,
       timeout: 30000,
-      env: { ...process.env, LOCALAPPDATA: directory },
+      env: { ...process.env, LOCALAPPDATA: directory, BLOCKY_PROFILE_DIR: join(directory, "ai.blocky.studio") },
     },
   );
   return {

@@ -130,7 +130,7 @@ function run(args: string[]) {
     encoding: "utf8",
     timeout: 20000,
     windowsHide: true,
-    env: { ...process.env, LOCALAPPDATA: directory },
+    env: { ...process.env, LOCALAPPDATA: directory, BLOCKY_PROFILE_DIR: join(directory, "ai.blocky.studio") },
   });
   return {
     code: p.status,

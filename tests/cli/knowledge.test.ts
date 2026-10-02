@@ -36,7 +36,7 @@ function cli(...args: string[]) {
       encoding: "utf8",
       timeout: 30000,
       windowsHide: true,
-      env: { ...process.env, LOCALAPPDATA: directory },
+      env: { ...process.env, LOCALAPPDATA: directory, BLOCKY_PROFILE_DIR: join(directory, "ai.blocky.studio") },
     },
   );
   if (!run.stdout.trim()) throw Error(`CLI empty response: ${run.status}`);
