@@ -360,7 +360,10 @@ mod tests {
             .custom_flags(0x02200000)
             .open(path)
             .unwrap();
-        let substitute: Vec<u16> = OsString::from(format!("\\??\\{}", target.display()))
+        let target = target.canonicalize().unwrap();
+        let target_text = target.to_string_lossy();
+        let target_text = target_text.strip_prefix("\\\\?\\").unwrap_or(&target_text);
+        let substitute: Vec<u16> = OsString::from(format!("\\??\\{target_text}"))
             .encode_wide()
             .collect();
         let print: Vec<u16> = target.as_os_str().encode_wide().collect();
@@ -406,6 +409,7 @@ mod tests {
         std::fs::create_dir_all(outside.join("selected")).unwrap();
         std::fs::write(outside.join("selected/sentinel.txt"), b"outside sentinel").unwrap();
         junction(&alias, &outside);
+        assert_eq!(std::fs::read(alias.join("selected/sentinel.txt")).unwrap(), b"outside sentinel");
         assert!(super::super::Scope::new(&alias.join("selected")).is_err());
         assert_eq!(std::fs::read(outside.join("selected/sentinel.txt")).unwrap(), b"outside sentinel");
     }
@@ -494,6 +498,7 @@ mod tests {
         std::fs::write(outside.join("outside-only.txt"), b"outside sentinel").unwrap();
         let held = directory(&inside);
         junction(&inside, &outside);
+        assert_eq!(std::fs::read(inside.join("outside-only.txt")).unwrap(), b"outside sentinel");
         assert!(open(&held, OsStr::new("outside-only.txt"), false, false, false).is_err());
         if let Ok(mut original) = open(&held, OsStr::new("safe.txt"), false, true, true) {
             original.write_all(b"original physical directory").unwrap();
