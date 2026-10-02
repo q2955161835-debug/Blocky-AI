@@ -30,7 +30,7 @@ afterEach(() => {
 it("sends runtime input once on Enter, preserving composition and multiline editing", async () => {
   const hook=renderHook(()=>useStudio());
   await waitFor(()=>expect(hook.result.current.canRun).toBe(true));
-  const run=vi.fn(async()=>{});
+  const run=vi.fn(async()=>undefined);
   render(<RunPanel studio={{...hook.result.current,run}} execute={()=>{}}/>);
   const input=screen.getByLabelText("向 Agent 提问");
   fireEvent.keyDown(input,{key:"Enter",shiftKey:true});
