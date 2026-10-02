@@ -30,5 +30,11 @@
       }
     ]
   },
-  "startedAt": "2026-10-03 02:15"
+  "startedAt": "2026-10-03 02:15",
+  "finalInventoryWithHandoffScripts": {
+    "logicalBytes": 0,
+    "files": 0,
+    "skippedReparsePoints": [],
+    "completedAt": "2026-10-03 02:21"
+  }
 }
