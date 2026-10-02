@@ -1,0 +1,385 @@
+{
+  "currency": "CNY",
+  "planning_period": "2027–2029",
+  "status": "全部财务为示例测算；无实际收入/试点/报价/资金承诺",
+  "scenarios": {
+    "基准": {
+      "years": [
+        {
+          "year": 2027,
+          "contracts": 4,
+          "revenue": 72000,
+          "cost": 132640.0,
+          "net_income": -60639.99999999999,
+          "ending_cash_before_additional_funding": -48640.0,
+          "ending_cash_if_gap_covered": 54360.0,
+          "delivery_hours": 320,
+          "external_hours": 0
+        },
+        {
+          "year": 2028,
+          "contracts": 10,
+          "revenue": 180000,
+          "cost": 188400.0,
+          "net_income": -8399.999999999989,
+          "ending_cash_before_additional_funding": -62040.0,
+          "ending_cash_if_gap_covered": 40960.0,
+          "delivery_hours": 800,
+          "external_hours": 160
+        },
+        {
+          "year": 2029,
+          "contracts": 18,
+          "revenue": 324000,
+          "cost": 269680.0,
+          "net_income": 54320.00000000001,
+          "ending_cash_before_additional_funding": -3720.0,
+          "ending_cash_if_gap_covered": 99280.0,
+          "delivery_hours": 1440,
+          "external_hours": 720
+        }
+      ],
+      "peak_cash_deficit": 83000.0,
+      "required_additional_cash_with_reserve": 103000.0,
+      "minimum_cash_before_funding": -83000.0,
+      "peak_deficit_month": "2028-09",
+      "unit_model_budget": 1400
+    },
+    "悲观": {
+      "years": [
+        {
+          "year": 2027,
+          "contracts": 2,
+          "revenue": 30000,
+          "cost": 125200.0,
+          "net_income": -95200.0,
+          "ending_cash_before_additional_funding": -83200.0,
+          "ending_cash_if_gap_covered": 197900.0,
+          "delivery_hours": 200,
+          "external_hours": 40
+        },
+        {
+          "year": 2028,
+          "contracts": 4,
+          "revenue": 60000,
+          "cost": 152800.0,
+          "net_income": -92800.0,
+          "ending_cash_before_additional_funding": -172000.0,
+          "ending_cash_if_gap_covered": 109100.0,
+          "delivery_hours": 400,
+          "external_hours": 80
+        },
+        {
+          "year": 2029,
+          "contracts": 6,
+          "revenue": 90000,
+          "cost": 180400.0,
+          "net_income": -90399.99999999999,
+          "ending_cash_before_additional_funding": -258400.0,
+          "ending_cash_if_gap_covered": 22700.0,
+          "delivery_hours": 600,
+          "external_hours": 120
+        }
+      ],
+      "peak_cash_deficit": 261100.0,
+      "required_additional_cash_with_reserve": 281100.0,
+      "minimum_cash_before_funding": -261100.0,
+      "peak_deficit_month": "2029-11",
+      "unit_model_budget": 3150
+    },
+    "积极": {
+      "years": [
+        {
+          "year": 2027,
+          "contracts": 6,
+          "revenue": 132000,
+          "cost": 180940.0,
+          "net_income": -48940.0,
+          "ending_cash_before_additional_funding": -36940.0,
+          "ending_cash_if_gap_covered": 38490.0,
+          "delivery_hours": 420,
+          "external_hours": 0
+        },
+        {
+          "year": 2028,
+          "contracts": 14,
+          "revenue": 308000,
+          "cost": 254860.0,
+          "net_income": 53140.00000000001,
+          "ending_cash_before_additional_funding": 9200.0,
+          "ending_cash_if_gap_covered": 84630.0,
+          "delivery_hours": 980,
+          "external_hours": 300
+        },
+        {
+          "year": 2029,
+          "contracts": 24,
+          "revenue": 528000,
+          "cost": 351760.0,
+          "net_income": 176240.0,
+          "ending_cash_before_additional_funding": 178440.0,
+          "ending_cash_if_gap_covered": 253870.0,
+          "delivery_hours": 1680,
+          "external_hours": 900
+        }
+      ],
+      "peak_cash_deficit": 55430.0,
+      "required_additional_cash_with_reserve": 75430.0,
+      "minimum_cash_before_funding": -55430.0,
+      "peak_deficit_month": "2028-02",
+      "unit_model_budget": 1750
+    }
+  },
+  "assumptions": [
+    {
+      "id": "A01",
+      "label": "2027合同数",
+      "baseline": 4,
+      "downside": 2,
+      "upside": 6,
+      "unit": "份",
+      "basis": "单次范围明确的课程试点/培训/配置支持服务；未签合同"
+    },
+    {
+      "id": "A02",
+      "label": "2028合同数",
+      "baseline": 10,
+      "downside": 4,
+      "upside": 14,
+      "unit": "份",
+      "basis": "不自动假设续约；全部为当年交付合同"
+    },
+    {
+      "id": "A03",
+      "label": "2029合同数",
+      "baseline": 18,
+      "downside": 6,
+      "upside": 24,
+      "unit": "份",
+      "basis": "可触达客户名单与转化均待验证"
+    },
+    {
+      "id": "A04",
+      "label": "每合同含税总预算",
+      "baseline": 18000,
+      "downside": 15000,
+      "upside": 22000,
+      "unit": "元/份",
+      "basis": "示例均价；具体机构须逐项报价"
+    },
+    {
+      "id": "A05",
+      "label": "每合同交付工时",
+      "baseline": 80,
+      "downside": 100,
+      "upside": 70,
+      "unit": "小时/份",
+      "basis": "备课、培训、安装配置、支持；不含固定核心工作"
+    },
+    {
+      "id": "A06",
+      "label": "交付内部工时预算",
+      "baseline": 80,
+      "downside": 90,
+      "upside": 80,
+      "unit": "元/小时",
+      "basis": "交付专项报酬；不与固定核心工作工时重叠"
+    },
+    {
+      "id": "A07",
+      "label": "外部增援工时预算",
+      "baseline": 100,
+      "downside": 110,
+      "upside": 100,
+      "unit": "元/小时",
+      "basis": "超出学生团队交付工时的外包预算；尚未聘用"
+    },
+    {
+      "id": "A08",
+      "label": "每合同输入Token",
+      "baseline": 80,
+      "downside": 120,
+      "upside": 100,
+      "unit": "百万Token",
+      "basis": "额度上限规划；没有整班实测"
+    },
+    {
+      "id": "A09",
+      "label": "每合同输出Token",
+      "baseline": 20,
+      "downside": 30,
+      "upside": 25,
+      "unit": "百万Token",
+      "basis": "包含重试的预算假设，非实测消费"
+    },
+    {
+      "id": "A10",
+      "label": "输入Token预算单价",
+      "baseline": 10,
+      "downside": 15,
+      "upside": 10,
+      "unit": "元/百万Token",
+      "basis": "保守预算假设，非供应商报价；需按实际模型替换"
+    },
+    {
+      "id": "A11",
+      "label": "输出Token预算单价",
+      "baseline": 30,
+      "downside": 45,
+      "upside": 30,
+      "unit": "元/百万Token",
+      "basis": "预算假设；客户自带API时另行报价"
+    },
+    {
+      "id": "A12",
+      "label": "每合同其他直接成本",
+      "baseline": 600,
+      "downside": 800,
+      "upside": 700,
+      "unit": "元/份",
+      "basis": "交通、资料及现场配置耗材预算"
+    },
+    {
+      "id": "A13",
+      "label": "两人每月固定核心报酬",
+      "baseline": 6000,
+      "downside": 6000,
+      "upside": 8000,
+      "unit": "元/月",
+      "basis": "产品维护/教研通用素材/销售；未获用户确认，非既有工资"
+    },
+    {
+      "id": "A14",
+      "label": "每月固定运营费",
+      "baseline": 1800,
+      "downside": 1800,
+      "upside": 2500,
+      "unit": "元/月",
+      "basis": "研发模型、网络云服务、行政等预留；不含合同模型额度"
+    },
+    {
+      "id": "A15",
+      "label": "初期设备投入",
+      "baseline": 12000,
+      "downside": 12000,
+      "upside": 12000,
+      "unit": "元",
+      "basis": "2027年1月；未发生，非历史投入"
+    },
+    {
+      "id": "A16",
+      "label": "设备折旧期",
+      "baseline": 36,
+      "downside": 36,
+      "upside": 36,
+      "unit": "月",
+      "basis": "零残值，直线法示例政策，非会计师确认"
+    },
+    {
+      "id": "A17",
+      "label": "期初自有资金",
+      "baseline": 20000,
+      "downside": 20000,
+      "upside": 20000,
+      "unit": "元",
+      "basis": "规划假设；未有真实承诺或到账"
+    },
+    {
+      "id": "A18",
+      "label": "最低现金储备",
+      "baseline": 20000,
+      "downside": 20000,
+      "upside": 20000,
+      "unit": "元",
+      "basis": "示例流动性目标；不是融资承诺"
+    },
+    {
+      "id": "A19",
+      "label": "当月收款比例",
+      "baseline": 0.5,
+      "downside": 0.3,
+      "upside": 0.5,
+      "unit": "比例",
+      "basis": "余款下一月收取；无坏账仅为简化；采购延期需另测"
+    },
+    {
+      "id": "A20",
+      "label": "税费现金预算预留",
+      "baseline": 0.02,
+      "downside": 0.03,
+      "upside": 0.02,
+      "unit": "收入比例",
+      "basis": "管理预算，计费用及当月现金流；不是法定税率，不构成税务结论"
+    },
+    {
+      "id": "A21",
+      "label": "两人每月可用工时合计",
+      "baseline": 240,
+      "downside": 240,
+      "upside": 240,
+      "unit": "小时/月",
+      "basis": "两名学生各120小时；须课程安排验证"
+    },
+    {
+      "id": "A22",
+      "label": "固定核心工作工时合计",
+      "baseline": 160,
+      "downside": 160,
+      "upside": 160,
+      "unit": "小时/月",
+      "basis": "两人各80小时；对应固定核心报酬，独立于合同交付"
+    },
+    {
+      "id": "A23",
+      "label": "每月外部增援上限",
+      "baseline": 160,
+      "downside": 160,
+      "upside": 160,
+      "unit": "小时/月",
+      "basis": "按项目招募预算，未聘用；超出则拒绝接单/改期"
+    }
+  ],
+  "cash_timing": "合同交付当月确认收入；当月50%（悲观30%）收款，余款次月；成本当月支付；无坏账仅为简化",
+  "capacity": "两名学生每月合计240小时，固定核心工作160小时，内部交付80小时；外部增援最多160小时/月，超出则改期或拒单。直接交付专项报酬与固定核心工时无重叠。",
+  "tax_policy": "按收入2%（悲观3%）预留税费现金预算；作为费用与现金支出；非已验证法定税率",
+  "funding_policy": "峰值缺口在期初自有资金2万元假设后计算；追加资金含2万元最低储备，未承诺，无股权融资要求；为勾稽仅假设2027年1月全额填补",
+  "sources": [
+    [
+      "S01",
+      "项目事实",
+      "AGENTS.md / README.md",
+      "2026-10-03",
+      "当前产品能力；未重跑产品验收"
+    ],
+    [
+      "S02",
+      "定位与商业模式",
+      "doc/产品设计/2026-10-02-Blocky市场与竞品深度调研.md",
+      "2026-10-03",
+      "教育、完整产品免费、机构联系报价；历史调研材料"
+    ],
+    [
+      "S03",
+      "竞品机构报价路径",
+      "https://blocksbuilder.ai/pricing",
+      "2026-10-02",
+      "引用项目调研来源，未本轮复查；不提供Blocky价格"
+    ],
+    [
+      "S04",
+      "全部A01–A23",
+      "主agent批准的草案规划假设；不是用户已确认数字",
+      "2026-10-03",
+      "单位成本、销量、报酬与资金全部未经市场/财务验证"
+    ],
+    [
+      "S05",
+      "模板兼容性",
+      "build-client-business-plans/references/financial-model-map.md",
+      "2026-10-03",
+      "原模板健康门禁通过；36个月超过24月上限，使用全新fallback；未改模板"
+    ]
+  ],
+  "true_external_llm_api": "否",
+  "workbook": "D:\\1Folder\\Blocky-AI\\doc\\交付\\2026-10-03-答辩与商业计划书\\Blocky-Studio-财务测算-2026-10-03.xlsx"
+}

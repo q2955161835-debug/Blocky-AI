@@ -1,0 +1,90 @@
+{
+  "independent_monthly_comparisons": 972,
+  "comparison_failures": [],
+  "formula_count": 4116,
+  "missing_formula_caches": [],
+  "formula_errors": [],
+  "internal_path_or_process_material_hits": [],
+  "excel_native_recalculation": true,
+  "perturbation_tests": [
+    {
+      "pass": true,
+      "profit": -53584.0,
+      "cash": -41584.0,
+      "name": "revenue_price_plus_10_percent",
+      "check": "通过",
+      "funding_need": 87160.0,
+      "revenue": 79200.0
+    },
+    {
+      "pass": true,
+      "profit": -66640.0,
+      "cash": -54640.0,
+      "name": "fixed_cost_plus_500",
+      "check": "通过",
+      "funding_need": 113500.0,
+      "revenue": 72000.0
+    },
+    {
+      "pass": true,
+      "profit": -60640.0,
+      "cash": -43640.0,
+      "name": "initial_cash_plus_5000",
+      "check": "通过",
+      "funding_need": 98000.0,
+      "revenue": 72000.0
+    },
+    {
+      "pass": true,
+      "profit": -131200.0,
+      "cash": -119200.0,
+      "name": "missing_price",
+      "check": "失败",
+      "funding_need": 579200.0,
+      "revenue": 0.0
+    },
+    {
+      "pass": true,
+      "profit": -97600.0,
+      "cash": -85600.0,
+      "name": "zero_contracts_2027",
+      "check": "通过",
+      "funding_need": 139960.0,
+      "revenue": 0.0
+    },
+    {
+      "pass": true,
+      "profit": -67040.0,
+      "cash": -55040.0,
+      "name": "insufficient_team_hours",
+      "check": "失败",
+      "funding_need": 117400.0,
+      "revenue": 72000.0
+    }
+  ],
+  "template_fallback_basis": "36 monthly forecast periods exceed protected template 24-month horizon; pristine template health gate passed; template untouched",
+  "real_external_llm_api": "否",
+  "visual_review": "34 native Excel PDF pages; scenario/year blocks readable; no blank or clipped numerical views; assumption/source notes included",
+  "metadata_privacy": "Creator/lastModifiedBy normalized to Blocky Studio; no user identity in author metadata",
+  "sha256": "9c33f92ee42f66f1d2d1895a769c551c7e3badd0f681567fa7bc37b6d74d9e87",
+  "bytes": 72021,
+  "wording_revision": {
+    "purpose": "预算等效人力不代表实际参赛名单",
+    "previous_sha256": "b42717de5b3513a4923ecc84b193f58b005c9658240d1f79964cf7169d18226e",
+    "sha256": "9c33f92ee42f66f1d2d1895a769c551c7e3badd0f681567fa7bc37b6d74d9e87",
+    "changed_parts": [
+      "xl/sharedStrings.xml"
+    ],
+    "changed_string_count": 4,
+    "changes": {
+      "两人每月固定核心报酬": "2名等效人力的固定核心报酬预算",
+      "两人每月可用工时合计": "等效人力每月可用工时合计",
+      "两名学生各120小时；须课程安排验证": "按2名等效人力各120小时测算；实际投入待验证",
+      "两人各80小时；对应固定核心报酬，独立于合同交付": "按2名等效人力各80小时测算；对应固定核心报酬，独立于合同交付"
+    },
+    "all_other_package_parts_byte_identical": true,
+    "formulas_and_cached_values_unchanged": true,
+    "styles_and_metadata_unchanged": true,
+    "recalculation": "未执行；只改共享字符串，数值与公式缓存逐字节保持"
+  }
+}

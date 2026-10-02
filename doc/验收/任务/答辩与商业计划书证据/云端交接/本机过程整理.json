@@ -1,0 +1,34 @@
+{
+  "after": {
+    "logicalBytes": 456801182,
+    "files": 3491,
+    "links": [
+      {
+        "target": [
+          "C:\\Users\\29551\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules"
+        ],
+        "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-03-答辩与商业计划书\\slides\\node_modules"
+      }
+    ]
+  },
+  "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-03-答辩与商业计划书",
+  "action": "organize without deletion",
+  "status": "organized",
+  "completedAt": "2026-10-03 02:15",
+  "deletedBytes": 0,
+  "source": "D:\\1Folder\\Blocky-AI\\try\\defense-2026-10-03",
+  "followedReparsePoints": false,
+  "before": {
+    "logicalBytes": 456801182,
+    "files": 3491,
+    "links": [
+      {
+        "target": [
+          "C:\\Users\\29551\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules"
+        ],
+        "path": "D:\\1Folder\\Blocky-AI\\try\\defense-2026-10-03\\slides\\node_modules"
+      }
+    ]
+  },
+  "startedAt": "2026-10-03 02:15"
+}

@@ -1,0 +1,64 @@
+{
+  "status": "reference inputs only; rejected narrative requires rewriting",
+  "files": [
+    {
+      "file": "ppt-reference-v6.mjs",
+      "bytes": 25678,
+      "sha256": "a5dc09cc26a244aa92e2ca49559e88193832e6b42b8752855a0a8e23ce535c43",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "prepare_ppt_metadata.py",
+      "bytes": 2489,
+      "sha256": "3175aaf5f00e8bb5557cd807dc613e1e134996d87b0b760dd7dda1b2659bf0d5",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "speaker-notes-reference-v6.json",
+      "bytes": 9017,
+      "sha256": "a92a7515463a84914e322ca40dbd5b6797621930d4325ec2cd987e27f0c33c89",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "business-plan-reference-v1.1.json",
+      "bytes": 34109,
+      "sha256": "518788be7586c700703b7829e80fa5172c54584a0d8cc19d003ced8af12930d1",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "build_business_plan_docx.py",
+      "bytes": 23297,
+      "sha256": "6d231cb45527b677a331ad96881b764cd78c209e4f8e4945e2706f23ca3b9000",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "finalize_word_docx.py",
+      "bytes": 13699,
+      "sha256": "08c7a1a11e6442fa67ad392d26b540c4bd9c95e3f62fcebdb0331fda9598c01d",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "finance-summary.json",
+      "bytes": 11864,
+      "sha256": "9520a130a3367714d9cf3ebbe7c08892e7c638c11a9203b89e0a2b9586568e0f",
+      "originalBytesMatch": true
+    },
+    {
+      "file": "finance-model-validation.json",
+      "bytes": 3209,
+      "sha256": "51b44d1eac5f78931e4d6dbea6eea567936b9db565cf9d234dcbec5930687547",
+      "originalBytesMatch": true
+    }
+  ],
+  "totalBytes": 123362,
+  "linksChecked": 15,
+  "sourceIdentity": "93d6a42 checkpoint plus read-only local drafting inputs",
+  "validation": {
+    "exactCopy": true,
+    "jsonParse": true,
+    "pythonSyntax": true,
+    "relativeLinks": true,
+    "credentialPatternScan": true
+  },
+  "cloudExecutionVerified": false
+}
