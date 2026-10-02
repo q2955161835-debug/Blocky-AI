@@ -1,0 +1,1142 @@
+{
+  "generatedAt": "2026-10-02T11:04:50.527Z",
+  "realExternalModelApiCalled": true,
+  "summary": [
+    {
+      "role": "independent-acceptance",
+      "responses": 39,
+      "inputTokens": 94006,
+      "outputTokens": 2952,
+      "totalTokens": 96958,
+      "nativeApprovedTasks": 23,
+      "tasksWithoutReadableResponse": 10
+    },
+    {
+      "role": "implementation-development",
+      "responses": 4,
+      "inputTokens": 5405,
+      "outputTokens": 213,
+      "totalTokens": 5618,
+      "nativeApprovedTasks": 2,
+      "tasksWithoutReadableResponse": 0
+    }
+  ],
+  "reported": [
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE01",
+      "completedAt": "2026-10-02T09:58:21.860Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909351009343a391e43edef5299850de6066b8d72e2bf9b99",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1179,
+        "outputTokens": 14,
+        "totalTokens": 1193
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE02",
+      "completedAt": "2026-10-02T09:58:36.695Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-b3ea4ae4-9f9c-985e-b509-d9ab34293968",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1236,
+        "outputTokens": 45,
+        "totalTokens": 1281
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE02",
+      "completedAt": "2026-10-02T09:58:36.695Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-ef1610d4-ffc4-9a0a-9f67-a9d084832573",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1353,
+        "outputTokens": 131,
+        "totalTokens": 1484
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE02",
+      "completedAt": "2026-10-02T09:58:36.695Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790935115661efca7158d8a072a352f4e6ec3154e35a212d25",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1637,
+        "outputTokens": 23,
+        "totalTokens": 1660
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "completedAt": "2026-10-02T11:02:48.585Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-30f34023-3d8f-9996-bce5-b8e4837164d0",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1210,
+        "outputTokens": 45,
+        "totalTokens": 1255
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "completedAt": "2026-10-02T11:02:48.585Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-fcd84a0d-9501-92f6-8851-627bac774b33",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1282,
+        "outputTokens": 26,
+        "totalTokens": 1308
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui4",
+      "marker": "LIVE21",
+      "completedAt": "2026-10-02T10:52:41.283Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790938360143d6f60410e67e178f28d968f0420b51c383efbd",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1192,
+        "outputTokens": 20,
+        "totalTokens": 1212
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE21",
+      "completedAt": "2026-10-02T10:53:31.356Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-1bbb6c22-ac66-97b0-af18-b8a9de916cc9",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1194,
+        "outputTokens": 15,
+        "totalTokens": 1209
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE22",
+      "completedAt": "2026-10-02T10:53:44.892Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790938415781fd0de7354b348b065f00b895e07126b85aa513",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1213,
+        "outputTokens": 55,
+        "totalTokens": 1268
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE22",
+      "completedAt": "2026-10-02T10:53:44.892Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790938419130534779bc6a83ab3f36a7a90c1e71ba35ba80ca",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1333,
+        "outputTokens": 120,
+        "totalTokens": 1453
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE22",
+      "completedAt": "2026-10-02T10:53:44.892Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909384236203d763aaa7a5e423f9e5323a8c500bc9f3f3928",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1601,
+        "outputTokens": 19,
+        "totalTokens": 1620
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE23",
+      "completedAt": "2026-10-02T10:54:08.116Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790938429523fd0de7354b348b065f00b895e07126b8af3aaf",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1280,
+        "outputTokens": 37,
+        "totalTokens": 1317
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE23",
+      "completedAt": "2026-10-02T10:54:08.116Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-f94007bd-a820-9a0f-84b3-40dd350a22fb",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2569,
+        "outputTokens": 143,
+        "totalTokens": 2712
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE23",
+      "completedAt": "2026-10-02T10:54:08.116Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909384389787d6713dc852f73f0cf900d2fbe3d4488644a94",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2879,
+        "outputTokens": 61,
+        "totalTokens": 2940
+      }
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE23",
+      "completedAt": "2026-10-02T10:54:08.116Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-a83b24c9-8820-9658-b32b-f7dda6f5ba0f",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4226,
+        "outputTokens": 240,
+        "totalTokens": 4466
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:21:53.390Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790936496763de824baea9702e17bffa39e9c3bdc4f686b5cb",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1776,
+        "outputTokens": 42,
+        "totalTokens": 1818
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:21:53.390Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-18cff9d5-24d3-9adc-98b7-535be4a21463",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3071,
+        "outputTokens": 112,
+        "totalTokens": 3183
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:21:53.390Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-5364d1b0-ae27-92d0-81ed-a7870174bdf9",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3348,
+        "outputTokens": 70,
+        "totalTokens": 3418
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:21:53.390Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-f3cffca3-cdcf-9c00-8e3e-648986428848",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4736,
+        "outputTokens": 111,
+        "totalTokens": 4847
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow3",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:30:15.989Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-38067202-49cc-99d2-9079-c98e9ee1d762",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2049,
+        "outputTokens": 20,
+        "totalTokens": 2069
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE15",
+      "completedAt": "2026-10-02T10:33:06.556Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-825391d3-625c-9f12-8d7e-532c062dddc2",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1301,
+        "outputTokens": 35,
+        "totalTokens": 1336
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE15",
+      "completedAt": "2026-10-02T10:33:06.556Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-f4e5d276-dc36-981a-b030-b37f2a9a257f",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2587,
+        "outputTokens": 109,
+        "totalTokens": 2696
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE15",
+      "completedAt": "2026-10-02T10:33:06.556Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-9da6b64d-1fd4-9a46-b63f-66e6dfb83a45",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2861,
+        "outputTokens": 72,
+        "totalTokens": 2933
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE15",
+      "completedAt": "2026-10-02T10:33:06.556Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790937181780ca3041a3a8c2b7f648d1ff1a7e90ae3f1917ce",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4251,
+        "outputTokens": 250,
+        "totalTokens": 4501
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790937191544534779bc6a83ab3f36a7a90c1e71ba35cc5530",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1677,
+        "outputTokens": 46,
+        "totalTokens": 1723
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-9d7376e2-ea41-9638-a754-4956be084f44",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1792,
+        "outputTokens": 112,
+        "totalTokens": 1904
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "021790937199217b566464da517b102b4cb09cdfd60e7ee8fada1",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3225,
+        "outputTokens": 72,
+        "totalTokens": 3297
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "02179093720275491be90b70b1bfc3059428bd07e108b7e8691fc",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3654,
+        "outputTokens": 136,
+        "totalTokens": 3790
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "02179093720649689d0c17fc196b3c940c12dd7ad5b500bc39ab3",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3820,
+        "outputTokens": 261,
+        "totalTokens": 4081
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE01",
+      "completedAt": "2026-10-02T10:10:52.841Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-5680a34c-8ad3-98fb-bebd-e94ade2b9857",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1202,
+        "outputTokens": 20,
+        "totalTokens": 1222
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE02",
+      "completedAt": "2026-10-02T10:10:56.740Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-0e6b6cad-3814-9098-bd6b-280ff5f86bac",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1243,
+        "outputTokens": 11,
+        "totalTokens": 1254
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE04",
+      "completedAt": "2026-10-02T10:11:12.346Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-f009da93-259d-9ac0-8554-108997988740",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1344,
+        "outputTokens": 45,
+        "totalTokens": 1389
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE04",
+      "completedAt": "2026-10-02T10:11:12.346Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-5d19170d-6dce-9963-8410-b406bfd7ff80",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1461,
+        "outputTokens": 128,
+        "totalTokens": 1589
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE04",
+      "completedAt": "2026-10-02T10:11:12.346Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-c892a46c-5ec0-9e81-be9c-b1ba3207b577",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1737,
+        "outputTokens": 24,
+        "totalTokens": 1761
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-cee4be3e-6a76-961a-bd0a-0ae303962056",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1440,
+        "outputTokens": 27,
+        "totalTokens": 1467
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-779f2800-b6cc-9b4c-8781-a2e61d1c86dd",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2719,
+        "outputTokens": 89,
+        "totalTokens": 2808
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-9d79fc0b-7ac8-9ac5-bf1f-c99724f4bcca",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2835,
+        "outputTokens": 48,
+        "totalTokens": 2883
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-11ab9ebc-e56a-97eb-b195-f9a2dc8b641b",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2910,
+        "outputTokens": 47,
+        "totalTokens": 2957
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909358931933d3436761e68cde6bd2815b0b11060acb0f922",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2984,
+        "outputTokens": 51,
+        "totalTokens": 3035
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909358961977424dba2bd6e77b99d402060a9cf8c0f7c6d00",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3062,
+        "outputTokens": 50,
+        "totalTokens": 3112
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909358994923d763aaa7a5e423f9e5323a8c500bc9fd0677d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3139,
+        "outputTokens": 47,
+        "totalTokens": 3186
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "chatcmpl-3ad38d85-bd97-9638-851a-457d466b62e5",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3213,
+        "outputTokens": 56,
+        "totalTokens": 3269
+      }
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "completedAt": "2026-10-02T10:11:49.713Z",
+      "provider": "xirang",
+      "actualModel": "deepseek-v4-pro",
+      "responseId": "0217909359072427424dba2bd6e77b99d402060a9cf8c0f6b2a18",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4590,
+        "outputTokens": 80,
+        "totalTokens": 4670
+      }
+    }
+  ],
+  "nativeApprovals": [
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE01",
+      "requestDigest": "e7f808d3ccd955ab2d15709b4cd8b749370c2f4eab18baaebdab65126d98007e",
+      "observedAt": "2026-10-02T09:58:18.0769756Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "implementation-development",
+      "run": "gui3",
+      "marker": "LIVE02",
+      "requestDigest": "8c87a967a02e47d2cb888c48d3e6f31ae2fcaeb622de1c7111c83ec769fcb73b",
+      "observedAt": "2026-10-02T09:58:24.7319563Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "requestDigest": "92ee188c55864fdb861103808bbb61d4a77687affa66637a1543b133de49ee3a",
+      "observedAt": "2026-10-02T11:02:25.2683888Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "requestDigest": "f8bee9cba733fd97bb4ecf93170e2fec17ce7ae84beec0ae72b1811b2636cf52",
+      "observedAt": "2026-10-02T11:02:33.8736861Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "requestDigest": "87d1fded18c50478bc90be01ceb2723a0d8a3cc86568ad9328df4f7c21f7adeb",
+      "observedAt": "2026-10-02T11:02:41.5911230Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-switch1",
+      "marker": "LIVE26",
+      "requestDigest": "9c7e73b1ed4143c3c15392175e014b58a1e3e2ea31e845f3ae780bd6315f8e56",
+      "observedAt": "2026-10-02T10:57:19.1766181Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-switch2",
+      "marker": "LIVE26",
+      "requestDigest": "0fa2569f7a8474741ec400c43875eee167aebb6cf1436c920ac0f010eac95441",
+      "observedAt": "2026-10-02T10:58:40.4550552Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui3",
+      "marker": "LIVE21",
+      "requestDigest": "6a8c599fd1e80988187e9846ad06e70f94ab3dd627db055ea3a4bae83f1ab491",
+      "observedAt": "2026-10-02T10:51:03.4544767Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui4",
+      "marker": "LIVE21",
+      "requestDigest": "2ffed3eae1d7db1b932e77aebba685cce57fecf2243815e0b47930c315ab8641",
+      "observedAt": "2026-10-02T10:52:36.7628889Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui4",
+      "marker": "LIVE22",
+      "requestDigest": "5e0b6b8921c84380da782f6337bbf6d7ec3d284b8df2de5b12322dfb949b5737",
+      "observedAt": "2026-10-02T10:52:42.8395934Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE21",
+      "requestDigest": "0c6a04d1bc4ea17fdb6689552e83d83b1e13869aed3666cb04e4b7bc8e63358d",
+      "observedAt": "2026-10-02T10:53:25.9674873Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE22",
+      "requestDigest": "4385e93ac8b1defc39c72c138c098750f9542520f52b1962aa7f2460ba8ba2cf",
+      "observedAt": "2026-10-02T10:53:33.1359642Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE23",
+      "requestDigest": "e88c829a38e82a21b8149b6ca1296f39d679a09cb0f07898ab3aee48d5f0f899",
+      "observedAt": "2026-10-02T10:53:47.1341709Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE24",
+      "requestDigest": "4a7348832770d10a8d39814406de3e0a57344efa5299a124482e2ce8f1de7848",
+      "observedAt": "2026-10-02T10:54:10.8886222Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE25",
+      "requestDigest": "fa9955739cb90ed9ce90a28513cefecc92b8b59f4a5734295d99d740c24fd71c",
+      "observedAt": "2026-10-02T10:54:24.0151249Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow1",
+      "marker": "LIVE05",
+      "requestDigest": "2deea80c91018aae4776cd984b001b17e71474fc4837835dfe6c3c612e456519",
+      "observedAt": "2026-10-02T10:15:53.8514730Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow2",
+      "marker": "LIVE05",
+      "requestDigest": "3f905c54e45d09362a1313007ee48e5997f30aed8c617f8abab44d1976c7935c",
+      "observedAt": "2026-10-02T10:21:33.0935718Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow3",
+      "marker": "LIVE05",
+      "requestDigest": "9a43bd9453577182254177e7e69191f722a4932843b9bacd18618a1999dd056f",
+      "observedAt": "2026-10-02T10:30:05.8434774Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE15",
+      "requestDigest": "89c5e9e45f142c1db2a6961380e913f1a3a443163d6b3a47c571463ce1275225",
+      "observedAt": "2026-10-02T10:32:45.3483283Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE09",
+      "requestDigest": "e1d950a6006efacea69c3b60974055adb214d7aaf9051ee4bf7c486c2774a755",
+      "observedAt": "2026-10-02T10:33:09.7215586Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE06",
+      "requestDigest": "86ca39fa1c1c8565b0574af6aea207a0dd9aac75959b09869b7e825e5ace7d7e",
+      "observedAt": "2026-10-02T10:33:32.1122351Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE01",
+      "requestDigest": "63f8a4738eb183102970735462b22052dccbf8b345e3cf80ea51eb415b79e2c4",
+      "observedAt": "2026-10-02T10:10:46.8544993Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE02",
+      "requestDigest": "ad28f5e383b149272231a7b9dc3db475c53ecc5b6b9614d0e167b4447d51d0ba",
+      "observedAt": "2026-10-02T10:10:53.4940141Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE04",
+      "requestDigest": "b38aae482aaf794e13d8139c937f8e85afa11ad653911b63d5cb73c218c64854",
+      "observedAt": "2026-10-02T10:10:59.4743189Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-ui2",
+      "marker": "LIVE05",
+      "requestDigest": "c296c936245a20398602ab8c13104d236c0d5d8d901af161f14434a0db34a2f2",
+      "observedAt": "2026-10-02T10:11:14.2269085Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "bodyPersisted": false
+    }
+  ],
+  "unavailable": [
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "approvalObservedAt": "2026-10-02T11:02:25.2683888Z",
+      "matchedAttemptCompletedAt": "2026-10-02T11:02:32.026Z",
+      "stableCodes": [
+        "BLK-PROVIDER-TRANSPORT"
+      ],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-negative1",
+      "marker": "LIVE27",
+      "approvalObservedAt": "2026-10-02T11:02:33.8736861Z",
+      "matchedAttemptCompletedAt": "2026-10-02T11:02:39.752Z",
+      "stableCodes": [
+        "BLK-PROVIDER-TRANSPORT"
+      ],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-switch1",
+      "marker": "LIVE26",
+      "approvalObservedAt": "2026-10-02T10:57:19.1766181Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:57:25.715Z",
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-switch2",
+      "marker": "LIVE26",
+      "approvalObservedAt": "2026-10-02T10:58:40.4550552Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:58:46.025Z",
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui3",
+      "marker": "LIVE21",
+      "approvalObservedAt": "2026-10-02T10:51:03.4544767Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:51:10.328Z",
+      "stableCodes": [
+        "BLK-PROVIDER-TRANSPORT"
+      ],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui4",
+      "marker": "LIVE22",
+      "approvalObservedAt": "2026-10-02T10:52:42.8395934Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:52:48.638Z",
+      "stableCodes": [
+        "BLK-PROVIDER-TRANSPORT"
+      ],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE24",
+      "approvalObservedAt": "2026-10-02T10:54:10.8886222Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:54:23.296Z",
+      "stableCodes": [],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+      "role": "independent-acceptance",
+      "run": "independent-current-ui5",
+      "marker": "LIVE25",
+      "approvalObservedAt": "2026-10-02T10:54:24.0151249Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:54:29.405Z",
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow1",
+      "marker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T10:15:53.8514730Z",
+      "matchedAttemptCompletedAt": "2026-10-02T10:16:04.218Z",
+      "stableCodes": [
+        "BLK-NETWORK-TRANSPORT"
+      ],
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    },
+    {
+      "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+      "role": "independent-acceptance",
+      "run": "independent-flow4",
+      "marker": "LIVE06",
+      "approvalObservedAt": "2026-10-02T10:33:32.1122351Z",
+      "responseAndUsage": "not read back; supplier consumption unknown"
+    }
+  ],
+  "limitation": "Response count is not supplier total request count. Unread/cancelled/transport failures may consume unreported tokens. Full uses deterministic no-key providers. Development and independent roles remain distinct."
+}

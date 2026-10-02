@@ -1,0 +1,160 @@
+{
+  "preparedAt": "2026-10-02T11:23:43.247Z",
+  "frozenSource": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "inheritedEvidence": {
+    "sourceCommit": "7ce51eadc84873faef459c137e47ce95faee5b4e",
+    "case": "真实读后外部版本变化，Host CAS拒绝覆盖",
+    "run": "independent-flow4",
+    "call": {
+      "marker": "LIVE09",
+      "completedAt": "2026-10-02T10:33:31.414Z",
+      "rejected": false,
+      "metadata": {
+        "requestId": "coding-56317a9a-3447-4d11-af09-e81d9f7e564b",
+        "projectId": "project-8514b386-1c6a-43fb-9dc8-6522f93cdb5e",
+        "baseDigest": "08e09089a139a5dc2d151ba07972da239bb71e732a41be752f12287cca217016",
+        "engine": "pi-agent-core/0.86.0",
+        "modelApiCalled": true,
+        "generations": [
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "021790937191544534779bc6a83ab3f36a7a90c1e71ba35cc5530",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1677,
+              "outputTokens": 46,
+              "totalTokens": 1723
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-9d7376e2-ea41-9638-a754-4956be084f44",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1792,
+              "outputTokens": 112,
+              "totalTokens": 1904
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "021790937199217b566464da517b102b4cb09cdfd60e7ee8fada1",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 3225,
+              "outputTokens": 72,
+              "totalTokens": 3297
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "02179093720275491be90b70b1bfc3059428bd07e108b7e8691fc",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 3654,
+              "outputTokens": 136,
+              "totalTokens": 3790
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "02179093720649689d0c17fc196b3c940c12dd7ad5b500bc39ab3",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 3820,
+              "outputTokens": 261,
+              "totalTokens": 4081
+            }
+          }
+        ],
+        "events": [
+          {
+            "sequence": 1,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 2,
+            "kind": "tool.completed",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 3,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 4,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 5,
+            "kind": "tool.completed",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 6,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 7,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 8,
+            "kind": "tool.completed",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 9,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 10,
+            "kind": "tool.started",
+            "tool": "workspace_write"
+          },
+          {
+            "sequence": 11,
+            "kind": "tool.failed",
+            "tool": "workspace_write",
+            "code": "BLK-CODING-CONFLICT"
+          },
+          {
+            "sequence": 12,
+            "kind": "text.delta"
+          }
+        ],
+        "changes": []
+      },
+      "alerts": []
+    },
+    "hostAndRuntimeDelta": "Host/worker/协议/CLI未在7ce51ea..ad058改动；本轮UI新增调用轨迹另以新source真实tool.failed验证，不外推旧视觉"
+  },
+  "ordinary": {
+    "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+    "fileCount": 2595,
+    "bytes": 769327639,
+    "passed": true,
+    "mismatches": [],
+    "missingFiles": [],
+    "manifestMatches": true,
+    "candidateAuditSha256": "350acbebfcc7fe59d193e2efd84895dc2afed2ec9a2579946479aefbf99a9c12"
+  }
+}

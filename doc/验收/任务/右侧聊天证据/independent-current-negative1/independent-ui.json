@@ -1,0 +1,252 @@
+{
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "startedAt": "2026-10-02T11:02:21.735Z",
+  "steps": [
+    "文件选择取消未授予；真实失败工具一调用一失败码且正文外；新来源原生拒绝无写入",
+    "真实退出及已观测后代8秒自然结算"
+  ],
+  "calls": [
+    {
+      "marker": "LIVE27",
+      "completedAt": "2026-10-02T11:02:32.026Z",
+      "rejected": false,
+      "metadata": null,
+      "alerts": [
+        "任务未完成，请检查模型、文件权限或任务内容。 BLK-PROVIDER-TRANSPORT"
+      ]
+    },
+    {
+      "marker": "LIVE27",
+      "completedAt": "2026-10-02T11:02:39.752Z",
+      "rejected": false,
+      "metadata": null,
+      "alerts": [
+        "任务未完成，请检查模型、文件权限或任务内容。 BLK-PROVIDER-TRANSPORT"
+      ]
+    },
+    {
+      "marker": "LIVE27",
+      "completedAt": "2026-10-02T11:02:48.585Z",
+      "rejected": false,
+      "metadata": {
+        "requestId": "coding-a20fd078-5827-4b8f-a1f2-00ca76ebf7de",
+        "projectId": "project-2aeedf1e-4b38-40b3-8768-3bcba0a7f815",
+        "baseDigest": "21adc4a450731606ab900a61266baa8f788ddcfbbb669ecf57546c91e69edfa1",
+        "engine": "pi-agent-core/0.86.0",
+        "modelApiCalled": true,
+        "generations": [
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-30f34023-3d8f-9996-bce5-b8e4837164d0",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1210,
+              "outputTokens": 45,
+              "totalTokens": 1255
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-fcd84a0d-9501-92f6-8851-627bac774b33",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1282,
+              "outputTokens": 26,
+              "totalTokens": 1308
+            }
+          }
+        ],
+        "events": [
+          {
+            "sequence": 1,
+            "kind": "tool.started",
+            "tool": "workspace_read",
+            "callId": "call_e8c667cf989f491f89ff3065"
+          },
+          {
+            "sequence": 2,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE",
+            "callId": "call_e8c667cf989f491f89ff3065"
+          },
+          {
+            "sequence": 3,
+            "kind": "text.delta"
+          }
+        ],
+        "changes": []
+      },
+      "alerts": []
+    },
+    {
+      "marker": "LIVE28",
+      "completedAt": "2026-10-02T11:02:49.511Z",
+      "rejected": true,
+      "metadata": null,
+      "alerts": [
+        "任务未完成，请检查模型、文件权限或任务内容。 BLK-PERM-001"
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "label": "builder-current-tool-failure-240",
+      "client": 240,
+      "scroll": 240,
+      "panel": "Blocky 构建助手",
+      "sidebar": {
+        "left": 1132.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 239.98513793945312,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1144.3900146484375,
+        "right": 1360.3870544433594,
+        "width": 215.99703979492188,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "构建需求",
+          "left": 1152.33642578125,
+          "right": 1352.4406127929688,
+          "width": 200.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "构建助手添加上下文",
+          "left": 1152.33642578125,
+          "right": 1180.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "选择构建模型",
+          "left": 1184.3155517578125,
+          "right": 1298.4822235107422,
+          "width": 114.16667175292969,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "发送",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "builder-current-native-rejection-240",
+      "client": 240,
+      "scroll": 240,
+      "panel": "Blocky 构建助手",
+      "sidebar": {
+        "left": 1132.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 239.98513793945312,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1144.3900146484375,
+        "right": 1360.3870544433594,
+        "width": 215.99703979492188,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "构建需求",
+          "left": 1152.33642578125,
+          "right": 1352.4406127929688,
+          "width": 200.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "构建助手添加上下文",
+          "left": 1152.33642578125,
+          "right": 1180.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "选择构建模型",
+          "left": 1184.3155517578125,
+          "right": 1298.4822235107422,
+          "width": 114.16667175292969,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "发送",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    }
+  ],
+  "popups": [],
+  "failedTrace": {
+    "inThread": false,
+    "rows": [
+      "! 读取文件 · 失败（BLK-CODING-FILE）"
+    ]
+  },
+  "ownedDescendants": [
+    {
+      "parent": 119208,
+      "pid": 119500,
+      "name": "msedgewebview2.exe",
+      "role": "browser"
+    },
+    {
+      "parent": 119500,
+      "pid": 116692,
+      "name": "msedgewebview2.exe",
+      "role": "crashpad-handler"
+    },
+    {
+      "parent": 119500,
+      "pid": 110876,
+      "name": "msedgewebview2.exe",
+      "role": "gpu-process"
+    },
+    {
+      "parent": 119500,
+      "pid": 113824,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 119500,
+      "pid": 108196,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 119500,
+      "pid": 118116,
+      "name": "msedgewebview2.exe",
+      "role": "renderer"
+    },
+    {
+      "parent": 119500,
+      "pid": 120168,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    }
+  ],
+  "applicationGone": true,
+  "remainingDescendants": [],
+  "endedAt": "2026-10-02T11:03:06.237Z"
+}

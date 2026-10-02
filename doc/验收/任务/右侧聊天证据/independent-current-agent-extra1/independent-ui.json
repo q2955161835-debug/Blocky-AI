@@ -1,0 +1,348 @@
+{
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "startedAt": "2026-10-02T10:54:42.938Z",
+  "steps": [],
+  "calls": [],
+  "layouts": [
+    {
+      "label": "agent-local-first",
+      "client": 340,
+      "scroll": 340,
+      "panel": "Blocky Agent 聊天",
+      "sidebar": {
+        "left": 1032.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 339.9851379394531,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1044.389892578125,
+        "right": 1360.3869323730469,
+        "width": 315.9970397949219,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "向 Agent 提问",
+          "left": 1052.33642578125,
+          "right": 1352.4406127929688,
+          "width": 300.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "Blocky Agent 添加上下文",
+          "left": 1052.33642578125,
+          "right": 1080.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "运行设置",
+          "left": 1084.3155517578125,
+          "right": 1148.3482971191406,
+          "width": 64.03274536132812,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "运行",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "agent-global-run",
+      "client": 340,
+      "scroll": 340,
+      "panel": "Blocky Agent 聊天",
+      "sidebar": {
+        "left": 1032.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 339.9851379394531,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1044.389892578125,
+        "right": 1360.3869323730469,
+        "width": 315.9970397949219,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "向 Agent 提问",
+          "left": 1052.33642578125,
+          "right": 1352.4406127929688,
+          "width": 300.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "Blocky Agent 添加上下文",
+          "left": 1052.33642578125,
+          "right": 1080.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "运行设置",
+          "left": 1084.3155517578125,
+          "right": 1148.3482971191406,
+          "width": 64.03274536132812,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "运行",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "agent-main-colored-trace",
+      "client": 340,
+      "scroll": 340,
+      "panel": "Blocky Agent 聊天",
+      "sidebar": {
+        "left": 1032.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 339.9851379394531,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1044.389892578125,
+        "right": 1360.3869323730469,
+        "width": 315.9970397949219,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "向 Agent 提问",
+          "left": 1052.33642578125,
+          "right": 1352.4406127929688,
+          "width": 300.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "Blocky Agent 添加上下文",
+          "left": 1052.33642578125,
+          "right": 1080.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "运行设置",
+          "left": 1084.3155517578125,
+          "right": 1148.3482971191406,
+          "width": 64.03274536132812,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "运行",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "agent-message-240",
+      "client": 240,
+      "scroll": 240,
+      "panel": "Blocky Agent 聊天",
+      "sidebar": {
+        "left": 1132.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 239.98513793945312,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1144.3900146484375,
+        "right": 1360.3870544433594,
+        "width": 215.99703979492188,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "向 Agent 提问",
+          "left": 1152.33642578125,
+          "right": 1352.4406127929688,
+          "width": 200.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "Blocky Agent 添加上下文",
+          "left": 1152.33642578125,
+          "right": 1180.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "运行设置",
+          "left": 1184.3155517578125,
+          "right": 1248.3482971191406,
+          "width": 64.03274536132812,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "运行",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "agent-settings-240",
+      "client": 240,
+      "scroll": 240,
+      "panel": "Blocky Agent 聊天",
+      "sidebar": {
+        "left": 1132.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 239.98513793945312,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1144.3900146484375,
+        "right": 1360.3870544433594,
+        "width": 215.99703979492188,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "向 Agent 提问",
+          "left": 1152.33642578125,
+          "right": 1352.4406127929688,
+          "width": 200.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "Blocky Agent 添加上下文",
+          "left": 1152.33642578125,
+          "right": 1180.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "运行设置",
+          "left": 1184.3155517578125,
+          "right": 1248.3482971191406,
+          "width": 64.03274536132812,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "运行",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 1
+    }
+  ],
+  "popups": [],
+  "first": {
+    "runId": "run-dcfe9d77-2e21-4e15-8416-3f11dcc2d8a0",
+    "bubble": "第一次聊天输入 中文😀",
+    "answer": "运行失败\n\n请在运行日志中查看详情。"
+  },
+  "global": {
+    "runId": "run-3124683c-7ff4-4508-8454-9afd401d7ecc",
+    "submittedInput": "第二次全局运行输入 🚀",
+    "bubble": "第二次全局运行输入 🚀",
+    "answer": "运行失败\n\n请在运行日志中查看详情。"
+  },
+  "globalBubbleCorresponds": true,
+  "trace": {
+    "inPopup": false,
+    "open": true,
+    "frames": [
+      {
+        "state": "active",
+        "color": "#8e9aaa",
+        "text": "项目#11 run.started项目"
+      },
+      {
+        "type": "core.agent",
+        "state": "active",
+        "color": "#7660c9",
+        "text": "智能体#12 block.startedresearch-root"
+      },
+      {
+        "type": "core.interaction.chat",
+        "state": "active",
+        "color": "#cc8a18",
+        "text": "收到问题#13 block.startedon-question"
+      },
+      {
+        "type": "core.interaction.chat",
+        "state": "idle",
+        "color": "#cc8a18",
+        "text": "收到问题#14 block.completedon-question"
+      },
+      {
+        "type": "core.knowledge.retrieve",
+        "state": "active",
+        "color": "#4f9c86",
+        "text": "查找资料#15 block.startedcall-citation"
+      },
+      {
+        "type": "core.knowledge.retrieve",
+        "state": "active",
+        "color": "#4f9c86",
+        "text": "查找资料#16 tool.startedcall-citation"
+      },
+      {
+        "type": "core.knowledge.retrieve",
+        "state": "error",
+        "color": "#4f9c86",
+        "text": "查找资料#17 tool.failedcall-citation"
+      },
+      {
+        "type": "core.knowledge.retrieve",
+        "state": "error",
+        "color": "#4f9c86",
+        "text": "查找资料#18 block.failedcall-citation"
+      },
+      {
+        "type": "core.agent",
+        "state": "error",
+        "color": "#7660c9",
+        "text": "智能体#19 block.failedresearch-root"
+      },
+      {
+        "state": "error",
+        "color": "#8e9aaa",
+        "text": "项目#20 run.failed项目"
+      }
+    ]
+  },
+  "canvasStates": [
+    {
+      "id": "research-root",
+      "state": "error",
+      "sequence": "19",
+      "stroke": "rgb(255, 129, 122)"
+    },
+    {
+      "id": "call-citation",
+      "state": "error",
+      "sequence": "18",
+      "stroke": "rgb(255, 129, 122)"
+    }
+  ],
+  "traceDetail": "block.started\n\n来源：research-agent / research-root\n\n积木类型：core.agent\n\n输入端口：BODY",
+  "debugBubble": "第三次调试入口输入 中文🚀",
+  "failure": "locator.press: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Blocky Agent 设置', exact: true })\u001b[22m\n",
+  "endedAt": "2026-10-02T10:55:16.696Z"
+}

@@ -1,0 +1,14 @@
+{
+  "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-chat\\Blocky Studio.exe",
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-chat",
+  "arguments": "",
+  "readOnly": true,
+  "shortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "targetExists": true,
+  "passed": true,
+  "old080Exists": true,
+  "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-chat\\Blocky Studio.exe,0",
+  "oldCodingPackageExists": true,
+  "verifiedAt": "2026-10-02T19:23:43.0989772+08:00"
+}

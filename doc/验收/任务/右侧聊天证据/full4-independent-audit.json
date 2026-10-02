@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "blocky.independent-gate-audit/v1",
+  "auditedAt": "2026-10-02T11:23:43.006Z",
+  "executionRole": "main-agent development run; independently reviewed original evidence, no duplicated Full",
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "sourceCommitAfter": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "sourceDifferenceFiles": [],
+  "sourceDriftIsEmptyCheckpoint": true,
+  "command": "pnpm check:full",
+  "exitCode": 0,
+  "soak": {
+    "runId": "b6fd87e8-7c30-4637-9db2-d83a432b2ad7",
+    "passed": true,
+    "schemaVersion": "blocky.soak/v1",
+    "startedAt": "2026-10-02T10:51:43.028Z",
+    "cycles": 360,
+    "roundTrips": 30,
+    "binary": {
+      "bytes": 53184512,
+      "sha256": "d7063fcac16eb3826aebe0f860e722d536c382fa2d0424501c64c407c9686f50"
+    },
+    "preparation": {
+      "baseline": "fbc97ec43d6526981af7776a27463147a747732acfec9cf276ba322a69e5ad43",
+      "blocks": 100,
+      "nodes": 100
+    },
+    "elapsedMs": 1803354,
+    "warmHeap": 29030988,
+    "finalHeap": 22003388,
+    "heapDelta": -7027600,
+    "trustedInput": [],
+    "errors": [],
+    "outbound": [],
+    "endedAt": "2026-10-02T11:21:46.382Z"
+  },
+  "testCountLines": [
+    " Test Files  116 passed | 5 skipped (121)",
+    "      Tests  520 passed | 6 skipped (526)",
+    " Test Files  7 passed (7)",
+    "      Tests  32 passed (32)",
+    " Test Files  42 passed (42)",
+    "      Tests  189 passed (189)",
+    "test result: ok. 339 passed; 0 failed; 26 ignored; 0 measured; 0 filtered out; finished in 15.41s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+    " Test Files  41 passed (41)",
+    "      Tests  141 passed (141)",
+    "[msedge 154.0.0.0 windows #0-0] 15 passing (22.9s)",
+    "[msedge 154.0.0.0 windows #0-0] 3 passing (5s)",
+    "[msedge 154.0.0.0 windows #0-0] 4 passing (30m 8.5s)"
+  ],
+  "locksUnchanged": true,
+  "trackedDiff": [],
+  "foregroundViolation": false,
+  "logSha256": "a6061429bd1d137ca2f591dfd65dc3746b277e0585ce5125c0c73d0645497019",
+  "passed": true
+}

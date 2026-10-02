@@ -1,0 +1,32 @@
+{
+  "versions": [
+    {
+      "name": "before",
+      "projectDigest": "dc7bcc69d4c258b1281870fe7321656e9f53e02f81b4205460eb81acda6c0b2a",
+      "compiledDigest": "add1a0d4132b0c2ffa971560ac325d46652167ea4b55c3ca861862a6cb00fc1c",
+      "diagnostics": [
+        null
+      ]
+    },
+    {
+      "name": "accepted",
+      "projectDigest": "0179fcda25ba23fac6d9806dc53c197c54596f3bf313d140f5bf740b45dd78c8",
+      "compiledDigest": "16cfb5c07b7b9082977af17e70cc276630a6f79336d684def97356e347f14b4e",
+      "diagnostics": [
+        null
+      ]
+    },
+    {
+      "name": "undone",
+      "projectDigest": "dc7bcc69d4c258b1281870fe7321656e9f53e02f81b4205460eb81acda6c0b2a",
+      "compiledDigest": "add1a0d4132b0c2ffa971560ac325d46652167ea4b55c3ca861862a6cb00fc1c",
+      "diagnostics": [
+        null
+      ]
+    }
+  ],
+  "acceptedChanged": true,
+  "exactUndo": true,
+  "verifiedAt": "2026-10-02T18:58:41.4087436+08:00",
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0"
+}

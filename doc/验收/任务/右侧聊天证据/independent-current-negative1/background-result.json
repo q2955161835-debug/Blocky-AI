@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-02T11:02:13.8181803Z",
+  "application": "Blocky Studio.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\chat-sidebar-2026-10-02\\independent-current-negative1",
+  "timeoutSeconds": 360,
+  "focusViolation": false,
+  "foregroundBefore": 18815676,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-838da9bfd47b4914b5a4097c8c74b1ac",
+  "pid": 119208,
+  "cdpPort": 19433,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "pid": 119208,
+      "threadHandleClosed": true,
+      "exited": true,
+      "role": "application",
+      "processHandleClosed": true
+    },
+    {
+      "pid": 109784,
+      "threadHandleClosed": true,
+      "exited": true,
+      "role": "controller",
+      "processHandleClosed": true
+    }
+  ],
+  "desktopHandleClosed": true,
+  "cdpPortClosed": true,
+  "foregroundFinally": 2369138,
+  "endedAt": "2026-10-02T11:03:09.7133347Z"
+}

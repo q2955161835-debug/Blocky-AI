@@ -1,0 +1,15 @@
+{
+  "provider": "xirang",
+  "modelId": "deepseek-v4-pro",
+  "secretRead": false,
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "resourceId": "xirang-personal",
+  "verifiedAt": "2026-10-02T18:58:41.9010807+08:00",
+  "capabilities": [
+    "text",
+    "tools"
+  ],
+  "defaultResourceId": "xirang-personal",
+  "passed": true,
+  "registryRevision": 1
+}

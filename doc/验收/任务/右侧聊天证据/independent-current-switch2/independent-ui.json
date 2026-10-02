@@ -1,0 +1,183 @@
+{
+  "sourceCommit": "ad058182fd379adf83228fbc6323b57a796fcfb0",
+  "startedAt": "2026-10-02T10:58:35.948Z",
+  "steps": [
+    "新来源真实重开恢复构建助手多轮记录，未恢复授权/可编辑候选",
+    "双草稿/弹层保持、真实活跃切项目后8秒无旧回复/结果/授权/迟到写入",
+    "真实退出及已观测后代8秒自然结算"
+  ],
+  "calls": [
+    {
+      "marker": "LIVE26",
+      "switchWhileActive": true,
+      "completedAt": "2026-10-02T10:58:46.025Z",
+      "metadata": null
+    }
+  ],
+  "layouts": [
+    {
+      "label": "builder-current-reopen-wide",
+      "client": 884,
+      "scroll": 884,
+      "panel": "Blocky 构建助手",
+      "sidebar": {
+        "left": 488.39288330078125,
+        "right": 1372.3810424804688,
+        "width": 883.9881591796875,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 500.3869323730469,
+        "right": 1360.3869934082031,
+        "width": 860.0000610351562,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "构建需求",
+          "left": 508.3333740234375,
+          "right": 1352.4405517578125,
+          "width": 844.107177734375,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "构建助手添加上下文",
+          "left": 508.3333740234375,
+          "right": 536.3244476318359,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "选择构建模型",
+          "left": 540.3125610351562,
+          "right": 680.5357818603516,
+          "width": 140.2232208251953,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "发送",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    },
+    {
+      "label": "builder-current-project-switched",
+      "client": 340,
+      "scroll": 340,
+      "panel": "Blocky 构建助手",
+      "sidebar": {
+        "left": 1032.3958740234375,
+        "right": 1372.3810119628906,
+        "width": 339.9851379394531,
+        "height": 789.1220703125
+      },
+      "composer": {
+        "left": 1044.389892578125,
+        "right": 1360.3869323730469,
+        "width": 315.9970397949219,
+        "height": 97.87203216552734
+      },
+      "controls": [
+        {
+          "label": "构建需求",
+          "left": 1052.33642578125,
+          "right": 1352.4406127929688,
+          "width": 300.10418701171875,
+          "height": 53.98809814453125
+        },
+        {
+          "label": "构建助手添加上下文",
+          "left": 1052.33642578125,
+          "right": 1080.3274993896484,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        },
+        {
+          "label": "选择构建模型",
+          "left": 1084.3155517578125,
+          "right": 1224.5387725830078,
+          "width": 140.2232208251953,
+          "height": 23.21428680419922
+        },
+        {
+          "label": "发送",
+          "left": 1324.449462890625,
+          "right": 1352.4405364990234,
+          "width": 27.991073608398438,
+          "height": 27.991073608398438
+        }
+      ],
+      "visibleDialogs": 0
+    }
+  ],
+  "popups": [
+    {
+      "panel": "Blocky Agent",
+      "keyboardEnterSpace": true,
+      "initialFocus": true,
+      "mutualExclusive": true,
+      "escapeFocusRestore": true,
+      "outsideClose": true
+    },
+    {
+      "panel": "构建助手",
+      "keyboardEnterSpace": true,
+      "initialFocus": true,
+      "mutualExclusive": true,
+      "escapeFocusRestore": true,
+      "outsideClose": true
+    }
+  ],
+  "agentDraft": "另一面板中文草稿 🚀\n第二行",
+  "ownedDescendants": [
+    {
+      "parent": 102804,
+      "pid": 105212,
+      "name": "msedgewebview2.exe",
+      "role": "browser"
+    },
+    {
+      "parent": 105212,
+      "pid": 86012,
+      "name": "msedgewebview2.exe",
+      "role": "crashpad-handler"
+    },
+    {
+      "parent": 105212,
+      "pid": 49640,
+      "name": "msedgewebview2.exe",
+      "role": "gpu-process"
+    },
+    {
+      "parent": 105212,
+      "pid": 64024,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 105212,
+      "pid": 114628,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 105212,
+      "pid": 59124,
+      "name": "msedgewebview2.exe",
+      "role": "renderer"
+    },
+    {
+      "parent": 105212,
+      "pid": 107292,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    }
+  ],
+  "applicationGone": true,
+  "remainingDescendants": [],
+  "endedAt": "2026-10-02T10:59:10.706Z"
+}
