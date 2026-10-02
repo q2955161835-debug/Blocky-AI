@@ -1,0 +1,63 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T07:18:38.474Z",
+  "steps": [],
+  "calls": [],
+  "restoredMessages": [
+    "你",
+    "构建助手未完成",
+    "你",
+    "构建助手已完成",
+    "你",
+    "构建助手已应用"
+  ],
+  "liveMarkerRestored": true,
+  "newChatCleared": true,
+  "ownedDescendants": [
+    {
+      "parent": 72048,
+      "pid": 71952,
+      "name": "msedgewebview2.exe",
+      "role": "browser"
+    },
+    {
+      "parent": 71952,
+      "pid": 65376,
+      "name": "msedgewebview2.exe",
+      "role": "crashpad-handler"
+    },
+    {
+      "parent": 71952,
+      "pid": 65040,
+      "name": "msedgewebview2.exe",
+      "role": "gpu-process"
+    },
+    {
+      "parent": 71952,
+      "pid": 72436,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 71952,
+      "pid": 65688,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 71952,
+      "pid": 72228,
+      "name": "msedgewebview2.exe",
+      "role": "renderer"
+    },
+    {
+      "parent": 71952,
+      "pid": 75196,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    }
+  ],
+  "applicationGone": true,
+  "remainingDescendants": [],
+  "endedAt": "2026-10-02T07:18:51.822Z"
+}

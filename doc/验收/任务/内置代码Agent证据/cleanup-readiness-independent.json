@@ -1,0 +1,8 @@
+{
+  "verifiedAt": "2026-10-02T15:54:45.1060994+08:00",
+  "scope": "own coding candidate executables and task-bound runtime descendants only",
+  "ownedCandidateProcesses": [],
+  "passed": true,
+  "noGlobalKill": true,
+  "limitation": "process/closed Job evidence; no claim about unrelated tools or arbitrary filesystem handles"
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "run": "independent-full-3",
+    "sourceCommit": "20e39765745617843c2ec0efa782887621da6099",
+    "sourceCommitAfter": "20e39765745617843c2ec0efa782887621da6099",
+    "startedAt": "2026-10-02T12:28:16.5847423+08:00",
+    "endedAt": "2026-10-02T12:30:55.6030857+08:00",
+    "exitCode": 101,
+    "trackedDiff": [],
+    "actualFullEvidence": null
+  },
+  {
+    "run": "independent-full-4",
+    "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+    "sourceCommitAfter": "33cc98360d7f02a28481b76a633dba2804189726",
+    "startedAt": "2026-10-02T13:37:26.4880889+08:00",
+    "endedAt": "2026-10-02T13:41:56.0926488+08:00",
+    "exitCode": 1,
+    "trackedDiff": [],
+    "actualFullEvidence": null
+  },
+  {
+    "run": "independent-full-5",
+    "sourceCommit": "142d5a7ceff32d1b0fa0f65f459eb5f80438b796",
+    "sourceCommitAfter": "142d5a7ceff32d1b0fa0f65f459eb5f80438b796",
+    "startedAt": "2026-10-02T14:06:15.7133951+08:00",
+    "endedAt": "2026-10-02T14:11:56.3177826+08:00",
+    "exitCode": 1,
+    "trackedDiff": [],
+    "actualFullEvidence": null
+  },
+  {
+    "run": "independent-full-6",
+    "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+    "sourceCommitAfter": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+    "startedAt": "2026-10-02T14:50:35.2914510+08:00",
+    "endedAt": "2026-10-02T14:52:02.2593126+08:00",
+    "exitCode": 101,
+    "trackedDiff": [],
+    "actualFullEvidence": null
+  }
+]

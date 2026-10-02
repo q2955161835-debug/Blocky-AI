@@ -1,0 +1,44 @@
+[
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\coding-agent-final-2026-10-02",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\coding-agent-final-2026-10-02",
+    "files": 7547,
+    "logicalBytes": 844836068,
+    "state": "moved"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding-candidate1",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\Blocky-Studio-0.8.0-coding-candidate1",
+    "files": 2595,
+    "logicalBytes": 769247255,
+    "state": "moved"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding-candidate2",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\Blocky-Studio-0.8.0-coding-candidate2",
+    "files": 2595,
+    "logicalBytes": 769300503,
+    "state": "moved"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding-candidate3",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\Blocky-Studio-0.8.0-coding-candidate3",
+    "files": 2595,
+    "logicalBytes": 769307671,
+    "state": "moved"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding-candidate4",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\Blocky-Studio-0.8.0-coding-candidate4",
+    "files": 2595,
+    "logicalBytes": 769313815,
+    "state": "moved"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding-candidate5",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\内置代码Agent-2026-10-02\\Blocky-Studio-0.8.0-coding-candidate5",
+    "files": 2595,
+    "logicalBytes": 769323031,
+    "state": "moved"
+  }
+]

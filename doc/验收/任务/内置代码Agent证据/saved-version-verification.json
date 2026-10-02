@@ -1,0 +1,32 @@
+{
+  "versions": [
+    {
+      "projectDigest": "c356f41eb6d2e8d8b640208774f13fda185c2134ac623259f5cb0c7909fc8ae1",
+      "ok": true,
+      "compiledDigest": "a57b63852b619a7f066a8327d405274c4076571bd643ec26590421ad6bcb2a8f",
+      "diagnostics": [],
+      "role": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。",
+      "name": "baseline"
+    },
+    {
+      "projectDigest": "eb1ac7c9c590f6474f1f732242ca1e9d39db69f9fdb409da55201a5733f1c891",
+      "ok": true,
+      "compiledDigest": "c28f4fac60f709fb16acbcf0e3e464dc426e644e260993f02706e2612d7df02d",
+      "diagnostics": [],
+      "role": "验收中文教师🚀",
+      "name": "accepted"
+    },
+    {
+      "projectDigest": "c356f41eb6d2e8d8b640208774f13fda185c2134ac623259f5cb0c7909fc8ae1",
+      "ok": true,
+      "compiledDigest": "a57b63852b619a7f066a8327d405274c4076571bd643ec26590421ad6bcb2a8f",
+      "diagnostics": [],
+      "role": "帮助我研究问题，只整理有出处的原文；没有证据的事实保持待核实。",
+      "name": "undone"
+    }
+  ],
+  "verifiedAt": "2026-10-02T07:20:26.5024915Z",
+  "wholeUndoVerified": true,
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "acceptedChangeVerified": true
+}

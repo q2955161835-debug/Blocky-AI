@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T07:29:47.3522522Z",
+  "endedAt": "2026-10-02T07:30:05.2144865Z",
+  "desktop": "BlockyTest-ddc9d9bef4054d729cd2158132f059e9",
+  "pid": 67860,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "focusViolation": false,
+  "cdpPortClosed": true,
+  "jobHandleClosed": true
+}

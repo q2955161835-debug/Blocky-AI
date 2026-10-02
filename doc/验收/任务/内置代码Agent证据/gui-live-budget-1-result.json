@@ -1,0 +1,69 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T07:19:32.043Z",
+  "steps": [
+    "过大文件拒绝、失败部分写入准确回执、无后续写入"
+  ],
+  "calls": [
+    {
+      "marker": "LIVE13",
+      "completedAt": "2026-10-02T07:19:44.005Z",
+      "rejected": false,
+      "metadata": null,
+      "alerts": [
+        "任务未完成，请检查模型、文件权限或任务内容。 BLK-CODING-BUDGET"
+      ]
+    }
+  ],
+  "junctionPositiveControl": true,
+  "budgetChanges": [
+    "budget-first.txt撤回"
+  ],
+  "ownedDescendants": [
+    {
+      "parent": 71516,
+      "pid": 74496,
+      "name": "msedgewebview2.exe",
+      "role": "browser"
+    },
+    {
+      "parent": 74496,
+      "pid": 59832,
+      "name": "msedgewebview2.exe",
+      "role": "crashpad-handler"
+    },
+    {
+      "parent": 74496,
+      "pid": 71212,
+      "name": "msedgewebview2.exe",
+      "role": "gpu-process"
+    },
+    {
+      "parent": 74496,
+      "pid": 74676,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 74496,
+      "pid": 73180,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 74496,
+      "pid": 60984,
+      "name": "msedgewebview2.exe",
+      "role": "renderer"
+    },
+    {
+      "parent": 74496,
+      "pid": 75252,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    }
+  ],
+  "applicationGone": true,
+  "remainingDescendants": [],
+  "endedAt": "2026-10-02T07:19:55.389Z"
+}

@@ -1,0 +1,17 @@
+{
+  "beforeRootIds": [
+    "research-root",
+    "lookup-entry"
+  ],
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "beforeDiagnostics": [],
+  "afterRootIds": [
+    "research-root",
+    "acceptance-browser",
+    "lookup-entry"
+  ],
+  "acceptedCandidatePresentInSavedProject": true,
+  "afterDiagnostics": [],
+  "staleCandidateAbsentInSavedProject": true,
+  "verifiedAt": "2026-10-02T07:20:27.1700263Z"
+}

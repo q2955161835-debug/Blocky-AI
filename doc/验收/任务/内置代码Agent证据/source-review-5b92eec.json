@@ -1,0 +1,16 @@
+{
+  "source": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+  "review": "read-only",
+  "files": [
+    "apps/studio-host/src/network_policy/dns.rs",
+    "apps/studio-host/src/provider/builder_model.rs",
+    "tests/e2e/studio.e2e.ts"
+  ],
+  "reviewedAt": "2026-10-02T06:45:39.4616428Z",
+  "findings": [],
+  "notes": [
+    "Production resolver entry retains fixed HTTPS endpoint, no redirect, no proxy, response public/CNAME checks; private query helper used by deterministic slow server regression does not add a runtime endpoint input",
+    "Gateway consumes only finishReason and leaves unknown metadata for production strict schema; Pi derives tool/stop semantics from validated content",
+    "Native E2E now asserts current independent drafts, Unicode, no-tools disabled send and new-chat boundaries; real external model/file/candidate behavior still requires ordinary acceptance"
+  ]
+}

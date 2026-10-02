@@ -1,0 +1,17 @@
+[
+  {
+    "action": "approve-task",
+    "pid": 71516,
+    "desktop": "BlockyTest-224299582f1d4728b0438b0a1ea7ec23",
+    "title": "批准代码助手任务",
+    "taskMarker": "LIVE13",
+    "provider": "xirang",
+    "model": "deepseek-v4-pro",
+    "scope": "synthetic-workspace",
+    "requestDigest": "0ef55697346665e8b74254301cb26ff914316f2487e2bfb296d3eb0dbc7ce52d",
+    "fixedBodyBindingChecked": true,
+    "bodyPersisted": false,
+    "dialogClosed": true,
+    "observedAt": "2026-10-02T07:19:34.0599142Z"
+  }
+]

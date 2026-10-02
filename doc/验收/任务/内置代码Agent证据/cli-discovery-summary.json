@@ -1,0 +1,31 @@
+{
+  "commands": [
+    {
+      "evidence": "cli-discovery-1.json",
+      "command": "version",
+      "ok": true
+    },
+    {
+      "evidence": "cli-discovery-2.json",
+      "command": "command.list",
+      "ok": true
+    },
+    {
+      "evidence": "cli-discovery-3.json",
+      "command": "catalog.list",
+      "ok": true
+    },
+    {
+      "evidence": "cli-discovery-4.json",
+      "command": "schema.list",
+      "ok": true
+    },
+    {
+      "evidence": "cli-discovery-5.json",
+      "command": "schema.show",
+      "ok": true
+    }
+  ],
+  "verifiedAt": "2026-10-02T07:22:12.0292702Z",
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8"
+}

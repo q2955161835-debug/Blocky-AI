@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "blocky.independent-full/v1",
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T15:16:07.9141993+08:00",
+  "command": "pnpm check:full",
+  "desktop": "BlockyTest-f391fc90ab9f44ea833e801b377402b2",
+  "completeSuiteRequested": true,
+  "requestedSoakCycles": 360,
+  "requestedCycleMilliseconds": 5000,
+  "requestedNativeRoundTrips": 30,
+  "locksBefore": [
+    {
+      "path": "tools/blocky-cli/runtime-worker-lock.json",
+      "sha256": "5e9f1672303716d9acfed7820725416458e6cae438c606a4440dd2553c9b3ddd"
+    },
+    {
+      "path": "tools/blocky-cli/cli-runtime-lock.json",
+      "sha256": "5bb9d6c19775206d6b396aaedef999024d28b66fc335905949b03ce0d50888f8"
+    },
+    {
+      "path": "packages/builder-engine/runtime-lock.json",
+      "sha256": "e5521e6aa297e7ac0a16757fa02cc7a2c450843310e6a7e3f586f84db594006f"
+    },
+    {
+      "path": "packages/rpa-core/runtime-lock.json",
+      "sha256": "7cc11808a17e2851bde9f0f15a1cff227bbcac9a88d8cbb109922aa00fe005ac"
+    },
+    {
+      "path": "packages/document-parser/runtime-lock.json",
+      "sha256": "bf67aac1097a1b4a6062a83feef400afcf980253fde388477b6724db8aaed8d7"
+    }
+  ],
+  "exitCode": 0,
+  "fullEvidence": {
+    "runId": "2fd640b1-4a94-45e7-8686-dc352ec80386",
+    "passed": true,
+    "schemaVersion": "blocky.soak/v1",
+    "startedAt": "2026-10-02T07:22:19.491Z",
+    "cycles": 360,
+    "roundTrips": 30,
+    "binary": {
+      "bytes": 53182976,
+      "sha256": "896dd7cc7787f697f469a92ef981d659aa52eec582ef0a927d8301899bfc89de"
+    },
+    "preparation": {
+      "baseline": "31dc67d088eee701007d650d17c9444c047dc8f598438d855e37e789625ca7ab",
+      "blocks": 100,
+      "nodes": 100
+    },
+    "elapsedMs": 1803466,
+    "warmHeap": 27865972,
+    "finalHeap": 22063028,
+    "heapDelta": -5802944,
+    "trustedInput": [],
+    "errors": [],
+    "outbound": [],
+    "endedAt": "2026-10-02T07:52:22.957Z"
+  },
+  "endedAt": "2026-10-02T15:52:23.5064718+08:00",
+  "sourceCommitAfter": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "trackedDiff": [],
+  "locksAfter": [
+    {
+      "path": "tools/blocky-cli/runtime-worker-lock.json",
+      "sha256": "5e9f1672303716d9acfed7820725416458e6cae438c606a4440dd2553c9b3ddd"
+    },
+    {
+      "path": "tools/blocky-cli/cli-runtime-lock.json",
+      "sha256": "5bb9d6c19775206d6b396aaedef999024d28b66fc335905949b03ce0d50888f8"
+    },
+    {
+      "path": "packages/builder-engine/runtime-lock.json",
+      "sha256": "e5521e6aa297e7ac0a16757fa02cc7a2c450843310e6a7e3f586f84db594006f"
+    },
+    {
+      "path": "packages/rpa-core/runtime-lock.json",
+      "sha256": "7cc11808a17e2851bde9f0f15a1cff227bbcac9a88d8cbb109922aa00fe005ac"
+    },
+    {
+      "path": "packages/document-parser/runtime-lock.json",
+      "sha256": "bf67aac1097a1b4a6062a83feef400afcf980253fde388477b6724db8aaed8d7"
+    }
+  ]
+}

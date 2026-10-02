@@ -1,0 +1,230 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "sealedAt": "2026-10-02T07:55:36.354Z",
+  "rawRoot": "try/coding-agent-final-2026-10-02",
+  "rawMayMoveWithRootPathMapping": true,
+  "items": [
+    {
+      "file": "full-7-independent-full.json",
+      "origin": "independent-full-7/independent-full.json",
+      "bytes": 2847,
+      "sha256": "a951d4d77ecc0842d1298fe4a402e46477c172b8e17ac415acd7d7d4939ced9f"
+    },
+    {
+      "file": "full-7-full.json",
+      "origin": "independent-full-7/full.json",
+      "bytes": 651,
+      "sha256": "b4898d4d3e91b9f192b3f5a8f740a45aaf7c73cb143320324813c7df728ee6f6"
+    },
+    {
+      "file": "full-7-performance.json",
+      "origin": "independent-full-7/performance.json",
+      "bytes": 1458,
+      "sha256": "dad01e438ef4b4fe29124f5f541dcfde5193e503b545b5861354bb5349e145e4"
+    },
+    {
+      "file": "full-7-window-policy.json",
+      "origin": "independent-full-7/window-policy.json",
+      "bytes": 336,
+      "sha256": "362fd1822b4d3faf5b7e76974a0eede86bdc8b15b4fad36dfd98308b5cc7b113"
+    },
+    {
+      "file": "full-7-cycle-summary.json",
+      "origin": "try/stage2-core/cycles.jsonl",
+      "bytes": 442,
+      "sha256": "c0ee7f8667dec06d356a87a89adee9b0081b7d3baaabf10b0e13368a75d72ea4"
+    },
+    {
+      "file": "candidate5-independent-audit.json",
+      "origin": "candidate5-independent-audit.json",
+      "bytes": 506977,
+      "sha256": "2a7bfbd23074948d7117b152fe37d75d1261a343bd794453db6b5a97ec26a4d2"
+    },
+    {
+      "file": "live-api-evidence-ledger.json",
+      "origin": "live-api-evidence-ledger.json",
+      "bytes": 64755,
+      "sha256": "af81c76a0236bcc0d36455a957e8a7a603712b30f0993052a486810e77e2fc1e"
+    },
+    {
+      "file": "source-review-a0eddc0.json",
+      "origin": "source-review-a0eddc0.json",
+      "bytes": 955,
+      "sha256": "0d1dbc3ea7b0d91987bbac6ad306c7edfceb0e5fcf61265f3847cb383e946fc7"
+    },
+    {
+      "file": "source-review-5b92eec.json",
+      "origin": "source-review-5b92eec.json",
+      "bytes": 887,
+      "sha256": "f05f505bd88bd2b9f8e00b3eaf6e290c6c4738ed0b26299f84cb8ecbb8585389"
+    },
+    {
+      "file": "gui-live-9-result.json",
+      "origin": "gui-live-9/gui-live-suite.json",
+      "bytes": 10467,
+      "sha256": "8e5c65b39004ba3e41637c002204a5f5ed4ce9cdfe8612ec197c4969e6afe784"
+    },
+    {
+      "file": "gui-live-9-background.json",
+      "origin": "gui-live-9/background-result.json",
+      "bytes": 431,
+      "sha256": "4e80ed16b9182a88644229d554bec185bdb1b33ec6dd7515d7c495dc3ce61599"
+    },
+    {
+      "file": "gui-live-9-native-approvals.json",
+      "origin": "gui-live-9/coding-native-*-task-*.json",
+      "bytes": 1535,
+      "sha256": "cd0944230724c14f7c8e010a76384fa41d39cdf1ed37764c4cc8f1290c4efd67"
+    },
+    {
+      "file": "gui-live-extended-4-result.json",
+      "origin": "gui-live-extended-4/gui-live-extended.json",
+      "bytes": 10027,
+      "sha256": "b416130f67d654c203ea00657a5931dd9fbf4d35bbd613362f065e8c4b8a6937"
+    },
+    {
+      "file": "gui-live-extended-4-background.json",
+      "origin": "gui-live-extended-4/background-result.json",
+      "bytes": 432,
+      "sha256": "6cf99f164a13eaa6eb2a49bcd0e01e71e88e3d74bc83188f7df1063d1b30df7a"
+    },
+    {
+      "file": "gui-live-extended-4-native-approvals.json",
+      "origin": "gui-live-extended-4/coding-native-*-task-*.json",
+      "bytes": 1536,
+      "sha256": "c641e40086c7404372fdb91cd0897129fc28275dfaf6031351fd661925f967ab"
+    },
+    {
+      "file": "gui-live-permission-4-result.json",
+      "origin": "gui-live-permission-4/gui-live-permission.json",
+      "bytes": 11365,
+      "sha256": "4e7abca558444c88a2ffd99caafcb10f4185752d16300362f8b7efbf9611104b"
+    },
+    {
+      "file": "gui-live-permission-4-background.json",
+      "origin": "gui-live-permission-4/background-result.json",
+      "bytes": 431,
+      "sha256": "755d208d249bb2e5dc4c51d621cc11f39a8bc47e4984f035069ad61d094e4272"
+    },
+    {
+      "file": "gui-live-permission-4-native-approvals.json",
+      "origin": "gui-live-permission-4/coding-native-*-task-*.json",
+      "bytes": 2047,
+      "sha256": "8354d30ada306c98332e6b6d4a4562ef345668e15f27d27220610434b30f7f14"
+    },
+    {
+      "file": "gui-live-lifecycle-2-result.json",
+      "origin": "gui-live-lifecycle-2/gui-live-extended.json",
+      "bytes": 6375,
+      "sha256": "3f9dffe42c2c9fe317cbf2f49acd35edd54ed65325d671fa53fd13d648943fcc"
+    },
+    {
+      "file": "gui-live-lifecycle-2-background.json",
+      "origin": "gui-live-lifecycle-2/background-result.json",
+      "bytes": 431,
+      "sha256": "063e6fe65fc6daba4b7c6a470a12b70f534067240ae8af2130ccfcc29c5b369c"
+    },
+    {
+      "file": "gui-live-lifecycle-2-native-approvals.json",
+      "origin": "gui-live-lifecycle-2/coding-native-*-task-*.json",
+      "bytes": 2047,
+      "sha256": "f96c21fe48576f84693f51da508e7ad1d2a2678205ef47b125a5feb15c739063"
+    },
+    {
+      "file": "gui-live-budget-1-result.json",
+      "origin": "gui-live-budget-1/gui-live-extended.json",
+      "bytes": 1519,
+      "sha256": "9d706433f9129895af798be6e7d2687f2ab320b7c6d481518f3812c77c31fa51"
+    },
+    {
+      "file": "gui-live-budget-1-background.json",
+      "origin": "gui-live-budget-1/background-result.json",
+      "bytes": 431,
+      "sha256": "f81c8e284b6a65525b69017ade9b10c438f851c3304a3046d8f4473857f02d3f"
+    },
+    {
+      "file": "gui-live-budget-1-native-approvals.json",
+      "origin": "gui-live-budget-1/coding-native-*-task-*.json",
+      "bytes": 514,
+      "sha256": "6f848f437df957789eefdc7a91f77978f57a63b735b9bb126da022600480fff3"
+    },
+    {
+      "file": "gui-chat-reopen-3-result.json",
+      "origin": "gui-chat-reopen-3/gui-chat-reopen.json",
+      "bytes": 1294,
+      "sha256": "b81ffb212a6d8ab78e6b5a1018797e21e6da7c8dfb196848e368a6dba22703e5"
+    },
+    {
+      "file": "gui-chat-reopen-3-background.json",
+      "origin": "gui-chat-reopen-3/background-result.json",
+      "bytes": 431,
+      "sha256": "2ea3365088c624cba299aa33a0faabfcee96a8bda83efb4b8569ad3d6a20ae65"
+    },
+    {
+      "file": "gui-empty-release-1-result.json",
+      "origin": "gui-empty-release-1/gui-empty-release.json",
+      "bytes": 1331,
+      "sha256": "fa4d91ea6d25244c7db546ae26cb8fa1a4258008100fd6187c1efe28c2a6473b"
+    },
+    {
+      "file": "gui-empty-release-1-background.json",
+      "origin": "gui-empty-release-1/background-result.json",
+      "bytes": 431,
+      "sha256": "4467b48c7aabfd23be1fdddff3909ca3157d418688d07dc6f8f3fa3778c026aa"
+    },
+    {
+      "file": "saved-version-verification.json",
+      "origin": "gui-live-9/saved-version-verification.json",
+      "bytes": 1248,
+      "sha256": "74fe87b04ee3826c0c0d4556f19be3e0898706217b89374c79b22aefff75e607"
+    },
+    {
+      "file": "cli-discovery-summary.json",
+      "origin": "gui-live-9/cli-discovery-summary.json",
+      "bytes": 651,
+      "sha256": "dc5b5df66dfbddecf80a5b1d41f726ff112e1a721d593728ed4b19a1adecdc41"
+    },
+    {
+      "file": "saved-permission-verification.json",
+      "origin": "gui-live-permission-4/saved-permission-verification.json",
+      "bytes": 419,
+      "sha256": "c2768eb860e21f671a22108735f31b923b2e29913f46b0a50dbe5e90d35fec78"
+    },
+    {
+      "file": "historical-gate-receipts.json",
+      "origin": "independent-full-3..6/independent-full.json",
+      "bytes": 1423,
+      "sha256": "883664d180ea1da48e3061eb4fd7ef0c89de99ceca55460826ac59bd9cd335b3"
+    },
+    {
+      "file": "release-scan.json",
+      "origin": "check-release-candidate5.log",
+      "bytes": 306,
+      "sha256": "969c804720feb09de09bb751e12f90ee120fdbbd26e95b06e4d1f807a6b50ca0"
+    },
+    {
+      "file": "delivery-independent.json",
+      "origin": "delivery-independent.json",
+      "bytes": 428,
+      "sha256": "f16e4b9872c70305bb69d1b26f5188db483594090a0c8bf68091f8a798d9f2ad"
+    },
+    {
+      "file": "shortcut-independent.json",
+      "origin": "shortcut-independent.json",
+      "bytes": 541,
+      "sha256": "9654c17f78241bca78f2e78773e7382c550ac93f61717db4c65c52af987a0d62"
+    },
+    {
+      "file": "cleanup-readiness-independent.json",
+      "origin": "cleanup-readiness-independent.json",
+      "bytes": 337,
+      "sha256": "2d4dcb61b6d562ffcbb87f1047a5d232dc83650fe1e94fb597ca1d387c62940e"
+    },
+    {
+      "file": "seven-tools-completed.json",
+      "origin": "fixed public tool.completed events",
+      "bytes": 3289,
+      "sha256": "f38450f3039565206f0e84b4ff10d04fced4a6806530303d2262497541e59b37"
+    }
+  ]
+}

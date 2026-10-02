@@ -1,0 +1,61 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T07:29:49.846Z",
+  "steps": [
+    "普通新profile无Hook、无tools模型发送禁用、真实目录取消不授予"
+  ],
+  "calls": [],
+  "normalWebview": {
+    "url": "http://tauri.localhost/",
+    "acceptanceHook": false
+  },
+  "sendDisabled": true,
+  "externalModelRequest": false,
+  "ownedDescendants": [
+    {
+      "parent": 67860,
+      "pid": 47372,
+      "name": "msedgewebview2.exe",
+      "role": "browser"
+    },
+    {
+      "parent": 47372,
+      "pid": 69372,
+      "name": "msedgewebview2.exe",
+      "role": "crashpad-handler"
+    },
+    {
+      "parent": 47372,
+      "pid": 57744,
+      "name": "msedgewebview2.exe",
+      "role": "gpu-process"
+    },
+    {
+      "parent": 47372,
+      "pid": 72404,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 47372,
+      "pid": 64608,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    },
+    {
+      "parent": 47372,
+      "pid": 75716,
+      "name": "msedgewebview2.exe",
+      "role": "renderer"
+    },
+    {
+      "parent": 47372,
+      "pid": 68220,
+      "name": "msedgewebview2.exe",
+      "role": "utility"
+    }
+  ],
+  "applicationGone": true,
+  "remainingDescendants": [],
+  "endedAt": "2026-10-02T07:30:02.978Z"
+}

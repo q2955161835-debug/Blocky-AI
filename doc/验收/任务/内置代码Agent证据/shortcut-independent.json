@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "blocky.independent-shortcut/v1",
+  "verifiedAt": "2026-10-02T15:54:17.6470857+08:00",
+  "link": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "targetPath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding\\Blocky Studio.exe",
+  "arguments": "",
+  "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding",
+  "iconLocation": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-coding\\Blocky Studio.exe,0",
+  "oldPackagePresent": true,
+  "readOnly": true,
+  "passed": true
+}

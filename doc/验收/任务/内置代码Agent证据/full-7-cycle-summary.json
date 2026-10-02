@@ -1,0 +1,18 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "actualCycles": 360,
+  "actualRoundTrips": 30,
+  "last": {
+    "cycle": 360,
+    "blocks": 100,
+    "nodes": 100,
+    "roundTrip": true,
+    "viewEvents": 22,
+    "logRecords": 500,
+    "dropped": 8263,
+    "droppedImportant": 0,
+    "elapsedMs": 1803464
+  },
+  "maximumDroppedImportant": 0,
+  "rawSha256": "c6e0364d612fba435b723809c6e97257c879c802e0896121d212558dba251682"
+}

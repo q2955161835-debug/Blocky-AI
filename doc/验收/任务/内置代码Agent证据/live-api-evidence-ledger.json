@@ -1,0 +1,1755 @@
+{
+  "generatedAt": "2026-10-02T07:40:18.086Z",
+  "realExternalModelApiCalled": true,
+  "reportedResponseCount": 72,
+  "reportedTotalTokens": 200833,
+  "summary": [
+    {
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "responses": 42,
+      "inputTokens": 111393,
+      "outputTokens": 6857,
+      "totalTokens": 118250
+    },
+    {
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "responses": 30,
+      "inputTokens": 76845,
+      "outputTokens": 5738,
+      "totalTokens": 82583
+    }
+  ],
+  "approvalSummary": [
+    {
+      "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+      "nativeApprovedTasks": 2,
+      "withReadableResponses": 0,
+      "withoutReadableCompleteResponses": 2
+    },
+    {
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "nativeApprovedTasks": 20,
+      "withReadableResponses": 13,
+      "withoutReadableCompleteResponses": 7
+    },
+    {
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "nativeApprovedTasks": 14,
+      "withReadableResponses": 10,
+      "withoutReadableCompleteResponses": 4
+    }
+  ],
+  "reported": [
+    {
+      "evidence": "gui-live-5/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:50:48.9691723Z",
+      "completedAt": "2026-10-02T06:51:17.722Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092385413478af8113c224ccdd69578c3b63d1e71a195709",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1279,
+        "outputTokens": 74,
+        "totalTokens": 1353
+      }
+    },
+    {
+      "evidence": "gui-live-5/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:50:48.9691723Z",
+      "completedAt": "2026-10-02T06:51:17.722Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-4e315373-b8ce-9977-8cc1-eada5894e702",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1426,
+        "outputTokens": 61,
+        "totalTokens": 1487
+      }
+    },
+    {
+      "evidence": "gui-live-5/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:50:48.9691723Z",
+      "completedAt": "2026-10-02T06:51:17.722Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-4e2d2326-7690-98ae-a293-ecb498bf56b8",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1574,
+        "outputTokens": 234,
+        "totalTokens": 1808
+      }
+    },
+    {
+      "evidence": "gui-live-5/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:50:48.9691723Z",
+      "completedAt": "2026-10-02T06:51:17.722Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790923873974795aa3a4ba36fe885727fc31a219ca25f6284e",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2092,
+        "outputTokens": 184,
+        "totalTokens": 2276
+      }
+    },
+    {
+      "evidence": "gui-live-8/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:00:36.1220679Z",
+      "completedAt": "2026-10-02T07:01:06.585Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-5f3ccc2e-927d-9a77-9303-046756ec5082",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1268,
+        "outputTokens": 39,
+        "totalTokens": 1307
+      }
+    },
+    {
+      "evidence": "gui-live-8/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:00:36.1220679Z",
+      "completedAt": "2026-10-02T07:01:06.585Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-49ba9914-1f6c-93cd-b696-4a79f46a9ff6",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2557,
+        "outputTokens": 221,
+        "totalTokens": 2778
+      }
+    },
+    {
+      "evidence": "gui-live-8/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:00:36.1220679Z",
+      "completedAt": "2026-10-02T07:01:06.585Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-20ffd8e3-4133-978f-ab68-2d2af77efd74",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2945,
+        "outputTokens": 66,
+        "totalTokens": 3011
+      }
+    },
+    {
+      "evidence": "gui-live-8/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:00:36.1220679Z",
+      "completedAt": "2026-10-02T07:01:06.585Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909244616437820404c56ac6dd9ce215ba8b602495accb4b2",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4302,
+        "outputTokens": 290,
+        "totalTokens": 4592
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T07:16:30.0740262Z",
+      "completedAt": "2026-10-02T07:16:54.809Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-d2c8205f-e637-9e23-9ea7-af1e6212ea65",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1280,
+        "outputTokens": 91,
+        "totalTokens": 1371
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T07:16:30.0740262Z",
+      "completedAt": "2026-10-02T07:16:54.809Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-2b79a90e-a755-9023-b923-37de34728ead",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1445,
+        "outputTokens": 81,
+        "totalTokens": 1526
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T07:16:30.0740262Z",
+      "completedAt": "2026-10-02T07:16:54.809Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925405946137f500080bf18603e76d17d12e7c43ec4e5b3",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1612,
+        "outputTokens": 222,
+        "totalTokens": 1834
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T07:16:30.0740262Z",
+      "completedAt": "2026-10-02T07:16:54.809Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-9b800ed2-e72a-9ea3-b3c1-5a71eece63cc",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2120,
+        "outputTokens": 164,
+        "totalTokens": 2284
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:16:55.8355958Z",
+      "completedAt": "2026-10-02T07:17:20.000Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-e530cf1c-8a46-9499-9ecf-812a67430e20",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1610,
+        "outputTokens": 37,
+        "totalTokens": 1647
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:16:55.8355958Z",
+      "completedAt": "2026-10-02T07:17:20.000Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925421769a6cdd8247c48d753298cd4bcf5eec90edd7e60",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2891,
+        "outputTokens": 173,
+        "totalTokens": 3064
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:16:55.8355958Z",
+      "completedAt": "2026-10-02T07:17:20.000Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-3bb5d952-05f6-924e-95aa-032bb2d225b5",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3235,
+        "outputTokens": 79,
+        "totalTokens": 3314
+      }
+    },
+    {
+      "evidence": "gui-live-9/gui-live-suite.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:16:55.8355958Z",
+      "completedAt": "2026-10-02T07:17:20.000Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-187aea7f-29c4-9424-88a1-d5e8d52b2ff3",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4597,
+        "outputTokens": 174,
+        "totalTokens": 4771
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:00:45.4877611Z",
+      "completedAt": "2026-10-02T07:01:10.745Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-0377ac94-dad7-9906-a85c-15ea21bb9f1e",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1311,
+        "outputTokens": 38,
+        "totalTokens": 1349
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:00:45.4877611Z",
+      "completedAt": "2026-10-02T07:01:10.745Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790924456790c237340934591b89d6de6b6a9271c1b9253fd1",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2599,
+        "outputTokens": 345,
+        "totalTokens": 2944
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:00:45.4877611Z",
+      "completedAt": "2026-10-02T07:01:10.745Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909244633543f04613060c95c0e1cb70b4f628471a9916d3e",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3132,
+        "outputTokens": 471,
+        "totalTokens": 3603
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-56e2063a-a4eb-9fcf-b29e-48e4cf95abd9",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1890,
+        "outputTokens": 85,
+        "totalTokens": 1975
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-4872af9a-35f9-9160-8219-973c7d85ae6d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3285,
+        "outputTokens": 117,
+        "totalTokens": 3402
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-90551f46-15ae-9864-8c29-793c11b03d6c",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4697,
+        "outputTokens": 66,
+        "totalTokens": 4763
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790924494525534779bc6a83ab3f36a7a90c1e71ba3577c1fd",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5123,
+        "outputTokens": 63,
+        "totalTokens": 5186
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-047f13f7-d5b2-9b36-84a9-183988e8afee",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 6544,
+        "outputTokens": 141,
+        "totalTokens": 6685
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "completedAt": "2026-10-02T07:01:57.571Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-1276757f-25de-9c85-a224-475fac601f2b",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 6714,
+        "outputTokens": 296,
+        "totalTokens": 7010
+      }
+    },
+    {
+      "evidence": "gui-live-extended-3/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:01:58.2218087Z",
+      "completedAt": "2026-10-02T07:02:07.723Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092452249439b5b0f4b57789945865e795386c3530e62efa",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2376,
+        "outputTokens": 272,
+        "totalTokens": 2648
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:17:21.1447734Z",
+      "completedAt": "2026-10-02T07:17:40.491Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909254452043d3436761e68cde6bd2815b0b11060acaac72b",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1312,
+        "outputTokens": 350,
+        "totalTokens": 1662
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:17:21.1447734Z",
+      "completedAt": "2026-10-02T07:17:40.491Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-53b4a2d4-45ce-95b7-a57c-c1dc4e244bd2",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1850,
+        "outputTokens": 535,
+        "totalTokens": 2385
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:17:41.3143262Z",
+      "completedAt": "2026-10-02T07:18:07.476Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-24f5498d-7a68-982a-821d-252fbd15ca6d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1949,
+        "outputTokens": 67,
+        "totalTokens": 2016
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:17:41.3143262Z",
+      "completedAt": "2026-10-02T07:18:07.476Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092547165791be90b70b1bfc3059428bd07e108b7ea47fea",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2081,
+        "outputTokens": 193,
+        "totalTokens": 2274
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:17:41.3143262Z",
+      "completedAt": "2026-10-02T07:18:07.476Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925476895770d3492782dd10cc0a489fec0a72eade13925",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5271,
+        "outputTokens": 145,
+        "totalTokens": 5416
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:17:41.3143262Z",
+      "completedAt": "2026-10-02T07:18:07.476Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925481378b4a50cd25f47d4bb7d101bbb29abc519495673",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5445,
+        "outputTokens": 391,
+        "totalTokens": 5836
+      }
+    },
+    {
+      "evidence": "gui-live-extended-4/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE13",
+      "approvalObservedAt": "2026-10-02T07:18:08.1031948Z",
+      "completedAt": "2026-10-02T07:18:18.681Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-118256ff-a6ad-9c26-a77d-5b4b2c6af841",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2511,
+        "outputTokens": 387,
+        "totalTokens": 2898
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909246607899255aa03547266d00c3fa3dce78057f1b794fd",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1244,
+        "outputTokens": 95,
+        "totalTokens": 1339
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-732dc185-ad87-9d0a-bf61-25742a83cffd",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1456,
+        "outputTokens": 82,
+        "totalTokens": 1538
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-e545c18f-2dbd-921e-930a-56ca56617359",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1684,
+        "outputTokens": 59,
+        "totalTokens": 1743
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-63548142-3ecb-9f8a-a269-9dd5955079ae",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1770,
+        "outputTokens": 58,
+        "totalTokens": 1828
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-a4669218-17d9-9221-9b23-9086c474edf1",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1855,
+        "outputTokens": 79,
+        "totalTokens": 1934
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "completedAt": "2026-10-02T07:04:59.350Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790924695828c237340934591b89d6de6b6a9271c1b9fbe161",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1982,
+        "outputTokens": 199,
+        "totalTokens": 2181
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:18:33.2922477Z",
+      "completedAt": "2026-10-02T07:18:55.569Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-589ee811-2d4a-9881-9570-0dfdadb9554a",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1243,
+        "outputTokens": 98,
+        "totalTokens": 1341
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:18:33.2922477Z",
+      "completedAt": "2026-10-02T07:18:55.569Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-5fcc4a25-c9dc-934f-adbd-5942a7b9818e",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1455,
+        "outputTokens": 107,
+        "totalTokens": 1562
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:18:33.2922477Z",
+      "completedAt": "2026-10-02T07:18:55.569Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925527115b531818cd979bd70c39b690ac6f23902eedb78",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1707,
+        "outputTokens": 55,
+        "totalTokens": 1762
+      }
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:18:33.2922477Z",
+      "completedAt": "2026-10-02T07:18:55.569Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-2e40cf53-c159-97c4-99bd-e19de6148906",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1810,
+        "outputTokens": 184,
+        "totalTokens": 1994
+      }
+    },
+    {
+      "evidence": "gui-live-permission-1/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:08:14.9792027Z",
+      "completedAt": "2026-10-02T07:08:29.276Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790924899164640844006c495b97e3327b5d9afec8567401e5",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1202,
+        "outputTokens": 34,
+        "totalTokens": 1236
+      }
+    },
+    {
+      "evidence": "gui-live-permission-1/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:08:14.9792027Z",
+      "completedAt": "2026-10-02T07:08:29.276Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-2c1cc999-da19-9f21-9291-db6834f024cb",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2486,
+        "outputTokens": 182,
+        "totalTokens": 2668
+      }
+    },
+    {
+      "evidence": "gui-live-permission-1/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:08:29.9645363Z",
+      "completedAt": "2026-10-02T07:08:35.467Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790924914265cdb985060772518cf2b73708fa98016e271a3c",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1419,
+        "outputTokens": 11,
+        "totalTokens": 1430
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:11:40.9396301Z",
+      "completedAt": "2026-10-02T07:11:53.196Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909251065974c81961e630bce638d970dc275335873e70d1b",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1203,
+        "outputTokens": 45,
+        "totalTokens": 1248
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:11:40.9396301Z",
+      "completedAt": "2026-10-02T07:11:53.196Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092511146340d92d5266a85c14e28416df297f1b20f23464",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2497,
+        "outputTokens": 29,
+        "totalTokens": 2526
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:11:53.8063112Z",
+      "completedAt": "2026-10-02T07:11:58.490Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-461f6304-d6bc-9d7c-95b4-4a9aed8ff40d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1278,
+        "outputTokens": 17,
+        "totalTokens": 1295
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:11:59.1419065Z",
+      "completedAt": "2026-10-02T07:12:28.457Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092512283291be90b70b1bfc3059428bd07e108b7e3fc859",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1708,
+        "outputTokens": 72,
+        "totalTokens": 1780
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:11:59.1419065Z",
+      "completedAt": "2026-10-02T07:12:28.457Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925128831b9f489096afc36acf45c00ec3935d23abc66be",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2140,
+        "outputTokens": 390,
+        "totalTokens": 2530
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:11:59.1419065Z",
+      "completedAt": "2026-10-02T07:12:28.457Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925136777e78c31fe06d4434dfef0260629e4a08b5423ed",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2908,
+        "outputTokens": 64,
+        "totalTokens": 2972
+      }
+    },
+    {
+      "evidence": "gui-live-permission-2/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:11:59.1419065Z",
+      "completedAt": "2026-10-02T07:12:28.457Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909251422633d763aaa7a5e423f9e5323a8c500bc9f6420df",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4480,
+        "outputTokens": 347,
+        "totalTokens": 4827
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:13:28.0927328Z",
+      "completedAt": "2026-10-02T07:14:00.685Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092521256596de9f55314d9c1d75ac853e3e9cad7e4f9568",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1574,
+        "outputTokens": 82,
+        "totalTokens": 1656
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:13:28.0927328Z",
+      "completedAt": "2026-10-02T07:14:00.685Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-e684c941-6a83-9516-9370-924350d1e32d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2014,
+        "outputTokens": 457,
+        "totalTokens": 2471
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:13:28.0927328Z",
+      "completedAt": "2026-10-02T07:14:00.685Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909252285390b63b37cbca791937f2f41fb0469576d2f1575",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2842,
+        "outputTokens": 62,
+        "totalTokens": 2904
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:13:28.0927328Z",
+      "completedAt": "2026-10-02T07:14:00.685Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-c30fba48-b054-9d1f-8a6f-10a4b9e91c87",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4360,
+        "outputTokens": 354,
+        "totalTokens": 4714
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:14:02.2269398Z",
+      "completedAt": "2026-10-02T07:14:37.744Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909252470253d3436761e68cde6bd2815b0b11060ac86c387",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2407,
+        "outputTokens": 77,
+        "totalTokens": 2484
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:14:02.2269398Z",
+      "completedAt": "2026-10-02T07:14:37.744Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-c59e5986-31c5-9045-978b-6c7c60d7c93b",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2845,
+        "outputTokens": 461,
+        "totalTokens": 3306
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:14:02.2269398Z",
+      "completedAt": "2026-10-02T07:14:37.744Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-66f721fe-f426-9563-8ee6-14de68ddfa13",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3677,
+        "outputTokens": 112,
+        "totalTokens": 3789
+      }
+    },
+    {
+      "evidence": "gui-live-permission-3/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:14:02.2269398Z",
+      "completedAt": "2026-10-02T07:14:37.744Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925272157efca7158d8a072a352f4e6ec3154e35a685981",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5248,
+        "outputTokens": 426,
+        "totalTokens": 5674
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:17:29.4327234Z",
+      "completedAt": "2026-10-02T07:17:39.354Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-8db613f4-bb89-993e-ae4e-d98eaf25c330",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1201,
+        "outputTokens": 27,
+        "totalTokens": 1228
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:17:29.4327234Z",
+      "completedAt": "2026-10-02T07:17:39.354Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217909254579107424dba2bd6e77b99d402060a9cf8c0fd619d3",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2477,
+        "outputTokens": 73,
+        "totalTokens": 2550
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:17:39.9884841Z",
+      "completedAt": "2026-10-02T07:17:43.680Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-42cb81cd-d741-9402-b7c2-ba5040b84b13",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1301,
+        "outputTokens": 11,
+        "totalTokens": 1312
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:17:44.3007905Z",
+      "completedAt": "2026-10-02T07:18:12.879Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925468547e4d5e3acd6b6d5c09c835e2d36b9596c82f2bf",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1725,
+        "outputTokens": 76,
+        "totalTokens": 1801
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:17:44.3007905Z",
+      "completedAt": "2026-10-02T07:18:12.879Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925472247770d3492782dd10cc0a489fec0a72eade68e4e",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2159,
+        "outputTokens": 456,
+        "totalTokens": 2615
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:17:44.3007905Z",
+      "completedAt": "2026-10-02T07:18:12.879Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-5747dd28-2421-959c-a607-a404ce987839",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2988,
+        "outputTokens": 70,
+        "totalTokens": 3058
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:17:44.3007905Z",
+      "completedAt": "2026-10-02T07:18:12.879Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "02179092548555391be90b70b1bfc3059428bd07e108b7e21721a",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4542,
+        "outputTokens": 415,
+        "totalTokens": 4957
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:18:14.4671602Z",
+      "completedAt": "2026-10-02T07:18:40.428Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925496968b4a50cd25f47d4bb7d101bbb29abc519736426",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2622,
+        "outputTokens": 79,
+        "totalTokens": 2701
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:18:14.4671602Z",
+      "completedAt": "2026-10-02T07:18:40.428Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925501188031cf6218c12fc0ace26887030dd7ea85af737",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3062,
+        "outputTokens": 464,
+        "totalTokens": 3526
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:18:14.4671602Z",
+      "completedAt": "2026-10-02T07:18:40.428Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-7e8fbd0b-76d3-9957-92e3-35bff256fc8d",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 3897,
+        "outputTokens": 70,
+        "totalTokens": 3967
+      }
+    },
+    {
+      "evidence": "gui-live-permission-4/gui-live-permission.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:18:14.4671602Z",
+      "completedAt": "2026-10-02T07:18:40.428Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021790925514382ed0e184fb98d17720dee9f0ee33ee7e13edef0",
+      "usageStatus": "reported",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5447,
+        "outputTokens": 464,
+        "totalTokens": 5911
+      }
+    }
+  ],
+  "unavailable": [
+    {
+      "evidence": "gui-live-3/gui-live-suite.json",
+      "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+      "taskMarker": "LIVE01",
+      "completedAt": "2026-10-02T06:09:55.069Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-NETWORK-TRANSPORT"
+      ]
+    },
+    {
+      "evidence": "gui-live-4/gui-live-suite.json",
+      "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+      "taskMarker": "LIVE01",
+      "completedAt": "2026-10-02T06:14:17.635Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-CODING-ENGINE"
+      ]
+    },
+    {
+      "evidence": "gui-live-7/gui-live-suite.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "completedAt": "2026-10-02T06:58:36.851Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-NETWORK-TRANSPORT"
+      ]
+    },
+    {
+      "evidence": "gui-live-budget-1/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE13",
+      "completedAt": "2026-10-02T07:19:44.005Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-CODING-BUDGET"
+      ]
+    },
+    {
+      "evidence": "gui-live-extended-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "completedAt": "2026-10-02T06:55:46.372Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-CODING-BUDGET"
+      ]
+    },
+    {
+      "evidence": "gui-live-extended-2/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "completedAt": "2026-10-02T06:58:39.653Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-NETWORK-TRANSPORT"
+      ]
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/gui-live-extended.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE06",
+      "completedAt": "2026-10-02T07:05:06.872Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": []
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/gui-live-extended.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE06",
+      "completedAt": "2026-10-02T07:19:00.480Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": []
+    },
+    {
+      "evidence": "gui-live-permission-1/gui-live-permission.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "completedAt": "2026-10-02T07:09:50.438Z",
+      "responseAndUsageUnavailable": true,
+      "visibleStableCodes": [
+        "BLK-CODING-BUDGET"
+      ]
+    }
+  ],
+  "nativeApprovals": [
+    {
+      "evidence": "gui-live-3/coding-native-approve-task-20261002-060951918.json",
+      "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:09:51.8850083Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "932acd737fb92f2cc3ebb002f02d4feca8a8d1cfb6820ec260450f392021168b",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-NETWORK-TRANSPORT"
+    },
+    {
+      "evidence": "gui-live-4/coding-native-approve-task-20261002-061411860.json",
+      "sourceCommit": "33cc98360d7f02a28481b76a633dba2804189726",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:14:11.8276045Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "393c258028cca81cfa43c2e44da26ec758576f354753399d5176b67768cc3b22",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-CODING-ENGINE"
+    },
+    {
+      "evidence": "gui-live-5/coding-native-approve-task-20261002-065049026.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T06:50:48.9691723Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "730465e6e106079035008535041a2a1586c9cdfbf038b9f02cef948ca4298dbe",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-7/coding-native-approve-task-20261002-065811358.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T06:58:11.3237685Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "f585441dade05617a7d06a598048697c36826dfb31b48036a757f97e40ef8028",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-NETWORK-TRANSPORT"
+    },
+    {
+      "evidence": "gui-live-8/coding-native-approve-task-20261002-070036154.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:00:36.1220679Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "35293855142bd3408a0b26f02f7d79f6effc3bb26d7c17d2b072b57eb2600c11",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-9/coding-native-approve-task-20261002-071630106.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE01",
+      "approvalObservedAt": "2026-10-02T07:16:30.0740262Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "570d4785212e3cb53ca491760df517358077bee0cb9ba4188e6e1b09d77bf9eb",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-9/coding-native-approve-task-20261002-071655880.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE02",
+      "approvalObservedAt": "2026-10-02T07:16:55.8355958Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "de5c129ba33a118c91df12dc62503685e93bc617bc69fb479559a755413225bd",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-budget-1/coding-native-approve-task-20261002-071934096.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE13",
+      "approvalObservedAt": "2026-10-02T07:19:34.0599142Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "0ef55697346665e8b74254301cb26ff914316f2487e2bfb296d3eb0dbc7ce52d",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-CODING-BUDGET"
+    },
+    {
+      "evidence": "gui-live-extended-1/coding-native-approve-task-20261002-065539316.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T06:55:39.2817782Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "7d67c1707b2686df1a36ab13bdb1a7de6f63e7386c9e475bd5902d55af6f8600",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-CODING-BUDGET"
+    },
+    {
+      "evidence": "gui-live-extended-2/coding-native-approve-task-20261002-065823527.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T06:58:23.4936774Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "710c4c28434d1c19de4aceb9ce1625659d7b913d43ca55fbe2c3db1987f80892",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-NETWORK-TRANSPORT"
+    },
+    {
+      "evidence": "gui-live-extended-3/coding-native-approve-task-20261002-070045521.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:00:45.4877611Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "34e7fdc4958b0eee11084e1d3049f32419b89d2c9f7acd01dedc6f82261dcdb9",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-extended-3/coding-native-approve-task-20261002-070111420.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:01:11.3852442Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "aa6658c75b9b71cf521f6520770cb10df205475e608244ac2ae64c7bca9f7932",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-extended-3/coding-native-approve-task-20261002-070158256.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:01:58.2218087Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "7372187d44fda10ae0d1a577f799b9588f86131733c9fe616fbba50670154603",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-extended-4/coding-native-approve-task-20261002-071721196.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE03",
+      "approvalObservedAt": "2026-10-02T07:17:21.1447734Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "9509033ec64548549578fbda7d58baa053501f69db1ae583401740df6062635b",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-extended-4/coding-native-approve-task-20261002-071741350.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE04",
+      "approvalObservedAt": "2026-10-02T07:17:41.3143262Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "319d51706f6ea44ac977b8f3eb8916236d0714eb5816437293ecf9a6077c32d7",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-extended-4/coding-native-approve-task-20261002-071808135.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE13",
+      "approvalObservedAt": "2026-10-02T07:18:08.1031948Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "0b1cc4e580b28f1548239e35d85c57c2805bf2f833e468c1ca1cb91ab62e542a",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/coding-native-approve-task-20261002-070417418.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:04:17.3865707Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "1b1a9e8f291edf43e1f802fa8e1d758dee758e73a0c5c9aa3e42b761deefce7b",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/coding-native-approve-task-20261002-070500033.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE06",
+      "approvalObservedAt": "2026-10-02T07:04:59.9992124Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "adb8aeae4ead76e662015e1b3005a64e6c81c2e85af41f3e29056ade11e3e309",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/coding-native-approve-task-20261002-070515488.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE07",
+      "approvalObservedAt": "2026-10-02T07:05:15.4541595Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "85a9e4f7a3c22ac2859054661cab2e09d3e8fde3623502c367ba2fe47ef37a75",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-lifecycle-1/coding-native-approve-task-20261002-070601207.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE08",
+      "approvalObservedAt": "2026-10-02T07:06:01.1733778Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "badc184600b088f2d385ba74e75170c3909290992588b8049278071d453ef138",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/coding-native-approve-task-20261002-071833330.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE05",
+      "approvalObservedAt": "2026-10-02T07:18:33.2922477Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "40390fe6000b99f27e836c597960ba37ead456581322ac3182c245dd1c68a6d0",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/coding-native-approve-task-20261002-071856290.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE06",
+      "approvalObservedAt": "2026-10-02T07:18:56.2531873Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "b12c49f1e810fad1843a2bfb05ed4ee9d505519007ed410e249e958fad9e6fb8",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/coding-native-approve-task-20261002-071909176.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE07",
+      "approvalObservedAt": "2026-10-02T07:19:09.1396769Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "33b5d972fd1c6adc6a40be8ba5ffe28efa1493782cae5605262d95b19ba78cd0",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-lifecycle-2/coding-native-approve-task-20261002-071955046.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE08",
+      "approvalObservedAt": "2026-10-02T07:19:55.0065126Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "d2af2334500eaacd4ae407c58937ad6ab5b626bf516e6b0cec887ac837908808",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "cancel-or-project-switch-or-exit"
+    },
+    {
+      "evidence": "gui-live-permission-1/coding-native-approve-task-20261002-070815011.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:08:14.9792027Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "66d46021c08a5f90847408585afdb05adc1ccce013150dcdd1c4f8e450aed0cf",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-1/coding-native-approve-task-20261002-070829998.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:08:29.9645363Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "93c5d939895844f3ad4e7a7bf23f414fddf324a67ca14a29b908751cdddccaa5",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-1/coding-native-approve-task-20261002-070836193.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:08:36.1587632Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "cb9b1b543d841a5af627d35a106d13331113cb37222019c58585f90ffadafdf1",
+      "completeResponseAndUsageReadable": false,
+      "outcome": "BLK-CODING-BUDGET"
+    },
+    {
+      "evidence": "gui-live-permission-2/coding-native-approve-task-20261002-071140974.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:11:40.9396301Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "929e4d8e72707fe0ecec997e4bcf959a32372d3341f4fda4955259737831a986",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-2/coding-native-approve-task-20261002-071153840.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:11:53.8063112Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "2f189fb5d3c05f9a1ae6b1bd28bdae32e65796df78945f5c351a026b94b71674",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-2/coding-native-approve-task-20261002-071159176.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:11:59.1419065Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "7586eb12601c1858dff5eefee54b980b2fc99da39c77420a502099fea6f96d24",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-3/coding-native-approve-task-20261002-071328125.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:13:28.0927328Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "2728dc2c86ee61cf3cfa6cfbf532de8849f1b8ad2ae0d34159de80c25408c32c",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-3/coding-native-approve-task-20261002-071402259.json",
+      "sourceCommit": "5b92eecc541bbb65ed4968947f0a5f76c8543681",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:14:02.2269398Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "e6bf7b6a4ebe4489a57ffa1468f45ff3bca8281fed77348b391d38f4693b4501",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-4/coding-native-approve-task-20261002-071729466.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE09",
+      "approvalObservedAt": "2026-10-02T07:17:29.4327234Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "4c99b12863d853d1dd9731ad9c5509eb33b4165c4c89e675679da4a427353afa",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-4/coding-native-approve-task-20261002-071740024.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE10",
+      "approvalObservedAt": "2026-10-02T07:17:39.9884841Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "77601b44bb38919bb863f83826472788778c46d04160779aace7ba5ee18cc56a",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-4/coding-native-approve-task-20261002-071744340.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE11",
+      "approvalObservedAt": "2026-10-02T07:17:44.3007905Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "043523488652eb9fed03d18002ce8ad016f1f83b6f0462f03f6d5e077073fb79",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    },
+    {
+      "evidence": "gui-live-permission-4/coding-native-approve-task-20261002-071814501.json",
+      "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+      "taskMarker": "LIVE12",
+      "approvalObservedAt": "2026-10-02T07:18:14.4671602Z",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestDigest": "e57297d9e9a62c5a8f31dc7685ec8206f35d884d08889e31f4938e14d540398e",
+      "completeResponseAndUsageReadable": true,
+      "outcome": "readable-response"
+    }
+  ],
+  "limitation": "Only returned readable metadata summed. Failed/cancelled tasks without metadata may have unobserved supplier use; no zero-use inference. completedAt is local task completion observation time, bounded after native approval observation. Native approval is not itself proof of a supplier response."
+}

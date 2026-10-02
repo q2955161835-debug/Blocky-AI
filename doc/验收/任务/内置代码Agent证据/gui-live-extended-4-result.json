@@ -1,0 +1,359 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "startedAt": "2026-10-02T07:17:16.906Z",
+  "steps": [
+    "实际权限拒绝、有效junction阳性对照及外侧字节保持",
+    "实际外部修改CAS冲突、不覆盖外部字节"
+  ],
+  "calls": [
+    {
+      "marker": "LIVE03",
+      "completedAt": "2026-10-02T07:17:40.491Z",
+      "rejected": false,
+      "metadata": {
+        "requestId": "coding-2386a895-ed88-403d-935a-bb761ef67565",
+        "projectId": "project-63479c1d-cea5-43ca-8151-067aaaa2a0d1",
+        "baseDigest": "912af47a1d7a6b1b1f701793f205f8effc78630aef48d374d95f112189e7e0bc",
+        "engine": "pi-agent-core/0.86.0",
+        "modelApiCalled": true,
+        "generations": [
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "0217909254452043d3436761e68cde6bd2815b0b11060acaac72b",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1312,
+              "outputTokens": 350,
+              "totalTokens": 1662
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-53b4a2d4-45ce-95b7-a57c-c1dc4e244bd2",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1850,
+              "outputTokens": 535,
+              "totalTokens": 2385
+            }
+          }
+        ],
+        "events": [
+          {
+            "sequence": 1,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 2,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 3,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 4,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 5,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 6,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 7,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 8,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 9,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 10,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 11,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 12,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 13,
+            "kind": "tool.failed",
+            "tool": "workspace_read",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 14,
+            "kind": "tool.started",
+            "tool": "workspace_write"
+          },
+          {
+            "sequence": 15,
+            "kind": "tool.failed",
+            "tool": "workspace_write",
+            "code": "BLK-CODING-FILE"
+          },
+          {
+            "sequence": 16,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 17,
+            "kind": "tool.failed",
+            "tool": "blocky_cli",
+            "code": "BLK-CODING-CLI"
+          },
+          {
+            "sequence": 18,
+            "kind": "text.delta"
+          }
+        ],
+        "changes": []
+      },
+      "alerts": []
+    },
+    {
+      "marker": "LIVE04",
+      "completedAt": "2026-10-02T07:18:07.476Z",
+      "rejected": false,
+      "metadata": {
+        "requestId": "coding-140a9a56-98c7-43e4-9c13-0644457b58f9",
+        "projectId": "project-63479c1d-cea5-43ca-8151-067aaaa2a0d1",
+        "baseDigest": "912af47a1d7a6b1b1f701793f205f8effc78630aef48d374d95f112189e7e0bc",
+        "engine": "pi-agent-core/0.86.0",
+        "modelApiCalled": true,
+        "generations": [
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-24f5498d-7a68-982a-821d-252fbd15ca6d",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 1949,
+              "outputTokens": 67,
+              "totalTokens": 2016
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "02179092547165791be90b70b1bfc3059428bd07e108b7ea47fea",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 2081,
+              "outputTokens": 193,
+              "totalTokens": 2274
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "021790925476895770d3492782dd10cc0a489fec0a72eade13925",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 5271,
+              "outputTokens": 145,
+              "totalTokens": 5416
+            }
+          },
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "021790925481378b4a50cd25f47d4bb7d101bbb29abc519495673",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 5445,
+              "outputTokens": 391,
+              "totalTokens": 5836
+            }
+          }
+        ],
+        "events": [
+          {
+            "sequence": 1,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 2,
+            "kind": "tool.started",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 3,
+            "kind": "tool.completed",
+            "tool": "workspace_read"
+          },
+          {
+            "sequence": 4,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 5,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 6,
+            "kind": "tool.completed",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 7,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 8,
+            "kind": "tool.completed",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 9,
+            "kind": "tool.started",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 10,
+            "kind": "tool.completed",
+            "tool": "blocky_cli"
+          },
+          {
+            "sequence": 11,
+            "kind": "text.delta"
+          },
+          {
+            "sequence": 12,
+            "kind": "tool.started",
+            "tool": "workspace_write"
+          },
+          {
+            "sequence": 13,
+            "kind": "tool.failed",
+            "tool": "workspace_write",
+            "code": "BLK-CODING-CONFLICT"
+          },
+          {
+            "sequence": 14,
+            "kind": "text.delta"
+          }
+        ],
+        "changes": []
+      },
+      "alerts": []
+    },
+    {
+      "marker": "LIVE13",
+      "completedAt": "2026-10-02T07:18:18.681Z",
+      "rejected": false,
+      "metadata": {
+        "requestId": "coding-082df663-86cf-4c21-8fd4-f9ef59d6b0ef",
+        "projectId": "project-63479c1d-cea5-43ca-8151-067aaaa2a0d1",
+        "baseDigest": "912af47a1d7a6b1b1f701793f205f8effc78630aef48d374d95f112189e7e0bc",
+        "engine": "pi-agent-core/0.86.0",
+        "modelApiCalled": true,
+        "generations": [
+          {
+            "schemaVersion": "blocky.model-response/v2",
+            "usageStatus": "reported",
+            "provider": "xirang",
+            "model": "deepseek-v4-pro",
+            "requestId": "chatcmpl-118256ff-a6ad-9c26-a77d-5b4b2c6af841",
+            "transport": "remote",
+            "usage": {
+              "inputTokens": 2511,
+              "outputTokens": 387,
+              "totalTokens": 2898
+            }
+          }
+        ],
+        "events": [
+          {
+            "sequence": 1,
+            "kind": "text.delta"
+          }
+        ],
+        "changes": []
+      },
+      "alerts": []
+    }
+  ],
+  "junctionPositiveControl": true,
+  "deniedCodes": [
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_read",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "workspace_write",
+      "code": "BLK-CODING-FILE"
+    },
+    {
+      "tool": "blocky_cli",
+      "code": "BLK-CODING-CLI"
+    }
+  ],
+  "failure": "Oversize did not return stable budget failure",
+  "endedAt": "2026-10-02T07:18:18.687Z"
+}

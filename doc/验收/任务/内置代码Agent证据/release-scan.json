@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "result": {
+    "passed": true,
+    "positiveControl": true,
+    "files": 2596,
+    "failures": []
+  },
+  "licenses": {
+    "covered": 682,
+    "total": 682,
+    "source": "formal-package license inventory and release build evidence"
+  }
+}

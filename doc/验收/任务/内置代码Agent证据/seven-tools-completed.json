@@ -1,0 +1,145 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "tools": {
+    "workspace_search": {
+      "completed": 1,
+      "evidence": [
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE01",
+          "sequence": 5
+        }
+      ]
+    },
+    "workspace_read": {
+      "completed": 2,
+      "evidence": [
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE01",
+          "sequence": 8
+        },
+        {
+          "file": "gui-live-extended-4-result.json",
+          "marker": "LIVE04",
+          "sequence": 3
+        }
+      ]
+    },
+    "workspace_write": {
+      "completed": 3,
+      "evidence": [
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE01",
+          "sequence": 11
+        },
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE01",
+          "sequence": 14
+        },
+        {
+          "file": "gui-live-lifecycle-2-result.json",
+          "marker": "LIVE05",
+          "sequence": 3
+        }
+      ]
+    },
+    "project_context": {
+      "completed": 2,
+      "evidence": [
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE02",
+          "sequence": 3
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE09",
+          "sequence": 2
+        }
+      ]
+    },
+    "blocky_cli": {
+      "completed": 11,
+      "evidence": [
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE02",
+          "sequence": 6
+        },
+        {
+          "file": "gui-live-9-result.json",
+          "marker": "LIVE02",
+          "sequence": 9
+        },
+        {
+          "file": "gui-live-extended-4-result.json",
+          "marker": "LIVE04",
+          "sequence": 6
+        },
+        {
+          "file": "gui-live-extended-4-result.json",
+          "marker": "LIVE04",
+          "sequence": 8
+        },
+        {
+          "file": "gui-live-extended-4-result.json",
+          "marker": "LIVE04",
+          "sequence": 10
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE11",
+          "sequence": 3
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE11",
+          "sequence": 6
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE11",
+          "sequence": 9
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE12",
+          "sequence": 3
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE12",
+          "sequence": 6
+        },
+        {
+          "file": "gui-live-permission-4-result.json",
+          "marker": "LIVE12",
+          "sequence": 9
+        }
+      ]
+    },
+    "workspace_undo": {
+      "completed": 1,
+      "evidence": [
+        {
+          "file": "gui-live-lifecycle-2-result.json",
+          "marker": "LIVE05",
+          "sequence": 7
+        }
+      ]
+    },
+    "workspace_list": {
+      "completed": 1,
+      "evidence": [
+        {
+          "file": "gui-live-lifecycle-2-result.json",
+          "marker": "LIVE05",
+          "sequence": 11
+        }
+      ]
+    }
+  }
+}

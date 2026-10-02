@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "checks": [
+    "GUI inverse retains existing change binding and digest validation via remember",
+    "Ledger serialized atomic replacement synced before publication; failure retains prior pending state",
+    "Ledger test diagnostics contain stage and OS error only",
+    "Persistent async runtime and reqwest Client; DNS answer validation still per request; no cached answers or added retry",
+    "Cancellation remains 20ms, connector10s,total15s"
+  ],
+  "reviewedAt": "2026-10-02T07:12:30.0993082Z",
+  "runtimeVerification": "Pending candidate5 formal Full/live",
+  "method": "Independent scoped read-only diff review, no development tests rerun",
+  "files": [
+    "apps/studio-desktop/src/composition/useCodingAgent.ts",
+    "apps/studio-host/src/approval_ledger.rs",
+    "apps/studio-host/src/network_policy/dns.rs",
+    "apps/studio-host/Cargo.toml"
+  ],
+  "actionableFindings": []
+}

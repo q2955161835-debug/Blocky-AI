@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "blocky.independent-delivery/v1",
+  "sourceCommit": "a0eddc0dc20b4d7e9869680098d321579dbff1b8",
+  "verifiedAt": "2026-10-02T07:54:16.522Z",
+  "candidateDirectory": "dist/Blocky-Studio-0.8.0-coding-candidate5",
+  "deliveryDirectory": "dist/Blocky-Studio-0.8.0-coding",
+  "fileCount": 2595,
+  "bytes": 769323031,
+  "baselineFileCount": 2595,
+  "baselineBytes": 769323031,
+  "failures": [],
+  "passed": true
+}

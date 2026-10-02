@@ -1,0 +1,47 @@
+[
+  {
+    "action": "approve-task",
+    "pid": 69824,
+    "desktop": "BlockyTest-6bf184b570a34c98b5c5d29f753f7551",
+    "title": "批准代码助手任务",
+    "taskMarker": "LIVE01",
+    "provider": "xirang",
+    "model": "deepseek-v4-pro",
+    "scope": "synthetic-workspace",
+    "requestDigest": "570d4785212e3cb53ca491760df517358077bee0cb9ba4188e6e1b09d77bf9eb",
+    "fixedBodyBindingChecked": true,
+    "bodyPersisted": false,
+    "dialogClosed": true,
+    "observedAt": "2026-10-02T07:16:30.0740262Z"
+  },
+  {
+    "action": "approve-task",
+    "pid": 69824,
+    "desktop": "BlockyTest-6bf184b570a34c98b5c5d29f753f7551",
+    "title": "批准代码助手任务",
+    "taskMarker": "LIVE02",
+    "provider": "xirang",
+    "model": "deepseek-v4-pro",
+    "scope": "synthetic-workspace",
+    "requestDigest": "de5c129ba33a118c91df12dc62503685e93bc617bc69fb479559a755413225bd",
+    "fixedBodyBindingChecked": true,
+    "bodyPersisted": false,
+    "dialogClosed": true,
+    "observedAt": "2026-10-02T07:16:55.8355958Z"
+  },
+  {
+    "action": "reject-task",
+    "pid": 69824,
+    "desktop": "BlockyTest-6bf184b570a34c98b5c5d29f753f7551",
+    "title": "批准代码助手任务",
+    "taskMarker": "LIVE00",
+    "provider": "xirang",
+    "model": "deepseek-v4-pro",
+    "scope": "synthetic-workspace",
+    "requestDigest": "8d66716fdd2761ccf9840aa57377dd6d2fca7774b14c6ae48107a08d3278ff1d",
+    "fixedBodyBindingChecked": true,
+    "bodyPersisted": false,
+    "dialogClosed": true,
+    "observedAt": "2026-10-02T07:16:29.3572081Z"
+  }
+]
