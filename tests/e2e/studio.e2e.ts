@@ -272,51 +272,32 @@ describe("Blocky native editor", () => {
     await expect($(".bottom-panel")).toBeDisplayed();
     await expect($$(".workspace-tabs > div")).toBeElementsArrayOfSize(2);
   });
-  it("generates a local builder proposal, renders actual readonly blocks, rejects and accepts with undo", async () => {
+  it("keeps independent native agent drafts and blocks coding requests without a tools model", async () => {
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
     await page.evaluate(() =>
       (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
     );
-    await page
-      .getByRole("button", { name: "Blocky 构建助手", exact: true })
-      .click();
-    await page.getByLabel("构建需求").fill("植物课堂助手");
-    await page.getByRole("button", { name: "生成方案", exact: true }).click();
-    try {
-      await page
-        .getByRole("button", { name: "审阅候选差异", exact: true })
-        .waitFor({ timeout: 30000 });
-    } catch (error) {
-      console.log(
-        "BUILDER_UI_FAILURE",
-        await page.getByRole("region", { name: "Blocky 构建助手" }).innerText(),
-      );
-      await page.getByRole("tab", { name: "运行 Agent", exact: true }).click();
-      throw error;
-    }
-    await page
-      .getByRole("button", { name: "审阅候选差异", exact: true })
-      .click();
-    await page
-      .locator('[aria-label="只读积木画布"] .blocklyBlockCanvas')
-      .first()
-      .waitFor();
-    expect(
-      await page.locator('[aria-label="只读积木画布"] .blocklyPath').count(),
-    ).toBeGreaterThan(0);
-    await page.getByRole("button", { name: "拒绝", exact: true }).click();
-    await page
-      .getByRole("button", { name: "Blocky 构建助手", exact: true })
-      .click();
-    await page.getByLabel("构建需求").fill("植物课堂助手");
-    await page.getByRole("button", { name: "生成方案", exact: true }).click();
-    await page
-      .getByRole("button", { name: "审阅候选差异", exact: true })
-      .click({ timeout: 30000 });
-    await page.getByRole("button", { name: "接受变更", exact: true }).click();
-    await page.waitForFunction(() =>
-      document.querySelector(".statusbar")?.textContent?.includes("已应用"),
-    );
-    await page.keyboard.press("Control+z");
+    await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
+    await page.getByLabel("向 Agent 提问", { exact: true }).fill("运行对话草稿🌱");
+    await page.getByRole("tab", { name: "构建助手", exact: true }).click();
+    const builder = page.getByRole("region", { name: "Blocky 构建助手", exact: true });
+    const prompt = builder.getByLabel("构建需求", { exact: true });
+    await prompt.fill("植物课堂助手😀");
+    await prompt.press("Shift+Enter");
+    await prompt.pressSequentially("第二行");
+    expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
+    expect(await builder.getByRole("button", { name: "发送", exact: true }).isDisabled()).toBe(true);
+    await prompt.press("Enter");
+    expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
+    expect(await builder.getByRole("log", { name: "对话消息" }).count()).toBe(0);
+    await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
+    expect(await page.getByLabel("向 Agent 提问", { exact: true }).inputValue()).toBe("运行对话草稿🌱");
+    await page.getByRole("tab", { name: "构建助手", exact: true }).click();
+    expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
+    await builder.getByRole("button", { name: "新对话", exact: true }).click();
+    expect(await prompt.inputValue()).toBe("");
+    await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
+    expect(await page.getByLabel("向 Agent 提问", { exact: true }).inputValue()).toBe("运行对话草稿🌱");
   });
   it("opens a previously accepted legacy surface, runs the isolated page and reopens its tab", async () => {
     await $(

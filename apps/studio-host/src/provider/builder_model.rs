@@ -170,12 +170,12 @@ impl BuilderModel {
                             content: m["content"].as_str().unwrap_or("").into(),
                             tool_calls: calls,
                             tool_call_id: m["tool_call_id"].as_str().map(str::to_owned),
-                            image_refs:Vec::new(),
+                            image_refs: Vec::new(),
                         })
                     })
                     .collect::<Result<Vec<_>, String>>()?;
                 request.validate()?;
-                let mut result = super::gateway::execute(
+                let result = super::gateway::execute(
                     root,
                     &request,
                     &bound,
@@ -186,18 +186,156 @@ impl BuilderModel {
                             crate::builder::evidence::response_metadata(bytes, &bound.provider);
                     },
                 )?;
-                let mut content = Vec::new();
-                if result["text"].as_str().is_some_and(|s| !s.is_empty()) {
-                    content.push(json!({"type":"text","text":result["text"]}));
-                }
-                for call in result["toolCalls"].as_array().ok_or(ERROR)? {
-                    content.push(json!({"type":"toolCall","id":call["id"],"name":call["name"],"arguments":call["arguments"]}));
-                }
-                result.as_object_mut().ok_or(ERROR)?.remove("text");
-                result.as_object_mut().ok_or(ERROR)?.remove("toolCalls");
-                result["content"] = json!(content);
-                Ok(result)
+                gateway_generation(result)
             }
         }
+    }
+}
+
+fn gateway_generation(mut result: Value) -> Result<Value, String> {
+    let mut content = Vec::new();
+    if result["text"].as_str().is_some_and(|s| !s.is_empty()) {
+        content.push(json!({"type":"text","text":result["text"]}));
+    }
+    for call in result["toolCalls"].as_array().ok_or(ERROR)? {
+        content.push(json!({"type":"toolCall","id":call["id"],"name":call["name"],"arguments":call["arguments"]}));
+    }
+    result.as_object_mut().ok_or(ERROR)?.remove("text");
+    result.as_object_mut().ok_or(ERROR)?.remove("toolCalls");
+    // Gateway already checked completion semantics. Pi derives completion from
+    // content; keep all remaining metadata for the existing strict schema.
+    result.as_object_mut().ok_or(ERROR)?.remove("finishReason");
+    result["content"] = json!(content);
+    Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn gateway_response(tool: bool, usage: bool) -> Value {
+        let request: GatewayRequest = serde_json::from_value(json!({
+            "schemaVersion":"blocky.model-request/v2","requestId":"bridge1","projectId":"project1","resourceId":"model1",
+            "messages":[{"role":"user","content":"synthetic bridge fixture"}],
+            "tools":[{"name":"workspace_list","description":"List","parameters":{"type":"object"}}],
+            "maxOutputTokens":512,"timeoutMs":1000
+        })).unwrap();
+        let mut response = json!({"id":"response1","model":"fixture-model","choices":[{
+            "message":{"role":"assistant","content":"synthetic answer"},"finish_reason":"stop"
+        }]});
+        if tool {
+            response["choices"][0]["message"]["tool_calls"] = json!([{"id":"call1","type":"function","function":{"name":"workspace_list","arguments":"{}"}}]);
+            response["choices"][0]["finish_reason"] = json!("tool_calls");
+        }
+        if usage {
+            response["usage"] = json!({"prompt_tokens":10,"completion_tokens":4,"total_tokens":14});
+        }
+        let mut result = super::super::gateway::parse_response(
+            &serde_json::to_vec(&response).unwrap(),
+            &request,
+        )
+        .unwrap();
+        result["provider"] = json!("xirang");
+        result["transport"] = json!("remote");
+        result
+    }
+    #[test]
+    fn gateway_bridge_consumes_wire_finish_reason_for_strict_generation_contract() {
+        let result = gateway_generation(gateway_response(true, true)).unwrap();
+        assert!(
+            result.get("finishReason").is_none(),
+            "Gateway transport completion is represented by content, not generation metadata: {result}"
+        );
+        assert_eq!(
+            result["content"],
+            json!([
+                {"type":"text","text":"synthetic answer"},
+                {"type":"toolCall","id":"call1","name":"workspace_list","arguments":{}}
+            ])
+        );
+        assert_eq!(
+            result["usage"],
+            json!({"inputTokens":10,"outputTokens":4,"totalTokens":14})
+        );
+    }
+    #[test]
+    fn gateway_and_legacy_bridge_outputs_parse_the_production_typescript_contract() {
+        let remote = gateway_generation(gateway_response(true, true)).unwrap();
+        let mut local = gateway_response(false, false);
+        local["provider"] = json!("managed-local");
+        local["transport"] = json!("local");
+        local["localInference"] = json!(true);
+        local["externalApi"] = json!(false);
+        let local = gateway_generation(local).unwrap();
+        assert_eq!(local["usageStatus"], "unavailable");
+        assert_eq!(local["usage"], Value::Null);
+        assert_eq!(local["localInference"], true);
+        assert_eq!(local["externalApi"], false);
+        let legacy_wire = json!({"id":"legacy1","model":"legacy-model","choices":[{
+            "message":{"role":"assistant","content":"legacy answer"},"finish_reason":"stop"
+        }],"usage":{"prompt_tokens":8,"completion_tokens":3,"total_tokens":11}});
+        let legacy =
+            super::super::builder::parse_response(&serde_json::to_vec(&legacy_wire).unwrap(), 512)
+                .unwrap();
+        assert_eq!(legacy["transport"], "remote");
+        assert_eq!(legacy["content"][0]["text"], "legacy answer");
+        assert!(legacy.get("usageStatus").is_none());
+        assert_contract(json!([remote, local, legacy]), true);
+    }
+    fn assert_contract(generations: Value, valid: bool) {
+        // Run the exact strict schema consumed by coding.ts with real Rust
+        // parser/bridge outputs, guarding changes on either language boundary.
+        use std::{
+            io::Write,
+            process::{Command, Stdio},
+        };
+        let mut child = Command::new("node")
+            .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+            .args([
+                "--import",
+                "tsx",
+                "--input-type=module",
+                "-e",
+                r#"
+                import { codingResultSchema } from './packages/builder-protocol/src/index.ts';
+                let input=''; for await (const chunk of process.stdin) input+=chunk;
+                for (const generated of JSON.parse(input)) {
+                    const { content, ...metadata } = generated;
+                    codingResultSchema.shape.generations.element.parse(metadata);
+                    if (!content.length) throw Error('Empty content');
+                }
+            "#,
+            ])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("Production bridge contract test requires project Node/tsx dependencies");
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(&serde_json::to_vec(&generations).unwrap())
+            .unwrap();
+        let output = child.wait_with_output().unwrap();
+        assert!(
+            output.status.success() == valid,
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        if !valid {
+            let error = String::from_utf8_lossy(&output.stderr);
+            assert!(
+                error.contains("unrecognized_keys") && error.contains("unexpected"),
+                "{error}"
+            );
+        }
+    }
+    #[test]
+    fn bridge_preserves_unknown_metadata_for_strict_typescript_rejection() {
+        let mut wire = gateway_response(false, true);
+        wire["unexpected"] = json!(true);
+        let result = gateway_generation(wire).unwrap();
+        assert_eq!(result["unexpected"], true);
+        assert_contract(json!([result]), false);
     }
 }

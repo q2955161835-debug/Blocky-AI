@@ -78,14 +78,25 @@ fn public_fallback(
     port: u16,
     cancel: &dyn Fn() -> Result<(), String>,
 ) -> Result<Vec<SocketAddr>, String> {
+    let endpoint = reqwest::Url::parse("https://1.1.1.1/dns-query").map_err(|_| INVALID)?;
+    query_public_resolver(host, port, endpoint, cancel)
+}
+fn query_public_resolver(
+    host: &str,
+    port: u16,
+    mut endpoint: reqwest::Url,
+    cancel: &dyn Fn() -> Result<(), String>,
+) -> Result<Vec<SocketAddr>, String> {
     cancel()?;
     let client = reqwest::Client::builder()
         .no_proxy()
         .redirect(reqwest::redirect::Policy::none())
-        .timeout(Duration::from_secs(2))
+        // TLS setup plus a resolver response can exceed a local DNS lookup.
+        // Keep the whole exchange bounded; cancellation is polled every 20 ms.
+        .connect_timeout(Duration::from_secs(10))
+        .timeout(Duration::from_secs(15))
         .build()
         .map_err(|_| "BLK-NETWORK-TRANSPORT")?;
-    let mut endpoint = reqwest::Url::parse("https://1.1.1.1/dns-query").map_err(|_| INVALID)?;
     endpoint
         .query_pairs_mut()
         .append_pair("name", host)
@@ -147,6 +158,58 @@ pub fn resolve(
 mod tests {
     use super::*;
     use serde_json::json;
+    fn slow_resolver() -> (reqwest::Url, std::thread::JoinHandle<()>) {
+        use std::io::{Read, Write};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let url = reqwest::Url::parse(&format!(
+            "http://{}/dns-query",
+            listener.local_addr().unwrap()
+        ))
+        .unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(5)))
+                .unwrap();
+            let mut request = [0u8; 4096];
+            let count = stream.read(&mut request).unwrap();
+            assert!(String::from_utf8_lossy(&request[..count]).contains("name=example.com"));
+            std::thread::sleep(Duration::from_millis(2250));
+            let body = r#"{"Status":0,"Question":[{"name":"example.com.","type":1}],"Answer":[{"name":"example.com.","type":1,"data":"93.184.215.14"}]}"#;
+            let _ = write!(
+                stream,
+                "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+        });
+        (url, server)
+    }
+    #[test]
+    fn public_resolver_accepts_slow_valid_response() {
+        let (url, server) = slow_resolver();
+        let result = query_public_resolver("example.com", 443, url, &|| Ok(()));
+        server.join().unwrap();
+        assert_eq!(
+            result.unwrap(),
+            vec!["93.184.215.14:443".parse::<SocketAddr>().unwrap()]
+        );
+    }
+    #[test]
+    fn public_resolver_remains_promptly_cancellable() {
+        let (url, server) = slow_resolver();
+        let began = Instant::now();
+        let result = query_public_resolver("example.com", 443, url, &|| {
+            if began.elapsed() >= Duration::from_millis(100) {
+                Err("BLK-CANCELLED".into())
+            } else {
+                Ok(())
+            }
+        });
+        let elapsed = began.elapsed();
+        server.join().unwrap();
+        assert_eq!(result.unwrap_err(), "BLK-CANCELLED");
+        assert!(elapsed < Duration::from_secs(1));
+    }
     #[test]
     fn dual_stack_benchmark_answers_use_authenticated_fallback_without_admitting_private_ranges() {
         for ip in ["198.18.1.68", "2001:2::13c"] {
