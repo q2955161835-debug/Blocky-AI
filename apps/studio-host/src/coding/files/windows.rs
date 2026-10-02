@@ -398,6 +398,18 @@ mod tests {
         );
     }
     #[test]
+    fn grant_rejects_ancestor_junction_before_root_open() {
+        let temp = sandbox();
+        let alias = temp.path().join("alias");
+        let outside = temp.path().join("outside");
+        std::fs::create_dir(&alias).unwrap();
+        std::fs::create_dir_all(outside.join("selected")).unwrap();
+        std::fs::write(outside.join("selected/sentinel.txt"), b"outside sentinel").unwrap();
+        junction(&alias, &outside);
+        assert!(super::super::Scope::new(&alias.join("selected")).is_err());
+        assert_eq!(std::fs::read(outside.join("selected/sentinel.txt")).unwrap(), b"outside sentinel");
+    }
+    #[test]
     fn relative_roundtrip_noclobber_and_drop() {
         let temp = sandbox();
         let parent = directory(temp.path());
