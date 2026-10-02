@@ -13,7 +13,7 @@
   },
   "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-03-答辩与商业计划书",
   "action": "organize without deletion",
-  "status": "organized",
+  "status": "historical_move_verified_current_path_missing",
   "completedAt": "2026-10-03 02:15",
   "deletedBytes": 0,
   "source": "D:\\1Folder\\Blocky-AI\\try\\defense-2026-10-03",
@@ -32,9 +32,20 @@
   },
   "startedAt": "2026-10-03 02:15",
   "finalInventoryWithHandoffScripts": {
-    "logicalBytes": 0,
-    "files": 0,
-    "skippedReparsePoints": [],
-    "completedAt": "2026-10-03 02:21"
+    "status": "not_measured",
+    "invalidZeroInventoryWithdrawn": true,
+    "reason": "Resolve-Path failed; counting did not execute",
+    "files": null,
+    "checkedAt": "2026-10-03 02:24",
+    "logicalBytes": null
+  },
+  "currentReadback": {
+    "cause": "undetermined",
+    "sourceExists": false,
+    "checkedAt": "2026-10-03 02:24",
+    "destinationExists": false,
+    "destinationParentExists": false,
+    "agentDeleteExecuted": false,
+    "diskRecoveryMeasured": false
   }
 }
