@@ -1,7 +1,9 @@
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
+#[cfg(not(windows))]
+use std::fs::OpenOptions;
 use std::{
-    fs::{File, OpenOptions},
+    fs::File,
     io::{Read, Write},
     path::{Path, PathBuf},
 };
@@ -72,17 +74,10 @@ fn metadata_safe(m: &std::fs::Metadata) -> bool {
     }
     m.is_file() || m.is_dir()
 }
+#[cfg(not(windows))]
 fn options(_directory: bool, write: bool) -> OpenOptions {
     let mut o = OpenOptions::new();
     o.read(true).write(write);
-    #[cfg(windows)]
-    {
-        use std::os::windows::fs::OpenOptionsExt;
-        // Directories permit child publication but remain pinned against deletion.
-        // Child access is relative to these handles, never through their paths.
-        o.share_mode(if _directory { 3 } else { 1 })
-            .custom_flags(0x00200000 | if _directory { 0x02000000 } else { 0 });
-    }
     #[cfg(unix)]
     {
         use std::os::unix::fs::OpenOptionsExt;
@@ -120,13 +115,18 @@ pub(super) struct Scope {
 }
 impl Scope {
     pub fn new(path: &Path) -> Result<Self, String> {
+        #[cfg(not(windows))]
         let original = std::fs::symlink_metadata(path).map_err(|_| ERROR)?;
+        #[cfg(not(windows))]
         if !metadata_safe(&original) || !original.is_dir() {
             return Err(ERROR.into());
         }
         // Open the exact selected directory without following its final component.
         // The handle stays locked for the grant lifetime; derive its path from the
         // handle rather than resolving a path that could have changed meanwhile.
+        #[cfg(windows)]
+        let file = windows::root(path).map_err(|_| ERROR)?;
+        #[cfg(not(windows))]
         let file = options(true, false).open(path).map_err(|_| ERROR)?;
         verify(&file, true)?;
         #[cfg(windows)]

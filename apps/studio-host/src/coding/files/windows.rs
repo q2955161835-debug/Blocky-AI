@@ -9,7 +9,7 @@ use std::{
         fs::MetadataExt,
         io::{AsRawHandle, FromRawHandle},
     },
-    path::Path,
+    path::{Component, Path, PathBuf, Prefix},
 };
 use windows_sys::Win32::Storage::FileSystem::{
     FILE_DISPOSITION_INFO, FileDispositionInfo, FileFullDirectoryInfo,
@@ -103,6 +103,50 @@ fn component(name: &OsStr) -> io::Result<Vec<u16>> {
         ));
     }
     Ok(wide)
+}
+
+pub(super) fn root(path: &Path) -> io::Result<File> {
+    use std::fs::OpenOptions;
+    use std::os::windows::fs::OpenOptionsExt;
+    let invalid = || {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "Expected absolute directory path",
+        )
+    };
+    let mut components = path.components();
+    let Some(Component::Prefix(prefix)) = components.next() else {
+        return Err(invalid());
+    };
+    if !matches!(
+        prefix.kind(),
+        Prefix::Disk(_) | Prefix::VerbatimDisk(_) | Prefix::UNC(_, _) | Prefix::VerbatimUNC(_, _)
+    ) || !matches!(components.next(), Some(Component::RootDir))
+    {
+        return Err(invalid());
+    }
+    let mut anchor = PathBuf::from(prefix.as_os_str());
+    anchor.push("\\");
+    let anchor = OpenOptions::new()
+        .read(true)
+        .share_mode(3)
+        .custom_flags(0x02200000)
+        .open(anchor)?;
+    super::verify(&anchor, true)
+        .map_err(|_| io::Error::new(io::ErrorKind::PermissionDenied, "Unsafe path anchor"))?;
+    // Keep each opened ancestor pinned until the selected directory has been
+    // acquired. No later component can be resolved through a replaced path.
+    let mut held = vec![anchor];
+    for part in components {
+        let Component::Normal(name) = part else {
+            return Err(invalid());
+        };
+        let child = open(held.last().unwrap(), name, true, false, false)?;
+        super::verify(&child, true)
+            .map_err(|_| io::Error::new(io::ErrorKind::PermissionDenied, "Unsafe ancestor"))?;
+        held.push(child);
+    }
+    Ok(held.pop().unwrap())
 }
 
 pub(super) fn open(
@@ -343,7 +387,7 @@ mod tests {
         let root = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../../try/coding-agent-final-2026-10-02/handle-io-tests");
         std::fs::create_dir_all(&root).unwrap();
-        tempfile::tempdir_in(root).unwrap()
+        tempfile::tempdir_in(root.canonicalize().unwrap()).unwrap()
     }
     fn directory(path: &Path) -> File {
         OpenOptions::new()
@@ -408,10 +452,17 @@ mod tests {
         std::fs::create_dir(&alias).unwrap();
         std::fs::create_dir_all(outside.join("selected")).unwrap();
         std::fs::write(outside.join("selected/sentinel.txt"), b"outside sentinel").unwrap();
+        assert!(super::super::Scope::new(&outside.join("selected")).is_ok());
         junction(&alias, &outside);
-        assert_eq!(std::fs::read(alias.join("selected/sentinel.txt")).unwrap(), b"outside sentinel");
+        assert_eq!(
+            std::fs::read(alias.join("selected/sentinel.txt")).unwrap(),
+            b"outside sentinel"
+        );
         assert!(super::super::Scope::new(&alias.join("selected")).is_err());
-        assert_eq!(std::fs::read(outside.join("selected/sentinel.txt")).unwrap(), b"outside sentinel");
+        assert_eq!(
+            std::fs::read(outside.join("selected/sentinel.txt")).unwrap(),
+            b"outside sentinel"
+        );
     }
     #[test]
     fn relative_roundtrip_noclobber_and_drop() {
@@ -498,7 +549,10 @@ mod tests {
         std::fs::write(outside.join("outside-only.txt"), b"outside sentinel").unwrap();
         let held = directory(&inside);
         junction(&inside, &outside);
-        assert_eq!(std::fs::read(inside.join("outside-only.txt")).unwrap(), b"outside sentinel");
+        assert_eq!(
+            std::fs::read(inside.join("outside-only.txt")).unwrap(),
+            b"outside sentinel"
+        );
         assert!(open(&held, OsStr::new("outside-only.txt"), false, false, false).is_err());
         if let Ok(mut original) = open(&held, OsStr::new("safe.txt"), false, true, true) {
             original.write_all(b"original physical directory").unwrap();

@@ -30,7 +30,7 @@ Pi Agent 0.86.0最多12次模型请求，总300000ms；纯文本可以结束，�
 | blocky_cli | 用参数数组执行锁定CLI bundle，返回真实退出码和结构化输出 |
 | project_context | 当前隔离项目候选、模块与选区；实际诊断通过CLI compile |
 
-工具参数Schema位于builder-engine/src/coding-tool-schemas.json，Pi与Rust共同消费。文件上限1MiB UTF-8；拒绝路径穿越、链接/重解析点、硬链接、二进制、秘密文件、敏感内容与直接编辑.blocky。Windows目录授权打开用户实际选择路径的no-follow句柄并读取最终路径；目录句柄禁止共享删除，子项打开/创建/枚举/发布锚定实际父目录句柄，禁止按绝对路径重新遍历；即使已授权目录被原地设置重解析点，也不能访问另一目录。普通文件句柄禁止共享写入/删除，保留版本与硬链接校验。Windows句柄操作独立在coding/files/windows.rs，不为此新增依赖。
+工具参数Schema位于builder-engine/src/coding-tool-schemas.json，Pi与Rust共同消费。文件上限1MiB UTF-8；拒绝路径穿越、链接/重解析点、硬链接、二进制、秘密文件、敏感内容与直接编辑.blocky。Windows目录授权从绝对路径锚点逐组件no-follow打开，遍历期间保留祖先句柄，拒绝祖先junction与相对/父目录组件，再从最终句柄读取目录路径；目录句柄禁止共享删除，子项打开/创建/枚举/发布锚定实际父目录句柄，禁止按绝对路径重新遍历；即使已授权目录被原地设置重解析点，也不能访问另一目录。普通文件句柄禁止共享写入/删除，保留版本与硬链接校验。Windows句柄操作独立在coding/files/windows.rs，不为此新增依赖。
 
 原子文件发布先写入并sync私有临时文件，版本匹配后将原文件移到私有备份，再禁止覆盖地发布；失败恢复原件，恢复被外部名称占用时保留可恢复备份与真实失败回执。`CodingChange`含changeId/path/before/after/beforeDigest/afterDigest；撤回附可选revertsChangeId，原回执失效、逆向回执可继续按版本撤回。部分发布恢复的回执可选invalidatesChangeId，原回执标记失效而非已撤回；撤回失败同样读取Host真实journal。Host总回执最多512条/64MiB序列化JSON，写/撤回前预留最坏字符转义空间，满时只压缩已失效记录、保留仍可操作记录。coding_changes查询最多512条；单Agent结果changes仍限128。
 
