@@ -2,6 +2,7 @@
 import { afterEach, expect, it, vi } from "vitest";
 import {
   cleanup,
+  act,
   fireEvent,
   render,
   renderHook,
@@ -12,10 +13,12 @@ import type { CodingAgent } from "../../apps/studio-desktop/src/composition/useC
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
+import { modelResource } from "../fixtures/model-resource";
 
 afterEach(() => {
   cleanup();
   localStorage.clear();
+  vi.restoreAllMocks();
 });
 
 async function readyStudio() {
@@ -142,17 +145,42 @@ it("shows real loading and stopping state and disables new chat while busy", asy
   expect(screen.getByRole("status").textContent).toContain("正在停止");
 });
 
-it("requires a configured model and exposes real file changes with undo", async () => {
+it("opens model recovery without losing the draft and keeps file undo available", async () => {
   const studio=await readyStudio();studio.resources.map.clear();
   const builder=makeBuilder({changes:[{change:{changeId:"change-1",path:"src/main.ts",before:"old",after:"new",beforeDigest:"a".repeat(64),afterDigest:"b".repeat(64)},undone:false}],error:"BLK-CODING-CONFLICT"});
   panel(studio,builder);
-  expect(screen.getAllByRole("alert").some(node=>node.textContent?.includes("模型"))).toBe(true);
+  expect(screen.queryByRole("button",{name:"配置模型"})).toBeNull();
   fireEvent.change(screen.getByLabelText("构建需求"),{target:{value:"修改代码"}});
-  expect((screen.getByRole("button",{name:"发送"}) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole("button",{name:"发送"}));
+  expect(screen.getByRole("button",{name:"配置模型"})).toBeTruthy();
+  expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value).toBe("修改代码");
+  expect(builder.generate).not.toHaveBeenCalled();
+  fireEvent.keyDown(screen.getByRole("dialog",{name:"构建助手设置"}),{key:"Escape"});
   fireEvent.click(screen.getByRole("button",{name:"撤回 src/main.ts"}));
   expect(builder.undoChange).toHaveBeenCalledWith("change-1");
   expect(screen.getByText("src/main.ts")).toBeTruthy();
   expect(screen.queryByRole("checkbox",{name:"生成本地应用界面"})).toBeNull();
+});
+
+it("keeps folders behind add, returns keyboard focus, and offers recovery for text-only models", async () => {
+  const studio=await readyStudio();
+  studio.resources.map.get("test-model")!.definition.capabilities=["text"];
+  const builder=makeBuilder();
+  panel(studio,builder);
+  expect(screen.queryByText("你想构建什么？")).toBeNull();
+  expect(screen.queryByRole("button",{name:"选择工作文件夹"})).toBeNull();
+  const add=screen.getByRole("button",{name:"构建助手添加上下文"});
+  fireEvent.click(add);
+  fireEvent.click(screen.getByRole("button",{name:"选择工作文件夹"}));
+  expect(builder.pickWorkspace).toHaveBeenCalledOnce();
+  fireEvent.click(add);
+  fireEvent.keyDown(screen.getByRole("dialog",{name:"构建助手上下文"}),{key:"Escape"});
+  expect(document.activeElement).toBe(add);
+  fireEvent.change(screen.getByLabelText("构建需求"),{target:{value:"你好"}});
+  fireEvent.keyDown(screen.getByLabelText("构建需求"),{key:"Enter"});
+  expect(screen.getByRole("dialog",{name:"构建助手设置"}).textContent).toContain("工具调用");
+  expect(builder.generate).not.toHaveBeenCalled();
+  expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value).toBe("你好");
 });
 
 it("starts a new conversation when idle", async () => {
@@ -163,4 +191,34 @@ it("starts a new conversation when idle", async () => {
   panel(studio, builder);
   fireEvent.click(screen.getByRole("button", { name: "新对话" }));
   expect(builder.newChat).toHaveBeenCalledOnce();
+});
+
+it("repairs a saved text-only model, preserves its connection and draft, then sends with that same model", async () => {
+  const hook=renderHook(()=>useStudio());
+  await waitFor(()=>expect(hook.result.current.resources.ready && hook.result.current.settings.ready).toBe(true));
+  const provider={schemaVersion:"blocky.model-provider/v1",providerId:"shared",displayName:"息壤",adapter:"xirang",protocol:"openai-chat",revision:1,secretBindings:[{fieldId:"apiKey",secretRef:"saved-model-secret"}]};
+  const model={...modelResource(),definition:{connectionRef:"shared",modelId:"deepseek-v4-pro",timeoutMs:60000,capabilities:["text"],parameters:{maxOutputTokens:512}},secretBindings:[]};
+  await act(()=>hook.result.current.resources.upsertProvider(provider));
+  await act(()=>hook.result.current.resources.upsert(model));
+  act(()=>hook.result.current.settings.change("app","models.defaultResourceId","saved-model"));
+  await act(()=>hook.result.current.settings.flush());
+  const builder=makeBuilder();
+  const view=panel(hook.result.current,builder);
+  fireEvent.change(screen.getByLabelText("构建需求"),{target:{value:"你好，检查当前项目"}});
+  fireEvent.click(screen.getByRole("button",{name:"发送"}));
+  expect(builder.generate).not.toHaveBeenCalled();
+  const storage=vi.spyOn(Storage.prototype,"setItem").mockImplementation(()=>{throw Error("write failed");});
+  fireEvent.click(screen.getByRole("button",{name:"启用工具调用"}));
+  await waitFor(()=>expect(screen.getByRole("alert").textContent).toContain("未能保存"));
+  expect(hook.result.current.resources.registry.resources[0].definition.capabilities).toEqual(["text"]);
+  expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value).toBe("你好，检查当前项目");
+  storage.mockRestore();
+  fireEvent.click(screen.getByRole("button",{name:"启用工具调用"}));
+  await waitFor(()=>expect(hook.result.current.resources.registry.resources[0].definition.capabilities).toEqual(["text","tools"]));
+  expect(hook.result.current.resources.registry.resources[0]).toMatchObject({...model,definition:{...model.definition,capabilities:["text","tools"]}});
+  expect(hook.result.current.resources.registry.providers).toEqual([provider]);
+  view.rerender(<BuilderPanel studio={hook.result.current} builder={builder} configureModel={()=>{}} />);
+  fireEvent.keyDown(screen.getByRole("dialog",{name:"构建助手设置"}),{key:"Escape"});
+  fireEvent.keyDown(screen.getByLabelText("构建需求"),{key:"Enter"});
+  expect(builder.generate).toHaveBeenCalledWith({prompt:"你好，检查当前项目",resourceId:"saved-model"});
 });

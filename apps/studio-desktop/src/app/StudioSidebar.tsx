@@ -7,6 +7,7 @@ import { RunPanel } from "./RunPanel";
 import { ProjectMap } from "./ProjectMap";
 import { EditorTools } from "./EditorTools";
 import { Inspector } from "./Inspector";
+import type { ChatMenuControl } from "./ChatControls";
 
 export function StudioSidebar({
   studio: s,
@@ -15,6 +16,7 @@ export function StudioSidebar({
   execute,
   enabled,
   onTraceContext,
+  chatMenu,
 }: {
   studio: Studio;
   builder: CodingAgent;
@@ -22,15 +24,18 @@ export function StudioSidebar({
   execute(id: string): void;
   enabled(id: string): boolean;
   onTraceContext(x: number, y: number, source: SourceRef): void;
+  chatMenu?: ChatMenuControl;
 }) {
   const views = [
     ["agent", "Blocky Agent"],
     ["builder", "构建助手"],
   ] as const;
-  const select = (rightView: "agent" | "builder") =>
+  const select = (rightView: "agent" | "builder") => {
+    chatMenu?.set(null);
     s.setSession((current) => ({ ...current, rightView }));
+  };
   return (
-    <aside className="right-sidebar" aria-label="右侧面板">
+    <aside className="right-sidebar chat-sidebar" aria-label="右侧面板">
       <div className="sidebar-tabs" role="tablist" aria-label="右侧工具">
         {views.map(([id, label]) => (
           <button
@@ -73,20 +78,18 @@ export function StudioSidebar({
         hidden={s.session.rightView !== "agent"}
         className="sidebar-content"
       >
-        <StarterGuide
-          studio={s}
-          resources={() => execute("settings.resources")}
-        />
         <RunPanel
+          key={s.snapshot.project.manifest.projectId}
           studio={s}
           execute={execute}
           onTraceContext={onTraceContext}
-        />
-        <ProjectMap studio={s} />
-        <EditorTools studio={s} execute={execute} enabled={enabled} />
-        <Inspector
-          studio={s}
-          configureResource={() => execute("settings.resources")}
+          menu={chatMenu && { ...chatMenu, value: s.session.rightView === "agent" ? chatMenu.value : null }}
+          context={<StarterGuide studio={s} resources={() => execute("settings.resources")} />}
+          settings={<>
+            <ProjectMap studio={s} />
+            <EditorTools studio={s} execute={execute} enabled={enabled} />
+            <Inspector studio={s} configureResource={() => execute("settings.resources")} />
+          </>}
         />
       </div>
       <div
@@ -100,6 +103,7 @@ export function StudioSidebar({
           key={s.snapshot.project.manifest.projectId}
           studio={s}
           builder={builder}
+          menu={chatMenu && { ...chatMenu, value: s.session.rightView === "builder" ? chatMenu.value : null }}
           promptSuggestion={promptSuggestion}
           configureModel={() => execute("settings.resources")}
         />

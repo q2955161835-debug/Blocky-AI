@@ -85,7 +85,7 @@ export function App() {
       construction.reject();
     }
   }, [lifecycle.requested]);
-  const show = (kind: Exclude<NonNullable<Popup>["kind"], "menu" | "context">) => {
+  const show = (kind: Exclude<NonNullable<Popup>["kind"], "menu" | "context" | "chat">) => {
     setQuery("");
     setPopup({ kind });
   };
@@ -384,6 +384,7 @@ export function App() {
             />
             }
             right={<StudioSidebar studio={s} builder={builder} promptSuggestion={builderPrompt}
+              chatMenu={{ value: !s.confirmation && popup?.kind === "chat" ? popup.menu : null, set: menu => setPopup(menu ? {kind:"chat",menu} : null) }}
               execute={execute} enabled={enabled}
               onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })}
               />}
@@ -602,6 +603,7 @@ export function App() {
         )}
       {popup &&
         popup.kind !== "menu" &&
+        popup.kind !== "chat" &&
         popup.kind !== "rpa" &&
         ![
           "blueprint-save",

@@ -4,6 +4,13 @@ import { isUserOnlineModel } from "@blocky/resource-registry";
 import type { CodingTool, CodingMessage } from "@blocky/builder-protocol";
 import type { Studio } from "../composition/useStudio";
 import type { CodingAgent } from "../composition/useCodingAgent";
+import {
+  ChatMenuButton,
+  ChatPopover,
+  useChatMenu,
+  type ChatMenuControl,
+} from "./ChatControls";
+import { BuilderModelSettings } from "./BuilderModelSettings";
 import "./BuilderChat.css";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
@@ -49,12 +56,15 @@ export function BuilderPanel({
   builder,
   configureModel,
   promptSuggestion,
+  menu: menuControl,
 }: {
+  menu?: ChatMenuControl;
   studio: Studio;
   builder: CodingAgent;
   configureModel(): void;
   promptSuggestion?: { nonce: number; text: string };
 }) {
+  const menu = useChatMenu(menuControl);
   const [prompt, setPrompt] = useState(""),
     [resourceOverride, setResourceId] = useState<string>();
   const [reviewing, setReviewing] = useState(false),
@@ -71,9 +81,6 @@ export function BuilderPanel({
   const availableModel = models.some(
     (model) => model.resourceId === resourceId && supportsTools(model),
   );
-  const unsupportedModel = models.some(
-    (model) => model.resourceId === resourceId && !supportsTools(model),
-  );
   const ready =
     builder.ready && studio.settings.ready && studio.resources.ready;
   const disabled =
@@ -81,7 +88,6 @@ export function BuilderPanel({
   const canSend =
     ready &&
     !disabled &&
-    availableModel &&
     !!prompt.trim() &&
     !!studio.snapshot.project.workspaces[studio.session.active];
   const thread = useRef<HTMLDivElement>(null);
@@ -98,6 +104,11 @@ export function BuilderPanel({
   }, [promptSuggestion?.nonce]);
   const submit = () => {
     if (!canSend) return;
+    if (!availableModel) {
+      menu.set("settings");
+      return;
+    }
+    menu.set(null);
     void builder.generate({ prompt, resourceId });
     setPrompt("");
   };
@@ -115,26 +126,28 @@ export function BuilderPanel({
   const lastTool = [...builder.events].reverse().find((event) => event.tool);
   return (
     <section
-      className="builder-panel builder-chat-panel"
+      className="builder-panel builder-chat-panel chat-panel"
       aria-label="Blocky 构建助手"
     >
-      <header className="builder-chat-header">
-        <div>
-          <strong>构建助手</strong>
-          <span>编辑代码 · 构建项目</span>
-        </div>
+      <div className="chat-panel-header">
         <button
+          className="chat-icon"
           type="button"
           aria-label="新对话"
+          title="新对话"
           disabled={disabled}
           onClick={() => {
             builder.newChat();
             setPrompt("");
+            menu.set(null);
           }}
         >
-          新对话
+          ＋
         </button>
-      </header>
+        <ChatMenuButton menu={menu} kind="settings" label="构建助手设置">
+          ⚙
+        </ChatMenuButton>
+      </div>
       <div
         className="builder-chat-thread"
         aria-label="构建助手聊天记录"
@@ -144,29 +157,6 @@ export function BuilderPanel({
           <p className="builder-chat-empty" role="status">
             正在恢复对话记录…
           </p>
-        ) : builder.messages.length === 0 ? (
-          <div className="builder-chat-welcome">
-            <span className="coding-welcome-symbol" aria-hidden="true">
-              ✦
-            </span>
-            <strong>你想构建什么？</strong>
-            <p>描述目标，或选择文件夹，让助手读取和修改代码。</p>
-            <div className="coding-suggestions">
-              {[
-                "解释当前项目",
-                "检查并修复项目问题",
-                "为当前项目创建应用界面",
-              ].map((text) => (
-                <button
-                  type="button"
-                  key={text}
-                  onClick={() => setPrompt(text)}
-                >
-                  {text}
-                </button>
-              ))}
-            </div>
-          </div>
         ) : (
           <ol
             className="builder-chat-messages"
@@ -335,107 +325,102 @@ export function BuilderPanel({
           </article>
         )}
       </div>
-      {studio.settings.ready && studio.resources.ready && !availableModel && (
-        <div role="alert" className="coding-model-guide">
-          <span>
-            {unsupportedModel
-              ? "所选模型未配置工具调用能力，请配置或选择其他模型。"
-              : resourceId
-                ? "默认模型不可用，请重新选择。"
-                : "配置模型后即可开始对话。"}
-          </span>
-          <button type="button" onClick={configureModel}>
-            配置模型
-          </button>
-        </div>
-      )}
+      <ChatPopover menu={menu} kind="add" label="构建助手上下文">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            menu.set(null);
+            void builder.pickWorkspace();
+          }}
+        >
+          选择工作文件夹
+        </button>
+        {builder.workspace && (
+          <p>工作文件夹：{builder.workspace.displayName}</p>
+        )}
+        <p>当前项目：{studio.snapshot.project.manifest.displayName}</p>
+        {studio.selectedRoots.length > 0 && (
+          <p>{studio.selectedRoots.length} 个所选积木</p>
+        )}
+      </ChatPopover>
+      <ChatPopover menu={menu} kind="settings" label="构建助手设置">
+        <BuilderModelSettings
+          studio={studio}
+          resourceId={resourceId}
+          disabled={disabled}
+          select={setResourceId}
+          configure={() => {
+            menu.set(null);
+            configureModel();
+          }}
+        />
+      </ChatPopover>
       <form
-        className="builder-chat-composer"
+        className="builder-chat-composer chat-composer"
         onSubmit={(event) => {
           event.preventDefault();
           submit();
         }}
       >
-        <div className="coding-context">
-          <span title={studio.snapshot.project.manifest.displayName}>
-            ◈ {studio.snapshot.project.manifest.displayName}
-          </span>
-          {studio.selectedRoots.length > 0 && (
-            <span>{studio.selectedRoots.length} 个所选积木</span>
-          )}
-        </div>
-        <label
-          className="builder-chat-prompt-label"
-          htmlFor="builder-chat-prompt"
-        >
-          需求
-        </label>
         <textarea
           id="builder-chat-prompt"
           aria-label="构建需求"
-          rows={3}
+          rows={2}
           maxLength={16000}
           value={prompt}
           disabled={disabled}
           onChange={(event) => setPrompt(event.target.value)}
           onKeyDown={keyDown}
-          placeholder="描述任务，助手会读取、编辑并验证…"
+          placeholder="描述要构建的内容"
+          title="Enter 发送 · Shift+Enter 换行"
         />
-        <div className="coding-composer-context">
-          <button
-            type="button"
-            className="coding-workspace-button"
-            disabled={disabled}
-            onClick={() => void builder.pickWorkspace()}
-            title={
-              builder.workspace?.displayName ?? "选择允许助手读取和编辑的文件夹"
-            }
+        <div className="chat-composer-toolbar">
+          <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
+            ＋
+          </ChatMenuButton>
+          <ChatMenuButton
+            menu={menu}
+            kind="settings"
+            label="选择构建模型"
+            className="chat-model-chip"
           >
-            {builder.workspace
-              ? `▱ ${builder.workspace.displayName}`
-              : "＋ 工作文件夹"}
-          </button>
-          <select
-            aria-label="构建模型资源"
-            value={resourceId}
-            disabled={disabled}
-            onChange={(event) => setResourceId(event.target.value)}
-          >
-            <option value="">选择模型</option>
-            {resourceId &&
-              !models.some((model) => model.resourceId === resourceId) && (
-                <option value={resourceId} disabled>
-                  默认模型不可用
-                </option>
-              )}
-            {models.map((model) => (
-              <option
-                key={model.resourceId}
-                value={model.resourceId}
-                disabled={!supportsTools(model)}
-              >
-                {model.displayName}
-                {supportsTools(model) ? "" : "（未配置工具调用）"}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="builder-chat-composer-footer">
-          <span>Enter 发送 · Shift+Enter 换行</span>
-          <div className="builder-chat-composer-actions">
-            {builder.busy && (
-              <button
-                type="button"
-                onClick={builder.stop}
-                disabled={builder.stopping}
-              >
-                {builder.stopping ? "正在停止…" : "停止"}
-              </button>
-            )}
-            <button type="submit" aria-label="发送" disabled={!canSend}>
-              发送 ↑
+            <span className="chat-model-name">{models.find((model) => model.resourceId === resourceId)
+              ?.displayName ?? "选择模型"}</span>
+            <span aria-hidden="true">⌄</span>
+          </ChatMenuButton>
+          {builder.workspace && (
+            <span
+              className="chat-context-marker"
+              title={builder.workspace.displayName}
+              aria-label={`工作文件夹：${builder.workspace.displayName}`}
+            >
+              ▱
+            </span>
+          )}
+          <span className="chat-toolbar-spacer" />
+          {builder.busy ? (
+            <button
+              className="chat-icon"
+              type="button"
+              aria-label={builder.stopping ? "正在停止" : "停止"}
+              title="停止"
+              disabled={builder.stopping}
+              onClick={builder.stop}
+            >
+              ■
             </button>
-          </div>
+          ) : (
+            <button
+              className="chat-send"
+              type="submit"
+              aria-label="发送"
+              title="发送"
+              disabled={!canSend}
+            >
+              ↑
+            </button>
+          )}
         </div>
       </form>
     </section>

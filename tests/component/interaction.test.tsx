@@ -27,6 +27,22 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
 });
+it("sends runtime input once on Enter, preserving composition and multiline editing", async () => {
+  const hook=renderHook(()=>useStudio());
+  await waitFor(()=>expect(hook.result.current.canRun).toBe(true));
+  const run=vi.fn(async()=>{});
+  render(<RunPanel studio={{...hook.result.current,run}} execute={()=>{}}/>);
+  const input=screen.getByLabelText("向 Agent 提问");
+  fireEvent.keyDown(input,{key:"Enter",shiftKey:true});
+  fireEvent.keyDown(input,{key:"Enter",isComposing:true});
+  fireEvent.keyDown(input,{key:"Enter",keyCode:229});
+  expect(run).not.toHaveBeenCalled();
+  fireEvent.keyDown(input,{key:"Enter"});
+  expect(run).toHaveBeenCalledOnce();
+  expect(screen.queryByRole("button",{name:"刷新任务"})).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:"Blocky Agent 设置"}));
+  expect(screen.getByRole("button",{name:"刷新任务"})).toBeTruthy();
+});
 it("selects the second module even when its entry block ID is unchanged", async () => {
   const project = createStarter();
   project.manifest.modules.push({
@@ -43,6 +59,7 @@ it("selects the second module even when its entry block ID is unchanged", async 
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
   );
   render(<RunPanel studio={hook.result.current} execute={() => {}} />);
+  fireEvent.click(screen.getByRole("button", {name:"Blocky Agent 设置"}));
   fireEvent.change(screen.getByLabelText("运行入口"), {
     target: { value: JSON.stringify(["teacher-agent", "on-question"]) },
   });
@@ -80,6 +97,7 @@ it("runs the selected InteractionManifest entry instead of always executing the 
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
   );
   render(<RunPanel studio={hook.result.current} execute={() => {}} />);
+  fireEvent.click(screen.getByRole("button", {name:"Blocky Agent 设置"}));
   fireEvent.change(screen.getByLabelText("运行入口"), {
     target: { value: JSON.stringify(["research-agent", "on-question-second"]) },
   });

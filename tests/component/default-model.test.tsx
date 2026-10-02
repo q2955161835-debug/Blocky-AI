@@ -30,13 +30,16 @@ it("reopens the coding assistant with the persisted model and no simulated mode"
   hook = renderHook(() => useStudio());
   await waitFor(() => expect(hook.result.current.settings.ready && hook.result.current.resources.ready).toBe(true));
   const builder = renderHook(() => useCodingAgent(hook.result.current));
+  await waitFor(() => expect(builder.result.current.ready).toBe(true));
   const props = { studio: hook.result.current, builder: builder.result.current, configureModel() {} };
   const dialog = render(<BuilderPanel {...props} />);
+  fireEvent.click(screen.getByRole("button", { name: "构建助手设置" }));
   expect(screen.queryByLabelText("构建模型模式")).toBeNull();
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
 
   dialog.unmount();
   render(<BuilderPanel {...props} />);
+  fireEvent.click(screen.getByRole("button", { name: "构建助手设置" }));
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
 });
 
@@ -60,10 +63,13 @@ it("shows a missing default and prevents an implicit switch to another online mo
   await act(() => hook.result.current.resources.remove("saved-model"));
   await act(() => hook.result.current.resources.flush());
   const builder = renderHook(() => useCodingAgent(hook.result.current));
+  await waitFor(() => expect(builder.result.current.ready).toBe(true));
   render(<BuilderPanel studio={hook.result.current} builder={builder.result.current} configureModel={() => {}} />);
   fireEvent.change(screen.getByLabelText("构建需求"), { target: { value: "Explain the selected blocks" } });
-  expect(screen.getByRole("alert").textContent).toContain("默认模型不可用");
-  expect((screen.getByRole("button", { name: "发送" }) as HTMLButtonElement).disabled).toBe(true);
+  await waitFor(() => expect((screen.getByRole("button", { name: "发送" }) as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole("button", { name: "发送" }));
+  expect(screen.getByRole("dialog", {name:"构建助手设置"}).textContent).toContain("默认模型不可用");
+  expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value).toBe("Explain the selected blocks");
 });
 
 it("offers configured user models in settings and resets the preference to local defaults", async () => {

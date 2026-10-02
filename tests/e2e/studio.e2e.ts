@@ -286,10 +286,11 @@ describe("Blocky native editor", () => {
     await prompt.press("Shift+Enter");
     await prompt.pressSequentially("第二行");
     expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
-    expect(await builder.getByRole("button", { name: "发送", exact: true }).isDisabled()).toBe(true);
+    expect(await builder.getByRole("button", { name: "发送", exact: true }).isEnabled()).toBe(true);
     await prompt.press("Enter");
     expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
-    expect(await builder.getByRole("log", { name: "对话消息" }).count()).toBe(0);
+    expect(await builder.getByRole("log", { name: "对话消息" }).locator("li").count()).toBe(0);
+    expect(await builder.getByRole("dialog", { name: "构建助手设置", exact: true }).isVisible()).toBe(true);
     await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
     expect(await page.getByLabel("向 Agent 提问", { exact: true }).inputValue()).toBe("运行对话草稿🌱");
     await page.getByRole("tab", { name: "构建助手", exact: true }).click();
@@ -543,7 +544,7 @@ describe("Blocky native editor", () => {
     expect(stored).toEqual({ same: true, minimumReaderVersion: "0.4.0" });
     await page
       .locator(".run-panel")
-      .getByRole("button", { name: "▶ 运行", exact: true })
+      .getByRole("button", { name: "运行", exact: true })
       .click();
     await page.waitForFunction(() =>
       document.querySelector(".answer pre")?.textContent?.includes("true"),
@@ -554,7 +555,7 @@ describe("Blocky native editor", () => {
     await page.getByLabel("向 Agent 提问").fill("no");
     await page
       .locator(".run-panel")
-      .getByRole("button", { name: "▶ 运行", exact: true })
+      .getByRole("button", { name: "运行", exact: true })
       .click();
     await page.waitForFunction(() =>
       document.querySelector(".answer pre")?.textContent?.includes("false"),
@@ -583,7 +584,7 @@ describe("Blocky native editor", () => {
       await page.getByLabel("向 Agent 提问").fill(input);
       const run = page
         .locator(".run-panel")
-        .getByRole("button", { name: "▶ 运行", exact: true });
+        .getByRole("button", { name: "运行", exact: true });
       await run.click();
       await page.waitForFunction(
         (expected) =>
@@ -594,7 +595,7 @@ describe("Blocky native editor", () => {
       await page.waitForFunction(
         () =>
           !document.querySelector<HTMLButtonElement>(
-            ".run-actions button.primary",
+            ".run-panel button.chat-send",
           )?.disabled,
       );
     }
@@ -640,7 +641,7 @@ describe("Blocky native editor", () => {
     const state = await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadParallelProject());
     expect(state.canRun).toBe(true);
     expect(await page.locator(".blocklyDraggable").filter({ hasText: "分支一" }).count()).toBeGreaterThan(0);
-    await page.locator(".run-panel").getByRole("button", { name: "▶ 运行", exact: true }).click();
+    await page.locator(".run-panel").getByRole("button", { name: "运行", exact: true }).click();
     await page.waitForFunction(() => document.querySelector(".answer pre")?.textContent?.includes('"right"'));
     expect(JSON.parse(await page.locator(".answer pre").innerText())).toEqual(["left", "right"]);
   });
@@ -651,7 +652,7 @@ describe("Blocky native editor", () => {
     );
     await page
       .locator(".run-panel")
-      .getByRole("button", { name: "▶ 运行", exact: true })
+      .getByRole("button", { name: "运行", exact: true })
       .click();
     await page.locator(".answer").waitFor();
     await page.waitForFunction(async () => {

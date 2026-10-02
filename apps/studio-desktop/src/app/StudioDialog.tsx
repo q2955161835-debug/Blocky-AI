@@ -25,6 +25,7 @@ export type Popup =
     }
   | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string; blockId?: string; source?: SourceRef }
   | { kind: "menu"; category: MenuCategory }
+  | { kind: "chat"; menu: "add" | "settings" }
   | null;
 export function StudioDialog({
   studio: s,
@@ -38,7 +39,7 @@ export function StudioDialog({
   add,
 }: {
   studio: Studio;
-  popup: Exclude<NonNullable<Popup>, { kind: "menu" }>;
+  popup: Exclude<NonNullable<Popup>, { kind: "menu" | "chat" }>;
   setPopup: Dispatch<SetStateAction<Popup>>;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
