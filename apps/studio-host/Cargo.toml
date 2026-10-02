@@ -26,7 +26,7 @@ png = "=0.18.1"
 jpeg-decoder = { version = "=0.3.2", default-features = false }
 base64 = "=0.22.1"
 reqwest = { version = "=0.13.5", default-features = false, features = ["blocking", "rustls"] }
-tokio = { version = "=1.53.1", features = ["rt", "time", "macros"] }
+tokio = { version = "=1.53.1", features = ["rt", "rt-multi-thread", "time", "macros"] }
 fastembed = { version = "=5.17.4", default-features = false, features = ["ort-download-binaries-rustls-tls"] }
 tokenizers = { version = "=0.22.2", default-features = false, features = ["onig"] }
 tauri-plugin-single-instance = "=2.4.4"

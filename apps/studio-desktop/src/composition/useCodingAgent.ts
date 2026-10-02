@@ -271,6 +271,12 @@ export function useCodingAgent(studio: Studio) {
           reversed.revertsChangeId !== changeId)
       )
         throw Error("BLK-CODING-CHANGE");
+      remember(
+        reversed,
+        receipt.workspaceId,
+        receipt.projectId,
+        receipt.requestId,
+      );
       receipt.undone = true;
       if (mounted.current) refresh((n) => n + 1);
     });

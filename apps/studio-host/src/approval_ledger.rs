@@ -12,16 +12,58 @@ const DENIED: &str = "BLK-PERM-001";
 const IO: &str = "BLK-APPROVAL-IO";
 const MAX_BYTES: usize = 8 * 1024 * 1024;
 const MAX_ENTRIES: usize = 32768;
-fn acquire(lock:&std::fs::File)->Result<(),String>{
-    let deadline=std::time::Instant::now()+std::time::Duration::from_secs(5);
-    loop {match lock.try_lock(){
-        Ok(())=>return Ok(()),
-        Err(std::fs::TryLockError::WouldBlock)=>{
-            if std::time::Instant::now()>=deadline{return Err("BLK-APPROVAL-BUSY".into());}
-            std::thread::sleep(std::time::Duration::from_millis(5));
+fn io_error(stage: &str, error: std::io::Error) -> String {
+    #[cfg(test)]
+    eprintln!(
+        "approval-ledger stage={stage} raw_os_error={:?}",
+        error.raw_os_error()
+    );
+    #[cfg(not(test))]
+    let _ = (stage, error);
+    IO.into()
+}
+fn publish(temp: tempfile::NamedTempFile, path: &Path) -> Result<(), String> {
+    #[cfg(windows)]
+    {
+        use std::os::windows::ffi::OsStrExt;
+        use windows_sys::Win32::Storage::FileSystem::{FILE_ATTRIBUTE_NORMAL, SetFileAttributesW};
+        let source: Vec<u16> = temp
+            .path()
+            .as_os_str()
+            .encode_wide()
+            .chain(Some(0))
+            .collect();
+        // Preserve tempfile's durability rule: clear TEMPORARY before publishing.
+        if unsafe { SetFileAttributesW(source.as_ptr(), FILE_ATTRIBUTE_NORMAL) } == 0 {
+            return Err(io_error("temp-attributes", std::io::Error::last_os_error()));
         }
-        Err(std::fs::TryLockError::Error(_))=>return Err(IO.into()),
-    }}
+        // std uses Windows POSIX rename semantics for open destination readers.
+        // The lock still covers the atomic replace; old snapshots remain old.
+        std::fs::rename(temp.path(), path).map_err(|e| io_error("temp-rename", e))?;
+        // NamedTempFile cleans its former (now absent) name, never the target.
+        Ok(())
+    }
+    #[cfg(not(windows))]
+    temp.persist(path)
+        .map(|_| ())
+        .map_err(|e| io_error("temp-persist", e.error))
+}
+fn acquire(lock: &std::fs::File) -> Result<(), String> {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    loop {
+        match lock.try_lock() {
+            Ok(()) => return Ok(()),
+            Err(std::fs::TryLockError::WouldBlock) => {
+                if std::time::Instant::now() >= deadline {
+                    return Err("BLK-APPROVAL-BUSY".into());
+                }
+                std::thread::sleep(std::time::Duration::from_millis(5));
+            }
+            Err(std::fs::TryLockError::Error(error)) => {
+                return Err(io_error("lock-acquire", error));
+            }
+        }
+    }
 }
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -59,7 +101,15 @@ pub fn consume(root: &Path, identity: &str, digest: &str) -> Result<(), String> 
     transact_at(root, identity, digest, true, None).map(|_| ())
 }
 #[cfg(test)]
-fn transact(root:&Path,identity:&str,digest:&str,consume:bool,time:u64)->Result<u64,String>{transact_at(root,identity,digest,consume,Some(time))}
+fn transact(
+    root: &Path,
+    identity: &str,
+    digest: &str,
+    consume: bool,
+    time: u64,
+) -> Result<u64, String> {
+    transact_at(root, identity, digest, consume, Some(time))
+}
 fn transact_at(
     root: &Path,
     identity: &str,
@@ -70,26 +120,29 @@ fn transact_at(
     if !valid_hash(digest) || identity.is_empty() || identity.len() > 512 {
         return Err(DENIED.into());
     }
-    std::fs::create_dir_all(root).map_err(|_| IO)?;
+    std::fs::create_dir_all(root).map_err(|e| io_error("create-root", e))?;
     let lock = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
         .truncate(false)
         .open(root.join("ledger.lock"))
-        .map_err(|_| IO)?;
+        .map_err(|e| io_error("lock-open", e))?;
     // Parallel model branches share this profile ledger. Serialize only this
     // short disk transaction, never the approval prompt or provider request.
     acquire(&lock)?;
-    let now=match provided_now{Some(time)=>time,None=>now()?};
+    let now = match provided_now {
+        Some(time) => time,
+        None => now()?,
+    };
     let path = root.join("ledger.json");
     let mut ledger = if path.exists() {
         let mut bytes = Vec::new();
         std::fs::File::open(&path)
-            .map_err(|_| IO)?
+            .map_err(|e| io_error("ledger-open", e))?
             .take(MAX_BYTES as u64 + 1)
             .read_to_end(&mut bytes)
-            .map_err(|_| IO)?;
+            .map_err(|e| io_error("ledger-read", e))?;
         if bytes.len() > MAX_BYTES {
             return Err("BLK-APPROVAL-LIMIT".into());
         }
@@ -150,11 +203,11 @@ fn transact_at(
     if bytes.len() > MAX_BYTES {
         return Err("BLK-APPROVAL-LIMIT".into());
     }
-    let mut temp = tempfile::NamedTempFile::new_in(root).map_err(|_| IO)?;
+    let mut temp = tempfile::NamedTempFile::new_in(root).map_err(|e| io_error("temp-create", e))?;
     temp.write_all(&bytes)
         .and_then(|_| temp.as_file().sync_all())
-        .map_err(|_| IO)?;
-    temp.persist(path).map_err(|_| IO)?;
+        .map_err(|e| io_error("temp-write-sync", e))?;
+    publish(temp, &path)?;
     Ok(expires)
 }
 #[cfg(test)]
@@ -193,18 +246,93 @@ mod tests {
         std::fs::write(root.path().join("ledger.json"), b"broken").unwrap();
         assert_eq!(issue(root.path(), "tool/p/r", &hash("x")).unwrap_err(), IO);
     }
+    #[cfg(windows)]
     #[test]
-    fn concurrent_approvals_serialize_without_replaying_consumed_entries(){
-        let root=fixture();
-        let lock=std::fs::OpenOptions::new().read(true).write(true).create(true).truncate(false).open(root.path().join("ledger.lock")).unwrap();
+    fn replacement_with_open_read_snapshot_keeps_consumption_single_use() {
+        let root = fixture();
+        let digest = hash("snapshot fixture");
+        issue(root.path(), "snapshot/request", &digest).unwrap();
+        let mut snapshot = std::fs::File::open(root.path().join("ledger.json")).unwrap();
+        consume(root.path(), "snapshot/request", &digest).unwrap();
+        let mut before = String::new();
+        snapshot.read_to_string(&mut before).unwrap();
+        assert!(
+            !crate::strict_json::parse(before.as_bytes()).unwrap()["entries"]
+                [hash("snapshot/request")]["consumed"]
+                .as_bool()
+                .unwrap()
+        );
+        let current = std::fs::read(root.path().join("ledger.json")).unwrap();
+        assert!(crate::strict_json::parse(&current).unwrap()["entries"][hash("snapshot/request")]["consumed"].as_bool().unwrap());
+        assert_eq!(
+            consume(root.path(), "snapshot/request", &digest).unwrap_err(),
+            DENIED
+        );
+        assert_eq!(
+            issue(root.path(), "snapshot/request", &digest).unwrap_err(),
+            DENIED
+        );
+    }
+    #[cfg(windows)]
+    #[test]
+    fn failed_replace_preserves_pending_approval_and_cleans_temporary_file() {
+        use std::os::windows::fs::OpenOptionsExt;
+        let root = fixture();
+        let digest = hash("locked destination fixture");
+        issue(root.path(), "locked/request", &digest).unwrap();
+        let before = std::fs::read(root.path().join("ledger.json")).unwrap();
+        let reader = std::fs::OpenOptions::new()
+            .read(true)
+            .share_mode(1)
+            .open(root.path().join("ledger.json"))
+            .unwrap();
+        assert_eq!(
+            consume(root.path(), "locked/request", &digest).unwrap_err(),
+            IO
+        );
+        assert_eq!(
+            std::fs::read(root.path().join("ledger.json")).unwrap(),
+            before
+        );
+        assert_eq!(std::fs::read_dir(root.path()).unwrap().count(), 2);
+        drop(reader);
+        consume(root.path(), "locked/request", &digest).unwrap();
+        assert_eq!(
+            consume(root.path(), "locked/request", &digest).unwrap_err(),
+            DENIED
+        );
+    }
+    #[test]
+    fn concurrent_approvals_serialize_without_replaying_consumed_entries() {
+        let root = fixture();
+        let lock = std::fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(false)
+            .open(root.path().join("ledger.lock"))
+            .unwrap();
         lock.lock().unwrap();
-        let barrier=std::sync::Arc::new(std::sync::Barrier::new(9));
-        let children=(0..8).map(|index|{let path=root.path().to_owned();let barrier=barrier.clone();std::thread::spawn(move||{
-            let identity=format!("provider/project/request-{index}");let digest=hash(&identity);barrier.wait();
-            issue(&path,&identity,&digest).unwrap();consume(&path,&identity,&digest).unwrap();
-            assert_eq!(consume(&path,&identity,&digest).unwrap_err(),DENIED);
-        })}).collect::<Vec<_>>();
-        barrier.wait();std::thread::sleep(std::time::Duration::from_millis(30));lock.unlock().unwrap();
-        for child in children{child.join().unwrap();}
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(9));
+        let children = (0..8)
+            .map(|index| {
+                let path = root.path().to_owned();
+                let barrier = barrier.clone();
+                std::thread::spawn(move || {
+                    let identity = format!("provider/project/request-{index}");
+                    let digest = hash(&identity);
+                    barrier.wait();
+                    issue(&path, &identity, &digest).unwrap();
+                    consume(&path, &identity, &digest).unwrap();
+                    assert_eq!(consume(&path, &identity, &digest).unwrap_err(), DENIED);
+                })
+            })
+            .collect::<Vec<_>>();
+        barrier.wait();
+        std::thread::sleep(std::time::Duration::from_millis(30));
+        lock.unlock().unwrap();
+        for child in children {
+            child.join().unwrap();
+        }
     }
 }

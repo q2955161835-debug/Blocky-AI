@@ -245,7 +245,7 @@ it("applies a verified project candidate as one undoable edit and rejects stale 
   );
   expect(hook.result.current.error).toBe("BLK-PATCH-001");
 });
-it("recovers actual Host changes after a failed task and offers version checked undo", async () => {
+it("recovers Host changes after a failed task and keeps manual undo reversible", async () => {
   const s = studio();
   const change = {
     changeId: "change-1",
@@ -260,6 +260,8 @@ it("recovers actual Host changes after a failed task and offers version checked 
       return { workspaceId: "workspace-1", displayName: "source" };
     if (name === "coding_run") throw Error("BLK-CODING-TIMEOUT");
     if (name === "coding_changes") return [change];
+    if (name === "coding_undo" && args.changeId === "undo-1")
+      return { ...change, changeId: "redo-1", revertsChangeId: "undo-1" };
     if (name === "coding_undo")
       return {
         ...change,
@@ -287,6 +289,14 @@ it("recovers actual Host changes after a failed task and offers version checked 
   expect(
     native.mock.calls.find(([name]) => name === "coding_undo")?.[1],
   ).toEqual({ workspaceId: "workspace-1", changeId: "change-1" });
+  expect(hook.result.current.changes.find((item) => item.change.changeId === "undo-1"))
+    .toMatchObject({ undone: false, invalidated: false });
+  await act(() => hook.result.current.undoChange("undo-1"));
+  expect(hook.result.current.error).toBe("");
+  expect(hook.result.current.changes.map((item) => [item.change.changeId, item.undone]))
+    .toEqual([["change-1", true], ["undo-1", true], ["redo-1", false]]);
+  expect(native.mock.calls.filter(([name]) => name === "coding_undo").at(-1)?.[1])
+    .toEqual({ workspaceId: "workspace-1", changeId: "undo-1" });
 });
 
 it("shows an Agent undo receipt as the active inverse, marking the original withdrawn", async () => {

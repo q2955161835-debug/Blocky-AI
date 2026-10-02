@@ -3,6 +3,7 @@ use serde_json::Value;
 use std::{
     collections::HashSet,
     net::{IpAddr, SocketAddr, ToSocketAddrs},
+    sync::OnceLock,
     time::{Duration, Instant},
 };
 
@@ -81,6 +82,33 @@ fn public_fallback(
     let endpoint = reqwest::Url::parse("https://1.1.1.1/dns-query").map_err(|_| INVALID)?;
     query_public_resolver(host, port, endpoint, cancel)
 }
+struct PublicResolver {
+    runtime: tokio::runtime::Runtime,
+    client: reqwest::Client,
+}
+fn public_resolver() -> Result<&'static PublicResolver, String> {
+    static RESOLVER: OnceLock<Result<PublicResolver, String>> = OnceLock::new();
+    RESOLVER
+        .get_or_init(|| {
+            // Keep the reactor alive with the client so its pooled connections can
+            // serve subsequent turns. DNS answers themselves are never cached here.
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .map_err(|_| "BLK-NETWORK-TRANSPORT".to_owned())?;
+            let client = reqwest::Client::builder()
+                .no_proxy()
+                .redirect(reqwest::redirect::Policy::none())
+                .connect_timeout(Duration::from_secs(10))
+                .timeout(Duration::from_secs(15))
+                .build()
+                .map_err(|_| "BLK-NETWORK-TRANSPORT".to_owned())?;
+            Ok(PublicResolver { runtime, client })
+        })
+        .as_ref()
+        .map_err(Clone::clone)
+}
 fn query_public_resolver(
     host: &str,
     port: u16,
@@ -88,30 +116,18 @@ fn query_public_resolver(
     cancel: &dyn Fn() -> Result<(), String>,
 ) -> Result<Vec<SocketAddr>, String> {
     cancel()?;
-    let client = reqwest::Client::builder()
-        .no_proxy()
-        .redirect(reqwest::redirect::Policy::none())
-        // TLS setup plus a resolver response can exceed a local DNS lookup.
-        // Keep the whole exchange bounded; cancellation is polled every 20 ms.
-        .connect_timeout(Duration::from_secs(10))
-        .timeout(Duration::from_secs(15))
-        .build()
-        .map_err(|_| "BLK-NETWORK-TRANSPORT")?;
+    let resolver = public_resolver()?;
     endpoint
         .query_pairs_mut()
         .append_pair("name", host)
         .append_pair("type", "A");
-    let runtime = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .map_err(|_| "BLK-NETWORK-TRANSPORT")?;
-    runtime.block_on(async {
+    resolver.runtime.block_on(async {
         let interrupted=async {loop {if let Err(error)=cancel(){break error;}tokio::time::sleep(Duration::from_millis(20)).await;}};
         tokio::select! {
             biased;
             error=interrupted=>Err(error),
             result=async {
-                let mut response=client.get(endpoint).header("Accept","application/dns-json").send().await.map_err(|_|"BLK-NETWORK-TRANSPORT")?;
+                let mut response=resolver.client.get(endpoint).header("Accept","application/dns-json").send().await.map_err(|_|"BLK-NETWORK-TRANSPORT")?;
                 if !response.status().is_success(){return Err("BLK-NETWORK-TRANSPORT".into());}
                 let mut bytes=Vec::new();
                 while let Some(chunk)=response.chunk().await.map_err(|_|"BLK-NETWORK-TRANSPORT")? {
@@ -158,6 +174,43 @@ pub fn resolve(
 mod tests {
     use super::*;
     use serde_json::json;
+    #[test]
+    fn consecutive_resolver_queries_reuse_one_connection() {
+        use std::io::{Read, Write};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let url = reqwest::Url::parse(&format!(
+            "http://{}/dns-query",
+            listener.local_addr().unwrap()
+        ))
+        .unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(3)))
+                .unwrap();
+            for _ in 0..2 {
+                let mut request = [0u8; 4096];
+                let count = stream.read(&mut request).unwrap();
+                assert!(
+                    count > 0,
+                    "Resolver closed a reusable connection between queries"
+                );
+                let body = r#"{"Status":0,"Question":[{"name":"example.com.","type":1}],"Answer":[{"name":"example.com.","type":1,"data":"93.184.215.14"}]}"#;
+                write!(
+                    stream,
+                    "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: keep-alive\r\n\r\n{body}",
+                    body.len()
+                )
+                .unwrap();
+            }
+        });
+        let first = query_public_resolver("example.com", 443, url.clone(), &|| Ok(()));
+        let second = query_public_resolver("example.com", 443, url, &|| Ok(()));
+        let served = server.join();
+        assert!(served.is_ok());
+        assert!(first.is_ok());
+        assert!(second.is_ok());
+    }
     fn slow_resolver() -> (reqwest::Url, std::thread::JoinHandle<()>) {
         use std::io::{Read, Write};
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
