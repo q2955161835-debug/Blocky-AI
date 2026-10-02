@@ -1,20 +1,17 @@
 import type { ReactNode } from "react";
 import type { Studio } from "../composition/useStudio";
-import { interactionKey, type SourceRef } from "@blocky/language-schema";
+import { interactionKey } from "@blocky/language-schema";
 import { RunModelChoice } from "./RunModelChoice";
 import { RunBudgetSummary } from "./RunBudgetSummary";
-import { TracePanel } from "./TracePanel";
 import { WorkflowTasks } from "./WorkflowTasks";
 import { findBlock } from "@blocky/project-model";
 export function RunSettings({
   studio: s,
   execute,
-  onTraceContext,
   children,
 }: {
   studio: Studio;
   execute(id: string): void;
-  onTraceContext?(x: number, y: number, source: SourceRef): void;
   children?: ReactNode;
 }) {
   const entries = s.compiled?.interaction.entries ?? [];
@@ -71,7 +68,6 @@ export function RunSettings({
           </button>
         )}
       </div>
-      <TracePanel studio={s} onContext={onTraceContext} />
       <WorkflowTasks
         key={s.snapshot.project.manifest.projectId}
         projectId={s.snapshot.project.manifest.projectId}

@@ -145,6 +145,31 @@ it("shows real loading and stopping state and disables new chat while busy", asy
   expect(screen.getByRole("status").textContent).toContain("正在停止");
 });
 
+it("separates tool calls from dialogue and replaces a running call with its final state", async () => {
+  const studio = await readyStudio();
+  const base = { schemaVersion: "blocky.coding-event/v1", requestId: "request-test", projectId: studio.snapshot.project.manifest.projectId };
+  const builder = makeBuilder({
+    messages: [{ id: "a1", role: "assistant", text: "我会检查文件。" }],
+    busy: true,
+    events: [
+      { ...base, sequence: 1, kind: "tool.started", tool: "workspace_read", callId: "call-1" },
+      { ...base, sequence: 2, kind: "tool.completed", tool: "workspace_read", callId: "call-1" },
+      { ...base, sequence: 3, kind: "tool.failed", tool: "workspace_write", callId: "call-2", code: "BLK-CODING-CONFLICT" },
+    ],
+  });
+  panel(studio, builder);
+  const dialogue = screen.getByLabelText("构建助手聊天记录");
+  const trace = screen.getByRole("region", { name: "构建助手调用轨迹" });
+  expect(dialogue.textContent).toContain("我会检查文件。");
+  expect(dialogue.contains(trace)).toBe(false);
+  expect(trace.querySelectorAll("li")).toHaveLength(2);
+  expect(trace.textContent).toContain("读取文件 · 已完成");
+  expect(trace.textContent).toContain("编辑文件 · 失败（BLK-CODING-CONFLICT）");
+  expect(trace.querySelector("details")?.open).toBe(false);
+  fireEvent.click(screen.getByText("调用轨迹 · 2 项操作"));
+  expect(trace.querySelector("details")?.open).toBe(true);
+});
+
 it("opens model recovery without losing the draft and keeps file undo available", async () => {
   const studio=await readyStudio();studio.resources.map.clear();
   const builder=makeBuilder({changes:[{change:{changeId:"change-1",path:"src/main.ts",before:"old",after:"new",beforeDigest:"a".repeat(64),afterDigest:"b".repeat(64)},undone:false}],error:"BLK-CODING-CONFLICT"});

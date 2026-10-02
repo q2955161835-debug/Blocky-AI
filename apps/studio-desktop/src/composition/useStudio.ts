@@ -109,6 +109,7 @@ export function useStudio() {
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
     [droppedEvents, setDroppedEvents] = useState(0),
     [result, setResult] = useState<RunResult>(),
+    [submittedInput, setSubmittedInput] = useState<{ projectId: string; text: string }>(),
     [running, setRunning] = useState(false),
     [question, setQuestion] = useState("为什么树叶在秋天会变黄？");
   const handle = useRef<string | undefined>(undefined),
@@ -246,6 +247,8 @@ export function useStudio() {
       return;
     }
     runBusy.current = true;
+    const runInput = request?.question ?? question;
+    setSubmittedInput({ projectId: snapshot.project.manifest.projectId, text: runInput });
     if (request) setQuestion(request.question);
     setRunning(true);
     eventBuffer.current = [];
@@ -265,7 +268,7 @@ export function useStudio() {
       const value = await runtime.run(
         snapshot.project,
         entry.interactionId,
-        request?.question ?? question,
+        runInput,
         {
           moduleId: entry.moduleId,
           ...(workflow ? { workflowTaskId: workflow.taskId } : {}),
@@ -366,6 +369,7 @@ export function useStudio() {
         setEvents([]);
         setDroppedEvents(0);
         setResult(undefined);
+        setSubmittedInput(undefined);
         setSelected(null);
         setMessage("已打开项目并重新编译");
       }
@@ -407,6 +411,7 @@ export function useStudio() {
       setEvents([]);
       setDroppedEvents(0);
       setResult(undefined);
+      setSubmittedInput(undefined);
       setSelected(null);
       setSession(restoreSession(p, null));
       setQuestion(
@@ -585,6 +590,7 @@ export function useStudio() {
     events,
     droppedEvents,
     result,
+    runInput: submittedInput?.projectId === snapshot.project.manifest.projectId ? submittedInput.text : undefined,
     invalidateKnowledgeEvidence: () => {
       abort.current?.abort();
       setResult(undefined);

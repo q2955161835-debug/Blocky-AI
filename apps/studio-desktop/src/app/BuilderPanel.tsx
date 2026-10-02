@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { resolveSetting } from "@blocky/settings-core";
 import { isUserOnlineModel } from "@blocky/resource-registry";
-import type { CodingTool, CodingMessage } from "@blocky/builder-protocol";
+import type { CodingMessage } from "@blocky/builder-protocol";
 import type { Studio } from "../composition/useStudio";
 import type { CodingAgent } from "../composition/useCodingAgent";
 import {
@@ -12,6 +12,7 @@ import {
 } from "./ChatControls";
 import { BuilderModelSettings } from "./BuilderModelSettings";
 import "./BuilderChat.css";
+import { CodingTrace } from "./CodingTrace";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -21,15 +22,6 @@ const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   failed: "未完成",
   cancelled: "已停止",
   stale: "候选已过期",
-};
-const toolNames: Record<CodingTool, string> = {
-  workspace_list: "查看文件",
-  workspace_search: "搜索代码",
-  workspace_read: "读取文件",
-  workspace_write: "编辑文件",
-  workspace_undo: "撤回修改",
-  blocky_cli: "运行 Blocky CLI",
-  project_context: "查看项目",
 };
 function FileDifference({
   before,
@@ -123,7 +115,6 @@ export function BuilderPanel({
     event.preventDefault();
     submit();
   };
-  const lastTool = [...builder.events].reverse().find((event) => event.tool);
   return (
     <section
       className="builder-panel builder-chat-panel chat-panel"
@@ -185,35 +176,6 @@ export function BuilderPanel({
           >
             <p>{builder.liveText}</p>
           </article>
-        )}
-        {builder.busy && (
-          <p className="builder-chat-progress" role="status">
-            {builder.stopping
-              ? "正在停止并结算任务…"
-              : lastTool?.tool
-                ? `${toolNames[lastTool.tool]}${lastTool.kind === "tool.failed" ? " · 未完成" : lastTool.kind === "tool.completed" ? " · 已完成" : "…"}`
-                : "正在处理任务…"}
-          </p>
-        )}
-        {builder.events.some((event) => event.tool) && (
-          <details className="coding-tool-history">
-            <summary>本轮操作</summary>
-            <ul>
-              {builder.events
-                .filter((event) => event.tool && event.kind !== "file.changed")
-                .map((event) => (
-                  <li key={event.sequence}>
-                    {toolNames[event.tool!]} ·{" "}
-                    {event.kind === "tool.started"
-                      ? "开始"
-                      : event.kind === "tool.failed"
-                        ? "失败"
-                        : "完成"}
-                    {event.code && `（${event.code}）`}
-                  </li>
-                ))}
-            </ul>
-          </details>
         )}
         {builder.error && (
           <p role="alert" className="builder-chat-alert">
@@ -325,6 +287,7 @@ export function BuilderPanel({
           </article>
         )}
       </div>
+      <CodingTrace events={builder.events} busy={builder.busy} stopping={builder.stopping} />
       <ChatPopover menu={menu} kind="add" label="构建助手上下文">
         <button
           type="button"

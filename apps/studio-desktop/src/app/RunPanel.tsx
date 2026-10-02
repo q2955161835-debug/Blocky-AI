@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { Studio } from "../composition/useStudio";
 import type { SourceRef } from "@blocky/language-schema";
 import { KnowledgeCitations } from "./KnowledgeCitations";
@@ -6,6 +6,7 @@ import { knowledgeNative } from "../composition/knowledge";
 import type { EvidenceCitation } from "@blocky/knowledge-core";
 import { RunOutputs } from "./RunOutputs";
 import { RunSettings } from "./RunSettings";
+import { TracePanel } from "./TracePanel";
 import {
   ChatMenuButton,
   ChatPopover,
@@ -29,11 +30,9 @@ export function RunPanel({
   menu?: ChatMenuControl;
 }) {
   const menu = useChatMenu(menuControl);
-  const [submitted, setSubmitted] = useState("");
   const entries = s.compiled?.interaction.entries ?? [];
   const submit = () => {
     if (!s.canRun) return;
-    setSubmitted(s.question);
     menu.set(null);
     void s.run();
   };
@@ -55,9 +54,9 @@ export function RunPanel({
         role="log"
         aria-live="polite"
       >
-        {submitted && (
+        {s.runInput && (
           <article className="builder-chat-message builder-chat-message-user">
-            <p>{submitted}</p>
+            <p>{s.runInput}</p>
           </article>
         )}
         {s.result && (
@@ -99,6 +98,9 @@ export function RunPanel({
           </article>
         )}
 
+        {(s.running || s.events.length > 0) && (
+          <TracePanel key={s.events[0]?.runId} studio={s} onContext={onTraceContext} initiallyOpen />
+        )}
         {!entries.length && (
           <p className="chat-inline-hint">添加交互入口后即可对话。</p>
         )}
@@ -111,7 +113,6 @@ export function RunPanel({
         <RunSettings
           studio={s}
           execute={execute}
-          onTraceContext={onTraceContext}
         >
           {settings}
         </RunSettings>
