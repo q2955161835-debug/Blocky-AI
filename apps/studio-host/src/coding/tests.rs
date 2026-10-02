@@ -1,5 +1,19 @@
 use super::*;
 use std::fs;
+#[test]
+fn coding_start_wire_omits_unselected_workspace_and_preserves_granted_id() {
+    // The worker's coding-start/v1 accepts an optional ID, never a JSON null.
+    let input = json!({"schemaVersion":"blocky.coding-start/v1","requestId":"greeting",
+        "projectId":"project","moduleId":"main","prompt":"你好","originalJson":"{}",
+        "resourceId":"model","selection":[],"conversation":[]});
+    let mut start: CodingStart = serde_json::from_value(input.clone()).unwrap();
+    assert_eq!(serde_json::to_value(&start).unwrap(), input);
+    assert!(CodingHost::default().scope(start.workspace_id.as_deref()).unwrap().is_none());
+    start.workspace_id = Some("workspace-granted".into());
+    let wire = serde_json::to_value(&start).unwrap();
+    assert_eq!(wire["workspaceId"], "workspace-granted");
+    assert_eq!(serde_json::from_value::<CodingStart>(wire).unwrap().workspace_id, start.workspace_id);
+}
 #[cfg(windows)]
 #[test]
 fn windows_grant_allows_child_publication_but_keeps_directory_identity_pinned() {

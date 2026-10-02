@@ -45,6 +45,7 @@ pub struct CodingStart {
     pub resource_id: String,
     pub selection: Vec<String>,
     pub conversation: Vec<Message>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub workspace_id: Option<String>,
 }
 pub(crate) fn text_safe(text: &str) -> Result<(), String> {
