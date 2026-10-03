@@ -61,6 +61,21 @@
           "path": "dist/utils/event-stream.js",
           "bytes": 2940,
           "sha256": "29a6bb6b21387b8c1f2ecfb1ec508b4030aba3727373ab854d28333557f7a68e"
+        },
+        {
+          "path": "dist/utils/text.js",
+          "bytes": 1421,
+          "sha256": "95037d5b787075ffb951cdeaf3b93aeb89735d10b31b82e19d2921f505ac2b04"
+        },
+        {
+          "path": "dist/utils/transcript.js",
+          "bytes": 8546,
+          "sha256": "cd63514661b4036c3bcdda11a108f6be853f790a01216bf30fa80121e4fd320f"
+        },
+        {
+          "path": "dist/utils/validation.js",
+          "bytes": 10615,
+          "sha256": "25448fb499e38cd216b4a47d747ddf3b7750419d379e4bf4ca1578ada48d04d7"
         }
       ],
       "licenseFile": {

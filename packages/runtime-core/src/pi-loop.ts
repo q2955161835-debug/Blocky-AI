@@ -68,7 +68,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         budget.call(); const limit = budget.reserveOutput(outputPerTurn);
         requestId = `${context.requestId}-m${turn}`;
         context.onEvent({ type: "model.started", requestId, data: { summary: "Pi 模型选择下一步", engine: "pi-agent-core/0.86.0", turn, maxOutputTokens: limit } });
-        const result = await abortable(context.generate({ projectId: context.project.manifest.projectId, resource: context.model, requestId, messages: history, maxOutputTokens: limit, tools: bound.map((t) => t.model), toolChoice: turn === turns ? "none" : "auto" }, budget.signal), budget.signal);
+        const result = await abortable(context.generate({ projectId: context.project.manifest.projectId, resource: context.model, requestId, messages: history, maxOutputTokens: limit, tools: bound.map((t) => t.model), toolChoice: !bound.length || turn === turns ? "none" : "auto" }, budget.signal), budget.signal);
         budget.check(); checkGenerationMetadata(result);
         if (result.usage && result.usage.outputTokens > limit) throw Error("BLK-RUN-004");
         context.onGeneration(structuredClone(result));

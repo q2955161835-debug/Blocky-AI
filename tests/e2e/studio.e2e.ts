@@ -194,7 +194,7 @@ describe("Blocky native editor", () => {
     await page.getByRole("button", { name: "返回开始页", exact: true }).click();
     await page
       .locator(".welcome")
-      .getByRole("button", { name: "＋ 新建项目", exact: true })
+      .getByRole("button", { name: "新建空白项目", exact: true })
       .click();
     expect(await page.locator(".blocklyDraggable").count()).toBe(0);
     // Existing project behavior is exercised with an explicit test-only fixture.
@@ -223,7 +223,7 @@ describe("Blocky native editor", () => {
   it("focuses the canvas after a blank click so Tab opens block search", async () => {
     const starter = page
       .locator(".welcome")
-      .getByRole("button", { name: "＋ 新建项目", exact: true });
+      .getByRole("button", { name: "新建空白项目", exact: true });
     if (await starter.isVisible()) await starter.click();
     const canvas = page.locator(".blockly-host");
     const background = page.locator(".blocklyMainBackground");
@@ -572,7 +572,7 @@ describe("Blocky native editor", () => {
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
     await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadStateMachineRegressionProject());
     await page.locator(".blocklyDraggable").first().waitFor();
-    expect(await page.getByLabel("画布名称").inputValue()).toBe("有限状态机");
+    expect(await page.getByLabel("画布名称").inputValue()).toBe("test scenario: state-machine");
     for (const [input, expected] of [
       ["start", "running"],
       ["finish", "done"],

@@ -10,7 +10,7 @@ export async function verifyPiCore(root = process.cwd(), suppliedLock) {
   const expected = ["@earendil-works/pi-agent-core", "@earendil-works/pi-ai"];
   for (const [index, entry] of lock.packages.entries()) {
     if (entry.name !== expected[index] || entry.version !== "0.86.0" || entry.license !== "MIT") throw Error("Pi package version mismatch");
-    const files=index===0?["package.json","dist/index.js","dist/agent.js","dist/agent-loop.js","dist/stream-fn.js","dist/types.d.ts"]:["package.json","dist/utils/event-stream.js"];
+    const files=index===0?["package.json","dist/index.js","dist/agent.js","dist/agent-loop.js","dist/stream-fn.js","dist/types.d.ts"]:["package.json","dist/utils/event-stream.js","dist/utils/text.js","dist/utils/transcript.js","dist/utils/validation.js"];
     if (JSON.stringify(entry.files.map(file=>file.path))!==JSON.stringify(files)) throw Error("Pi source coverage mismatch");
     const packageRoot = resolve(root, "packages/runtime-core/node_modules", entry.name);
     const manifest = JSON.parse(await readFile(resolve(packageRoot, "package.json"), "utf8"));

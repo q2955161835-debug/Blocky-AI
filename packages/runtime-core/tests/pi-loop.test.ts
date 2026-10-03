@@ -47,6 +47,7 @@ it("allows a Pi core without tools and accepts bounded prior conversation", asyn
   const { context, budget } = setup(async (request) => {
     expect(request.messages.some((m) => m.content === "previous response")).toBe(true);
     expect(request.tools).toEqual([]);
+    expect(request.toolChoice).toBe("none");
     return response("answer");
   }, async () => { throw Error("unexpected tool"); });
   context.resourceIds = [];
