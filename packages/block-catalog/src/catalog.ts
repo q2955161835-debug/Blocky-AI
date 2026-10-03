@@ -52,7 +52,7 @@ export const beginnerCategories = [
   "会回答",
 ];
 export const catalog: BlockDefinition[] = [
-  ...definitions,
+  ...(definitions as BlockDefinition[]),
   ...(knowledgePrimitives as BlockDefinition[]),
   ...textPrimitives,
   ...eventPrimitives,

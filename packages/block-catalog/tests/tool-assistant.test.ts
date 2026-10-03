@@ -50,7 +50,7 @@ it("requires a real tool-capable model and exposes tool declarations to the shar
   const result = session.inspect();
   expect(
     result.catalog.find((b) => b.type === "core.reason.tool_loop"),
-  ).toMatchObject({ requiredInputs: ["TOOLS"] });
+  ).toMatchObject({ inputs: ["TOOLS"] });
   expect(
     result.resources.find((r) => r.resourceId === model.resourceId),
   ).toMatchObject({ modelCapabilities: ["text", "tools"] });

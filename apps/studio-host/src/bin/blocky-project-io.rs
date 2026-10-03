@@ -368,6 +368,7 @@ fn main() {
             std::process::exit(blocky_studio::agent_data::trigger_api::session::main())
         }
         Some("--blocky-coding-run") => std::process::exit(blocky_studio::coding::session_main()),
+        Some("--blocky-workspace-session") => std::process::exit(blocky_studio::coding::workspace_session::main()),
         Some("--blocky-tool-call") => {
             std::process::exit(blocky_studio::tool_gateway::dispatch::session_main())
         }

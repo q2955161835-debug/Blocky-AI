@@ -159,9 +159,6 @@ it("reports only implemented commands and a real native store version", () => {
   expect(h.code).toBe(0);
   expect(h.lines[0].schemaVersion).toBe("blocky.cli/v1");
   expect(h.lines[0].data.commands).not.toContain("compat export");
-  expect(h.lines[0].data.commands).not.toContainEqual(
-    expect.stringMatching(/^(template|blueprint official)\b/),
-  );
   const doctor = run(["doctor", "--json"]);
   expect(doctor.code).toBe(0);
   expect(doctor.lines[0].data.nativeStore).toBe(packageInfo.version);
@@ -205,17 +202,19 @@ it("creates a named blank project, keeps it empty, and refuses to clobber the sa
   expect(hash(await readFile(blankFile))).toBe(hash(bytes));
   expect(conflict.lines[0].error.code).toBe("BLK-CONFLICT-001");
 });
-it("rejects removed template and official-blueprint CLI entry points", () => {
+it("rejects a removed template ID", () => {
   const legacyProject = join(directory, "legacy-template.blocky");
-  const legacyBlueprint = join(directory, "legacy-official.json");
-  for (const args of [
-    ["template", "list", "--json"],
-    ["template", "show", "research-companion", "--json"],
-    ["blueprint", "official", "research-companion", "--output", legacyBlueprint, "--json"],
-    ["project", "create", "--template", "research-companion", "--output", legacyProject, "--json"],
-  ]) {
-    expect(run(args).code).not.toBe(0);
-  }
+  expect(
+    run([
+      "project",
+      "create",
+      "--template",
+      "research-companion",
+      "--output",
+      legacyProject,
+      "--json",
+    ]).code,
+  ).not.toBe(0);
 });
 it("compiles with the exact desktop compiler and does not rewrite project bytes", async () => {
   const before = hash(await readFile(file));

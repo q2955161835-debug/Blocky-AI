@@ -11,10 +11,12 @@ import {
   codingChangeSchema,
   codingChangesSchema,
   codingWorkspaceSchema,
+  codingRuntimeContextSchema,
   projectPermissions,
   type CodingEvent,
   type CodingResult,
   type CodingChange,
+  type CodingRuntimeContext,
 } from "@blocky/builder-protocol";
 import type { Studio } from "./useStudio";
 import {
@@ -27,7 +29,58 @@ type Workspace = { workspaceId: string; displayName: string };
 export type CodingProjectReview = {
   files: { path: string; before: string | null; after: string | null }[];
   permissions: string[];
+  status: "applied" | "conflict" | "failed";
+  error?: string;
 };
+const stableContextId = (value: unknown): value is string =>
+  typeof value === "string" &&
+  value.length <= 200 &&
+  /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(value);
+const stableContextCode = (value: unknown): value is string =>
+  typeof value === "string" && /^BLK-[A-Z0-9-]{1,124}$/.test(value);
+function runtimeContext(studio: Studio): CodingRuntimeContext {
+  const diagnostics = studio.diagnostics.flatMap((diagnostic) => {
+    if (!stableContextCode(diagnostic.code)) return [];
+    const source = diagnostic.source;
+    return [
+      {
+        code: diagnostic.code,
+        severity: diagnostic.severity,
+        ...(stableContextId(source?.moduleId)
+          ? { moduleId: source.moduleId }
+          : {}),
+        ...(stableContextId(source?.blockId)
+          ? { blockId: source.blockId }
+          : {}),
+      },
+    ];
+  });
+  const recentEvents = studio.events
+    .filter(
+      (event) =>
+        event.projectId === studio.snapshot.project.manifest.projectId,
+    )
+    .map((event) => ({
+      type: event.type,
+      ...(stableContextId(event.moduleId) ? { moduleId: event.moduleId } : {}),
+      ...(stableContextId(event.blockId) ? { blockId: event.blockId } : {}),
+      ...(stableContextCode(event.data.code)
+        ? { code: event.data.code }
+        : {}),
+    }));
+  const context = {
+    diagnostics: diagnostics.slice(-20),
+    recentEvents: recentEvents.slice(-20),
+  };
+  while (new TextEncoder().encode(JSON.stringify(context)).length > 8192) {
+    if (context.recentEvents.length >= context.diagnostics.length) {
+      if (context.recentEvents.length) context.recentEvents.shift();
+      else context.diagnostics.shift();
+    } else if (context.diagnostics.length) context.diagnostics.shift();
+    else context.recentEvents.shift();
+  }
+  return codingRuntimeContextSchema.parse(context);
+}
 const safeError = (cause: unknown) => {
   const text = cause instanceof Error ? cause.message : String(cause);
   return /^BLK-[A-Z0-9-]+$/.test(text) ? text : "BLK-CODING-ENGINE";
@@ -59,7 +112,7 @@ export function useCodingAgent(studio: Studio) {
         projectId: string;
         undone: boolean;
         invalidated: boolean;
-        requestId: string;
+        requestId?: string;
       }
     >(),
   );
@@ -88,12 +141,12 @@ export function useCodingAgent(studio: Studio) {
     if (mounted.current) setStopping(true);
     void invoke("coding_cancel", { requestId: owner.id }).catch(() => {});
   };
-  const decision = (status: "accepted" | "rejected") => {
-    if (!result) return;
+  const discardProjectCandidate = () => {
+    if (!result || !projectReview || projectReview.status === "applied") return;
     chat.update(result.projectId, (messages) =>
       messages.map((message) =>
         message.id === `${result.requestId}-answer`
-          ? { ...message, status }
+          ? { ...message, status: "rejected" as const }
           : message,
       ),
     );
@@ -162,7 +215,9 @@ export function useCodingAgent(studio: Studio) {
     localOperation(async () => {
       const s = current.current,
         id = s.snapshot.project.manifest.projectId;
-      const raw = await invoke<unknown>("coding_workspace_pick");
+      const raw = await invoke<unknown>("coding_workspace_pick", {
+        projectId: id,
+      });
       if (!raw || !visible({ projectId: id, controller: s.controller })) return;
       folders.current.set(id, codingWorkspaceSchema.parse(raw));
       refresh((n) => n + 1);
@@ -171,7 +226,7 @@ export function useCodingAgent(studio: Studio) {
     change: CodingChange,
     workspaceId: string | undefined,
     id: string,
-    requestId: string,
+    requestId?: string,
   ) => {
     if (containsCredential(JSON.stringify(change)))
       throw Error("BLK-CODING-CHANGE");
@@ -222,6 +277,45 @@ export function useCodingAgent(studio: Studio) {
       receipts.current.delete(receipts.current.keys().next().value!);
     refresh((n) => n + 1);
   };
+  const refreshWorkspace = async (id: string) => {
+    const raw = await invoke<unknown>("workspace_status", { projectId: id });
+    if (!raw || typeof raw !== "object" || Array.isArray(raw))
+      throw Error("BLK-CODING-WORKSPACE");
+    const value = raw as Record<string, unknown>;
+    if (
+      Object.keys(value).some(
+        (key) =>
+          !["available", "workspaceId", "displayName", "changes"].includes(
+            key,
+          ),
+      )
+    )
+      throw Error("BLK-CODING-WORKSPACE");
+    const workspace =
+      value.available === true
+        ? codingWorkspaceSchema.parse({
+            workspaceId: value.workspaceId,
+            displayName:
+              typeof value.displayName === "string" &&
+              value.displayName.length > 0
+                ? value.displayName
+                : "工作文件夹",
+          })
+        : value.available === false &&
+            value.workspaceId === null &&
+            value.displayName === null
+          ? undefined
+          : (() => {
+              throw Error("BLK-CODING-WORKSPACE");
+            })();
+    const changes = codingChangesSchema.parse(value.changes);
+    if (workspace) folders.current.set(id, workspace);
+    else folders.current.delete(id);
+    for (const change of changes)
+      remember(change, workspace?.workspaceId, id);
+    refresh((n) => n + 1);
+    return workspace;
+  };
   const undoChange = (changeId: string) =>
     localOperation(async () => {
       const receipt = receipts.current.get(changeId),
@@ -243,6 +337,7 @@ export function useCodingAgent(studio: Studio) {
         );
       } catch (cause) {
         try {
+          if (!receipt.requestId) throw Error("BLK-CODING-STALE");
           const changes = codingChangesSchema.parse(
             await invoke("coding_changes", { requestId: receipt.requestId }),
           );
@@ -280,53 +375,70 @@ export function useCodingAgent(studio: Studio) {
       receipt.undone = true;
       if (mounted.current) refresh((n) => n + 1);
     });
-  const applyProject = (approved: string[]) =>
-    localOperation(async () => {
-      const candidate = result,
-        s = current.current,
-        review = projectReview;
+  const applyProjectCandidate = async (
+    s: Studio,
+    candidate: CodingResult,
+    review: CodingProjectReview,
+  ): Promise<CodingProjectReview> => {
+    const owner = { projectId: candidate.projectId, controller: s.controller };
+    try {
       if (
-        !candidate?.project ||
-        !review ||
-        candidate.projectId !== s.snapshot.project.manifest.projectId
+        !candidate.project ||
+        candidate.projectId !==
+          s.controller.getSnapshot().project.manifest.projectId
       )
         throw Error("BLK-CODING-PROJECT");
-      if (
-        !review.permissions.every((permission) => approved.includes(permission))
-      )
-        throw Error("BLK-PATCH-003");
-      const original = s.controller.getSnapshot().project,
-        before = canonicalJson(original);
+      const original = s.controller.getSnapshot().project;
+      const before = canonicalJson(original);
       if ((await projectDigest(original)) !== candidate.baseDigest)
         throw Error("BLK-PATCH-001");
       await s.resources.flush();
+      if (!visible(owner) || current.current.exiting)
+        throw Error("BLK-CODING-CANCELLED");
       const checked = parseProject(
         await invoke("coding_validate_project", {
           requestId: candidate.requestId,
           originalJson: before,
           project: candidate.project,
-          approved,
+          approved: review.permissions,
         }),
       );
       if (canonicalJson(checked) !== canonicalJson(candidate.project))
         throw Error("BLK-CODING-PROJECT");
+      const latest = s.controller.getSnapshot().project;
       if (
-        !visible({
-          projectId: candidate.projectId,
-          controller: s.controller,
-        }) ||
-        current.current.exiting
+        !visible(owner) ||
+        current.current.exiting ||
+        latest.manifest.projectId !== candidate.projectId ||
+        canonicalJson(latest) !== before ||
+        (await projectDigest(latest)) !== candidate.baseDigest
       )
-        throw Error("BLK-CODING-CANCELLED");
-      s.controller.edit((p) => {
-        if (canonicalJson(p) !== before) throw Error("BLK-PATCH-001");
-        for (const key of Object.keys(p))
-          delete (p as unknown as Record<string, unknown>)[key];
-        Object.assign(p, checked);
+        throw Error("BLK-PATCH-001");
+      s.controller.edit((project) => {
+        if (canonicalJson(project) !== before) throw Error("BLK-PATCH-001");
+        for (const key of Object.keys(project))
+          delete (project as unknown as Record<string, unknown>)[key];
+        Object.assign(project, checked);
       });
-      decision("accepted");
       s.setMessage("代码助手的项目修改已应用，可整体撤销。");
-    });
+      return { ...review, status: "applied" };
+    } catch (cause) {
+      const code = safeError(cause);
+      if (visible(owner)) {
+        setError(code);
+        s.setMessage(
+          code === "BLK-PATCH-001"
+            ? "项目已变化，代码助手保留了候选修改，未覆盖当前内容。"
+            : "项目修改未能自动应用，候选内容仍可查看。",
+        );
+      }
+      return {
+        ...review,
+        status: code === "BLK-PATCH-001" ? "conflict" : "failed",
+        error: code,
+      };
+    }
+  };
   const generate = async (input: { prompt: string; resourceId: string }) => {
     if (
       active.current ||
@@ -359,7 +471,7 @@ export function useCodingAgent(studio: Studio) {
     setError("");
     setLiveText("");
     setEvents([]);
-    const workspace = folders.current.get(projectId);
+    let workspace = folders.current.get(projectId);
     let appended = false,
       sequence = 0,
       streamed = "",
@@ -411,6 +523,9 @@ export function useCodingAgent(studio: Studio) {
       setEvents((previous) => [...previous, event].slice(-200));
     };
     try {
+      workspace = await refreshWorkspace(owner.projectId);
+      if (owner.cancelled || !visible(owner))
+        throw Error("BLK-CODING-CANCELLED");
       const project = s.controller.getSnapshot().project;
       const start = parseCodingStart({
         schemaVersion: "blocky.coding-start/v1",
@@ -426,6 +541,7 @@ export function useCodingAgent(studio: Studio) {
             ? [s.selected]
             : [],
         conversation: codingContext(chat.messages),
+        runtimeContext: runtimeContext(s),
         ...(workspace ? { workspaceId: workspace.workspaceId } : {}),
       });
       chat.update(owner.projectId, (messages) => [
@@ -469,41 +585,52 @@ export function useCodingAgent(studio: Studio) {
         value.project &&
         canonicalJson(project) !== canonicalJson(value.project)
       ) {
+        const [before, after] = await Promise.all([
+          projectPermissions(project, s.resources.map, true),
+          projectPermissions(value.project, s.resources.map),
+        ]);
+        if (after.compiled.diagnostics.some((d) => d.severity === "error"))
+          throw Error("BLK-CODING-PROJECT");
+        const a = encodeProject(project),
+          b = encodeProject(value.project);
+        review = {
+          permissions: [...after.values]
+            .filter((permission) => !before.values.has(permission))
+            .sort(),
+          files: [...new Set([...Object.keys(a), ...Object.keys(b)])]
+            .sort()
+            .filter((path) => a[path] !== b[path])
+            .map((path) => ({
+              path,
+              before: a[path] ?? null,
+              after: b[path] ?? null,
+            })),
+          status: "conflict",
+        };
         if (
-          value.baseDigest !==
+          value.baseDigest ===
           (await projectDigest(s.controller.getSnapshot().project))
         ) {
-          setError("BLK-PATCH-001");
-          delete value.project;
+          review = await applyProjectCandidate(s, value, review);
         } else {
-          const [before, after] = await Promise.all([
-            projectPermissions(project, s.resources.map, true),
-            projectPermissions(value.project, s.resources.map),
-          ]);
-          if (after.compiled.diagnostics.some((d) => d.severity === "error"))
-            throw Error("BLK-CODING-PROJECT");
-          const a = encodeProject(project),
-            b = encodeProject(value.project);
-          review = {
-            permissions: [...after.values]
-              .filter((permission) => !before.values.has(permission))
-              .sort(),
-            files: [...new Set([...Object.keys(a), ...Object.keys(b)])]
-              .sort()
-              .filter((path) => a[path] !== b[path])
-              .map((path) => ({
-                path,
-                before: a[path] ?? null,
-                after: b[path] ?? null,
-              })),
-          };
+          setError("BLK-PATCH-001");
+          s.setMessage(
+            "项目已变化，代码助手保留了候选修改，未覆盖当前内容。",
+          );
+          review = { ...review, status: "conflict", error: "BLK-PATCH-001" };
         }
       } else delete value.project;
       if (owner.cancelled || !visible(owner))
         throw Error("BLK-CODING-CANCELLED");
       answer(
         value.text || "本轮任务已完成。",
-        review ? "proposed" : "completed",
+        review?.status === "applied"
+          ? "accepted"
+          : review?.status === "conflict"
+            ? "stale"
+            : review?.status === "failed"
+              ? "failed"
+              : "completed",
       );
       setResult(value);
       setProjectReview(review);
@@ -568,8 +695,7 @@ export function useCodingAgent(studio: Studio) {
     newChat,
     pickWorkspace,
     undoChange,
-    applyProject,
-    reject: () => decision("rejected"),
+    reject: discardProjectCandidate,
     flush: chat.flush,
     settle: async () => {
       const owner = active.current;

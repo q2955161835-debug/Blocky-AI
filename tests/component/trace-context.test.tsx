@@ -37,7 +37,7 @@ vi.mock("../../apps/studio-desktop/src/app/RunPanel", async () => {
 afterEach(() => { cleanup(); localStorage.clear(); vi.clearAllMocks(); observed.studio = undefined; });
 async function openStudio() {
   render(<App />);
-  await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
+  await waitFor(() => expect((screen.getByRole("button", { name: "新建空白项目" }) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
   await waitFor(() => expect(observed.studio?.canRun).toBe(true));
 }

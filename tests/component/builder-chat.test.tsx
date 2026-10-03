@@ -79,7 +79,7 @@ it("renders saved chat as plain text and keeps the candidate while editing", asy
       { id: "u1", role: "user", text: "Use <img src=x onerror=alert(1)>" },
       { id: "a1", role: "assistant", text: "准备审阅", status: "proposed" },
     ],
-    result: proposal(), projectReview:{files:[{path:"project.json",before:"旧项目",after:"创建工具"}],permissions:[]},
+    result: proposal(), projectReview:{files:[{path:"project.json",before:"旧项目",after:"创建工具"}],permissions:[],status:"conflict"},
   });
   const review = vi.fn();
   panel(studio, builder, review);

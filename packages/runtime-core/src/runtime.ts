@@ -16,6 +16,8 @@ import { parseProject } from "@blocky/project-model";
 import {
   evaluateExpression,
   canonicalJson,
+  digest,
+  containsCredential,
   type IrNode,
   type Project,
   type Json,
@@ -42,6 +44,7 @@ import {
 import { resolveRunEntry } from "./entry";
 import { parseRuntimeSession, type RuntimeSessionState } from "./session-state";
 import { runToolLoop } from "./tool-loop";
+import { runPiLoop, type PiConversation } from "./pi-loop";
 import { delegateTasks, delegationSchema } from "./delegation";
 import {executeSkill} from './skill-execution';
 type Options = {
@@ -285,7 +288,7 @@ export class Runtime {
         "knowledge.read",
         "memory.read", "memory.write", "skill.read", "model.score", "media.read",
         ...(adapters.agent
-          ? ["text.analyze", "module.execute", "network.request", "mcp.local"]
+          ? ["text.analyze", "module.execute", "network.request", "mcp.local", "workspace.read", "workspace.write", "workspace.check"]
           : []),
       ];
       agent.allowedCapabilities = baseCapabilities;
@@ -989,7 +992,7 @@ export class Runtime {
                     capabilities.includes(p),
                   ) ||
                   !Array.isArray(resource.definition.capabilities) ||
-                  !resource.definition.capabilities.includes("tools") ||
+                  (!resource.definition.capabilities.includes("tools") && (node.inputs.TOOLS || node.fields.ENGINE !== "pi")) ||
                   !state.services.generate
                 )
                   throw Error("BLK-TOOL-001");
@@ -1006,7 +1009,14 @@ export class Runtime {
                   if(state.activeSkillTools&&!state.activeSkillTools.includes(String(declaration.fields.RESOURCE)))throw Error('BLK-SKILL-PERMISSION');
                   declaration = declaration.next ?? null;
                 }
-                state.generated = await runToolLoop({
+                const pi = node.fields.ENGINE === "pi";
+                const conversationKey = JSON.stringify([project.manifest.projectId, this.sessionId, `pi-${(await digest([moduleId, node.nodeId])).slice(0, 32)}`]);
+                const binding = await digest({ model: resource, role: scope.role, instruction: state.instruction, tools: resourceIds.map((id) => resolveResource(project, id, "tool", options.userRegistry)), citations: scope.citations });
+                const stored = this.sessionMemory.get(conversationKey);
+                let conversation: PiConversation = [];
+                if (pi && node.fields.SESSION === "conversation" && stored && typeof stored === "object" && !Array.isArray(stored) && stored.binding === binding && Array.isArray(stored.messages)) conversation = stored.messages as PiConversation;
+                const loop = pi ? (context: Parameters<typeof runToolLoop>[0]) => runPiLoop(context, conversation) : runToolLoop;
+                state.generated = await loop({
                   project,
                   registry: options.userRegistry,
                   model: resource,
@@ -1051,6 +1061,15 @@ export class Runtime {
                       }
                     : {}),
                 });
+                if (pi && node.fields.SESSION === "conversation") {
+                  const next = ([...conversation, { role: "user", content: state.question }, { role: "assistant", content: state.generated }] as PiConversation).slice(-20);
+                  while (utf8(canonicalJson(next)) > 16000 && next.length > 2) next.splice(0, 2);
+                  if (utf8(canonicalJson(next)) <= 16000 && !containsCredential(canonicalJson(next))) {
+                    const entry = { binding, messages: next } as Json;
+                    const future = new Map(this.sessionMemory); future.set(conversationKey, entry);
+                    if (utf8(canonicalJson([...future])) <= 1048576) this.sessionMemory.set(conversationKey, entry);
+                  }
+                }
                 state.value = state.generated;
                 handled = true;
                 break;

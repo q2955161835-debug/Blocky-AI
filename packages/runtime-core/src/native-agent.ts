@@ -167,6 +167,16 @@ export function nativeAgentServices(
       const implementation = implementationKey(
         input.resource.definition.implementationRef,
       );
+      if (implementation === "adapter://workspace-file-v1") {
+        const operation = String(input.resource.definition.operation);
+        const permission = ["list", "search", "read"].includes(operation) ? "workspace.read" : ["write", "undo"].includes(operation) ? "workspace.write" : operation === "check" ? "workspace.check" : "";
+        if (!permission || input.resource.scope !== "project" || JSON.stringify(input.resource.definition.permissions) !== JSON.stringify([permission]) || JSON.stringify(input.resource.capabilityRequirements) !== JSON.stringify([permission])) throw Error("BLK-TOOL-001");
+        const request = { schemaVersion: "blocky.workspace-request/v1", projectId: input.projectId, requestId: input.requestId, operation, input: input.input };
+        const cancel = () => { void call("coding-cancel", { requestId: input.requestId }).catch(() => {}); };
+        signal.addEventListener("abort", cancel, { once: true });
+        try { signal.throwIfAborted(); return await call("workspace-call", { request }, signal) as Json; }
+        finally { signal.removeEventListener("abort", cancel); }
+      }
       if (
         [
           "adapter://http-json-v1",

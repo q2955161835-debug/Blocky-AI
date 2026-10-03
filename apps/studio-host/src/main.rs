@@ -230,6 +230,8 @@ fn main() {
             commands::validate_patch,
             commands::authorize_surface,
             coding_commands::coding_workspace_pick,
+            coding_commands::workspace_status,
+            coding_commands::workspace_call,
             coding_commands::coding_run,
             coding_commands::coding_cancel,
             coding_commands::coding_undo,

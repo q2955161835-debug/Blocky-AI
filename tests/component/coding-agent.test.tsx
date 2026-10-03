@@ -13,6 +13,10 @@ import { useCodingChat } from "../../apps/studio-desktop/src/composition/useCodi
 import { codingConversationSchema } from "../../packages/builder-protocol/src";
 const native = vi.hoisted(() => vi.fn());
 const persisted = new Map<string, unknown>();
+const pickedWorkspaces = new Map<
+  string,
+  { workspaceId: string; displayName: string }
+>();
 it("budgets the formatted status prefixes in long saved conversations", () => {
   const messages = Array.from({ length: 5 }, (_, index) => ({
     id: `message-${index}`,
@@ -57,6 +61,7 @@ afterEach(() => {
   cleanup();
   native.mockReset();
   persisted.clear();
+  pickedWorkspaces.clear();
   delete (window as any).__TAURI_INTERNALS__;
   vi.unstubAllGlobals();
 });
@@ -71,14 +76,31 @@ function studio(id = "research-workbench") {
     selectedRoots: [],
     selected: null,
     resources: { map: new Map(), flush: async () => {} },
+    diagnostics: [],
+    events: [],
     setMessage: vi.fn(),
   } as unknown as Studio;
 }
 function storage(name: string, args: any) {
+  if (name === "workspace_status") {
+    const workspace = pickedWorkspaces.get(args.projectId);
+    return {
+      available: !!workspace,
+      workspaceId: workspace?.workspaceId ?? null,
+      displayName: workspace?.displayName ?? null,
+      changes: [],
+    };
+  }
   const key = `${args.kind}/${args.id}`;
   if (name === "read_user_state") return persisted.get(key) ?? null;
   if (name === "write_user_state")
     persisted.set(key, structuredClone(args.value));
+}
+function pickWorkspace(args: any) {
+  expect(typeof args.projectId).toBe("string");
+  const workspace = { workspaceId: "workspace-1", displayName: "source" };
+  pickedWorkspaces.set(args.projectId, workspace);
+  return workspace;
 }
 async function result(start: any, project?: unknown) {
   return {
@@ -149,6 +171,7 @@ it("cancels during resource flush without starting a model or writing", async ()
       resourceId: "my-model",
     });
   });
+  await waitFor(() => expect(release).toBeTypeOf("function"));
   act(() => hook.result.current.stop());
   expect(hook.result.current.busy).toBe(true);
   await act(async () => {
@@ -206,11 +229,67 @@ it("ignores cross-project stream and late completion, preserving independent con
     native.mock.calls.filter(([name]) => name === "coding_cancel"),
   ).toHaveLength(1);
 });
-it("applies a verified project candidate as one undoable edit and rejects stale canvas", async () => {
+it("automatically applies a verified project candidate and retains it on a canvas conflict", async () => {
   const s = studio();
+  s.diagnostics = [
+    {
+      code: "BLK-LINK-001",
+      severity: "error",
+      source: {
+        projectId: "research-workbench",
+        moduleId: "research-agent",
+        blockId: "research-root",
+      },
+    },
+  ] as unknown as Studio["diagnostics"];
+  s.events = [
+    {
+      projectId: "research-workbench",
+      type: "run.failed",
+      moduleId: "research-agent",
+      blockId: "research-root",
+      data: { code: "BLK-RUN-009", message: "sensitive response" },
+    },
+    {
+      projectId: "other-project",
+      type: "run.failed",
+      data: { code: "BLK-RUN-010" },
+    },
+  ] as unknown as Studio["events"];
+  let conflictOnValidation = false;
   native.mockImplementation(async (name, args) => {
-    if (name === "coding_validate_project") return args.project;
+    if (name === "coding_validate_project") {
+      expect(args.approved).toEqual([]);
+      if (conflictOnValidation) {
+        conflictOnValidation = false;
+        s.controller.edit((p) => {
+          p.manifest.displayName = "用户新修改";
+        });
+      }
+      return args.project;
+    }
     if (name !== "coding_run") return storage(name, args);
+    expect(args.start.runtimeContext).toEqual({
+      diagnostics: [
+        {
+          code: "BLK-LINK-001",
+          severity: "error",
+          moduleId: "research-agent",
+          blockId: "research-root",
+        },
+      ],
+      recentEvents: [
+        {
+          type: "run.failed",
+          moduleId: "research-agent",
+          blockId: "research-root",
+          code: "BLK-RUN-009",
+        },
+      ],
+    });
+    expect(JSON.stringify(args.start.runtimeContext)).not.toContain(
+      "sensitive response",
+    );
     const p = JSON.parse(args.start.originalJson);
     p.manifest.displayName = "改进后的项目";
     return result(args.start, p);
@@ -224,24 +303,22 @@ it("applies a verified project candidate as one undoable edit and rejects stale 
       resourceId: "my-model",
     }),
   );
-  expect(s.controller.getSnapshot().project.manifest.displayName).toBe(before);
-  await act(() => hook.result.current.applyProject([]));
   expect(s.controller.getSnapshot().project.manifest.displayName).toBe(
     "改进后的项目",
   );
+  expect(hook.result.current.projectReview?.status).toBe("applied");
   act(() => s.controller.undo());
   expect(s.controller.getSnapshot().project.manifest.displayName).toBe(before);
+  conflictOnValidation = true;
   await act(() =>
     hook.result.current.generate({ prompt: "再修改", resourceId: "my-model" }),
   );
-  act(() =>
-    s.controller.edit((p) => {
-      p.manifest.displayName = "用户新修改";
-    }),
-  );
-  await act(() => hook.result.current.applyProject([]));
   expect(s.controller.getSnapshot().project.manifest.displayName).toBe(
     "用户新修改",
+  );
+  expect(hook.result.current.projectReview?.status).toBe("conflict");
+  expect(hook.result.current.result?.project?.manifest.displayName).toBe(
+    "改进后的项目",
   );
   expect(hook.result.current.error).toBe("BLK-PATCH-001");
 });
@@ -256,8 +333,7 @@ it("recovers Host changes after a failed task and keeps manual undo reversible",
     afterDigest: "a".repeat(64),
   };
   native.mockImplementation(async (name, args) => {
-    if (name === "coding_workspace_pick")
-      return { workspaceId: "workspace-1", displayName: "source" };
+    if (name === "coding_workspace_pick") return pickWorkspace(args);
     if (name === "coding_run") throw Error("BLK-CODING-TIMEOUT");
     if (name === "coding_changes") return [change];
     if (name === "coding_undo" && args.changeId === "undo-1")
@@ -319,8 +395,7 @@ it("shows an Agent undo receipt as the active inverse, marking the original with
     afterDigest: null,
   };
   native.mockImplementation(async (name, args) => {
-    if (name === "coding_workspace_pick")
-      return { workspaceId: "workspace-1", displayName: "source" };
+    if (name === "coding_workspace_pick") return pickWorkspace(args);
     if (name === "coding_run")
       return { ...(await result(args.start)), changes: [original, inverse] };
     return storage(name, args);
@@ -366,8 +441,7 @@ it("recovers partial failed manual undo and disables the invalidated original re
     afterDigest: null,
   };
   native.mockImplementation(async (name, args) => {
-    if (name === "coding_workspace_pick")
-      return { workspaceId: "workspace-1", displayName: "source" };
+    if (name === "coding_workspace_pick") return pickWorkspace(args);
     if (name === "coding_run")
       return { ...(await result(args.start)), changes: [original] };
     if (name === "coding_undo") throw Error("BLK-CODING-CONFLICT");
@@ -402,8 +476,7 @@ it("does not place a late manual-undo error into another project's conversation"
     afterDigest: "a".repeat(64),
   };
   native.mockImplementation(async (name, args) => {
-    if (name === "coding_workspace_pick")
-      return { workspaceId: "workspace-1", displayName: "source" };
+    if (name === "coding_workspace_pick") return pickWorkspace(args);
     if (name === "coding_run")
       return { ...(await result(args.start)), changes: [change] };
     if (name === "coding_undo") {

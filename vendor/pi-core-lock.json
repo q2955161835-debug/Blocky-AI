@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "blocky.upstream-core-lock/v1",
+  "repository": "https://github.com/earendil-works/pi",
+  "tag": "v0.86.0",
+  "commit": "ecac0a9c4edad3dac5d9f8b40e0c7db7a56471fc",
+  "license": "MIT",
+  "packages": [
+    {
+      "name": "@earendil-works/pi-agent-core",
+      "version": "0.86.0",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "package.json",
+          "bytes": 2810,
+          "sha256": "4663fd17e9ab160de75f9d012eea65e4ab1845ff3152445209914065c6403d10"
+        },
+        {
+          "path": "dist/index.js",
+          "bytes": 1786,
+          "sha256": "4a551a8b128525e90f3da827f5c459a6f6ba39796c63b2ba73d0f0bfb7be9e72"
+        },
+        {
+          "path": "dist/agent.js",
+          "bytes": 16680,
+          "sha256": "d81d9c9b57d61e052542b70f772e2ac0ff7b9d9e43910583b42c47709cad39e6"
+        },
+        {
+          "path": "dist/agent-loop.js",
+          "bytes": 25496,
+          "sha256": "aedd3264c31a3b9f1c3dc52826871894c0653718021583abbdfbe1e6763cd3e6"
+        },
+        {
+          "path": "dist/stream-fn.js",
+          "bytes": 631,
+          "sha256": "2218c37514f6bfd818bf7f054ff4d9e248da4e817cbf459457bc3d790b9c6e54"
+        },
+        {
+          "path": "dist/types.d.ts",
+          "bytes": 18756,
+          "sha256": "796784dec2d962c9e8a1933b920299ad0510e4e8758530843af8a982afeb3f26"
+        }
+      ],
+      "licenseFile": {
+        "path": "vendor/licenses/earendil-works-pi-agent-core-0.86.0/LICENSE",
+        "bytes": 1069,
+        "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48"
+      }
+    },
+    {
+      "name": "@earendil-works/pi-ai",
+      "version": "0.86.0",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "package.json",
+          "bytes": 2713,
+          "sha256": "677040ae486802b83af52a7b29436da9af1daef8866269437ec09b7700191492"
+        },
+        {
+          "path": "dist/utils/event-stream.js",
+          "bytes": 2940,
+          "sha256": "29a6bb6b21387b8c1f2ecfb1ec508b4030aba3727373ab854d28333557f7a68e"
+        }
+      ],
+      "licenseFile": {
+        "path": "vendor/licenses/earendil-works-pi-ai-0.86.0/LICENSE",
+        "bytes": 1069,
+        "sha256": "0457f5bcec3b3b211605dfb5d1a49042fd638f3686a410fe099c24a25af13c48"
+      }
+    }
+  ],
+  "mapping": {
+    "core.agent.ROLE": "Agent.initialState.systemPrompt",
+    "core.prompt.context.TEXT": "Host-bound context + system prompt",
+    "core.reason.tool_loop.RESOURCE": "Agent.initialState.model -> Host generation port",
+    "core.reason.tool_loop.TOOLS": "Agent.initialState.tools -> schema-checked Host tool port",
+    "core.reason.tool_loop.ENGINE=pi": "Agent.prompt + official agentLoop dispatcher",
+    "core.reason.tool_loop.SESSION=conversation": "bounded project/session/node history -> Agent.state.messages",
+    "core.run.budget": "before generation/tool dispatch, Host cancellation + Agent.abort",
+    "runtime events": "SDK turn/tool ports -> structured RuntimeEvent"
+  },
+  "scope": "Agent core only; no Pi programming CLI/TUI, arbitrary Shell or complete plugin compatibility"
+}

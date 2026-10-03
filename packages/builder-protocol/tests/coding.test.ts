@@ -35,6 +35,61 @@ it("rejects credentials and excessive conversation context", () => {
     }),
   ).toThrow();
 });
+it("accepts only bounded diagnostic codes and recent event IDs in runtime context", () => {
+  const runtimeContext = {
+    diagnostics: [
+      {
+        code: "BLK-LINK-001",
+        severity: "error",
+        moduleId: "main",
+        blockId: "agent-root",
+      },
+    ],
+    recentEvents: [
+      {
+        type: "block.failed",
+        moduleId: "main",
+        blockId: "agent-root",
+        code: "BLK-RUN-001",
+      },
+    ],
+  };
+  expect(parseCodingStart({ ...start(), runtimeContext }).runtimeContext).toEqual(
+    runtimeContext,
+  );
+  expect(() =>
+    parseCodingStart({
+      ...start(),
+      runtimeContext: {
+        ...runtimeContext,
+        diagnostics: [{ ...runtimeContext.diagnostics[0], message: "private" }],
+      },
+    }),
+  ).toThrow("BLK-CODING-INPUT");
+  expect(() =>
+    parseCodingStart({
+      ...start(),
+      runtimeContext: {
+        diagnostics: Array.from({ length: 21 }, () => runtimeContext.diagnostics[0]),
+        recentEvents: [],
+      },
+    }),
+  ).toThrow("BLK-CODING-INPUT");
+  expect(() =>
+    parseCodingStart({
+      ...start(),
+      runtimeContext: {
+        diagnostics: Array.from({ length: 20 }, () => ({
+          code: "BLK-LINK-001",
+          severity: "error",
+          moduleId: "a".repeat(200),
+          blockId: "b".repeat(200),
+        })),
+        recentEvents: [],
+      },
+    }),
+  ).toThrow("BLK-CODING-INPUT");
+});
 it.each([
   "../escape.ts",
   "/absolute.ts",

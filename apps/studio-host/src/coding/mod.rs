@@ -2,6 +2,10 @@ mod cli;
 mod files;
 mod process;
 mod session;
+mod workspace;
+pub use workspace::WorkspaceRequest;
+mod check;
+pub mod workspace_session;
 pub use session::{native_reply, session_main};
 #[cfg(test)]
 mod tests;
@@ -17,12 +21,13 @@ use std::{
     },
     time::{Duration, Instant},
 };
-pub(crate) const TOOLS: [&str; 7] = [
+pub(crate) const TOOLS: [&str; 8] = [
     "workspace_list",
     "workspace_search",
     "workspace_read",
     "workspace_write",
     "workspace_undo",
+    "workspace_check",
     "blocky_cli",
     "project_context",
 ];
@@ -47,6 +52,8 @@ pub struct CodingStart {
     pub conversation: Vec<Message>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub workspace_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runtime_context: Option<Value>,
 }
 pub(crate) fn text_safe(text: &str) -> Result<(), String> {
     files::safe_text(text)
@@ -91,6 +98,7 @@ impl CodingStart {
             return Err(ERROR.into());
         }
         files::safe_text(&self.prompt)?;
+        if let Some(context) = &self.runtime_context { workspace::validate_runtime_context(context)?; }
         for message in &self.conversation {
             files::safe_text(&message.text)?;
         }
@@ -114,6 +122,7 @@ impl CodingStart {
 #[derive(Default)]
 struct State {
     workspaces: HashMap<String, Arc<files::Scope>>,
+    project_workspaces: HashMap<String, String>,
     changes: HashMap<String, (String, Value)>,
     active: HashMap<String, Arc<AtomicBool>>,
     used: HashSet<String>,
@@ -356,92 +365,12 @@ impl CodingHost {
         {
             return Err(ERROR.into());
         }
-        let workspace = start.workspace_id.as_deref();
-        let scope_required = || scope.ok_or("BLK-CODING-WORKSPACE".to_owned());
         match name {
             "project_context" => {
                 fields(args, &[])?;
                 Ok(
-                    json!({"project":cli.project,"moduleId":start.module_id,"selection":start.selection}),
+                    json!({"project":cli.project,"moduleId":start.module_id,"selection":start.selection,"runtimeContext":start.runtime_context,"capabilities":{"projectContext":true,"blockyCli":true,"workspaceFiles":scope.is_some()}}),
                 )
-            }
-            "workspace_list" => {
-                fields(args, &["path"])?;
-                Ok(json!({"entries":scope_required()?.list(optional_text(args,"path")?)?}))
-            }
-            "workspace_search" => {
-                fields(args, &["query", "path"])?;
-                scope_required()?.search_cancellable(
-                    text(args, "query")?,
-                    optional_text(args, "path")?,
-                    cancel,
-                )
-            }
-            "workspace_read" => {
-                fields(args, &["path"])?;
-                scope_required()?.read(text(args, "path")?)
-            }
-            "workspace_write" => {
-                fields(args, &["path", "text", "expectedDigest"])?;
-                let expected = match args.get("expectedDigest") {
-                    Some(Value::Null) => None,
-                    Some(Value::String(s))
-                        if s.len() == 64
-                            && s.bytes()
-                                .all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase()) =>
-                    {
-                        Some(s.as_str())
-                    }
-                    _ => return Err(ERROR.into()),
-                };
-                // Reserve a bounded journal slot before any actual write.
-                let mut state = self.state.lock().map_err(|_| "BLK-CODING-STATE")?;
-                if cancel.load(Ordering::SeqCst) {
-                    return Err("BLK-CODING-CANCELLED".into());
-                }
-                reserve_receipt(&mut state, false)?;
-                let change = scope_required()?.write_tracked(
-                    text(args, "path")?,
-                    text(args, "text")?,
-                    expected,
-                    &mut |change| {
-                        if let Some(id) = change["changeId"].as_str() {
-                            state.changes.insert(
-                                id.to_owned(),
-                                (workspace.unwrap_or("").to_owned(), change.clone()),
-                            );
-                        }
-                        state
-                            .receipts
-                            .entry(start.request_id.clone())
-                            .or_default()
-                            .push(change);
-                    },
-                )?;
-                state.changes.insert(
-                    change["changeId"].as_str().ok_or(ERROR)?.to_owned(),
-                    (workspace.ok_or(ERROR)?.to_owned(), change.clone()),
-                );
-                state
-                    .receipts
-                    .entry(start.request_id.clone())
-                    .or_default()
-                    .push(change.clone());
-                Ok(json!({"change":change}))
-            }
-            "workspace_undo" => {
-                fields(args, &["changeId"])?;
-                let mut state = self.state.lock().map_err(|_| "BLK-CODING-STATE")?;
-                if cancel.load(Ordering::SeqCst) {
-                    return Err("BLK-CODING-CANCELLED".into());
-                }
-                let change = undo_locked(
-                    &mut state,
-                    workspace.ok_or("BLK-CODING-WORKSPACE")?,
-                    text(args, "changeId")?,
-                    Some(&start.request_id),
-                )?;
-                Ok(json!({"change":change}))
             }
             "blocky_cli" => {
                 fields(args, &["args"])?;
@@ -453,7 +382,7 @@ impl CodingHost {
                     .collect::<Result<Vec<_>, _>>()?;
                 cli.run(&args, scope, cancel)
             }
-            _ => Err(ERROR.into()),
+            _ => self.workspace_operation(start.workspace_id.as_deref(), scope, &start.request_id, name, args, cancel),
         }
     }
 }

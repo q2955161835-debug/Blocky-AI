@@ -55,7 +55,28 @@ it("does not begin a deferred Host tool when cancellation lands after tool.start
 
 it("answers in plain text with Pi metadata and bounded conversation context", async () => {
   const result = await runCodingAgent(
-    { ...start, conversation: [{ role: "user", text: "先前的问题" }] },
+    {
+      ...start,
+      conversation: [{ role: "user", text: "先前的问题" }],
+      runtimeContext: {
+        diagnostics: [
+          {
+            code: "BLK-LINK-001",
+            severity: "error",
+            moduleId: "research-agent",
+            blockId: "research-root",
+          },
+        ],
+        recentEvents: [
+          {
+            type: "block.failed",
+            moduleId: "research-agent",
+            blockId: "research-root",
+            code: "BLK-RUN-001",
+          },
+        ],
+      },
+    },
     {
       modelId: "fixture",
       executeTool: async () => {
@@ -63,6 +84,9 @@ it("answers in plain text with Pi metadata and bounded conversation context", as
       },
       generate: async (input) => {
         expect(JSON.stringify(input.messages)).toContain("先前的问题");
+        expect(JSON.stringify(input.messages)).toContain("BLK-LINK-001");
+        expect(JSON.stringify(input.messages)).toContain("BLK-RUN-001");
+        expect(JSON.stringify(input.messages)).not.toContain("workspaceAvailable");
         return generation([{ type: "text", text: "这是完整回答。" }]);
       },
     },

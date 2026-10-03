@@ -1,4 +1,11 @@
 export * from "./catalog";
+export * from "./workspace-tools";
+export {
+  startingBlueprints,
+  createStartingBlueprint,
+  type StartingBlueprint,
+  type StartingBlueprintId,
+} from "./starting-blueprints";
 export {
   blueprintInstance,
   previewBlueprintUpdate,

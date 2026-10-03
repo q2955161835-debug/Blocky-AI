@@ -213,6 +213,7 @@ export const resourceDefinitions: readonly ResourceDefinition[] = [
         toolName: { type: "string", maxLength: 128 },
         moduleId: id,
         exportId: id,
+        operation: enumeration("list", "search", "read", "write", "undo", "check"),
       },
       ["version", "permissions", "implementationRef"],
     ),

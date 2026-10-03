@@ -11,6 +11,7 @@ import { KnowledgeTransport } from "./knowledge-transport";
 import { installModel } from "./model-install-transport";
 import { codingNativeRequest } from "./coding-transport";
 import { cooperativeNativeRequest } from "./cooperative-transport";
+import { WorkspaceTransport } from "./workspace-transport";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const helper = /\/(?:main|runtime-worker)\.mjs$/.test(import.meta.url)
   ? resolve(
@@ -19,7 +20,8 @@ export const helper = /\/(?:main|runtime-worker)\.mjs$/.test(import.meta.url)
     )
   : resolve(root, "tools/blocky-cli/dist/bin/blocky-project-io.exe");
 const knowledgeTransport = new KnowledgeTransport(helper);
-export const closeNativeKnowledge = () => knowledgeTransport.close();
+export const workspaceTransport = new WorkspaceTransport(helper);
+export const closeNativeKnowledge = async () => { await Promise.all([knowledgeTransport.close(), workspaceTransport.close()]); };
 type Reply = {
   schemaVersion: "blocky.project-io/v1alpha1";
   ok: boolean;
@@ -125,6 +127,9 @@ export async function nativeUserOperation(
   fields: Record<string, unknown>,
   signal?: AbortSignal,
 ): Promise<unknown> {
+  if (operation === "workspace-call") return workspaceTransport.call(fields.request, signal);
+  if (operation === "workspace-status") return workspaceTransport.status(String(fields.projectId));
+  if (operation === "coding-cancel") { workspaceTransport.cancel(String(fields.requestId)); return null; }
   // A timed-out inference must not hold up the final ACL check or the fallback.
   // The session is privately owned by this CLI; the next request starts afresh.
   if (operation === "knowledge-cancel") knowledgeTransport.cancel();

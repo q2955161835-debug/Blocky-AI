@@ -81,9 +81,9 @@ function schema(project: Project, resource: Resource, key: string): Json {
   if (!value) throw Error("BLK-TOOL-003");
   return value;
 }
-function bind(context: ToolLoopContext): BoundTool[] {
+export function bindLoopTools(context: ToolLoopContext, allowEmpty = false): BoundTool[] {
   if (
-    !context.resourceIds.length ||
+    (!context.resourceIds.length && !allowEmpty) ||
     context.resourceIds.length > 16 ||
     new Set(context.resourceIds).size !== context.resourceIds.length
   )
@@ -135,7 +135,7 @@ function historyLimit(history: Message[]): void {
 export async function runToolLoop(context: ToolLoopContext): Promise<string> {
   const turns = integer(context.maxTurns, 1, 8),
     outputPerTurn = integer(context.outputPerTurn, 1, 4096);
-  const tools = bind(context),
+  const tools = bindLoopTools(context),
     { budget } = context;
   if (context.requireEvidence && !context.citations.length)
     return "资料没有提供足够依据，请补充资料或澄清问题。";

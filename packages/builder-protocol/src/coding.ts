@@ -14,6 +14,7 @@ export const codingTools = [
   "workspace_read",
   "workspace_write",
   "workspace_undo",
+  "workspace_check",
   "blocky_cli",
   "project_context",
 ] as const;
@@ -32,6 +33,40 @@ export const codingConversationSchema = z
     (messages) =>
       messages.reduce((sum, message) => sum + message.text.length, 0) <= 64000,
   );
+const contextCode = z.string().regex(/^BLK-[A-Z0-9-]{1,124}$/).max(128);
+export const codingRuntimeContextSchema = z
+  .object({
+    diagnostics: z
+      .array(
+        z
+          .object({
+            code: contextCode,
+            severity: z.enum(["info", "warning", "error"]),
+            moduleId: id.optional(),
+            blockId: id.optional(),
+          })
+          .strict(),
+      )
+      .max(20),
+    recentEvents: z
+      .array(
+        z
+          .object({
+            type: z.string().min(1).max(64),
+            moduleId: id.optional(),
+            blockId: id.optional(),
+            code: contextCode.optional(),
+          })
+          .strict(),
+      )
+      .max(20),
+  })
+  .strict()
+  .superRefine((context, refinement) => {
+    if (new TextEncoder().encode(JSON.stringify(context)).length > 8192)
+      refinement.addIssue({ code: "custom", message: "BLK-CODING-INPUT" });
+  });
+export type CodingRuntimeContext = z.infer<typeof codingRuntimeContextSchema>;
 export const codingStartSchema = z
   .object({
     schemaVersion: z.literal("blocky.coding-start/v1"),
@@ -47,6 +82,7 @@ export const codingStartSchema = z
       .refine((ids) => new Set(ids).size === ids.length),
     conversation: codingConversationSchema,
     workspaceId: id.optional(),
+    runtimeContext: codingRuntimeContextSchema.optional(),
   })
   .strict();
 export type CodingStart = z.infer<typeof codingStartSchema>;

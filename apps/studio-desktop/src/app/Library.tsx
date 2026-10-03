@@ -1,4 +1,9 @@
-import { catalog, categories, beginnerCategories } from "@blocky/block-catalog";
+import {
+  catalog,
+  categories,
+  beginnerCategories,
+  startingBlueprints,
+} from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
 import { surfaceTitle } from "@blocky/app-surface";
 import type { Blueprint } from "@blocky/block-catalog";
@@ -99,6 +104,22 @@ export function Library({
         })}
       </div>
       <div className="module-list">
+        <div className="section-label">内置起始蓝图</div>
+        {startingBlueprints.map((blueprint) => (
+          <button
+            key={blueprint.id}
+            disabled={s.busy || !s.settings.ready || !s.resources.ready}
+            onClick={() => void s.startBlueprint(blueprint.id)}
+          >
+            新建：{blueprint.displayName}
+          </button>
+        ))}
+        <button
+          disabled={s.busy || !s.settings.ready || !s.resources.ready}
+          onClick={() => void s.fresh()}
+        >
+          新建空白项目
+        </button>
         <div className="section-label">个人蓝图</div>
         {blueprints.map((blueprint) => (
           <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>

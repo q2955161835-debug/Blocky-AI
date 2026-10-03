@@ -98,6 +98,20 @@ it("requires a tools-capable model, one to sixteen distinct tools, and TOOLS-onl
   ).toContain("BLK-TOOL-LOOP-SCOPE");
 });
 
+it("allows a zero-tool Pi loop while retaining the Blocky minimum", async () => {
+  const pi = toolLoop();
+  pi.loop.fields!.ENGINE = "pi";
+  pi.loop.inputs = {};
+  expect((await compileProject(pi.project)).diagnostics).toEqual([]);
+
+  const blocky = toolLoop();
+  blocky.loop.fields!.ENGINE = "blocky";
+  blocky.loop.inputs = {};
+  expect(
+    (await compileProject(blocky.project)).diagnostics.map((item) => item.code),
+  ).toContain("BLK-TOOL-LOOP-CONFIG");
+});
+
 it("validates bounded flow configuration and rejects retrying effectful tools", async () => {
   const repeat = createAgentExample("bounded-repeat-project");
   const repeated = findBlock(

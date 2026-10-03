@@ -1,6 +1,6 @@
 # 内置代码 Agent 与 Host 工具
 
-这是桌面代码助手的接口；旧builder/v1仍兼容。2026-10-02内置代码Agent已完成Windows最终验收，精确来源见[原任务验收](../../验收/任务/验收-2026-10-02-内置代码Agent最终交付.md)。右侧聊天与默认配置发送修复另见[当前任务验收](../../验收/任务/验收-2026-10-02-右侧聊天简化与发送修复.md)，不能沿用旧结论覆盖本轮交付。
+这是桌面代码助手的接口；旧builder/v1仍兼容。2026-10-02内置代码Agent Windows 最终验收及聊天修复结论只绑定当时的源码和包：[代码Agent验收](../../验收/任务/验收-2026-10-02-内置代码Agent最终交付.md)、[聊天修复验收](../../验收/任务/验收-2026-10-02-右侧聊天简化与发送修复.md)。2026-10-04 起点蓝图、Pi 循环与默认构建助手调整见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)；该新范围正在实现，尚未独立验收，不能套用上述历史结论。
 
 ## 桌面交互
 
@@ -52,7 +52,9 @@ CLI的`--blocky-coding-run`helper读首帧任务，后续控制帧/EOF协作取�
 
 Host校验`blocky.cli-runtime/v1`的bundle字节数/SHA256。构建先生成runtime-worker和CLI锁定bundle，再编译内嵌锁的原生helper/Host；dev/build/native-test/release按发行布局放置CLI与原生依赖。
 
-桌面返回项目候选保持未应用；显示实际项目文件差异与新增能力，接受后再次由`coding_validate_project`核验任务绑定、项目基线、权限与正式格式，controller.edit一次事务保证可撤销。执行期间画布变化则拒绝旧候选；保存仍由用户显式进行。
+桌面候选显示实际项目文件差异与权限变化。当前有效行为是在项目身份、基线摘要、正式格式、编译和 Host 权限校验通过且画布未并发变化时，自动通过`coding_validate_project`并由`controller.edit`作为一次可撤销编辑应用；项目在任务期间变化时保留冲突候选、不覆盖画布。该行为与普通积木编辑共用撤销边界；它不是 CLI 批准流程。当前 10/04 行为及未验收状态见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)。
+
+桌面 `coding_run` 发送任务时不弹每任务 Yes/No 对话框；Tauri Host 仍预检并重算绑定任务与模型版本的请求摘要，检查 requestId 一次性、工作目录和 Host 权限。该摘要是请求完整性绑定，不是逐任务用户批准。CLI helper 保留原生 Yes/No 任务批准框；普通 CLI `run start --live` 的批准摘要/交互流程也保持独立。三种状态不得混写。桌面默认 `project_context` 和 `blocky_cli` 上下文、运行上下文的 8 KiB 有界投影及候选自动应用条件见[契约18第4节](18-四类起始蓝图、Pi运行与共享工作目录.md)。
 
 Tauri入口：coding_workspace_pick、coding_run（Channel事件）、coding_cancel、coding_undo、coding_changes（失败/取消回执）、coding_validate_project。真正退出需settle活动任务与本地撤回/应用事务，再刷新聊天。
 

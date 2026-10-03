@@ -53,11 +53,11 @@ it("fully hides panels, keeps the assistant draft when switching views, and expo
   render(<App />);
   await waitFor(() =>
     expect(
-      (screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement)
+      (screen.getByRole("button", { name: "新建空白项目" }) as HTMLButtonElement)
         .disabled,
     ).toBe(false),
   );
-  fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
+  fireEvent.click(screen.getByRole("button", { name: "新建空白项目" }));
   await screen.findByLabelText("画布名称");
   const toolbar = screen.getByRole("banner");
   expect(

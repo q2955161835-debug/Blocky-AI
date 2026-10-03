@@ -9,7 +9,7 @@
 | 官方 Skills 入口 | `$build-blocky-agents`、`$create-blocky-blocks`、`$convert-github-project-to-blocky`、`$reverse-agent-to-blocky` |
 | 首发环境 | Windows；从任意本地项目目录调用 |
 
-> 更新说明（2026-08-23）：官方集成已从单一 `$build-blocky-agents` Skill 扩展为四个 Skills 与 Codex 等客户端的官方插件；`$convert-github-project-to-blocky` 固定为核心项目积木化入口，可输出自定义积木、可展开蓝图、兼容模板草案或原生保留报告。具体证据链、RAG 积木和 Harness 夹具见[《Blocky GitHub 项目积木化与 Agent 组件设计》](Blocky-GitHub项目积木化与Agent组件设计.md)。
+> 更新说明（2026-10-04）：保留四个 Blocky Skills 与 Codex 官方插件方向。空白新建仍为空白项目；四类可自由改造起始蓝图按知识问答助手、工作助手、Coding 助手、Pi Agent 顺序建设，正在实现、尚未验收。当前开发源码加入 `template list/show/status`、`project create --template <四类新ID> [--model <resource-id>]` 与 `run start --workspace-dir <directory>`；旧软件起点 ID 明确拒绝，`--template` 不适用于空白项目。普通 CLI 构建、包读回及真实运行验收尚未完成，具体使用和边界见 [CLI README](../../tools/blocky-cli/README.md)。第三方框架只作为研究来源；这不影响 Codex 插件、Pi 内置构建助手、个人蓝图或通用工作流能力。
 
 当前已实现命令以 [`tools/blocky-cli/README.md`](../../tools/blocky-cli/README.md) 与 `blocky --help` 为准；本文后续命令表为完整目标，未进入帮助列表的命令不得宣称可用。
 
@@ -19,7 +19,7 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 
 各层分工明确：
 
-- `blocky` CLI 是机器接口，负责确定性读取、创建、编译、校验、差异、模拟、运行和兼容适配。
+- `blocky` CLI 是机器接口，负责确定性读取、空白项目创建、编译、校验、差异、模拟和运行；第三方框架来源分析不等于原生运行适配。
 - Blocky 内置搭建助手使用受限的画布查询、语义补丁、校验和模拟工具；默认审阅修改，也可在逐轮检查点保护下直接搭建。
 - 官方 Skills 是工作方法，告诉通用 Agent 何时调用哪些命令、如何控制上下文，以及哪些操作必须先展示差异或取得授权。
 - 官方插件负责发现 Skills、CLI 和本机图形页，不复制语言或运行时。
@@ -40,11 +40,11 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 ```
 
 ```text
-把我现有的 OpenClaw 配置读成积木，解释每一组权限，但不要写回。
+只读分析这份 OpenClaw 公开配置，标注来源和权限边界；不要假设 Blocky 已能导入、运行或写回。
 ```
 
 ```text
-检查这个 Hermes 模板为什么无法通过兼容验证，并生成一份修复计划。
+只读分析这个公开 Agent 项目的配置和工具边界，给出来源证据；不要假设 Blocky 已能导入或运行它。
 ```
 
 ```text
@@ -62,8 +62,8 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 ### 第一阶段：本地安全闭环
 
 - 检查 CLI、Blocky 核心和项目格式版本。
-- 查询可用能力积木、模板、类型、权益和权限说明。
-- 从 Build Spec 创建 `.blocky` 项目。
+- 查询可用能力积木、类型、权益和权限说明。
+- 使用 `project create [--name <name>] --output <file.blocky> --json` 创建空白 `main` 模块；不预置资源、问句或 Agent 流程。
 - 将现有 `.blocky` 导出为可读、可修改的 Build Spec。
 - 校验、解释错误、比较差异和生成修复建议所需的结构化信息。
 - 使用模拟模型进行确定性试运行并输出积木级事件。
@@ -72,7 +72,7 @@ Blocky 除图形编辑器外，提供内置搭建助手、稳定 CLI、官方 Ag
 ### 后续阶段
 
 - 连接真实模型和 Blocky 本地运行 Host。
-- Pi、Codex、OpenClaw、Hermes、OpenCode、DeepSeek Harness 只读扫描、原生往返和兼容报告。
+- 主流 Agent/框架的只读来源研究与证据映射；不宣称软件起点、原生运行或兼容报告能力。
 - 经 Blocky UI 授权的真实运行、外部行动和远程实例控制。
 - macOS CLI；Windows 以外平台的发行包在对应桌面端适配时加入。
 
@@ -89,8 +89,7 @@ Android、HarmonyOS 与 iOS 不提供设备本地 CLI 或积木编辑器。它�
 | `blocky schema show <name> --json` | 输出 Build Spec、CLI 响应或事件 Schema | 无 |
 | `blocky catalog list --json` | 分页列出当前版本和权益可见的能力积木 | 无 |
 | `blocky catalog show <block-id> --json` | 精确读取积木输入、输出、权限和示例 | 无 |
-| `blocky template list --json` | 列出内置模板及运行时要求 | 无 |
-| `blocky template show <template-id> --json` | 读取一个模板的结构和兼容信息 | 无 |
+| `blocky project create [--name <name>] --output <file.blocky> --json` | 创建空白 `main` 模块项目 | 目标存在时拒绝覆盖；不预置资源或问句 |
 
 ### 项目创建和修改
 
@@ -351,9 +350,9 @@ agent-skills/
 
 加入真实模型运行、事件订阅、短期授权引用和 Windows 本地 IPC。
 
-### 阶段 E：原生兼容
+### 阶段 E：四类起始蓝图
 
-开放 Pi、Codex、OpenCode、OpenClaw、Hermes、DeepSeek Harness 的 `compat` 读取、导入、差异、报告，再按兼容模板与 ADR-002 的共同门槛逐个开放写回。
+桌面和 CLI 复用同一目录与工厂建设知识问答助手、工作助手、Coding 助手、Pi Agent；新建空白项目保持独立。四类蓝图通过 `template list/show/status` 发现和检查，通过 `project create --template <knowledge-assistant|work-assistant|coding-assistant|pi-agent> [--model <resource-id>]` 创建。`--model` 只应用于蓝图创建；省略时才尝试继承本机默认模型，空白创建不增加模型积木。`run start --workspace-dir <directory>` 在当前 CLI 运行中绑定受控工作目录，项目只保留工作区名称/相对文件信息，不保存绝对路径。旧软件起点 ID 和 `blueprint official` 明确拒绝。当前开发源码已接入这些命令，但普通 CLI 构建、包读回与实际运行尚未验证。Pi Agent 必须使用锁定的真实 Pi Agent 上游核心，完成来源、许可证和循环映射验证；其他框架按需保留为只读研究来源。
 
 验收门槛：
 
@@ -362,8 +361,9 @@ agent-skills/
 - 交互入口生成相同 `InteractionManifest`；没有入口时运行栏禁用，多入口保持稳定 ID、名称和独立草稿。
 - Tool 引用调用和显式调用共享同一 Schema、权限、错误与结果事件。
 - JSON/JSONL 输出通过固定 Schema，列表可分页，大对象只返回文件路径。
-- Agent 能在无隐藏答案的测试中独立完成新建、修改、自定义积木、GitHub 转换、逆向和六类只读兼容导入。
-- GitHub 转换至少覆盖：一个单组件仓库生成自定义积木、一个 RAG 仓库生成通用积木蓝图、一个 Harness 生成兼容草案，以及许可证/源码不足时只输出阻塞报告。
+- Agent 能在无隐藏答案的测试中独立完成空白项目新建、修改、自定义积木、GitHub 转换和逆向。
+- GitHub 转换至少覆盖：一个单组件仓库生成自定义积木、一个 RAG 仓库生成通用积木蓝图，以及许可证/源码证据不足时只输出缺口报告。
+- 四类起始蓝图各自通过其真实任务行为、可改造性、保存重开和必要资源缺口检查；Pi Agent 另须通过真实上游锁定及循环验证。
 - 未授权测试中，Agent 无法触发真实外部副作用、原生写回或权益绕过。
 - Skill 从应用内置副本安装到干净仓库后，可被目标客户端发现且版本校验通过。
 

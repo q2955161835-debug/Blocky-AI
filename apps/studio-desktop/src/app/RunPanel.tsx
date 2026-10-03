@@ -7,6 +7,7 @@ import type { EvidenceCitation } from "@blocky/knowledge-core";
 import { RunOutputs } from "./RunOutputs";
 import { RunSettings } from "./RunSettings";
 import { TracePanel } from "./TracePanel";
+import { StartingConfiguration } from "./StartingConfiguration";
 import {
   ChatMenuButton,
   ChatPopover,
@@ -54,6 +55,7 @@ export function RunPanel({
         role="log"
         aria-live="polite"
       >
+        <StartingConfiguration studio={s} execute={execute} />
         {s.runInput && (
           <article className="builder-chat-message builder-chat-message-user">
             <p>{s.runInput}</p>

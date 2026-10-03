@@ -6,6 +6,10 @@ import { installBrowser } from "../../scripts/browser-runtime.mjs";
 import { mkdir, copyFile, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { writeGenerated } from "../../scripts/write-generated.mjs";
+import { piAgentOnlyPlugin } from "../../scripts/pi-agent-entry.mjs";
+import { verifyPiCore } from "../../scripts/check-pi-core.mjs";
+import { fileURLToPath } from "node:url";
+await verifyPiCore(fileURLToPath(new URL("../..",import.meta.url)));
 import {
   installDirectML,
   checkSystemRuntime,
@@ -19,6 +23,7 @@ await build({
   format: "esm",
   sourcemap: false,
   banner: { js: "#!/usr/bin/env node" },
+  plugins: [piAgentOnlyPlugin()],
 });
 const cliBytes = await readFile("dist/main.mjs");
 await writeGenerated(

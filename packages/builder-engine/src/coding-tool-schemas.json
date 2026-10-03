@@ -117,6 +117,16 @@
     }
   },
   {
+    "name": "workspace_check",
+    "description": "Actually validate a verified file snapshot: JSON parsing or JavaScript syntax via Node --check. This never executes repository code. A failed check returns ok=false with a stable code and line; fix the file then check the new digest. Other test commands require a registered tool extension.",
+    "parameters": {
+      "type": "object",
+      "properties": { "path": { "type": "string", "maxLength": 512 }, "kind": { "type": "string", "enum": ["json", "javascript"] } },
+      "required": ["path", "kind"],
+      "additionalProperties": false
+    }
+  },
+  {
     "name": "project_context",
     "description": "Read the latest isolated Blocky project candidate, target module and selection from Host. Use blocky_cli project compile for actual compiler diagnostics.",
     "parameters": {

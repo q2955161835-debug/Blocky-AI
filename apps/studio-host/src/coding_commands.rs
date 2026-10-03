@@ -2,9 +2,19 @@ use blocky_studio::coding::{CodingHost, CodingStart};
 use serde_json::Value;
 use tauri::{Manager, ipc::Channel};
 #[tauri::command]
+pub fn workspace_status(window: tauri::WebviewWindow, host: tauri::State<'_, CodingHost>, project_id: String) -> Result<Value,String> {
+    crate::window_lifecycle::visible(&window)?; host.workspace_status(&project_id)
+}
+#[tauri::command]
+pub async fn workspace_call(window: tauri::WebviewWindow, host: tauri::State<'_, CodingHost>, request: blocky_studio::coding::WorkspaceRequest) -> Result<Value,String> {
+    crate::window_lifecycle::visible(&window)?;
+    let host=host.inner().clone(); tauri::async_runtime::spawn_blocking(move||host.workspace_call(request)).await.map_err(|_|"BLK-CODING-STATE".to_owned())?
+}
+#[tauri::command]
 pub async fn coding_workspace_pick(
     window: tauri::WebviewWindow,
     host: tauri::State<'_, CodingHost>,
+    project_id: String,
 ) -> Result<Option<Value>, String> {
     crate::window_lifecycle::visible(&window)?;
     let parent = window.clone();
@@ -17,7 +27,7 @@ pub async fn coding_workspace_pick(
     .await
     .map_err(|_| "BLK-CODING-STATE")?;
     crate::window_lifecycle::visible(&window)?;
-    path.map(|p| host.grant(&p)).transpose()
+    path.map(|p| host.grant_project(&project_id, &p)).transpose()
 }
 #[tauri::command]
 pub async fn coding_run(
@@ -33,15 +43,6 @@ pub async fn coding_run(
         .as_str()
         .ok_or("BLK-CODING-INPUT")?
         .to_owned();
-    if !blocky_studio::native_confirmation::yes_no(
-        &window,
-        "批准代码助手任务",
-        blocky_studio::coding::approval_description(&preview),
-    )
-    .await
-    {
-        return Err("BLK-PERM-001".into());
-    }
     crate::window_lifecycle::visible(&window)?;
     let host = host.inner().clone();
     tauri::async_runtime::spawn_blocking(move || {

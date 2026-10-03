@@ -2,10 +2,12 @@
 
 | 项目 | 内容 |
 |---|---|
-| 状态 | 已接受，随 Blocky Core 尖峰分阶段实现 |
+| 状态 | CLI/Skills/插件的共享语义与权限原则继续有效；原模板专属 CLI 命令及六类导入路线已被 2026-10-04 当前路线取代 |
 | 日期 | 2026-08-23 |
 | 决策范围 | Windows CLI、内置搭建助手、多模块 Build Spec、Interaction Manifest、项目积木化、应用界面、RPA 检查、机器输出、官方 Agent Skills、官方插件、原生兼容命令 |
 | 关联文档 | [完整积木与 Agent 兼容设计](../产品设计/Blocky-完整积木与Agent兼容设计.md)、[项目积木化与 Agent 组件设计](../产品设计/Blocky-GitHub项目积木化与Agent组件设计.md)、[多画布、应用界面与 RPA 设计](../产品设计/Blocky-多画布应用界面与RPA设计.md)、[CLI 产品设计](../产品设计/CLI与官方Agent-Skill.md)、[ADR-001](ADR-001-首版跨端技术选型.md)、[ADR-002](ADR-002-原生Agent兼容运行时.md)、[ADR-005](ADR-005-多模块应用界面与RPA边界.md) |
+
+> 路线更新（2026-10-04）：本文中的 `template list/show`、`project create --template` 及六类首批模板导入用例属于原 CLI 设计，不是当前命令接口或交付路线。CLI 当前命令以 [`tools/blocky-cli/README.md`](../../tools/blocky-cli/README.md) 和实际 `blocky --help` 为准；四类起始蓝图状态、空白项目边界及 Pi Agent 来源要求见[四类起始蓝图](../产品设计/Blocky-四类起始蓝图.md)。四个官方 Skills、Codex 插件、内置构建助手及通用项目积木化能力继续作为独立方向。
 
 > 更新说明（2026-08-23）：原单一 `$build-blocky-agents` Skill 已扩展为四个官方 Skills 与 Codex 等客户端的插件；`$convert-github-project-to-blocky` 是核心项目积木化入口。本文定义的 CLI、Build Spec、输出、差异和授权契约由内置助手、全部 Skills 与插件共用；阶段 1 Demo 使用相同领域接口，不增加 Demo 专用 Schema 或运行旁路。
 

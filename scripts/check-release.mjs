@@ -8,6 +8,8 @@ import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
 import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 import { audioLock, audioRuntimeSource, verifyAudioRuntime } from "./prepare-audio-runtime.mjs";
 import { checkSystemRuntime } from "./prepare-native-runtime.mjs";
+import { verifyPiCore } from "./check-pi-core.mjs";
+await verifyPiCore();
 const root = process.cwd();
 const files = [
   "try/release-native-target/release/blocky-studio.exe",

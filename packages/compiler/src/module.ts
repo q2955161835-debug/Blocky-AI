@@ -21,6 +21,8 @@ import { getBlock } from "@blocky/block-catalog";
 import { isRpaSession, isRpaStep, compileRpaSession } from "@blocky/rpa-core";
 
 function validateToolLoop(node: IrNode): void {
+  if (node.fields.ENGINE !== undefined && !["blocky", "pi"].includes(String(node.fields.ENGINE))) throw Error("BLK-TOOL-LOOP-CONFIG");
+  if (node.fields.SESSION !== undefined && !["turn", "conversation"].includes(String(node.fields.SESSION))) throw Error("BLK-TOOL-LOOP-CONFIG");
   boundedField(node.fields.MAX_TURNS, 1, 8);
   boundedField(node.fields.OUTPUT_TOKENS, 1, 4096);
   let declaration = node.inputs.TOOLS;
@@ -38,7 +40,7 @@ function validateToolLoop(node: IrNode): void {
     resourceIds.add(declaration.fields.RESOURCE);
     declaration = declaration.next ?? null;
   }
-  if (!count) throw Error("BLK-TOOL-LOOP-CONFIG");
+  if (!count && node.fields.ENGINE !== "pi") throw Error("BLK-TOOL-LOOP-CONFIG");
 }
 
 export function compileWorkspace(

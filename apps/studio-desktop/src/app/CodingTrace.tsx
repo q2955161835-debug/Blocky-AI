@@ -6,6 +6,7 @@ const toolNames: Record<CodingTool, string> = {
   workspace_read: "读取文件",
   workspace_write: "编辑文件",
   workspace_undo: "撤回修改",
+  workspace_check: "检查代码",
   blocky_cli: "运行 Blocky CLI",
   project_context: "查看项目",
 };

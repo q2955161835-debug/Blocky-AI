@@ -580,6 +580,17 @@
         "exportId": {
           "type": "string",
           "format": "id"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "list",
+            "search",
+            "read",
+            "write",
+            "undo",
+            "check"
+          ]
         }
       },
       "required": [

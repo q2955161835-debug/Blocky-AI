@@ -16,7 +16,7 @@ import {
   type InteractionManifest,
 } from "@blocky/language-schema";
 import { type Args, required, integer } from "./arguments";
-import { nativeUserOperation } from "./native-store";
+import { nativeUserOperation, workspaceTransport } from "./native-store";
 import { envelope, CliError } from "./protocol";
 import { TraceSession } from "@blocky/observability";
 import { readJsonArtifact } from "./artifacts";
@@ -187,6 +187,7 @@ export async function runAgent(
     }
   };
   try {
+    if (args.options.has("workspace-dir")) await workspaceTransport.bind(project.manifest.projectId, required(args, "workspace-dir"), abort.signal);
     const services = nativeAgentServices(call, {
       mode: "cli",
       live: args.options.has("live"),
@@ -296,6 +297,7 @@ export async function runAgent(
           }
         : {}),
       pendingApprovals: pending,
+      ...(args.options.has("workspace-dir") ? { workspace: await workspaceTransport.status(project.manifest.projectId) } : {}),
     });
     response.ok = result.status === "completed";
     return {

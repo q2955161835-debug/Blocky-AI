@@ -7,13 +7,16 @@ Agent 使用 Blocky 的核心入口，与桌面共享 Project Model、Compiler�
 ```powershell
 .\blocky.cmd doctor --json
 .\blocky.cmd catalog list --limit 10 --json
-.\blocky.cmd project create --template research-companion --output .\try\my-project.blocky --json
+.\blocky.cmd project create --name "我的项目" --output .\try\my-project.blocky --json
+.\blocky.cmd template list --json
+.\blocky.cmd template show knowledge-assistant --json
+.\blocky.cmd project create --template work-assistant --name "合成工作项目" --output .\try\work-assistant.blocky --json
 .\blocky.cmd project validate .\try\my-project.blocky --json
 .\blocky.cmd project compile .\try\my-project.blocky --json
-.\blocky.cmd run preflight .\try\my-project.blocky --json
-.\blocky.cmd run start .\try\my-project.blocky --simulate --input "为什么树叶变黄？" --jsonl
 $LASTEXITCODE
 ```
+
+不带 `--template` 的新建项目是空白 `main` 模块，没有模型、资料、问句或 Agent 流程。四类蓝图创建的是可改造项目，但并不预置可用模型、知识索引或已选工作目录；运行前需配置对应资源、完成资料同步，并按需绑定工作目录。`--model` 只适用于 `project create --template <id>`；省略时仅蓝图创建会尝试继承本机默认模型，空白项目不会暗中添加模型积木。当前蓝图 CLI 接口已进入开发源码，尚未完成普通构建和验收。
 
 创建目标的父目录必须已存在。文件已存在时退出码为 5，不提供强制覆盖开关。缺少存储程序返回 6；参数错误 2；校验失败 3；拒绝 live 运行 4；取消或超时 7；内部错误 10。`--timeout` 单位为毫秒，Agent 运行默认 120000，具名任务默认 30000；Ctrl+C 请求取消。机器脚本应直接调用 `blocky.cmd` 或 `node tools/blocky-cli/dist/main.mjs`，不要以 pnpm 包装进程的退出码代替 CLI 原始退出码。
 
@@ -44,7 +47,7 @@ $LASTEXITCODE
 
 选定目录直接保存本资料集的设置、资源、秘密、日志、知识、转换缓存、记忆、恢复记录与自动化回执；桌面 WebView2 数据也进入其 `webview2/`。不同目录使用不同桌面实例标识，同目录保持单实例。项目文件与模型/驱动只读安装资产不迁移；新资料集不会自动复制原密钥或未保存作品。不设置时保留原默认行为。不要用覆盖 `LOCALAPPDATA` 代替桌面此入口：Windows Known Folder 不跟随该子进程变量。
 
-`template list/show` 与欢迎页提供 `state-machine`、`behavior-tree`、`rule-engine`、`hybrid-router` 和 `event-mailbox` 架构起点。它们是可编辑的普通模块积木组合，不要求 Agent 根。状态机记忆和事件队列只保留在当前会话；退出程序或另开 CLI 运行不会保留。事件收件箱用普通输入入队，输入 next 按顺序取出消息。取出后业务失败不自动重投；持久工作流仍在开发。
+开发中的 `template list/show/status` 面向四类新起始蓝图：`knowledge-assistant`、`work-assistant`、`coding-assistant`、`pi-agent`。`template status` 读取目标项目的模型、知识来源/索引及可选工作目录状态；它报告配置就绪度，不代替真实运行验收。旧软件项目起点 ID 不再作为别名。状态机、行为树、规则、混合路由和事件收件箱仍是通用积木/工作流能力，不是固定软件项目起点。状态机记忆和事件队列只保留在当前会话；退出程序或另开 CLI 运行不会保留。事件收件箱用普通输入入队，输入 next 按顺序取出消息。取出后业务失败不自动重投；持久工作流仍在开发。
 
 `run start --inputs-file <inputs.json>` 可替代 `--input`，在同一会话按顺序执行 1–32 个字符串；每项最多 16000 UTF-8 字节，文件最多 128 KiB。用 `schema show blocky.run-inputs/v1 --json` 获取输入结构。失败、拒绝授权或取消后不继续剩余输入，整批共享命令超时；每次模型/工具请求仍遵守原有批准要求。JSONL 输出所有运行事件，最终 `runs` 分别返回结果和运行 ID，`completedInputs/requestedInputs` 表示进度。`--trace-output` 只导出最后一次尝试的运行，响应注明 `traceScope:last-run`；多次输入不能使用单个 `--output` 文件路径。
 
@@ -52,7 +55,7 @@ $LASTEXITCODE
 
 `project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。Windows UIA 与隔离浏览器 Host 已有开发实现；普通包操作、录制和完整阶段门禁仍未完成。
 
-阶段 4 已提供受控 `run start --live`；官方 Skills 安装和六个原生兼容模板尚未提供。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生，兼容草案不能运行。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
+阶段 4 已提供受控 `run start --live`；四类新起始蓝图在开发源码中有 CLI 入口，但普通构建与验收尚未完成。当前创建接口接受四个新 ID，旧软件项目起点 ID 应明确拒绝。`run start --workspace-dir <directory>` 为本次 CLI 运行绑定所选文件范围；对外只显示工作区名和相对文件名，绝对路径不写入项目。第三方 Agent/框架只作为研究与来源分析对象，不因此提供原生适配或兼容声明。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
 
 ## 阶段 4 Agent 运行
 
@@ -76,13 +79,16 @@ $LASTEXITCODE
 
 生成结果保留 provider、transport、真实响应标识和用量。仅 transport=remote 时 `modelApiCalled=true`；本机托管与 Ollama 为 false。供应商未报告用量时保留 `usageStatus=unavailable`、`usage=null`，不能推算为零。预检不产生生成调用；批准与请求、资源及秘密版本绑定，不能沿用旧摘要。取消传到原生 Host，失败后使用结构化错误码与 `diagnostics explain` 获取恢复提示。
 
-`agent-loop` 是可编辑的文本分析项目示例，与四个官方知识蓝图分别列出。默认使用无网络模型，但本机工具仍需要批准。
+以下运行示例要求目标项目具备实际配置的模型及相应工具/知识索引；空白项目不具备运行条件。新蓝图也需先按 `template status` 提示配置资源。知识问答应先添加资料来源并完成 `knowledge sync`；工作/Coding 任务需显式选择工作目录。
 
 ```powershell
-.\blocky.cmd project create --template agent-loop --output .\try\agent.blocky --json
-.\blocky.cmd run preflight .\try\agent.blocky --json
-.\blocky.cmd run start .\try\agent.blocky --simulate --input "Hello Blocky" --interactive --jsonl
+.\blocky.cmd run preflight .\try\my-existing-project.blocky --json
+.\blocky.cmd run start .\try\my-existing-project.blocky --simulate --input "Hello Blocky" --interactive --jsonl
+.\blocky.cmd template status .\try\work-assistant.blocky --workspace-dir .\try\synthetic-workspace --json
+.\blocky.cmd run start .\try\work-assistant.blocky --live --input "整理合成资料" --workspace-dir .\try\synthetic-workspace --interactive --jsonl
 ```
+
+示例目录均为合成相对路径，执行前自行在 `try/` 下准备测试文件。绑定只对当前 CLI 运行有效；项目文件不记录工作目录绝对路径。
 
 在线生成先通过 `resource set` 配置用户模型、`secret import` 导入密钥引用，再将用户资源链接到项目并配置模型积木。`--live` 允许正式 Host 调用；是否真正联网由项目选中的模型决定，本地整理器不会因此变为远程模型。密钥不写入项目，也不作为命令行参数。
 
@@ -92,17 +98,24 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 ## 阶段 3 蓝图与真实来源
 
-`template list` 列出 `research-companion`、`code-guide`、`knowledge-tutor`、`task-helper` 四个起点。三个知识起点的集合初始为空，先用 `knowledge add` 与 `knowledge sync` 导入资料；向量/混合模式需 `knowledge embed`。`run --simulate` 仍运行真实本地检索，只是不调用外部生成式模型。
+空白创建只生成空白 `main` 模块。当前开发源码提供四类蓝图的列出、查看与状态查询，创建时需通过 `project create --template` 选取；这些新入口尚未完成 CLI 普通构建或验收。
 
 ```powershell
+.\blocky.cmd project create --name "空白项目" --output .\try\empty.blocky --json
+.\blocky.cmd project inspect .\try\empty.blocky --json
 .\blocky.cmd template list --json
-.\blocky.cmd blueprint official task-helper --output .\try\task-blueprint.json --json
+.\blocky.cmd template show knowledge-assistant --json
+.\blocky.cmd project create --template knowledge-assistant --model model-example --name "合成资料问答" --output .\try\knowledge-assistant.blocky --json
+.\blocky.cmd template status .\try\knowledge-assistant.blocky --json
+.\blocky.cmd template status .\try\work-assistant.blocky --workspace-dir .\try\synthetic-workspace --json
 .\blocky.cmd blueprint migrate .\try\old-blueprint.json --output .\try\migrated-blueprint.json --json
 .\blocky.cmd blueprint update .\try\task.blocky --blueprint .\try\new-version.json --module research-agent --root research-root --output .\try\update.json --json
 .\blocky.cmd patch preview .\try\task.blocky --patch .\try\update.json --json
 ```
 
 更新有冲突时返回 `ready:false` 且不写补丁；明确 `--resolution keep-user` 或 `upstream` 后才生成候选。`blueprint restore` 生成还原补丁；`patch apply` 输出新项目，不覆盖原件。版本、绑定和默认副本随项目保存，蓝图本身不包含知识正文或模型密钥。
+
+`model-example` 是占位资源 ID，运行示例前请将其替换为你已配置的模型资源；也可省略 `--model`，但只有蓝图创建会尝试继承本机默认模型。模型积木存在不代表资源已连通或外部模型已调用。知识问答的资料来源需另行通过 `knowledge add` 添加，再运行 `knowledge sync` 建立索引；普通空白/蓝图结构未同步前不应宣称资料问答已就绪。`template status` 的配置结果及上述 CLI 命令目前没有普通构建读回或验收结论。
 
 ## 阶段 2 项目、模块、设置与资源
 

@@ -1,4 +1,5 @@
 export { Runtime } from "./runtime";
+export { inspectRunSetup, type SetupIssue } from "./run-setup";
 export { RemoteRuntime } from "./remote-runtime";
 export { RuntimeServiceHost } from "./runtime-service-host";
 export type { RuntimeSessionState } from "./session-state";

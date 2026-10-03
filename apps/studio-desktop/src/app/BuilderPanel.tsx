@@ -59,8 +59,7 @@ export function BuilderPanel({
   const menu = useChatMenu(menuControl);
   const [prompt, setPrompt] = useState(""),
     [resourceOverride, setResourceId] = useState<string>();
-  const [reviewing, setReviewing] = useState(false),
-    [approved, setApproved] = useState<string[]>([]);
+  const [reviewing, setReviewing] = useState(false);
   const defaultResourceId = resolveSetting(
     "models.defaultResourceId",
     studio.settings.layers,
@@ -89,7 +88,6 @@ export function BuilderPanel({
   }, [builder.messages, builder.liveText, builder.events, builder.result]);
   useEffect(() => {
     setReviewing(false);
-    setApproved([]);
   }, [builder.result?.requestId]);
   useEffect(() => {
     if (promptSuggestion) setPrompt(promptSuggestion.text);
@@ -223,16 +221,40 @@ export function BuilderPanel({
         )}
         {builder.projectReview && (
           <article className="builder-chat-candidate" aria-label="项目修改">
-            <strong>项目修改待审阅</strong>
+            <strong>
+              {builder.projectReview.status === "applied"
+                ? "项目修改已自动应用"
+                : builder.projectReview.status === "conflict"
+                  ? "项目已变化，候选修改已保留"
+                  : "候选修改未能应用，内容已保留"}
+            </strong>
             <p>
               {builder.projectReview.files.length} 个项目文件 ·
-              接受后可以整体撤销
+              {builder.projectReview.status === "applied"
+                ? "可整体撤销"
+                : "未覆盖当前画布"}
             </p>
             <ul className="coding-project-files">
               {builder.projectReview.files.map((file) => (
                 <li key={file.path}>{file.path}</li>
               ))}
             </ul>
+            {builder.projectReview.permissions.length > 0 && (
+              <div>
+                <strong>新增声明权限</strong>
+                <ul>
+                  {builder.projectReview.permissions.map((permission) => (
+                    <li key={permission}>{permission}</li>
+                  ))}
+                </ul>
+                <p>Host 实际可用能力仍由现有安全策略控制。</p>
+              </div>
+            )}
+            {builder.projectReview.error && (
+              <p role="status">
+                {builder.projectReview.error} · 候选保留，可查看差异。
+              </p>
+            )}
             <button type="button" onClick={() => setReviewing(!reviewing)}>
               审阅候选差异
             </button>
@@ -244,46 +266,17 @@ export function BuilderPanel({
                     <FileDifference before={file.before} after={file.after} />
                   </details>
                 ))}
-                {builder.projectReview.permissions.length > 0 && (
-                  <fieldset>
-                    <legend>新增权限</legend>
-                    {builder.projectReview.permissions.map((permission) => (
-                      <label key={permission}>
-                        <input
-                          type="checkbox"
-                          checked={approved.includes(permission)}
-                          onChange={(event) =>
-                            setApproved((values) =>
-                              event.target.checked
-                                ? [...values, permission]
-                                : values.filter(
-                                    (value) => value !== permission,
-                                  ),
-                            )
-                          }
-                        />
-                        {permission}
-                      </label>
-                    ))}
-                  </fieldset>
-                )}
-                <button
-                  type="button"
-                  disabled={
-                    disabled ||
-                    !builder.projectReview.permissions.every((permission) =>
-                      approved.includes(permission),
-                    )
-                  }
-                  onClick={() => void builder.applyProject(approved)}
-                >
-                  接受项目修改
-                </button>
               </div>
             )}
-            <button type="button" disabled={disabled} onClick={builder.reject}>
-              舍弃项目修改
-            </button>
+            {builder.projectReview.status !== "applied" && (
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={builder.reject}
+              >
+                舍弃项目修改
+              </button>
+            )}
           </article>
         )}
       </div>

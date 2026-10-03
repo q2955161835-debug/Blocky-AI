@@ -3,10 +3,10 @@
 | 项目 | 内容 |
 |---|---|
 | 契约代际 | 阶段 0 的 `v1alpha1` 与阶段 2 的项目/IR `v1` 共存 |
-| 当前阶段 | 阶段 0–7及Agent能力补全已验收；内置代码Agent开发验证中 |
-| 当前任务 | `codex/feat-built-in-code-agent`；范围见契约17 |
-| 目标版本 | 现有普通包`0.8.0`；本轮未发布新包 |
-| 稳定性 | 内置代码Agent尚未完成Windows最终验收；历史证据仅绑定各自来源 |
+| 当前阶段 | 阶段 0–7及Agent能力补全已验收；四类起始蓝图、共享工作目录与桌面默认构建助手调整正在实现 |
+| 当前任务 | 四类起始蓝图与默认构建助手；范围见契约17、18 |
+| 目标版本 | 现有普通包`0.8.0`为历史交付；本轮新范围尚未形成验收包 |
+| 稳定性 | 本轮范围尚未独立验收；历史验收结论仅绑定各自来源 |
 
 本目录是 Blocky 正式产品接口索引。它定义不同包、Host、桌面界面和 CLI 之间交换什么数据；契约登记与源码消费者不等于对应产品功能已经完成。Windows Core 技术尖峰目录已从当前工作区删除，相关结果只作为 Git 历史证据，不是正式契约或包边界。
 
@@ -17,7 +17,7 @@
 1. 用户当前明确指令；
 2. [竞品驱动完整开发计划](../../执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)；
 3. [ADR-005](../ADR-005-多模块应用界面与RPA边界.md)、[ADR-006](../ADR-006-底部面板终端与日志系统边界.md)及其专项产品设计；
-4. 设置中心、积木语言、兼容模板和 CLI/Skills 产品设计；
+4. 设置中心、积木语言、四类起始蓝图和 CLI/Skills 产品设计；
 5. Git 历史中的 Windows Core 尖峰及归档验收证据。
 
 发现冲突时必须修订当前基线或记录明确决策点，不能用未验证实现反向覆盖产品契约。
@@ -58,7 +58,10 @@
 | `blocky.coding-result/v1` | 终态、文件回执与项目候选 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
 | `blocky.coding-chat/v1` | 按项目持久聊天 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 本机用户会话 | 否 | `studio-host` / `builder-protocol` |
 | `blocky.coding-ipc/v1` | Host与Pi worker消息 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 任务内存 | 否 | `studio-host` / `builder-protocol` |
+| `blocky.workspace-request/v1` | 项目绑定目录上的 list/search/read/write/undo/check 请求 | [四类起始蓝图、Pi运行与共享工作目录](18-四类起始蓝图、Pi运行与共享工作目录.md) | Host会话 | 否 | `studio-host` / `runtime-core` |
 | `blocky.cli-runtime/v1` | 实际CLI bundle完整性锁定 | [内置代码Agent与Host工具](17-内置代码Agent与Host工具.md) | 构建工件 | 否 | `studio-host` / `builder-protocol` |
+
+`StartingBlueprintId` 是 CLI/桌面共用的起点目录标识，不是新的项目存储 Schema；四个当前 ID、构建规则与配置边界见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)。
 
 ## 3. 唯一数据流
 
@@ -124,7 +127,7 @@ Compiler / Runtime / Builder / Host / Terminal / Preview / RPA
 
 阶段 3 当前开发入口为[知识与积木化契约](12-阶段3知识与积木化.md)，新增 `blocky.knowledge-index/v1` 和 `blocky.knowledge-store/v1` 受控资源协议；最终结论仍以该阶段任务验收为准。
 
-当前已进入正式实现的部分包括：`blocky.project/v1`、`blocky.module-ir/v1` 与 `blocky.project-ir/v1`；显式 `blocky.migration/v1` 迁移候选；按模块缓存的增量编译；六个文本语言原子；统一命令/快捷键、分层设置、类型化资源；Windows ConPTY 用户终端；登记任务与 Agent capability 票据；结构化日志与有界存储；`blocky.recovery/v1` 恢复副本；以及只在 Host 内消费的秘密存储。实际 Provider、RAG、动态页面生成、RPA、完整构建助手、六套兼容适配器和官方 Skills 仍按后续阶段处理。
+阶段 2 当时的范围不包括真实 Provider、RAG、动态页面生成和 RPA；各项后续状态以对应阶段契约与验收记录为准。六套软件兼容适配器是已被替代的历史规划，不再列为当前交付路线。2026-10-04 起四类可编辑起始蓝图及其共享工作目录/Pi 运行行为正在实现，当前来源与边界见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)；此更新不改写历史阶段验收，也不将第三方框架研究写成兼容交付。
 
 除上述明确提升版本的项目、IR、迁移、恢复和设置文档外，`blocky.interaction/v1alpha1`、`blocky.tool/v1alpha1`、`blocky.resource/v1alpha1`、`blocky.command/v1alpha1`、`blocky.setting/v1alpha1`、`blocky.app-surface/v1alpha1`、`blocky.frontend-bridge/v1alpha1`、`blocky.rpa/v1alpha1`、`blocky.window/v1alpha1`、`blocky.log/v1alpha1`、`blocky.terminal/v1alpha1`、`blocky.task/v1alpha1` 与 `blocky.audit/v1alpha1` 保持原版本；本阶段不做无语义依据的批量改名。
 

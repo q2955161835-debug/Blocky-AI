@@ -204,12 +204,18 @@ function validateNewTool(
       "search-json-v1",
       "mcp-tool-v1",
       "module-tool-v1",
+      "workspace-file-v1",
     ].includes(adapter ?? "")
   )
     return;
   requireToolSchemas(config);
   const permissions = config.permissions;
   const capabilities = input.capabilityRequirements;
+  if (adapter === "workspace-file-v1") {
+    const permission = ["list", "search", "read"].includes(String(config.operation)) ? "workspace.read" : ["write", "undo"].includes(String(config.operation)) ? "workspace.write" : config.operation === "check" ? "workspace.check" : undefined;
+    if (!permission || input.scope !== "project" || !exactOne(permissions, permission) || !exactOne(capabilities, permission) || secrets.size > 0 || ["mcpResourceId", "toolName", "method", "networkMode", "moduleId", "exportId"].some((key) => Object.hasOwn(config, key))) invalidResource();
+    return;
+  }
   if (adapter === "http-json-v1" || adapter === "search-json-v1") {
     if (
       input.scope !== "user" ||

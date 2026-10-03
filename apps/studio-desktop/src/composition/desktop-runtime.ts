@@ -173,12 +173,12 @@ export class DesktopRuntime {
                 .then(
                   (value) =>
                     send({ kind: "reply", id: frame.id, ok: true, value }),
-                  () =>
+                  (cause) =>
                     send({
                       kind: "reply",
                       id: frame.id,
                       ok: false,
-                      value: { code: "BLK-RUN-SERVICE" },
+                      value: { code: cause instanceof Error && /^BLK-[A-Z0-9-]{3,64}$/.test(cause.message) ? cause.message : "BLK-RUN-SERVICE" },
                     }),
                 )
                 .catch(fail);

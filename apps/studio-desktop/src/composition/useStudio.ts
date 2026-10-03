@@ -8,12 +8,15 @@ import { useSession } from "./useSession";
 import {
   ProjectController,
   restoreSession,
+  applyDefaultModel,
   configureBlock,
   editSelection,
   copyAcrossModules,
   createEmptyProject,
   type SelectionEdit,
 } from "@blocky/project-model";
+import { createStartingBlueprint, startingBlueprints } from "@blocky/block-catalog";
+import { resolveSetting } from "@blocky/settings-core";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult, type WorkflowSummary } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
@@ -29,7 +32,7 @@ import {
   type RuntimeEvent,
 } from "@blocky/observability";
 import { digest, interactionKey, type SourceRef, type Project } from "@blocky/language-schema";
-import { resolveResource } from "@blocky/resource-registry";
+import { isUserOnlineModel, resolveResource } from "@blocky/resource-registry";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
@@ -369,7 +372,11 @@ export function useStudio(initialProject?: Project) {
       setBusy(false);
     }
   };
-  const fresh = async () => {
+  const beginProject = async (
+    create: () => Project,
+    confirmationMessage: string,
+    successMessage: string,
+  ) => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     if (!settings.ready || !resources.ready) {
       setMessage("本机模型配置尚未就绪，请稍后重试。");
@@ -380,10 +387,10 @@ export function useStudio(initialProject?: Project) {
     try {
       if (
         controller.getSnapshot().dirty &&
-        !(await confirm("新建项目将放弃当前未保存的修改。"))
+        !(await confirm(confirmationMessage))
       )
         return;
-      const p = createEmptyProject();
+      const p = create();
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -394,15 +401,50 @@ export function useStudio(initialProject?: Project) {
       setResult(undefined);
       setSubmittedInput(undefined);
       setSelected(null);
+      setFocus(undefined);
+      setHistory([]);
+      setInteractionId("");
+      setPaused(false);
       setSession(restoreSession(p, null));
       setQuestion("");
-      setMessage("已新建项目");
+      setMessage(successMessage);
     } catch {
       setMessage("项目无法创建，请重试。");
     } finally {
       ioBusy.current = false;
       setBusy(false);
     }
+  };
+  const fresh = () =>
+    beginProject(
+      createEmptyProject,
+      "新建项目将放弃当前未保存的修改。",
+      "已新建项目",
+    );
+  const startBlueprint = (id: string) => {
+    const blueprint = startingBlueprints.find((item) => item.id === id);
+    if (!blueprint) {
+      setMessage("所选起始蓝图不存在，请刷新后重试。");
+      return Promise.resolve();
+    }
+    return beginProject(
+      () => {
+        let project = createStartingBlueprint(id);
+        const defaultModelId = resolveSetting(
+          "models.defaultResourceId",
+          settings.layers,
+        ).value;
+        const model =
+          typeof defaultModelId === "string"
+            ? resources.map.get(defaultModelId)
+            : undefined;
+        if (model && isUserOnlineModel(model))
+          project = applyDefaultModel(project, defaultModelId as string, resources.map);
+        return project;
+      },
+      `开始“${blueprint.displayName}”将放弃当前未保存的修改。`,
+      `已创建${blueprint.displayName}`,
+    );
   };
   const migrate = async () => {
     if (closing.current || runBusy.current || ioBusy.current) return;
@@ -589,6 +631,7 @@ export function useStudio(initialProject?: Project) {
     save,
     open,
     fresh,
+    startBlueprint,
     updateField,
     applySelectionEdit,
     copySelectionToModule,

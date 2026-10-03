@@ -9,5 +9,7 @@ export default defineConfig({
     ],
     exclude: ["**/node_modules/**"],
     testTimeout: 10000,
+    // Leave capacity for tests that start real Node/Host child processes.
+    maxWorkers: 8,
   },
 });

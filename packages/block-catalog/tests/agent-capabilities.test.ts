@@ -2,14 +2,20 @@ import { expect, it } from "vitest";
 import { getBlock } from "../src/catalog";
 
 it("publishes bounded control and tool-loop blocks with resource and slot metadata", () => {
-  expect(getBlock("core.reason.tool_loop")).toMatchObject({
-    fields: ["RESOURCE", "MAX_TURNS", "OUTPUT_TOKENS"],
+  const toolLoop = getBlock("core.reason.tool_loop");
+  expect(toolLoop).toMatchObject({
+    fields: ["RESOURCE", "MAX_TURNS", "OUTPUT_TOKENS", "ENGINE", "SESSION"],
+    optionalFields: ["ENGINE", "SESSION"],
+    fieldOptions: {
+      ENGINE: ["blocky", "pi"],
+      SESSION: ["turn", "conversation"],
+    },
     inputs: ["TOOLS"],
-    requiredInputs: ["TOOLS"],
     inputChecks: { TOOLS: "agent-tool" },
     resourceFields: { RESOURCE: "model" },
     defaultFields: { MAX_TURNS: "4", OUTPUT_TOKENS: "512" },
   });
+  expect(toolLoop?.requiredInputs ?? []).not.toContain("TOOLS");
   expect(getBlock("core.tool.expose")).toMatchObject({
     statement: true,
     statementCheck: "agent-tool",

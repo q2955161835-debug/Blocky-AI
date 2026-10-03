@@ -2,10 +2,12 @@ import {
   catalog,
   catalogVersion,
   getBlock,
+  createStartingBlueprint,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
 import { runAgent, type RunAgentContext } from "./run-agent";
-import { projectDigest, createEmptyProject } from "@blocky/project-model";
+import { projectDigest, createEmptyProject, applyDefaultModel } from "@blocky/project-model";
+import { startingBlueprintCommand, startingBlueprintHelp } from "./starting-blueprints";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -48,10 +50,12 @@ import {
   userConfigCommand,
   userConfigHelp,
   userRegistryMap,
+  readDefaultModelId,
 } from "./user-config";
 export const help = {
   version: "0.8.0",
   commands: [
+    ...startingBlueprintHelp,
     "profile show --json",
     ...discoveryHelp,
     ...blockQueryHelp,
@@ -82,7 +86,7 @@ export const help = {
     "doctor --json",
     "catalog list [--limit 20] [--cursor 0] --json",
     "catalog show <block-id> --json",
-    "project create [--name <name>] --output <file.blocky> --json",
+    "project create [--template <knowledge-assistant|work-assistant|coding-assistant|pi-agent>] [--model <resource-id>] [--name <name>] --output <file.blocky> --json",
     "project inspect <file.blocky> --json",
     "project module list <file.blocky> --json",
     "project validate <file.blocky> --json",
@@ -90,7 +94,7 @@ export const help = {
     "project configure <file.blocky> --module <id> --block <id> --field <name> --value <text> --output <new.blocky> --json",
     "surface list <file.blocky> --json",
     "run preflight <file.blocky> --json",
-    "run start <file.blocky> (--simulate | --live) (--input <question> | --inputs-file <strings.json>) [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <last-run.json>] [--rpa-inputs <module-inputs.json>] [--workflow-task <task-id>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
+    "run start <file.blocky> (--simulate | --live) (--input <question> | --inputs-file <strings.json>) [--workspace-dir <directory>] [--entry <id>] [--module <id>] [--from-block <id>] [--breakpoint <module:id[,module:id]> --debug-actions <actions.json>] [--trace-output <last-run.json>] [--rpa-inputs <module-inputs.json>] [--workflow-task <task-id>] [--timeout 120000] [--run-id <id>] [--interactive | --approval-file <sha256-array.json>] [--output <new-file>] --jsonl",
   ],
   modelApiCalled: false,
 };
@@ -112,6 +116,8 @@ export async function dispatch(
   }
   const discovered = discoveryCommand(args, help.commands);
   if (discovered) return discovered;
+  const blueprint = await startingBlueprintCommand(args, signal);
+  if (blueprint) return blueprint;
   const profiles = await modelProfilesCommand(args);
   if (profiles) return profiles;
   const model = await modelCommand(args, signal);
@@ -208,13 +214,24 @@ export async function dispatch(
     return { code: 0, result: envelope(command, { catalogVersion, block }) };
   }
   if (command === "project.create") {
-    allow(args, ["json", "name", "output"], 2);
+    allow(args, ["json", "name", "output", "template", "model"], 2);
     const output = required(args, "output");
     let project;
     try {
-      project = createEmptyProject(args.options.has("name") ? required(args, "name") : undefined);
+      project = args.options.has("template") ? createStartingBlueprint(required(args, "template")) : createEmptyProject(args.options.has("name") ? required(args, "name") : undefined);
+      if (args.options.has("name")) {
+        const name=required(args,"name").trim(); if (!name || name.length>200) throw Error("BLK-PROJECT-NAME-001"); project.manifest.displayName=name;
+      }
     } catch {
-      throw new CliError(2, "BLK-CLI-002", "项目名称须为 1–200 个字符。");
+      throw new CliError(2, "BLK-CLI-002", "项目名称无效或起始蓝图不存在。", "template list 可查看当前四个起点。");
+    }
+    if (args.options.has("model") && !args.options.has("template")) throw new CliError(2,"BLK-CLI-002","空白项目没有模型积木，请先选择起始蓝图或自行添加积木。");
+    if (args.options.has("template")) {
+      const modelId=args.options.has("model")?required(args,"model"):await readDefaultModelId();
+      if (modelId) {
+        try { project=applyDefaultModel(project,modelId,await userRegistryMap()); }
+        catch { if(args.options.has("model")) throw new CliError(3,"BLK-MODEL-DEFAULT-001","指定模型未配置或不可用。","使用 resource list 查看本机模型。"); }
+      }
     }
     await createProject(output, project);
     const bytes = await readFile(output);
@@ -280,6 +297,7 @@ export async function dispatch(
           "inputs-file",
           "rpa-inputs",
           "workflow-task",
+          "workspace-dir",
         ]
       : ["json"],
     moduleList ? 4 : 3,

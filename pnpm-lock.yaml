@@ -195,6 +195,9 @@ importers:
 
   packages/block-catalog:
     dependencies:
+      '@blocky/knowledge-core':
+        specifier: workspace:*
+        version: link:../knowledge-core
       '@blocky/language-schema':
         specifier: workspace:*
         version: link:../language-schema
@@ -443,6 +446,15 @@ importers:
       '@blocky/rpa-core':
         specifier: workspace:*
         version: link:../rpa-core
+      '@earendil-works/pi-agent-core':
+        specifier: 0.86.0
+        version: 0.86.0(ws@8.21.3)(zod@4.4.3)
+      '@earendil-works/pi-ai':
+        specifier: 0.86.0
+        version: 0.86.0(ws@8.21.3)(zod@4.4.3)
+      typebox:
+        specifier: 1.3.27
+        version: 1.3.27
       zod:
         specifier: 4.4.3
         version: 4.4.3

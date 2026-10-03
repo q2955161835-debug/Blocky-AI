@@ -1,8 +1,11 @@
 import { build } from "esbuild";
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { resolve, dirname } from "node:path";
+import { resolve } from "node:path";
 import { writeGenerated } from "./write-generated.mjs";
+import { piAgentOnlyPlugin } from "./pi-agent-entry.mjs";
+import { verifyPiCore } from "./check-pi-core.mjs";
+await verifyPiCore();
 
 const output = resolve("try/stage5/builder-runtime");
 await mkdir(output, { recursive: true });
@@ -18,37 +21,7 @@ const built = await build({
   metafile: true,
   // The 0.86 public barrel also reexports effectful, unused Harness tool schemas.
   // Retain its supported Agent export; do not load the unrelated barrel exports.
-  plugins: [
-    {
-      name: "pi-agent-only",
-      setup(builder) {
-        builder.onLoad(
-          {
-            filter:
-              /[\\/]@earendil-works[\\/]pi-agent-core[\\/]dist[\\/]index\.js$/,
-          },
-          async (args) => {
-            const pkg = JSON.parse(
-              await readFile(
-                resolve(dirname(args.path), "../package.json"),
-                "utf8",
-              ),
-            );
-            if (pkg.version !== "0.86.0")
-              throw Error("Pi entry audit requires version 0.86.0");
-            const entry = await readFile(args.path, "utf8");
-            if (!entry.includes("./agent.js"))
-              throw Error("Pi Agent export changed");
-            return {
-              contents: 'export { Agent } from "./agent.js";',
-              resolveDir: dirname(args.path),
-              loader: "js",
-            };
-          },
-        );
-      },
-    },
-  ],
+  plugins: [piAgentOnlyPlugin()],
 });
 const retained = [
   ...new Set(

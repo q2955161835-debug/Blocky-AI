@@ -285,7 +285,7 @@ fn prepare(args: &[String]) -> Result<Prepared, String> {
         modifies,
     })
 }
-fn assets() -> Result<(PathBuf, PathBuf), String> {
+pub(super) fn assets() -> Result<(PathBuf, PathBuf), String> {
     let directory = crate::builder::process::assets()?
         .canonicalize()
         .map_err(|_| ERROR)?;

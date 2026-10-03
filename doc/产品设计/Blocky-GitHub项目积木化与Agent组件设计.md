@@ -133,13 +133,13 @@
 
 | Harness | 当前证据用途 | 转换策略 |
 |---|---|---|
-| Codex | 官方开放仓库、CLI/SDK、Skills、MCP、AGENTS.md、沙箱与审批 | 可做源码级 Harness fixture；仍需按 commit 和许可证锁定 |
-| Claude Code | 官方文档描述 CLAUDE.md、Skills、Subagents、MCP、Hooks、Plugins；公开仓库含分发与插件资料 | 先做配置/行为/扩展夹具；未完成源码与许可证审计前，不宣称完整源码转换或第七个内置模板 |
-| OpenClaw | 官方开放仓库、Gateway、Workspace、Tools、Skills、Plugins、Channels | 可做源码级和真实运行适配夹具 |
-| Pi | SDK、极简循环和四个基础工具 | 作为构建助手候选底层与轻量兼容夹具，两个方向保持隔离 |
-| OpenCode、Hermes、DeepSeek Harness | 已列入首批兼容模板 | 按各自 ADR-002 矩阵逐个锁定和验证，不由一个绿色结果推断其他项目 |
+| Codex | 官方开放仓库、CLI/SDK、Skills、MCP、AGENTS.md、沙箱与审批 | 作为公开架构和来源研究材料；Codex 官方 Blocky 插件仍是独立产品方向，不意味着 Codex 项目起点 |
+| Claude Code | 官方文档描述 CLAUDE.md、Skills、Subagents、MCP、Hooks、Plugins；公开仓库含分发与插件资料 | 作为配置/行为/扩展研究来源，不据此承诺源码转换或内置蓝图 |
+| OpenClaw | 官方开放仓库、Gateway、Workspace、Tools、Skills、Plugins、Channels | 作为研究来源；本项目不据此提供运行适配或软件起点 |
+| Pi | SDK、真实 Agent 循环、上下文和工具语义 | Pi Agent 是第四类起始蓝图；必须锁定真实上游版本/许可证并将核心运行语义积木化，不能以自有循环改名替代 |
+| OpenCode、Hermes、DeepSeek Harness | 各自公开项目、架构与配置 | 仅作为研究来源；不再处于当前软件模板或兼容适配交付队列 |
 
-Codex、Claude Code 和 OpenClaw 共同用于校验 Agent 落地场景中的仓库规则、Skills、工具/MCP、权限、子 Agent、Hooks/插件、会话和事件语义。Claude Code 是否升级为内置兼容模板，必须经过产品价值、许可证、可维护性和行为往返专项决策；本设计不擅自把首批六个模板改为七个。
+Codex、Claude Code、OpenClaw、OpenCode、Hermes 和 DeepSeek Harness 可继续用于研究 Agent 落地场景中的仓库规则、Skills、工具/MCP、权限、子 Agent、Hooks/插件、会话和事件语义。研究不能自动升级为产品支持或兼容结论；当前产品起点固定为四类可改造蓝图。Pi SDK 作为现有构建助手的内置引擎与 Pi Agent 蓝图来源是两个不同使用边界。
 
 ## 7. 兼容性设计
 

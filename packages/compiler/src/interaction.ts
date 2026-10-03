@@ -79,7 +79,7 @@ export function projectInteraction(
           );
           if (
             !Array.isArray(model.definition.capabilities) ||
-            !model.definition.capabilities.includes("tools")
+            (!model.definition.capabilities.includes("tools") && (node.inputs.TOOLS || node.fields.ENGINE !== "pi"))
           )
             diagnostics.push(
               diagnostic(
@@ -135,7 +135,7 @@ export function projectInteraction(
           }
           declaration = declaration.next ?? null;
         }
-        if (!count)
+        if (!count && node.fields.ENGINE !== "pi")
           diagnostics.push(
             diagnostic("BLK-TOOL-LOOP-CONFIG", "至少连接一个可用工具", source),
           );
