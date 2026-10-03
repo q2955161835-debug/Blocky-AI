@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createAgentExample } from "../../packages/block-catalog/src";
+import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import { canonicalJson } from "../../packages/language-schema/src";
 import { createHash } from "node:crypto";
 const native = vi.hoisted(() => ({

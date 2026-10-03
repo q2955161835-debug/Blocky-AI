@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { parseSettings } from "@blocky/settings-core";
 export { applyDefaultModel } from "./model-defaults";
+export { createEmptyProject } from "./empty-project";
 import {
   canonicalJson,
   digest,

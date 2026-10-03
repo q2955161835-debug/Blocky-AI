@@ -223,8 +223,8 @@ fn prepare(args: &[String]) -> Result<Prepared, String> {
     let (positional, keys, modifies): (usize, &[&str], bool) = match command.as_str() {
         "catalog.list" => (0, &["limit", "cursor"], false),
         "command.list" => (0, &["query"], false),
-        "catalog.show" | "template.show" | "schema.show" => (1, &[], false),
-        "template.list" | "schema.list" => (0, &[], false),
+        "catalog.show" | "schema.show" => (1, &[], false),
+        "schema.list" => (0, &[], false),
         "project.inspect" | "project.validate" | "project.compile" | "project.map"
         | "surface.list" | "run.preflight" => (1, &[], false),
         "project.configure" => (1, &["module", "block", "field", "value", "output"], true),
@@ -366,6 +366,9 @@ mod tests {
         assert!(prepare(&["project", "inspect", "$project", "--json"].map(str::to_owned)).is_ok());
         for args in [
             vec!["builder", "draft", "$project", "--json"],
+            vec!["template", "list", "--json"],
+            vec!["template", "show", "research-companion", "--json"],
+            vec!["blueprint", "official", "research-companion", "--json"],
             vec!["run", "start", "$project", "--live", "--json"],
             vec!["project", "inspect", "C:/secret.blocky", "--json"],
             vec!["schema", "list", "--json", "--output", "escape"],

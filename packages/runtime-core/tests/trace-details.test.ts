@@ -3,7 +3,7 @@ import { TraceSession, inspectTraceExport } from "@blocky/observability";
 import type { WorkspaceBlock } from "@blocky/language-schema";
 import { createStarter } from "../../test-fixtures/src";
 import { Runtime, localAdapters } from "../src";
-import { createAgentExample } from "../../block-catalog/src/agent-example";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 
 function project(...blocks: WorkspaceBlock[]) {
   const p = createStarter();

@@ -608,39 +608,6 @@ kbd {
   padding: 11px 22px;
   border: 1px solid #3b485d;
 }
-.starter-card {
-  width: 100%;
-  border: 1px solid #43526b;
-  border-radius: 14px;
-  text-align: left;
-  padding: 23px;
-  background: #29313f;
-  box-shadow: 0 20px 70px #0003;
-}
-.starter-grid {
-  flex: 1 1 440px;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-.starter-guide {
-  padding: 14px;
-  border-bottom: 1px solid #43526b;
-  font-size: 12px;
-  line-height: 1.7;
-}
-.starter-guide summary {
-  cursor: pointer;
-  font-weight: 600;
-}
-.starter-guide ol {
-  padding-left: 20px;
-}
-.starter-guide button {
-  margin: 3px;
-  white-space: normal;
-}
 .blueprint-import {
   display: block;
   margin: 10px 0;
@@ -683,33 +650,6 @@ kbd {
 .mini-blocks span + span + span {
   background: #4666aa;
   border-color: #6387d4;
-}
-.starter-card small {
-  font-size: 11px;
-  color: #8fabd5;
-}
-.starter-card h2 {
-  font-size: 19px;
-  margin: 12px 0;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-}
-.starter-card h2 span {
-  color: #829fcb;
-}
-.starter-card p {
-  font-size: 12px;
-  color: #9ba9bd;
-}
-.starter-card footer {
-  border-top: 1px solid #3b4556;
-  margin-top: 22px;
-  padding-top: 16px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: #8798b2;
 }
 .popup-backdrop {
   position: fixed;

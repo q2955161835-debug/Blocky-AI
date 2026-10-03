@@ -2,19 +2,10 @@ import {
   catalog,
   catalogVersion,
   getBlock,
-  createAgentExample,
-} from "@blocky/block-catalog";
-import {
-  officialStarters,
-  capabilityStarters,
-  createCapabilityStarter,
-  architectureStarters,
-  createArchitectureStarter,
-  createBlueprintProject,
 } from "@blocky/block-catalog";
 import { compileProject } from "@blocky/compiler";
 import { runAgent, type RunAgentContext } from "./run-agent";
-import { projectDigest, applyDefaultModel } from "@blocky/project-model";
+import { projectDigest, createEmptyProject } from "@blocky/project-model";
 import { digest } from "@blocky/language-schema";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -57,8 +48,6 @@ import {
   userConfigCommand,
   userConfigHelp,
   userRegistryMap,
-  readDefaultModelId,
-  defaultModelError,
 } from "./user-config";
 export const help = {
   version: "0.8.0",
@@ -93,9 +82,7 @@ export const help = {
     "doctor --json",
     "catalog list [--limit 20] [--cursor 0] --json",
     "catalog show <block-id> --json",
-    "template list --json",
-    "template show research-companion --json",
-    "project create --template research-companion --output <file.blocky> --json",
+    "project create [--name <name>] --output <file.blocky> --json",
     "project inspect <file.blocky> --json",
     "project module list <file.blocky> --json",
     "project validate <file.blocky> --json",
@@ -220,99 +207,14 @@ export async function dispatch(
     if (!block) throw new CliError(3, "BLK-CATALOG-001", "积木不存在。");
     return { code: 0, result: envelope(command, { catalogVersion, block }) };
   }
-  if (command === "template.list") {
-    allow(args, ["json"], 2);
-    return {
-      code: 0,
-      result: envelope(command, {
-        templates: [
-          ...officialStarters.map((s) => ({
-            ...s,
-            templateId: s.id,
-            kind: "blueprint",
-            compatibilityClaim: "none",
-          })),
-          ...[...capabilityStarters, ...architectureStarters].map((s) => ({
-            ...s,
-            templateId: s.id,
-            kind: "project",
-            compatibilityClaim: "none",
-          })),
-          {
-            id: "agent-loop",
-            templateId: "agent-loop",
-            displayName: "文本分析 Agent",
-            kind: "project",
-            compatibilityClaim: "none",
-          },
-        ],
-      }),
-    };
-  }
-  if (command === "template.show") {
-    allow(args, ["json"], 3);
-    if (args.words[2] === "agent-loop")
-      return {
-        code: 0,
-        result: envelope(command, {
-          templateId: "agent-loop",
-          kind: "project",
-          displayName: "文本分析 Agent",
-          sampleInput: "Hello Blocky",
-          compatibilityClaim: "none",
-        }),
-      };
-    const selected = [
-      ...officialStarters,
-      ...architectureStarters,
-      ...capabilityStarters,
-    ].find((s) => s.id === args.words[2]);
-    if (!selected) throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
-    return {
-      code: 0,
-      result: envelope(command, {
-        ...selected,
-        templateId: selected.id,
-        kind: [...architectureStarters, ...capabilityStarters].some(
-          (s) => s.id === selected.id,
-        )
-          ? "project"
-          : "blueprint",
-        compatibilityClaim: "none",
-      }),
-    };
-  }
   if (command === "project.create") {
-    allow(args, ["json", "template", "output"], 2);
-    if (
-      required(args, "template") !== "agent-loop" &&
-      !capabilityStarters.some((s) => s.id === required(args, "template")) &&
-      !architectureStarters.some((s) => s.id === required(args, "template")) &&
-      !officialStarters.some((s) => s.id === required(args, "template"))
-    )
-      throw new CliError(3, "BLK-CATALOG-001", "模板尚不可用。");
-    const output = required(args, "output"),
-      starter =
-        required(args, "template") === "agent-loop"
-          ? createAgentExample()
-          : capabilityStarters.some((s) => s.id === required(args, "template"))
-            ? createCapabilityStarter(required(args, "template"))
-            : architectureStarters.some(
-                  (s) => s.id === required(args, "template"),
-                )
-              ? createArchitectureStarter(required(args, "template"))
-              : await createBlueprintProject(required(args, "template"));
+    allow(args, ["json", "name", "output"], 2);
+    const output = required(args, "output");
     let project;
     try {
-      project = applyDefaultModel(
-        starter,
-        await readDefaultModelId(),
-        await userRegistryMap(),
-      );
-    } catch (error) {
-      if (error instanceof Error && error.message === "BLK-MODEL-DEFAULT-001")
-        throw defaultModelError();
-      throw error;
+      project = createEmptyProject(args.options.has("name") ? required(args, "name") : undefined);
+    } catch {
+      throw new CliError(2, "BLK-CLI-002", "项目名称须为 1–200 个字符。");
     }
     await createProject(output, project);
     const bytes = await readFile(output);

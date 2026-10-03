@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import { modelResource } from "../../../tests/fixtures/model-resource";
 import { parseRegistry, resolveRegistryResources } from "../../resource-registry/src";
-import { createAgentExample } from "../../block-catalog/src";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { applyDefaultModel } from "../../project-model/src";
 import { compileProject } from "../../compiler/src";
 import { createBuilderSession } from "../src";

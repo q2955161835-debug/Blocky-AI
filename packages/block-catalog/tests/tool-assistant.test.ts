@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
-import { createCapabilityStarter, walkBlocks } from "../src";
+import { createCapabilityStarter } from "../../test-fixtures/src/scenarios";
+import { walkBlocks } from "../src";
 import { applyDefaultModel } from "../../project-model/src";
 import { compileProject } from "../../compiler/src";
 import { createBuilderSession } from "../../builder-protocol/src";

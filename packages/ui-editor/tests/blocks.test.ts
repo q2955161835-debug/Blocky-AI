@@ -6,9 +6,8 @@ import {
   instantiateBlueprint,
   defaultBindings,
   blueprintInstance,
-  createBlueprintProject,
-  officialStarters,
 } from "../../block-catalog/src";
+import { createCapabilityStarter } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "../../compiler/src";
 import type { Workspace } from "../../language-schema/src";
 import { createTextProject } from "../../test-fixtures/src/text-project";
@@ -103,20 +102,27 @@ it("preserves editor group and note metadata through Blockly serialization", () 
     workspace.dispose();
   }
 });
-it.each(officialStarters)(
-  "$id preserves blueprint instance metadata, edited role and answer style through actual Blockly save/reload",
-  async (starter) => {
+it("preserves user blueprint instance metadata, edited role and answer style through actual Blockly save/reload", async () => {
     registerBlocks();
-    const project = await createBlueprintProject(starter.id);
-    const original = project.workspaces["research-agent"].blocks.blocks[0];
+    const project = createStarter();
+    const blueprint = await captureBlueprint(
+      project,
+      "research-agent",
+      ["research-root"],
+      "Blockly serialization scenario",
+      "serialization-scenario",
+    );
+    const [original] = await instantiateBlueprint(
+      blueprint,
+      project,
+      "research-agent",
+      defaultBindings(blueprint),
+      { x: 80, y: 70 },
+      (sourceId) => `inserted-${sourceId}`,
+    );
     const instance = blueprintInstance(original);
     expect(instance).toBeDefined();
-    const expectedStyle =
-      starter.id === "code-guide"
-        ? "源码导览"
-        : starter.id === "knowledge-tutor"
-          ? "知识练习"
-          : "条目";
+    project.workspaces["research-agent"].blocks.blocks = [original];
     for (const [moduleId, source] of Object.entries(project.workspaces)) {
       const workspace = new Blockly.Workspace();
       const reloaded = new Blockly.Workspace();
@@ -125,12 +131,10 @@ it.each(officialStarters)(
         const count = workspace.getAllBlocks(false).length;
         if (moduleId === "research-agent") {
           workspace
-            .getBlockById("research-root")!
+            .getBlockById(original.id)!
             .setFieldValue("用户修改的角色", "ROLE");
-          const answer = workspace.getBlockById("reply-answer");
-          if (starter.id !== "task-helper")
-            expect(answer!.getFieldValue("STYLE")).toBe(expectedStyle);
-          else expect(answer).toBeNull();
+          const answer = workspace.getBlockById("inserted-reply-answer");
+          expect(answer!.getFieldValue("STYLE")).toBe("条目");
         }
         // Cross a JSON boundary as project persistence does; use a fresh workspace.
         const saved = JSON.parse(
@@ -149,24 +153,24 @@ it.each(officialStarters)(
             instance,
           );
           expect(
-            reloaded.getBlockById("research-root")!.getFieldValue("ROLE"),
+            reloaded.getBlockById(original.id)!.getFieldValue("ROLE"),
           ).toBe("用户修改的角色");
-          if (starter.id !== "task-helper") {
-            const answer = reloaded.getBlockById("reply-answer")!;
-            expect(answer.getFieldValue("STYLE")).toBe(expectedStyle);
-            answer.setFieldValue("段落", "STYLE");
-            const edited = JSON.parse(
-              JSON.stringify(Blockly.serialization.workspaces.save(reloaded)),
-            ) as Workspace;
-            Blockly.serialization.workspaces.load(edited, workspace);
-            expect(
-              workspace.getBlockById("reply-answer")!.getFieldValue("STYLE"),
-            ).toBe("段落");
-            expect(
-              (Blockly.serialization.workspaces.save(workspace) as Workspace)
-                .blocks.blocks[0].extraState,
-            ).toEqual(original.extraState);
-          }
+          const answer = reloaded.getBlockById("inserted-reply-answer")!;
+          expect(answer.getFieldValue("STYLE")).toBe("条目");
+          answer.setFieldValue("段落", "STYLE");
+          const edited = JSON.parse(
+            JSON.stringify(Blockly.serialization.workspaces.save(reloaded)),
+          ) as Workspace;
+          Blockly.serialization.workspaces.load(edited, workspace);
+          expect(
+            workspace
+              .getBlockById("inserted-reply-answer")!
+              .getFieldValue("STYLE"),
+          ).toBe("段落");
+          expect(
+            (Blockly.serialization.workspaces.save(workspace) as Workspace)
+              .blocks.blocks[0].extraState,
+          ).toEqual(original.extraState);
         }
         project.workspaces[moduleId] = roundTrip;
       } finally {
@@ -179,8 +183,7 @@ it.each(officialStarters)(
         (d) => d.severity === "error",
       ),
     ).toEqual([]);
-  },
-);
+});
 it("round-trips typed text/message value ports and JSON values in actual Blockly", () => {
   registerBlocks();
   const workspace = new Blockly.Workspace();
@@ -258,7 +261,7 @@ it.each(["knowledge-ingestion", "knowledge-correction"])(
   "%s preserves edited ingestion and judgment fields through real Blockly save/reload",
   async (id) => {
     registerBlocks();
-    const project = await createBlueprintProject(id),
+    const project = createCapabilityStarter(id, `ui-${id}`),
       source = project.workspaces["research-agent"];
     const workspace = new Blockly.Workspace(),
       reopened = new Blockly.Workspace();

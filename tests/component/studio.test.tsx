@@ -13,10 +13,9 @@ import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useSession } from "../../apps/studio-desktop/src/composition/useSession";
 import { Inspector } from "../../apps/studio-desktop/src/app/Inspector";
 import { BottomPanel } from "../../apps/studio-desktop/src/app/BottomPanel";
-import { Welcome } from "../../apps/studio-desktop/src/app/Welcome";
 import { createStarter } from "../../packages/test-fixtures/src";
 it("revalidates session targets when reopening the same project ID", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   act(() =>
     hook.result.current.setSession((s) => ({
@@ -38,34 +37,6 @@ it("revalidates session targets when reopening the same project ID", async () =>
   ).toBe(true);
 });
 const io = vi.hoisted(() => ({ open: vi.fn(), save: vi.fn() }));
-it("creates the official approval workflow from the welcome page with an editable handler", async () => {
-  const hook = renderHook(() => useStudio());
-  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
-  render(<Welcome studio={hook.result.current} />);
-  fireEvent.click(screen.getByRole("button", { name: /审批工作流/ }));
-  await waitFor(() =>
-    expect(hook.result.current.snapshot.project.manifest.displayName).toBe(
-      "审批工作流",
-    ),
-  );
-  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
-  const p = hook.result.current.snapshot.project;
-  expect(p.manifest.modules).toHaveLength(1);
-  expect(p.manifest.modules[0].purpose).toBe("automation");
-  expect(p.manifest.resources).toEqual([]);
-  expect(p.manifest.appSurfaces).toEqual([]);
-  expect(p.workspaces.main.blocks.blocks[0].inputs?.HANDLER?.block?.type).toBe(
-    "runtime.task.durable",
-  );
-  expect(hook.result.current.question).toBe("请审阅这份交付内容。");
-  expect(hook.result.current.started).toBe(true);
-  expect(hook.result.current.result).toBeUndefined();
-  expect(
-    hook.result.current.compiled?.diagnostics.filter(
-      (d) => d.severity === "error",
-    ),
-  ).toEqual([]);
-});
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: io.open,
   saveProject: io.save,
@@ -82,7 +53,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 it("editing the inspector changes the real project and undo restores it", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   act(() => hook.result.current.setSelected("research-root"));
   const view = render(<Inspector studio={hook.result.current} />);
@@ -101,7 +72,7 @@ it("editing the inspector changes the real project and undo restores it", async 
   ).not.toBe("自然科学教师");
 });
 it("navigation reopens a closed tab and the problem panel uses compiler diagnostics", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   act(() => {
     hook.result.current.setSession((s) => ({ ...s, tabs: ["research-agent"] }));
@@ -132,7 +103,7 @@ it("navigation reopens a closed tab and the problem panel uses compiler diagnost
   expect(screen.getByText("BLK-LINK-002")).toBeTruthy();
 });
 it("save completion cannot mark later edits as saved and cancelled open preserves the project", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   let resolve!: (value: { handle: string; displayName: string }) => void;
   io.save.mockReturnValue(
@@ -168,7 +139,7 @@ it("save completion cannot mark later edits as saved and cancelled open preserve
   expect(hook.result.current.snapshot.project).toBe(before);
 });
 it("cancelling unsaved changes keeps the project and never opens a native dialog", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   act(() =>
     hook.result.current.controller.edit((p) => {
@@ -205,7 +176,7 @@ it("opening another project retains its own saved session without overwriting it
     }),
   );
   io.open.mockResolvedValue({ project: next, handle: "second" });
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   await act(() => hook.result.current.open());
   expect(hook.result.current.session.active).toBe("citation-service");

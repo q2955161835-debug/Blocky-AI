@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { Runtime } from "../src/runtime";
 import { localAdapters } from "../src/adapters";
 import { createWorkflow, transitionWorkflow, type WorkflowRecord } from "../src/workflow";

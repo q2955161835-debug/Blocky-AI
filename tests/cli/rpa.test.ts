@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parse } from "../../tools/blocky-cli/src/arguments";
-import { createArchitectureStarter } from "../../packages/block-catalog/src";
+import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
 import { createProject, readProject } from "../../tools/blocky-cli/src/native-store";
 import { RecordingBuffer } from "../../packages/rpa-core/src/recording";
 

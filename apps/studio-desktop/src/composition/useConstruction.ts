@@ -5,9 +5,6 @@ import {
   instantiateBlueprint,
   defaultBindings,
   migrateBlueprint,
-  officialBlueprint,
-  officialStarters,
-  knowledgeBlueprintStarters,
   type Blueprint,
   type BlueprintBindings,
 } from "@blocky/block-catalog";
@@ -58,7 +55,6 @@ export function useConstruction(studio: Studio) {
 
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [libraryUnavailable, setLibraryUnavailable] = useState(true);
-  const [official, setOfficial] = useState<Blueprint[]>([]);
   const [legacy, setLegacy] = useState<unknown[]>([]);
   const [importedLegacy, setImportedLegacy] = useState<unknown>();
   const [captured, setCaptured] = useState<Blueprint>();
@@ -78,7 +74,7 @@ export function useConstruction(studio: Studio) {
   });
   const blueprintUpdate = useBlueprintUpdate(
     studio,
-    [...official, ...blueprints],
+    blueprints,
     (value) => {
       setCandidate(undefined);
       setReview(value);
@@ -109,16 +105,6 @@ export function useConstruction(studio: Studio) {
       } catch {
         if (active)
           studio.setMessage("本机蓝图库无法读取，请检查导入内容或可用空间。");
-      }
-      try {
-        const builtins = await Promise.all(
-          [...officialStarters, ...knowledgeBlueprintStarters].map((s) =>
-            officialBlueprint(s.id),
-          ),
-        );
-        if (active) setOfficial(builtins);
-      } catch {
-        if (active) studio.setMessage("官方蓝图暂时无法读取。");
       }
     })();
     return () => {
@@ -399,7 +385,6 @@ export function useConstruction(studio: Studio) {
     });
   return {
     blueprints,
-    official,
     legacy,
     importedLegacy,
     importBlueprint,

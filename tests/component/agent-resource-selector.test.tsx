@@ -2,7 +2,7 @@
 import { expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach } from "vitest";
-import { createAgentExample } from "../../packages/block-catalog/src";
+import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import { createStarter } from "../../packages/test-fixtures/src";
 import type { WorkspaceBlock } from "../../packages/language-schema/src";
 import { Inspector } from "../../apps/studio-desktop/src/app/Inspector";

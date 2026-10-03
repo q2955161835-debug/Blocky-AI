@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import { runToolLoop, type ToolLoopContext } from "../src/tool-loop";
 import { RunBudget } from "../src/budget";
-import { createAgentExample } from "../../block-catalog/src/index";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import type { Generation, GenerationRequest } from "../src/agent-context";
 import type { Json } from "@blocky/language-schema";
 

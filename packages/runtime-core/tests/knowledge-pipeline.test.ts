@@ -5,11 +5,8 @@ import {
   RemoteRuntime,
   RuntimeServiceHost,
 } from "../src/index";
-import {
-  createCapabilityStarter,
-  officialBlueprint,
-  walkBlocks,
-} from "../../block-catalog/src/index";
+import { createCapabilityStarter } from "../../test-fixtures/src/scenarios";
+import { walkBlocks } from "../../block-catalog/src/index";
 import { compileProject } from "@blocky/compiler";
 import { parseProject } from "../../project-model/src/index";
 import type { KnowledgeCall } from "@blocky/knowledge-core";
@@ -111,8 +108,7 @@ it("runs an editable ingestion blueprint through shared domain services and reta
     pending: null,
     index: { chunks: [{ locator: { page: 2 } }] },
   });
-  const blueprint = await officialBlueprint("knowledge-ingestion");
-  expect([...walkBlocks(blueprint.roots)].map((block) => block.type)).toEqual(
+  expect([...walkBlocks(project.workspaces["research-agent"].blocks.blocks)].map((block) => block.type)).toEqual(
     expect.arrayContaining([
       "core.knowledge.source",
       "core.knowledge.parse",
@@ -223,8 +219,7 @@ it("uses the selected model to judge and rewrite retrieval while sharing the run
   expect(run.citations.length).toBeGreaterThan(0);
   expect(run.generations?.length).toBe(2);
   expect(run.modelApiCalled).toBe(false);
-  const blueprint = await officialBlueprint("knowledge-correction");
-  expect(blueprint.resources.map((resource) => resource.kind).sort()).toEqual([
+  expect(Object.values(project.resources).map((resource) => resource.kind).sort()).toEqual([
     "knowledge",
     "model",
   ]);

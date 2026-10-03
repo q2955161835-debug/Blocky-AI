@@ -124,7 +124,7 @@ it("has an independent native patch gate for stale bases, capability grants and 
   expect(rejected.code).toBe(3);
   expect(JSON.stringify(rejected.lines)).not.toContain("TEST_MARKER_NOT_A_KEY");
 });
-let directory: string, file: string;
+let directory: string, file: string, blankFile: string;
 function run(args: string[]) {
   const p = spawnSync(process.execPath, [cli, ...args], {
     encoding: "utf8",
@@ -147,6 +147,8 @@ const hash = (bytes: Buffer) =>
 beforeAll(async () => {
   directory = await mkdtemp(resolve("try/cli-test-"));
   file = join(directory, "research.blocky");
+  blankFile = join(directory, "blank.blocky");
+  await createProject(file, createStarter());
 });
 afterAll(async () => {
   if (directory.startsWith(resolve("try/cli-test-")))
@@ -157,37 +159,63 @@ it("reports only implemented commands and a real native store version", () => {
   expect(h.code).toBe(0);
   expect(h.lines[0].schemaVersion).toBe("blocky.cli/v1");
   expect(h.lines[0].data.commands).not.toContain("compat export");
+  expect(h.lines[0].data.commands).not.toContainEqual(
+    expect.stringMatching(/^(template|blueprint official)\b/),
+  );
   const doctor = run(["doctor", "--json"]);
   expect(doctor.code).toBe(0);
   expect(doctor.lines[0].data.nativeStore).toBe(packageInfo.version);
   expect(doctor.lines[0].data.modelApiCalled).toBe(false);
 });
-it("creates a real archive and refuses to clobber the same target", async () => {
+it("creates a named blank project, keeps it empty, and refuses to clobber the same target", async () => {
   const created = run([
     "project",
     "create",
-    "--template",
-    "research-companion",
+    "--name",
+    "空白 CLI 项目",
     "--output",
-    file,
+    blankFile,
     "--json",
   ]);
   expect(created.code).toBe(0);
-  const bytes = await readFile(file);
+  const bytes = await readFile(blankFile);
   expect(bytes.subarray(0, 2).toString()).toBe("PK");
   expect(created.lines[0].artifacts[0].sha256).toBe(hash(bytes));
+  const inspected = run(["project", "inspect", blankFile, "--json"]);
+  expect(inspected.code).toBe(0);
+  expect(inspected.lines[0].data.displayName).toBe("空白 CLI 项目");
+  expect(inspected.lines[0].data.modules).toMatchObject([
+    { moduleId: "main", displayName: "主画布" },
+  ]);
+  expect(inspected.lines[0].data.resources).toEqual([]);
+  expect(
+    (await readProject(blankFile)).workspaces.main.blocks.blocks,
+  ).toEqual([]);
+  expect(run(["project", "compile", blankFile, "--json"]).code).toBe(0);
   const conflict = run([
     "project",
     "create",
-    "--template",
-    "research-companion",
+    "--name",
+    "覆盖测试",
     "--output",
-    file,
+    blankFile,
     "--json",
   ]);
   expect(conflict.code).toBe(5);
-  expect(hash(await readFile(file))).toBe(hash(bytes));
+  expect(hash(await readFile(blankFile))).toBe(hash(bytes));
   expect(conflict.lines[0].error.code).toBe("BLK-CONFLICT-001");
+});
+it("rejects removed template and official-blueprint CLI entry points", () => {
+  const legacyProject = join(directory, "legacy-template.blocky");
+  const legacyBlueprint = join(directory, "legacy-official.json");
+  for (const args of [
+    ["template", "list", "--json"],
+    ["template", "show", "research-companion", "--json"],
+    ["blueprint", "official", "research-companion", "--output", legacyBlueprint, "--json"],
+    ["project", "create", "--template", "research-companion", "--output", legacyProject, "--json"],
+  ]) {
+    expect(run(args).code).not.toBe(0);
+  }
 });
 it("compiles with the exact desktop compiler and does not rewrite project bytes", async () => {
   const before = hash(await readFile(file));

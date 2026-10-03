@@ -21,7 +21,9 @@ vi.mock("../../packages/ui-editor/src/index.ts", () => ({
   }}>测试积木右键</button>,
 }));
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
-  openProject: vi.fn(),
+  openProject: vi.fn(async () => ({
+    project: (await import("../../packages/test-fixtures/src")).createStarter(), handle: "test-existing",
+  })),
   saveProject: io.save,
   readPreferences: () => ({
     reduceMotion: false,
@@ -88,7 +90,7 @@ it("disables both runtime controls while saving and restores them after cancella
   );
   render(<App />);
   await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
-  fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
+  fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
   await waitFor(() =>
     expect(
       screen
@@ -115,7 +117,7 @@ it("disables both runtime controls while saving and restores them after cancella
 it("keeps the context block target when opening the menu clears canvas focus", async () => {
   render(<App />);
   await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
-  fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
+  fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
   await waitFor(() => expect((screen.getAllByRole("button", { name: /^(▶ )?运行$/ })[0] as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole("button", { name: "测试积木右键" }));
   const dialog = screen.getByRole("dialog", { name: "上下文菜单" });

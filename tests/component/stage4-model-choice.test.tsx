@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { RunModelChoice } from "../../apps/studio-desktop/src/app/RunModelChoice";
 import { ProjectController } from "../../packages/project-model/src/index";
-import { createAgentExample } from "../../packages/block-catalog/src/index";
+import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
 it("model choice records a user resource reference and can undo the project edit", () => {
   const controller = new ProjectController(createAgentExample("stage4-ui"));

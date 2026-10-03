@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { Runtime, localAdapters } from "../src";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { planToRpaBlocks, type RpaModulePorts } from "@blocky/rpa-core";
 
 function fixture() {

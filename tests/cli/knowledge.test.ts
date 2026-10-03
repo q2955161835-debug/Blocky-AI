@@ -2,6 +2,8 @@ import { beforeAll, afterAll, expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
+import { createStarter } from "../../packages/test-fixtures/src";
+import { createProject } from "../../tools/blocky-cli/src/native-store";
 let directory: string, project: string, source: string;
 beforeAll(async () => {
   await mkdir("try/stage3", { recursive: true });
@@ -13,16 +15,7 @@ beforeAll(async () => {
     "水循环包含蒸发、凝结和降水。\n\nWater evaporates and returns as rain.",
     "utf8",
   );
-  expect(
-    cli(
-      "project",
-      "create",
-      "--template",
-      "research-companion",
-      "--output",
-      project,
-    ).code,
-  ).toBe(0);
+  await createProject(project, createStarter());
 });
 afterAll(async () => {
   if (directory && resolve(directory).startsWith(resolve("try/stage3") + "\\"))

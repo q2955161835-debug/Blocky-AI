@@ -1,11 +1,8 @@
 import { expect, it } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "@blocky/compiler";
 import { Runtime } from "../src";
-import {
-  createArchitectureStarter,
-  architectureStarters,
-} from "../../block-catalog/src";
 
 it("runs an event mailbox across inputs without leaking payloads to trace events", async () => {
   const runtime = new Runtime(), project = createArchitectureStarter("event-mailbox");
@@ -32,22 +29,6 @@ it("shares a project mailbox across modules and rejects invalid wait parameters 
   expect(failed.events.some(e => e.type === "block.started")).toBe(false);
 });
 
-it.each(architectureStarters)(
-  "compiles $id as an independent module",
-  async (starter) => {
-    const p = createArchitectureStarter(starter.id);
-    expect(
-      p.workspaces.main.blocks.blocks.some((b) =>
-        b.type.startsWith("core.agent"),
-      ),
-    ).toBe(false);
-    expect(
-      (await compileProject(p)).diagnostics.filter(
-        (d) => d.severity === "error",
-      ),
-    ).toEqual([]);
-  },
-);
 it("retains state transitions within one session, respects terminal state and isolates projects", async () => {
   const runtime = new Runtime(),
     project = createArchitectureStarter("state-machine");

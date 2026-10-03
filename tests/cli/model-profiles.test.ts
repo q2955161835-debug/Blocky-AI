@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { modelResource } from "../fixtures/model-resource";
+import { readProject } from "../../tools/blocky-cli/src/native-store";
 async function fixture() {
   await mkdir("try/model-providers", { recursive: true });
   const root = await mkdtemp(resolve("try/model-providers/cli-")), profile = join(root,"profile");
@@ -19,11 +20,15 @@ async function fixture() {
 }
 const provider = { schemaVersion:"blocky.model-provider/v1",providerId:"shared",displayName:"Shared account",adapter:"xirang",protocol:"openai-chat",revision:1,secretBindings:[{fieldId:"apiKey",secretRef:"saved-model-secret"}] };
 const model = (id:string) => ({...modelResource(id),definition:{connectionRef:"shared",modelId:`model-${id}`,timeoutMs:60000,capabilities:["text","tools"],parameters:{maxOutputTokens:1024}},secretBindings:[]});
-it("configures shared models across real processes and preserves existing projects and approval boundaries",async()=>{
+it("configures shared models across real processes while blank projects remain unbound and approval stays explicit",async()=>{
   const f=await fixture(),{cli,define,root}=f;
   const old=join(root,"old.blocky");
-  expect(cli("project","create","--template","research-companion","--output",old).code).toBe(0);
+  expect(cli("project","create","--name","旧空白项目","--output",old).code).toBe(0);
   const bytes=await readFile(old);
+  const oldProject=await readProject(old);
+  expect(oldProject.manifest.modules.map((module)=>module.moduleId)).toEqual(["main"]);
+  expect(oldProject.manifest.resources).toEqual([]);
+  expect(oldProject.workspaces.main.blocks.blocks).toEqual([]);
   expect(cli("provider","set","--definition",await define("provider",provider)).code).toBe(0);
   for(const id of ["one","two"]) expect(cli("model-profile","set","--definition",await define(id,model(id))).code).toBe(0);
   expect(cli("provider","list").value.data.providers).toHaveLength(1);
@@ -32,12 +37,16 @@ it("configures shared models across real processes and preserves existing projec
   expect(cli("secret","import","--id","saved-model-secret","--env-file",envFile,"--variable","MODEL_KEY").code).toBe(0);
   expect(cli("model-profile","default","--id","two").code).toBe(0);
   const next=join(root,"new.blocky");
-  expect(cli("project","create","--template","research-companion","--output",next).code).toBe(0);
+  expect(cli("project","create","--name","默认模型后的空白项目","--output",next).code).toBe(0);
+  const nextProject=await readProject(next);
+  expect(nextProject.manifest.modules.map((module)=>module.moduleId)).toEqual(["main"]);
+  expect(nextProject.manifest.resources).toEqual([]);
+  expect(nextProject.workspaces.main.blocks.blocks).toEqual([]);
   expect(await readFile(old)).toEqual(bytes);
-  const preflight=cli("builder","draft",next,"--module","research-agent","--prompt","Explain project","--live","--request-id","shared-preview","--output",join(root,"draft.json"));
+  const preflight=cli("builder","draft",next,"--module","main","--prompt","Explain project","--live","--request-id","shared-preview","--output",join(root,"draft.json"));
   expect(preflight.code).toBe(4);
   expect(preflight.value.data.pendingApproval.modelId).toBe("model-two");
-  expect(cli("builder","draft",next,"--module","research-agent","--prompt","Answer briefly","--output",join(root,"offline-draft.json")).code).toBe(0);
+  expect(cli("builder","draft",next,"--module","main","--prompt","Answer briefly","--output",join(root,"offline-draft.json")).code).toBe(0);
   const registryFile=join(f.profile,"user/resources/app.json"),before=await readFile(registryFile);
   const blocked=cli("provider","delete","--id","shared");
   expect(blocked.value.error.code).toBe("BLK-PROVIDER-IN-USE");
@@ -61,8 +70,11 @@ it("explicitly migrates v1 once and rolls back through the Host without merging 
   await writeFile(join(dir,"app.json"),original);
   expect(cli("model-profile","default","--id","a").code).toBe(0);
   const unpersisted=join(root,"unpersisted.blocky");
-  expect(cli("project","create","--template","research-companion","--output",unpersisted).code).toBe(0);
-  const offline = cli("builder","draft",unpersisted,"--module","research-agent","--prompt","Answer briefly","--output",join(root,"unpersisted-draft.json"));
+  expect(cli("project","create","--name","迁移前空白项目","--output",unpersisted).code).toBe(0);
+  const unpersistedProject=await readProject(unpersisted);
+  expect(unpersistedProject.manifest.resources).toEqual([]);
+  expect(unpersistedProject.workspaces.main.blocks.blocks).toEqual([]);
+  const offline = cli("builder","draft",unpersisted,"--module","main","--prompt","Answer briefly","--output",join(root,"unpersisted-draft.json"));
   expect(offline.code, JSON.stringify(offline.value.error)).toBe(0);
   expect(JSON.parse(await readFile(join(dir,"app.json"),"utf8")).schemaVersion).toBe("blocky.resource-registry/v1");
   expect(cli("resource","migrate").code).toBe(0);

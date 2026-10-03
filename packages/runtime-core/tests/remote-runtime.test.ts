@@ -2,7 +2,7 @@ import { expect, it, vi } from "vitest";
 import { RemoteRuntime } from "../src/remote-runtime";
 import { RuntimeServiceHost } from "../src/runtime-service-host";
 import { localAdapters, Runtime } from "../src";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { createStarter } from "../../test-fixtures/src";
 import { planToRpaBlocks } from "@blocky/rpa-core";
 

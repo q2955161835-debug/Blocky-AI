@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import { compileProject } from "@blocky/compiler";
 import type { WorkspaceBlock as Block } from "@blocky/language-schema";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { Runtime } from "../src";
 
 const result = (id: string, value: unknown): Block => ({ type: "core.data.set", id, fields: { VALUE: JSON.stringify(value) } });

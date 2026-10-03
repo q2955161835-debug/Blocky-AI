@@ -2,6 +2,8 @@ import { expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
+import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
+import { createProject } from "../../tools/blocky-cli/src/native-store";
 it.each(["approve", "reject"])(
   "persists a workflow across CLI processes and follows %s without replaying the first step",
   async (decision) => {
@@ -27,27 +29,7 @@ it.each(["approve", "reject"])(
     };
     try {
       const file = join(directory, "workflow.blocky");
-      const listed = call(["template", "list", "--json"]);
-      expect(listed.code).toBe(0);
-      expect(listed.result.data.templates).toContainEqual(
-        expect.objectContaining({
-          templateId: "durable-workflow",
-          kind: "project",
-        }),
-      );
-      const shown = call(["template", "show", "durable-workflow", "--json"]);
-      expect(shown.code).toBe(0);
-      expect(shown.result.data.sampleInput).toBeTruthy();
-      const created = call([
-        "project",
-        "create",
-        "--template",
-        "durable-workflow",
-        "--output",
-        file,
-        "--json",
-      ]);
-      expect(created.code, JSON.stringify(created.result)).toBe(0);
+      await createProject(file, createArchitectureStarter("durable-workflow"));
       const start = call([
         "run",
         "start",

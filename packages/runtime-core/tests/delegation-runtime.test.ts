@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {delegationStarter} from '../../block-catalog/src/starters/delegation';
+import { delegationStarter } from "../../test-fixtures/src/scenarios";
 import {compileProject} from '../../compiler/src';
 import {Runtime,localAdapters} from '../src';
 import type {GenerationRequest,Generation} from '../src';

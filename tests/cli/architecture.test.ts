@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, writeFile, readFile, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
-import { createArchitectureStarter } from "../../packages/block-catalog/src";
+import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
 import { createProject } from "../../tools/blocky-cli/src/native-store";
 import { createParallelProject } from "../../packages/test-fixtures/src/parallel-project";
 const cli = resolve("tools/blocky-cli/dist/main.mjs");
@@ -38,8 +38,7 @@ it("creates and runs the event mailbox with FIFO results in one CLI session", as
   const directory = await mkdtemp(resolve("try/stage7-mailbox-"));
   try {
     const project = join(directory, "mailbox.blocky"), inputs = join(directory, "inputs.json");
-    const created = run(["project", "create", "--template", "event-mailbox", "--output", project, "--json"]);
-    expect(created.code, JSON.stringify(created.result)).toBe(0);
+    await createProject(project, createArchitectureStarter("event-mailbox"));
     await writeFile(inputs, JSON.stringify(["first", "second", "next", "next", "next"]));
     const result = run(["run", "start", project, "--simulate", "--inputs-file", inputs, "--jsonl"]);
     expect(result.code, JSON.stringify(result.result)).toBe(0);
@@ -88,9 +87,6 @@ it("discovers architecture projects and executes a stateful input sequence in on
       minItems: 1,
       maxItems: 32,
     });
-    expect(
-      run(["template", "show", "state-machine", "--json"]).result.data.kind,
-    ).toBe("project");
     const denied = run([
       "run",
       "start",

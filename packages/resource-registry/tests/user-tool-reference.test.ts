@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { createAgentExample } from "../../block-catalog/src";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { referenceUserResource } from "../src";
 import { parseProject } from "../../project-model/src";
 function resource() {

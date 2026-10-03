@@ -5,7 +5,7 @@ import { join, resolve } from "node:path";
 import {
   createArchitectureStarter,
   createAgentExample,
-} from "../../packages/block-catalog/src";
+} from "../../packages/test-fixtures/src/scenarios";
 import { createProject } from "../../tools/blocky-cli/src/native-store";
 it.each([true, false])(
   "preserves public CLI interactive tool approval (%s) through native custody",

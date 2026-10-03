@@ -6,7 +6,6 @@ import {
   defaultBindings,
   migrateBlueprint,
   previewBlueprintUpdate,
-  officialBlueprint,
   type BlueprintBindings,
 } from "@blocky/block-catalog";
 import { ProjectController, projectDigest } from "@blocky/project-model";
@@ -35,7 +34,6 @@ const operations = [
   "surface.build",
   "blueprint.create",
   "blueprint.show",
-  "blueprint.official",
   "blueprint.insert",
   "blueprint.migrate",
   "blueprint.update",
@@ -49,7 +47,6 @@ export const constructionHelp = [
   "surface build <file.blocky> --surface-id <id> --output <page.html> --json",
   "blueprint create <file.blocky> --module <id> --blocks <id,id> --name <name> --output <blueprint.json> --json",
   "blueprint show <blueprint.json> --json",
-  "blueprint official <starter-id> --output <blueprint.json> --json",
   "blueprint migrate <old-blueprint.json> --output <v1-blueprint.json> --json",
   "blueprint update <file.blocky> --blueprint <new-version.json> --module <id> --root <id> [--resolution keep-user|upstream] --output <patch.json> --json",
   "blueprint restore <file.blocky> --blueprint <blueprint.json> --module <id> --root <id> --output <patch.json> --json",
@@ -85,18 +82,6 @@ export async function construction(args: Args, signal: AbortSignal) {
   if (!operations.includes(command)) return;
   try {
     signal.throwIfAborted();
-    if (command === "blueprint.official") {
-      allow(args, ["output", "json"], 3);
-      const blueprint = await officialBlueprint(args.words[2]);
-      const result = envelope(command, {
-        blueprintId: blueprint.blueprintId,
-        version: blueprint.version,
-      });
-      result.artifacts = [
-        await writeJsonArtifact(required(args, "output"), blueprint),
-      ];
-      return { code: 0, result };
-    }
     if (command === "blueprint.migrate") {
       allow(args, ["output", "json"], 3);
       const blueprint = await migrateBlueprint(

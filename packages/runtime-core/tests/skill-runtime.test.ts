@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {createAgentExample} from '../../block-catalog/src';
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import {Runtime,localAdapters} from '../src';
 import type {Json} from '@blocky/language-schema';
 const digest='a'.repeat(64);

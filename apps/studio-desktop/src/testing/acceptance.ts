@@ -1,4 +1,4 @@
-import { createAgentExample } from "@blocky/block-catalog";
+import { createAgentExample, createArchitectureStarter } from "@blocky/test-fixtures/scenarios";
 import { createStarter, createParallelProject } from "@blocky/test-fixtures";
 import { restoreSession } from "@blocky/project-model";
 import {
@@ -311,6 +311,14 @@ export function install(get: () => Studio) {
           canonicalJson(files),
         minimumReaderVersion: project.manifest.format.minimumReaderVersion,
       };
+    },
+    async loadStateMachineRegressionProject() {
+      const project = createArchitectureStarter("state-machine");
+      get().controller.replace(project);
+      get().setSession(restoreSession(project, null));
+      get().setStarted(true);
+      await paint();
+      await wait(() => !get().compiling && get().canRun);
     },
     async loadLegacyRegressionProject() {
       const project = createStarter();

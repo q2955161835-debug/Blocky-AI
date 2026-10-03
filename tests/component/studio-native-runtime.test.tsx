@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { createStarter } from "../../packages/test-fixtures/src";
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
@@ -36,7 +37,7 @@ it("routes the Studio entry through the native facade and disposes it during exi
   );
   vi.stubGlobal("__TAURI_INTERNALS__", { invoke });
   vi.stubGlobal("isTauri", true);
-  const hook = renderHook(() => useStudio(), { wrapper: StrictMode });
+  const hook = renderHook(() => useStudio(createStarter()), { wrapper: StrictMode });
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   expect(hook.result.current.compiled?.diagnostics).toEqual([]);
   expect(hook.result.current.canRun).toBe(true);

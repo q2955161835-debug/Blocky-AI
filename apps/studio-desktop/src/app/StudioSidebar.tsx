@@ -2,7 +2,6 @@ import type { Studio } from "../composition/useStudio";
 import type { CodingAgent } from "../composition/useCodingAgent";
 import type { SourceRef } from "@blocky/language-schema";
 import { BuilderPanel } from "./BuilderPanel";
-import { StarterGuide } from "./StarterGuide";
 import { RunPanel } from "./RunPanel";
 import { ProjectMap } from "./ProjectMap";
 import { EditorTools } from "./EditorTools";
@@ -84,7 +83,6 @@ export function StudioSidebar({
           execute={execute}
           onTraceContext={onTraceContext}
           menu={chatMenu && { ...chatMenu, value: s.session.rightView === "agent" ? chatMenu.value : null }}
-          context={<StarterGuide studio={s} resources={() => execute("settings.resources")} />}
           settings={<>
             <ProjectMap studio={s} />
             <EditorTools studio={s} execute={execute} enabled={enabled} />

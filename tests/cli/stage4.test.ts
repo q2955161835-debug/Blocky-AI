@@ -4,7 +4,7 @@ import { resolve, join } from "node:path";
 import { spawnSync, spawn } from "node:child_process";
 import { atomicOutput } from "../../tools/blocky-cli/src/atomic-output";
 import { output } from "../../tools/blocky-cli/src/output";
-import { createAgentExample } from "../../packages/block-catalog/src/index";
+import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import {
   createProject,
   readProject,
@@ -129,20 +129,7 @@ it("complete example requires exact approval and produces checked JSON through n
   const profile = join(root, "profile");
   try {
     const file = join(root, "agent.blocky");
-    expect(
-      run(
-        [
-          "project",
-          "create",
-          "--template",
-          "agent-loop",
-          "--output",
-          file,
-          "--json",
-        ],
-        profile,
-      ).code,
-    ).toBe(0);
+    await createProject(file, createAgentExample("stage4-cli-approval"));
     const base = [
       "run",
       "start",

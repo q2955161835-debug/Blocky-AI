@@ -99,12 +99,6 @@ export function Library({
         })}
       </div>
       <div className="module-list">
-        <div className="section-label">官方蓝图</div>
-        {c.official.map((blueprint) => (
-          <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
-            {blueprint.displayName} ＋
-          </button>
-        ))}
         <div className="section-label">个人蓝图</div>
         {blueprints.map((blueprint) => (
           <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>

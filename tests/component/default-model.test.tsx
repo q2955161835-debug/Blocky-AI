@@ -5,7 +5,7 @@ import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useCodingAgent } from "../../apps/studio-desktop/src/composition/useCodingAgent";
 import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
 import { SettingsPanel } from "../../apps/studio-desktop/src/app/SettingsPanel";
-import { createAgentExample } from "../../packages/block-catalog/src";
+import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import { modelResource } from "../fixtures/model-resource";
 
 beforeAll(() => {
@@ -43,17 +43,18 @@ it("reopens the coding assistant with the persisted model and no simulated mode"
   expect((screen.getByLabelText("构建模型资源") as HTMLSelectElement).value).toBe("saved-model");
 });
 
-it("uses the default only when creating a new project, without rewriting an existing model choice", async () => {
+it("keeps new projects empty and preserves the model choice in existing projects", async () => {
   const hook = await configuredStudio();
   const existing = createAgentExample("existing-project");
   act(() => hook.result.current.controller.replace(existing));
   expect(hook.result.current.snapshot.project).toEqual(existing);
-  await act(() => hook.result.current.startBlueprint("agent-loop"));
+  await act(() => hook.result.current.fresh());
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
   const project = hook.result.current.snapshot.project;
-  expect(JSON.stringify(project.workspaces)).toContain('"RESOURCE":"saved-model"');
-  expect(project.manifest.resources.find(r => r.resourceId === "saved-model")).toEqual({ resourceId: "saved-model", kind: "model", scope: "user", definitionRef: "saved-model", secretRefs: ["saved-model-secret"] });
-  expect(project.resources["saved-model"]).toBeUndefined();
+  expect(project.manifest.resources).toEqual([]);
+  expect(project.resources).toEqual({});
+  expect(project.workspaces.main.blocks.blocks).toEqual([]);
+  expect(Object.values(existing.workspaces).flatMap(w => w.blocks.blocks).length).toBeGreaterThan(0);
   expect(project.settings?.values["models.defaultResourceId"]).toBeUndefined();
   expect(hook.result.current.compiled?.diagnostics.filter(d => d.severity === "error")).toEqual([]);
 });

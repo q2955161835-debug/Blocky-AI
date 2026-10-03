@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { Runtime } from "../src";
 import { parseRuntimeSession } from "../src/session-state";
 import { EventMailbox } from "../src/event-mailbox";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 
 it("carries memory and trace order across fresh runtimes without leaking state between projects", async () => {
   const project = createArchitectureStarter("state-machine"),

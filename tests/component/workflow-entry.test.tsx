@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { createStarter } from "../../packages/test-fixtures/src";
-import { createArchitectureStarter } from "../../packages/block-catalog/src";
+import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
 import { compileProject } from "../../packages/compiler/src";
 import { findBlock } from "../../packages/project-model/src";
 import { workflowEntry } from "../../apps/studio-desktop/src/composition/workflow-entry";

@@ -7,10 +7,13 @@ import {
   createProject,
 } from "../../tools/blocky-cli/src/native-store";
 import { createTextProject } from "../../packages/test-fixtures/src/text-project";
-let directory: string;
+import { createStarter } from "../../packages/test-fixtures/src";
+let directory: string, sourceFile: string;
 beforeAll(async () => {
   await mkdir("try", { recursive: true });
   directory = await mkdtemp(resolve("try/cli-stage2-"));
+  sourceFile = join(directory, "source.blocky");
+  await createProject(sourceFile, createStarter());
 });
 afterAll(async () => {
   await rm(directory, { recursive: true, force: true });
@@ -29,20 +32,10 @@ function cli(...args: string[]) {
   return { code: run.status, value: JSON.parse(run.stdout) };
 }
 it("creates and renames modules, roundtrips project settings, and preserves output conflicts", async () => {
-  const source = join(directory, "source.blocky"),
+  const source = sourceFile,
     newCanvas = join(directory, "canvas.blocky"),
     renamed = join(directory, "renamed.blocky"),
     settings = join(directory, "settings.blocky");
-  expect(
-    cli(
-      "project",
-      "create",
-      "--template",
-      "research-companion",
-      "--output",
-      source,
-    ).code,
-  ).toBe(0);
   expect(
     cli(
       "project",

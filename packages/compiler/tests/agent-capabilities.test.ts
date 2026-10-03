@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import type { WorkspaceBlock } from "@blocky/language-schema";
-import { createAgentExample } from "@blocky/block-catalog";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "../src";
 
 function findBlock(

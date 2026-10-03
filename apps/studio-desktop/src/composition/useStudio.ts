@@ -11,19 +11,9 @@ import {
   configureBlock,
   editSelection,
   copyAcrossModules,
-  applyDefaultModel,
+  createEmptyProject,
   type SelectionEdit,
 } from "@blocky/project-model";
-import { createStarter } from "@blocky/test-fixtures";
-import {
-  createBlueprintProject,
-  createAgentExample,
-  capabilityStarters,
-  createCapabilityStarter,
-  officialStarters,
-  architectureStarters,
-  createArchitectureStarter,
-} from "@blocky/block-catalog";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
 import { Runtime, hostAdapters, type RunResult, type WorkflowSummary } from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
@@ -38,9 +28,8 @@ import {
   projectLog,
   type RuntimeEvent,
 } from "@blocky/observability";
-import { digest, interactionKey, type SourceRef } from "@blocky/language-schema";
+import { digest, interactionKey, type SourceRef, type Project } from "@blocky/language-schema";
 import { resolveResource } from "@blocky/resource-registry";
-import { resolveSetting } from "@blocky/settings-core";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
   openProject,
@@ -48,11 +37,11 @@ import {
   prepareMigration,
   saveMigration,
 } from "./host";
-export function useStudio() {
+export function useStudio(initialProject?: Project) {
   const rpaInput = useRpaInput();
   const { confirmation, confirmationLabels, answerConfirmation, confirm } =
     useConfirmation();
-  const [controller] = useState(() => new ProjectController(createStarter()));
+  const [controller] = useState(() => new ProjectController(initialProject ?? createEmptyProject()));
   const snapshot = useSyncExternalStore(
     controller.subscribe,
     controller.getSnapshot,
@@ -111,7 +100,7 @@ export function useStudio() {
     [result, setResult] = useState<RunResult>(),
     [submittedInput, setSubmittedInput] = useState<{ projectId: string; text: string }>(),
     [running, setRunning] = useState(false),
-    [question, setQuestion] = useState("为什么树叶在秋天会变黄？");
+    [question, setQuestion] = useState("");
   const handle = useRef<string | undefined>(undefined),
     eventBuffer = useRef<RuntimeEvent[]>([]),
     droppedEventCount = useRef(0),
@@ -380,7 +369,7 @@ export function useStudio() {
       setBusy(false);
     }
   };
-  const startBlueprint = async (starterId: string) => {
+  const fresh = async () => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     if (!settings.ready || !resources.ready) {
       setMessage("本机模型配置尚未就绪，请稍后重试。");
@@ -394,15 +383,7 @@ export function useStudio() {
         !(await confirm("新建项目将放弃当前未保存的修改。"))
       )
         return;
-      const starter =
-        starterId === "agent-loop"
-          ? createAgentExample()
-          : capabilityStarters.some((s) => s.id === starterId)
-            ? createCapabilityStarter(starterId)
-          : architectureStarters.some((s) => s.id === starterId)
-            ? createArchitectureStarter(starterId)
-            : await createBlueprintProject(starterId);
-      const p = applyDefaultModel(starter, resolveSetting("models.defaultResourceId", settings.layers).value, resources.map);
+      const p = createEmptyProject();
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -414,21 +395,15 @@ export function useStudio() {
       setSubmittedInput(undefined);
       setSelected(null);
       setSession(restoreSession(p, null));
-      setQuestion(
-        starterId === "agent-loop"
-          ? "Hello Blocky\n一起学习"
-          : ([...officialStarters, ...architectureStarters, ...capabilityStarters].find(
-              (s) => s.id === starterId,
-            )?.sampleInput ?? ""),
-      );
+      setQuestion("");
+      setMessage("已新建项目");
     } catch {
-      setMessage("蓝图无法创建，请检查公开插槽和本机配置。");
+      setMessage("项目无法创建，请重试。");
     } finally {
       ioBusy.current = false;
       setBusy(false);
     }
   };
-  const fresh = () => startBlueprint("research-companion");
   const migrate = async () => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     ioBusy.current = true;
@@ -614,7 +589,6 @@ export function useStudio() {
     save,
     open,
     fresh,
-    startBlueprint,
     updateField,
     applySelectionEdit,
     copySelectionToModule,

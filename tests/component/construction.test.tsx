@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { createStarter } from "../../packages/test-fixtures/src";
 import { afterEach, beforeAll, expect, it, vi } from "vitest";
 import {
   act,
@@ -12,6 +13,7 @@ import {
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useConstruction } from "../../apps/studio-desktop/src/composition/useConstruction";
 import { ConstructionDialog } from "../../apps/studio-desktop/src/app/ConstructionDialog";
+import { captureBlueprint, instantiateBlueprint, defaultBindings } from "../../packages/block-catalog/src";
 import { projectDigest } from "../../packages/project-model/src";
 vi.mock("../../apps/studio-desktop/src/composition/knowledge", async () => {
   const fixture = await (
@@ -47,30 +49,21 @@ beforeAll(() => {
   };
 });
 function useEditor() {
-  const studio = useStudio();
+  const studio = useStudio(createStarter());
   return { studio, construction: useConstruction(studio) };
 }
-it("starts each official project and previews a restore without losing user edits before acceptance", async () => {
-  const hook = renderHook(useEditor);
-  await waitFor(() =>
-    expect(hook.result.current.construction.official).toHaveLength(6),
+it("previews a personal blueprint restore without losing user edits before acceptance", async () => {
+  const project = createStarter();
+  const blueprint = await captureBlueprint(project, "research-agent", ["research-root"], "个人问答");
+  project.workspaces["research-agent"].blocks.blocks = [];
+  project.workspaces["research-agent"].blocks.blocks = await instantiateBlueprint(
+    blueprint, project, "research-agent", defaultBindings(blueprint), { x: 0, y: 0 }, id => id,
   );
-  for (const id of [
-    "research-companion",
-    "code-guide",
-    "knowledge-tutor",
-    "task-helper",
-  ]) {
-    await act(() => hook.result.current.studio.startBlueprint(id));
-    await waitFor(() =>
-      expect(hook.result.current.studio.compiling).toBe(false),
-    );
-    expect(
-      hook.result.current.studio.diagnostics.filter(
-        (d) => d.severity === "error",
-      ),
-    ).toEqual([]);
-  }
+  localStorage.setItem("blocky.blueprints.v1", JSON.stringify([blueprint]));
+  const hook = renderHook(useEditor);
+  act(() => hook.result.current.studio.controller.replace(project));
+  await waitFor(() => expect(hook.result.current.construction.blueprints).toHaveLength(1));
+  await waitFor(() => expect(hook.result.current.studio.compiling).toBe(false));
   act(() => {
     hook.result.current.studio.setSelectedRoots(["research-root"]);
     hook.result.current.studio.updateField(
@@ -107,11 +100,11 @@ it("starts each official project and previews a restore without losing user edit
     before,
   );
 });
-it("keeps an unreadable personal library intact while official starters remain usable", async () => {
+it("keeps an unreadable personal library intact when saving a captured blueprint", async () => {
   localStorage.setItem("blocky.blueprints.v1", "broken library");
   const hook = renderHook(useEditor);
   await waitFor(() =>
-    expect(hook.result.current.construction.official).toHaveLength(6),
+    expect(hook.result.current.studio.message).toContain("本机蓝图库无法读取"),
   );
   act(() => hook.result.current.studio.setSelectedRoots(["research-root"]));
   await act(() => hook.result.current.construction.capture());

@@ -9,7 +9,9 @@ import { App } from "../../apps/studio-desktop/src/app/App";
 const observed = vi.hoisted(() => ({ studio: undefined as Studio | undefined, context: vi.fn() }));
 vi.mock("../../packages/ui-editor/src/index.ts", () => ({ Canvas: () => null }));
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
-  openProject: vi.fn(), saveProject: vi.fn(),
+  openProject: vi.fn(async () => ({
+    project: (await import("../../packages/test-fixtures/src")).createStarter(), handle: "test-existing",
+  })), saveProject: vi.fn(),
   readPreferences: () => ({ reduceMotion: false, view: "professional", minimizeToTray: true }),
   writePreferences: vi.fn(),
 }));
@@ -36,7 +38,7 @@ afterEach(() => { cleanup(); localStorage.clear(); vi.clearAllMocks(); observed.
 async function openStudio() {
   render(<App />);
   await waitFor(() => expect((screen.getByRole("button", { name: "＋ 新建项目" }) as HTMLButtonElement).disabled).toBe(false));
-  fireEvent.click(screen.getByRole("button", { name: "＋ 新建项目" }));
+  fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
   await waitFor(() => expect(observed.studio?.canRun).toBe(true));
 }
 it("disables breakpoint on a project event instead of reusing the selected canvas block", async () => {

@@ -134,9 +134,6 @@ importers:
       '@blocky/terminal-protocol':
         specifier: workspace:*
         version: link:../../packages/terminal-protocol
-      '@blocky/test-fixtures':
-        specifier: workspace:*
-        version: link:../../packages/test-fixtures
       '@blocky/ui-editor':
         specifier: workspace:*
         version: link:../../packages/ui-editor
@@ -159,6 +156,9 @@ importers:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
     devDependencies:
+      '@blocky/test-fixtures':
+        specifier: workspace:*
+        version: link:../../packages/test-fixtures
       '@types/react':
         specifier: 19.2.18
         version: 19.2.18

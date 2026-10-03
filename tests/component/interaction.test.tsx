@@ -28,7 +28,7 @@ afterEach(() => {
   localStorage.clear();
 });
 it("binds the displayed input to common run entry, including external requests and debug runs", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.canRun).toBe(true));
   const panel = render(
     <RunPanel studio={hook.result.current} execute={() => {}} />,
@@ -62,13 +62,14 @@ it("binds the displayed input to common run entry, including external requests a
   expect(
     document.querySelectorAll(".trace-events [data-block-type]").length,
   ).toBeGreaterThan(0);
-  await act(() => hook.result.current.startBlueprint("agent-loop"));
+  await act(() => hook.result.current.fresh());
   panel.rerender(<RunPanel studio={hook.result.current} execute={() => {}} />);
   expect(thread.textContent).not.toContain("界面桥接输入");
 });
 it("sends runtime input once on Enter, preserving composition and multiline editing", async () => {
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.canRun).toBe(true));
+  act(() => hook.result.current.setQuestion("测试问题"));
   const run = vi.fn(async () => undefined);
   render(
     <RunPanel studio={{ ...hook.result.current, run }} execute={() => {}} />,
@@ -94,7 +95,7 @@ it("selects the second module even when its entry block ID is unchanged", async 
   project.workspaces["teacher-agent"] = structuredClone(
     project.workspaces["research-agent"],
   );
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   act(() => hook.result.current.controller.replace(project));
   await waitFor(() =>
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
@@ -132,7 +133,7 @@ it("runs the selected InteractionManifest entry instead of always executing the 
   second.fields!.ROLE = "科学教师";
   second.inputs!.BODY.block!.fields!.NAME = "教师入口";
   project.workspaces["research-agent"].blocks.blocks.push(second);
-  const hook = renderHook(() => useStudio());
+  const hook = renderHook(() => useStudio(createStarter()));
   act(() => hook.result.current.controller.replace(project));
   await waitFor(() =>
     expect(hook.result.current.compiled?.interaction.entries).toHaveLength(2),
@@ -142,6 +143,7 @@ it("runs the selected InteractionManifest entry instead of always executing the 
   fireEvent.change(screen.getByLabelText("运行入口"), {
     target: { value: JSON.stringify(["research-agent", "on-question-second"]) },
   });
+  act(() => hook.result.current.setQuestion("为什么树叶在秋天会变黄？"));
   await act(() => hook.result.current.run());
   expect(hook.result.current.result?.answer).toContain("学习要点");
   const started = hook.result.current.events.filter(

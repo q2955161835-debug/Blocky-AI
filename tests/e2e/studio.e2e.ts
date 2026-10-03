@@ -190,15 +190,14 @@ describe("Blocky native editor", () => {
       }), { timeout: 5000, timeoutMsg: `Canvas obscured for left=${leftVisible}, right=${rightVisible}` });
     }
   });
-  it("opens a starter and preserves legacy multi-module runtime and navigation behavior", async () => {
+  it("opens an empty project and preserves existing multi-module runtime and navigation behavior", async () => {
     await page.getByRole("button", { name: "返回开始页", exact: true }).click();
     await page
       .locator(".welcome")
-      .getByRole("button", { name: /资料问答伙伴/ })
+      .getByRole("button", { name: "＋ 新建项目", exact: true })
       .click();
-    await $(".blocklyDraggable").waitForDisplayed();
-    // Existing editor/preview regression uses its declared deterministic fixture.
-    // Stage 3 real-source and starter delivery have separate native/CLI evidence.
+    expect(await page.locator(".blocklyDraggable").count()).toBe(0);
+    // Existing project behavior is exercised with an explicit test-only fixture.
     await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
     await page.evaluate(() =>
       (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
@@ -224,7 +223,7 @@ describe("Blocky native editor", () => {
   it("focuses the canvas after a blank click so Tab opens block search", async () => {
     const starter = page
       .locator(".welcome")
-      .getByRole("button", { name: /资料问答伙伴/ });
+      .getByRole("button", { name: "＋ 新建项目", exact: true });
     if (await starter.isVisible()) await starter.click();
     const canvas = page.locator(".blockly-host");
     const background = page.locator(".blocklyMainBackground");
@@ -568,12 +567,10 @@ describe("Blocky native editor", () => {
       path: "try/stage4/native/structured-branches.png",
     });
   });
-  it("creates an architecture starter and retains state through desktop input runs", async () => {
+  it("retains an existing state-machine project state through desktop input runs", async () => {
     await page.reload();
-    await page
-      .getByLabel("架构起点")
-      .getByRole("button", { name: /有限状态机/ })
-      .click();
+    await page.waitForFunction(() => !!(window as any).__BLOCKY_ACCEPTANCE__);
+    await page.evaluate(() => (window as any).__BLOCKY_ACCEPTANCE__.loadStateMachineRegressionProject());
     await page.locator(".blocklyDraggable").first().waitFor();
     expect(await page.getByLabel("画布名称").inputValue()).toBe("有限状态机");
     for (const [input, expected] of [

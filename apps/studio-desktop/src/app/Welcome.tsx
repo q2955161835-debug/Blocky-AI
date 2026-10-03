@@ -1,5 +1,4 @@
 import type { Studio } from "../composition/useStudio";
-import { officialStarters, architectureStarters, capabilityStarters } from "@blocky/block-catalog";
 export function Welcome({ studio: s }: { studio: Studio }) {
   const creatingDisabled = s.busy || !s.settings.ready || !s.resources.ready;
   return (
@@ -41,51 +40,7 @@ export function Welcome({ studio: s }: { studio: Studio }) {
             ＋ 新建项目
           </button>
           <button onClick={() => void s.open()}>打开本机项目</button>
-          <button
-            disabled={creatingDisabled}
-            onClick={() => void s.startBlueprint("agent-loop")}
-          >
-            文本分析 Agent
-          </button>
         </div>
-      </div>
-      <div className="starter-grid">
-        {officialStarters.map((starter, index) => (
-          <button
-            key={starter.id}
-            className="starter-card"
-            disabled={creatingDisabled}
-            onClick={() => void s.startBlueprint(starter.id)}
-          >
-            <small>蓝图 {String(index + 1).padStart(2, "0")}</small>
-            <h2>
-              {starter.displayName} <span>↗</span>
-            </h2>
-            <p>{starter.description}</p>
-            <footer>
-              {starter.id === "task-helper"
-                ? "计算 · 工具 · 结果"
-                : "角色 · 资料 · 引用"}
-            </footer>
-          </button>
-        ))}
-      </div>
-      <div className="starter-grid" aria-label="架构起点">
-        {[...capabilityStarters, ...architectureStarters].map((starter) => (
-          <button
-            key={starter.id}
-            className="starter-card"
-            disabled={creatingDisabled}
-            onClick={() => void s.startBlueprint(starter.id)}
-          >
-            <small>架构起点</small>
-            <h2>
-              {starter.displayName} <span>↗</span>
-            </h2>
-            <p>{starter.description}</p>
-            <footer>模块 · 条件 · 动作</footer>
-          </button>
-        ))}
       </div>
     </section>
   );

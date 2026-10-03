@@ -1,5 +1,5 @@
 import {expect,it,vi} from 'vitest';
-import {createAgentExample} from '../../block-catalog/src';
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import {AgentExecution} from '../src/agent-execution';
 import {RunBudget} from '../src/budget';
 import {NativeMedia,type MediaPort} from '../src/media';

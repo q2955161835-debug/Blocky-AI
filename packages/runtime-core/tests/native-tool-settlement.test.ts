@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { nativeAgentServices } from "../src/native-agent";
-import { createAgentExample } from "../../block-catalog/src";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 it("native close waits for the cancelled tool request without replaying it", async () => {
   const controller = new AbortController(),
     operations: string[] = [];

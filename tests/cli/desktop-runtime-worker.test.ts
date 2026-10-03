@@ -5,7 +5,7 @@ import {
   RuntimeServiceHost,
   localAdapters,
 } from "../../packages/runtime-core/src";
-import { createArchitectureStarter } from "../../packages/block-catalog/src";
+import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
 
 it("runs desktop state and debug controls through the pinned Node worker", async () => {
   const project = createArchitectureStarter("state-machine");

@@ -3,7 +3,8 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { digest } from "../../packages/language-schema/src";
-import { readProject } from "../../tools/blocky-cli/src/native-store";
+import { createProject, readProject } from "../../tools/blocky-cli/src/native-store";
+import { createStarter } from "../../packages/test-fixtures/src";
 import {
   blueprintInstance,
   walkBlocks,
@@ -37,125 +38,64 @@ function cli(...args: string[]) {
       .map((s) => JSON.parse(s)),
   };
 }
-it("creates and reopens all four starters, runs real ingested evidence and switches a numeric tool", async () => {
-  const source = join(directory, "lesson.ts");
-  await writeFile(
+it("captures, inserts, updates and restores a personal blueprint with explicit conflict handling", async () => {
+  const source = join(directory, "source.blocky"),
+    personal = join(directory, "personal.json"),
+    inserted = join(directory, "inserted.blocky"),
+    custom = join(directory, "custom.blocky"),
+    version2 = join(directory, "v2.json"),
+    patch = join(directory, "update.json"),
+    updated = join(directory, "updated.blocky"),
+    restorePatch = join(directory, "restore.json"),
+    restored = join(directory, "restored.blocky");
+  await createProject(source, createStarter());
+  const sourceBytes = await readFile(source);
+  const captured = cli(
+    "blueprint",
+    "create",
     source,
-    "// Water evaporates and returns as rain.\nexport const minutes = 15;\n",
+    "--module",
+    "research-agent",
+    "--blocks",
+    "research-root",
+    "--name",
+    "我的问答",
+    "--output",
+    personal,
+    "--json",
   );
-  const outputs: string[] = [];
-  for (const id of [
-    "research-companion",
-    "code-guide",
-    "knowledge-tutor",
-    "task-helper",
-  ]) {
-    const file = join(directory, `${id}.blocky`);
-    expect(
-      cli("project", "create", "--template", id, "--output", file, "--json")
-        .code,
-    ).toBe(0);
-    const project = await readProject(file);
-    expect(
-      blueprintInstance(project.workspaces["research-agent"].blocks.blocks[0])
-        ?.blueprintId,
-    ).toBe(`official-${id}`);
-    if (id !== "task-helper") {
-      expect(
-        cli(
-          "knowledge",
-          "add",
-          file,
-          "--collection",
-          "product-handbook",
-          "--kind",
-          "file",
-          "--path",
-          source,
-          "--json",
-        ).code,
-      ).toBe(0);
-      expect(
-        cli(
-          "knowledge",
-          "sync",
-          file,
-          "--collection",
-          "product-handbook",
-          "--json",
-        ).code,
-      ).toBe(0);
-    }
-    const result = cli(
-      "run",
-      "start",
-      file,
-      "--simulate",
-      "--input",
-      id === "task-helper" ? '{"count":3,"minutes":15}' : "Water evaporates",
-      "--jsonl",
-    );
-    expect(result.code, JSON.stringify(result.lines.at(-1))).toBe(0);
-    const output = result.lines.at(-1).data;
-    if (id === "task-helper") expect(output.answer).toBe("0.75");
-    else {
-      expect(output.citations[0].locator.path).toBe("lesson.ts");
-      expect(output.answer).toContain("Water evaporates");
-      outputs.push(output.answer);
-    }
-  }
-  expect(new Set(outputs).size).toBe(3);
-  const switched = join(directory, "minutes.blocky");
+  expect(captured.code).toBe(0);
+  expect(cli("blueprint", "show", personal, "--json").code).toBe(0);
   expect(
     cli(
-      "project",
-      "configure",
-      join(directory, "task-helper.blocky"),
+      "blueprint",
+      "insert",
+      source,
+      "--blueprint",
+      personal,
       "--module",
       "research-agent",
-      "--block",
-      "call-citation",
-      "--field",
-      "MODULE",
-      "--value",
-      "minutes-service",
+      "--reuse-bindings",
       "--output",
-      switched,
+      inserted,
       "--json",
     ).code,
   ).toBe(0);
-  expect(
-    cli(
-      "run",
-      "start",
-      switched,
-      "--simulate",
-      "--input",
-      '{"count":3,"minutes":15}',
-      "--jsonl",
-    ).lines.at(-1).data.answer,
-  ).toBe("45");
-}, 60000);
-it("exports an official blueprint, requires conflict resolution, and applies a native version update without clobbering originals", async () => {
-  const source = join(directory, "task-helper.blocky"),
-    custom = join(directory, "custom.blocky"),
-    blueprint = join(directory, "official.json"),
-    version2 = join(directory, "v2.json"),
-    patch = join(directory, "update.json"),
-    updated = join(directory, "updated.blocky");
-  expect(
-    cli("blueprint", "official", "task-helper", "--output", blueprint, "--json")
-      .code,
-  ).toBe(0);
+  const insertedProject = await readProject(inserted);
+  const instanceRoot = insertedProject.workspaces["research-agent"].blocks.blocks.find(
+    (root) => blueprintInstance(root)?.blueprintId === captured.lines[0].data.blueprintId,
+  );
+  expect(instanceRoot).toBeTruthy();
+  const rootId = instanceRoot!.id;
   expect(
     cli(
       "project",
       "configure",
-      source,
+      inserted,
       "--module",
       "research-agent",
       "--block",
-      "research-root",
+      rootId,
       "--field",
       "ROLE",
       "--value",
@@ -166,7 +106,7 @@ it("exports an official blueprint, requires conflict resolution, and applies a n
     ).code,
   ).toBe(0);
   const { digest: _, ...content } = JSON.parse(
-    await readFile(blueprint, "utf8"),
+    await readFile(personal, "utf8"),
   );
   content.version = 2;
   content.roots[0].fields.ROLE = "新的官方角色";
@@ -185,7 +125,7 @@ it("exports an official blueprint, requires conflict resolution, and applies a n
     "--module",
     "research-agent",
     "--root",
-    "research-root",
+    rootId,
     "--output",
     patch,
     "--json",
@@ -193,6 +133,7 @@ it("exports an official blueprint, requires conflict resolution, and applies a n
   const unresolved = cli(...args);
   expect(unresolved.code).toBe(0);
   expect(unresolved.lines[0].data.ready).toBe(false);
+  expect(unresolved.lines[0].data.conflicts.length).toBeGreaterThan(0);
   expect(cli(...args, "--resolution", "keep-user").code).toBe(0);
   expect(
     cli(
@@ -208,11 +149,43 @@ it("exports an official blueprint, requires conflict resolution, and applies a n
   ).toBe(0);
   expect(await readFile(custom)).toEqual(original);
   const project = await readProject(updated),
-    root = project.workspaces["research-agent"].blocks.blocks[0];
+    root = project.workspaces["research-agent"].blocks.blocks.find((block) => block.id === rootId)!;
   expect(root.fields!.ROLE).toBe("我的自定义角色");
-  expect(blueprintInstance(root)?.version).toBe(2);
+  const updatedInstance = blueprintInstance(root)!;
+  expect(updatedInstance.version).toBe(2);
   expect(
-    [...walkBlocks([root])].find((b) => b.id === "call-citation")?.fields!
-      .MODULE,
+    [...walkBlocks([root])].find((b) => b.id === updatedInstance.idMap["call-citation"])?.fields!.MODULE,
   ).toBe("citation-service");
+  const restore = cli(
+    "blueprint",
+    "restore",
+    updated,
+    "--blueprint",
+    version2,
+    "--module",
+    "research-agent",
+    "--root",
+    rootId,
+    "--output",
+    restorePatch,
+    "--json",
+  );
+  expect(restore.code).toBe(0);
+  expect(
+    cli(
+      "patch",
+      "apply",
+      updated,
+      "--patch",
+      restorePatch,
+      "--output",
+      restored,
+      "--json",
+    ).code,
+  ).toBe(0);
+  const final = await readProject(restored);
+  expect(
+    final.workspaces["research-agent"].blocks.blocks.find((block) => block.id === rootId)?.fields!.ROLE,
+  ).toBe("新的官方角色");
+  expect(await readFile(source)).toEqual(sourceBytes);
 });

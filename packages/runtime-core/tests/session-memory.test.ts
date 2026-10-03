@@ -2,7 +2,7 @@ import {it,expect} from 'vitest';
 import {sessionRequest,newSessionLedger} from '../src/session-memory';
 import {AgentExecution} from '../src/agent-execution';
 import {RunBudget} from '../src/budget';
-import {createAgentExample} from '../../block-catalog/src';
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import type {Json} from '@blocky/language-schema';
 it('filters expiry and source revocation, keeps versions and conflict state',()=>{
  const values=new Map<string,Json>(),ledger=newSessionLedger();const run=(input:Parameters<typeof sessionRequest>[4],time=100)=>sessionRequest(values,ledger,'project','session',input,time);

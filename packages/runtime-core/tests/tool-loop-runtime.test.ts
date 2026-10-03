@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { createAgentExample } from "../../block-catalog/src";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "../../compiler/src";
 import { Runtime, localAdapters } from "../src";
 import type { Generation, GenerationRequest } from "../src/agent-context";

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "@blocky/compiler";
 import { canonicalJson, type WorkspaceBlock } from "@blocky/language-schema";
 import { Runtime } from "../src/runtime";

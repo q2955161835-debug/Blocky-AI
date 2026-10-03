@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { createArchitectureStarter } from "../../block-catalog/src";
+import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { AgentExecution } from "../src/agent-execution";
 import { EventMailbox } from "../src/event-mailbox";
 import { RunBudget } from "../src/budget";

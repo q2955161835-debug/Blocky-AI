@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { createAgentExample } from "../../block-catalog/src";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { resourceDefinitions, validateResource } from "../src";
 
 const reference = (id: string) => ({ kind: "schema", id });
