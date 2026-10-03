@@ -75,22 +75,43 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         if (result.usage && result.usage.outputTokens > limit) throw Error("BLK-RUN-004");
         context.onGeneration(structuredClone(result));
         if (result.toolCalls !== undefined && !Array.isArray(result.toolCalls)) throw Error("BLK-TOOL-PROPOSAL");
-        const proposed = result.toolCalls ?? [];
+        let proposed = result.toolCalls ?? [];
+        let rejectedInput = false;
         if (proposed.length) {
           if (turn === turns) throw Error("BLK-TOOL-LOOP-LIMIT");
           if (proposed.length > 8 || result.finishReason !== "tool_calls") throw Error("BLK-TOOL-PROPOSAL");
           const batchIds = new Set(ids), batchOperations = new Set<string>();
+          const invalidInputs = new Set<string>();
           // Validate the complete proposal before the SDK observes any tool call.
           for (const call of proposed) {
             const tool = bound.find((t) => t.model.name === call?.name);
             if (!tool || typeof call.id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(call.id) || batchIds.has(call.id)) throw Error("BLK-TOOL-PROPOSAL");
-            validateOutput(call.arguments, tool.model.parameters);
+            batchIds.add(call.id);
+          }
+          for (const call of proposed) {
+            const tool = bound.find((t) => t.model.name === call.name)!;
+            try {
+              validateOutput(call.arguments, tool.model.parameters);
+            } catch (error) {
+              if (!(error instanceof Error) || error.message !== "BLK-OUTPUT-001") throw error;
+              invalidInputs.add(tool.model.name);
+              continue;
+            }
             const operation = canonicalJson({ resourceId: tool.resource.resourceId, input: call.arguments.input });
             if (batchOperations.has(operation)) throw Error("BLK-TOOL-DUPLICATE");
-            batchIds.add(call.id); batchOperations.add(operation);
+            batchOperations.add(operation);
           }
-          if (budget.calls + proposed.length > budget.maxCalls) throw Error("BLK-RUN-004");
-          batchIds.forEach((id) => ids.add(id));
+          if (invalidInputs.size) {
+            // A rejected batch never reaches the SDK dispatcher or Host. Ask
+            // the official loop to correct it without exposing raw arguments,
+            // retaining the same turn/call/output/cancellation budgets.
+            rejectedInput = true;
+            proposed = [];
+            agent.followUp({ role: "user", timestamp: Date.now(), content: `BLK-OUTPUT-001：工具 ${[...invalidInputs].join(", ")} 的参数不符合已声明的 JSON Schema，本轮整批工具都未执行。请按工具声明纠正参数；每个调用的参数对象必须包含 input，工具实际字段放在 input 中。只重提未执行操作，不重复之前已完成的副作用。` });
+          } else {
+            if (budget.calls + proposed.length > budget.maxCalls) throw Error("BLK-RUN-004");
+            batchIds.forEach((id) => ids.add(id));
+          }
         } else {
           if (!result.text.trim() || (result.finishReason !== undefined && result.finishReason !== "stop")) throw Error("BLK-TOOL-PROPOSAL");
           if (context.validateCitations) await abortable(context.validateCitations(budget.signal), budget.signal);
@@ -104,8 +125,9 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
             agent.followUp({ role: "user", timestamp: Date.now(), content: `BLK-GUARD-001：刚才的回答引用不合法。可用知识来源ID：${canonicalJson(context.citations.map((citation) => citation.id))}。只修正最终回答，不重复已完成的文件操作。没有来源ID时不要使用 [source:ID]；文件名和检查回执使用普通文字。` });
           }
         }
-        context.onEvent({ type: "model.completed", requestId, data: { summary: "Pi 模型已返回", engine: "pi-agent-core/0.86.0", turn, transport: result.transport, model: result.model, ...(result.usage ? { usage: result.usage } : {}) } });
-        if (result.text) output.content.push({ type: "text", text: result.text });
+        context.onEvent({ type: "model.completed", requestId, data: { summary: rejectedInput ? "工具参数校验未通过，Pi 正在纠正未执行提案" : "Pi 模型已返回", engine: "pi-agent-core/0.86.0", turn, transport: result.transport, model: result.model, ...(rejectedInput ? { rejectedProposal: "BLK-OUTPUT-001" } : {}), ...(result.usage ? { usage: result.usage } : {}) } });
+        if (rejectedInput) output.content.push({ type: "text", text: "工具参数不符合声明，整批提案未执行。" });
+        else if (result.text) output.content.push({ type: "text", text: result.text });
         for (const call of proposed) output.content.push({ type: "toolCall", id: call.id, name: call.name, arguments: call.arguments as JsonObject });
         if (result.usage) Object.assign(output.usage, { input: result.usage.inputTokens, output: result.usage.outputTokens, totalTokens: result.usage.totalTokens });
         output.responseId = result.requestId; output.responseModel = result.model;

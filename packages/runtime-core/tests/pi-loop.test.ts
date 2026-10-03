@@ -45,6 +45,60 @@ it("rejects a malformed batch before any side effect", async () => {
   try { await expect(runPiLoop(context)).rejects.toThrow("BLK-TOOL-PROPOSAL"); expect(calls).toBe(0); }
   finally { budget.dispose(); }
 });
+it("feeds a rejected input batch back through official Pi before executing any corrected tool", async () => {
+  const requests: GenerationRequest[] = [];
+  const invoked: Json[] = [];
+  const { context, budget } = setup(async (request) => {
+    requests.push(request);
+    if (requests.length === 1) return response("", [
+      { id: "valid-unexecuted", name: "tool_1", arguments: { input: "original" } },
+      { id: "bad-input", name: "tool_1", arguments: { input: { secret: "private argument sentinel" } } },
+    ]);
+    if (requests.length === 2) {
+      expect(invoked).toEqual([]);
+      expect(request.messages.at(-1)?.content).toContain("BLK-OUTPUT-001");
+      expect(JSON.stringify(request.messages)).not.toContain("private argument sentinel");
+      expect(request.messages.flatMap((m) => m.toolCalls ?? [])).toEqual([]);
+      return response("", [{ id: "corrected", name: "tool_1", arguments: { input: "correct" } }]);
+    }
+    return response("corrected tool returned actual receipt");
+  }, async (_tool, value) => { invoked.push(value); return { words: 1, characters: 7, lines: 1 }; });
+  try {
+    expect(await runPiLoop(context)).toBe("corrected tool returned actual receipt");
+    expect(invoked).toEqual(["correct"]);
+    expect(requests).toHaveLength(3);
+    expect(budget.calls).toBe(4);
+  } finally { budget.dispose(); }
+});
+it("keeps parameter correction inside the original model and turn budgets", async () => {
+  let calls = 0, invoked = 0;
+  const { context, budget } = setup(async () => {
+    calls++;
+    return response("", [{ id: `invalid-${calls}`, name: "tool_1", arguments: { input: 42 } }]);
+  }, async () => { invoked++; return null; });
+  context.maxTurns = 3;
+  try {
+    await expect(runPiLoop(context)).rejects.toThrow("BLK-TOOL-LOOP-LIMIT");
+    expect(calls).toBe(3);
+    expect(invoked).toBe(0);
+    expect(budget.calls).toBe(3);
+  } finally { budget.dispose(); }
+});
+it("does not reset the call budget for a parameter correction turn", async () => {
+  let requests = 0, invoked = 0;
+  const { context, budget } = setup(async () => {
+    requests++;
+    return response("", [{ id: "invalid", name: "tool_1", arguments: { input: 42 } }]);
+  }, async () => { invoked++; return null; });
+  budget.maxCalls = 1;
+  try {
+    await expect(runPiLoop(context)).rejects.toThrow("BLK-RUN-004");
+    expect(requests).toBe(1);
+    expect(invoked).toBe(0);
+    expect(budget.maxCalls).toBe(1);
+    expect(budget.usedOutput).toBe(128);
+  } finally { budget.dispose(); }
+});
 it("rejects duplicate operations within one proposed batch before any side effect",async()=>{
   let calls=0;
   const {context,budget}=setup(async()=>response("",[{id:"one",name:"tool_1",arguments:{input:"same"}},{id:"two",name:"tool_1",arguments:{input:"same"}}]),async()=>{calls++;return null;});
