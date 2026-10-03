@@ -5,6 +5,7 @@ import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import type { Generation, GenerationRequest } from "../src/agent-context";
 import type { ToolLoopContext } from "../src/tool-loop";
 import { createStartingBlueprint } from "../../block-catalog/src/starting-blueprints";
+import type { Json } from "@blocky/language-schema";
 
 const response = (text: string, toolCalls: Generation["toolCalls"] = []): Generation => ({
   provider: "unit-fixture", transport: "local", model: "unit-fixture", requestId: "unit-result",
@@ -56,7 +57,7 @@ it("allows actual check feedback to drive a write and recheck in subsequent Pi t
     if(turn===1||turn===3)return response("",[{id:`check-${turn}`,name:"tool_1",arguments:{input:{path:"sample.js",kind:"javascript"}}}]);
     if(turn===2)return response("",[{id:"fix-two",name:"tool_2",arguments:{input:{path:"sample.js",text:"const value = 1;",expectedDigest:"0".repeat(64)}}}]);
     return response("syntax corrected and verified");
-  },async(tool)=>{performed.push(String(tool.definition.operation));return tool.definition.operation==="check"?{ok:performed.length>1,exitCode:performed.length>1?0:1}:{change:{changeId:"change-fix"}};});
+  },async(tool):Promise<Json>=>{performed.push(String(tool.definition.operation));return tool.definition.operation==="check"?{ok:performed.length>1,exitCode:performed.length>1?0:1}:{change:{changeId:"change-fix"}};});
   context.project=createStartingBlueprint("coding-assistant");context.resourceIds=["workspace-check","workspace-write"];context.capabilities=["workspace.check","workspace.write"];context.maxTurns=4;
   try{expect(await runPiLoop(context)).toBe("syntax corrected and verified");expect(performed).toEqual(["check","write","check"]);}finally{budget.dispose();}
 });
