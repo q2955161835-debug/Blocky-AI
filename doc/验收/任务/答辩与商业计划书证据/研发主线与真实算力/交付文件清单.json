@@ -50,7 +50,16 @@
       "retainedCandidate": "D:\\1Folder\\Blocky-AI\\try\\待清理\\2026-10-03-研发主线与真实算力\\Blocky-Studio-财务测算-2026-10-03.xlsx"
     }
   ],
-  "gitMerged": false,
-  "githubPushed": false,
-  "published": false
+  "gitMerged": true,
+  "githubPushed": true,
+  "published": false,
+  "integration": {
+    "authorizedDate": "2026-10-03",
+    "acceptedMaterialCommit": "357472dc4758183ff66a10ae3fb93f2332188da3",
+    "remoteMainReadback": "357472dc4758183ff66a10ae3fb93f2332188da3",
+    "localTaskBranchDeleted": true,
+    "remoteTaskBranchDeleted": true,
+    "documentationFollowupDoesNotChangeArtifacts": true,
+    "workflow": "文档提交含[skip ci]；未运行产品CI"
+  }
 }
