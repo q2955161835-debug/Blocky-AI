@@ -23,12 +23,12 @@ it("uses official Pi dispatch and feeds actual tool output into the next model t
   let calls = 0;
   const { context, budget } = setup(async (request) => {
     requests.push(request);
-    return requests.length === 1 ? response("", [{ id: "one", name: "tool_1", arguments: { input: "alpha beta" } }]) : response("2 words");
-  }, async (_tool, value) => { calls++; expect(value).toBe("alpha beta"); return { words: 2, characters: 10, lines: 1 }; });
+    return requests.length === 1 ? response("", [{ id: "call_Upper_42", name: "tool_1", arguments: { input: "alpha beta" } }]) : response("2 words");
+  }, async (_tool, value, requestId) => { calls++; expect(value).toBe("alpha beta"); expect(requestId).toMatch(/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/); return { words: 2, characters: 10, lines: 1 }; });
   try {
     expect(await runPiLoop(context)).toBe("2 words");
     expect(calls).toBe(1);
-    expect(requests[1].messages.at(-1)).toMatchObject({ role: "tool", toolCallId: "one" });
+    expect(requests[1].messages.at(-1)).toMatchObject({ role: "tool", toolCallId: "call_Upper_42" });
     expect(JSON.parse(requests[1].messages.at(-1)!.content).words).toBe(2);
     expect(requests[0].messages[0].content).toContain("reader");
     expect(budget.calls).toBe(3);

@@ -27,7 +27,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
   if (context.requireEvidence && !context.citations.length) return "资料没有提供足够依据，请补充资料或澄清问题。";
   const initial = messages(context.role, context.instruction, context.question, context.memory, context.value, context.citations);
   const model: Model<"blocky-host"> = { id: context.model.resourceId, name: context.model.displayName, api: "blocky-host", provider: "blocky-host", baseUrl: "", reasoning: false, input: ["text"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 131072, maxTokens: outputPerTurn };
-  let turn = 0, answer = "", failure: unknown;
+  let turn = 0, toolSequence = 0, answer = "", failure: unknown;
   const ids = new Set<string>(), operations = new Set<string>();
   const tools: AgentTool[] = bound.map((tool) => ({
     name: tool.model.name, label: tool.resource.displayName, description: tool.model.description,
@@ -36,7 +36,9 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
       budget.check();
       if (failure) throw failure;
       budget.call();
-      const requestId = `${context.requestId}-t${turn}-${callId}`;
+      // Provider call IDs may contain uppercase letters; native request IDs are
+      // locally generated stable identifiers, while Pi keeps the original ID.
+      const requestId = `${context.requestId}-t${turn}-${++toolSequence}`;
       context.onEvent({ type: "tool.started", requestId, data: { summary: "Pi 正在执行工具", engine: "pi-agent-core/0.86.0", toolId: tool.resource.resourceId, turn } });
       try {
         validateOutput(args as Json, tool.model.parameters);
