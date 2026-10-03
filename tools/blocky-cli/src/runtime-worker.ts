@@ -24,6 +24,7 @@ const pending = new Map<
     resolve(value: unknown): void;
     reject(error: Error): void;
     timer: ReturnType<typeof setTimeout>;
+    operation: string;
   }
 >();
 const send = (frame: unknown) => {
@@ -47,7 +48,7 @@ function call(operation: string, fields: Record<string, unknown> = {}) {
           ? 180000
           : 10000,
     );
-    pending.set(id, { resolve, reject, timer });
+    pending.set(id, { resolve, reject, timer, operation });
     try {
       send({ kind: "workflow", id, operation, ...fields });
     } catch (error) {
@@ -124,7 +125,7 @@ async function startDesktop(request: unknown) {
     const value = await desktop.run(request, abort.signal, (value) =>
       send({ kind: "event", value }),
     );
-    if(inputClosed)throw Error("BLK-WORKFLOW-CHANNEL");
+    if (inputClosed) throw Error("BLK-WORKFLOW-CHANNEL");
     send({ kind: "desktop-done", value });
   } catch {
     process.exitCode = 3;
@@ -227,8 +228,11 @@ process.stdin.on("data", (chunk: string) => {
         else
           p.reject(
             Error(
-              desktop && frame.value?.code === "BLK-RUN-SERVICE"
-                ? "BLK-RUN-SERVICE"
+              desktop && p.operation === "service"
+                ? typeof frame.value?.code === "string" &&
+                  /^BLK-[A-Z0-9-]{3,64}$/.test(frame.value.code)
+                  ? frame.value.code
+                  : "BLK-RUN-SERVICE"
                 : workflowErrorCode(frame.value?.code),
             ),
           );
@@ -241,7 +245,7 @@ process.stdin.on("data", (chunk: string) => {
   }
 });
 process.stdin.on("end", () => {
-  if(!inputClosed)process.exitCode=3;
+  if (!inputClosed) process.exitCode = 3;
   inputClosed = true;
   abort.abort();
   finish();

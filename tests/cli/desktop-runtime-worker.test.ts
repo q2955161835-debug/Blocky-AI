@@ -6,6 +6,142 @@ import {
   localAdapters,
 } from "../../packages/runtime-core/src";
 import { createArchitectureStarter } from "../../packages/test-fixtures/src/scenarios";
+import { createStarter } from "../../packages/test-fixtures/src";
+
+it.each([
+  ["service", "BLK-KNOWLEDGE-NO-INDEX", "BLK-KNOWLEDGE-NO-INDEX"],
+  ["service", "unexpected failure", "BLK-RUN-SERVICE"],
+  [
+    "service",
+    "BLK-KNOWLEDGE-NO-INDEX: D:\\private\\source.txt",
+    "BLK-RUN-SERVICE",
+  ],
+  ["open", "BLK-KNOWLEDGE-NO-INDEX", "BLK-WORKFLOW-CHANNEL"],
+] as const)(
+  "routes desktop worker %s error reply %s to %s through real stdin/stdout",
+  async (operation, suppliedCode, expectedCode) => {
+    const project =
+      operation === "service"
+        ? createStarter()
+        : createArchitectureStarter("durable-workflow");
+    if (operation === "service") {
+      project.resources["product-handbook"].definition = {
+        collection: "product-handbook",
+        implementationRef: { kind: "adapter", id: "knowledge-local-v1" },
+        sourceRef: { kind: "resource", id: "product-handbook" },
+        chunking: { strategy: "paragraph", size: 768, overlap: 64 },
+        index: { strategy: "keyword" },
+        retrieval: { strategy: "keyword", topK: 5 },
+      };
+    }
+    const host = new RuntimeServiceHost(
+      project.manifest.projectId,
+      localAdapters(),
+    );
+    const child = spawn(
+      resolve("tools/blocky-cli/dist/bin/builder/node.exe"),
+      [
+        "--no-addons",
+        "--no-global-search-paths",
+        resolve("tools/blocky-cli/dist/runtime-worker.mjs"),
+      ],
+      { windowsHide: true, stdio: ["pipe", "pipe", "pipe"] },
+    );
+    let buffer = "",
+      injected = false;
+    const frames: any[] = [];
+    const send = (value: unknown) =>
+      child.stdin.write(JSON.stringify(value) + "\n");
+    const exited = new Promise<number | null>((done, reject) => {
+      child.once("error", reject);
+      child.once("close", done);
+    });
+    child.stderr.resume();
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      buffer += chunk;
+      let end: number;
+      while ((end = buffer.indexOf("\n")) >= 0) {
+        const frame = JSON.parse(buffer.slice(0, end));
+        buffer = buffer.slice(end + 1);
+        frames.push(frame);
+        if (frame.kind !== "workflow") continue;
+        if (
+          !injected &&
+          frame.operation === operation &&
+          (operation !== "service" ||
+            frame.request.service === "knowledge.query")
+        ) {
+          injected = true;
+          send({
+            kind: "reply",
+            id: frame.id,
+            ok: false,
+            value: { code: suppliedCode },
+          });
+        } else if (frame.operation === "service") {
+          void host.request(frame.request, new AbortController().signal).then(
+            (value) => send({ kind: "reply", id: frame.id, ok: true, value }),
+            () =>
+              send({
+                kind: "reply",
+                id: frame.id,
+                ok: false,
+                value: { code: "BLK-RUN-SERVICE" },
+              }),
+          );
+        } else {
+          send({
+            kind: "reply",
+            id: frame.id,
+            ok: false,
+            value: { code: "BLK-WORKFLOW-CHANNEL" },
+          });
+        }
+      }
+    });
+    const timer = setTimeout(() => child.kill(), 10000);
+    try {
+      send({
+        kind: "start",
+        schemaVersion: "blocky.desktop-session/v1",
+        request: {
+          schemaVersion: "blocky.desktop-run/v1",
+          project,
+          interactionId: operation === "service" ? "on-question" : "on-event",
+          question: operation === "service" ? "水循环" : "start",
+          options: {},
+        },
+      });
+      expect(await exited).toBe(0);
+      expect(injected).toBe(true);
+      const done = frames.find((frame) => frame.kind === "desktop-done");
+      expect(done?.value.result.status).toBe("failed");
+      expect(
+        frames.find(
+          (frame) =>
+            frame.kind === "event" && frame.value.type === "run.failed",
+        )?.value.data.code,
+      ).toBe(expectedCode);
+      if (operation === "service") {
+        expect(
+          frames.find(
+            (frame) =>
+              frame.kind === "event" && frame.value.type === "tool.failed",
+          )?.value.data.code,
+        ).toBe(expectedCode);
+      }
+      expect(
+        JSON.stringify(frames.filter((frame) => frame.kind !== "workflow")),
+      ).not.toContain("source.txt");
+    } finally {
+      clearTimeout(timer);
+      if (child.exitCode === null) child.kill();
+      await host.close();
+    }
+  },
+  15000,
+);
 
 it("runs desktop state and debug controls through the pinned Node worker", async () => {
   const project = createArchitectureStarter("state-machine");
@@ -119,7 +255,7 @@ it("fails promptly when the desktop owner disconnects during a service reply", a
   let text = "",
     disconnected = false,
     forced = false;
-  const received: {kind:string}[]=[];
+  const received: { kind: string }[] = [];
   child.stdout.setEncoding("utf8");
   child.stdout.on("data", (chunk) => {
     text += chunk;
@@ -165,8 +301,8 @@ it("fails promptly when the desktop owner disconnects during a service reply", a
     expect(disconnected).toBe(true);
     expect(forced).toBe(false);
     expect(code).toBe(3);
-    expect(received.some(frame=>frame.kind==='desktop-done')).toBe(false);
-    expect(received.some(frame=>frame.kind==='error')).toBe(true);
+    expect(received.some((frame) => frame.kind === "desktop-done")).toBe(false);
+    expect(received.some((frame) => frame.kind === "error")).toBe(true);
   } finally {
     clearTimeout(timer);
     if (child.exitCode === null) child.kill();

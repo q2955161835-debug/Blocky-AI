@@ -15,8 +15,8 @@ export function calculationToolResource(project: Project): string {
       values: {
         type: "array",
         items: { type: "number" },
-        minItems: 2,
         maxItems: 100,
+        description: "至少两个有限数值；不足两个由计算服务拒绝",
       },
     },
     required: ["operation", "values"],

@@ -1,6 +1,21 @@
 use super::*;
 use std::fs;
 #[test]
+fn workspace_directory_dot_alias_uses_the_pinned_root_without_opening_file_aliases() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("note.txt"), "public marker").unwrap();
+    let scope = files::Scope::new(dir.path()).unwrap();
+    assert_eq!(scope.list(Some(".")).unwrap(), scope.list(None).unwrap());
+    assert_eq!(
+        scope.search("marker", Some(".")).unwrap()["matches"][0]["path"],
+        "note.txt"
+    );
+    assert!(scope.read(".").is_err());
+    assert!(scope.write(".", "bad", None).is_err());
+    assert!(scope.list(Some("..")).is_err());
+    assert!(scope.list(Some("../other")).is_err());
+}
+#[test]
 fn coding_start_wire_omits_unselected_workspace_and_preserves_granted_id() {
     // The worker's coding-start/v1 accepts an optional ID, never a JSON null.
     let input = json!({"schemaVersion":"blocky.coding-start/v1","requestId":"greeting",

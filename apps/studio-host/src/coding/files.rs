@@ -359,7 +359,12 @@ impl Scope {
     }
     pub fn list(&self, relative: Option<&str>) -> Result<Vec<Value>, String> {
         verify(&self._root, true)?;
-        let prefix = relative.unwrap_or("");
+        // A directory-only root alias still uses the already pinned grant.
+        // File read/write and traversal validation retain their strict rules.
+        let prefix = match relative {
+            Some(".") => "",
+            other => other.unwrap_or(""),
+        };
         let (_path, _locks) = if prefix.is_empty() {
             (self.root.clone(), Vec::new())
         } else {
