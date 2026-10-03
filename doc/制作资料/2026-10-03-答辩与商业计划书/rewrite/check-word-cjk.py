@@ -20,6 +20,7 @@ W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 PKG_REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 NS = {"w": W_NS, "r": R_NS, "pr": PKG_REL_NS}
+EXPECTED_FONT = "Noto Sans SC"
 W = f"{{{W_NS}}}"
 R = f"{{{R_NS}}}"
 
@@ -239,8 +240,8 @@ def check_fonts(styles_root: etree._Element, document_root: etree._Element, part
         report.fail("Typeface and paragraph styling", theme_fonts[0], "theme font reference remains")
     if len(fonts) > 1:
         report.fail("Typeface and paragraph styling", "Word styles", f"multiple typefaces found: {', '.join(sorted(fonts))}")
-    elif fonts and fonts != {"noto sans sc"}:
-        report.fail("Typeface and paragraph styling", "Word styles", f"expected Noto Sans SC, found {', '.join(sorted(fonts))}")
+    elif fonts and fonts != {EXPECTED_FONT.casefold()}:
+        report.fail("Typeface and paragraph styling", "Word styles", f"expected {EXPECTED_FONT}, found {', '.join(sorted(fonts))}")
 
     body_style = next(
         (
@@ -695,7 +696,10 @@ def main() -> None:
         action="store_true",
         help="Allow identity placeholders and drafting guidance in the bundled template",
     )
+    parser.add_argument("--font", default="Noto Sans SC", choices=("Noto Sans SC", "宋体"))
     args = parser.parse_args()
+    global EXPECTED_FONT
+    EXPECTED_FONT = args.font
     sys.exit(validate(args.document, args.template))
 
 

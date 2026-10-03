@@ -1,0 +1,47 @@
+{
+  "currency": "CNY",
+  "date": "2026-10-03",
+  "start_month": "2026-11",
+  "months": 24,
+  "owner_cash": 0,
+  "recovery_rate": 0,
+  "collection_lag": 0,
+  "vendor_fee": 0,
+  "vendor_prepay": 0,
+  "vendor_deposit": 0,
+  "vendor_month": 6,
+  "asset_life_months": 36,
+  "rounding_step": 500000,
+  "unknown_terms": "厂商报价、实际自有资金与算力收费未确认；金额0表示未录入，不表示免费或实际为零。默认不以未确认收入抵减资金。",
+  "cohort_quarters": [
+    [0, 0, 0], [60, 10, 30], [150, 25, 100], [300, 40, 250],
+    [600, 60, 500], [900, 90, 900], [1500, 150, 1500], [2400, 240, 2500]
+  ],
+  "base_monthly_per_person": {"student": 10, "teacher": 50, "personal": 30},
+  "scenarios": [
+    {"name": "精简推进", "fte_first6": 2, "fte_later18": 3, "loaded_monthly_cost": 16000, "user_scale": 0.4, "token_cost_scale": 0.6, "other_cost_scale": 0.75, "vendor_buffer": 100000, "contingency_rate": 0.1, "reserve_months": 3},
+    {"name": "基准建设", "fte_first6": 3, "fte_later18": 4, "loaded_monthly_cost": 20000, "user_scale": 1, "token_cost_scale": 1, "other_cost_scale": 1, "vendor_buffer": 300000, "contingency_rate": 0.1, "reserve_months": 3},
+    {"name": "高用量压力", "fte_first6": 4, "fte_later18": 5, "loaded_monthly_cost": 24000, "user_scale": 2, "token_cost_scale": 2.5, "other_cost_scale": 1.5, "vendor_buffer": 800000, "contingency_rate": 0.15, "reserve_months": 3}
+  ],
+  "base_costs": {
+    "dev_compute_per_fte": 1200,
+    "infrastructure_first6": 3000,
+    "infrastructure_middle6": 6000,
+    "infrastructure_last12": 9000,
+    "teaching_first3": 0,
+    "teaching_middle9": 6000,
+    "teaching_last12": 8000,
+    "community_first3": 0,
+    "community_middle9": 3000,
+    "community_last12": 6000,
+    "admin_monthly": 3000,
+    "specialist_months": {"6": 30000, "12": 40000, "18": 40000, "24": 40000},
+    "equipment_months": {"1": 50000, "7": 30000}
+  },
+  "sources": [
+    {"id": "F01", "basis": "用户确认", "description": "覆盖24个月持续发展；Token按使用人头；厂商合作费用未知。", "url": ""},
+    {"id": "F02", "basis": "规划假设", "description": "2026-11起算；人数曲线、等效人力、费用、储备和合作现金预留均为低置信预算参数，不是客户、报价、招聘或已到资金。", "url": ""},
+    {"id": "F03", "basis": "计费机制参照", "description": "DeepSeek官方按输入/输出与缓存Token计费，价格可变；预算的人均成本只是汇总单位，需以实际模型、调用与Token账单替换。未使用厂商美元价格反推人民币套餐。", "url": "https://api-docs.deepseek.com/quick_start/pricing/"},
+    {"id": "F04", "basis": "订阅与组织机制参照", "description": "Cursor按用户订阅、内含模型用量与超额按量，企业方案洽谈；不证明Blocky定价或合作费用。", "url": "https://cursor.com/pricing"}
+  ]
+}

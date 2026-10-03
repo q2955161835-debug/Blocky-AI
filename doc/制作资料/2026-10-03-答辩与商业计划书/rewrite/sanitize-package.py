@@ -70,6 +70,11 @@ if '[Content_Types].xml' in parts:
  parts['[Content_Types].xml']=E.tostring(r,xml_declaration=True,encoding='UTF-8',standalone=True)
 if 'docProps/core.xml' in parts:
  r=E.fromstring(parts['docProps/core.xml']);D='http://purl.org/dc/terms/';XSI='http://www.w3.org/2001/XMLSchema-instance'
+ if 'xl/workbook.xml' in parts:
+  for tag in ['{http://purl.org/dc/elements/1.1/}creator','{http://schemas.openxmlformats.org/package/2006/metadata/core-properties}lastModifiedBy']:
+   e=r.find(tag)
+   if e is None:e=E.SubElement(r,tag)
+   e.text='Blocky Studio'
  for name in ['created','modified']:
   e=r.find('{'+D+'}'+name)
   if e is None:e=E.SubElement(r,'{'+D+'}'+name)

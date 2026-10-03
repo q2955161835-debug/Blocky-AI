@@ -1,0 +1,50 @@
+{
+  "summary_sha256": "d6b389816ce26ee50f637a2f1720c1b3e80d6ce1332a6ffb33375160ecb3b02a",
+  "summary_tables": [
+    {
+      "table": "Table 9. 平台采购人头与算力成本",
+      "sourceTable": "people",
+      "exact_match": true,
+      "rows": 4
+    },
+    {
+      "table": "Table 14. 24个月资金用途",
+      "sourceTable": "uses",
+      "exact_match": true,
+      "rows": 14
+    },
+    {
+      "table": "Table 15. 现金覆盖与资金目标",
+      "sourceTable": "funding",
+      "exact_match": true,
+      "rows": 7
+    },
+    {
+      "table": "Table 20. 24个月假设与未知项",
+      "sourceTable": "assumptions",
+      "exact_match": true,
+      "rows": 9
+    },
+    {
+      "table": "Table 21. 24个月资源情景",
+      "sourceTable": "scenarios",
+      "exact_match": true,
+      "rows": 4
+    },
+    {
+      "table": "Table 22. 回收与合作条件敏感性",
+      "sourceTable": "sensitivity",
+      "exact_match": true,
+      "rows": 7
+    }
+  ],
+  "all_22_tables_exact_match": true,
+  "cash_paid": 3410750,
+  "minimum_additional_funding": 4630250,
+  "funding_target": 5000000,
+  "source_use_total": 5000000,
+  "user_token_cost": 789750,
+  "deprecated_budget_removed": true,
+  "public_body_no_internal_paths": true,
+  "real_external_model_API": false
+}

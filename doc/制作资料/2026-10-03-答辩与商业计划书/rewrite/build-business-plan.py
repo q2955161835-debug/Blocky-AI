@@ -57,6 +57,8 @@ def clear_runs(paragraph: etree._Element) -> None:
 
 def put_text(paragraph: etree._Element, value: str, *, font_size: float | None = None,
              bold: bool = False, center: bool = False) -> None:
+    if FONT == "宋体":
+        value = value.replace("−", "-")
     clear_runs(paragraph)
     ppr = paragraph.find(qn("pPr"))
     if ppr is None:
@@ -197,6 +199,9 @@ def money_wan(value: Any) -> str:
 def table_from_block(block: dict[str, Any], finance: dict[str, Any]) -> tuple[str, etree._Element]:
     kind = block["type"]
     if kind == "table":
+        if block.get("sourceTable"):
+            table_data = finance["bp_tables"][block["sourceTable"]]
+            block = {**table_data, **block}
         caption = str(block["caption"])
         match = re.search(r"Table\s*(\d+)", caption, re.IGNORECASE)
         if not match:
@@ -258,6 +263,9 @@ def table_from_block(block: dict[str, Any], finance: dict[str, Any]) -> tuple[st
 
 def set_style_fonts(styles_xml: bytes) -> bytes:
     root = etree.fromstring(styles_xml)
+    # Word honors the template cell spacing; zero keeps single shared grid lines.
+    for spacing in root.xpath(".//w:style[@w:styleId='TableGrid']//w:tblCellSpacing", namespaces=NS):
+        spacing.set(qn("w"), "0")
     for fonts in root.xpath(".//w:rFonts", namespaces=NS):
         for attribute in list(fonts.attrib):
             if etree.QName(attribute).localname.endswith("Theme"):
@@ -439,6 +447,8 @@ def build(template: Path, content_path: Path, finance_path: Path, output: Path) 
                     add_child(node.find(qn("pPr")), "pageBreakBefore")
             elif kind == "h2":
                 node = clone_paragraph("Heading2", style_paragraphs, str(block["text"]))
+                if block.get("pageBreak"):
+                    add_child(node.find(qn("pPr")), "pageBreakBefore")
             elif kind == "h3":
                 node = clone_paragraph("Heading3", style_paragraphs, str(block["text"]))
             elif kind == "p":
@@ -502,7 +512,10 @@ def main() -> int:
     parser.add_argument("--finance", required=True, type=Path, help="finance-summary.json for dynamic tables")
     parser.add_argument("--output", required=True, type=Path, help="Output DOCX path below try/")
     parser.add_argument("--overwrite", action="store_true", help="Replace only the named output DOCX")
+    parser.add_argument("--font", default="Noto Sans SC", choices=("Noto Sans SC", "宋体"), help="Explicit installed typeface for this export")
     args = parser.parse_args()
+    global FONT
+    FONT = args.font
 
     template = args.template.expanduser().resolve(strict=True)
     content = args.content.expanduser().resolve(strict=True)

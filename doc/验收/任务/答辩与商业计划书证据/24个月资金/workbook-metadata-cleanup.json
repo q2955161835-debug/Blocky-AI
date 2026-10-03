@@ -1,0 +1,27 @@
+{
+  "unchanged_financial_parts": [
+    "xl/worksheets/sheet1.xml",
+    "xl/worksheets/sheet2.xml",
+    "xl/worksheets/sheet3.xml",
+    "xl/worksheets/sheet4.xml",
+    "xl/worksheets/sheet5.xml",
+    "xl/worksheets/sheet6.xml",
+    "xl/worksheets/sheet7.xml",
+    "xl/worksheets/sheet8.xml",
+    "xl/worksheets/sheet9.xml",
+    "xl/worksheets/sheet10.xml",
+    "xl/worksheets/sheet11.xml",
+    "xl/styles.xml",
+    "xl/sharedStrings.xml",
+    "xl/calcChain.xml"
+  ],
+  "all_financial_parts_byte_identical": true,
+  "removed": [
+    "xl/webextensions/taskpanes.xml",
+    "xl/webextensions/webextension1.xml",
+    "xl/webextensions/webextension2.xml",
+    "xl/webextensions/webextension3.xml",
+    "xl/webextensions/_rels/taskpanes.xml.rels"
+  ],
+  "sha256": "d47c5610561f3c4fb6d075926838b596650ab410667d3101eba30f7b19d67571"
+}

@@ -1,10 +1,27 @@
 param(
  [Parameter(Mandatory=$true)][string]$Document,
- [Parameter(Mandatory=$true)][string]$LibreOfficeRuntime,
- [Parameter(Mandatory=$true)][string]$Profile
+ [string]$LibreOfficeRuntime,
+ [string]$Profile,
+ [ValidateSet("Auto","Word","LibreOffice")][string]$Engine="Auto"
 )
 $ErrorActionPreference='Stop'
 $taskDoc=(Resolve-Path -LiteralPath $Document).Path
+if($Engine -eq 'Word' -or ($Engine -eq 'Auto' -and !$LibreOfficeRuntime)){
+ $taskWord=$null;$taskOpen=$null
+ try {
+  $taskWord=New-Object -ComObject Word.Application
+  $taskWord.Visible=$false;$taskWord.DisplayAlerts=0;$taskWord.AutomationSecurity=3
+  $taskOpen=$taskWord.Documents.Open($taskDoc,$false,$true,$false)
+  $taskOpen.Repaginate()
+  $taskOpen.ExportAsFixedFormat([IO.Path]::ChangeExtension($taskDoc,'.pdf'),17,$false,0,0,1,1,0,$false,$false,1,$true,$true,$false)
+ } finally {
+  if($taskOpen){$taskOpen.Close(0);[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($taskOpen)}
+  if($taskWord){$taskWord.Quit();[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($taskWord)}
+  [GC]::Collect();[GC]::WaitForPendingFinalizers()
+ }
+ return
+}
+if(!$LibreOfficeRuntime -or !$Profile){throw 'LibreOffice export requires an existing runtime and isolated profile'}
 $taskRuntime=(Resolve-Path -LiteralPath $LibreOfficeRuntime).Path
 $taskProfile=[IO.Path]::GetFullPath($Profile)
 $taskOutput=[IO.Path]::GetDirectoryName($taskDoc)

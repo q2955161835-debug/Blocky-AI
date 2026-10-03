@@ -2,7 +2,7 @@ const pptxgen = require('pptxgenjs');
 const fs = require('fs');
 const path = require('path');
 const root = path.resolve(__dirname, '../../../..');
-const output = path.join(root, 'try/investor-iteration-20261003/presentation');
+const output = path.join(root, 'try/funding-24m-20261003/presentation');
 const p = new pptxgen();
 p.layout = 'LAYOUT_WIDE';
 p.author = 'TB快重置就队'; p.company = 'TB快重置就队';
@@ -11,7 +11,10 @@ p.theme = {headFontFace:'Noto Sans SC',bodyFontFace:'Noto Sans SC',lang:'zh-CN'}
 const C = {bg:'F7F6F0',ink:'172C30',teal:'007C73',purple:'7550A4',gold:'AF6B22',muted:'53696B',line:'D8E0DA',white:'FFFFFF',navy:'102B31'};
 const assets = path.join(root, 'doc/验收/任务/答辩与商业计划书证据/产品演示');
 const art = path.join(root, 'doc/设计素材/2026-10-03-答辩/rewrite/小学创作学习-imagegen.png');
-const finance = JSON.parse(fs.readFileSync(path.join(root,'doc/制作资料/2026-10-03-答辩与商业计划书/finance-summary.json'),'utf8'));
+const funding = JSON.parse(fs.readFileSync(path.join(root,'doc/制作资料/2026-10-03-答辩与商业计划书/funding-24m/funding-summary.json'),'utf8'));
+const budget = funding.base;
+const wan = v => (v / 10000).toFixed(3);
+const number = v => Number(v).toLocaleString('en-US');
 const sources = {
  scratch:'https://scratchfoundation.org/learn/learning-library/getting-started',
  teacher:'https://scratchfoundation.org/learn/learning-library/teacher-accounts',
@@ -249,35 +252,44 @@ function flow(s,steps,{y=2.65,size=20}={}) {
  note(s,25,'学生可先搭建故事搭档，再给它输入和结果页面，目标是生成可以独立使用的故事伙伴App。这是产品规划，当前已有页面生成和预览不等于一键独立App。Pake基于Tauri并提供桌面网页或本地前端封装，Blocky仍需集成运行内核、资源、桥接和权限；Tauri定制壳是另一二次开发路径。生成应用不默认包含商店上架，各平台分发独立完成。',['https://github.com/tw93/Pake','https://v2.tauri.app/start/','https://v2.tauri.app/distribute/']);
 }
 {
- const s=slide('17 / 经营参考','以试点服务测算，规划早期交付资源','人民币 · 原试点服务情景；组织后台与独立算力订阅另行测算。');
- table(s,[['单份规划','金额（元）','计算依据'],['服务均价','18,000','按服务范围洽谈的经营假设'],['交付人工','6,400','80小时 × 80元/小时'],['模型、材料与税费预算','2,360','1,400 + 600 + 18,000 × 2%'],['覆盖固定费用前的贡献','9,240','18,000 − 6,400 − 2,360']], [4.4,2.1,5.5],{fsz:19,rowH:.71});
- text(s,'80小时',.8,5.94,2.7,.5,29,C.teal,true);
- text(s,'作品准备24 + 培训16 + 配置16 + 支持复盘24',3.5,5.93,8.9,.5,20);
- foot(s,'试点服务情景追加资金参考10.30万元；组织订阅、后台建设与算力业务单独核算。');
- note(s,30,'沿用原试点服务工作簿，不把它改称新组织版完整预算。单份贡献9240元不是净利润，仍覆盖固定费用和折旧。人工80小时乘80元，外援100元时薪时贡献7640。原模型1400元是服务情景的模型成本预留，非独立算力订阅收入或包含额度承诺。新增组织订阅收入、后台建设运营成本和独立算力业务另行测算；不能拿10.30万元作为新商业方案全部资金需求。原基准三年累计损益负1.472万元。');
+ const s=slide('17 / 按人头算力','把算力成本，落实到每一类云端用户','2026-11至2028-10 · 24个月规划 · 人均月度采购成本为预算参数。');
+ table(s,[['云算力用户','期末活跃人头','累计人月','人均月成本（元）','24月成本（万元）'],...funding.people.map(v=>[v.type,number(v.end_people),number(v.person_months),v.cost_per_month,wan(v.cost_24m)])], [1.8,2.3,2.3,2.6,3],{y:2.35,fsz:18,rowH:.74});
+ text(s,`${wan(budget.customer_token_cost)}万元`,.8,5.57,4.1,.56,30,C.teal,true);
+ text(s,`外部用户算力采购合计；研发工具与内部算力另列${wan(budget.dev_compute)}万元。`,4.9,5.58,7.5,.7,19);
+ foot(s,'实际云活跃人数 × 各类人均成本；API密钥自带与本地模型按各自方式结算。');
+ note(s,35,'表内人数是逐季增长的资源情景，期末学生2400、教师240、个人2500，共5140名平台云算力活跃用户，不是已获得客户，也不是注册或下载数。累计人月为17730、1845、17340，分别乘暂定10、50、30元人均月采购成本，24个月合计789750元。该参数不是向学生或个人销售的订阅价格，也不是厂商报价。实际执行后台按模型、输入输出、缓存及工具计量，再观察各用户月均采购成本。个人开源和BYOK/local不承担平台模型采购成本。研发按等效资源人月另算108000元。',[...funding.sources.map(x=>x.url)]);
 }
 {
- const s=slide('财务情景','试点服务情景的三年经营参考','2027–2029 · 万元 · 原服务预算；组织与算力订阅另行测算');
- const rows=[['情景','三年收入','三年费用','追加资金预算']];
- for(const k of ['悲观','基准','积极']) {const a=finance.scenarios[k];rows.push([k==='悲观'?'审慎':k,a.years.reduce((s,x)=>s+x.revenue,0)/1e4,a.years.reduce((s,x)=>s+x.cost,0)/1e4,a.required_additional_cash_with_reserve/1e4].map((v,i)=>i?Number(v).toFixed(3):v));}
- table(s,rows,[1.2,1.7,1.7,1.7],{w:6.3,fsz:16,rowH:.77});
- const a=finance.scenarios['基准'];
- s.addChart(p.ChartType.bar,[
-  {name:'收入',labels:['2027','2028','2029'],values:a.years.map(x=>x.revenue/1e4)},
-  {name:'费用',labels:['2027','2028','2029'],values:a.years.map(x=>x.cost/1e4)}
- ],{x:7.25,y:2.5,w:5.4,h:3.13,catAxisLabelFontFace:'Noto Sans SC',catAxisLabelFontSize:12,valAxisLabelFontSize:11,
- showLegend:true,legendPos:'b',legendFontSize:12,chartColors:[C.teal,C.purple],showValue:true,dataLabelPosition:'outEnd',dataLabelFormatCode:'0.00',
- showTitle:true,title:'基准年度收入与费用',titleFontFace:'Noto Sans SC',titleFontSize:15,showBorder:false,valAxisMinVal:0,valAxisMaxVal:40,valAxisMajorUnit:10});
- text(s,'基准年度',.8,5.92,2.4,.48,24,C.teal,true);
- a.years.forEach((x,i)=>text(s,`${2027+i} 收入 ${(x.revenue/1e4).toFixed(2)}\n费用 ${(x.cost/1e4).toFixed(3)}`,3.3+i*3.08,5.85,2.9,.84,17));
- note(s,0,'直接读取finance-summary，不重写财务公式。基准2027/2028/2029收入7.2/18/32.4万元，费用13.264/18.84/26.968万元，2029单年转正但三年累计负1.472万元。三情景同时变化多个输入，用于规划范围，不是单变量因果或实际收入。');
+ const s=slide('持续发展资金','500万元资金规划，覆盖24个月产品建设','基准覆盖预算：收入及自有投入确认后抵减；人力3→4等效资源，综合人月2万元。');
+ const d=funding.base_cost_detail;
+ table(s,[['资金用途','预算（万元）','覆盖范围'],['人力、研发工具与专项交付',wan(budget.payroll+budget.dev_compute+d.specialist),'研发、教研与运营等效资源；跨端和应用交付'],['基础设施',wan(d.infrastructure),'账户、组织后台、存储与运行监测'],['外部用户算力',wan(budget.customer_token_cost),'随学生、教师、个人云活跃人数增长'],['教学、社区与一般运营',wan(d.teaching+d.community+d.admin),'活动与材料、共创推广、行政与合规支持'],['测试设备',wan(budget.equipment),'桌面与移动端设备购置'],['现金储备、预留与取整余量',wan(budget.ending_cash_with_funding),'正常运营储备、风险预留、厂商合作预留及余量']], [4.25,2.0,5.75],{y:2.24,fsz:16,rowH:.54});
+ text(s,`最低追加需求 ${wan(budget.required_additional_funding)}万元`,.8,6.35,7.1,.38,23,C.teal,true);
+ text(s,'资金规划目标 500万元',8.1,6.36,4.45,.39,22,C.purple,true);
+ note(s,40,'新预算替代仅支持试点服务的旧资金参考。前6月3、后18月4个等效人力资源，共90人月，综合人月2万元；这是预算能力，不是现有团队介绍。24个月现金支出3410750元，常规固定与专项支出风险预留254100元，未知厂商合作预留300000元，期末正常月支出与未覆盖算力成本的3个月储备665400元，最低追加4630250元，按50万元取整至500万元，余量369750元。现金储备1589250元由上述三类储备和取整余量组成，不重复记为费用。默认未确认收入和自有资金不抵减；不代表融资到账、估值、股权或贷款条件。设备现金与折旧、专项采购与等效人力分别核算。');
 }
 {
- const s=slide('工时与现金','让服务范围、交付产能和资金节奏匹配','单变量工时比较 · 服务价与其他直接费用保持不变');
- table(s,[['交付工时','人工成本（元）','固定费用前贡献（元）'],['80小时','6,400','9,240'],['100小时','8,000','7,640'],['120小时','9,600','6,040']], [3.4,4.1,4.5],{fsz:20,rowH:.71});
- text(s,'基准资金安排',.8,5.7,3.2,.47,24,C.teal,true);
- text(s,'试点情景：期初自有资金2万元；追加预算10.30万元\n由8.30万元现金需求与2万元储备组成',4.1,5.59,8.3,.99,19);
- note(s,0,'单变量计算保持18000价格、80元时薪、1400模型、600材料和税费预算预留360元不变，新增工时降低单份贡献。100小时贡献7640与80小时外援100元时薪的结果相同但原因不同，不能混用。现金需求8.3万元已经计入假设期初2万元；额外储备2万元后追加10.3万元，没有融资承诺或到账事实。');
+ const s=slide('厂商合作与结算','把合作费用、预付额度和保证金分开管理','预算先预留合作现金30万元；取得厂商条款后，按具体用途更新。');
+ table(s,[['合作项目','现金如何占用','费用与资产如何记录'],['不可退还的合作费','按合同约定时间支付','计入费用，并占用合作预留'],['可消费的预付算力额度','充值时先支付现金','留作额度资产，消耗后抵扣采购成本'],['可退还的保证金','签约时支付，按条件收回','单列保证金资产，跟踪返还时间']], [3.1,4.05,4.85],{y:2.35,fsz:18,rowH:.77});
+ text(s,'按合同输入金额与时间，分别追踪充值、消耗与保证金返还。',.85,5.72,11.7,.4,19,C.teal,true);
+ text(s,'组织额度池、个人订阅与加量，随实际用量和回款更新预算。',.85,6.25,11.7,.4,19);
+ note(s,35,'30万元只是现金预算判断，不是大模型厂商的报价。非退合作费、可消费额度预付与可退保证金当前输入0表示未录入条款，不表示厂商免费。已发生的非退费用以及期末占用的保证金、未消耗额度占用预留余额，预留余额最低为0。预付额度在消耗时抵扣模型采购现金，不能把充值和后续被抵扣的消耗再收两遍；保证金不进入损益。基准暂不假定返还到账，签约后按实际条款增加返还时点。');
+}
+{
+ const s=slide('订阅回款与资金','用回款与合作条款，校准资金计划','单位：万元 · 同一基准预算下的条件测算 · 订阅销售价格另行设计。');
+ const labels={recover80:'算力成本回收80%，当月收款',fee100w:'不可退合作费100万元','late-recovery':'成本回收80%，延迟2个月'};
+ const rows=[['调整条件','最低追加需求','资金目标'],['基准覆盖预算',wan(budget.required_additional_funding),wan(budget.proposed_funding)],...['recover80','late-recovery','fee100w'].map(k=>{const v=funding.whatifs.find(x=>x.name===k);return [labels[k],wan(v.required_additional_funding),wan(v.proposed_funding)];})];
+ table(s,rows,[6.4,2.8,2.8],{y:2.4,fsz:19,rowH:.73});
+ text(s,'回款改变的是现金占用',.8,6.15,5,.38,22,C.teal,true);
+ text(s,'按实际采购、订阅收款与账期持续更新',6,6.15,6.5,.38,20);
+ note(s,40,'80%是用户算力采购成本的回收覆盖比例，不是付费转化率、用户售价或80%利润率，也没有假定收入已经发生。默认未确认收款不压低资金需求。若当月回收80%，最低3732050元、取整400万元；相同比例延迟两月收款，最低3909650元、取整仍400万元，但现金需求增加。若厂商有100万元不可退合作费，最低5330250元，取整550万元，原30万元合作预留已被占用，不再重复加。压力金额不是实际厂商报价。模型另有额度预付100万、保证金10万、合作费30万情景，预付余量与保证金为资产。机构服务收入和正式算力售价还需合同及实际成本支持，未计入不确定收益。');
+}
+{
+ const s=slide('资源与用量情景','按建设能力和用户规模，安排不同资金强度','24个月规划 · 各情景同时调整人力、用户规模与采购成本。');
+ table(s,[['资源情景','期末云活跃人头','24月现金支出（万元）','资金目标（万元）'],...funding.scenarios.map(v=>[v.name,number(v.cloud_people_end),wan(v.cash_paid),wan(v.proposed_funding)])], [2.55,3.0,3.75,2.7],{y:2.35,fsz:18,rowH:.74});
+ text(s,'精简推进：更小人力与云用户规模，按优先级交付。',.85,5.58,11.6,.35,18);
+ text(s,'基准建设：覆盖教育后台、多端与App、社区的持续建设。',.85,6.0,11.6,.35,18,C.teal,true);
+ text(s,'高用量压力：更大云用户规模、更高人均成本与现金储备。',.85,6.42,11.6,.35,18);
+ note(s,35,'三类均为资源规划情景，不是已经获得用户或融资，也不是三年收入预测。精简推进前6月2人后18月3人、综合人月1.6万元，用户为基准40%、人均Token成本为60%、其他支出75%；最低2389225元取整250万元。基准最低4630250元取整500万元。高用量前6月4人后18月5人、综合人月2.4万元，云用户为2倍、人均算力2.5倍、其他支出1.5倍、合作预留80万元及风险15%；最低11512055元取整1200万元。不能把这些多输入变化解释成单变量因果。实际扩大用量时，要同步调整订阅收入、额度、合同与现金保障。');
 }
 {
  const s=slide('18 / 成果与路线','推进小学作品、开源社区与组织方案','已有桌面能力支持教学共创，开源与组织后台按阶段建设。');
@@ -289,7 +301,7 @@ function flow(s,steps,{y=2.65,size=20}={}) {
  text(s,'OPC（一人公司）',.8,2.62,4.3,.54,27,C.teal,true);
  text(s,'审阅“Agent员工”的职责、流程和工具权限；\n用运行轨迹核对实际步骤，再决定如何调整。',5.05,2.59,7.5,1.06,22);
  rule(s,.8,4.09,11.7);
- table(s,[['来源组','支持的内容','公开查阅入口'],['Scratch Foundation','作品创作、改编与教师组织','创作与教师资源'],['BBAI / Tynker','积木AI与组织教学方案','教育报价与学校方案'],['算力收费参照','订阅额度、按量与组织预算','WorkBuddy / Cursor / TRAE / Zen'],['教育部 / 配套服务预算','小学AI教育方向；服务经营参考','2024分学段部署 / 财务XLSX']], [3.8,4.55,3.65],{y:4.24,fsz:14.5,rowH:.47});
+ table(s,[['来源组','支持的内容','公开查阅入口'],['Scratch Foundation','作品创作、改编与教师组织','创作与教师资源'],['BBAI / Tynker','积木AI与组织教学方案','教育报价与学校方案'],['算力收费参照','订阅额度、按量与组织预算','WorkBuddy / Cursor / TRAE / Zen'],['教育部 / 24个月资金模型','小学AI教育方向；建设资金规划','2024分学段部署 / 财务XLSX']], [3.8,4.55,3.65],{y:4.24,fsz:14.5,rowH:.47});
  note(s,0,'OPC方向共享结构审阅、修改和运行解释价值，具体办公应用没有现阶段实证，不进入财务。WorkBuddy积分与加量、Cursor订阅额度与按量、TRAE将Token成本折算用量余额、OpenCode Zen按量/BYOK/组织限额提供算力设计参照，不搬入固定价或倍率。官方来源完整URL如下。截图是既有普通包合成资料场景，规则对照是本地Runtime，教学活动是设计；不拼接成已完成课堂。',[sources.scratch,sources.teacher,sources.features,sources.pricing,sources.tynker,sources.classroom,sources.policy,'https://www.workbuddy.cn/docs/workbuddy/Pricing','https://cursor.com/pricing','https://www.trae.ai/pricing','https://opencode.ai/docs/zen/']);
 }
 {
@@ -304,7 +316,7 @@ function flow(s,steps,{y=2.65,size=20}={}) {
  note(s,25,'具体邀请是教师带来一个教学目标，并提供设备和组织机会，共同准备原作品与任务，开展可记录的创作活动，收集作品与过程，再形成教师可复用资料和机构合作范围。这是下一阶段合作诉求，不是融资到账或签约成果。谢谢各位。');
 }
 
-if(n!==35 || notes.some(x=>!x.seconds)) throw new Error('Continuous slide count / timing mismatch');
+if(n!==37 || notes.some(x=>!x.seconds)) throw new Error('Continuous slide count / timing mismatch');
 notes.forEach((item,i)=>{
  item.transition=i===notes.length-1?'结束：共创邀请与下一步行动。':`转场：${slideTitles[i+1]}`;
  noteSlides[i].addNotes(`讲述时间参考${item.seconds}秒。\n${item.body}\n${item.transition}\n${item.sources.length?'公开来源，2026-10-03核对：\n'+item.sources.join('\n'):''}`);

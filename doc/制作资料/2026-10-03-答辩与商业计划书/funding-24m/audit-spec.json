@@ -1,0 +1,147 @@
+{
+  "required_sheets": [
+    "Summary",
+    "Assumptions",
+    "Cohorts",
+    "Costs",
+    "Revenue",
+    "Income Statement",
+    "Balance Sheet",
+    "Cash Flow",
+    "Financing",
+    "Checks",
+    "Sources"
+  ],
+  "min_formula_count": 4000,
+  "allow_external_links": false,
+  "input_cells": [
+    "Assumptions!B4",
+    "Assumptions!B5",
+    "Assumptions!B7",
+    "Assumptions!B8",
+    "Assumptions!B9",
+    "Assumptions!C19"
+  ],
+  "formula_cells": [
+    "Summary!C18",
+    "Summary!C19",
+    "Cash Flow!Y17",
+    "Checks!B8"
+  ],
+  "policy_inputs": [
+    {
+      "cell": "Assumptions!B11",
+      "label": "Equipment useful life"
+    },
+    {
+      "cell": "Assumptions!B12",
+      "label": "Funding rounding step"
+    }
+  ],
+  "status_cells": [
+    {
+      "cell": "Checks!B8",
+      "equals": "PASS"
+    },
+    {
+      "cell": "Checks!C8",
+      "equals": "PASS"
+    },
+    {
+      "cell": "Checks!D8",
+      "equals": "PASS"
+    }
+  ],
+  "numeric_checks": [
+    {
+      "left": "Summary!B6",
+      "expected": 189540.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!B11",
+      "expected": 1839690.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!B14",
+      "expected": 1839690.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!B18",
+      "expected": 2389225.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!B19",
+      "expected": 2500000,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!B20",
+      "expected": 660310.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C6",
+      "expected": 789750.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C11",
+      "expected": 3410750.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C14",
+      "expected": 3410750,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C18",
+      "expected": 4630250.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C19",
+      "expected": 5000000,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!C20",
+      "expected": 1589250,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D6",
+      "expected": 3948750.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D11",
+      "expected": 7959450.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D14",
+      "expected": 7959450.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D18",
+      "expected": 11512055.0,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D19",
+      "expected": 12000000,
+      "tolerance": 0.01
+    },
+    {
+      "left": "Summary!D20",
+      "expected": 4040550.0,
+      "tolerance": 0.01
+    }
+  ]
+}
