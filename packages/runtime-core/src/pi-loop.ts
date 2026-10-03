@@ -28,7 +28,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
   const initial = messages(context.role, context.instruction, context.question, context.memory, context.value, context.citations);
   const model: Model<"blocky-host"> = { id: context.model.resourceId, name: context.model.displayName, api: "blocky-host", provider: "blocky-host", baseUrl: "", reasoning: false, input: ["text"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 131072, maxTokens: outputPerTurn };
   let turn = 0, toolSequence = 0, answer = "", failure: unknown;
-  const ids = new Set<string>(), operations = new Set<string>();
+  const ids = new Set<string>();
   const tools: AgentTool[] = bound.map((tool) => ({
     name: tool.model.name, label: tool.resource.displayName, description: tool.model.description,
     parameters: tool.model.parameters as unknown as TSchema, executionMode: "sequential", replay: "never",
@@ -79,7 +79,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         if (proposed.length) {
           if (turn === turns) throw Error("BLK-TOOL-LOOP-LIMIT");
           if (proposed.length > 8 || result.finishReason !== "tool_calls") throw Error("BLK-TOOL-PROPOSAL");
-          const batchIds = new Set(ids), batchOperations = new Set(operations);
+          const batchIds = new Set(ids), batchOperations = new Set<string>();
           // Validate the complete proposal before the SDK observes any tool call.
           for (const call of proposed) {
             const tool = bound.find((t) => t.model.name === call?.name);
@@ -90,7 +90,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
             batchIds.add(call.id); batchOperations.add(operation);
           }
           if (budget.calls + proposed.length > budget.maxCalls) throw Error("BLK-RUN-004");
-          batchIds.forEach((id) => ids.add(id)); batchOperations.forEach((op) => operations.add(op));
+          batchIds.forEach((id) => ids.add(id));
         } else {
           if (!result.text.trim() || (result.finishReason !== undefined && result.finishReason !== "stop")) throw Error("BLK-TOOL-PROPOSAL");
           if (context.validateCitations) await abortable(context.validateCitations(budget.signal), budget.signal);
