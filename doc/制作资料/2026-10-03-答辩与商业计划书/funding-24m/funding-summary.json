@@ -2,102 +2,102 @@
   "currency": "CNY",
   "period": "2026-11–2028-10",
   "months": 24,
-  "status": "全部金额与人数为资源规划；非真实报价、客户或融资承诺",
+  "status": "研发优先、关口后真实场景条件容量；真实用量样本、公开价格/统计与假设分别列示",
   "provenance": {
-    "workbook": "D:\\1Folder\\Blocky-AI\\try\\funding-24m-20261003\\Blocky-Studio-财务测算-2026-10-03.xlsx",
-    "sha256": "d47c5610561f3c4fb6d075926838b596650ab410667d3101eba30f7b19d67571",
+    "workbook": "D:\\1Folder\\Blocky-AI\\try\\rd-narrative-20261003\\Blocky-Studio-财务测算-2026-10-03.xlsx",
+    "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c",
     "method": "native Excel recalculated cache extraction",
-    "formula_count": 5583
+    "formula_count": 5596
   },
   "scenarios": [
     {
       "name": "精简推进",
-      "cloud_people_end": 2056,
-      "customer_token_cost": 189540,
-      "dev_compute": 59400,
+      "cloud_people_end": 464,
+      "customer_token_cost": 913809.7674,
+      "dev_compute": 95348.81070000006,
       "payroll": 1056000,
-      "other_ops": 474750,
+      "other_ops": 474750.00000000047,
       "equipment": 60000,
-      "cash_paid": 1839690,
+      "cash_paid": 2599908.5780999996,
       "cash_collected": 0,
       "owner_cash": 0,
-      "peak_cash_deficit": 1839690,
-      "contingency": 159015,
+      "peak_cash_deficit": 2599908.5780999996,
+      "contingency": 162609.88107000006,
       "vendor_buffer_remaining": 100000,
-      "cash_reserve": 290520,
-      "required_additional_funding": 2389225,
-      "proposed_funding": 2500000,
-      "ending_cash_with_funding": 660310,
-      "token_monthly_end": 26640,
+      "cash_reserve": 824586.7216859999,
+      "required_additional_funding": 3687105.1808559997,
+      "proposed_funding": 4000000,
+      "ending_cash_with_funding": 1400091.4219000014,
+      "token_monthly_end": 203028.203712,
       "peak_month": "2028-10",
-      "rounding_headroom": 110775
+      "rounding_headroom": 312894.8191440003
     },
     {
       "name": "基准建设",
-      "cloud_people_end": 5140,
-      "customer_token_cost": 789750,
-      "dev_compute": 108000,
+      "cloud_people_end": 1160,
+      "customer_token_cost": 3046032.5579999997,
+      "dev_compute": 173361.47399999996,
       "payroll": 1800000,
-      "other_ops": 633000,
+      "other_ops": 633000.0000000005,
       "equipment": 80000,
-      "cash_paid": 3410750,
+      "cash_paid": 5732394.032,
       "cash_collected": 0,
       "owner_cash": 0,
-      "peak_cash_deficit": 3410750,
-      "contingency": 254100,
+      "peak_cash_deficit": 5732394.032,
+      "contingency": 260636.14740000005,
       "vendor_buffer_remaining": 300000,
-      "cash_reserve": 665400,
-      "required_additional_funding": 4630250,
-      "proposed_funding": 5000000,
-      "ending_cash_with_funding": 1589250,
-      "token_monthly_end": 111000,
+      "cash_reserve": 2371396.90032,
+      "required_additional_funding": 8664427.07972,
+      "proposed_funding": 9000000,
+      "ending_cash_with_funding": 3267605.9679999957,
+      "token_monthly_end": 676760.67904,
       "peak_month": "2028-10",
-      "rounding_headroom": 369750
+      "rounding_headroom": 335572.9202800002
     },
     {
       "name": "高用量压力",
-      "cloud_people_end": 10280,
-      "customer_token_cost": 3948750,
-      "dev_compute": 205200,
+      "cloud_people_end": 2320,
+      "customer_token_cost": 15230162.79,
+      "dev_compute": 329386.80060000013,
       "payroll": 2736000,
-      "other_ops": 949500,
+      "other_ops": 949499.9999999991,
       "equipment": 120000,
-      "cash_paid": 7959450,
+      "cash_paid": 19365049.590600003,
       "cash_collected": 0,
       "owner_cash": 0,
-      "peak_cash_deficit": 7959450,
-      "contingency": 583605,
+      "peak_cash_deficit": 19365049.590600003,
+      "contingency": 602233.0200899999,
       "vendor_buffer_remaining": 800000,
-      "cash_reserve": 2169000,
-      "required_additional_funding": 11512055,
-      "proposed_funding": 12000000,
-      "ending_cash_with_funding": 4040550,
-      "token_monthly_end": 555000,
+      "cash_reserve": 10671750.5541,
+      "required_additional_funding": 31439033.16479,
+      "proposed_funding": 31500000,
+      "ending_cash_with_funding": 12134950.409399975,
+      "token_monthly_end": 3383803.3952,
       "peak_month": "2028-10",
-      "rounding_headroom": 487945
+      "rounding_headroom": 60966.83520999923
     }
   ],
   "base": {
     "name": "基准建设",
-    "cloud_people_end": 5140,
-    "customer_token_cost": 789750,
-    "dev_compute": 108000,
+    "cloud_people_end": 1160,
+    "customer_token_cost": 3046032.5579999997,
+    "dev_compute": 173361.47399999996,
     "payroll": 1800000,
-    "other_ops": 633000,
+    "other_ops": 633000.0000000005,
     "equipment": 80000,
-    "cash_paid": 3410750,
+    "cash_paid": 5732394.032,
     "cash_collected": 0,
     "owner_cash": 0,
-    "peak_cash_deficit": 3410750,
-    "contingency": 254100,
+    "peak_cash_deficit": 5732394.032,
+    "contingency": 260636.14740000005,
     "vendor_buffer_remaining": 300000,
-    "cash_reserve": 665400,
-    "required_additional_funding": 4630250,
-    "proposed_funding": 5000000,
-    "ending_cash_with_funding": 1589250,
-    "token_monthly_end": 111000,
+    "cash_reserve": 2371396.90032,
+    "required_additional_funding": 8664427.07972,
+    "proposed_funding": 9000000,
+    "ending_cash_with_funding": 3267605.9679999957,
+    "token_monthly_end": 676760.67904,
     "peak_month": "2028-10",
-    "rounding_headroom": 369750
+    "rounding_headroom": 335572.9202800002
   },
   "base_cost_detail": {
     "infrastructure": 162000,
@@ -106,27 +106,47 @@
     "admin": 72000,
     "specialist": 150000
   },
+  "phase_cash": [
+    {
+      "label": "模板研发推进",
+      "from_month": 1,
+      "to_month": 6,
+      "cash": 537672.2948
+    },
+    {
+      "label": "后续产品开发",
+      "from_month": 7,
+      "to_month": 18,
+      "cash": 1426459.4528
+    },
+    {
+      "label": "条件真实场景",
+      "from_month": 19,
+      "to_month": 24,
+      "cash": 3768262.2844000002
+    }
+  ],
   "people": [
     {
       "type": "学生",
-      "person_months": 17730,
-      "end_people": 2400,
-      "cost_per_month": 10,
-      "cost_24m": 177300
+      "person_months": 2700,
+      "end_people": 600,
+      "cost_per_month": 3.3861240000000006,
+      "cost_24m": 9142.534800000001
     },
     {
       "type": "教师",
-      "person_months": 1845,
-      "end_people": 240,
-      "cost_per_month": 50,
-      "cost_24m": 92250
+      "person_months": 300,
+      "end_people": 60,
+      "cost_per_month": 20.316744,
+      "cost_24m": 6095.0232000000005
     },
     {
-      "type": "个人",
-      "person_months": 17340,
-      "end_people": 2500,
-      "cost_per_month": 30,
-      "cost_24m": 520200
+      "type": "专业创作者",
+      "person_months": 2250,
+      "end_people": 500,
+      "cost_per_month": 1347.02,
+      "cost_24m": 3030795
     }
   ],
   "whatifs": [
@@ -135,9 +155,9 @@
       "changes": {
         "recovery_rate": 0.8
       },
-      "required_additional_funding": 3732050,
-      "proposed_funding": 4000000,
-      "ending_cash_with_proposed_funding": 1221050,
+      "required_additional_funding": 4603375.403624,
+      "proposed_funding": 5000000,
+      "ending_cash_with_proposed_funding": 1704432.014399995,
       "check": "PASS"
     },
     {
@@ -145,9 +165,9 @@
       "changes": {
         "vendor_fee": 1000000
       },
-      "required_additional_funding": 5330250,
-      "proposed_funding": 5500000,
-      "ending_cash_with_proposed_funding": 1089250,
+      "required_additional_funding": 9364427.079720002,
+      "proposed_funding": 9500000,
+      "ending_cash_with_proposed_funding": 2767605.9679999957,
       "check": "PASS"
     },
     {
@@ -157,9 +177,9 @@
         "vendor_deposit": 100000,
         "vendor_fee": 300000
       },
-      "required_additional_funding": 4944500,
-      "proposed_funding": 5000000,
-      "ending_cash_with_proposed_funding": 975000,
+      "required_additional_funding": 8764427.079720002,
+      "proposed_funding": 9000000,
+      "ending_cash_with_proposed_funding": 2867605.9679999957,
       "check": "PASS"
     },
     {
@@ -167,9 +187,9 @@
       "changes": {
         "owner_cash": 200000
       },
-      "required_additional_funding": 4430250,
-      "proposed_funding": 4500000,
-      "ending_cash_with_proposed_funding": 1289250,
+      "required_additional_funding": 8464427.07972,
+      "proposed_funding": 8500000,
+      "ending_cash_with_proposed_funding": 2967605.9679999957,
       "check": "PASS"
     },
     {
@@ -178,9 +198,9 @@
         "recovery_rate": 0.8,
         "collection_lag": 2
       },
-      "required_additional_funding": 3909650,
-      "proposed_funding": 4000000,
-      "ending_cash_with_proposed_funding": 1043450,
+      "required_additional_funding": 5686192.490087999,
+      "proposed_funding": 6000000,
+      "ending_cash_with_proposed_funding": 1621614.9279359952,
       "check": "PASS"
     }
   ],
@@ -198,9 +218,9 @@
           "前6月3人、后18月4人；综合人月2万元，非现有成员履历"
         ],
         [
-          "内部研发工具与算力",
-          "10.800",
-          "按等效开发人头每月1200元；与外部用户算力分开"
+          "内部研发Agent预算",
+          "17.336",
+          "13美元/活跃日×22天×参考汇率；活跃天数是假设，与外部用户分开"
         ],
         [
           "专项外部交付",
@@ -214,18 +234,18 @@
         ],
         [
           "外部用户Token采购",
-          "78.975",
-          "学生/教师/个人的实际云算力活跃人头×各类人均月成本"
+          "304.603",
+          "产品准备关口后条件容量×短任务参考/专业档公开统计；按实际账单更新"
         ],
         [
           "教学共创与试用",
           "15.000",
-          "活动、设备配置与材料支出；人员报酬已在人力项"
+          "研发期教学设计及材料，准备关口后试用；人员报酬已在人力项"
         ],
         [
           "社区活动与内容材料",
           "9.900",
-          "共创活动与材料；不重复运营人员薪酬"
+          "研发期发布与贡献准备，产品关口后社区活动；不重复人员薪酬"
         ],
         [
           "一般运营与合规预算",
@@ -239,7 +259,7 @@
         ],
         [
           "常规支出风险预留",
-          "25.410",
+          "26.064",
           "常规固定与专项支出10%；不是提前确认的费用"
         ],
         [
@@ -249,12 +269,12 @@
         ],
         [
           "正常运营现金储备",
-          "66.540",
+          "237.140",
           "期末正常月支出及未收回的算力成本×3个月"
         ],
         [
           "资金取整余量",
-          "36.975",
+          "33.557",
           "最低需求按50万元步长取整，保持资金来源用途一致"
         ]
       ],
@@ -267,40 +287,40 @@
     "people": {
       "headers": [
         "云算力用户",
-        "期末活跃人头",
+        "期末条件容量",
         "累计人月",
-        "人均月成本（元）",
+        "参考月成本（元）",
         "24个月成本（万元）"
       ],
       "rows": [
         [
-          "学生",
-          "2400",
-          "17730",
-          "10",
-          "17.730"
+          "学生（短任务）",
+          "600",
+          "2700",
+          "3.39",
+          "0.914"
         ],
         [
-          "教师",
-          "240",
-          "1845",
-          "50",
-          "9.225"
+          "教师（短任务）",
+          "60",
+          "300",
+          "20.32",
+          "0.610"
         ],
         [
-          "个人",
-          "2500",
-          "17340",
-          "30",
-          "52.020"
+          "专业创作者",
+          "500",
+          "2250",
+          "1,347.02",
+          "303.079"
         ]
       ],
       "widths": [
-        0.8,
+        1.0,
         0.9,
         0.9,
         1.0,
-        1.4
+        1.2
       ]
     },
     "scenarios": {
@@ -313,21 +333,21 @@
       "rows": [
         [
           "精简推进",
-          "183.969",
-          "238.923",
-          "250.000"
+          "259.991",
+          "368.711",
+          "400.000"
         ],
         [
           "基准建设",
-          "341.075",
-          "463.025",
-          "500.000"
+          "573.239",
+          "866.443",
+          "900.000"
         ],
         [
           "高用量压力",
-          "795.945",
-          "1,151.206",
-          "1,200.000"
+          "1,936.505",
+          "3,143.903",
+          "3,150.000"
         ]
       ],
       "widths": [
@@ -346,12 +366,12 @@
       "rows": [
         [
           "24个月建设与用量支出",
-          "341.075",
+          "573.239",
           "不以未确定收入抵减的覆盖预算"
         ],
         [
           "常规风险预留",
-          "25.410",
+          "26.064",
           "常规固定及专项支出10%"
         ],
         [
@@ -361,18 +381,18 @@
         ],
         [
           "正常运营现金储备",
-          "66.540",
+          "237.140",
           "期末正常净月支出×3"
         ],
         [
           "最低追加资金",
-          "463.025",
+          "866.443",
           "未确认自有资金默认不抵减"
         ],
         [
           "取整资金规划目标",
-          "500.000",
-          "按50万元步长取整；余量36.975万元"
+          "900.000",
+          "按50万元步长取整；余量33.557万元"
         ]
       ],
       "widths": [
@@ -391,38 +411,38 @@
       "rows": [
         [
           "基准覆盖预算",
-          "463.025",
-          "500.000",
+          "866.443",
+          "900.000",
           "未确认回款不抵减；合作条件未录入"
         ],
         [
           "算力成本回收80%、当月收款",
-          "373.205",
-          "400.000",
+          "460.338",
+          "500.000",
           "成本回收不是正式售价；收款须实际落实"
         ],
         [
           "非退还合作费100万元",
-          "533.025",
-          "550.000",
+          "936.443",
+          "950.000",
           "压力参数不是报价；已发生合作费占用原预留"
         ],
         [
           "额度预付100万+保证金10万+合作费30万",
-          "494.450",
-          "500.000",
+          "876.443",
+          "900.000",
           "额度按消耗抵扣、余量与保证金为资产；不双算"
         ],
         [
           "确认自有资金20万元",
-          "443.025",
-          "450.000",
+          "846.443",
+          "850.000",
           "只有已确认投入才能抵减外部需求"
         ],
         [
           "成本回收80%、延迟2个月",
-          "390.965",
-          "400.000",
+          "568.619",
+          "600.000",
           "相同回收比例，收款延迟增加营运资金"
         ]
       ],
@@ -445,12 +465,12 @@
           "F01",
           "期间",
           "2026-11至2028-10，共24个月",
-          "24个月用户确认；起点为规划假设"
+          "24个月规划要求；起点为规划假设"
         ],
         [
           "F02",
           "云用户",
-          "期末学生2400、教师240、个人2500；累计人月按季度曲线",
+          "前18月研发；第19月后条件容量，期末学生600/教师60/专业创作者500",
           "低置信规模情景，非已获得用户"
         ],
         [
@@ -462,8 +482,8 @@
         [
           "F06",
           "按人头算力",
-          "学生10、教师50、个人30元/月；研发1200元/人月",
-          "采购成本规划，非用户订阅价或厂商报价"
+          "短任务实测Token按当前Pro峰价重定价；专业200美元/月；研发13美元/活跃日×22天",
+          "任务频次/预算中点是假设；公开统计不是本产品实测，报价未知"
         ],
         [
           "F07",
@@ -498,18 +518,34 @@
       ]
     }
   },
+  "usage": {
+    "short_task_input": 7684.5,
+    "short_task_output": 573.8,
+    "short_task_peak_cny": 0.08465310000000001,
+    "professional_low_cny": 1010.265,
+    "professional_high_cny": 1683.775,
+    "usd_cny": 6.7351,
+    "scene_budget_month": 19,
+    "developer_monthly_cny": 1926.2386000000001
+  },
   "sources": [
     {
       "title": "DeepSeek Models & Pricing",
-      "url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
       "accessed": "2026-10-03",
       "scope": "Token分类、余额抵扣机制；不证明本项目人均成本或合作费"
     },
     {
-      "title": "Cursor Pricing",
-      "url": "https://cursor.com/pricing",
+      "title": "Claude Code usage costs",
+      "url": "https://code.claude.com/docs/en/costs",
       "accessed": "2026-10-03",
-      "scope": "按用户订阅、内含用量、额外按量及组织洽谈；不证明本项目价格"
+      "scope": "企业开发者典型150–250美元/月、活跃日均13美元；不证明小学或Blocky实际成本"
+    },
+    {
+      "title": "中国货币网中间价",
+      "url": "https://www.chinamoney.com.cn/chinese/index.html",
+      "accessed": "2026-10-03",
+      "scope": "2026-09-30参考中间价6.7351；非实际付款汇率"
     }
   ]
 }

@@ -18,15 +18,29 @@ SCENARIO_LABELS = ['前6月等效人力','后18月等效人力','综合人月成
 GLOBAL_KEYS = ['months','start_month','owner_cash','recovery_rate','collection_lag','vendor_fee','vendor_prepay','vendor_deposit','vendor_month','asset_life_months','rounding_step']
 GLOBAL_LABELS = ['规划月数','起始月份（假设）','已确认自有现金（未录入为0）','算力成本回收比例（非套餐价）','收款延迟月数','非退还合作费（报价未录入）','可抵扣算力预付（报价未录入）','可退保证金（报价未录入）','厂商款支付月份','设备折旧月数','资金目标取整步长（元）']
 
+def usage_costs(p):
+    """Calibrate short tasks from measured tokens; professional use is a separate benchmark."""
+    u=p['usage']; t=u['task_sample']; price=u['deepseek_pro_peak_cny']
+    task=(t['input_tokens']/t['completed_tasks']*price['input_miss'] +
+          t['output_tokens']/t['completed_tasks']*price['output'])/1000000
+    return {
+        'student':task*u['student']['sessions_per_month']*u['student']['tasks_per_session'],
+        'teacher':task*u['teacher']['sessions_per_month']*u['teacher']['tasks_per_session'],
+        'personal':u['professional_monthly_usd']*u['usd_cny'],
+        'development':u['developer_active_day_usd']*u['development_active_days']*u['usd_cny'],
+        'task':task,
+    }
+
 def projected(p, scenario, **changes):
     """Design-side cash arithmetic, independent of Excel cell formulas."""
     p = dict(p, **changes); c=p['base_costs']; cash=p['owner_cash']; wallet=0
+    unit=usage_costs(p)
     months=[]; revenue=[]; minimum=cash; deposit=0; totals={k:0.0 for k in ['payroll','dev_compute','infrastructure','teaching','community','admin','specialist','customer_token','vendor_fee','equipment','cash_paid','cash_collected','non_token_ops']}
     for m in range(1,25):
-        people=[round(n*scenario['user_scale']) for n in p['cohort_quarters'][(m-1)//3]]
-        token=sum(n*price for n,price in zip(people,p['base_monthly_per_person'].values()))*scenario['token_cost_scale']
+        people=[round(n*scenario['user_scale']) if m>=p['usage']['scene_budget_month'] else 0 for n in p['cohort_quarters'][(m-1)//3]]
+        token=sum(n*unit[k] for n,k in zip(people,['student','teacher','personal']))*scenario['token_cost_scale']
         fte=scenario['fte_first6'] if m<=6 else scenario['fte_later18']; scale=scenario['other_cost_scale']
-        values={'payroll':fte*scenario['loaded_monthly_cost'],'dev_compute':fte*c['dev_compute_per_fte']*scale,
+        values={'payroll':fte*scenario['loaded_monthly_cost'],'dev_compute':fte*unit['development']*scale,
             'infrastructure':(c['infrastructure_first6'] if m<=6 else c['infrastructure_middle6'] if m<=12 else c['infrastructure_last12'])*scale,
             'teaching':(c['teaching_first3'] if m<=3 else c['teaching_middle9'] if m<=12 else c['teaching_last12'])*scale,
             'community':(c['community_first3'] if m<=3 else c['community_middle9'] if m<=12 else c['community_last12'])*scale,
@@ -56,10 +70,10 @@ def build(p, path, spec_path):
             value=e
             for key in k:value=value[key]
             numeric.append({'left':f'Summary!{cc}{r}','expected':value,'tolerance':0.01})
-    spec={'required_sheets':['Summary','Assumptions','Cohorts','Costs','Revenue','Income Statement','Balance Sheet','Cash Flow','Financing','Checks','Sources'], 'min_formula_count':4000,'allow_external_links':False,
+    spec={'required_sheets':['Summary','Assumptions','Usage','Cohorts','Costs','Revenue','Income Statement','Balance Sheet','Cash Flow','Financing','Checks','Sources'], 'min_formula_count':4000,'allow_external_links':False,
           'input_cells':['Assumptions!B4','Assumptions!B5','Assumptions!B7','Assumptions!B8','Assumptions!B9','Assumptions!C19'],
           'formula_cells':['Summary!C18','Summary!C19','Cash Flow!Y17','Checks!B8'],
-          'policy_inputs':[{'cell':'Assumptions!B11','label':'Equipment useful life'},{'cell':'Assumptions!B12','label':'Funding rounding step'}],
+          'policy_inputs':[{'cell':'Assumptions!B11','label':'Equipment useful life'},{'cell':'Assumptions!B12','label':'Funding rounding step'},{'cell':'Usage!B5','label':'Dated USD CNY reference'},{'cell':'Usage!B18','label':'Conditional scenario budget start month'}],
           'status_cells':[{'cell':f'Checks!{col(i+2)}8','equals':'PASS'} for i in range(3)],'numeric_checks':numeric}
     spec_path.parent.mkdir(parents=True,exist_ok=True); spec_path.write_text(json.dumps(spec,ensure_ascii=False,indent=2),encoding='utf-8')
     wb=openpyxl.Workbook(); wb.remove(wb.active)
@@ -93,7 +107,16 @@ def build(p, path, spec_path):
     for r,(key,label) in enumerate(zip(SCENARIO_KEYS,SCENARIO_LABELS),17):
         cell('Assumptions',r,1,label)
         for i,s in enumerate(p['scenarios'],2):cell('Assumptions',r,i,s[key],True)
-    for r,(label,v) in enumerate([('学生人均月算力采购成本',p['base_monthly_per_person']['student']),('教师人均月算力采购成本',p['base_monthly_per_person']['teacher']),('个人人均月算力采购成本',p['base_monthly_per_person']['personal']),('研发等效人力每人月工具与算力',p['base_costs']['dev_compute_per_fte'])],29):cell('Assumptions',r,1,label);cell('Assumptions',r,2,v,True)
+    for r,(label,v) in enumerate([('学生短任务参考月成本','=Usage!B19'),('教师短任务参考月成本','=Usage!B20'),('专业云创作者参考月成本','=Usage!B21'),('研发等效人力月度Agent预算','=Usage!B22')],29):cell('Assumptions',r,1,label);cell('Assumptions',r,2,v)
+    u=p['usage']; t=u['task_sample']; price=u['deepseek_pro_peak_cny']
+    heading('Usage',1,'Token成本：项目短任务样本与专业开发者公开统计分开使用')
+    usage_inputs={3:('有回执的任务数',t['completed_tasks']),4:('实际响应数',t['responses']),5:('美元兑人民币参考中间价',u['usd_cny']),6:('样本输入Token总量',t['input_tokens']),7:('样本输出Token总量',t['output_tokens']),8:('Pro高峰未命中输入价（元/百万）',price['input_miss']),9:('Pro高峰输出价（元/百万）',price['output']),10:('学生每月活动次数（假设）',u['student']['sessions_per_month']),11:('学生每活动任务尝试数（假设）',u['student']['tasks_per_session']),12:('教师每月准备次数（假设）',u['teacher']['sessions_per_month']),13:('教师每次任务尝试数（假设）',u['teacher']['tasks_per_session']),14:('专业开发者典型月成本下限（美元）',u['professional_monthly_usd_low']),15:('专业云创作者月成本中点（美元）',u['professional_monthly_usd']),16:('专业开发者典型月成本上限（美元）',u['professional_monthly_usd_high']),17:('研发每活跃日成本参考（美元）',u['developer_active_day_usd']),18:('场景预算启用月序（条件假设）',u['scene_budget_month']),23:('研发每月活跃天数（假设）',u['development_active_days'])}
+    for r,(label,value) in usage_inputs.items():cell('Usage',r,1,label);cell('Usage',r,2,value,True)
+    for r,label,f in [(19,'学生人均月短任务参考成本','=B24*B10*B11'),(20,'教师人均月短任务参考成本','=B24*B12*B13'),(21,'专业云创作者人均月参考成本','=B15*B5'),(22,'研发等效资源人均月Agent预算','=B17*B23*B5'),(24,'单任务按直供Pro峰价重定价（元）','=(B6/B3*B8+B7/B3*B9)/1000000'),(25,'每任务平均输入Token','=B6/B3'),(26,'每任务平均输出Token','=B7/B3'),(27,'专业月成本下限折人民币','=B14*B5'),(28,'专业月成本上限折人民币','=B16*B5')]:cell('Usage',r,1,label);cell('Usage',r,2,f)
+    usage_notes={30:'样本仅涵盖10个有可读回执的短任务、30次响应；未取得缓存拆分。其他任务可能另有费用，不用成功样本估算其零消耗。',31:'学生/教师频次为规划输入，短任务参考不代表真实课堂月成本或完整专业模板消耗；输入输出、上下文增长与重试须后续实测。',32:'专业档单列Claude Code企业API使用统计150–250美元/月，中点为200；不套用于所有个人用户或小学生，不代表Blocky实测或厂商报价。',33:'内部研发采用13美元/活跃日×22个活跃日的资源预算，活跃天数是工作负荷假设；公开典型月范围与活跃日均不能同时相加。',34:'DeepSeek价格来自当前中文API文档，缓存未知按全部未命中敏感性重定价；不能当成息壤实际支付账单。',35:'汇率参考2026-09-30中国货币网6.7351，非支付成交汇率；美元统计先换算人民币再进入本模型。',36:'前18个月为研发排期假设，场景预算第19月后且产品准备关口通过才启用；日期与人数均非上线承诺。关口延期时调整启用月与人数曲线。',37:'BYOK及本地用户不计平台采购人数。平台云算力专业档用户规模是条件容量，人头不等于下载、注册、订阅销量或既有客户。'}
+    for r,label in usage_notes.items():cell('Usage',r,1,label)
+    sheets['Usage'].column_dimensions['A'].width=62;sheets['Usage'].column_dimensions['B'].width=22
+    for r in usage_notes:sheets['Usage'].merge_cells(start_row=r,start_column=1,end_row=r,end_column=4);sheets['Usage'].row_dimensions[r].height=42
     base_keys=['infrastructure_first6','infrastructure_middle6','infrastructure_last12','teaching_first3','teaching_middle9','teaching_last12','community_first3','community_middle9','community_last12','admin_monthly']
     cost_labels=['基础设施前6月/月','基础设施第7至12月/月','基础设施后12月/月','教学共创前3月/月','教学共创第4至12月/月','教学共创后12月/月','社区前3月/月','社区第4至12月/月','社区后12月/月','一般运营/月']
     for r,(key,label) in enumerate(zip(base_keys,cost_labels),34):cell('Assumptions',r,1,label);cell('Assumptions',r,2,p['base_costs'][key],True)
@@ -112,13 +135,13 @@ def build(p, path, spec_path):
         ac=col(i+2); co=1+i*14; ct=1+i*25; rv=1+i*12; cf=1+i*33; ip=1+i*18; bs=1+i*18
         for name,start in [('Cohorts',co),('Costs',ct),('Revenue',rv),('Cash Flow',cf),('Income Statement',ip),('Balance Sheet',bs)]:heading(name,start,s['name']);monthly_headers(name,start+1)
         sc=lambda r:f'Assumptions!${ac}${r}'
-        for off,source_c,label in [(2,2,'学生平台云算力活跃人头'),(3,3,'教师平台云算力活跃人头'),(4,4,'个人平台云算力活跃人头')]:monthly_row('Cohorts',co+off,label,[f'=ROUND(Assumptions!{col(source_c)}{46+m}*{sc(20)},0)' for m in range(1,25)])
+        for off,source_c,label in [(2,2,'学生平台云算力条件容量'),(3,3,'教师平台云算力条件容量'),(4,4,'专业创作者平台云算力条件容量')]:monthly_row('Cohorts',co+off,label,[f'=IF({m}>=Usage!$B$18,ROUND(Assumptions!{col(source_c)}{46+m}*{sc(20)},0),0)' for m in range(1,25)])
         monthly_row('Cohorts',co+5,'合计云算力人头（非下载数）',[f'=SUM({col(m+1)}{co+2}:{col(m+1)}{co+4})' for m in range(1,25)],'last')
         for off,personoff,price_r,label in [(6,2,29,'学生月度算力采购'),(7,3,30,'教师月度算力采购'),(8,4,31,'个人月度算力采购')]:monthly_row('Cohorts',co+off,label,[f'={col(m+1)}{co+personoff}*Assumptions!$B${price_r}*{sc(21)}' for m in range(1,25)])
         monthly_row('Cohorts',co+9,'外部用户Token成本合计',[f'=SUM({col(m+1)}{co+6}:{col(m+1)}{co+8})' for m in range(1,25)])
-        cost_rows=[('等效资源人力',lambda m,c:f'=IF({m}<=6,{sc(17)},{sc(18)})'),('综合人力现金',lambda m,c:f'={c}{ct+2}*{sc(19)}'),('内部研发算力与工具',lambda m,c:f'={c}{ct+2}*Assumptions!$B$32*{sc(22)}'),('云基础设施',lambda m,c:f'=IF({m}<=6,Assumptions!$B$34,IF({m}<=12,Assumptions!$B$35,Assumptions!$B$36))*{sc(22)}'),('教学共创与试用',lambda m,c:f'=IF({m}<=3,Assumptions!$B$37,IF({m}<=12,Assumptions!$B$38,Assumptions!$B$39))*{sc(22)}'),('社区活动与材料',lambda m,c:f'=IF({m}<=3,Assumptions!$B$40,IF({m}<=12,Assumptions!$B$41,Assumptions!$B$42))*{sc(22)}'),('一般运营与合规预算',lambda m,c:f'=Assumptions!$B$43*{sc(22)}'),('专项外部交付',lambda m,c:f'=SUMIF(Assumptions!$F$47:$F$50,{m},Assumptions!$G$47:$G$50)*{sc(22)}'),('用户Token消耗成本',lambda m,c:f'={ref("Cohorts",co+9,m+1)}'),('实际非退还合作费（未录入）',lambda m,c:f'=IF({m}=Assumptions!$B$10,Assumptions!$B$7,0)'),('费用现金合计（不含设备）',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+11})'),('设备购置现金',lambda m,c:f'=SUMIF(Assumptions!$F$54:$F$55,{m},Assumptions!$G$54:$G$55)*{sc(22)}'),('当月设备折旧',lambda m,c:f'=SUMPRODUCT(({m}-Assumptions!$F$54:$F$55+1>0)*({m}-Assumptions!$F$54:$F$55+1<=Assumptions!$B$11)*Assumptions!$G$54:$G$55)*{sc(22)}/Assumptions!$B$11'),('损益费用合计',lambda m,c:f'={c}{ct+12}+{c}{ct+14}'),('常规固定与专项支出',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+9})'),('常规经常性支出',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+8})')]
+        cost_rows=[('等效资源人力',lambda m,c:f'=IF({m}<=6,{sc(17)},{sc(18)})'),('综合人力现金',lambda m,c:f'={c}{ct+2}*{sc(19)}'),('内部研发Agent预算',lambda m,c:f'={c}{ct+2}*Assumptions!$B$32*{sc(22)}'),('云基础设施',lambda m,c:f'=IF({m}<=6,Assumptions!$B$34,IF({m}<=12,Assumptions!$B$35,Assumptions!$B$36))*{sc(22)}'),('教学共创与试用',lambda m,c:f'=IF({m}<=3,Assumptions!$B$37,IF({m}<=12,Assumptions!$B$38,Assumptions!$B$39))*{sc(22)}'),('社区活动与材料',lambda m,c:f'=IF({m}<=3,Assumptions!$B$40,IF({m}<=12,Assumptions!$B$41,Assumptions!$B$42))*{sc(22)}'),('一般运营与合规预算',lambda m,c:f'=Assumptions!$B$43*{sc(22)}'),('专项外部交付',lambda m,c:f'=SUMIF(Assumptions!$F$47:$F$50,{m},Assumptions!$G$47:$G$50)*{sc(22)}'),('条件用户算力成本',lambda m,c:f'={ref("Cohorts",co+9,m+1)}'),('实际非退还合作费（未录入）',lambda m,c:f'=IF({m}=Assumptions!$B$10,Assumptions!$B$7,0)'),('费用现金合计（不含设备）',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+11})'),('设备购置现金',lambda m,c:f'=SUMIF(Assumptions!$F$54:$F$55,{m},Assumptions!$G$54:$G$55)*{sc(22)}'),('当月设备折旧',lambda m,c:f'=SUMPRODUCT(({m}-Assumptions!$F$54:$F$55+1>0)*({m}-Assumptions!$F$54:$F$55+1<=Assumptions!$B$11)*Assumptions!$G$54:$G$55)*{sc(22)}/Assumptions!$B$11'),('损益费用合计',lambda m,c:f'={c}{ct+12}+{c}{ct+14}'),('常规固定与专项支出',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+9})'),('常规经常性支出',lambda m,c:f'=SUM({c}{ct+3}:{c}{ct+8})')]
         for off,(label,fn) in enumerate(cost_rows,2):monthly_row('Costs',ct+off,label,[fn(m,col(m+1)) for m in range(1,25)])
-        monthly_row('Revenue',rv+2,'用户Token消耗成本',[f'={ref("Cohorts",co+9,m+1)}' for m in range(1,25)])
+        monthly_row('Revenue',rv+2,'条件用户算力成本',[f'={ref("Cohorts",co+9,m+1)}' for m in range(1,25)])
         monthly_row('Revenue',rv+3,'规划成本回收额（不是正式售价）',[f'={col(m+1)}{rv+2}*Assumptions!$B$5' for m in range(1,25)])
         monthly_row('Revenue',rv+4,'实际收款规划',[f'=IF({m}>Assumptions!$B$6,INDEX($B${rv+3}:$Y${rv+3},1,{m}-Assumptions!$B$6),0)' for m in range(1,25)])
         monthly_row('Revenue',rv+5,'期末待收回金额',[f'=SUM($B{rv+3}:{col(m+1)}{rv+3})-SUM($B{rv+4}:{col(m+1)}{rv+4})' for m in range(1,25)],'last')
@@ -153,7 +176,7 @@ def build(p, path, spec_path):
     heading('Summary',26,'厂商费用0表示未录入；现金预留是风险预算，获得报价后更新费、预付和保证金。')
     cell('Summary',28,1,'精简与高用量同时改变人力、人数和成本，是资源情景；新增用量须有额度与回款支持。')
     heading('Financing',1,'资金来源与用途｜全部融资仅为规划演算，不代表到账、估值或贷款')
-    finance_labels={4:'假设外部资金补入',5:'确认自有资金',6:'规划运营收款',7:'现金来源合计',9:'研发/教研运营等效人力',10:'内部研发算力与工具',11:'外部用户Token实际现金',12:'基础设施/教学/社区/运营/专项',13:'设备采购',14:'合作费及保证金现金',15:'24个月现金支付',17:'期末现金（含储备与预留）',18:'现金用途合计',19:'来源减用途',21:'风险预留（不提前确认为费用）',22:'合作现金预留余额',23:'正常运营储备',24:'资金取整余量',26:'最低追加需求'}
+    finance_labels={4:'假设外部资金补入',5:'确认自有资金',6:'规划运营收款',7:'现金来源合计',9:'研发/教研运营等效人力',10:'内部研发Agent预算',11:'外部用户Token实际现金',12:'基础设施/教学/社区/运营/专项',13:'设备采购',14:'合作费及保证金现金',15:'24个月现金支付',17:'期末现金（含储备与预留）',18:'现金用途合计',19:'来源减用途',21:'风险预留（不提前确认为费用）',22:'合作现金预留余额',23:'正常运营储备',24:'资金取整余量',26:'最低追加需求'}
     for r,label in finance_labels.items():cell('Financing',r,1,label)
     for i,(co,ct,rv,cf,ip,bs) in enumerate(records):
         c=col(i+2);cell('Financing',3,i+2,p['scenarios'][i]['name'])
@@ -166,16 +189,16 @@ def build(p, path, spec_path):
         for r,f in fs.items():cell('Checks',r,i+2,f)
     for r,label in [(4,'现金来源与用途差额'),(5,'资金需求与取整差额'),(6,'预付抵扣恒等最大误差'),(7,'逐月资产负债最大误差'),(8,'状态')]:cell('Checks',r,1,label)
     heading('Sources',1,'参数来源和假设登记｜访问日期2026-10-03｜人民币')
-    source_rows=[['F01','用户确认','24个月；Token按人头；合作费用未知','用户当前直接说明','高（范围）',''],['F02','规划判断','人数曲线/期末5,140人','低置信资源情景；不是客户或收入','低',''],['F05','资源预算','3→4等效人力，综合人月2万元','覆盖研发、教研与运营，非现有人员履历','低',''],['F06','人均成本','学生10/教师50/个人30元每月','采购成本预算，非用户订阅售价；凭实际账单更新','低',''],['F07','厂商条件','实际费/额度预付/保证金待报价','0是未录入；合作现金预留30万元为预算判断','低',''],['F08','现金政策','3个月正常运营储备+10%常规支出风险预留','风险预留不含用户Token、设备及未知合作费','低',''],['F09','收入与资金','默认成本回收0、自有现金0','不以未确认收款或自有投入压低资金；外部补资仅规划','低',''],['F10','设备与会计','36个月折旧；预付和保证金为资产','现金、费用与折旧分别核算；无融资税务承诺','低','']]
-    for source in p['sources'][2:]:source_rows.append([source['id'],source['basis'],source['description'],'官方机制参照；未使用美元套餐换算人民币成本','高（机制）',source['url']])
+    source_rows=[['F01','规划要求','24个月；Token按人头；合作费用未知','24个月持续发展规划','高（范围）',''],['F02','规划判断','第19月后条件容量/期末1160人','产品准备关口后；不代表上线或增长承诺','低',''],['F05','资源预算','3→4等效人力，综合人月2万元','覆盖研发、教研与运营，非现有人员履历','低',''],['F06','任务与公开使用统计','短任务实测Token与专业150–250美元/月分别使用','频次和专业预算中点为假设；不是售价或真实账单','中（来源）/低（频次）',''],['F07','厂商条件','实际费/额度预付/保证金待报价','0是未录入；合作现金预留30万元为预算判断','低',''],['F08','现金政策','3个月正常运营储备+10%常规支出风险预留','风险预留不含用户Token、设备及未知合作费','低',''],['F09','收入与资金','默认成本回收0、自有现金0','不以未确认收款或自有投入压低资金；外部补资仅规划','低',''],['F10','设备与会计','36个月折旧；预付和保证金为资产','现金、费用与折旧分别核算；无融资税务承诺','低','']]
+    for source in p['sources'][2:]:source_rows.append([source['id'],source['basis'],source['description'],'来源类别及边界见原说明；USD按2026-09-30参考汇率换算','高（机制）',source['url']])
     for r,row in enumerate([['ID','类型','参数/事实','依据和边界','置信度','公开来源']]+source_rows,3):
         for c,v in enumerate(row,1):cell('Sources',r,c,v)
     for name,sheet in sheets.items():
         sheet.freeze_panes='B3';sheet.sheet_view.showGridLines=True
-        sheet.column_dimensions['A'].width=39
+        sheet.column_dimensions['A'].width=62 if name=='Usage' else 39
         for c in range(2,sheet.max_column+1):sheet.column_dimensions[col(c)].width=13
         sheet.page_setup.orientation='landscape';sheet.page_setup.paperSize=sheet.PAPERSIZE_A3
-        sheet.page_setup.fitToWidth=1 if name in ['Summary','Assumptions','Financing','Checks','Sources'] else 2;sheet.page_setup.fitToHeight=0;sheet.sheet_properties.pageSetUpPr.fitToPage=True
+        sheet.page_setup.fitToWidth=1 if name in ['Summary','Assumptions','Usage','Financing','Checks','Sources'] else 2;sheet.page_setup.fitToHeight=0;sheet.sheet_properties.pageSetUpPr.fitToPage=True
         sheet.print_options.horizontalCentered=True;sheet.print_title_cols='A:A';sheet.print_area=sheet.dimensions
         sheet.page_margins.left=0.25;sheet.page_margins.right=0.25
         for row in sheet:

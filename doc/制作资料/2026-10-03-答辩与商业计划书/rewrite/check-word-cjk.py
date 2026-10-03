@@ -1,4 +1,5 @@
-# Task adapter: preserve every upstream rule; use one installed CJK typeface for Chinese.
+# Task adapter: use one installed CJK typeface for Chinese; exempt only the
+# user-mandated proper name DeepSeek Harness from the generic prose warning.
 # The document standards require one typeface and do not mandate Arial.
 #!/usr/bin/env python3
 """Validate a final Word deliverable against the skill's mandatory standard."""
@@ -63,7 +64,7 @@ BANNED_PATTERNS = {
     "landscape": r"\blandscape\b",
     "ecosystem": r"\becosystem\b",
     "unlock": r"\bunlock(?:s|ed|ing)?\b",
-    "harness": r"\bharness(?:es|ed|ing)?\b",
+    "harness": r"(?<!DeepSeek )\bharness(?:es|ed|ing)?\b",
     "navigate the complexities": r"\bnavigate(?:s|d|ing)? the complexities\b",
     "drive value": r"\bdriv(?:e|es|ing|en) value\b",
     "at the end of the day": r"\bat the end of the day\b",

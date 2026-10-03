@@ -5,6 +5,18 @@ from pathlib import Path
 from lxml import etree as E
 f=Path(sys.argv[1]);pdf=Path(sys.argv[2]);pages=[page.get_text() for page in fitz.open(pdf)];ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'};W=ns['w'];q=lambda x:'{'+W+'}'+x
 with zipfile.ZipFile(f) as z: parts={n:z.read(n) for n in z.namelist()}
+# The template's extended page count must follow the measured PDF, including
+# read-only Word exports that do not refresh app.xml statistics.
+if 'docProps/app.xml' in parts:
+ app=E.fromstring(parts['docProps/app.xml']);tag='{http://schemas.openxmlformats.org/officeDocument/2006/extended-properties}Pages'
+ page_count=app.find(tag)
+ if page_count is None:page_count=E.SubElement(app,tag)
+ page_count.text=str(len(pages));parts['docProps/app.xml']=E.tostring(app,xml_declaration=True,encoding='UTF-8',standalone=True)
+if '--page-stats-only' in sys.argv:
+ with zipfile.ZipFile(f,'w',zipfile.ZIP_DEFLATED) as z:
+  for name,data in parts.items():z.writestr(name,data)
+ print({'page_statistics':len(pages),'updated_part':'docProps/app.xml'})
+ sys.exit(0)
 r=E.fromstring(parts['word/document.xml']);body=r.find('w:body',ns);styles=E.fromstring(parts['word/styles.xml']);entries=[]
 normalize=lambda t:re.sub(r'\s+','',t)
 for j,node in enumerate(body.findall('w:p',ns)):

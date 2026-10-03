@@ -2,6 +2,7 @@
   "required_sheets": [
     "Summary",
     "Assumptions",
+    "Usage",
     "Cohorts",
     "Costs",
     "Revenue",
@@ -36,6 +37,14 @@
     {
       "cell": "Assumptions!B12",
       "label": "Funding rounding step"
+    },
+    {
+      "cell": "Usage!B5",
+      "label": "Dated USD CNY reference"
+    },
+    {
+      "cell": "Usage!B18",
+      "label": "Conditional scenario budget start month"
     }
   ],
   "status_cells": [
@@ -55,92 +64,92 @@
   "numeric_checks": [
     {
       "left": "Summary!B6",
-      "expected": 189540.0,
+      "expected": 913809.7674,
       "tolerance": 0.01
     },
     {
       "left": "Summary!B11",
-      "expected": 1839690.0,
+      "expected": 2599908.5780999996,
       "tolerance": 0.01
     },
     {
       "left": "Summary!B14",
-      "expected": 1839690.0,
+      "expected": 2599908.5780999996,
       "tolerance": 0.01
     },
     {
       "left": "Summary!B18",
-      "expected": 2389225.0,
+      "expected": 3687105.1808559997,
       "tolerance": 0.01
     },
     {
       "left": "Summary!B19",
-      "expected": 2500000,
+      "expected": 4000000,
       "tolerance": 0.01
     },
     {
       "left": "Summary!B20",
-      "expected": 660310.0,
+      "expected": 1400091.4219000004,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C6",
-      "expected": 789750.0,
+      "expected": 3046032.5579999997,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C11",
-      "expected": 3410750.0,
+      "expected": 5732394.032,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C14",
-      "expected": 3410750,
+      "expected": 5732394.032,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C18",
-      "expected": 4630250.0,
+      "expected": 8664427.07972,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C19",
-      "expected": 5000000,
+      "expected": 9000000,
       "tolerance": 0.01
     },
     {
       "left": "Summary!C20",
-      "expected": 1589250,
+      "expected": 3267605.9680000003,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D6",
-      "expected": 3948750.0,
+      "expected": 15230162.789999997,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D11",
-      "expected": 7959450.0,
+      "expected": 19365049.5906,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D14",
-      "expected": 7959450.0,
+      "expected": 19365049.5906,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D18",
-      "expected": 11512055.0,
+      "expected": 31439033.164789997,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D19",
-      "expected": 12000000,
+      "expected": 31500000,
       "tolerance": 0.01
     },
     {
       "left": "Summary!D20",
-      "expected": 4040550.0,
+      "expected": 12134950.409400001,
       "tolerance": 0.01
     }
   ]

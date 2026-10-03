@@ -44,13 +44,8 @@ for n in list(parts):
     crop,description=crops[marker];fill=pic.find('{'+P+'}blipFill');old=fill.find('{'+A+'}srcRect')
     if old is not None:fill.remove(old)
     fill.insert(1,E.Element('{'+A+'}srcRect',crop));props.set('descr',description)
-  if n=='ppt/slides/slide8.xml':
-   pics=r.xpath('.//p:pic',namespaces={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'})
-   A='http://schemas.openxmlformats.org/drawingml/2006/main'
-   for pic,crop in zip(pics,[{'l':'29861','t':'31111','r':'37500','b':'20000'},{'l':'76042','t':'28889','r':'1042','b':'15556'}]):
-    fill=pic.find('{http://schemas.openxmlformats.org/presentationml/2006/main}blipFill');old=fill.find('{'+A+'}srcRect')
-    if old is not None:fill.remove(old)
-    fill.insert(1,E.Element('{'+A+'}srcRect',crop))
+  # Crop only explicitly marked pictures, so reordering slides cannot crop an
+  # unrelated screenshot using a historical slide number.
   parts[n]=E.tostring(r,xml_declaration=True,encoding='UTF-8',standalone=True)
 if 'xl/workbook.xml' in parts:
  r=E.fromstring(parts['xl/workbook.xml'])
