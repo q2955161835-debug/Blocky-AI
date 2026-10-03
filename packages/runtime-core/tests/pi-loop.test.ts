@@ -72,6 +72,16 @@ it("allows a Pi core without tools and accepts bounded prior conversation", asyn
   try { expect(await runPiLoop(context, [{ role: "assistant", content: "previous response" }])).toBe("answer"); }
   finally { budget.dispose(); }
 });
+it("uses official Pi follow-up feedback to repair undeclared citations without accepting the invalid answer",async()=>{
+  const requests:GenerationRequest[]=[];
+  const {context,budget}=setup(async(request)=>{requests.push(request);return requests.length===1?response("Fixed [source:sample.js]"):response("sample.js syntax check passed");},async()=>null);
+  context.resourceIds=[];
+  try{expect(await runPiLoop(context)).toBe("sample.js syntax check passed");expect(requests).toHaveLength(2);expect(requests[1].messages.at(-1)?.content).toContain("BLK-GUARD-001");expect(requests[0].messages[0].content).toContain("没有知识来源ID");}finally{budget.dispose();}
+});
+it("keeps the citation guard and turn budget when Pi cannot repair its final answer",async()=>{
+  let calls=0;const {context,budget}=setup(async()=>{calls++;return response("Invalid [source:unknown]");},async()=>null);context.resourceIds=[];context.maxTurns=2;
+  try{await expect(runPiLoop(context)).rejects.toThrow("BLK-GUARD-001");expect(calls).toBe(2);}finally{budget.dispose();}
+});
 it("settles cancellation even when the model port is uncooperative", async () => {
   const { context, budget } = setup(async () => new Promise(() => {}), async () => null);
   const pending = runPiLoop(context);

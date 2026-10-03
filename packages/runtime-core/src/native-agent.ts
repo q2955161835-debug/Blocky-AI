@@ -2,6 +2,7 @@ import { implementationKey } from "@blocky/resource-registry";
 import type { Json } from "@blocky/language-schema";
 import type { AgentServices, Generation } from "./agent-context";
 import { nativeModelRequest } from "./native-model";
+import { calculate } from "./calculation-tool";
 export type NativeAgentCall = (
   operation: string,
   fields: Record<string, unknown>,
@@ -167,6 +168,7 @@ export function nativeAgentServices(
       const implementation = implementationKey(
         input.resource.definition.implementationRef,
       );
+      if (implementation === "adapter://arithmetic-v1") return calculate(input.resource,input.input,signal);
       if (implementation === "adapter://workspace-file-v1") {
         const operation = String(input.resource.definition.operation);
         const permission = ["list", "search", "read"].includes(operation) ? "workspace.read" : ["write", "undo"].includes(operation) ? "workspace.write" : operation === "check" ? "workspace.check" : "";

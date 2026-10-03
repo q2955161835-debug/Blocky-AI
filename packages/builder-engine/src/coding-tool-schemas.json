@@ -98,7 +98,7 @@
   },
   {
     "name": "blocky_cli",
-    "description": "Run the actual Blocky CLI using an argument array and --json. Discover version, command schemas and catalog first. Use $project for the isolated current project candidate; mutation output must also be $project. For --patch or --operations, use a workspace relative JSON file or $json:<compact JSON> for a bounded staged artifact. Only deterministic Host-approved commands are available; no shell or nested builder tasks.",
+    "description": "Run actual Blocky CLI using a string argument array. Start with [\"--version\",\"--json\"] and [\"command\",\"list\",\"--json\"], not --help or a Shell string. JSON output is automatic. Use $project as the isolated project input and mutation output. Configure a field with project configure $project --module ID --block ID --field NAME --value TEXT --output $project. BLK-CODING-CLI-ARGS means invalid arguments or an unsupported command, not missing permissions. For --patch/--operations, use a workspace relative JSON file or $json:<compact JSON>. Only deterministic commands; no Shell or nested builder tasks.",
     "parameters": {
       "type": "object",
       "properties": {

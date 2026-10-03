@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm, writeFile, copyFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { compileProject } from "../../packages/compiler/src";
+import { knowledgeResource } from "../../packages/knowledge-core/src";
 import {
   readProject,
   createProject,
@@ -148,7 +149,17 @@ beforeAll(async () => {
   directory = await mkdtemp(resolve("try/cli-test-"));
   file = join(directory, "research.blocky");
   blankFile = join(directory, "blank.blocky");
-  await createProject(file, createStarter());
+  const starter = createStarter();
+  // This CLI flow tests Host-backed ingestion, so use the current native resource form.
+  starter.resources["product-handbook"] = knowledgeResource(
+    "product-handbook",
+    "自然科学资料",
+    { strategy: "keyword", topK: 5 },
+  );
+  starter.manifest.resources.find(
+    (resource) => resource.resourceId === "product-handbook",
+  )!.secretRefs = [];
+  await createProject(file, starter);
 });
 afterAll(async () => {
   if (directory.startsWith(resolve("try/cli-test-")))
@@ -408,7 +419,9 @@ it("configures a declared field through the shared editor and keeps the source a
     "--jsonl",
   ]);
   expect(executed.code).toBe(0);
-  expect(executed.lines.at(-1).data.answer).toContain("相关资料摘录");
+  expect(executed.lines.at(-1).data.answer).toContain(
+    "水循环包括蒸发、凝结和降水",
+  );
   const saved = hash(await readFile(target));
   expect(run(args).code).toBe(5);
   expect(hash(await readFile(target))).toBe(saved);
@@ -437,11 +450,12 @@ it("saves and inserts personal blueprints with explicit bindings and no source o
   expect(run(capture).code).toBe(0);
   const shown = run(["blueprint", "show", blueprint, "--json"]);
   expect(shown.code).toBe(0);
-  expect(
-    shown.lines[0].data.blueprint.resources.filter(
-      (r: { kind: string }) => r.kind === "knowledge",
-    ),
-  ).toHaveLength(1);
+  // Capturing research-root includes its direct model and module-call slots.
+  // The called module's knowledge dependency is transitive and stays in that module.
+  expect(shown.lines[0].data.blueprint.resources.map((r: { kind: string }) => r.kind)).toEqual([
+    "model",
+  ]);
+  expect(shown.lines[0].data.blueprint.modules).toHaveLength(1);
   const target = join(directory, "blueprint-inserted.blocky");
   const insert = [
     "blueprint",

@@ -94,7 +94,15 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         } else {
           if (!result.text.trim() || (result.finishReason !== undefined && result.finishReason !== "stop")) throw Error("BLK-TOOL-PROPOSAL");
           if (context.validateCitations) await abortable(context.validateCitations(budget.signal), budget.signal);
-          checkGeneration(result, context.citations, context.requireEvidence); budget.check(); answer = result.text;
+          try {
+            checkGeneration(result, context.citations, context.requireEvidence);
+            budget.check(); answer = result.text;
+          } catch (error) {
+            if (!(error instanceof Error) || error.message !== "BLK-GUARD-001" || turn === turns) throw error;
+            // Keep the guard intact. The official SDK schedules a bounded
+            // correction turn; an invalid answer is never exposed as output.
+            agent.followUp({ role: "user", timestamp: Date.now(), content: `BLK-GUARD-001：刚才的回答引用不合法。可用知识来源ID：${canonicalJson(context.citations.map((citation) => citation.id))}。只修正最终回答，不重复已完成的文件操作。没有来源ID时不要使用 [source:ID]；文件名和检查回执使用普通文字。` });
+          }
         }
         context.onEvent({ type: "model.completed", requestId, data: { summary: "Pi 模型已返回", engine: "pi-agent-core/0.86.0", turn, transport: result.transport, model: result.model, ...(result.usage ? { usage: result.usage } : {}) } });
         if (result.text) output.content.push({ type: "text", text: result.text });

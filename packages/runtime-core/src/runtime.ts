@@ -288,7 +288,7 @@ export class Runtime {
         "knowledge.read",
         "memory.read", "memory.write", "skill.read", "model.score", "media.read",
         ...(adapters.agent
-          ? ["text.analyze", "module.execute", "network.request", "mcp.local", "workspace.read", "workspace.write", "workspace.check"]
+          ? ["text.analyze", "module.execute", "network.request", "mcp.local", "workspace.read", "workspace.write", "workspace.check", "data.calculate"]
           : []),
       ];
       agent.allowedCapabilities = baseCapabilities;

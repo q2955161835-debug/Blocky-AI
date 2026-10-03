@@ -5,6 +5,7 @@ import {
 } from "@blocky/language-schema";
 import { knowledgeResource } from "@blocky/knowledge-core";
 import { workspaceToolResources } from "./workspace-tools";
+import { calculationToolResource } from "./calculation-tool";
 
 export type StartingBlueprintId =
   | "knowledge-assistant"
@@ -209,7 +210,7 @@ function createWorkAssistant(projectId?: string): Project {
     type: "core.prompt.context",
     id: "assistant-work-instructions",
     fields: {
-      TEXT: "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。只报告已完成的操作；没有可用目录或工具时准确说明缺少哪项配置。",
+      TEXT: "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的结果，不用语言模型心算充当核验；生成后读回文件核对内容。只报告已完成的操作；没有可用目录或工具时准确说明缺少哪项配置。",
     },
   };
   const remember: WorkspaceBlock = {
@@ -221,7 +222,7 @@ function createWorkAssistant(projectId?: string): Project {
     project,
     "帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。",
     "工作任务",
-    chain(prompt, budget(), toolLoop(tools, "pi"), remember, answer()),
+    chain(prompt, budget(), toolLoop([...tools,calculationToolResource(project)], "pi"), remember, answer()),
   );
 }
 

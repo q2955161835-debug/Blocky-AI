@@ -90,9 +90,11 @@ it.each([
   const budget = blocks(project).find((block) => block.type === "core.run.budget");
   expect(budget?.fields).toMatchObject({ CALLS: "16", OUTPUT_TOKENS: "4096" });
   const declared = [...walkBlocks([loop.inputs!.TOOLS!.block!])];
-  const toolResources = declared.map(
+  const allTools = declared.map(
     (block) => project.resources[String(block.fields?.RESOURCE)],
   );
+  const toolResources = allTools.filter((resource) => resource.definition.implementationRef && typeof resource.definition.implementationRef === "object" && !Array.isArray(resource.definition.implementationRef) && resource.definition.implementationRef.id === "workspace-file-v1");
+  expect(allTools.length).toBe(operations.length+(id==="work-assistant"?1:0));
   expect(toolResources.map((resource) => resource.definition.operation)).toEqual(
     operations,
   );

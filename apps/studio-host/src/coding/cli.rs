@@ -37,8 +37,13 @@ impl Cli {
         scope: Option<&Scope>,
         cancel: &AtomicBool,
     ) -> Result<Value, String> {
-        let prepared = prepare(args)?;
+        // This tool always uses structured JSON output. Normalize the optional
+        // public CLI flag here instead of relying on model spelling each time.
         let mut args = args.to_vec();
+        if !args.iter().any(|arg| arg == "--json") {
+            args.push("--json".into());
+        }
+        let prepared = prepare(&args).map_err(|_| "BLK-CODING-CLI-ARGS")?;
         let mut input = 0;
         for index in prepared.inputs {
             if args[index] == "$project" {
@@ -75,7 +80,7 @@ impl Cli {
         let mut next = None;
         if let Some(i) = prepared.output {
             if args[i] != "$project" {
-                return Err(ERROR.into());
+                return Err("BLK-CODING-CLI-ARGS".into());
             }
             if prepared.modifies {
                 let path = self

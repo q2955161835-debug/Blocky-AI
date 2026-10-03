@@ -46,7 +46,9 @@ it("configures shared models across real processes while blank projects remain u
   const preflight=cli("builder","draft",next,"--module","main","--prompt","Explain project","--live","--request-id","shared-preview","--output",join(root,"draft.json"));
   expect(preflight.code).toBe(4);
   expect(preflight.value.data.pendingApproval.modelId).toBe("model-two");
-  expect(cli("builder","draft",next,"--module","main","--prompt","Answer briefly","--output",join(root,"offline-draft.json")).code).toBe(0);
+  const explanation = cli("builder","explain",next,"--module","main","--prompt","Explain this blank project","--output",join(root,"offline-explanation.json"));
+  expect(explanation.code).toBe(0);
+  expect(explanation.value.data.modelApiCalled).toBe(false);
   const registryFile=join(f.profile,"user/resources/app.json"),before=await readFile(registryFile);
   const blocked=cli("provider","delete","--id","shared");
   expect(blocked.value.error.code).toBe("BLK-PROVIDER-IN-USE");
@@ -74,7 +76,7 @@ it("explicitly migrates v1 once and rolls back through the Host without merging 
   const unpersistedProject=await readProject(unpersisted);
   expect(unpersistedProject.manifest.resources).toEqual([]);
   expect(unpersistedProject.workspaces.main.blocks.blocks).toEqual([]);
-  const offline = cli("builder","draft",unpersisted,"--module","main","--prompt","Answer briefly","--output",join(root,"unpersisted-draft.json"));
+  const offline = cli("builder","explain",unpersisted,"--module","main","--prompt","Explain this blank project","--output",join(root,"unpersisted-explanation.json"));
   expect(offline.code, JSON.stringify(offline.value.error)).toBe(0);
   expect(JSON.parse(await readFile(join(dir,"app.json"),"utf8")).schemaVersion).toBe("blocky.resource-registry/v1");
   expect(cli("resource","migrate").code).toBe(0);
