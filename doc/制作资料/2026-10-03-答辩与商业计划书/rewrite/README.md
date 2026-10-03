@@ -1,31 +1,37 @@
-# 小学创作教育稿制作入口
+# 小学 Agent 创作教育材料制作入口
 
-本目录是可复用制作输入，不随参赛成品提交。产品源码未修改。PPT文字、5张表和财务图原生可编辑；真实截图只用原生裁切，概念图由ImageGen生成。
+本目录保存可复用制作输入，不随参赛成品提交。当前投资顾问整改稿以小学读懂、改造、自主搭建、调试解释为主线，保留积木审阅价值。用户明确不写团队成员介绍；交付资产和服务资源承担项目交付说明。
 
-- `build-ppt.cjs`：17页新教育稿，读取项目内图片与原财务汇总，使用已安装的PptxGenJS 4.0.1。
-- `business-plan-v2.json`：当前2.1版独立商业计划书内容，与原三情景假设一致。
-- `build-business-plan.py`：只读技能Word模板，生成黑白A4文档；唯一字体Noto Sans CJK SC。
-- `refresh-toc.py`：从Heading 1–3及实际PDF测得页码更新真实TOC缓存/PAGEREF；保留可更新字段。
-- `sanitize-package.py`：清理未引用模板数据和图片描述路径；原生裁切真实轨迹；XLSX只清理路径及任务窗格元数据，不改表格、公式、缓存或打印设置。
-- `check-word-cjk.py`：上游Word检查器仅将硬编码Arial预期改为统一中文字体；其余11类规则保持。上游检查器也已执行，其唯一不匹配为Arial预期，技能正文只规定一种字体。
-- `check-example.ts`及两份`story-*.json`：本地领域Runtime条件部件复现实验，不是生成式故事、Windows普通包或学生试用。
-- `speaker-notes-v2.json`：与新PPT完全一致的12页480秒讲稿及5页备答。
+## 当前输入
 
-在仓库根目录使用已有Node/Python及soffice：
+- build-investor-ppt.cjs：35页连续讲述PPT，全部内容融入产品、学习、教师、商业和完整开发路线章节，合作邀请为最后一页；原生可编辑文字、表格和财务图。真实截图与概念插画沿用已有素材。
+- speaker-notes-v3.json：35页讲稿、来源和转场；855秒是讲稿参考预算，不是用户限定时长或实测演讲时间。
+- business-plan-v2.json：文件名沿用既有入口，内容版本为3.0；独立商业计划书，不改变原三情景财务输入。
+- build-business-plan.py：只读技能Word模板生成黑白A4文档；中文统一使用本机已安装的Noto Sans SC。
+- refresh-toc.py：从实际PDF标题位置刷新TOC页码缓存，保留可更新字段。
+- check-word-cjk.py：保留Word标准检查，中文字体预期适配为统一字体；目录字段生成的样式按其实际用途检查。
+- sanitize-package.py：清理模板与路径元数据，按图片标记原生裁切轨迹；修复PptxGenJS 4.0.1产生的不存在部件引用和重复对象ID。原生表格使用合法的middle对齐参数。
+- export-ppt.ps1：在独立PowerPoint实例中只读打开候选并导出PDF，再关闭本次实例。
+- export-business-plan.ps1：使用项目内LibreOffice独立运行时和profile导出22页BP；静态Noto Sans SC字体从本机字体目录复制到该运行时，验证PDF实际嵌入字体。
+- investor-revision-research.md：2026-10-03核对的Scratch、Blocks Builder AI与教育部官方资料；明确公开资料的阅读范围。
+- check-example.ts、两份story-*.json：真实本地Runtime条件对照，不能代表完整故事生成、普通包课堂或学生试用。
 
-```sh
-node doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/build-ppt.cjs
-python doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/build-business-plan.py --template .agents/skills/build-client-business-plans/assets/business-plan-template.docx --content doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/business-plan-v2.json --finance doc/制作资料/2026-10-03-答辩与商业计划书/finance-summary.json --output try/education-rewrite/Blocky-Studio-小学Agent商业计划书-2026-10-03.docx
+## 生成与检查
+
+使用已有Node/Python运行时及PptxGenJS 4.0.1；模块目录通过运行时提供的NODE_PATH解析。输出先进入项目try，原始财务摘要与XLSX只读。当前PPT命令入口为：
+
+```powershell
+node doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/build-investor-ppt.cjs
+python doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/sanitize-package.py try/investor-iteration-20261003/presentation/Blocky-Studio-小学Agent创作教育-2026-10-03.pptx
+& doc/制作资料/2026-10-03-答辩与商业计划书/rewrite/export-ppt.ps1 -Path try/investor-iteration-20261003/presentation/Blocky-Studio-小学Agent创作教育-2026-10-03.pptx
 ```
 
-生成后先执行包清理、soffice导出PDF，再以`refresh-toc.py DOCX PDF`更新目录并重新导出。已存在文件须显式`--overwrite`；重新生成即成为新候选，不能外推旧验收。脚本使用当前已配置运行时，未把依赖或Office profile纳入Git。
+Word生成器使用--template指定只读模板、--content指定business-plan-v2.json、--finance指定原finance-summary.json、--output指定try下候选路径。DOCX生成后须导出PDF、按实际页码刷新TOC并再次导出，核对全部页和嵌入字体。export-business-plan.ps1的Document、LibreOfficeRuntime、Profile参数须分别提供项目候选、项目本地运行时和独立profile绝对路径；本轮运行时已整理到try/待清理/2026-10-03-投资顾问材料整改/business/libreoffice-runtime/，重生成前检查目录存在。Windows Word可能替换字体，DOCX字体标签正确不能代替PDF字体核验。已存在文件须显式使用生成器的--overwrite。任何重生成都是新候选，必须重新绑定哈希与实际变化。
 
-旧v6与旧BP文案留作历史输入，不直接运行生成新稿。公开竞品核对沿用交接记录；云端对3个官方页面访问均被代理403拒绝，未绕过网络策略，也没有虚构新核验。删去全国全学段规模推断。
+## 历史与证据边界
 
-本轮调用ImageGen一次；没有新增Blocky真实外部大模型请求。历史息壤3响应7717Token只属于合成课程演示。
+旧17页PPT制作源与2.1版讲稿已由当前入口替代，移出当前制作目录；历史内容可通过Git恢复。旧验收只提供原文件证据。当前成品与结论见[投资顾问整改最终复验](../../../验收/任务/验收-2026-10-03-投资顾问整改最终复验.md)。
 
-用户后续要求补充“从代码审阅到积木审阅”和OPC的Agent员工透明化。PPT第10页改为搭建、执行、运行三阶段审阅与OPC后续方向，第2页及讲稿同步价值表述；总17页和480秒预算不变。商业计划书2.1版在摘要、产品价值、竞争定位与市场进入顺序补充对应内容，导出18页，真实TOC22项已刷新。OPC仍待验证，不计入财务预测；本次不新增ImageGen或产品模型请求。旧交付四份文件已可逆归档，复验记录见两份独立报告顶部。
+本轮完成计划见[归档执行计划](../../../归档/2026-10-03/2026-10-03-投资顾问材料整改与复验.md)；后续产品开发仍以[完整开发计划](../../../执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)为入口，不能把本次材料任务完成当成产品路线全部完成。
 
-## 本地批注文案修订
-
-2026-10-03用户要求删除PPT中的负面提示与“待验证”。本轮直接原位替换OOXML可见文字，并同步`build-ppt.cjs`：以“教学设计”“课堂实践计划”和“经营规划”等表述说明方向，保留实际能力、教学方案与预算之间的事实区别。原生对象、图片裁切、图表数据、备注与财务数字未改；PDF由本机PowerPoint导出。信息量与商业论证问题由投资顾问独立复核，文案修订不代表已完成扩充。历史通过仅适用于原哈希文件。
+本轮不改产品源码和财务工作簿，不新增ImageGen或Blocky真实大模型API请求。历史息壤3响应、7717Token只属于合成课程资料演示；完整故事链、小学课堂、机构合同与经营数字分别按教学设计或规划呈现。

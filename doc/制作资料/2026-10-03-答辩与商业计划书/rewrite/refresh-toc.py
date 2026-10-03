@@ -1,8 +1,9 @@
 """Refresh the true TOC field cache from heading styles and measured PDF pagination."""
-import sys,re,copy,zipfile,subprocess
+import sys,re,copy,zipfile
+import fitz
 from pathlib import Path
 from lxml import etree as E
-f=Path(sys.argv[1]);pdf=Path(sys.argv[2]);txt=subprocess.check_output(['pdftotext','-layout',str(pdf),'-']).decode();pages=txt.split('\f');ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'};W=ns['w'];q=lambda x:'{'+W+'}'+x
+f=Path(sys.argv[1]);pdf=Path(sys.argv[2]);pages=[page.get_text() for page in fitz.open(pdf)];ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'};W=ns['w'];q=lambda x:'{'+W+'}'+x
 with zipfile.ZipFile(f) as z: parts={n:z.read(n) for n in z.namelist()}
 r=E.fromstring(parts['word/document.xml']);body=r.find('w:body',ns);styles=E.fromstring(parts['word/styles.xml']);entries=[]
 normalize=lambda t:re.sub(r'\s+','',t)
@@ -13,8 +14,14 @@ for j,node in enumerate(body.findall('w:p',ns)):
  if not matches:raise ValueError('Heading page unavailable: '+t)
  name='_TocBlocky'+str(len(entries));bid=str(1000+len(entries));
  for old in node.findall('w:bookmarkStart',ns)+node.findall('w:bookmarkEnd',ns):node.remove(old)
- start=E.Element(q('bookmarkStart'),{q('id'):bid,q('name'):name});end=E.Element(q('bookmarkEnd'),{q('id'):bid});node.insert(1,start);node.append(end);entries.append((t,style[-1],matches[0],name))
-field=next(n for n in body.findall('w:p',ns) if n.xpath('.//w:instrText[contains(.,"TOC")]',namespaces=ns));idx=body.index(field);body.remove(field)
+ start=E.Element(q('bookmarkStart'),{q('id'):bid,q('name'):name});end=E.Element(q('bookmarkEnd'),{q('id'):bid});node.insert(1,start);node.append(end);entries.append((t,style[-1],matches[-1],name))
+field=next(n for n in body.findall('w:p',ns) if n.xpath('.//w:instrText[contains(.,"TOC")]',namespaces=ns));idx=body.index(field)
+# Remove the previous field's cache paragraphs as a unit before replacing it.
+for node in list(body)[idx:]:
+ style=node.xpath('string(w:pPr/w:pStyle/@w:val)',namespaces=ns)
+ if node is field or style in ['TOC1','TOC2','TOC3']:
+  body.remove(node)
+ else:break
 def run(parent,text=None,kind=None,instr=None):
  a=E.SubElement(parent,q('r'))
  if text is not None:E.SubElement(a,q('t')).text=text

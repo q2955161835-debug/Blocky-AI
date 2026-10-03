@@ -23,9 +23,27 @@ for n in list(parts):
 for n in list(parts):
  if n.startswith('ppt/slides/') and n.endswith('.xml'):
   r=E.fromstring(parts[n])
+  # Generated table IDs can collide with existing native text objects.
+  # These authored decks contain no animation/connector references to shape IDs.
+  shape_props=r.xpath('.//p:cNvPr',namespaces={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'})
+  used=set();next_id=max([int(e.get('id','0')) for e in shape_props]+[0])+1
+  for props in shape_props:
+   ident=props.get('id')
+   if ident in used:
+    props.set('id',str(next_id));used.add(str(next_id));next_id+=1
+   else:used.add(ident)
   for e in r.iter():
    if E.QName(e).localname=='cNvPr' and any(v in e.get('descr','') for v in ['/workspace/','C:','D:']):
     e.set('descr','Blocky概念插画或Windows真实产品画面；具体来源与边界见本页讲稿')
+  for pic in r.xpath('.//p:pic',namespaces={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'}):
+   P='http://schemas.openxmlformats.org/presentationml/2006/main';A='http://schemas.openxmlformats.org/drawingml/2006/main'
+   props=pic.find('{'+P+'}nvPicPr/{'+P+'}cNvPr');marker=props.get('descr','') if props is not None else ''
+   crops={'crop:canvas':({'l':'29861','t':'31111','r':'37500','b':'20000'},'真实Windows运行画布局部，选中积木对应运行事件'),
+          'crop:trace':({'l':'76042','t':'28889','r':'1042','b':'15556'},'同次真实运行轨迹局部，事件对应具体积木')}
+   if marker in crops:
+    crop,description=crops[marker];fill=pic.find('{'+P+'}blipFill');old=fill.find('{'+A+'}srcRect')
+    if old is not None:fill.remove(old)
+    fill.insert(1,E.Element('{'+A+'}srcRect',crop));props.set('descr',description)
   if n=='ppt/slides/slide8.xml':
    pics=r.xpath('.//p:pic',namespaces={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'})
    A='http://schemas.openxmlformats.org/drawingml/2006/main'
@@ -45,7 +63,10 @@ if 'xl/workbook.xml' in parts:
 if '[Content_Types].xml' in parts:
  r=E.fromstring(parts['[Content_Types].xml'])
  for e in list(r):
-  if e.get('PartName','').lstrip('/') in removed:r.remove(e)
+  target=e.get('PartName','').lstrip('/')
+  # PptxGenJS 4.0.1 issue #1444 emits nonexistent slideMaster overrides.
+  # Removing only references to absent parts leaves every active part intact.
+  if target in removed or (E.QName(e).localname=='Override' and target not in parts):r.remove(e)
  parts['[Content_Types].xml']=E.tostring(r,xml_declaration=True,encoding='UTF-8',standalone=True)
 if 'docProps/core.xml' in parts:
  r=E.fromstring(parts['docProps/core.xml']);D='http://purl.org/dc/terms/';XSI='http://www.w3.org/2001/XMLSchema-instance'

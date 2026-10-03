@@ -239,8 +239,8 @@ def check_fonts(styles_root: etree._Element, document_root: etree._Element, part
         report.fail("Typeface and paragraph styling", theme_fonts[0], "theme font reference remains")
     if len(fonts) > 1:
         report.fail("Typeface and paragraph styling", "Word styles", f"multiple typefaces found: {', '.join(sorted(fonts))}")
-    elif fonts and fonts != {"noto sans cjk sc"}:
-        report.fail("Typeface and paragraph styling", "Word styles", f"expected Noto Sans CJK SC, found {', '.join(sorted(fonts))}")
+    elif fonts and fonts != {"noto sans sc"}:
+        report.fail("Typeface and paragraph styling", "Word styles", f"expected Noto Sans SC, found {', '.join(sorted(fonts))}")
 
     body_style = next(
         (
@@ -418,7 +418,9 @@ def check_headings(records: list[ParagraphRecord], report: Report) -> None:
             report.fail("Heading hierarchy", f"paragraph {record.index}", f"disallowed style {record.style_name}")
         if record.style_name in patterns and record.text and not patterns[record.style_name].match(record.text):
             report.fail("Heading hierarchy", f"paragraph {record.index}", f"{record.style_name} is not correctly numbered: {record.text}")
-        if re.match(r"^\d+(?:\.\d+){0,2}\.?\s+\S", record.text) and record.style_name not in patterns:
+        # Native Word TOC results repeat numbered headings in approved TOC styles.
+        # They are field results, not body headings or invented heading styles.
+        if re.match(r"^\d+(?:\.\d+){0,2}\.?\s+\S", record.text) and record.style_name not in patterns and record.style_name not in {"toc 1", "toc 2", "toc 3"}:
             report.fail("Heading hierarchy", f"paragraph {record.index}", f"numbered heading text uses {record.style_name}")
 
     substantive = [record for record in records if record.text]

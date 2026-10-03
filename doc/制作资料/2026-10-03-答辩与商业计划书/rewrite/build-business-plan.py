@@ -27,7 +27,7 @@ DC_NS = "http://purl.org/dc/elements/1.1/"
 CP_NS = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
 NS = {"w": W_NS}
 TABLE_WIDTH_TWIPS = 8950  # A4 portrait, 1-inch margins, with a small safety inset.
-FONT = "Noto Sans CJK SC"
+FONT = "Noto Sans SC"
 
 
 def qn(local: str) -> str:
@@ -203,10 +203,6 @@ def table_from_block(block: dict[str, Any], finance: dict[str, Any]) -> tuple[st
             raise ValueError(f"Table caption has no number: {caption}")
         number = int(match.group(1))
         title = caption.split(".", 1)[1].strip() if "." in caption else caption
-        if number == 3:
-            number = 4
-        elif number == 4:
-            number = 3
         headers = [str(value) for value in block["headers"]]
         rows = [[str(value) for value in row] for row in block["rows"]]
         return f"Table {number}. {title}", make_table(headers, rows, block.get("widths"))
@@ -352,12 +348,8 @@ def business_name(data: dict[str, Any]) -> str:
 def table_reference_text(text: str) -> str:
     def replacement(match: re.Match[str]) -> str:
         number = int(match.group(1))
-        if number == 3:
-            number = 4
-        elif number == 4:
-            number = 3
         return f"Table {number}（表{number}）"
-    return re.sub(r"表([1-8])", replacement, text)
+    return re.sub(r"表(\d+)", replacement, text)
 
 
 def build(template: Path, content_path: Path, finance_path: Path, output: Path) -> dict[str, Any]:
@@ -443,7 +435,7 @@ def build(template: Path, content_path: Path, finance_path: Path, output: Path) 
             if kind == "h1":
                 text = str(block["text"])
                 node = clone_paragraph("Heading1", style_paragraphs, text)
-                if text.startswith("Appendix "):
+                if text.startswith("Appendix ") or block.get("pageBreak"):
                     add_child(node.find(qn("pPr")), "pageBreakBefore")
             elif kind == "h2":
                 node = clone_paragraph("Heading2", style_paragraphs, str(block["text"]))
@@ -451,7 +443,7 @@ def build(template: Path, content_path: Path, finance_path: Path, output: Path) 
                 node = clone_paragraph("Heading3", style_paragraphs, str(block["text"]))
             elif kind == "p":
                 text = table_reference_text(str(block["text"]))
-                node = clone_paragraph("BodyText", style_paragraphs, text)
+                node = clone_paragraph("BodyText", style_paragraphs, text, keep_next=bool(block.get("keepWithNext")))
             elif kind in {"table", "finance_assumptions", "finance_scenarios", "finance_funding"}:
                 title, table = table_from_block(block, finance)
                 title_node = clone_paragraph("Tabletitle", style_paragraphs, title, keep_next=True)

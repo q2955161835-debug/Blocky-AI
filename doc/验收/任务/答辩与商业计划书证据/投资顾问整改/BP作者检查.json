@@ -1,0 +1,232 @@
+{
+  "page_count": 22,
+  "fonts": [
+    "BAAAAA+NotoSansSC-Bold",
+    "CAAAAA+NotoSansSC-Regular",
+    "DAAAAA+NotoSansSC-Regular",
+    "EAAAAA+NotoSansSC-Regular",
+    "FAAAAA+NotoSansSC-Regular"
+  ],
+  "headings": [
+    {
+      "heading": "0. 执行摘要",
+      "body_page": 3
+    },
+    {
+      "heading": "1. 企业与产品概况",
+      "body_page": 4
+    },
+    {
+      "heading": "1.1 产品与教学价值",
+      "body_page": 4
+    },
+    {
+      "heading": "1.2 目标市场与需求判断",
+      "body_page": 5
+    },
+    {
+      "heading": "1.3 竞争与产品定位",
+      "body_page": 6
+    },
+    {
+      "heading": "2. 销售与客户服务",
+      "body_page": 7
+    },
+    {
+      "heading": "2.1 客户角色与购买条件",
+      "body_page": 8
+    },
+    {
+      "heading": "2.2 试点教育服务与报价",
+      "body_page": 8
+    },
+    {
+      "heading": "2.3 机构组织后台建设",
+      "body_page": 9
+    },
+    {
+      "heading": "2.4 独立算力与模型账户",
+      "body_page": 10
+    },
+    {
+      "heading": "2.5 获客与验证路径",
+      "body_page": 10
+    },
+    {
+      "heading": "3. 运营计划",
+      "body_page": 11
+    },
+    {
+      "heading": "4. 交付资源与复用资产",
+      "body_page": 12
+    },
+    {
+      "heading": "5. 战略实施与财务安排",
+      "body_page": 12
+    },
+    {
+      "heading": "5.1 市场进入与定位",
+      "body_page": 13
+    },
+    {
+      "heading": "5.2 商业模式与单位经济",
+      "body_page": 13
+    },
+    {
+      "heading": "5.3 阶段目标",
+      "body_page": 14
+    },
+    {
+      "heading": "5.4 近期项目与退出条件",
+      "body_page": 15
+    },
+    {
+      "heading": "5.5 资源与资金需求",
+      "body_page": 15
+    },
+    {
+      "heading": "5.6 实施路线图",
+      "body_page": 16
+    },
+    {
+      "heading": "5.7 主要风险与应对",
+      "body_page": 18
+    },
+    {
+      "heading": "Appendix A. 规划假设与待确认事项",
+      "body_page": 19
+    },
+    {
+      "heading": "Appendix B. 资料来源",
+      "body_page": 21
+    },
+    {
+      "heading": "Appendix C. 情景分析",
+      "body_page": 22
+    }
+  ],
+  "page_metrics": [
+    {
+      "page": 1,
+      "body_blocks": 9,
+      "body_bottom": 343.3
+    },
+    {
+      "page": 2,
+      "body_blocks": 24,
+      "body_bottom": 487.1
+    },
+    {
+      "page": 3,
+      "body_blocks": 26,
+      "body_bottom": 602.0
+    },
+    {
+      "page": 4,
+      "body_blocks": 36,
+      "body_bottom": 759.0
+    },
+    {
+      "page": 5,
+      "body_blocks": 36,
+      "body_bottom": 746.3
+    },
+    {
+      "page": 6,
+      "body_blocks": 34,
+      "body_bottom": 738.1
+    },
+    {
+      "page": 7,
+      "body_blocks": 36,
+      "body_bottom": 733.8
+    },
+    {
+      "page": 8,
+      "body_blocks": 30,
+      "body_bottom": 695.6
+    },
+    {
+      "page": 9,
+      "body_blocks": 31,
+      "body_bottom": 743.9
+    },
+    {
+      "page": 10,
+      "body_blocks": 35,
+      "body_bottom": 745.0
+    },
+    {
+      "page": 11,
+      "body_blocks": 33,
+      "body_bottom": 753.0
+    },
+    {
+      "page": 12,
+      "body_blocks": 34,
+      "body_bottom": 730.5
+    },
+    {
+      "page": 13,
+      "body_blocks": 32,
+      "body_bottom": 737.2
+    },
+    {
+      "page": 14,
+      "body_blocks": 36,
+      "body_bottom": 764.4
+    },
+    {
+      "page": 15,
+      "body_blocks": 32,
+      "body_bottom": 761.9
+    },
+    {
+      "page": 16,
+      "body_blocks": 36,
+      "body_bottom": 702.2
+    },
+    {
+      "page": 17,
+      "body_blocks": 26,
+      "body_bottom": 620.9
+    },
+    {
+      "page": 18,
+      "body_blocks": 25,
+      "body_bottom": 399.1
+    },
+    {
+      "page": 19,
+      "body_blocks": 29,
+      "body_bottom": 724.9
+    },
+    {
+      "page": 20,
+      "body_blocks": 28,
+      "body_bottom": 719.0
+    },
+    {
+      "page": 21,
+      "body_blocks": 29,
+      "body_bottom": 734.9
+    },
+    {
+      "page": 22,
+      "body_blocks": 26,
+      "body_bottom": 639.6
+    }
+  ],
+  "files": [
+    {
+      "file": "D:\\1Folder\\Blocky-AI\\try\\investor-iteration-20261003\\business\\final\\Blocky-Studio-小学Agent商业计划书-2026-10-03.docx",
+      "sha256": "414c5d2b16e6a0fd1e61d3dfedff83dc5346dc156dead8943d53aef1180bf931",
+      "bytes": 55492
+    },
+    {
+      "file": "D:\\1Folder\\Blocky-AI\\try\\investor-iteration-20261003\\business\\final\\Blocky-Studio-小学Agent商业计划书-2026-10-03.pdf",
+      "sha256": "3fd0b81c07a55a5b06733e93a702c6508e825ceeabb91f1361d3b3be98bd235d",
+      "bytes": 778705
+    }
+  ]
+}
