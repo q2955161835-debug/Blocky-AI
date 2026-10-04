@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+import { agentBudgetDefaults } from "../../packages/language-schema/src";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
@@ -60,7 +61,7 @@ it("uses the shared edit transaction and produces a read-only trace without mode
     expect(inspected.lines[0].data.frames.filter((frame: { budget?: unknown }) => frame.budget))
       .toEqual(budgets);
     expect(inspected.lines[0].data.frames.find((frame: { type: string }) => frame.type === "model.completed").details)
-      .toMatchObject({ model: { maxOutputTokens: 1024 }, context: { evidenceCount: 1 }, guard: { decision: "passed" } });
+      .toMatchObject({ model: { maxOutputTokens: agentBudgetDefaults.outputTokensPerTurn }, context: { evidenceCount: 1 }, guard: { decision: "passed" } });
     const replayed = run(["trace", "replay", trace, "--json"]);
     expect(replayed.code).toBe(0);
     expect(replayed.lines[0].data.externalCalls).toBe(0);

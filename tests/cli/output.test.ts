@@ -4,12 +4,12 @@ import { output } from "../../tools/blocky-cli/src/output";
 
 it("preserves the same bounded numeric token counters in event and CLI transport", () => {
   for (const key of ["inputTokens", "outputTokens", "totalTokens", "reservedOutputTokens", "maxOutputTokens", "maxOutputTokensPerTurn", "contextTokens"]) {
-    for (const value of [0, 20, 10_000_000]) {
+    for (const value of [0, 20, 10_000_000, 10_000_001, Number.MAX_SAFE_INTEGER]) {
       const payload = { budget: { [key]: value } };
       expect(redact(payload)).toMatchObject({ value: payload, redaction: { applied: false } });
       expect(JSON.parse(output(payload))).toEqual(payload);
     }
-    for (const value of ["SYNTHETIC_SECRET", true, -1, 1.5, 10_000_001, Number.MAX_SAFE_INTEGER + 1, Infinity, { value: 1 }]) {
+    for (const value of ["SYNTHETIC_SECRET", true, -1, 1.5, Number.MAX_SAFE_INTEGER + 1, Infinity, { value: 1 }]) {
       const payload = { budget: { [key]: value } };
       expect(redact(payload)).toMatchObject({ value: { budget: { [key]: "[已脱敏]" } }, redaction: { applied: true } });
       expect(JSON.parse(output(payload))).toEqual({ budget: { [key]: "[已脱敏]" } });
