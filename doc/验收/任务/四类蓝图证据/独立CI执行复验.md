@@ -10,7 +10,7 @@
 | 真实进程协议 | 三个新Node会话进程与coding/builder两个stdin协议 | 通过：断言及超时未改，after原三项均实际通过 |
 | 普通包来源 | CI配置修正是否改变已交付产品 | 通过：直接diff仅vitest.config.ts，不改变产品实现或包来源 |
 | 本地标准检查 | pnpm check完整回执 | 通过：typecheck、unit529、contracts32、deployment35，根退出0 |
-| 远端集成 | 最终整合后的Windows CI | 未执行：尚未取得新远端成功；旧37177896422为真实失败 |
+| 远端集成 | 最终整合后的Windows CI | 通过：37179523042/current72dc completed/success，六必需步骤全成功；旧失败保留 |
 
 ## 详细报告
 
@@ -44,10 +44,27 @@ after原三项：coding 2063.3996ms、builder 2051.515ms、session三进程6830.
 
 2026-10-04 13:17补充核读：`ci-fix-check-result.json`记录实际pnpm check退出0、输出chunk b6f582；原始`ci-fix-check.log`完整链为typecheck→unit→contracts→deployment，unit529通过/6跳过、contracts32通过、deployment35通过/1跳过，无失败。局部阶段要求已齐。
 
-旧远端失败保留；本地baseline CPU设置记录及缓存边界明确。新远端集成是本轮局部阶段之后的独立交付核读，尚未执行，不签其成功。
+旧远端失败保留；本地baseline CPU设置记录及缓存边界明确。新远端集成是本轮局部阶段之后的独立交付核读；下文记录实际终态，不以局部通过外推。
 
 ## 最终结论
 
 通过
 
-本轮局部阶段范围为并发配置、测试覆盖与原真实进程断言不减、双核全packages及本地pnpm check、产品实现未改；该范围全部通过。最终整合后须追加实际新远端CI结论，当前仍未执行。此局部通过不撤销旧CI失败或冒称新远端成功。
+本轮局部阶段范围为并发配置、测试覆盖与原真实进程断言不减、双核全packages及本地pnpm check、产品实现未改；该范围全部通过。最终整合后新远端CI亦经下方独立终态核读通过，旧失败保持历史记录。
+
+## 最终整合的独立远端核读
+
+本地时间段：2026-10-04 13:20 ~ 2026-10-04 13:49。仅等待主Agent原有watch写出的终态，不启动第二watch或重跑CI。独立读取`try/待清理/四类蓝图-2026-10-04/integration-ci.json`，databaseId **37179523042**、headSha **72dc1ed9ad2fe523cdb75aee8138ba319afd79cf**，与当前Git HEAD一致；run及contracts job均 **completed/success**，job本地13:18:51开始、13:47:09完成。该结果不是先前37177896422/00ef失败回执。
+
+| 必需步骤 | 状态 | 结论 |
+|---|---|---|
+| pnpm install --frozen-lockfile | completed | success |
+| pnpm build:cli | completed | success |
+| pnpm check | completed | success |
+| pnpm test:component | completed | success |
+| pnpm test:host | completed | success |
+| pnpm test:cli | completed | success |
+
+[Windows CI37179523042](https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37179523042)证据保存步骤亦success。`Frozen knowledge quality (actual Host/model)`明确为skipped；独立读`.github/workflows/check.yml`，该步骤只在workflow_dispatch且knowledge_quality=true时执行，本次push不触发，不把它记为通过或本轮新增Host/model质量运行。本次CI没有额外远程模型调用证据，不推算用量。该跳过不影响上述六必需步骤的真实成功。
+
+最终整合核读结论：**通过**。原B01–B08稳定成品验收来源仍为10e738b2，本次CI配置与文档整合72dc1ed9的远端成功单独记录，不伪称重建普通成品或重新Full。
