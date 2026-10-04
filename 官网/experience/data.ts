@@ -1,5 +1,6 @@
 import { catalog, startingBlueprints } from '../../packages/block-catalog/src/index';
 import type { Workspace, WorkspaceBlock } from '../../packages/language-schema/src/index';
+import { localizeDefault, getPreferences } from '../dist/preferences.js';
 export { catalog, startingBlueprints };
 export type BlueprintId = (typeof startingBlueprints)[number]['id'];
 export const descriptions = {
@@ -16,7 +17,20 @@ export const examples = {
 };
 export const blank: Workspace = { blocks: { languageVersion: 0, blocks: [] } };
 export function createWorkspace(id: BlueprintId | 'blank') {
-  return id === 'blank' ? structuredClone(blank) : startingBlueprints.find(b => b.id === id)!.create('website-demo').workspaces.main;
+  return id === 'blank' ? structuredClone(blank) : localizeWorkspace(startingBlueprints.find(b => b.id === id)!.create('website-demo').workspaces.main);
+}
+const presetFields=new Map<string,Set<string>>();
+for(const blueprint of startingBlueprints)for(const block of flatten(blueprint.create('website-demo').workspaces.main))for(const [field,value] of Object.entries(block.fields??{})) {
+  if(typeof value!=='string'||!['NAME','ROLE','TEXT'].includes(field))continue;
+  const key=block.type+':'+field,values=presetFields.get(key)||new Set<string>();
+  values.add(value);values.add(localizeDefault(value,'en'));presetFields.set(key,values);
+}
+export function localizeWorkspace(workspace:Workspace) {
+  const next=structuredClone(workspace),language=getPreferences().resolvedLanguage;
+  for(const block of flatten(next))for(const [field,value] of Object.entries(block.fields??{})) {
+    if(typeof value==='string'&&presetFields.get(block.type+':'+field)?.has(value))block.fields![field]=localizeDefault(value,language);
+  }
+  return next;
 }
 export function flatten(workspace: Workspace): WorkspaceBlock[] {
   const result: WorkspaceBlock[] = [];

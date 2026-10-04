@@ -8,7 +8,9 @@ import type { RuntimeEvent } from '../../packages/observability/src/events';
 import { DemoLibrary } from './DemoLibrary';
 import { DemoChat, type Message } from './DemoChat';
 import { DemoDialog } from './DemoDialog';
-import { catalog, startingBlueprints, createWorkspace, descriptions, examples, flatten, removeBlock, type BlueprintId } from './data';
+import { Preferences } from './Preferences';
+import { subscribePreferences, translate, localizeDefault } from '../dist/preferences.js';
+import { catalog, startingBlueprints, createWorkspace, localizeWorkspace, descriptions, examples, flatten, removeBlock, type BlueprintId } from './data';
 
 type Mode='agent'|'builder';
 const projectActions=[['edit.blueprint','保存为蓝图'],['build.convert','项目积木化'],['build.assistant','构建助手'],['build.surface','创建应用界面'],['file.save','保存项目'],['edit.undo','撤销'],['edit.redo','重做']] as const;
@@ -25,7 +27,7 @@ export function DemoApp() {
   const [messages,setMessages]=useState<Record<Mode,Message[]>>({agent:[],builder:[]});
   const [trace,setTrace]=useState<string[]>([]),[events,setEvents]=useState<RuntimeEvent[]>([]),[running,setRunning]=useState(false);
   const [status,setStatus]=useState('UI 演示 · 预设内容'),[bottomTab,setBottomTab]=useState('problems');
-  const [canvasName,setCanvasName]=useState('主画布'),[canvasOpen,setCanvasOpen]=useState(true);
+  const [canvasName,setCanvasName]=useState(()=>translate('主画布')),[canvasOpen,setCanvasOpen]=useState(true);
   const api=useRef<CanvasHandle|null>(null),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
   const pendingAdd=useRef<string|null>(null);
   const groupRef=useRef<string|undefined>(undefined);
@@ -33,6 +35,10 @@ export function DemoApp() {
   const title=blueprint==='blank'?'未命名项目':startingBlueprints.find(b=>b.id===blueprint)!.displayName;
   const example=examples[blueprint==='blank'?'knowledge-assistant':blueprint];
   useEffect(()=>()=>clearTimeout(timer.current),[]);
+  useEffect(()=>subscribePreferences(()=>{
+    setHistory(old=>({past:old.past.map(localizeWorkspace),current:localizeWorkspace(old.current),future:old.future.map(localizeWorkspace)}));
+    setCanvasName(name=>['主画布','Main canvas'].includes(name)?localizeDefault(name):name);
+  }),[]);
   useEffect(()=>{if(started&&canvasOpen&&pendingAdd.current&&api.current){api.current.add(pendingAdd.current);pendingAdd.current=null;}},[started,canvasOpen]);
   function stop(message='演示已停止') {clearTimeout(timer.current);setRunning(false);setEvents([]);setStatus(message);}
   function edit(next:Workspace,group?:string) {
@@ -42,7 +48,7 @@ export function DemoApp() {
   }
   function start(id:BlueprintId|'blank') {
     stop('UI 演示 · 预设内容');setBlueprint(id);setHistory({past:[],current:createWorkspace(id),future:[]});
-    setGeneration(v=>v+1);setSelected(null);setTrace([]);setMessages({agent:[],builder:[]});setStarted(true);setCanvasOpen(true);setCanvasName('主画布');setMobilePanel('canvas');setMenu(null);
+    setGeneration(v=>v+1);setSelected(null);setTrace([]);setMessages({agent:[],builder:[]});setStarted(true);setCanvasOpen(true);setCanvasName(translate('主画布'));setMobilePanel('canvas');setMenu(null);
   }
   function add(type:string){if(flatten(workspace).length>=100){setStatus('演示画布最多保留 100 块积木');return;}stop('已加入积木');if(!started||!canvasOpen){pendingAdd.current=type;setStarted(true);setCanvasOpen(true);}else api.current?.add(type);setMobilePanel('canvas');}
   function send(text:string) {
@@ -83,7 +89,7 @@ export function DemoApp() {
     if(nativeOnly.has(id)){setDialog('info');return;}
     if(id==='edit.undo'){setHistory(old=>old.past.length?{past:old.past.slice(0,-1),current:old.past.at(-1)!,future:[old.current,...old.future]}:old);return;}
     if(id==='edit.redo'){setHistory(old=>old.future.length?{past:[...old.past,old.current],current:old.future[0],future:old.future.slice(1)}:old);return;}
-    if(id==='run.start'){send(example[0]);return;}
+    if(id==='run.start'){send(translate(example[0]));return;}
     if(id==='run.stop'){stop();return;}
     if(id==='view.toggle-left-sidebar'){setLeftVisible(v=>!v);return;}
     if(id==='view.toggle-right-sidebar'){setRightVisible(v=>!v);return;}
@@ -97,7 +103,7 @@ export function DemoApp() {
   }
   const icon=(id:string,label:string,pressed?:boolean)=><button key={id} className={`icon-button ${id==='run.start'?'primary':''}`} aria-label={label} title={label} aria-pressed={pressed} disabled={!enabled(id)} onClick={()=>execute(id)}><CommandIcon id={id}/></button>;
   return <>
-    <div className="demo-banner"><span>在线体验 <span className="demo-banner-detail">· 预设内容</span></span><button onClick={()=>setDialog('info')}>体验说明</button><a href="../#" target="_top">返回官网 ↗</a></div>
+    <div className="demo-banner"><span>在线体验 <span className="demo-banner-detail">· 预设内容</span></span><button onClick={()=>setDialog('info')}>体验说明</button><a href="../#" target="_top">返回官网 ↗</a><Preferences/></div>
     <main className="studio demo-studio" onKeyDown={event=>{
       const target=event.target as HTMLElement;
       if(target.matches('input,textarea,select')||target.isContentEditable)return;
@@ -116,7 +122,7 @@ export function DemoApp() {
         <div className="workbench demo-workbench" data-panel={mobilePanel} style={{gridTemplateColumns:`${leftVisible?`minmax(180px,${leftWidth}px)`:'0px'} ${leftVisible?'4px':'0px'} minmax(0,1fr) ${rightVisible?'4px':'0px'} ${rightVisible?`minmax(240px,${rightWidth}px)`:'0px'}`}}>
           <div className="workbench-left" hidden={!leftVisible}><DemoLibrary view={view} setView={setView} add={add} start={start} search={()=>setDialog('search')}/></div>
           {leftVisible?<ResizeHandle className="left-boundary" label="左侧积木库宽度" axis="x" min={180} max={400} value={leftWidth} onChange={setLeftWidth}/>:<div className="left-boundary"/>}
-          <section className="workspace"><div className="workspace-tabs"><div className="active"><button onClick={()=>setCanvasOpen(true)}>▧ {canvasName}</button><button aria-label="关闭主画布" onClick={()=>setCanvasOpen(false)}>×</button></div></div>
+          <section className="workspace"><div className="workspace-tabs"><div className="active"><button data-no-translate="" onClick={()=>setCanvasOpen(true)}>▧ {canvasName}</button><button aria-label="关闭主画布" onClick={()=>setCanvasOpen(false)}>×</button></div></div>
             {canvasOpen?<><div className="canvas-toolbar"><button aria-label="重置当前蓝图" title="重置当前蓝图" onClick={()=>start(blueprint)}>↺</button><input aria-label="画布名称" value={canvasName} onChange={e=>setCanvasName(e.target.value)}/><span className="spacer"/>{selected&&<button aria-label="删除选中积木" onClick={()=>execute('edit.delete')}>×</button>}<button aria-label="缩小画布" onClick={()=>api.current?.zoom(-1)}>−</button><button aria-label="放大画布" onClick={()=>api.current?.zoom(1)}>＋</button></div>
             <Canvas key={generation} workspace={workspace} moduleId="main" onChange={edit} onSelect={setSelected} onSearch={()=>setDialog('search')} onContext={()=>setMenu('edit')} handle={value=>{api.current=value;}} events={events} reduceMotion={true} onViewport={()=>{}}/></>:<div className="demo-empty"><button onClick={()=>setCanvasOpen(true)}>重新打开主画布</button></div>}
             {bottom&&<section className="demo-bottom"><div role="tablist" aria-label="底部面板">{[['problems','问题'],['logs','运行日志'],['terminal','终端'],['output','输出']].map(([id,label])=><button key={id} role="tab" aria-selected={bottomTab===id} onClick={()=>setBottomTab(id)}>{label}</button>)}<button aria-label="关闭底部面板" onClick={()=>setBottom(false)}>×</button></div><div role="tabpanel">{bottomTab==='logs'?trace.map((line,i)=><p key={i}>✓ {line}</p>):bottomTab==='terminal'?<p>终端在桌面版中使用。</p>:bottomTab==='output'?<p>预设 UI 演示，无真实工具输出。</p>:<p>此页面仅展示 UI；运行检查在桌面版中进行。</p>}</div></section>}

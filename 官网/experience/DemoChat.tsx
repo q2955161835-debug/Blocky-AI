@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { translate } from '../dist/preferences.js';
 import { ChatMenuButton, ChatPopover, useChatMenu } from '../../apps/studio-desktop/src/app/ChatControls';
 export type Message = {role:'user'|'assistant';text:string};
 export function DemoChat({mode,setMode,messages,send,running,stop,sample,trace,reset,info}: {
@@ -16,7 +17,7 @@ export function DemoChat({mode,setMode,messages,send,running,stop,sample,trace,r
     <div id="chat-content" className="sidebar-content" role="tabpanel" aria-labelledby={`sidebar-tab-${mode}`}>
       <section className={`chat-panel ${mode==='builder'?'builder-panel builder-chat-panel':'run-panel'}`} aria-label={mode==='builder'?'Blocky 构建助手':'Blocky Agent 聊天'}>
         <div className="chat-panel-header"><button className="chat-icon" aria-label="新对话" onClick={reset}>＋</button><ChatMenuButton menu={menu} kind="settings" label={mode==='builder'?'构建助手设置':'Blocky Agent 设置'}>⚙</ChatMenuButton></div>
-        <div className="builder-chat-thread" ref={thread} role="log" aria-live="polite"><ol className="builder-chat-messages">{messages.map((message,i)=><li key={i} className={`builder-chat-message builder-chat-message-${message.role}`}><p>{message.text}</p></li>)}</ol>{!messages.length&&<div className="demo-chat-sample"><button onClick={()=>send(sample)} disabled={running}>{sample}<span> ↗</span></button><small>预设对话示例</small></div>}{mode==='agent'&&trace.length>0&&<div className="trace demo-trace"><strong>运行轨迹 · 预设</strong>{trace.map((line,i)=><p key={i}>✓ {line}</p>)}</div>}</div>
+        <div className="builder-chat-thread" ref={thread} role="log" aria-live="polite"><ol className="builder-chat-messages">{messages.map((message,i)=><li key={i} className={`builder-chat-message builder-chat-message-${message.role}`}><p data-no-translate={message.role === 'user' ? '' : undefined}>{message.text}</p></li>)}</ol>{!messages.length&&<div className="demo-chat-sample"><button onClick={()=>send(translate(sample))} disabled={running}>{sample}<span> ↗</span></button><small>预设对话示例</small></div>}{mode==='agent'&&trace.length>0&&<div className="trace demo-trace"><strong>运行轨迹 · 预设</strong>{trace.map((line,i)=><p key={i}>✓ {line}</p>)}</div>}</div>
         {mode==='builder'&&trace.length>0&&<div className="coding-trace"><details open><summary>调用轨迹 · 预设</summary>{trace.map((line,i)=><p key={i}>✓ {line}</p>)}</details></div>}
         <ChatPopover menu={menu} kind="add" label="对话上下文"><button onClick={info}>选择工作文件夹</button><p>当前项目的积木可在此页面编辑。</p></ChatPopover>
         <ChatPopover menu={menu} kind="settings" label="模型设置"><label>模型<select defaultValue="preset" aria-label="演示模型"><option value="preset">预设演示</option></select></label><p>对话为预设示例，不连接真实模型。</p></ChatPopover>

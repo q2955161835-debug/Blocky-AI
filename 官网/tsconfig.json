@@ -1,4 +1,5 @@
 {
   "extends": "../tsconfig.base.json",
+  "compilerOptions": {"paths":{"blockly/*":["../packages/ui-editor/node_modules/blockly/*"]}},
   "include": ["experience/**/*.ts", "experience/**/*.tsx"]
 }

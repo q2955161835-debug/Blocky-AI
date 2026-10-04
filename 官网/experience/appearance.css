@@ -1,0 +1,35 @@
+html[data-theme=light],html[data-theme=light] body,html[data-theme=light] #root{color-scheme:light;color:#273547;background:#f0f3f8;--panel:#fafbfd;--border:#d4dce7;--muted:#6d7b8e;--action:#326dde}
+[data-theme=light] button:hover{background:#24456e0b}
+[data-theme=light] input,[data-theme=light] textarea,[data-theme=light] select{background:#fff;border-color:#cad5e3;color:#273547}
+[data-theme=light] .demo-banner{background:#e8edf5;border-color:#ccd7e6;color:#5a6f8a}
+[data-theme=light] .demo-banner a{color:#426794}
+[data-theme=light] .statusbar{background:#e8edf5;color:#60738e}[data-theme=light] .project-title{color:#61789a}
+[data-theme=light] .library,[data-theme=light] .right-sidebar.chat-sidebar,[data-theme=light] .demo-mobile-tabs{background:#f8fafd}
+[data-theme=light] .palette h3,[data-theme=light] .section-label{color:#617189}
+[data-theme=light] .palette-block{background:#e9eef6;color:#354a65}
+[data-theme=light] .view-switch{background:#e5ebf4}[data-theme=light] .view-switch .active{background:#ccd9ed;color:#294c7e}
+[data-theme=light] .workspace-tabs,[data-theme=light] .canvas-toolbar,[data-theme=light] .demo-bottom{background:#edf1f7;border-color:#d4dce7}
+[data-theme=light] .workspace-tabs .active{background:#fff}[data-theme=light] .sidebar-tabs [aria-selected=true]{color:#2c60a4}
+[data-theme=light] .canvas-toolbar input{background:transparent;border-color:transparent}
+[data-theme=light] .canvas-shell,[data-theme=light] .blocklySvg{background:#f4f6fa!important}
+[data-theme=light] .blocklyMainBackground{fill:#f4f6fa!important}
+[data-theme=light] .canvas-overview{background:#ffffffed;border-color:#c4d0e0;color:#415877}
+[data-theme=light] .canvas-outline small,[data-theme=light] .canvas-outline p,[data-theme=light] .canvas-hint{color:#73839a}
+[data-theme=light] .canvas-outline button:hover{background:#e7edf7}
+[data-theme=light] .overview-viewport{stroke:#537eb5}
+[data-theme=light] .runtime-status{color:#38765a}
+[data-theme=light] .demo-blueprints>div>button span,[data-theme=light] .welcome p,[data-theme=light] .welcome .eyebrow{color:#6b7f9b}
+[data-theme=light] .demo-chat-sample button{border-color:#ccd8e8;color:#547094}
+[data-theme=light] .demo-chat-sample small{color:#7c8ba0}
+[data-theme=light] .chat-panel button.chat-icon,[data-theme=light] .chat-panel .chat-model-chip{color:#536983}
+[data-theme=light] .chat-composer{background:#fff;border-color:#c3cfdf}
+[data-theme=light] .chat-composer:focus-within{border-color:#6a93ca}
+[data-theme=light] .chat-popover,[data-theme=light] .demo-dialog{background:#fff;border-color:#b6c6dc;color:#344c6b;box-shadow:0 12px 40px #26446920}
+[data-theme=light] .demo-dialog p{color:#677d99}
+[data-theme=light] .builder-chat-message-user{background:#e2ebf8}
+[data-theme=light] .builder-chat-message p,[data-theme=light] .demo-trace{color:#405e83}
+[data-theme=light] .menu-dropdown{background:#fff;border-color:#c7d3e4;color:#304b70;box-shadow:0 12px 30px #344b6820}
+[data-theme=light] .demo-bottom [aria-selected=true],[data-theme=light] .demo-mobile-tabs [aria-pressed=true]{color:#2f65ac}
+html[lang=en] .demo-blueprints strong{line-height:1.4}
+.demo-banner .preference-controls{gap:2px}.demo-banner .preference-menu summary{min-height:27px;padding:2px 5px}.demo-banner .preference-options button{padding:9px 24px 9px 10px}
+@media(max-width:600px){.demo-banner{gap:7px;padding-inline:10px}.demo-banner>button{display:none}.demo-banner a{font-size:10px}.demo-banner .demo-banner-detail{display:none}.demo-studio .welcome h1{line-height:1.25}.demo-studio .welcome-actions{flex-wrap:wrap;gap:8px}.demo-banner .preference-options{width:152px}}

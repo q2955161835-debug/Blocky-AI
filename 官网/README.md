@@ -4,11 +4,14 @@
 
 官网按完整产品愿景讲述教育与专业场景，具体开放进度集中 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定导航保留唯一在线体验入口。
 
+官网和在线体验支持中文/English及深色/浅色。首次访问，两项均跟随系统；手动选择后保留偏好，也可恢复“跟随系统”。系统语言以浏览器提供的首选系统语言为准，中文使用中文，其余使用英文；系统外观变化会立即同步。切换保留当前锚点与演示编辑内容。只有两项显示偏好写入 localStorage，演示内容不持久化。
+
 ## 文件与运行
 
 - `dist/index.html`、`content.js`、`scenes.js`：官网内容。
 - `dist/styles.css`、`scenes.css`、`navigation.css`：官网样式与固定页头。
 - `dist/main.js`、`demo.js`：首页及 `#/studio` 路由、隔离演示 iframe。
+- `dist/preferences-boot.js`、`preferences.js`、`preferences.css`：首次外观、共享偏好及紧凑切换控件；`translations.js`、`ui-translations.js` 为两类文案字典，`appearance.css` 为官网浅色与英文排版适配。
 - `experience/`：在线体验 React 源码。直接复用桌面 Canvas、MenuBar、CommandIcon、ResizeHandle、ChatControls，以及真实积木目录、四类蓝图、产品 CSS；演示壳与预设聊天拆分管理。
 - `build-experience.mjs`：用根目录既有 esbuild 构建 `dist/studio/`，输出哈希资源与第三方许可证。构建拒绝包含桌面 composition、Tauri Host 或 worker；不新增依赖。
 - `.openai/hosting.json`：Sites 站点身份和静态目录配置。
