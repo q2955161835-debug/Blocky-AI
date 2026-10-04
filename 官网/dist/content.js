@@ -1,0 +1,35 @@
+export function mountContent() {
+document.querySelector('#more-content').innerHTML = `
+<section class="features section-shell" aria-label="产品能力">
+  <article class="feature-row">
+    <div class="feature-copy"><span class="feature-number">01 — A LANGUAGE YOU CAN SEE</span><h3>把抽象的能力，<br>握在手里。</h3><p>像搭积木一样组合角色、模型、知识与工具。嵌套结构让思考过程清晰可见，入门与专业视图，让创作跟着你的理解一起成长。</p><div class="inline-tags"><span>可视化画布</span><span>自由组合</span><span>双视图</span></div></div>
+    <div class="feature-visual visual-blocks dotted" aria-label="积木组合示意"><div class="visual-label">YOUR IDEAS, CONNECTED.</div><div class="small-stack"><div class="block block-yellow cap">开始 <b>我的创作</b></div><div class="block block-purple">设定 <b>一个有趣的角色</b></div><div class="block block-blue bracket">遇到问题时<div class="block block-green">查找 <b>知识</b></div><div class="block block-orange">使用 <b>工具</b></div></div><div class="block block-cyan">表达 <b>你的答案</b></div></div><span class="visual-footnote">可展开、可修改、可复用</span></div>
+  </article>
+  <article class="feature-row reverse">
+    <div class="feature-copy"><span class="feature-number">02 — A LITTLE HELP TO GO FURTHER</span><h3>从一句“我想”，<br>开始下一步。</h3><p>构建助手就在画布旁。用自然语言描述想法，让它帮助搭建、解释和修改当前项目。每一次改变，都可以继续审阅与撤销。</p><div class="inline-tags"><span>自然语言创作</span><span>项目上下文</span><span>可撤销修改</span></div></div>
+    <div class="feature-visual visual-conversation"><div class="conversation-question">我想让它记住我的学习偏好。</div><div class="assistant-label"><span class="chat-avatar">B.</span>构建助手</div><p>可以在回答前加入记忆能力。<br>下一次交流，就从更了解你开始。</p><div class="change-line"><span>＋</span> 加入记忆积木 <span class="tag-outline">示意</span></div><div class="block block-pink">记住 <b>学习偏好</b></div><div class="conversation-status">◇ 读懂改变，再决定下一步。</div></div>
+  </article>
+  <article class="feature-row">
+    <div class="feature-copy"><span class="feature-number">03 — UNDERSTAND EVERY STEP</span><h3>让过程可见，<br>让理解发生。</h3><p>沿着运行轨迹，看到智能体如何调用知识与工具，定位问题发生的位置。结果之外，创作过程本身也值得被理解。</p><div class="inline-tags"><span>运行轨迹</span><span>逐步调试</span><span>诊断与日志</span></div></div>
+    <div class="feature-visual visual-trace"><div class="trace-title">运行轨迹 <span>示意</span></div><div class="trace-line"><i style="--step:#e4bd60"></i><div>收到问题<small>“天空为什么是蓝色的？”</small></div><span>01</span></div><div class="trace-line"><i style="--step:#bb9ddd"></i><div>理解角色<small>用适合初学者的方式解释</small></div><span>02</span></div><div class="trace-line"><i style="--step:#8cc9af"></i><div>查找知识<small>连接科学知识库</small></div><span>03</span></div><div class="trace-line"><i style="--step:#9bcbd4"></i><div>组织回答<small>从一个生活中的例子讲起</small></div><span>04</span></div></div>
+  </article>
+</section>
+<section class="blueprints-section" id="blueprints"><div class="section-shell"><div class="section-heading"><div><div class="section-kicker">02 / 一个起点，无数种可能</div><h2>从蓝图出发。<br>把它变成你的。</h2></div><p>四种起始蓝图，一张自由创作的画布。<br>保留你需要的，改变你想改变的。</p></div>
+<div class="blueprint-grid">
+<article style="--card-color:#8cc9af"><span class="blueprint-index">01</span><div class="blueprint-glyph" aria-hidden="true">知</div><h3>知识问答助手</h3><p>连接你的资料，围绕知识展开对话。</p><span class="blueprint-use">学习 / 资料问答</span></article>
+<article style="--card-color:#e4bd60"><span class="blueprint-index">02</span><div class="blueprint-glyph" aria-hidden="true">工</div><h3>工作助手</h3><p>组合工具与步骤，探索自己的工作方式。</p><span class="blueprint-use">日常 / 任务处理</span></article>
+<article style="--card-color:#8cb7e8"><span class="blueprint-index">03</span><div class="blueprint-glyph" aria-hidden="true">&lt;/&gt;</div><h3>Coding 助手</h3><p>用积木组织编程任务，理解工具协作。</p><span class="blueprint-use">代码 / 创作实践</span></article>
+<article style="--card-color:#bb9ddd"><span class="blueprint-index">04</span><div class="blueprint-glyph" aria-hidden="true">π</div><h3>Pi Agent</h3><p>探索智能体循环，继续改造你的 Agent。</p><span class="blueprint-use">进阶 / 智能体探索</span></article>
+</div><p class="blueprint-bottom">也可以从一张空白画布开始。你的想法，决定它的样子。</p></div></section>
+<section class="how-section section-shell" id="how-it-works"><div class="section-kicker">03 / 创作，比想象中更近</div><h2>想一想。搭一搭。<span>再多走一步。</span></h2><div class="steps"><article><span>01</span><h3>从一个好问题开始</h3><p>它应该扮演谁？解决什么问题？<br>挑选蓝图，或打开一张空白画布。</p></article><article><span>02</span><h3>拼出你的想法</h3><p>组合积木，调整角色、知识与工具。<br>需要帮助时，和构建助手聊一聊。</p></article><article><span>03</span><h3>运行，然后更进一步</h3><p>观察轨迹，检查回答，修改与再试。<br>把探索留下，成为自己的作品。</p></article></div></section>
+<section class="education-section section-shell" id="education"><div class="education-frame"><div class="section-kicker">04 / 为学习，也为更大的创造</div><h2>学会和 AI 对话之后，<br>试着亲手创造一个。</h2><p class="education-intro">从读懂一个智能体，到改造它，再到自主搭建。<br>Blocky 希望让创作成为理解 AI 的一种方式。</p><div class="education-path"><span>读懂</span><i aria-hidden="true"></i><span>改造</span><i aria-hidden="true"></i><span>搭建</span><i aria-hidden="true"></i><span>解释</span></div><div class="education-columns"><article><h3>给每一位创作者</h3><p>围绕好奇心与真实问题探索。让一个小想法，长成可以继续修改的作品。</p></article><article><h3>给教育中的探索者</h3><p>用共同的画布讨论角色、工具和决策，让学习过程可以被观察和讲述。</p></article></div><div class="education-note">课堂应用与教学效果仍在探索中。组织后台、课程支持和多端能力将按后续计划推进。</div></div></section>
+<section class="access-section section-shell"><div><div class="section-kicker">05 / 开放创作的可能</div><h2>个人自由探索。<br>教育一起向前。</h2></div><div class="access-details"><article><span class="access-label">个人创作</span><h3>免费使用</h3><p>面向个人的完整创作体验。个人版开源与社区生态正在筹备，模型服务费用按所用服务独立计算。</p></article><article><span class="access-label">学校与教育机构</span><h3>按教学需求规划</h3><p>机构服务方向涵盖组织配置、师生与课堂、课程和教学支持，具体方案按规模与需求确定；相关服务尚在建设中。</p></article></div></section>
+<section class="faq-section section-shell" id="faq"><div><div class="section-kicker">06 / 再多了解一点</div><h2>你可能想知道。</h2></div><div class="faq-list">
+<details><summary>没有编程基础，可以从哪里开始？<span aria-hidden="true">＋</span></summary><p>可以先选择一份起始蓝图，读懂每块积木的作用，再修改角色、知识与回答方式。入门视图按“开始、角色、会思考、会查找、会记住、会行动、会回答”组织能力。</p></details>
+<details><summary>Blocky 和直接与 AI 聊天有什么区别？<span aria-hidden="true">＋</span></summary><p>除了得到回答，你还可以决定智能体的角色、知识、工具与执行方式，将它们组合成可查看、可修改、可复用的项目，并沿运行轨迹理解过程。</p></details>
+<details><summary>目前支持哪些设备？<span aria-hidden="true">＋</span></summary><p>当前产品以 Windows 桌面端为主。macOS 创作端，以及 Android、HarmonyOS 和 iOS 运行端属于后续规划。网页中的在线体验展示预设 UI，不提供真实 AI 服务。</p></details>
+<details><summary>作品和模型连接如何管理？<span aria-hidden="true">＋</span></summary><p>桌面端使用 .blocky 项目文件保存作品，可配置自己的模型连接。真实模型调用是否发送内容、产生费用，取决于使用的模型服务及项目配置。在线 UI 体验不需要填写密钥，也不读取本地文件。</p></details>
+<details><summary>在哪里获取桌面版和开源代码？<span aria-hidden="true">＋</span></summary><p>桌面产品正在持续完善，公开下载渠道、个人版开源和社区入口尚在准备。本站会在渠道正式开放后更新链接。</p></details>
+</div></section>
+<section class="closing section-shell"><span class="section-kicker">CURIOSITY IS THE FIRST BLOCK.</span><h2>下一个想法，<br>从你开始。</h2><a class="button button-accent" href="#blueprints">找到你的创作起点</a></section>`;
+}

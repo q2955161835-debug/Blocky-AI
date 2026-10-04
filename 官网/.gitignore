@@ -1,0 +1,8 @@
+!dist/
+!dist/**
+.sites-runtime/
+.sites-checkout*/
+node_modules/
+.env
+.env.*
+!.env.example
