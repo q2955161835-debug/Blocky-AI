@@ -35,7 +35,8 @@ export function worldCamera(type,model){
     if(aspect!==view.camera.aspect)fit(view.camera);
     const lo=Math.min(4,Math.max(0,Math.floor(amount))),hi=Math.min(4,lo+1),mix=THREE.MathUtils.smoothstep(amount-lo,0,1);
     const [a,e,r]=frames[lo].map((v,i)=>THREE.MathUtils.lerp(v,frames[hi][i],mix));
-    const target=centers[lo].clone().lerp(centers[hi],mix),position=new THREE.Vector3(Math.sin(a)*r,1+Math.tan(e)*r,Math.cos(a)*r);
+    const elevation=e+(type==='professional'&&lo===1?Math.sin(Math.PI*mix)*.28:0);
+    const target=centers[lo].clone().lerp(centers[hi],mix),position=new THREE.Vector3(Math.sin(a)*r,1+Math.tan(elevation)*r,Math.cos(a)*r);
     // Travel on an exterior orbit, fitted to actual model outlines at each stop.
     // No linear chord can cut through the campus or its tallest structures.
     view.camera.clearViewOffset();view.camera.position.copy(position);view.camera.lookAt(target);view.camera.updateMatrixWorld();
