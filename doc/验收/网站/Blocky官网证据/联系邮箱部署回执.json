@@ -1,0 +1,50 @@
+{
+  "implementation_commit": "cdca7e76280ed5142db01db53f9ceb28bb84139c",
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "commit_sha": "8700f3af1193c1a742575bd948db48520d6666f8",
+    "archive": "D:/1Folder/Blocky-AI/try/官网邮箱/blocky-contact-site.tar.gz"
+  },
+  "saved_version": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_1d874a4575288191b24a07f2f6dee1f6",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 7,
+    "source": {
+      "commit_sha": "8700f3af1193c1a742575bd948db48520d6666f8"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000e93881fda77cc0b8432f8a66",
+      "content_hash": "sha256:4aa7a703d884d49dd22d25be7e5e21b82c7813f85276691446bccf26134058bf",
+      "size_bytes": 2897920,
+      "file_count": 34
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac28e779e688191a1f171f666a406f1",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_1d874a4575288191b24a07f2f6dee1f6",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T17:36:02.828559+00:00"
+  },
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "access_mode": "public",
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "latest_version_number": 7
+  },
+  "archive_current_path": "D:/1Folder/Blocky-AI/try/待清理/官网邮箱-2026-10-05/blocky-contact-site.tar.gz",
+  "scope": "User-authorized public contact email; four static files changed, Studio bundles unchanged. Simple content edit exempt from independent formal acceptance."
+}
