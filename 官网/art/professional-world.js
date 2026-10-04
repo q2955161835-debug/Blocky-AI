@@ -37,7 +37,7 @@ export function professionalWorld(root){
     cylinder(root,'#9bacb9',.2,4,[x,2.55,-3.8]);cylinder(root,'#416a98',.34,.25,[x,4.53,-3.8]);beam(root,[x,4.4,-3.8],[1,4.4,-3.8],.14,'#899daf');
     const hanger=block(root,'#75a5cc',.56,.5,.56);hanger.position.set(x*.67,3.7,-3.8);beam(root,[x*.67,3.95,-3.8],[x*.67,4.4,-3.8],.04,'#a6c2d2');
   }
-  const characters=[[-3.1,1.1,3],[2.4,2.05,-1.1],[1.2,.7,4.6]].map(p=>{const m=mascot(root);m.root.position.set(...p);m.root.scale.setScalar(.35);return m;});
+  const characters=[[-3.1,1.1,3],[2.4,2.05,-1.1],[1.2,.7,4.6]].map((p,i)=>{const m=mascot(root,{expression:['focused','curious','gentle'][i]});m.root.position.set(...p);m.root.scale.setScalar(.35);return m;});
   return {anchors:[new THREE.Vector3(0,2,0),new THREE.Vector3(1,4,-3.1),new THREE.Vector3(-3.3,2,1.4),new THREE.Vector3(3.7,2,2),new THREE.Vector3(-.2,1.8,4.25)],animate(time,pointer,reduced){
     characters.forEach(c=>c.look(pointer,reduced));if(reduced)return;
     orbitGroup.rotation.y=Math.sin(time*.35)*.3;cargo.position.y=2.1+Math.sin(time*.6)*.3;packages.forEach((m,i)=>m.position.z=.18+Math.sin(time*.6+i)*.22);

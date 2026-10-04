@@ -1,18 +1,11 @@
 import {THREE,box,cylinder,sphere,material} from './kit.js';
+import {addExpression,roleExpressions} from './expressions.js';
 
-export function mascot(parent,{color='#12aee2',kind='brand'}={}){
+export function mascot(parent,{color='#12aee2',kind='brand',expression=roleExpressions[kind]}={}){
   const root=new THREE.Group(),head=new THREE.Group();parent.add(root);root.add(head);
   box(head,color,[1.7,1.45,1.25],[0,0,0],.25);
   for(const x of [-.43,.43])cylinder(head,color,.25,.22,[x,.79,0]);
-  const pupils=[];
-  for(const x of [-.37,.37]){
-    const eye=sphere(head,'#f6f9f5',.2,[x,.09,.631]);eye.scale.set(1,1.2,.36);
-    const pupil=sphere(head,'#13232b',.125,[x,.09,.71]);pupil.scale.set(.87,1.18,.43);
-    const gleam=sphere(pupil,'#ffffff',.028,[-.027,.04,.08]);pupils.push({pupil,x});
-    const brow=box(head,'#153744',[.26,.045,.05],[x,.44,.64],.02);brow.rotation.z=x>0?-.12:.12;
-  }
-  const smile=new THREE.Mesh(new THREE.TorusGeometry(.17,.026,8,24,Math.PI),material('#19333c'));
-  smile.position.set(0,-.31,.65);smile.rotation.z=Math.PI;head.add(smile);
+  const pupils=addExpression(head,expression);
   if(kind==='knowledge'){
     const book=new THREE.Group();book.position.set(0,-.78,.68);root.add(book);
     for(const side of [-1,1]){const cover=box(book,'#215e50',[.76,.08,.65],[side*.4,0,0],.04);cover.rotation.z=side*.15;box(book,'#efeeda',[.65,.09,.55],[side*.4,.085,0],.025).rotation.z=side*.15;}
@@ -32,7 +25,7 @@ export function mascot(parent,{color='#12aee2',kind='brand'}={}){
   return {root,head,pupils,look(pointer,reduced=false){
     const x=reduced?0:THREE.MathUtils.clamp(pointer.x,-1,1),y=reduced?0:THREE.MathUtils.clamp(pointer.y,-1,1);
     head.rotation.y=THREE.MathUtils.lerp(head.rotation.y,x*.23,.1);head.rotation.x=THREE.MathUtils.lerp(head.rotation.x,-y*.12,.1);
-    for(const {pupil,x:base} of pupils){pupil.position.x=base+x*.065;pupil.position.y=.09+y*.055;}
+    for(const {pupil,x:base,y:baseY} of pupils){pupil.position.x=base+x*.05;pupil.position.y=baseY+y*.035;}
   }};
 }
 

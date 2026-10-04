@@ -1,12 +1,13 @@
 import {THREE,block,bracket,glyph} from './kit.js';
 import {mascot} from './characters.js';
+import {heroExpressions} from './expressions.js';
 
 export function heroSculpture(scene){
   const root=new THREE.Group();scene.add(root);let hovered=null,clicked=-100;
   const palette=['#dc5aac','#5361d7','#e9cb58','#4eba9b','#a7c86c','#a080cb'];
   const positions=[[-.32,.26,1.25], [.32,.25,1.05],[-.41,-.12,.8],[.4,-.23,1.2],[-.29,-.34,1.1],[.23,-.37,.95],[-.45,.33,.55],[.44,.36,.6],[-.43,.05,.45],[.45,.03,.6],[-.08,.39,.42],[.1,-.44,.45],[-.45,-.4,.48],[.43,-.43,.55],[-.2,.36,.45],[.2,.36,.5],[-.13,-.39,.45],[.34,.06,.42],[-.34,.1,.46],[.05,.41,.36]];
   const objects=positions.map(([x,y,s],i)=>{
-    const color=palette[i%palette.length],character=i<6||i===11?mascot(root,{color}):null;
+    const color=palette[i%palette.length],character=i<6||i===11?mascot(root,{color,expression:heroExpressions[i%heroExpressions.length]}):null;
     const mesh=character?.root||(i%6===0?bracket(root,color,1.4,1.1,.45):block(root,color,1.5,.55,.7));
     mesh.scale.setScalar(s);mesh.traverse(child=>{child.userData.owner=mesh;});
     return {mesh,character,x,y,s,phase:i,rotation:[.15+(i%3)*.12,(i%4-.8)*.16,(i%2?.12:-.17)]};
