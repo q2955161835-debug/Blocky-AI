@@ -1,3 +1,4 @@
+import { sceneSections } from './scenes.js';
 export function mountContent() {
 document.querySelector('#more-content').innerHTML = `
 <section class="features section-shell" aria-label="产品能力">
@@ -22,9 +23,10 @@ document.querySelector('#more-content').innerHTML = `
 <article style="--card-color:#bb9ddd"><span class="blueprint-index">04</span><div class="blueprint-glyph" aria-hidden="true">π</div><h3>Pi Agent</h3><p>探索智能体循环，继续改造你的 Agent。</p><span class="blueprint-use">进阶 / 智能体探索</span></article>
 </div><p class="blueprint-bottom">也可以从一张空白画布开始。你的想法，决定它的样子。</p></div></section>
 <section class="how-section section-shell" id="how-it-works"><div class="section-kicker">03 / 创作，比想象中更近</div><h2>想一想。搭一搭。<span>再多走一步。</span></h2><div class="steps"><article><span>01</span><h3>从一个好问题开始</h3><p>它应该扮演谁？解决什么问题？<br>挑选蓝图，或打开一张空白画布。</p></article><article><span>02</span><h3>拼出你的想法</h3><p>组合积木，调整角色、知识与工具。<br>需要帮助时，和构建助手聊一聊。</p></article><article><span>03</span><h3>运行，然后更进一步</h3><p>观察轨迹，检查回答，修改与再试。<br>把探索留下，成为自己的作品。</p></article></div></section>
-<section class="education-section section-shell" id="education"><div class="education-frame"><div class="section-kicker">04 / 为学习，也为更大的创造</div><h2>学会和 AI 对话之后，<br>试着亲手创造一个。</h2><p class="education-intro">从读懂一个智能体，到改造它，再到自主搭建。<br>Blocky 希望让创作成为理解 AI 的一种方式。</p><div class="education-path"><span>读懂</span><i aria-hidden="true"></i><span>改造</span><i aria-hidden="true"></i><span>搭建</span><i aria-hidden="true"></i><span>解释</span></div><div class="education-columns"><article><h3>给每一位创作者</h3><p>围绕好奇心与真实问题探索。让一个小想法，长成可以继续修改的作品。</p></article><article><h3>给教育中的探索者</h3><p>用共同的画布讨论角色、工具和决策，让学习过程可以被观察和讲述。</p></article></div><div class="education-note">课堂应用与教学效果仍在探索中。组织后台、课程支持和多端能力将按后续计划推进。</div></div></section>
-<section class="access-section section-shell"><div><div class="section-kicker">05 / 开放创作的可能</div><h2>个人自由探索。<br>教育一起向前。</h2></div><div class="access-details"><article><span class="access-label">个人创作</span><h3>免费使用</h3><p>面向个人的完整创作体验。个人版开源与社区生态正在筹备，模型服务费用按所用服务独立计算。</p></article><article><span class="access-label">学校与教育机构</span><h3>按教学需求规划</h3><p>机构服务方向涵盖组织配置、师生与课堂、课程和教学支持，具体方案按规模与需求确定；相关服务尚在建设中。</p></article></div></section>
+${sceneSections()}
+<section class="access-section section-shell"><div><div class="section-kicker">05 / 开放创作的可能</div><h2>自由探索。<br>一起向前。</h2></div><div class="access-details"><article><span class="access-label">个人创作</span><h3>开源，免费，完整创作</h3><p>以完全开源的个人版和作品、蓝图、积木社区为方向，让每一位创作者自由探索。模型服务与算力独立核算。</p></article><article><span class="access-label">学校与组织</span><h3>服务围绕需求展开</h3><p>根据教学与协作规模，组合组织后台、课程支持、部署与维护服务。组织服务的价值，来自共同创造的方式。</p></article></div></section>
 <section class="faq-section section-shell" id="faq"><div><div class="section-kicker">06 / 再多了解一点</div><h2>你可能想知道。</h2></div><div class="faq-list">
+<details><summary>这些能力目前都开放了吗？<span aria-hidden="true">＋</span></summary><p>官网按 Blocky 的完整产品愿景介绍教育与专业场景，各项能力分阶段开放。当前以 Windows 桌面创作端为主；教育组织、专业团队与部署、社区、更多平台及 Agent App 按产品计划推进。具体可用能力以发布版本为准。</p></details>
 <details><summary>没有编程基础，可以从哪里开始？<span aria-hidden="true">＋</span></summary><p>可以先选择一份起始蓝图，读懂每块积木的作用，再修改角色、知识与回答方式。入门视图按“开始、角色、会思考、会查找、会记住、会行动、会回答”组织能力。</p></details>
 <details><summary>Blocky 和直接与 AI 聊天有什么区别？<span aria-hidden="true">＋</span></summary><p>除了得到回答，你还可以决定智能体的角色、知识、工具与执行方式，将它们组合成可查看、可修改、可复用的项目，并沿运行轨迹理解过程。</p></details>
 <details><summary>目前支持哪些设备？<span aria-hidden="true">＋</span></summary><p>当前产品以 Windows 桌面端为主。macOS 创作端，以及 Android、HarmonyOS 和 iOS 运行端属于后续规划。网页中的在线体验展示预设 UI，不提供真实 AI 服务。</p></details>
