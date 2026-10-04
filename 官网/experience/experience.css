@@ -1,0 +1,40 @@
+/* Product styles are imported unchanged; these rules adapt only the web frame. */
+html,body,#root{height:100%;overflow:hidden;color-scheme:dark}
+.demo-banner{height:32px;display:flex;align-items:center;gap:16px;padding:0 14px;background:#171a20;border-bottom:1px solid #353c47;font-size:11px;color:#a7b3c4}
+.demo-banner>span{margin-right:auto}.demo-banner button{font-size:11px;padding:2px 6px}.demo-banner a{color:#b4c8e9;text-decoration:none}
+.studio.demo-studio{height:calc(100dvh - 32px);min-height:0}
+.demo-mobile-tabs{display:none}
+.demo-blueprints{flex:1 1 420px;min-width:0;max-width:560px}
+.demo-blueprints>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.demo-blueprints>div>button{display:grid;gap:6px;text-align:left;padding:14px}
+.demo-blueprints>div>button span{line-height:1.7;color:#aab6c8}
+.demo-chat-sample{margin:auto 4px;text-align:center;display:grid;gap:12px;align-content:center}
+.demo-chat-sample button{border:1px solid #ffffff17;color:#bcc5d2;line-height:1.7}
+.demo-chat-sample small{font-size:10px;color:#747f8e}
+.demo-empty{flex:1;display:grid;place-items:center}
+.demo-bottom{height:170px;flex-shrink:0;border-top:1px solid var(--border);background:#20242c;overflow:hidden}
+.demo-bottom>[role=tablist]{display:flex;border-bottom:1px solid var(--border)}
+.demo-bottom>[role=tablist]>button:last-child{margin-left:auto}
+.demo-bottom [aria-selected=true]{box-shadow:inset 0 -2px var(--action);color:#c0d3f4}
+.demo-bottom>[role=tabpanel]{height:120px;overflow:auto;padding:6px 14px;font-size:11px;color:var(--muted)}
+.demo-dialog{color:#eef2f7;background:#252a33;border:1px solid #465368;border-radius:10px;width:min(520px,calc(100vw - 28px));max-height:80dvh;padding:22px;box-shadow:0 25px 100px #0008}
+.demo-dialog::backdrop{background:#0009}.demo-dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.demo-dialog h2{font-size:17px;margin:0}.demo-dialog p{line-height:1.8;color:#b5c0cf}.demo-dialog input{width:100%}.demo-search-results{max-height:45dvh;overflow:auto;margin-top:12px;display:grid;grid-template-columns:1fr 1fr}.demo-search-results button{text-align:left}
+.demo-trace{font-size:11px;color:#acbdd1}.demo-trace p{border-left:3px solid #7764c8;padding-left:10px}
+@media(max-width:1100px){.demo-studio .project-title{display:none}.demo-studio .topbar nav button{padding-inline:5px}}
+@media(max-width:900px){
+  .demo-studio .topbar{overflow-x:auto;min-height:44px;scrollbar-width:thin}.demo-studio .topbar>.spacer{min-width:6px}
+  .demo-studio .topbar .toolbar-actions,.demo-studio .topbar .layout-actions{display:flex}
+  .demo-studio .welcome{overflow:auto;padding:28px 22px;gap:24px;align-items:stretch;flex-direction:column}
+  .demo-studio .welcome-heading{width:auto;max-width:100%;margin:0}.demo-studio .welcome h1{font-size:36px}
+  .demo-blueprints{flex:0 0 auto;max-width:none}.demo-blueprints>div{grid-template-columns:1fr 1fr}
+  .demo-mobile-tabs{display:flex;height:37px;flex-shrink:0;border-bottom:1px solid var(--border);background:#252a33}
+  .demo-mobile-tabs button{flex:1;border-radius:0;font-size:12px}.demo-mobile-tabs [aria-pressed=true]{box-shadow:inset 0 -2px #4b83f5;color:#bfd3f8}
+  .demo-workbench{display:block!important;position:relative;min-height:0;overflow:hidden}
+  .demo-workbench>.left-boundary,.demo-workbench>.right-boundary{display:none}
+  .demo-workbench>.workbench-left,.demo-workbench>.workbench-right,.demo-workbench>.workspace{height:100%}
+  .demo-workbench[data-panel=canvas]>.workbench-left,.demo-workbench[data-panel=canvas]>.workbench-right,.demo-workbench[data-panel=library]>.workspace,.demo-workbench[data-panel=library]>.workbench-right,.demo-workbench[data-panel=chat]>.workspace,.demo-workbench[data-panel=chat]>.workbench-left{display:none}
+  .demo-workbench .workbench-left .library{width:100%}.demo-workbench .palette{display:block}.demo-workbench .module-list{max-height:190px}
+  .demo-studio .canvas-toolbar input{width:110px}.demo-studio .canvas-hint{font-size:9px;white-space:normal;max-width:calc(100% - 26px)}
+  .demo-studio .statusbar{font-size:10px}.demo-studio .statusbar>span:last-child{display:none}
+}
+@media(max-width:360px){.demo-blueprints>div{grid-template-columns:1fr}.demo-studio .welcome h1{font-size:32px}.demo-banner{gap:8px;padding-inline:10px}.demo-banner-detail{display:none}}
