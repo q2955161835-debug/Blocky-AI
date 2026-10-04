@@ -12,6 +12,28 @@
   "competitionArtifactsUnchanged": true,
   "outsideWorkspaceStorageCreated": false,
   "ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "ac0984d0d4287b4700ab2a3fc00c05258a034201",
+    "url": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37204040239",
+    "independentMonitor": "watch_windows_ci",
+    "model": "gpt-6-luna",
+    "reasoningEffort": "xhigh",
+    "reportedAtLocal": "2026-10-04 21:33",
+    "requiredStepsSucceeded": [
+      "pnpm build:cli",
+      "pnpm check",
+      "pnpm test:component",
+      "pnpm test:host",
+      "pnpm test:cli",
+      "Preserve validation evidence"
+    ],
+    "expectedSkip": "workflow_dispatch-only knowledge quality",
+    "repairNeeded": false,
+    "monitorWasReadOnly": true,
+    "warning": "Actions Node.js 20弃用提示，未阻断CI"
+  },
+  "earlierCiSnapshot": {
     "conclusion": "",
     "headSha": "ac0984d0d4287b4700ab2a3fc00c05258a034201",
     "jobs": [
