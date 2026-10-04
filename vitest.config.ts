@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { availableParallelism } from "node:os";
 export default defineConfig({
   test: {
     include: [
@@ -9,7 +10,7 @@ export default defineConfig({
     ],
     exclude: ["**/node_modules/**"],
     testTimeout: 10000,
-    // Leave capacity for tests that start real Node/Host child processes.
-    maxWorkers: 8,
+    // Real Node/Host subprocesses share the runner CPUs with Vitest workers.
+    maxWorkers: Math.max(1, Math.min(8, Math.floor(availableParallelism() / 2))),
   },
 });
