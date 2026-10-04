@@ -11,7 +11,7 @@ export function mascot(parent,{color='#12aee2',kind='brand',expression=roleExpre
   if(grounded)for(const x of [-.33,.33])box(root,color,[.38,.145,.50],[x,-.7975,.08],.055);
   return {root,head,pupils,look(pointer,reduced=false){
     const x=reduced?0:THREE.MathUtils.clamp(pointer.x,-1,1),y=reduced?0:THREE.MathUtils.clamp(pointer.y,-1,1);
-    head.rotation.y=THREE.MathUtils.lerp(head.rotation.y,x*.23,.1);head.rotation.x=THREE.MathUtils.lerp(head.rotation.x,-y*(grounded?.035:.12),.1);
+    head.rotation.y=reduced?0:THREE.MathUtils.lerp(head.rotation.y,x*.23,.1);head.rotation.x=reduced?0:THREE.MathUtils.lerp(head.rotation.x,-y*(grounded?.035:.12),.1);
     for(const {pupil,x:base,y:baseY} of pupils){pupil.position.x=base+x*.05;pupil.position.y=baseY+y*.035;}
   }};
 }
