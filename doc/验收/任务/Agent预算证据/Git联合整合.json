@@ -1,0 +1,153 @@
+{
+  "checkedAt": "2026-10-04T21:02:28.6296516+08:00",
+  "authorizationDate": "2026-10-04",
+  "scope": "初赛归档、根目录复赛及模版优化聊天已验预算修正",
+  "productSourceCommit": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+  "previousMain": "c84d082",
+  "integratedCommit": "ac0984d0d4287b4700ab2a3fc00c05258a034201",
+  "remoteMainReadback": "ac0984d0d4287b4700ab2a3fc00c05258a034201",
+  "mergeMode": "fast-forward",
+  "localTaskBranchDeleted": true,
+  "remoteTaskBranchOriginallyAbsent": true,
+  "competitionArtifactsUnchanged": true,
+  "outsideWorkspaceStorageCreated": false,
+  "ci": {
+    "conclusion": "",
+    "headSha": "ac0984d0d4287b4700ab2a3fc00c05258a034201",
+    "jobs": [
+      {
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "databaseId": 111441414538,
+        "name": "contracts",
+        "startedAt": "2026-10-04T12:59:54Z",
+        "status": "in_progress",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T12:59:57Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T12:59:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T13:00:09Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-10-04T12:59:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T13:00:13Z",
+            "conclusion": "success",
+            "name": "Run pnpm/action-setup@v4",
+            "number": 3,
+            "startedAt": "2026-10-04T13:00:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T13:00:42Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v4",
+            "number": 4,
+            "startedAt": "2026-10-04T13:00:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T13:00:52Z",
+            "conclusion": "success",
+            "name": "Run pnpm install --frozen-lockfile",
+            "number": 5,
+            "startedAt": "2026-10-04T13:00:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Run pnpm build:cli",
+            "number": 6,
+            "startedAt": "2026-10-04T13:00:52Z",
+            "status": "in_progress"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Run pnpm check",
+            "number": 7,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Run pnpm test:component",
+            "number": 8,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Run pnpm test:host",
+            "number": 9,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Run pnpm test:cli",
+            "number": 10,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Frozen knowledge quality (actual Host/model)",
+            "number": 11,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Preserve validation evidence",
+            "number": 12,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Post Run actions/setup-node@v4",
+            "number": 22,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Post Run pnpm/action-setup@v4",
+            "number": 23,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          },
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Post Run actions/checkout@v4",
+            "number": 24,
+            "startedAt": "0001-01-01T00:00:00Z",
+            "status": "pending"
+          }
+        ],
+        "url": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37204040239/job/111441414538"
+      }
+    ],
+    "status": "in_progress",
+    "url": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37204040239"
+  }
+}
