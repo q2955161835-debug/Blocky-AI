@@ -41,6 +41,7 @@ export class ArtEngine {
     this.renderer.setScissorTest(false);this.renderer.clear();this.renderer.setScissorTest(true);
     for(const view of [...this.views].sort((a,b)=>Number(a.element.dataset.art==='brand')-Number(b.element.dataset.art==='brand'))){
       if(!view.element.isConnected||!view.element.getClientRects().length)continue;
+      if(view.model.fade){const style=getComputedStyle(view.element);if(style.visibility==='hidden'||Number(style.opacity)<.001)continue;view.model.fade(Number(style.opacity));}
       const r=view.element.getBoundingClientRect();if(r.bottom<=0||r.top>=innerHeight||r.right<=0||r.left>=innerWidth||r.width<1||r.height<1)continue;
       const progress=THREE.MathUtils.clamp((innerHeight-r.top)/(innerHeight+r.height),0,1);
       view.camera.aspect=r.width/r.height;view.camera.updateProjectionMatrix();view.model.update?.(time,progress,this.pointer,this.reduced.matches,view.camera.aspect);

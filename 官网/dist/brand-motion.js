@@ -1,6 +1,6 @@
 export function mountBrandMotion(){
   const badge=document.createElement('a');badge.href='#';badge.className='brand-orbit';badge.setAttribute('aria-label','Blocky 首页');
-  badge.innerHTML=`<span class="brand-avatar art-stage" data-art="brand" aria-hidden="true"><img class="brand-fallback" src="./assets/blocky.png" alt=""></span><span class="brand-word" data-no-translate>Blocky.</span><svg class="brand-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M 30 90 A 43 43 0 1 1 70 90"/><text x="50" y="95" text-anchor="middle" data-no-translate>Blocky.</text></svg>`;
+  badge.innerHTML=`<span class="brand-avatar" aria-hidden="true"><img class="brand-flat" src="./assets/blocky.png" alt=""><span class="brand-model art-stage" data-art="brand"><img class="brand-fallback" src="./assets/blocky.png" alt=""></span></span><span class="brand-word" data-no-translate>Blocky.</span><svg class="brand-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M 30 90 A 43 43 0 1 1 70 90"/><text x="50" y="95" text-anchor="middle" data-no-translate>Blocky.</text></svg>`;
   document.body.append(badge);let frame=0;
   function update(){frame=0;const world=!!document.body.dataset.world,compact=world||scrollY>innerHeight*.35;
     document.body.classList.toggle('nav-compact',compact);

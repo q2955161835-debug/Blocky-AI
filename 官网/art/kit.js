@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const geometry = new Map(), materials = new Map();
-export function material(color, metalness = .08) {
-  const key = `${color}/${metalness}`;
-  if (!materials.has(key)) materials.set(key, new THREE.MeshPhysicalMaterial({color, roughness:.32, metalness, clearcoat:.55, clearcoatRoughness:.28}));
+export function material(color, metalness = .08, roughness=.32, clearcoat=.55) {
+  const key = `${color}/${metalness}/${roughness}/${clearcoat}`;
+  if (!materials.has(key)) materials.set(key, new THREE.MeshPhysicalMaterial({color, roughness, metalness, clearcoat, clearcoatRoughness:.28}));
   return materials.get(key);
 }
 export function box(parent, color, size, position=[0,0,0], radius=.12) {

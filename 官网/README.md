@@ -2,7 +2,7 @@
 
 公开地址：[blocky.donk55666.chatgpt.site](https://blocky.donk55666.chatgpt.site)
 
-官网按完整产品愿景讲述教育与专业场景，具体开放进度集中 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定胶囊导航保留唯一在线体验入口。首屏居中文字与彩色3D积木角色环绕，蓝图四宫格角色跟随鼠标；滚动后的品牌迁移到左上圆环。
+官网按完整产品愿景讲述教育与专业场景，具体开放进度见05开放方式与06 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定胶囊导航保留唯一在线体验入口。首屏居中文字与彩色3D积木角色环绕，蓝图四宫格角色跟随鼠标；品牌从初始原2D Logo连续转为左上圆环3D角色。
 
 官网和在线体验支持中文/English及深色/浅色。首次访问，两项均跟随系统；手动选择后保留偏好，也可恢复“跟随系统”。系统语言以浏览器提供的首选系统语言为准，中文使用中文，其余使用英文；系统外观变化会立即同步。切换保留当前锚点与演示编辑内容。只有两项显示偏好写入 localStorage，演示内容不持久化。
 
@@ -16,6 +16,7 @@
 - `build-experience.mjs`：用根目录既有 esbuild 构建 `dist/studio/`，输出哈希资源与第三方许可证。构建拒绝包含桌面 composition、Tauri Host 或 worker；不新增依赖。
 - `.openai/hosting.json`：Sites 站点身份和静态目录配置。
 - `art/`：独立Three.js依赖与程序化几何；角色、积木、教育/专业世界、镜头与共享渲染器分模块。`art/references/`保存ImageGen建模参考，不进入发布包。
+- `art/expressions.js`、`character-accessories.js`：浅弧嘴与六种表情、四蓝图连贯配件；场景人物带接地脚部。`campus-buildings.js`、`district-buildings.js`按功能建筑建立固定地坪和连续结构；`world-camera.js`沿外部球面轨道插值位置与朝向，按当前建筑几何轮廓和可用画面取景。
 - `build-art.mjs`：通过根esbuild生成公开`dist/art3d.js`及Three.js许可证。无远程模型、贴图、运行时CDN或真实模型连接。
 - `dist/world-pages.js`：`#/education`积木校园与`#/professional`创作园区。正常滚动驱动转向及远近镜头，章节按钮定位；“阅读全部”、减少动态效果或3D失败时按普通文档阅读原全部正文。
 - `dist/brand-motion.js`、`active-navigation.js`、`content-motion.js`与`capsule.css`/`art.css`/`worlds.css`：品牌迁移与圆环、活动导航画线/擦除、内容入场及3D版式。
