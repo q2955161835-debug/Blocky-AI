@@ -1,0 +1,178 @@
+{
+  "implementation_commit": "60f4fe876de30e95fe9f1a9459aee506ff0f4cf8",
+  "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+  "source_checkout": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+  "public_asset_count": 33,
+  "entries": [
+    {
+      "path": "dist/appearance.css",
+      "size": 7315,
+      "sha256": "f062b7b3b4adaef9a21c7231797e1f9adb780d3f8af8d4244eefe040d0285946"
+    },
+    {
+      "path": "dist/assets/blockly-media/1x1.gif",
+      "size": 43,
+      "sha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629"
+    },
+    {
+      "path": "dist/assets/blockly-media/delete-icon.svg",
+      "size": 315,
+      "sha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef"
+    },
+    {
+      "path": "dist/assets/blockly-media/dropdown-arrow.svg",
+      "size": 569,
+      "sha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9"
+    },
+    {
+      "path": "dist/assets/blockly-media/foldout-icon.svg",
+      "size": 150,
+      "sha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64"
+    },
+    {
+      "path": "dist/assets/blockly-media/handclosed.cur",
+      "size": 326,
+      "sha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5"
+    },
+    {
+      "path": "dist/assets/blockly-media/handdelete.cur",
+      "size": 766,
+      "sha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040"
+    },
+    {
+      "path": "dist/assets/blockly-media/handopen.cur",
+      "size": 198,
+      "sha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd"
+    },
+    {
+      "path": "dist/assets/blockly-media/pilcrow.png",
+      "size": 1010,
+      "sha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167"
+    },
+    {
+      "path": "dist/assets/blockly-media/quote0.png",
+      "size": 771,
+      "sha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c"
+    },
+    {
+      "path": "dist/assets/blockly-media/quote1.png",
+      "size": 738,
+      "sha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35"
+    },
+    {
+      "path": "dist/assets/blockly-media/resize-handle.svg",
+      "size": 218,
+      "sha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b"
+    },
+    {
+      "path": "dist/assets/blockly-media/sprites.svg",
+      "size": 1775,
+      "sha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f"
+    },
+    {
+      "path": "dist/assets/blocky.png",
+      "size": 1222308,
+      "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d"
+    },
+    {
+      "path": "dist/content.js",
+      "size": 9066,
+      "sha256": "afc2ac541597a9b71b435d5fdb227cc04201ea28340c5992b8ca531117f6ecee"
+    },
+    {
+      "path": "dist/demo-translations.js",
+      "size": 5285,
+      "sha256": "6baea135fedecc188b7938928b834473a1c304b59a40989e1d8812ca8944db60"
+    },
+    {
+      "path": "dist/demo.js",
+      "size": 419,
+      "sha256": "1fac92bec90d41214f77f925bc713194d9c2bd36cbdb22d78d94ca7c612ea90d"
+    },
+    {
+      "path": "dist/index.html",
+      "size": 5793,
+      "sha256": "447617205bc11713e9a7ffbc1e33157df98fbe8351a8207e74b0f43eff4a94b7"
+    },
+    {
+      "path": "dist/main.js",
+      "size": 1638,
+      "sha256": "1fae8bab7791812e5672371f5ec97e50751e7425854a09375f30fc9bae1c5382"
+    },
+    {
+      "path": "dist/navigation.css",
+      "size": 746,
+      "sha256": "6c9f0d63b866ad17033d5b89479db30e662dbf59cd4335f85e51f6082e21ef51"
+    },
+    {
+      "path": "dist/preferences-boot.js",
+      "size": 605,
+      "sha256": "f938615cad405b7e16f26de9fe2143f07b14fa80fbddace247205aec2d9b45b4"
+    },
+    {
+      "path": "dist/preferences.css",
+      "size": 2315,
+      "sha256": "37e66560af048e19c6783ff4d798e42d4df05eb4cfb258bf0619fe445d7b1078"
+    },
+    {
+      "path": "dist/preferences.js",
+      "size": 8312,
+      "sha256": "9e8a1f964de33104a851d835dec6b6bbaf5406fd44cfa3187460e622cd764e8b"
+    },
+    {
+      "path": "dist/scenes.css",
+      "size": 8192,
+      "sha256": "0c5fb1950618bb1424a9f57d01fd64707da74113cad21f3c0b6936634c95c678"
+    },
+    {
+      "path": "dist/scenes.js",
+      "size": 6715,
+      "sha256": "f163c24156e42846bf05e3269a06e5d008ac932c60c9e07cf0a8c12ff1db9d9a"
+    },
+    {
+      "path": "dist/studio/app-SVYGZQ64.js",
+      "size": 1448973,
+      "sha256": "b7db566d06e55b9d4d2afabe0f39ecb6a3926c4bc9194f2b7c68e87d8cf05962"
+    },
+    {
+      "path": "dist/studio/app-SVYGZQ64.js.LEGAL.txt",
+      "size": 1528,
+      "sha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3"
+    },
+    {
+      "path": "dist/studio/app-TMMI2MKX.css",
+      "size": 42070,
+      "sha256": "0b4c37d888e35c34a461e3ba526573375fe96efd8e9cc10d2d4a696881ad14d4"
+    },
+    {
+      "path": "dist/studio/index.html",
+      "size": 655,
+      "sha256": "ea097c669aba76d5cf0d40fbad4aff8ad77eb1e6569a876f13260430f3ae6b08"
+    },
+    {
+      "path": "dist/studio/licenses.txt",
+      "size": 18273,
+      "sha256": "8a672a44492afb4bf7c566750f3b673dcdc466ecd9abab3c32428513b8693f78"
+    },
+    {
+      "path": "dist/styles.css",
+      "size": 25937,
+      "sha256": "5579c57cc0386748c74b4ea1cb4dcebb811acfe1a867a37e0ab65a90ac58d586"
+    },
+    {
+      "path": "dist/translations.js",
+      "size": 21138,
+      "sha256": "ca71c8a36287489675dc1d3e543add72d16c681645f2ab46e58c886cbdf95364"
+    },
+    {
+      "path": "dist/ui-translations.js",
+      "size": 17129,
+      "sha256": "7ae011d114ec1433e18d0210f640ba7e389c2bfe8595b07518f0e2e56d19249b"
+    },
+    {
+      "path": ".openai/hosting.json",
+      "size": 100,
+      "sha256": "a2d70737989b8de18e2f1ad0f68b3c7d1e7487dcb03ff308a3a2760dda1bc495"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "implementation_commit": "60f4fe876de30e95fe9f1a9459aee506ff0f4cf8",
+  "archive_current_path": "D:/1Folder/Blocky-AI/try/待清理/官网工作演示-2026-10-05/blocky-guided-site.tar.gz",
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "commit_sha": "d1a0da09336b740def344c308adb357309205fe3",
+    "archive": "D:/1Folder/Blocky-AI/try/官网工作演示/blocky-guided-site.tar.gz"
+  },
+  "saved_version": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_3a148b285d608191b86c09e106cd7340",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 6,
+    "source": {
+      "commit_sha": "d1a0da09336b740def344c308adb357309205fe3"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000fc488230b3ae3432d8ca35db",
+      "content_hash": "sha256:da0f027dfce05b33f0d96cbf12d2d13b2d331b2f2bf05a1c2f673a5d86a39044",
+      "size_bytes": 2897920,
+      "file_count": 34
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac28709e34481919c679bf559523906",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_3a148b285d608191b86c09e106cd7340",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T17:04:17.847024+00:00"
+  },
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "access_mode": "public",
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "latest_version_number": 6,
+    "updated_at": "2026-10-04T17:04:17.730205+00:00"
+  }
+}
