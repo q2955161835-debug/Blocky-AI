@@ -156,7 +156,9 @@ fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
     }
     let map = value.as_object().ok_or(ERROR)?;
     let messages = value["messages"].as_array().ok_or(ERROR)?;
-    if (coding && value.to_string().len() > 8 * 1024 * 1024)
+    if (coding
+        && (value.to_string().len() > 8 * 1024 * 1024
+            || serde_json::to_vec(messages).map_err(|_| ERROR)?.len() > crate::coding::HISTORY_BYTES))
         || value["schemaVersion"]
             != if coding {
                 "blocky.coding-chat/v1"
@@ -249,6 +251,8 @@ mod tests {
         assert!(store.write("coding-chat", "sample", large).is_err());
         let total = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"sample","messages":(0..3).map(|id| serde_json::json!({"id":format!("m_{id}"),"role":"assistant","text":"x".repeat(1536 * 1024),"status":"completed"})).collect::<Vec<_>>()});
         assert!(store.write("coding-chat", "sample", total).is_err());
+        let escaped_total = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"sample","messages":(0..4).map(|id| serde_json::json!({"id":format!("escaped_{id}"),"role":"assistant","text":format!("line{}", "\n".repeat(600000)),"status":"completed"})).collect::<Vec<_>>()});
+        assert!(store.write("coding-chat", "sample", escaped_total).is_err());
         assert_eq!(store.read("coding-chat", "sample").unwrap(), Some(value.clone()));
         let mut secret = value.clone();
         secret["messages"][0]["text"] =

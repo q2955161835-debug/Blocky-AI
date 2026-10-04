@@ -1,6 +1,6 @@
 # 内置代码 Agent 与 Host 工具
 
-这是桌面代码助手的接口；旧builder/v1仍兼容。2026-10-02内置代码Agent Windows 最终验收及聊天修复结论只绑定当时的源码和包：[代码Agent验收](../../验收/任务/验收-2026-10-02-内置代码Agent最终交付.md)、[聊天修复验收](../../验收/任务/验收-2026-10-02-右侧聊天简化与发送修复.md)。2026-10-04 起点蓝图、Pi 循环与默认构建助手调整见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)；该新范围正在实现，尚未独立验收，不能套用上述历史结论。
+这是桌面代码助手的接口；旧builder/v1仍兼容。2026-10-02内置代码Agent Windows 最终验收及聊天修复结论只绑定当时的源码和包：[代码Agent验收](../../验收/任务/验收-2026-10-02-内置代码Agent最终交付.md)、[聊天修复验收](../../验收/任务/验收-2026-10-02-右侧聊天简化与发送修复.md)。2026-10-04 起点蓝图、Pi 循环与默认构建助手已通过该任务独立验收，见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)。本文预算和长文本边界随本次修正更新；新普通包是否通过，以[Agent预算任务验收](../../验收/任务/验收-2026-10-04-Agent-Token预算修正.md)的精确来源与结果为准。
 
 ## 桌面交互
 
@@ -10,23 +10,23 @@ Blocky Agent显示项目运行结果与独立运行轨迹，轨迹保留积木�
 
 ## 会话与存储
 
-`builder-protocol/src/coding.ts`是共享严格Schema入口。`blocky.coding-start/v1`包含requestId/projectId/moduleId、prompt、originalJson、resourceId、selection、conversation与可选workspaceId；不含操作类型、模拟模式或页面复选框。conversation最多20条、每条16000 UTF-16单位、总64000，包含前轮完成/拒绝/取消状态。start整体最多9MiB UTF-8。
+`builder-protocol/src/coding.ts`是共享严格Schema入口。`blocky.coding-start/v1`包含requestId/projectId/moduleId、prompt、originalJson、resourceId、selection、conversation与可选workspaceId；不含操作类型、模拟模式或页面复选框。prompt保留16000 UTF-16单位输入边界；conversation最多20条、单条正文最多2MiB UTF-8，序列化消息数组最多4MiB UTF-8。originalJson最多8MiB UTF-8；Host IPC单帧另限16MiB。conversation携带前轮用户与助手正文，状态保存在本地聊天记录。
 
 未选择文件夹时Host省略workspaceId，不序列化null；正常文本对话与项目上下文不以目录授权为前提。文件工具仍要求有效目录授权。
 
-`blocky.coding-chat/v1`按项目保存最多40条角色/正文/状态消息，总64000 UTF-16单位，桌面另限编码96KiB。新旧聊天分开；不持久化目录授权、凭据或可接受项目候选。工作目录由原生选择器授予不透明workspaceId，仅在Host及当前会话内使用。当前提供单项目连续对话与新对话；历史会话管理和附件选择器未实现。
+`blocky.coding-chat/v1`按项目保存最多40条角色/正文/状态消息，单条正文最多2MiB UTF-8，序列化消息数组最多4MiB UTF-8，完整存储文件最多8MiB。Host与桌面共同检查字节边界，拒绝无效输入时不替换原记录。新旧聊天分开；旧builder/v1存储约束保持原值，不持久化目录授权、凭据或可接受项目候选。工作目录由原生选择器授予不透明workspaceId，仅在Host及当前会话内使用。当前提供单项目连续对话与新对话；历史会话管理和附件选择器未实现。
 
 `blocky.coding-event/v1`绑定requestId/projectId与正整数sequence；kind为text.delta、tool.started/completed/failed、file.changed。前端只接受同owner的连续序号，结果中的相同事件重放必须完全相等。切项目、退出或取消后不能应用迟到项目候选。
 
-`blocky.coding-result/v1`包含requestId/projectId/baseDigest、text、changes、events、generations、engine、modelApiCalled，可选正式Project。文本64000 UTF-16单位，changes128、events2048、generations12。模型响应证据区分本地推理与实际外部API，不从回复文字推断调用事实。
+`blocky.coding-result/v1`包含requestId/projectId/baseDigest、text、changes、events、generations、engine、modelApiCalled，可选正式Project。正文最多2MiB UTF-8，changes128、events262144、generations4096。流式text.delta单事件仍有16384 UTF-16单位边界；它不限制最终正文长度。模型响应证据区分本地推理与实际外部API，不从回复文字推断调用事实。
 
 ## Pi 与模型桥接
 
-Pi Agent 0.86.0最多12次模型请求，总300000ms；纯文本可以结束，不强制draft/patch。worker只导入受审计Pi内核与共享领域模块，不直接导入文件系统、进程或Provider SDK。Host持有模型凭据，使用声明tools能力的已配置模型与auto tool choice；不存在静默模拟兜底。
+Pi Agent 0.86.0每任务最多4096次模型请求、65536次工具调用，任务最长24小时；单次模型请求超时可配置到1小时。构建助手不额外设置单次或累计Token配额：模型未显式设置输出参数时HTTP请求省略max_tokens；显式配置时使用该参数，服务自身容量仍由服务决定。轮次、时长、文件和IPC字节边界独立保留。纯文本可以结束，不强制draft/patch。worker只导入受审计Pi内核与共享领域模块，不直接导入文件系统、进程或Provider SDK。Host持有模型凭据，使用声明tools能力的已配置模型与auto tool choice；不存在静默模拟兜底。
 
 `blocky.coding-ipc/v1`以requestId绑定start/provider.call/result/error、tool.call/result、event、complete/error/cancel；工具另带唯一callId。全部消息有界严格校验，Host执行工具并生成真实变更回执，模型不能伪造file.changed。取消须等当前操作与进程结算；写入前在同一状态锁内重查取消，已完成写入保留回执。
 
-## 七个工具
+## Host工具
 
 | 工具 | 行为 |
 |---|---|
@@ -35,6 +35,7 @@ Pi Agent 0.86.0最多12次模型请求，总300000ms；纯文本可以结束，�
 | workspace_read | 读取有界UTF-8文本与SHA256版本 |
 | workspace_write | 创建或摘要匹配替换，返回前后内容/摘要 |
 | workspace_undo | 当前摘要匹配后撤回真实修改，产生逆向回执 |
+| workspace_check | 检查所选目录的JSON或JavaScript语法，返回实际检查结果；不执行仓库代码 |
 | blocky_cli | 用参数数组执行锁定CLI bundle，返回真实退出码和结构化输出 |
 | project_context | 当前隔离项目候选、模块与选区；实际诊断通过CLI compile |
 
@@ -52,7 +53,7 @@ CLI的`--blocky-coding-run`helper读首帧任务，后续控制帧/EOF协作取�
 
 Host校验`blocky.cli-runtime/v1`的bundle字节数/SHA256。构建先生成runtime-worker和CLI锁定bundle，再编译内嵌锁的原生helper/Host；dev/build/native-test/release按发行布局放置CLI与原生依赖。
 
-桌面候选显示实际项目文件差异与权限变化。当前有效行为是在项目身份、基线摘要、正式格式、编译和 Host 权限校验通过且画布未并发变化时，自动通过`coding_validate_project`并由`controller.edit`作为一次可撤销编辑应用；项目在任务期间变化时保留冲突候选、不覆盖画布。该行为与普通积木编辑共用撤销边界；它不是 CLI 批准流程。当前 10/04 行为及未验收状态见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)。
+桌面候选显示实际项目文件差异与权限变化。当前有效行为是在项目身份、基线摘要、正式格式、编译和 Host 权限校验通过且画布未并发变化时，自动通过`coding_validate_project`并由`controller.edit`作为一次可撤销编辑应用；项目在任务期间变化时保留冲突候选、不覆盖画布。该行为与普通积木编辑共用撤销边界；它不是 CLI 批准流程。当前 10/04 行为及对应验收来源见[契约18](18-四类起始蓝图、Pi运行与共享工作目录.md)。
 
 桌面 `coding_run` 发送任务时不弹每任务 Yes/No 对话框；Tauri Host 仍预检并重算绑定任务与模型版本的请求摘要，检查 requestId 一次性、工作目录和 Host 权限。该摘要是请求完整性绑定，不是逐任务用户批准。CLI helper 保留原生 Yes/No 任务批准框；普通 CLI `run start --live` 的批准摘要/交互流程也保持独立。三种状态不得混写。桌面默认 `project_context` 和 `blocky_cli` 上下文、运行上下文的 8 KiB 有界投影及候选自动应用条件见[契约18第4节](18-四类起始蓝图、Pi运行与共享工作目录.md)。
 
