@@ -1,0 +1,45 @@
+{
+  "time": "2026-10-04 23:26",
+  "from": "D:\\1Folder\\Blocky-AI\\try\\官网修正",
+  "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网修正-2026-10-04",
+  "fileCount": 691,
+  "bytes": 40531915.0,
+  "allHashesMatched": true,
+  "groups": [
+    {
+      "name": "acceptance",
+      "files": 280,
+      "bytes": 14385419.0
+    },
+    {
+      "name": "blocky-fixed-site.tar.gz",
+      "files": 1,
+      "bytes": 1602661.0
+    },
+    {
+      "name": "capture-native.mjs",
+      "files": 1,
+      "bytes": 1439.0
+    },
+    {
+      "name": "dev-check.mjs",
+      "files": 1,
+      "bytes": 2593.0
+    },
+    {
+      "name": "development",
+      "files": 228,
+      "bytes": 13330290.0
+    },
+    {
+      "name": "experience-build.json",
+      "files": 1,
+      "bytes": 123429.0
+    },
+    {
+      "name": "native-reference",
+      "files": 179,
+      "bytes": 11086084.0
+    }
+  ]
+}

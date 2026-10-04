@@ -1,0 +1,54 @@
+{
+  "localProductCommit": "ad3eaec271caff07f29f37a9d2bc0c74a60dedaa",
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "commit_sha": "abb59ac99da68a6adbbb54378bee6ee9d1bbee12",
+    "archive": "D:/1Folder/Blocky-AI/try/官网修正/blocky-fixed-site.tar.gz"
+  },
+  "savedVersion": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_0514e30d23d08191a53a5afcca4e617b",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 4,
+    "source": {
+      "commit_sha": "abb59ac99da68a6adbbb54378bee6ee9d1bbee12"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000199881fd94a3c99b02845950",
+      "content_hash": "sha256:c3287bbd87d9f75199a9044ff0bc46c6bdec82c82fdc48211828ff57d60e4af3",
+      "size_bytes": 2723840,
+      "file_count": 15
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac26ed33a748191aa2db36b9b10ab02",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_0514e30d23d08191a53a5afcca4e617b",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T23:20:58.507778+08:00"
+  },
+  "currentSite": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "latest_version_number": 4,
+    "access_mode": "public"
+  },
+  "archivedPaths": {
+    "archive": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网修正-2026-10-04\\blocky-fixed-site.tar.gz",
+    "acceptanceEvidence": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网修正-2026-10-04\\acceptance",
+    "nativeReference": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网修正-2026-10-04\\native-reference",
+    "note": "原生source.archive保留执行时路径，23:26整目录可逆移动，逐文件哈希一致。"
+  }
+}
