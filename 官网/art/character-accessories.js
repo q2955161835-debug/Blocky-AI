@@ -33,7 +33,7 @@ export function addAccessories(root,head,color,kind){
       box(tasks,'#69a694',[.06,.06,.014],[-.13,.15-i*.15,.048],.008);
       box(tasks,'#b2ad9b',[.17,.022,.014],[.045,.15-i*.15,.048],.008);
     }
-    hands(root,color,[[-.94,-.48,.66],[.55,-.62,.58]]);
+    hands(root,color,[[-.94,-.48,.66],[.32,-.60,.65]]);
   }else if(kind==='coding'){
     for(const x of [-.94,.94])box(head,'#344768',[.23,.58,.60],[x,.05,-.02],.09);
     const band=new THREE.Mesh(new THREE.TorusGeometry(1.02,.05,8,32,Math.PI),material('#45669e'));
