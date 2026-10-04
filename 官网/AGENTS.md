@@ -9,3 +9,5 @@
 在根目录通过 `node 官网/preview.mjs` 预览，Sites 配置在 `.openai/hosting.json`；复用既有站点和原生发布流程。验收由根目录 `doc/验收/网站/` 管理，真实桌面能力不在官网验收范围。
 
 中英文与深浅主题默认跟随系统，顶部紧凑控件允许手动选择并恢复系统模式。`dist/preferences-boot.js` 在样式前确定首次外观，`preferences.js` 共享偏好、翻译及切换控件；`translations.js`/`ui-translations.js` 维护官网和演示文案，`appearance.css` 分别适配三种场景。演示的 `localization.ts` 只适配真实 Blockly 的标签、预设字段和内置菜单，不修改产品源码或积木语言。仅 `blocky.site.preferences.v1` 保存语言/主题选项，不保存项目、输入或聊天；切换不重新挂载工作台。
+
+Blockly视觉媒体随构建从既有依赖复制到 `dist/assets/blockly-media/`；网页适配通过公开CSS和Workspace选项使用本地媒体，禁止退回默认外部图标路径。声音仍关闭，不打包音频。

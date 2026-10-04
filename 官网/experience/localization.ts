@@ -19,6 +19,7 @@ function localizeBlock(block:Blockly.Block) {
 }
 export function installCanvasLocalization() {
   registerBlocks();
+  Blockly.Css.inject(document.body,true,'../assets/blockly-media/');
   for(const definition of Object.values(Blockly.Blocks)) {
     const original=definition.init;
     if(!original)continue;
@@ -34,6 +35,7 @@ export function installCanvasLocalization() {
   // The shared overview is a snapshot. Refresh only its rendered labels from
   // actual blocks, so edited field values remain verbatim in either language.
   const updateOutline=()=>{
+    for(const workspace of Blockly.common.getAllWorkspaces())if(workspace instanceof Blockly.WorkspaceSvg)workspace.options.pathToMedia='../assets/blockly-media/';
     for(const button of document.querySelectorAll<HTMLButtonElement>('.canvas-outline button[title]')) {
       const block=Blockly.common.getAllWorkspaces().map(workspace=>workspace.getBlockById(button.title)).find(Boolean);
       const label=button.querySelector('span');
