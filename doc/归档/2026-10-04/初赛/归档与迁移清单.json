@@ -1,0 +1,181 @@
+{
+  "preparedAt": "2026-10-04T20:54:30.7424047+08:00",
+  "checkpointCommit": "2d632f26165c2ad8b75dd58f8f3f889c4248fc5d",
+  "fileCount": 21,
+  "bytes": 47003006,
+  "acceptedFinalArtifactsMatch": true,
+  "files": [
+    {
+      "source": "PPT与商业计划书/Blocky-Studio-息壤杯-AI+教育.pptx",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/Blocky-Studio-息壤杯-AI+教育.pptx",
+      "bytes": 18597707,
+      "sha256": "7e80efb8c2ffa424082404401758c0b982ed9afb9d8b681c0874f9c508bdd844",
+      "finalBytes": 18597707,
+      "finalSha256": "7e80efb8c2ffa424082404401758c0b982ed9afb9d8b681c0874f9c508bdd844"
+    },
+    {
+      "source": "PPT与商业计划书/README.md",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/README.md",
+      "bytes": 1230,
+      "sha256": "53e8658d5787417d0079a1e7f239f31e88a7492cd0a03906301e3cfee6410a2a",
+      "finalBytes": 1286,
+      "finalSha256": "c625ab287392dd597cc86457074f4182648ac2dcda53a857739abeb8190f3e86",
+      "contentChange": "仅更新已归档README的历史用途与当前位置说明"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-classroom-collaboration.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-classroom-collaboration.png",
+      "bytes": 1843412,
+      "sha256": "1306ffe0f2fbec4ab8a605aa4acb5bc9e2c072aa8c9108a619246bf6a197798a",
+      "finalBytes": 1843412,
+      "finalSha256": "1306ffe0f2fbec4ab8a605aa4acb5bc9e2c072aa8c9108a619246bf6a197798a"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-education-paper-cut.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-education-paper-cut.png",
+      "bytes": 2166277,
+      "sha256": "9246089b77bcd50bf8006ffbd707656b9aebb4359f2e3a5d8ceada0f2a72b668",
+      "finalBytes": 2166277,
+      "finalSha256": "9246089b77bcd50bf8006ffbd707656b9aebb4359f2e3a5d8ceada0f2a72b668"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-outcomes-blueprint.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-outcomes-blueprint.png",
+      "bytes": 1552345,
+      "sha256": "511e058f96dafa40441925ff6b1894be065b3efbc381a612b4a213957ef36dbf",
+      "finalBytes": 1552345,
+      "finalSha256": "511e058f96dafa40441925ff6b1894be065b3efbc381a612b4a213957ef36dbf"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-safety-handdrawn.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-safety-handdrawn.png",
+      "bytes": 2332374,
+      "sha256": "b4c7ed0d1522b3ccb757cb303342484e23da2991b6b54e3c92eb7cc257dd8861",
+      "finalBytes": 2332374,
+      "finalSha256": "b4c7ed0d1522b3ccb757cb303342484e23da2991b6b54e3c92eb7cc257dd8861"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-student-builder.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-student-builder.png",
+      "bytes": 1277813,
+      "sha256": "81d8cc20da1b922f24b0ec19160914047dcc0c631cb4d7ac28109efb7ae2c4f3",
+      "finalBytes": 1277813,
+      "finalSha256": "81d8cc20da1b922f24b0ec19160914047dcc0c631cb4d7ac28109efb7ae2c4f3"
+    },
+    {
+      "source": "PPT与商业计划书/assets/agent-student-vision.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/agent-student-vision.png",
+      "bytes": 1524086,
+      "sha256": "f2a42efdd641d6795e72ad69efe9e67a8a45a603cb03beddceefd6d57b8d5ea6",
+      "finalBytes": 1524086,
+      "finalSha256": "f2a42efdd641d6795e72ad69efe9e67a8a45a603cb03beddceefd6d57b8d5ea6"
+    },
+    {
+      "source": "PPT与商业计划书/assets/blocky-appsurface-frontend-v1.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/blocky-appsurface-frontend-v1.png",
+      "bytes": 1333227,
+      "sha256": "b67576354b830840bffef8cc068d1adcbb0f201869af33833079624ca5c74bdd",
+      "finalBytes": 1333227,
+      "finalSha256": "b67576354b830840bffef8cc068d1adcbb0f201869af33833079624ca5c74bdd"
+    },
+    {
+      "source": "PPT与商业计划书/assets/blocky-block-internals-v1.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/blocky-block-internals-v1.png",
+      "bytes": 1458330,
+      "sha256": "86261717813f1cc6acdb91b86407bf58b01c066ce926ab2c16a69088f9777031",
+      "finalBytes": 1458330,
+      "finalSha256": "86261717813f1cc6acdb91b86407bf58b01c066ce926ab2c16a69088f9777031"
+    },
+    {
+      "source": "PPT与商业计划书/assets/blocky-community-packages-v1.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/blocky-community-packages-v1.png",
+      "bytes": 3357010,
+      "sha256": "5f174112a313e66b97dc3217c0bf46e21ab632c86b9098523e60e855cdedac50",
+      "finalBytes": 3357010,
+      "finalSha256": "5f174112a313e66b97dc3217c0bf46e21ab632c86b9098523e60e855cdedac50"
+    },
+    {
+      "source": "PPT与商业计划书/assets/blocky-mobile-runner-v1.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/blocky-mobile-runner-v1.png",
+      "bytes": 1526462,
+      "sha256": "7cb1154b635f47ebe8d491e4173464b109228178251ae1275032f81799349f9c",
+      "finalBytes": 1526462,
+      "finalSha256": "7cb1154b635f47ebe8d491e4173464b109228178251ae1275032f81799349f9c"
+    },
+    {
+      "source": "PPT与商业计划书/assets/blocky-office-automation-v1.png",
+      "destination": "doc/归档/2026-10-04/初赛/PPT与商业计划书/assets/blocky-office-automation-v1.png",
+      "bytes": 2175125,
+      "sha256": "d5e680de0882b35c8dfc725d76c6596ffb60ce954a6992cbee34da7f678c4f54",
+      "finalBytes": 2175125,
+      "finalSha256": "d5e680de0882b35c8dfc725d76c6596ffb60ce954a6992cbee34da7f678c4f54"
+    },
+    {
+      "source": "POC与演示视频/Blocky-自然科学课程助教-Agent-60秒录屏剧本.md",
+      "destination": "doc/归档/2026-10-04/初赛/POC与演示视频/Blocky-自然科学课程助教-Agent-60秒录屏剧本.md",
+      "bytes": 4013,
+      "sha256": "f994cec3225427c4248e93f80da5bd08d330bc29f1042845bf6fd685a0fbdcec",
+      "finalBytes": 4013,
+      "finalSha256": "f994cec3225427c4248e93f80da5bd08d330bc29f1042845bf6fd685a0fbdcec"
+    },
+    {
+      "source": "POC与演示视频/Blocky-自然科学课程助教-Agent.blocky",
+      "destination": "doc/归档/2026-10-04/初赛/POC与演示视频/Blocky-自然科学课程助教-Agent.blocky",
+      "bytes": 1218,
+      "sha256": "ba52d6eaaf18b6693702eb4c6226a003e5a6d260462f206d4160f8f5fd9e20de",
+      "finalBytes": 1218,
+      "finalSha256": "ba52d6eaaf18b6693702eb4c6226a003e5a6d260462f206d4160f8f5fd9e20de"
+    },
+    {
+      "source": "POC与演示视频/README.md",
+      "destination": "doc/归档/2026-10-04/初赛/POC与演示视频/README.md",
+      "bytes": 1730,
+      "sha256": "30ccd7867c80d03144b860f89fa5db2c3e03d802e143e8942a1b6334cd626f72",
+      "finalBytes": 1874,
+      "finalSha256": "d933f199963a4d4e6bd1c36d3fb5dbfbd8f8b43396c293aed20248a963086158",
+      "contentChange": "仅更新已归档README的历史用途与当前位置说明"
+    },
+    {
+      "source": "doc/交付/2026-10-03-答辩与商业计划书/Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "destination": "复赛/Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "bytes": 85536,
+      "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c",
+      "finalBytes": 85536,
+      "finalSha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c"
+    },
+    {
+      "source": "doc/交付/2026-10-03-答辩与商业计划书/Blocky-Studio-小学Agent创作教育-2026-10-03.pdf",
+      "destination": "复赛/Blocky-Studio-小学Agent创作教育-2026-10-03.pdf",
+      "bytes": 5306389,
+      "sha256": "3d33b7993e7413e74c6613d0a0f9c6c66d46ab1197506a7349171ac71db7b52d",
+      "finalBytes": 5306389,
+      "finalSha256": "3d33b7993e7413e74c6613d0a0f9c6c66d46ab1197506a7349171ac71db7b52d"
+    },
+    {
+      "source": "doc/交付/2026-10-03-答辩与商业计划书/Blocky-Studio-小学Agent创作教育-2026-10-03.pptx",
+      "destination": "复赛/Blocky-Studio-小学Agent创作教育-2026-10-03.pptx",
+      "bytes": 2006865,
+      "sha256": "7eb19b897d950ec9add4409101b4cf1e42af7556de550dccb8e851f53f86df63",
+      "finalBytes": 2006865,
+      "finalSha256": "7eb19b897d950ec9add4409101b4cf1e42af7556de550dccb8e851f53f86df63"
+    },
+    {
+      "source": "doc/交付/2026-10-03-答辩与商业计划书/Blocky-Studio-小学Agent商业计划书-2026-10-03.docx",
+      "destination": "复赛/Blocky-Studio-小学Agent商业计划书-2026-10-03.docx",
+      "bytes": 59526,
+      "sha256": "eb60a0d5b40fae7a8f84dd3f67f3762ab2f40841b517090e0ddbcab2f4b5034f",
+      "finalBytes": 59526,
+      "finalSha256": "eb60a0d5b40fae7a8f84dd3f67f3762ab2f40841b517090e0ddbcab2f4b5034f"
+    },
+    {
+      "source": "doc/交付/2026-10-03-答辩与商业计划书/Blocky-Studio-小学Agent商业计划书-2026-10-03.pdf",
+      "destination": "复赛/Blocky-Studio-小学Agent商业计划书-2026-10-03.pdf",
+      "bytes": 392331,
+      "sha256": "beba0479cae388dc1f38864439b3ce64ee9a4fe113137d38d6e8080dfb21dabf",
+      "finalBytes": 392331,
+      "finalSha256": "beba0479cae388dc1f38864439b3ce64ee9a4fe113137d38d6e8080dfb21dabf"
+    }
+  ],
+  "movedAt": "2026-10-04T20:54:57.5838741+08:00",
+  "allFilesMatchAtMove": true
+}
