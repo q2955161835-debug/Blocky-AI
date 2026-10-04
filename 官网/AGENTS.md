@@ -4,4 +4,4 @@
 
 发布只包括 `dist/` 中的公开网页资源。不得发布项目文档、验收资料、源仓库历史、真实密钥或本机路径。在线体验不调用模型、不读取文件、不保存用户聊天；预设示例必须清楚标记。官方 Logo 复用项目 `logo/logo.png`。
 
-在根目录通过 `node try/官网/server.mjs` 预览；正式 Sites 配置在 `.openai/hosting.json`，发布遵循 Sites 原生工具及插件流程。验收入口由根目录 `doc/验收/网站/` 管理。
+在根目录通过 `node 官网/preview.mjs` 预览（Node.js 内置 HTTP，无新增依赖）；正式 Sites 配置在 `.openai/hosting.json`，发布遵循 Sites 原生工具及插件流程。验收入口由根目录 `doc/验收/网站/` 管理。
