@@ -1,0 +1,12 @@
+{
+  "rootSourceCommit": "53f24df0b3a4c048c9dcaff7086ff5d2bf150767",
+  "siteSourceCommit": "918ce08af896db89598116e4de24a80e4d7b2457",
+  "archive": "try/待清理/官网模型整改-2026-10-05/blocky-model-repair-release.tgz",
+  "archiveSha256": "b3ce2700e1e3204ae2ccaee128d2825edbe6595579bf70c07bfa69112778cc3e",
+  "archiveBytes": 1872826,
+  "publicFiles": 43,
+  "packagedFiles": 44,
+  "publicBytes": 3675848,
+  "allPublicAssetsMatch": true,
+  "onlyPublicAssetsAndHosting": true
+}
