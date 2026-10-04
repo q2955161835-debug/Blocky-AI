@@ -1,0 +1,15 @@
+{
+  "recordedAt": "2026-10-04T19:50:14.151Z",
+  "kind": "可逆整理，未删除",
+  "source": "D:/1Folder/Blocky-AI/try/官网3D美术",
+  "destination": "D:/1Folder/Blocky-AI/try/待清理/官网3D美术-2026-10-05",
+  "files": 124,
+  "bytes": 10981768,
+  "MiB": 10.47,
+  "contents": "开发/独立验收截图、运行读回、一次性脚本、封包诊断副本及已发布封包；独立公开源 checkout 保持原地址。",
+  "outsideWorkspace": {
+    "reason": "内置 ImageGen 默认输出位置；项目中复制了一份用于建模。",
+    "originalImage": "C:/Users/29551/.codex/generated_images/01a10735-9c83-7b50-b7be-6ec75226c116/exec-8552dfde-fb07-4a13-bcbf-78e74bd578c8.png",
+    "projectCopy": "D:/1Folder/Blocky-AI/官网/art/references/worlds-concept.png"
+  }
+}

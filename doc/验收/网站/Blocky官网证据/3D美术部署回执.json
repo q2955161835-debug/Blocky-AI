@@ -1,0 +1,53 @@
+{
+  "recordedAt": "2026-10-04T19:48:15.684Z",
+  "rootSourceCommit": "4819ef3854eace7c9248a6984ba78b3606f38436",
+  "siteSourceCommit": "0288064422c735b97235c105cb79939f4a97a7b1",
+  "savedVersion": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_af97e362e08081919e7fd6c8ee1d977b",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 8,
+    "source": {
+      "commit_sha": "0288064422c735b97235c105cb79939f4a97a7b1"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000d3ec81fd8c6a88187d53bede",
+      "content_hash": "sha256:0bce0a49545c44bd42b6820c15285ef2fd2ccc6d2de3f8bde296d7b51e910993",
+      "size_bytes": 3706880,
+      "file_count": 44
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac2ac5e41848191914661e91cee2998",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_af97e362e08081919e7fd6c8ee1d977b",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T19:43:33.164377+00:00"
+  },
+  "siteReadback": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "status": "active",
+    "access_mode": "public",
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "latest_version_number": 8,
+    "updated_at": "2026-10-04T19:45:22.173507+00:00"
+  },
+  "localGzipArchive": {
+    "originalPath": "D:/1Folder/Blocky-AI/try/官网3D美术/blocky-3d-site.tgz",
+    "retainedPath": "D:/1Folder/Blocky-AI/try/待清理/官网3D美术-2026-10-05/blocky-3d-site.tgz",
+    "sha256": "c78dfe2f2eac642f830e7c193331fbb5a310f19504211654d25756088cc421ed",
+    "bytes": 1868798
+  },
+  "note": "本地 gzip 封包与 backend 解压 tar 的 hash/字节数不同；44 封包文件 = 43 公开资产 + .openai/hosting.json。逐项内容绑定见 3D美术封包绑定.json。"
+}
