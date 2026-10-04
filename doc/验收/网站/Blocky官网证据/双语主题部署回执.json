@@ -1,0 +1,51 @@
+{
+  "implementation_commit": "642a7af76023661e9e8a1d5d7c43ab2eb3efb522",
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "commit_sha": "e7b893419af0809e45cfdd77330941012408d1f0",
+    "archive": "D:/1Folder/Blocky-AI/try/官网双语主题/blocky-bilingual-site.tar.gz"
+  },
+  "saved_version": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_70402dab19d0819190352a9196d0406d",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 5,
+    "source": {
+      "commit_sha": "e7b893419af0809e45cfdd77330941012408d1f0"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000d85881fdbabc0c12fffa0103",
+      "content_hash": "sha256:e58458de74e239969b754bc60e55fc9129b8081ace786fcc5f71f49e47fe2d4a",
+      "size_bytes": 2867200,
+      "file_count": 33
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac27c46bb048191bafe0bf10c37cca7",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_70402dab19d0819190352a9196d0406d",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T16:18:22.037062+00:00"
+  },
+  "verified_site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "latest_version_number": 5,
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "access_mode": "public"
+  },
+  "local_archive_sha256": "a45af880a3fd4e0c6b67d816715274e4cf5b32d86e39b62f5e8bfc8e7dc486f3",
+  "public_asset_count": 32,
+  "archive_file_count": 33
+}

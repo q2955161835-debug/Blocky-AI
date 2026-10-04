@@ -1,0 +1,172 @@
+{
+  "source_commit": "642a7af76023661e9e8a1d5d7c43ab2eb3efb522",
+  "asset_count": 32,
+  "files": [
+    {
+      "path": "appearance.css",
+      "bytes": 7315,
+      "sha256": "f062b7b3b4adaef9a21c7231797e1f9adb780d3f8af8d4244eefe040d0285946"
+    },
+    {
+      "path": "content.js",
+      "bytes": 9066,
+      "sha256": "afc2ac541597a9b71b435d5fdb227cc04201ea28340c5992b8ca531117f6ecee"
+    },
+    {
+      "path": "demo.js",
+      "bytes": 419,
+      "sha256": "1fac92bec90d41214f77f925bc713194d9c2bd36cbdb22d78d94ca7c612ea90d"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5793,
+      "sha256": "447617205bc11713e9a7ffbc1e33157df98fbe8351a8207e74b0f43eff4a94b7"
+    },
+    {
+      "path": "main.js",
+      "bytes": 1638,
+      "sha256": "1fae8bab7791812e5672371f5ec97e50751e7425854a09375f30fc9bae1c5382"
+    },
+    {
+      "path": "navigation.css",
+      "bytes": 746,
+      "sha256": "6c9f0d63b866ad17033d5b89479db30e662dbf59cd4335f85e51f6082e21ef51"
+    },
+    {
+      "path": "preferences-boot.js",
+      "bytes": 605,
+      "sha256": "f938615cad405b7e16f26de9fe2143f07b14fa80fbddace247205aec2d9b45b4"
+    },
+    {
+      "path": "preferences.css",
+      "bytes": 2315,
+      "sha256": "37e66560af048e19c6783ff4d798e42d4df05eb4cfb258bf0619fe445d7b1078"
+    },
+    {
+      "path": "preferences.js",
+      "bytes": 8242,
+      "sha256": "44ba754df19de70eb32151c652d073f7ccb02ed36220653830912074cc696558"
+    },
+    {
+      "path": "scenes.css",
+      "bytes": 8192,
+      "sha256": "0c5fb1950618bb1424a9f57d01fd64707da74113cad21f3c0b6936634c95c678"
+    },
+    {
+      "path": "scenes.js",
+      "bytes": 6715,
+      "sha256": "f163c24156e42846bf05e3269a06e5d008ac932c60c9e07cf0a8c12ff1db9d9a"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 25937,
+      "sha256": "5579c57cc0386748c74b4ea1cb4dcebb811acfe1a867a37e0ab65a90ac58d586"
+    },
+    {
+      "path": "translations.js",
+      "bytes": 21138,
+      "sha256": "ca71c8a36287489675dc1d3e543add72d16c681645f2ab46e58c886cbdf95364"
+    },
+    {
+      "path": "ui-translations.js",
+      "bytes": 17129,
+      "sha256": "7ae011d114ec1433e18d0210f640ba7e389c2bfe8595b07518f0e2e56d19249b"
+    },
+    {
+      "path": "assets/blocky.png",
+      "bytes": 1222308,
+      "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d"
+    },
+    {
+      "path": "assets/blockly-media/1x1.gif",
+      "bytes": 43,
+      "sha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629"
+    },
+    {
+      "path": "assets/blockly-media/delete-icon.svg",
+      "bytes": 315,
+      "sha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef"
+    },
+    {
+      "path": "assets/blockly-media/dropdown-arrow.svg",
+      "bytes": 569,
+      "sha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9"
+    },
+    {
+      "path": "assets/blockly-media/foldout-icon.svg",
+      "bytes": 150,
+      "sha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64"
+    },
+    {
+      "path": "assets/blockly-media/handclosed.cur",
+      "bytes": 326,
+      "sha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5"
+    },
+    {
+      "path": "assets/blockly-media/handdelete.cur",
+      "bytes": 766,
+      "sha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040"
+    },
+    {
+      "path": "assets/blockly-media/handopen.cur",
+      "bytes": 198,
+      "sha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd"
+    },
+    {
+      "path": "assets/blockly-media/pilcrow.png",
+      "bytes": 1010,
+      "sha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167"
+    },
+    {
+      "path": "assets/blockly-media/quote0.png",
+      "bytes": 771,
+      "sha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c"
+    },
+    {
+      "path": "assets/blockly-media/quote1.png",
+      "bytes": 738,
+      "sha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35"
+    },
+    {
+      "path": "assets/blockly-media/resize-handle.svg",
+      "bytes": 218,
+      "sha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b"
+    },
+    {
+      "path": "assets/blockly-media/sprites.svg",
+      "bytes": 1775,
+      "sha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f"
+    },
+    {
+      "path": "studio/app-37MM6DI4.js",
+      "bytes": 1428079,
+      "sha256": "bf35b7f2ec5886e6e01b5119f44f34e8cf104e4148e0c51e4954c920ac0a6f65"
+    },
+    {
+      "path": "studio/app-37MM6DI4.js.LEGAL.txt",
+      "bytes": 1528,
+      "sha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3"
+    },
+    {
+      "path": "studio/app-Q37DSIGJ.css",
+      "bytes": 38321,
+      "sha256": "ba2fc6a896a4259b2bc0ed61b7e1e743f7715e881a7bd37160ab1bd82cd4d0bf"
+    },
+    {
+      "path": "studio/index.html",
+      "bytes": 655,
+      "sha256": "52f1a041d9147d6bead24fa5200c730f7590d4a0031dffb0ce796ae570ea28ac"
+    },
+    {
+      "path": "studio/licenses.txt",
+      "bytes": 18273,
+      "sha256": "8a672a44492afb4bf7c566750f3b673dcdc466ecd9abab3c32428513b8693f78"
+    }
+  ],
+  "development_checks": 107,
+  "development_checks_source": "a939651",
+  "final_typecheck": "passed",
+  "final_build_capability_boundary": "passed",
+  "canonical_path": "D:\\1Folder\\Blocky-AI\\官网\\dist",
+  "publish_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source\\dist"
+}
