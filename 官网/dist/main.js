@@ -4,6 +4,7 @@ import { getPreferences, subscribePreferences, mountPreferenceControls, observeT
 import {mountWorldPage} from './world-pages.js';
 import {mountActiveNavigation} from './active-navigation.js';
 import {mountContentMotion} from './content-motion.js';
+import {mountBrandMotion} from './brand-motion.js';
 mountContent();
 mountContentMotion();
 mountPreferenceControls(document.querySelector('#site-preferences'));
@@ -40,4 +41,5 @@ subscribePreferences(updateMetadata);
 window.addEventListener('hashchange', route);
 document.querySelector('.skip-link').addEventListener('click',event=>{event.preventDefault();const main=world?worldPage.querySelector('main'):document.querySelector('#main');main.setAttribute('tabindex','-1');main.focus({preventScroll:true});});
 route();
+mountBrandMotion();
 mountActiveNavigation();

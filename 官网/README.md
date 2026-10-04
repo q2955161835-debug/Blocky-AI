@@ -2,7 +2,7 @@
 
 公开地址：[blocky.donk55666.chatgpt.site](https://blocky.donk55666.chatgpt.site)
 
-官网按完整产品愿景讲述教育与专业场景，具体开放进度集中 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定导航保留唯一在线体验入口。
+官网按完整产品愿景讲述教育与专业场景，具体开放进度集中 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定胶囊导航保留唯一在线体验入口。首屏居中文字与彩色3D积木角色环绕，蓝图四宫格角色跟随鼠标；滚动后的品牌迁移到左上圆环。
 
 官网和在线体验支持中文/English及深色/浅色。首次访问，两项均跟随系统；手动选择后保留偏好，也可恢复“跟随系统”。系统语言以浏览器提供的首选系统语言为准，中文使用中文，其余使用英文；系统外观变化会立即同步。切换保留当前锚点与演示编辑内容。只有两项显示偏好写入 localStorage，演示内容不持久化。
 
@@ -15,10 +15,14 @@
 - `experience/`：在线体验 React 源码。直接复用桌面 Canvas、MenuBar、CommandIcon、ResizeHandle、ChatControls，以及真实积木目录、四类蓝图、产品 CSS；演示壳与预设聊天拆分管理。
 - `build-experience.mjs`：用根目录既有 esbuild 构建 `dist/studio/`，输出哈希资源与第三方许可证。构建拒绝包含桌面 composition、Tauri Host 或 worker；不新增依赖。
 - `.openai/hosting.json`：Sites 站点身份和静态目录配置。
+- `art/`：独立Three.js依赖与程序化几何；角色、积木、教育/专业世界、镜头与共享渲染器分模块。`art/references/`保存ImageGen建模参考，不进入发布包。
+- `build-art.mjs`：通过根esbuild生成公开`dist/art3d.js`及Three.js许可证。无远程模型、贴图、运行时CDN或真实模型连接。
+- `dist/world-pages.js`：`#/education`积木校园与`#/professional`创作园区。正常滚动驱动转向及远近镜头，章节按钮定位；“阅读全部”、减少动态效果或3D失败时按普通文档阅读原全部正文。
+- `dist/brand-motion.js`、`active-navigation.js`、`content-motion.js`与`capsule.css`/`art.css`/`worlds.css`：品牌迁移与圆环、活动导航画线/擦除、内容入场及3D版式。
 
 根目录执行 `node 官网/build-experience.mjs` 构建演示；`node node_modules/typescript/bin/tsc --project 官网/tsconfig.json --noEmit` 检查类型。执行 `node 官网/preview.mjs` 预览 `http://127.0.0.1:4177/`。
 
-`dist/` 为受 Git 管理的发布目录，包含手写官网和生成的 `studio/`，不要整体清空。演示改动后必须重新构建；官网主页无需构建。
+3D环境首次安装：`pnpm --dir 官网/art install --ignore-workspace --frozen-lockfile`；改动`art/`后运行`node 官网/build-art.mjs`。`dist/`为受Git管理的发布目录，包含手写官网、生成的`studio/`及`art3d.js`，不要整体清空。演示改动后须重新构建；手写官网内容无需构建。
 
 ## 界面依据与演示边界
 

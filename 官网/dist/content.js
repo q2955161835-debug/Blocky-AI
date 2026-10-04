@@ -17,10 +17,10 @@ document.querySelector('#more-content').innerHTML = `
 </section>
 <section class="blueprints-section" id="blueprints"><div class="section-shell"><div class="section-heading"><div><div class="section-kicker">02 / 一个起点，无数种可能</div><h2>从蓝图出发。<br>把它变成你的。</h2></div><p>四种起始蓝图，一张自由创作的画布。<br>保留你需要的，改变你想改变的。</p></div>
 <div class="blueprint-grid">
-<article style="--card-color:#8cc9af"><span class="blueprint-index">01</span><div class="blueprint-glyph" aria-hidden="true">知</div><h3>知识问答助手</h3><p>连接你的资料，围绕知识展开对话。</p><span class="blueprint-use">学习 / 资料问答</span></article>
-<article style="--card-color:#e4bd60"><span class="blueprint-index">02</span><div class="blueprint-glyph" aria-hidden="true">工</div><h3>工作助手</h3><p>组合工具与步骤，探索自己的工作方式。</p><span class="blueprint-use">日常 / 任务处理</span></article>
-<article style="--card-color:#8cb7e8"><span class="blueprint-index">03</span><div class="blueprint-glyph" aria-hidden="true">&lt;/&gt;</div><h3>Coding 助手</h3><p>用积木组织编程任务，理解工具协作。</p><span class="blueprint-use">代码 / 创作实践</span></article>
-<article style="--card-color:#bb9ddd"><span class="blueprint-index">04</span><div class="blueprint-glyph" aria-hidden="true">π</div><h3>Pi Agent</h3><p>探索智能体循环，继续改造你的 Agent。</p><span class="blueprint-use">进阶 / 智能体探索</span></article>
+<article style="--card-color:#8cc9af"><span class="blueprint-index">01</span><div class="blueprint-character art-stage" data-art="character-knowledge" aria-hidden="true"></div><h3>知识问答助手</h3><p>连接你的资料，围绕知识展开对话。</p><span class="blueprint-use">学习 / 资料问答</span></article>
+<article style="--card-color:#e4bd60"><span class="blueprint-index">02</span><div class="blueprint-character art-stage" data-art="character-work" aria-hidden="true"></div><h3>工作助手</h3><p>组合工具与步骤，探索自己的工作方式。</p><span class="blueprint-use">日常 / 任务处理</span></article>
+<article style="--card-color:#8cb7e8"><span class="blueprint-index">03</span><div class="blueprint-character art-stage" data-art="character-coding" aria-hidden="true"></div><h3>Coding 助手</h3><p>用积木组织编程任务，理解工具协作。</p><span class="blueprint-use">代码 / 创作实践</span></article>
+<article style="--card-color:#bb9ddd"><span class="blueprint-index">04</span><div class="blueprint-character art-stage" data-art="character-pi" aria-hidden="true"></div><h3>Pi Agent</h3><p>探索智能体循环，继续改造你的 Agent。</p><span class="blueprint-use">进阶 / 智能体探索</span></article>
 </div><p class="blueprint-bottom">也可以从一张空白画布开始。你的想法，决定它的样子。</p></div></section>
 <section class="how-section section-shell" id="how-it-works"><div class="section-kicker">03 / 创作，比想象中更近</div><h2>想一想。搭一搭。<span>再多走一步。</span></h2><div class="steps"><article><span>01</span><h3>从一个好问题开始</h3><p>它应该扮演谁？解决什么问题？<br>挑选蓝图，或打开一张空白画布。</p></article><article><span>02</span><h3>拼出你的想法</h3><p>组合积木，调整角色、知识与工具。<br>需要帮助时，和构建助手聊一聊。</p></article><article><span>03</span><h3>运行，然后更进一步</h3><p>观察轨迹，检查回答，修改与再试。<br>把探索留下，成为自己的作品。</p></article></div></section>
 ${sceneSections()}

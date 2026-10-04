@@ -12,7 +12,7 @@ export function mountWorldPage(container,type){
   const content=[overview.innerHTML,...features.map(a=>a.innerHTML),example.innerHTML];
   if(!education){const extra=[...section.querySelectorAll('.professional-extensions article')];content[3]+=extra[0].innerHTML;content[4]+=extra[1].innerHTML;}
   content[4]+=`<div class="story-tags">${section.querySelector('.scene-bottom').innerHTML}</div><div class="story-ending"><a href="#/${education?'professional':'education'}">${education?'探索专业场景':'探索教育场景'}</a><a href="#faq">了解开放进度</a></div>`;
-  container.innerHTML=`<header class="site-header world-header"><a class="brand" href="#" aria-label="返回首页"><img src="./assets/blocky.png" width="32" height="32" alt=""><span>Blocky.</span></a><a class="world-back" href="#${type}">返回官网</a><nav aria-label="主导航"><a href="#possibilities">产品能力</a><a href="#blueprints">起始蓝图</a><a href="#/education">教育场景</a><a href="#/professional">专业场景</a></nav><div class="header-actions"><button type="button" class="reading-toggle" aria-pressed="false">阅读全部</button><div id="world-preferences"></div></div></header>
+  container.innerHTML=`<header class="site-header world-header"><a class="world-back" href="#${type}">返回官网</a><nav aria-label="主导航"><a href="#possibilities">产品能力</a><a href="#blueprints">起始蓝图</a><a href="#/education">教育场景</a><a href="#/professional">专业场景</a></nav><div class="header-actions"><button type="button" class="reading-toggle" aria-pressed="false">阅读全部</button><div id="world-preferences"></div></div></header>
     <main class="world-tour" data-progress="0"><div class="story-stage" aria-hidden="true"></div><div class="story-connector" aria-hidden="true"></div><div class="story-scroll-cue">向下滚动，沿着作品探索<span aria-hidden="true">↓</span></div>${content.map((html,i)=>`<section class="story-chapter" id="${type}-chapter-${i}"><article class="story-card" data-chapter="${i}"><div class="story-location"><span>${String(i+1).padStart(2,'0')} / 05</span><span>${stops[type][i]}</span></div>${html}</article></section>`).join('')}</main>
     <nav class="story-nav" aria-label="场景章节">${stops[type].map((label,i)=>`<button type="button" data-stop="${i}" aria-current="${i===0?'step':'false'}"><span>${String(i+1).padStart(2,'0')}</span><span>${label}</span></button>`).join('')}</nav>`;
   for(const node of container.querySelectorAll('.story-card [id]'))node.removeAttribute('id');
@@ -37,9 +37,10 @@ export function mountWorldPage(container,type){
   function projection(point){
     if(reading)return;
     const card=cards[index],w=card.offsetWidth,h=card.offsetHeight;
-    const x=innerWidth<700?16:Math.max(28,Math.min(innerWidth-w-28,point.x+68));
-    const y=innerWidth<700?Math.max(140,innerHeight-h-105):Math.max(118,Math.min(innerHeight-h-110,point.y-85));
+    const x=innerWidth<700?16:innerWidth-w-Math.max(36,innerWidth*.04);
+    const y=innerWidth<700?Math.max(140,innerHeight-h-105):Math.max(150,Math.min(innerHeight-h-115,innerHeight*.26));
     card.style.left=`${x}px`;card.style.top=`${y}px`;
+    tour.dataset.copyTop=String(y);tour.style.setProperty('--copy-y',`${y}px`);
     const endX=innerWidth<700?Math.max(x+25,Math.min(x+w-25,point.x)):x+15,endY=y+22,dx=endX-point.x,dy=endY-point.y;
     connector.style.left=`${point.x}px`;connector.style.top=`${point.y}px`;connector.style.width=`${Math.hypot(dx,dy)}px`;connector.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
   }

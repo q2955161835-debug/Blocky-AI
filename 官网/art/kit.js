@@ -47,12 +47,18 @@ export function glyph(parent,text,color,position,size=.6) {
   const mesh=new THREE.Mesh(new THREE.PlaneGeometry(size,size),new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
   mesh.position.set(...position);parent.add(mesh);return mesh;
 }
-export function lighting(scene) {
+export function lighting(scene,shadows=false) {
   scene.add(new THREE.HemisphereLight('#e9f5ff','#374035',2.1));
-  const key=new THREE.DirectionalLight('#fff4d7',4.6);key.position.set(-8,14,10);key.castShadow=true;
+  const key=new THREE.DirectionalLight('#fff4d7',4.6);key.position.set(-8,14,10);key.castShadow=shadows;
   key.shadow.mapSize.set(1024,1024);Object.assign(key.shadow.camera,{left:-15,right:15,top:15,bottom:-15,near:.5,far:50});key.shadow.bias=-.0008;key.shadow.normalBias=.025;
   scene.add(key);
   const rim=new THREE.DirectionalLight('#d3e9ff',2.3);rim.position.set(8,7,-6);scene.add(rim);
 }
 export function disposeKit() {for(const g of geometry.values())g.dispose();for(const m of materials.values())m.dispose();geometry.clear();materials.clear();}
+export function disposeScene(scene){
+  const sharedGeometry=new Set(geometry.values()),sharedMaterials=new Set(materials.values());
+  scene.traverse(object=>{if(!object.isMesh)return;if(!sharedGeometry.has(object.geometry))object.geometry.dispose();
+    for(const m of Array.isArray(object.material)?object.material:[object.material])if(!sharedMaterials.has(m)){m.map?.dispose();m.dispose();}
+  });
+}
 export { THREE };
