@@ -12,6 +12,7 @@ import { Preferences } from './Preferences';
 import { GuidedControls } from './guided-demo/GuidedControls';
 import { Delivery } from './guided-demo/Delivery';
 import { useGuidedDemo } from './guided-demo/useGuidedDemo';
+import { useGuidedViewport } from './guided-demo/useGuidedViewport';
 import { buildPrompt,taskPrompt,buildStage,type DemoAction } from './guided-demo/scenario';
 import { subscribePreferences, translate, localizeDefault } from '../dist/preferences.js';
 import { catalog, startingBlueprints, createWorkspace, localizeWorkspace, descriptions, examples, flatten, removeBlock, type BlueprintId } from './data';
@@ -40,6 +41,7 @@ export function DemoApp() {
   const groupRef=useRef<string|undefined>(undefined);
   const guided=useGuidedDemo(applyGuidedAction);
   const workspace=history.current;
+  useGuidedViewport(guided.active,focusId,workspace);
   const title=blueprint==='blank'?'未命名项目':startingBlueprints.find(b=>b.id===blueprint)!.displayName;
   const example=examples[blueprint==='blank'?'knowledge-assistant':blueprint];
   useEffect(()=>()=>clearTimeout(timer.current),[]);
@@ -163,7 +165,7 @@ export function DemoApp() {
       {guided.active&&<GuidedControls elapsed={guided.elapsed} status={guided.status as 'playing'|'paused'|'complete'} pause={guided.pause} resume={guided.resume} replay={beginGuided} close={()=>endGuided()} continueEditing={()=>endGuided(false)}/>}
       {!started?<section className="welcome"><div className="welcome-heading"><span className="eyebrow">把想法搭起来</span><h1>从一个问题，<br/>开始创作。</h1><p>用积木组合角色、资料和工具，构建你的 AI 项目。</p><div className="welcome-actions"><button className="primary" onClick={()=>start('blank')}>新建空白项目</button><button onClick={()=>setDialog('info')}>打开本机项目</button></div><button className="guided-entry" onClick={beginGuided}><span aria-hidden="true">▶</span><div><strong>工作助手 · 1 分钟演示</strong><small>从一句需求，到 Agent 完成工作</small></div></button></div><section className="demo-blueprints" aria-label="内置起始蓝图"><h2>选择一个起点</h2><div>{startingBlueprints.map(b=><button key={b.id} aria-label={`从${b.displayName}开始`} onClick={()=>start(b.id)}><strong>{b.displayName}</strong><span>{descriptions[b.id]}</span></button>)}</div></section></section>:<>
         <nav className="demo-mobile-tabs" aria-label="工作区面板">{[['library','积木库'],['canvas','画布'],['chat','对话']].map(([id,label])=><button key={id} aria-pressed={mobilePanel===id} onClick={()=>{setMobilePanel(id);if(id==='library')setLeftVisible(true);if(id==='chat')setRightVisible(true);}}>{label}</button>)}</nav>
-        <div className="workbench demo-workbench" data-panel={mobilePanel} style={{gridTemplateColumns:`${leftVisible?`minmax(180px,${leftWidth}px)`:'0px'} ${leftVisible?'4px':'0px'} minmax(0,1fr) ${rightVisible?'4px':'0px'} ${rightVisible?`minmax(240px,${rightWidth}px)`:'0px'}`}}>
+        <div className="workbench demo-workbench" data-panel={mobilePanel} data-guided={guided.active} style={{gridTemplateColumns:`${leftVisible?`minmax(180px,${leftWidth}px)`:'0px'} ${leftVisible?'4px':'0px'} minmax(0,1fr) ${rightVisible?'4px':'0px'} ${rightVisible?`minmax(240px,${rightWidth}px)`:'0px'}`}}>
           <div className="workbench-left" hidden={!leftVisible} inert={guided.active}><DemoLibrary view={view} setView={setView} add={add} start={start} search={()=>setDialog('search')}/></div>
           {leftVisible?<ResizeHandle className="left-boundary" label="左侧积木库宽度" axis="x" min={180} max={400} value={leftWidth} onChange={setLeftWidth}/>:<div className="left-boundary"/>}
           <section className="workspace"><div className="workspace-tabs"><div className="active"><button data-no-translate="" onClick={()=>{setCanvasOpen(true);setReportShown(false);}}>▧ {canvasName}</button><button aria-label="关闭主画布" disabled={guided.active} onClick={()=>setCanvasOpen(false)}>×</button></div>{hasReport&&<div className={reportShown?'active':undefined}><button onClick={()=>setReportShown(true)}>周报.md</button></div>}</div>
