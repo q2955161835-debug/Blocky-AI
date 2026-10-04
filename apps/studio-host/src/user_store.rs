@@ -156,7 +156,7 @@ fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
     }
     let map = value.as_object().ok_or(ERROR)?;
     let messages = value["messages"].as_array().ok_or(ERROR)?;
-    if (coding && value.to_string().len() > 128000)
+    if (coding && value.to_string().len() > 8 * 1024 * 1024)
         || value["schemaVersion"]
             != if coding {
                 "blocky.coding-chat/v1"
@@ -179,7 +179,7 @@ fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
         let fields = message.as_object().ok_or(ERROR)?;
         let id = message["id"].as_str().ok_or(ERROR)?;
         let text = message["text"].as_str().ok_or(ERROR)?;
-        let length = if coding { text.encode_utf16().count() } else { text.chars().count() };
+        let length = if coding { text.len() } else { text.chars().count() };
         total += length;
         if (coding && crate::coding::text_safe(text).is_err())
             || (if coding {
@@ -194,8 +194,8 @@ fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
             || !ids.insert(id)
             || !matches!(message["role"].as_str(), Some("user" | "assistant"))
             || text.trim().is_empty()
-            || length > if coding { 16000 } else { 4000 }
-            || total > 64000
+            || length > if coding { crate::coding::MESSAGE_BYTES } else { 4000 }
+            || total > if coding { crate::coding::HISTORY_BYTES } else { 64000 }
             || fields
                 .keys()
                 .any(|key| !["id", "role", "text", "status"].contains(&key.as_str()))
@@ -245,12 +245,27 @@ mod tests {
         extra["workspaceId"] = serde_json::json!("workspace-unsafe");
         assert!(store.write("coding-chat", "sample", extra).is_err());
         let mut large = value.clone();
-        large["messages"][0]["text"] = serde_json::json!("x".repeat(16001));
+        large["messages"][0]["text"] = serde_json::json!("x".repeat(crate::coding::MESSAGE_BYTES + 1));
         assert!(store.write("coding-chat", "sample", large).is_err());
+        let total = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"sample","messages":(0..3).map(|id| serde_json::json!({"id":format!("m_{id}"),"role":"assistant","text":"x".repeat(1536 * 1024),"status":"completed"})).collect::<Vec<_>>()});
+        assert!(store.write("coding-chat", "sample", total).is_err());
+        assert_eq!(store.read("coding-chat", "sample").unwrap(), Some(value.clone()));
         let mut secret = value.clone();
         secret["messages"][0]["text"] =
             serde_json::json!("sk-abcdefghijklmnopqrstuvwxyz1234567890123456");
         assert!(store.write("coding-chat", "sample", secret).is_err());
+    }
+    #[test]
+    fn coding_chat_preserves_long_unicode_answers_after_reopening_the_store() {
+        let parent = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/agent-token-budgets/chat-store-tests");
+        std::fs::create_dir_all(&parent).unwrap();
+        let root = tempfile::tempdir_in(parent).unwrap();
+        let store = UserStore::new(root.path().to_owned());
+        let text = "知识🙂\n".repeat(20000);
+        let value = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"long-chat","messages":[{"id":"answer_1","role":"assistant","text":text,"status":"completed"}]});
+        store.write("coding-chat", "long-chat", value.clone()).unwrap();
+        drop(store);
+        assert_eq!(UserStore::new(root.path().to_owned()).read("coding-chat", "long-chat").unwrap(), Some(value));
     }
     #[test]
     fn chat_is_project_bound_and_does_not_store_candidates_or_credentials() {

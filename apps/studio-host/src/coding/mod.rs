@@ -31,6 +31,8 @@ pub(crate) const TOOLS: [&str; 8] = [
     "blocky_cli",
     "project_context",
 ];
+pub(crate) const MESSAGE_BYTES: usize = 2 * 1024 * 1024;
+pub(crate) const HISTORY_BYTES: usize = 4 * 1024 * 1024;
 const ERROR: &str = "BLK-CODING-INPUT";
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -83,11 +85,11 @@ impl CodingStart {
                 .any(|s| s.len() > 200 || !crate::project_store::stable(s))
             || self.selection.iter().collect::<HashSet<_>>().len() != self.selection.len()
             || self.conversation.len() > 20
-            || serde_json::to_vec(&self.conversation).map_err(|_| ERROR)?.len() > 4 * 1024 * 1024
+            || serde_json::to_vec(&self.conversation).map_err(|_| ERROR)?.len() > HISTORY_BYTES
             || self.conversation.iter().any(|m| {
                 !["user", "assistant"].contains(&m.role.as_str())
                     || m.text.trim().is_empty()
-                    || m.text.len() > 2 * 1024 * 1024
+                    || m.text.len() > MESSAGE_BYTES
             })
         {
             return Err(ERROR.into());
