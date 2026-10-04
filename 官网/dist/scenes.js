@@ -1,4 +1,4 @@
-export function sceneSections() {
+export function fullSceneSections() {
   return `
 <section class="scenes-intro section-shell"><div class="section-kicker">04 / 两种场景，同一种创造力</div><h2>从课堂里的好奇心，<br>到专业创作的可能。</h2><p>同一套积木语言，同一种项目格式。<br>从第一份作品出发，一直走向自己的应用。</p></section>
 <section class="scene-section section-shell" id="education" aria-labelledby="education-title">
@@ -21,4 +21,11 @@ export function sceneSections() {
   </div>
 </section>
 <section class="shared-foundation section-shell"><span class="section-kicker">ONE PLATFORM. ROOM TO GROW.</span><h3>从入门到专业，<span>作品始终是你的。</span></h3><p>教育与专业共享项目格式、积木语言和运行内核。<br>切换视图，展开蓝图，继续生长；不必换一种语言重新开始。</p></section>`;
+}
+
+export function sceneSections() {
+  return `<section class="scenes-intro section-shell"><div class="section-kicker">04 / 两种场景，同一种创造力</div><h2>从课堂里的好奇心，<br>到专业创作的可能。</h2><p>同一套积木语言，同一种项目格式。<br>从第一份作品出发，一直走向自己的应用。</p></section>
+  <section class="world-entry education-scene section-shell" id="education" aria-labelledby="education-title"><div class="world-entry-copy"><span class="section-kicker">FOR EDUCATION</span><h2 id="education-title">让 AI 教育，<br>有一件自己的作品。</h2><p>学生亲手搭建，教师看见过程。<br>把一次课堂探索，变成可理解、可分享、<br>可以继续生长的创作。</p><a class="world-enter" href="#/education">进入积木校园 <span aria-hidden="true">＋</span></a><div class="world-entry-meta"><span>学习</span><span>课堂</span><span>作品</span></div></div><a class="world-art art-stage" data-art="education" href="#/education" aria-label="进入积木校园"><span class="world-map-label">BLOCKY / CAMPUS</span></a></section>
+  <section class="world-entry professional-scene section-shell" id="professional" aria-labelledby="professional-title"><a class="world-art art-stage" data-art="professional" href="#/professional" aria-label="进入创作园区"><span class="world-map-label">BLOCKY / DISTRICT</span></a><div class="world-entry-copy"><span class="section-kicker">FOR PROFESSIONALS</span><h2 id="professional-title">把一个好想法，<br>做成能工作的系统。</h2><p>从个人创作者到专业团队，<br>把智能体、知识、工具与业务流程组合起来，<br>让每一步都可以审阅、调试和持续改进。</p><a class="world-enter" href="#/professional">进入创作园区 <span aria-hidden="true">＋</span></a><div class="world-entry-meta"><span>搭建与扩展</span><span>运行与评测</span><span>部署与交付</span></div></div></section>
+  <section class="shared-foundation section-shell"><span class="section-kicker">ONE PLATFORM. ROOM TO GROW.</span><h3>从入门到专业，<span>作品始终是你的。</span></h3><p>教育与专业共享项目格式、积木语言和运行内核。<br>切换视图，展开蓝图，继续生长；不必换一种语言重新开始。</p></section>`;
 }
