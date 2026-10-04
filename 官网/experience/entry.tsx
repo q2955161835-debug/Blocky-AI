@@ -5,6 +5,7 @@ import '../../apps/studio-desktop/src/app/BuilderChat.css';
 import './experience.css';
 import '../dist/preferences.css';
 import './appearance.css';
+import './guided-demo/guided.css';
 import { getPreferences, observeTranslations, subscribePreferences } from '../dist/preferences.js';
 import { installCanvasLocalization } from './localization';
 installCanvasLocalization();

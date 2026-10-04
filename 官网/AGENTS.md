@@ -11,3 +11,5 @@
 中英文与深浅主题默认跟随系统，顶部紧凑控件允许手动选择并恢复系统模式。`dist/preferences-boot.js` 在样式前确定首次外观，`preferences.js` 共享偏好、翻译及切换控件；`translations.js`/`ui-translations.js` 维护官网和演示文案，`appearance.css` 分别适配三种场景。演示的 `localization.ts` 只适配真实 Blockly 的标签、预设字段和内置菜单，不修改产品源码或积木语言。仅 `blocky.site.preferences.v1` 保存语言/主题选项，不保存项目、输入或聊天；切换不重新挂载工作台。
 
 Blockly视觉媒体随构建从既有依赖复制到 `dist/assets/blockly-media/`；网页适配通过公开CSS和Workspace选项使用本地媒体，禁止退回默认外部图标路径。声音仍关闭，不打包音频。
+
+在线体验的 `experience/guided-demo/` 管理固定60秒工作助手演示：独立剧情数据、计时Hook、播放控件、示例周报。使用真实工作助手蓝图的阶段快照与稳定ID，预设消息和调用轨迹不执行真实CLI/模型/文件工具。单一计时器支持暂停、重播、退出及卸载清理；退出恢复演示前项目，完成后可继续编辑生成的样例。只在在线体验提供入口，不扩大官网演示宣传。

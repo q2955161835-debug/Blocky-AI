@@ -34,6 +34,6 @@ for(const directory of dependencyRoots){
 await fs.writeFile(path.join(out,'licenses.txt'),notices.join('\n\n--------------------\n\n'));
 const js=result.outputFiles.find(f=>f.path.endsWith('.js')),css=result.outputFiles.find(f=>f.path.endsWith('.css'));
 await fs.writeFile(path.join(out,'index.html'),`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Blocky Studio · 在线体验</title><meta name="theme-color" content="#20242c"><script src="../preferences-boot.js"></script><link rel="stylesheet" href="./${path.basename(css.path)}"><script type="module" src="./${path.basename(js.path)}"></script></head><body><div id="root"></div></body></html>`);
-await fs.mkdir(path.resolve(root,'../try/官网双语主题'),{recursive:true});
-await fs.writeFile(path.resolve(root,'../try/官网双语主题/experience-build.json'),JSON.stringify(result.metafile,null,2));
+await fs.mkdir(path.resolve(root,'../try/官网工作演示'),{recursive:true});
+await fs.writeFile(path.resolve(root,'../try/官网工作演示/experience-build.json'),JSON.stringify(result.metafile,null,2));
 console.log(`Built ${result.outputFiles.length} assets; desktop capability boundary checked.`);

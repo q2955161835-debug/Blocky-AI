@@ -1,7 +1,8 @@
 import { english } from './translations.js';
 import { uiEnglish } from './ui-translations.js';
+import { demoEnglish } from './demo-translations.js';
 
-const dictionary = { ...english, ...uiEnglish };
+const dictionary = { ...english, ...uiEnglish, ...demoEnglish };
 const reverse = new Map(Object.entries(dictionary).map(([zh,en]) => [en,zh]));
 const key = 'blocky.site.preferences.v1';
 const media = matchMedia('(prefers-color-scheme: dark)');
