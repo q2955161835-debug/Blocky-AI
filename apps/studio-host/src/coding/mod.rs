@@ -58,7 +58,7 @@ pub struct CodingStart {
     pub runtime_context: Option<Value>,
 }
 pub(crate) fn text_safe(text: &str) -> Result<(), String> {
-    files::safe_text(text)
+    files::safe_message(text)
 }
 impl CodingStart {
     pub fn validate(&self) -> Result<Value, String> {
@@ -97,7 +97,7 @@ impl CodingStart {
         files::safe_text(&self.prompt)?;
         if let Some(context) = &self.runtime_context { workspace::validate_runtime_context(context)?; }
         for message in &self.conversation {
-            files::safe_text(&message.text)?;
+            text_safe(&message.text)?;
         }
         let p = crate::strict_json::parse(self.original_json.as_bytes()).map_err(|_| ERROR)?;
         if crate::builder::contains_credentials(

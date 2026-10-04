@@ -29,6 +29,21 @@ fn coding_start_wire_omits_unselected_workspace_and_preserves_granted_id() {
     assert_eq!(wire["workspaceId"], "workspace-granted");
     assert_eq!(serde_json::from_value::<CodingStart>(wire).unwrap().workspace_id, start.workspace_id);
 }
+#[test]
+fn coding_history_accepts_message_bytes_without_expanding_workspace_file_limits() {
+    let text = "知识🙂\n".repeat(150000);
+    assert!(text.len() > files::LIMIT && text.len() < MESSAGE_BYTES);
+    assert!(files::safe_text(&text).is_err());
+    text_safe(&text).unwrap();
+    let project = json!({"manifest":{"schemaVersion":"blocky.project/v1","projectId":"sample","displayName":"Sample","modules":[{"moduleId":"main","displayName":"Main","purpose":"agent","workspaceRef":"workspaces/main.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"0.8.0","minimumReaderVersion":"0.4.0"}},"workspaces":{"main":{"blocks":{"languageVersion":0,"blocks":[]}}},"resources":{},"schemas":{},"surfaces":{}});
+    let mut start: CodingStart = serde_json::from_value(json!({"schemaVersion":"blocky.coding-start/v1","requestId":"long-history","projectId":"sample","moduleId":"main","prompt":"继续","originalJson":project.to_string(),"resourceId":"model","selection":[],"conversation":[{"role":"assistant","text":text}]})).unwrap();
+    assert_eq!(start.validate().unwrap(), project);
+    crate::provider::builder::validate_coding_messages(&json!([{"role":"system","content":"Task"},{"role":"assistant","content":start.conversation[0].text},{"role":"user","content":"Next"}])).unwrap();
+    for invalid in ["x".repeat(MESSAGE_BYTES + 1), "public\0text".to_owned(), "api_key = synthetic-credential-marker".to_owned()] {
+        start.conversation[0].text = invalid;
+        assert!(start.validate().is_err());
+    }
+}
 #[cfg(windows)]
 #[test]
 fn windows_grant_allows_child_publication_but_keeps_directory_identity_pinned() {

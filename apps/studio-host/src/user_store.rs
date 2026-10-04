@@ -265,7 +265,7 @@ mod tests {
         std::fs::create_dir_all(&parent).unwrap();
         let root = tempfile::tempdir_in(parent).unwrap();
         let store = UserStore::new(root.path().to_owned());
-        let text = "知识🙂\n".repeat(20000);
+        let text = "知识🙂\n".repeat(150000);
         let value = serde_json::json!({"schemaVersion":"blocky.coding-chat/v1","projectId":"long-chat","messages":[{"id":"answer_1","role":"assistant","text":text,"status":"completed"}]});
         store.write("coding-chat", "long-chat", value.clone()).unwrap();
         drop(store);

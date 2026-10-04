@@ -508,6 +508,12 @@ fn content(file: &mut File) -> Result<String, String> {
     Ok(text)
 }
 pub(super) fn safe_text(text: &str) -> Result<(), String> {
+    check_text(text, LIMIT)
+}
+pub(super) fn safe_message(text: &str) -> Result<(), String> {
+    check_text(text, super::MESSAGE_BYTES)
+}
+fn check_text(text: &str, limit: usize) -> Result<(), String> {
     if let Ok(value) = crate::strict_json::parse(text.as_bytes()) {
         crate::project_store::check_secrets(&value, 0).map_err(|_| ERROR)?;
     }
@@ -516,7 +522,7 @@ pub(super) fn safe_text(text: &str) -> Result<(), String> {
     if assignments.is_match(text) {
         return Err(ERROR.into());
     }
-    if text.len() > LIMIT
+    if text.len() > limit
         || text
             .chars()
             .any(|c| c == '\0' || (c.is_control() && !['\n', '\r', '\t'].contains(&c)))
