@@ -1,0 +1,26 @@
+[
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\官网",
+    "Destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网开发-2026-10-04",
+    "FileCount": 203,
+    "Bytes": 15023718.0,
+    "ManifestSHA256": "15AFA73570EC32A1878F485502255D708D987D0E0240D6A0738802EB003D7DFD",
+    "Unchanged": true
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\官网发布",
+    "Destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04",
+    "FileCount": 69,
+    "Bytes": 3828924.0,
+    "ManifestSHA256": "9326F3F79C3CE8288A60486E5186B20F1F031802F36192FFA53EDCE199DDAD2D",
+    "Unchanged": true
+  },
+  {
+    "Source": "D:\\1Folder\\Blocky-AI\\try\\官网验收",
+    "Destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网验收-2026-10-04",
+    "FileCount": 282,
+    "Bytes": 18264529.0,
+    "ManifestSHA256": "EA60889F5218597A7B7FA7F99BB77DD5413F1B45BC04B12CCA81957DB120209C",
+    "Unchanged": true
+  }
+]

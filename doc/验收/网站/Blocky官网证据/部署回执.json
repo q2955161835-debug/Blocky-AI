@@ -1,0 +1,54 @@
+{
+  "localProductCommit": "d9c876ab4b3167b7014f69396b3d9f8870c58d59",
+  "archivedPaths": {
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "archive": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\blocky-site.tar.gz",
+    "acceptanceEvidence": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网验收-2026-10-04",
+    "note": "原生source字段保留执行时路径；2026-10-04 22:49可逆移动，内容哈希保持，详见临时材料整理回执。"
+  },
+  "currentSite": {"project_id":"appgprj_6ac2611c78048191af586892e782d68f","status":"active","current_live_url":"https://blocky.donk55666.chatgpt.site","latest_version_number":3,"access_mode":"public"},
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\官网发布\\source",
+    "commit_sha": "e5d1bdc45f241f1b6c9efa5a5259f1ca8ed132e6",
+    "archive": "D:\\1Folder\\Blocky-AI\\try\\官网发布\\blocky-site.tar.gz"
+  },
+  "savedVersion": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_0d7d523162f081919927d6d1ed23fe32",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 3,
+    "source": {
+      "commit_sha": "e5d1bdc45f241f1b6c9efa5a5259f1ca8ed132e6"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000676c81fd98dbe039fc3b8a71",
+      "content_hash": "sha256:18e15b638f0a576d3a3d8fe332f00435d5bd1e7779eea79deffcc1a88d747311",
+      "size_bytes": 1300480,
+      "file_count": 9
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac26676053481918f90e24ad77de526",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_0d7d523162f081919927d6d1ed23fe32",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-04T14:45:16.007526+00:00"
+  },
+  "access": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "access_mode": "public",
+    "revision": 2,
+    "updated_at": "2026-10-04T14:31:07.102655+00:00"
+  }
+}
