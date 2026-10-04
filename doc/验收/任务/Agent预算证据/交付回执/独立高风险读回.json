@@ -1,0 +1,9 @@
+{
+  "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+  "finalChecks": 7,
+  "passed": true,
+  "evidencePathsExist": true,
+  "privacyFilenameViolations": 0,
+  "helperHashMatches": true,
+  "appHashMatches": true
+}

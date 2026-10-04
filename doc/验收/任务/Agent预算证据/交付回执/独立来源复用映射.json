@@ -1,0 +1,47 @@
+{
+  "fromSource": "3521585a7ad8ea9aaf3d04bff9172a39d777b498",
+  "toSource": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+  "fromPackage": "D:/1Folder/Blocky-AI/try/待清理/Agent预算-2026-10-04/普通包失败1/",
+  "intermediateFailedPackage": "D:/1Folder/Blocky-AI/try/待清理/Agent预算-2026-10-04/普通包失败2/",
+  "toPackage": "D:/1Folder/Blocky-AI/dist/Blocky-Studio-0.8.0-budgets-candidate3/",
+  "appSha256": "4cc38ef18a2f6a719e62c93dcaee4571ee2207f628198a4d8fcf035b0cb95bae",
+  "helperSha256": "f9800d34ece90b38e33b23598c18b763fef85c898ebe2a8988680562cd2f5002",
+  "packageFiles": 2595,
+  "packageBytes": 770452440,
+  "reuseMeaning": "Old executed facts retain original source and helper SHA; direct module diff supports reuse. No new real external call or whole regression is claimed.",
+  "unchanged": [
+    "provider Gateway/request/usage",
+    "model registry and secret binding",
+    "Runtime budgets and workflow",
+    "Pi loop and builder.mjs",
+    "file limits/permissions and secrets"
+  ],
+  "changes": [
+    "Host user_store: UTF8 single2MiB, text and serialized messages4MiB, whole8MiB; binding and content safety retained",
+    "Host coding: shared2/4MiB constants and safe_message2MiB; safe_text files1MiB unchanged",
+    "CLI coding --conversation: explicit historyBytes4MiB; generic artifacts unchanged",
+    "CLI/runtime-worker generated locks; bundle codingCommand +33bytes only",
+    "related tests and documentation"
+  ],
+  "reusedEvidence": [
+    "boundary-results.json",
+    "checkpoint-size-results.json",
+    "checkpoint-focused-tests.txt",
+    "host-binding-tests.txt",
+    "native-1791111077436/native-results.json",
+    "ordinary-coding-3/ordinary-coding-safe-result.json",
+    "latest-real-result.json",
+    "restore-scope-result.json"
+  ],
+  "newPackageStorageCheck": "passed 7/7",
+  "newEvidence": [
+    "chat-ui-5/safe-chat-result.json",
+    "chat-ui-5/background-result.json",
+    "chat-ui-5/synthetic-http.jsonl",
+    "chat-ui-5/coding-approval-110212.json"
+  ],
+  "realExternalModelCalls": 1,
+  "realOutputTokens": 27600,
+  "realTotalTokens": 27750,
+  "limitation": "Current ordinary recovery precedes execution; no safety claim for cross-execution late generation restoration of the same internal budget object."
+}

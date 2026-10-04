@@ -1,0 +1,18 @@
+[
+  {
+    "gate": "studio",
+    "startedAt": "2026-10-04T11:44:49.1214504Z",
+    "exitCode": 0,
+    "log": "try/agent-token-budgets/native5-studio.txt",
+    "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+    "completedAt": "2026-10-04T11:45:51.1006339Z"
+  },
+  {
+    "gate": "core",
+    "startedAt": "2026-10-04T11:45:51.1176302Z",
+    "exitCode": 0,
+    "log": "try/agent-token-budgets/native5-core.txt",
+    "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+    "completedAt": "2026-10-04T11:46:25.0202863Z"
+  }
+]

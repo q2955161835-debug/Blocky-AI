@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-04T11:54:59.8482137Z",
+  "application": "pwsh.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\agent-token-budgets\\native-background5-full",
+  "timeoutSeconds": 3600,
+  "focusViolation": false,
+  "foregroundBefore": 13115048,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-bf4a8c30bbea4ffc83e423e7c6a95dc9",
+  "pid": 86200,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [
+    "28385646:95968:False:False",
+    "26941300:95968:True:False",
+    "47260142:95968:True:False",
+    "18424218:105864:False:False",
+    "1582016:109608:False:False",
+    "9314812:109608:False:False",
+    "44179862:109608:False:False",
+    "8789764:95968:False:False",
+    "13115874:95968:False:False",
+    "28319474:95968:False:False",
+    "1253854:105864:False:False",
+    "10690354:109352:False:False",
+    "77012926:109352:False:False"
+  ],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "role": "application",
+      "pid": 86200,
+      "exited": true,
+      "processHandleClosed": true,
+      "threadHandleClosed": true
+    }
+  ],
+  "desktopHandleClosed": true,
+  "foregroundFinally": 13115048,
+  "endedAt": "2026-10-04T12:25:32.1514497Z"
+}

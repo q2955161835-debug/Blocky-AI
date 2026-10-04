@@ -1,0 +1,48 @@
+{
+  "bytes": 21786369117.0,
+  "completedAt": "2026-10-04T12:27:04.5436200Z",
+  "files": 40338.0,
+  "action": "recoverable move, no bytes deleted",
+  "items": [
+    {
+      "bytes": 12800630790.0,
+      "verified": true,
+      "files": 16354,
+      "source": "D:\\1Folder\\Blocky-AI\\apps\\studio-host\\target",
+      "name": "Host编译缓存",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\Agent预算-2026-10-04\\Host编译缓存"
+    },
+    {
+      "bytes": 4058893317.0,
+      "verified": true,
+      "files": 9327,
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "name": "原生E2E编译产物",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\Agent预算-2026-10-04\\原生E2E编译产物"
+    },
+    {
+      "bytes": 3318531081.0,
+      "verified": true,
+      "files": 8028,
+      "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "name": "发行编译产物",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\Agent预算-2026-10-04\\发行编译产物"
+    },
+    {
+      "bytes": 770452440.0,
+      "verified": true,
+      "files": 2595,
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-budgets-candidate3",
+      "name": "最终候选包",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\Agent预算-2026-10-04\\最终候选包"
+    },
+    {
+      "bytes": 837861489.0,
+      "verified": true,
+      "files": 4034,
+      "source": "D:\\1Folder\\Blocky-AI\\try\\agent-token-budgets",
+      "name": "验证证据",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\Agent预算-2026-10-04\\验证证据"
+    }
+  ]
+}

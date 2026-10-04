@@ -1,0 +1,84 @@
+{
+  "copiedAt": "2026-10-04T12:26:50.0273465Z",
+  "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+  "entries": [
+    {
+      "sha256": "98e5ce5d0f000c6bd0ae58ba11c4d222d260cb4b475600ca26bb1e009b4e3eac",
+      "bytes": 545,
+      "original": "try\\agent-token-budgets\\native-gates5-pre.json",
+      "copied": "原生预门禁.json"
+    },
+    {
+      "sha256": "4dcfa8c002420312c6ba6d2b8f79c7ee57900ee14c4d1d629867653940fb9661",
+      "bytes": 251,
+      "original": "try\\agent-token-budgets\\native-gates5-full.json",
+      "copied": "原生Full命令.json"
+    },
+    {
+      "sha256": "9981d372712d387ec91c0cd1a359533dfbdc8995e521dff65f71a00ab9d46c8c",
+      "bytes": 1315,
+      "original": "try\\agent-token-budgets\\native-background5-full\\background-result.json",
+      "copied": "原生Full后台结算.json"
+    },
+    {
+      "sha256": "b47ec194fe203a29168fa892b8f4347b4637f3d50e323aa2bc6c0f2b1721d516",
+      "bytes": 649,
+      "original": "try\\stage2-core\\full.json",
+      "copied": "原生Full.json"
+    },
+    {
+      "sha256": "15fa121d6b75718fda7a2da25151c5e1a9e4e6450ab9a12f720b9fe57b8dca04",
+      "bytes": 52103,
+      "original": "try\\stage2-core\\cycles.jsonl",
+      "copied": "原生Full循环.jsonl"
+    },
+    {
+      "sha256": "404240a7e96e34858468d90b1f7d7d7be438c0b711b740ec79a00af4ef567d32",
+      "bytes": 1485,
+      "original": "try\\stage2-core\\performance.json",
+      "copied": "性能.json"
+    },
+    {
+      "sha256": "63bff28105813f7346d1bc3414b69a96500a33d5d9bcd5c7b88dd1a23603ad9c",
+      "bytes": 335,
+      "original": "try\\stage2-core\\window-policy.json",
+      "copied": "窗口策略.json"
+    },
+    {
+      "sha256": "dab694f2fb9bcd78357efbf63daddf782540b04f795d4b2d07e74c4712a160b3",
+      "bytes": 640920,
+      "original": "try\\agent-token-budgets\\artifacts-final5.json",
+      "copied": "发行扫描.json"
+    },
+    {
+      "sha256": "8392342e7515df023475406dc795c1df2714e7c6fba25be4ac04c1e712fbfa66",
+      "bytes": 57,
+      "original": "try\\agent-token-budgets\\license-coverage-final5.json",
+      "copied": "许可证覆盖.json"
+    },
+    {
+      "sha256": "9a04fc312e8de007353b0af65d6f4c72e067e144491854c0f1b79fb94ded8f02",
+      "bytes": 519327,
+      "original": "try\\agent-token-budgets\\package-stable.json",
+      "copied": "普通包清单.json"
+    },
+    {
+      "sha256": "7439d6c86972dbd6f55088b812a982aa9496f6f3c0d099e7ac3cc7cc382cae3a",
+      "bytes": 342,
+      "original": "try\\agent-token-budgets\\stable-promotion.json",
+      "copied": "普通包复制核对.json"
+    },
+    {
+      "sha256": "8114eb9e96187fa8c2fb20ac81bd463f241496e3b58a62b014bbebb856c0fed9",
+      "bytes": 225,
+      "original": "try\\agent-token-budgets\\acceptance-high\\final-evidence-readback.json",
+      "copied": "独立高风险读回.json"
+    },
+    {
+      "sha256": "18a6915881944b1bfbe772edb4bd9eb1eca4aae3399c62d4baf66bbe28415834",
+      "bytes": 2311,
+      "original": "try\\agent-token-budgets\\acceptance-high\\source-reuse-map.json",
+      "copied": "独立来源复用映射.json"
+    }
+  ]
+}

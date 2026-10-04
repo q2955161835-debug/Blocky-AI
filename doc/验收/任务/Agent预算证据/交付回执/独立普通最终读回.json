@@ -1,0 +1,40 @@
+{
+  "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+  "package": {
+    "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-budgets",
+    "count": 2595,
+    "bytes": 770452440,
+    "allHashesMatch": true
+  },
+  "shortcut": {
+    "checkedAt": "2026-10-04T12:28:07.1889218Z",
+    "shortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-budgets\\Blocky Studio.exe",
+    "arguments": "",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-budgets",
+    "iconLocation": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-budgets\\Blocky Studio.exe,0",
+    "targetExists": true,
+    "exeSha256": "4CC38EF18A2F6A719E62C93DCAEE4571EE2207F628198A4D8FCF035B0CB95BAE",
+    "readOnly": true
+  },
+  "full": {
+    "source": "ef4810db182b1f34cbc8a529f6d0c50e34e110ff",
+    "commandExit": 0,
+    "passed": true,
+    "cycles": 360,
+    "uniqueCycles": 360,
+    "roundTrips": 30,
+    "elapsedMs": 1803599,
+    "importantEventsDropped": 0.0,
+    "badCycleCounts": 0,
+    "errors": [],
+    "trustedInput": [],
+    "outbound": [],
+    "heapDelta": -780880,
+    "focusViolation": false,
+    "jobClosed": true,
+    "recordedChildrenStillRunning": [],
+    "scanPassed": true,
+    "scanPositiveControl": true
+  }
+}
