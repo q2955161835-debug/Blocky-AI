@@ -38,5 +38,5 @@ export const english = {
   '作品和模型连接如何管理？':'How are projects and model connections managed?','桌面端使用 .blocky 项目文件保存作品，可配置自己的模型连接。真实模型调用是否发送内容、产生费用，取决于使用的模型服务及项目配置。在线 UI 体验不需要填写密钥，也不读取本地文件。':'The desktop app saves projects as .blocky files and lets you configure your own model connections. Data transmission and charges depend on the model service and project configuration. The online UI experience requires no API keys and reads no local files.',
   '在哪里获取桌面版和开源代码？':'Where can I download the app and source code?','桌面产品正在持续完善，公开下载渠道、个人版开源和社区入口尚在准备。本站会在渠道正式开放后更新链接。':'The desktop app is being developed. Public downloads, the open-source personal edition, and community access are in preparation. This site will add links when those channels open.',
   '下一个想法，':'Your next idea','从你开始。':'starts with you.','找到你的创作起点':'Find your starting point','让每一个好奇的想法，都有开始的方式。':'Give every curious idea a place to begin.','常见问题':'FAQ',
-  '语言':'Language','主题':'Appearance','跟随系统':'Use system setting','深色':'Dark','浅色':'Light','切换语言':'Change language','切换主题':'Change appearance',
+  '语言':'Language','主题':'Appearance','跟随系统':'Use system setting','深色':'Dark','浅色':'Light','切换语言':'Change language','切换主题':'Change appearance','联系':'Contact','机构咨询':'Institutional inquiries',
 };
