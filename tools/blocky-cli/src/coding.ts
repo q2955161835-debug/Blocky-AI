@@ -5,7 +5,7 @@ import {
   codingResultSchema,
   parseCodingStart,
 } from "@blocky/builder-protocol";
-import { canonicalJson, stableId } from "@blocky/language-schema";
+import { agentMessageLimits, canonicalJson, stableId } from "@blocky/language-schema";
 import { allow, required, type Args } from "./arguments";
 import { readJsonArtifact, writeJsonArtifact } from "./artifacts";
 import { nativeUserOperation, readProject } from "./native-store";
@@ -96,7 +96,7 @@ export async function codingCommand(args: Args, signal: AbortSignal) {
         .split(",")
         .filter(Boolean),
       conversation: args.options.has("conversation")
-        ? await readJsonArtifact(required(args, "conversation"))
+        ? await readJsonArtifact(required(args, "conversation"), agentMessageLimits.historyBytes)
         : [],
     });
     const raw = await nativeUserOperation(

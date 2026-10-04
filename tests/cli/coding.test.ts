@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import { canonicalJson } from "../../packages/language-schema/src";
 import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { join, resolve, sep } from "node:path";
 const native = vi.hoisted(() => ({
   read: vi.fn(),
   run: vi.fn(),
@@ -23,6 +25,7 @@ import { codingCommand, codingHelp } from "../../tools/blocky-cli/src/coding";
 import { parse } from "../../tools/blocky-cli/src/arguments";
 import { output } from "../../tools/blocky-cli/src/output";
 import { discoveryCommand } from "../../tools/blocky-cli/src/discovery";
+import { readJsonArtifact } from "../../tools/blocky-cli/src/artifacts";
 function result(start: {
   requestId: string;
   projectId: string;
@@ -53,6 +56,27 @@ beforeEach(() => {
   native.run.mockImplementation(async (_operation, { start }) => result(start));
 });
 describe("coding CLI native boundary", () => {
+  it("reads legal multi-megabyte history before Host handoff and rejects overflow without calling Host", async () => {
+    const parent = resolve("try/agent-token-budgets/cli-history-tests");
+    await mkdir(parent, { recursive: true });
+    const directory = await mkdtemp(join(parent, "history-"));
+    if (!directory.startsWith(parent + sep)) throw Error("Unexpected test path");
+    const path = join(directory, "conversation.json");
+    const actual = await vi.importActual<typeof import("../../tools/blocky-cli/src/artifacts")>("../../tools/blocky-cli/src/artifacts");
+    vi.mocked(readJsonArtifact).mockImplementation(actual.readJsonArtifact);
+    const command = parse(["coding", "run", "test.blocky", "--module", "research-agent", "--prompt", "继续", "--conversation", path, "--output", "result.json"]);
+    const messages = [{ role: "user", text: "知识".repeat(225000) }, { role: "assistant", text: "资料".repeat(225000) }];
+    try {
+      await writeFile(path, JSON.stringify(messages));
+      await codingCommand(command, new AbortController().signal);
+      expect(native.run.mock.calls[0][1].start.conversation).toEqual(messages);
+      await writeFile(path, JSON.stringify([...messages, { role: "assistant", text: "资料".repeat(300000) }]));
+      await expect(codingCommand(command, new AbortController().signal)).rejects.toMatchObject({ code: "BLK-CLI-003" });
+      expect(native.run).toHaveBeenCalledOnce();
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
   it("discovers all coding schemas including transformed candidate project", () => {
     expect(codingHelp[0]).toContain("--workspace");
     for (const id of [
