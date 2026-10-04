@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { canonicalJson, type Json } from "@blocky/language-schema";
+import { canonicalJson, agentMessageLimits, type Json } from "@blocky/language-schema";
 import { memoryRequestSchema, type MemoryInput, type MemoryResult } from "./memory";
 import { utf8 } from "./budget";
 export const sessionMetadataSchema=z.object({version:z.number().int().positive(),sourceRef:z.string().max(256).nullable(),summary:z.string().max(2048),summaryKind:z.enum(['manual','extract']),updatedAt:z.number().int().nonnegative(),expiresAt:z.number().int().nonnegative().nullable(),deleted:z.boolean()}).strict();
@@ -39,12 +39,12 @@ export function sessionRequest(values:Map<string,Json>,ledger:SessionLedger,proj
   if(r.sourceRef&&ledger.revoked.has(revokeKey(project,session,r.sourceRef)))throw Error('BLK-PERM-001');value=r.value;
   if(r.conflictPolicy==='merge') {const incoming=value,previous=found?values.get(key):{};
    if(!incoming||typeof incoming!=='object'||Array.isArray(incoming)||!previous||typeof previous!=='object'||Array.isArray(previous))throw Error('BLK-MEMORY-001');value={...previous,...incoming};}
-  if(utf8(canonicalJson(value))>32768)throw Error('BLK-MEMORY-001');
+  if(utf8(canonicalJson(value))>agentMessageLimits.outputBytes)throw Error('BLK-MEMORY-001');
  }
  const meta:SessionMetadata={version:version+1,sourceRef:r.action==='upsert'?r.sourceRef??null:null,summary:r.action==='upsert'?r.summary??(typeof value==='string'?value:canonicalJson(value)).slice(0,256):'',summaryKind:r.action==='upsert'&&r.summary!==undefined?'manual':'extract',updatedAt:time,expiresAt:r.action==='upsert'&&r.ttlSeconds?time+r.ttlSeconds:null,deleted:r.action==='delete'};
  const candidate=new Map(values);if(meta.deleted)candidate.delete(key);else candidate.set(key,structuredClone(value));
  const next=new Map(ledger.entries);next.set(key,meta);
- if(next.size>1024||utf8(JSON.stringify([...candidate]))+utf8(JSON.stringify([...next]))>1048576)throw Error('BLK-MEMORY-001');
+ if(next.size>1024||utf8(JSON.stringify([...candidate]))+utf8(JSON.stringify([...next]))>agentMessageLimits.sessionBytes)throw Error('BLK-MEMORY-001');
  ledger.entries.set(key,meta);if(meta.deleted)values.delete(key);else values.set(key,structuredClone(value));
  return {ok:true,version:meta.version,...(!meta.deleted?{entry:view(key)}:{})};
 }

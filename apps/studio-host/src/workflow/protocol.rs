@@ -2,7 +2,8 @@
 use serde_json::{Value, json};
 pub(super) const INVALID: &str = "BLK-WORKFLOW-INVALID";
 pub(super) const LIMIT: &str = "BLK-WORKFLOW-LIMIT";
-pub(super) const RECORD_LIMIT: usize = 1_048_576;
+pub(super) const STATE_LIMIT: usize = 8 * 1024 * 1024;
+pub(super) const RECORD_LIMIT: usize = 16 * 1024 * 1024;
 pub(super) fn require(ok: bool, code: &str) -> Result<(), String> {
     if ok { Ok(()) } else { Err(code.into()) }
 }
@@ -165,7 +166,7 @@ pub fn parse(v: &Value) -> Result<Value, String> {
         ),
         INVALID,
     )?;
-    bounded(&v["state"], 131072)?;
+    bounded(&v["state"], STATE_LIMIT)?;
     let receipts = v["receipts"]
         .as_array()
         .filter(|a| a.len() == steps.len())
@@ -195,8 +196,8 @@ pub fn parse(v: &Value) -> Result<Value, String> {
             INVALID,
         )?;
         if frame {
-            bounded(&receipt["before"], 131072)?;
-            bounded(&receipt["after"], 131072)?;
+            bounded(&receipt["before"], STATE_LIMIT)?;
+            bounded(&receipt["after"], STATE_LIMIT)?;
         }
         if (index as i64) < forward {
             let expected = if kind == "approval" {

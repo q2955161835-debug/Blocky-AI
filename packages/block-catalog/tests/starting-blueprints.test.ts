@@ -84,11 +84,11 @@ it.each([
     RESOURCE: "assistant-model",
     ENGINE: "pi",
     SESSION: "conversation",
-    MAX_TURNS: "8",
-    OUTPUT_TOKENS: "512",
+    MAX_TURNS: "32",
+    OUTPUT_TOKENS: "32768",
   });
   const budget = blocks(project).find((block) => block.type === "core.run.budget");
-  expect(budget?.fields).toMatchObject({ CALLS: "16", OUTPUT_TOKENS: "4096" });
+  expect(budget?.fields).toMatchObject({ CALLS: "256", OUTPUT_TOKENS: "1048576" });
   const declared = [...walkBlocks([loop.inputs!.TOOLS!.block!])];
   const allTools = declared.map(
     (block) => project.resources[String(block.fields?.RESOURCE)],

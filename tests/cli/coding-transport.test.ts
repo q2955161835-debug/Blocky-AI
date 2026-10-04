@@ -77,6 +77,8 @@ it("timeout sends a control frame and waits for settled process exit", async () 
     return reply;
   });
   await vi.advanceTimersByTimeAsync(310000);
+  expect(child.stdin.end).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(86400000 + 10000 - 310000);
   expect(child.stdin.end).toHaveBeenCalledWith('{"cancel":true}\n');
   expect(settled).toBe(false);
   expect(child.kill).not.toHaveBeenCalled();

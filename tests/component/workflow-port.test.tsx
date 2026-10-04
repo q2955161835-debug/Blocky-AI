@@ -98,7 +98,7 @@ it("rejects oversized or deeply nested manual state before invoking the Host", a
     transitionWorkflow(initial, { kind: "begin", revision: 1 }),
   );
   for (const state of [
-    "x".repeat(131073),
+    "x".repeat(8 * 1024 * 1024),
     Array.from({ length: 40 }).reduce<any>((v) => ({ next: v }), null),
   ]) {
     await expect(

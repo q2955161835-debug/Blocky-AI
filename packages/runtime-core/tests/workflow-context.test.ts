@@ -150,7 +150,7 @@ it("preserves consumed budget and deadline instead of minting fresh limits on re
     expect(next.reserveOutput(50)).toBe(28);
     expect(() => next.reserveOutput(1)).toThrow("BLK-RUN-004");
     expect(() =>
-      next.restoreCheckpoint({ ...snapshot, maxCalls: 17 }),
+      next.restoreCheckpoint({ ...snapshot, maxCalls: 65537 }),
     ).toThrow();
   } finally {
     old.dispose();

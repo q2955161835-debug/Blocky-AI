@@ -42,7 +42,7 @@ fn call_with_tools(value: &Value, tools: &[&str]) -> Result<(String, Value), Str
         .ok_or(ERROR)?;
     let args = value["function"]["arguments"]
         .as_str()
-        .filter(|s| s.len() <= 65536)
+        .filter(|s| s.len() <= 2 * 1024 * 1024)
         .ok_or(ERROR)?;
     let args = crate::strict_json::parse(args.as_bytes()).map_err(|_| ERROR)?;
     if value["type"] != "function" || !args.is_object() {
@@ -57,7 +57,7 @@ pub fn validate_messages(value: &Value) -> Result<(), String> {
     validate_messages_with_tools(value, &TOOLS, 32)
 }
 pub(crate) fn validate_coding_messages(value: &Value) -> Result<(), String> {
-    validate_messages_with_tools(value, &crate::coding::TOOLS, 256)
+    validate_messages_with_tools(value, &crate::coding::TOOLS, 8192)
 }
 fn validate_messages_with_tools(
     value: &Value,

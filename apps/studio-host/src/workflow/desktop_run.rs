@@ -63,7 +63,9 @@ pub(super) fn run(
     let mut pending = HashSet::new();
     let mut serial = 0u64;
     let mut cancelled = false;
-    let mut deadline = Instant::now() + Duration::from_secs(310);
+    // Runtime owns the configured task deadline; this supervisor only adds a
+    // bounded settlement margin beyond the largest accepted project budget.
+    let mut deadline = Instant::now() + Duration::from_secs(86410);
     let outcome = (|| -> Result<(Value, String), String> {
         loop {
             if cancellation.load(Ordering::SeqCst) && !cancelled {
@@ -110,7 +112,7 @@ pub(super) fn run(
                 }
                 Some("workflow") => {
                     let id = message["id"].as_u64().ok_or(ERROR)?;
-                    require(id == serial + 1 && id <= 4096, ERROR)?;
+                    wire::service_sequence(serial, id).map_err(|_| ERROR)?;
                     serial = id;
                     if message["operation"] == "service" {
                         keys(&message, &["kind", "id", "operation", "request"], &[])?;
@@ -145,7 +147,7 @@ pub(super) fn run(
                     require(custody.closed() && pending.is_empty(), ERROR)?;
                     let state = message["value"]["state"].as_str().ok_or(ERROR)?;
                     require(
-                        state.len() <= 2 * 1024 * 1024
+                        state.len() <= 8 * 1024 * 1024
                             && matches!(
                                 message["value"]["result"]["status"].as_str(),
                                 Some("completed" | "cancelled" | "failed" | "waiting")

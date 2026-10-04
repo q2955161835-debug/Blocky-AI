@@ -29,14 +29,14 @@ pub async fn provider_model_call(
         .to_owned();
     let destination = host.model_destination(&root, &request, &digest)?;
     let description = format!(
-        "模型：{}\n资源：{}\n地址：{}\n输入：{} bytes\n图片：{}\n工具：{}\n输出上限：{} tokens\n请求摘要：{}",
+        "模型：{}\n资源：{}\n地址：{}\n输入：{} bytes\n图片：{}\n工具：{}\n输出上限：{}\n请求摘要：{}",
         preview["modelId"],
         request.resource_id,
         destination,
         preview["inputBytes"],
         preview["imageCount"],
         preview["toolNames"],
-        request.max_output_tokens,
+        request.max_output_tokens.map(|n|format!("{n} tokens")).unwrap_or_else(||"由模型服务决定".into()),
         digest
     );
     if !blocky_studio::native_confirmation::yes_no(&window, "批准模型请求", description).await

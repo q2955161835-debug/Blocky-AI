@@ -30,7 +30,7 @@ it("rejects credentials and excessive conversation context", () => {
       ...start(),
       conversation: Array.from({ length: 5 }, () => ({
         role: "user",
-        text: "a".repeat(16000),
+        text: "a".repeat(1024 * 1024),
       })),
     }),
   ).toThrow();
@@ -54,9 +54,9 @@ it("accepts only bounded diagnostic codes and recent event IDs in runtime contex
       },
     ],
   };
-  expect(parseCodingStart({ ...start(), runtimeContext }).runtimeContext).toEqual(
-    runtimeContext,
-  );
+  expect(
+    parseCodingStart({ ...start(), runtimeContext }).runtimeContext,
+  ).toEqual(runtimeContext);
   expect(() =>
     parseCodingStart({
       ...start(),
@@ -70,7 +70,10 @@ it("accepts only bounded diagnostic codes and recent event IDs in runtime contex
     parseCodingStart({
       ...start(),
       runtimeContext: {
-        diagnostics: Array.from({ length: 21 }, () => runtimeContext.diagnostics[0]),
+        diagnostics: Array.from(
+          { length: 21 },
+          () => runtimeContext.diagnostics[0],
+        ),
         recentEvents: [],
       },
     }),
@@ -208,4 +211,23 @@ it("accepts the bounded Host journal after manual undo appends inverse receipts"
       { ...changes[0], changeId: "overflow" },
     ]),
   ).toThrow();
+});
+
+it("keeps long Unicode replies in saved chat and next-turn context within byte boundaries", () => {
+  const text = "中😀".repeat(50_000);
+  expect(
+    parseCodingStart({
+      ...start(),
+      conversation: [{ role: "assistant", text }],
+    }).conversation[0].text,
+  ).toBe(text);
+  expect(
+    protocol.codingChatStateSchema.parse({
+      schemaVersion: "blocky.coding-chat/v1",
+      projectId: "project-1",
+      messages: [{ id: "message-one", role: "assistant", text }],
+    }).messages[0].text,
+  ).toBe(text);
+  expect(protocol.codingTextBytePrefix("a😀中z", 7)).toBe("a😀");
+  expect(protocol.codingTextBytePrefix("a😀中z", 8)).toBe("a😀中");
 });

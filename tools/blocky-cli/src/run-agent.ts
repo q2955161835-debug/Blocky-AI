@@ -11,6 +11,8 @@ import {
 } from "@blocky/runtime-core";
 import {
   stableId,
+  agentBudgetDefaults,
+  agentBudgetLimits,
   type Project,
   type Resource,
   type InteractionManifest,
@@ -173,7 +175,7 @@ export async function runAgent(
     cancel = () => abort.abort();
   signal.addEventListener("abort", cancel, { once: true });
   if (signal.aborted) cancel();
-  const timer = setTimeout(cancel, integer(args, "timeout", 120000, 300000));
+  const timer = setTimeout(cancel, integer(args, "timeout", agentBudgetDefaults.durationMs, agentBudgetLimits.durationMs));
   const call = async (
     operation: string,
     fields: Record<string, unknown>,

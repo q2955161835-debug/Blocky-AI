@@ -31,7 +31,7 @@ pub fn dispatch(root: PathBuf, input: &Value) -> Result<Value, String> {
         fields.push("state");
     }
     keys(input, &fields, &["approval"])?;
-    protocol::bounded(input, 262144)?;
+    protocol::bounded(input, protocol::RECORD_LIMIT)?;
     require(
         input["schemaVersion"] == "blocky.project-io/v1alpha1"
             && input["operation"] == "workflow-reconcile",

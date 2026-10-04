@@ -1,4 +1,4 @@
-use super::protocol::{INVALID, bounded, keys, parse, require};
+use super::protocol::{INVALID, STATE_LIMIT, RECORD_LIMIT, bounded, keys, parse, require};
 use serde_json::{Value, json};
 const STATE: &str = "BLK-WORKFLOW-STATE";
 fn clear(r: &mut Value) {
@@ -12,7 +12,7 @@ fn complete(r: &mut Value, state: &Value, index: usize, forward: bool) -> Result
         r["definition"]["steps"][index]["kind"] == "action" && r.get("active").is_some(),
         STATE,
     )?;
-    bounded(state, 131072)?;
+    bounded(state, STATE_LIMIT)?;
     if forward {
         r["receipts"][index] = json!({"status":"completed","before":r["state"],"after":state});
         r["cursor"] = json!(index + 1);
@@ -30,7 +30,7 @@ fn complete(r: &mut Value, state: &Value, index: usize, forward: bool) -> Result
 /// Apply only to an authoritative record while its native ledger lock is held.
 pub fn transition(input: &Value, action: &Value) -> Result<Value, String> {
     let mut r = parse(input)?;
-    bounded(action, 262144)?;
+    bounded(action, RECORD_LIMIT)?;
     require(action["revision"] == r["revision"], "BLK-WORKFLOW-CONFLICT")?;
     let kind = action["kind"].as_str().ok_or(INVALID)?;
     let mut fields = vec!["kind", "revision"];

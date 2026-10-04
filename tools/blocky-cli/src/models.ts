@@ -4,6 +4,7 @@ import { allow, required, type Args } from "./arguments";
 import { nativeUserOperation } from "./native-store";
 import { readJsonArtifact } from "./artifacts";
 import { CliError, envelope } from "./protocol";
+import { agentMessageLimits } from "@blocky/language-schema";
 import {
   modelIdSchema,
   modelRequestSchema,
@@ -38,7 +39,7 @@ export async function modelCommand(args: Args, signal: AbortSignal) {
       2,
     );
     const parsed = modelRequestSchema.safeParse(
-      await readJsonArtifact(required(args, "request"), 262144),
+      await readJsonArtifact(required(args, "request"), agentMessageLimits.historyBytes),
     );
     if (!parsed.success)
       throw new CliError(

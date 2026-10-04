@@ -374,7 +374,7 @@ fn workflow_host_rejects_injected_fields_codes_conflicts_and_limits() {
     active["status"] = json!("uncertain");
     active["code"] = json!("BLK-WORKFLOW-SECRET");
     assert!(parse(&active).is_err());
-    assert!(create("task-one", &definition(), json!("x".repeat(131072))).is_err());
+    assert!(create("task-one", &definition(), json!("x".repeat(protocol::STATE_LIMIT))).is_err());
     let mut deep = Value::Null;
     for _ in 0..34 {
         deep = json!([deep]);
@@ -719,4 +719,65 @@ fn workflow_host_failed_atomic_replace_leaves_previous_record_and_no_temp_file()
             .starts_with(".workflow-")
     }));
     lease.release().unwrap();
+}
+
+#[test]
+fn large_workflow_states_persist_privately_and_record_duplication_remains_bounded() {
+    let dir = temp();
+    let host = host::WorkflowHost::new(dir.path().to_owned());
+    let long = "中".repeat(100_000);
+    let opened = host.open(&json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":{"generated":long,"value":long,"budget":{"calls":1,"usedOutput":25000}}})).unwrap();
+    let token = opened["sessionId"].clone();
+    let command = |action:Value| json!({"sessionId":token,"projectId":"project-one","operation":"commit","action":action});
+    host.request(&command(json!({"kind":"begin","revision":1}))).unwrap();
+    let next = json!({"generated":long,"value":long,"budget":{"calls":1,"usedOutput":25000}});
+    let completed = host.request(&command(json!({"kind":"complete","revision":2,"state":next}))).unwrap();
+    assert_eq!(completed["state"]["generated"], long);
+    host.request(&json!({"sessionId":token,"projectId":"project-one","operation":"close"})).unwrap();
+    let task = opened["record"]["taskId"].as_str().unwrap();
+    let restored = Store::new(dir.path().to_owned()).unwrap().read(task).unwrap();
+    assert_eq!(restored["state"], next);
+    assert_eq!(restored["receipts"][0]["after"], next);
+    assert!(!summary(&restored).unwrap().to_string().contains(&long));
+    let oversized = "x".repeat(6 * 1024 * 1024);
+    let record = create("task-large-record", &definition(), json!(oversized)).unwrap();
+    let active = transition(&record, &json!({"kind":"begin","revision":1})).unwrap();
+    assert!(transition(&active, &json!({"kind":"complete","revision":2,"state":oversized})).is_err());
+    assert_eq!(active["revision"], 2);
+}
+#[test]
+fn runtime_service_and_frame_counts_admit_valid_high_budgets_without_unbounded_sequences() {
+    use super::managed_wire as wire;
+    assert!(wire::service_sequence(4096,4097).is_ok());
+    assert!(wire::service_sequence(999_999,1_000_000).is_ok());
+    assert!(wire::service_sequence(1_000_000,1_000_001).is_err());
+    assert!(wire::service_sequence(42,44).is_err());
+    assert!(wire::service_sequence(42,42).is_err());
+    assert!(wire::service_sequence(u64::MAX,0).is_err());
+    assert!(wire::frame_count(20_001).is_ok());
+    assert!(wire::frame_count(3_000_000).is_ok());
+    assert!(wire::frame_count(3_000_001).is_err());
+}
+
+#[test]
+fn native_session_frames_carry_large_initial_and_receipt_states_and_reopen_the_store() {
+    let dir = temp();
+    let long = "中".repeat(400_000);
+    let frames = vec![
+        json!({"schemaVersion":"blocky.workflow-session/v1","definition":definition(),"initial":long}),
+        json!({"operation":"commit","requestId":1,"action":{"kind":"begin","revision":1}}),
+        json!({"operation":"commit","requestId":2,"action":{"kind":"complete","revision":2,"state":long}}),
+        json!({"operation":"close","requestId":3})
+    ];
+    let input = frames.iter().map(|frame|format!("{frame}\n")).collect::<String>();
+    let mut output = Vec::new();
+    assert_eq!(super::session::serve(dir.path().to_owned(),std::io::Cursor::new(input.into_bytes()),&mut output),0);
+    let replies = String::from_utf8(output).unwrap().lines().map(|line|serde_json::from_str::<Value>(line).unwrap()).collect::<Vec<_>>();
+    assert_eq!(replies[2]["value"]["state"], long);
+    assert_eq!(replies[3]["value"]["released"],true);
+    let task = replies[0]["value"]["taskId"].as_str().unwrap();
+    let loaded = Store::new(dir.path().to_owned()).unwrap().read(task).unwrap();
+    assert_eq!(loaded["state"], long);
+    assert_eq!(loaded["receipts"][0]["before"], long);
+    assert_eq!(loaded["receipts"][0]["after"], long);
 }

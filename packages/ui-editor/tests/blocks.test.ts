@@ -66,8 +66,8 @@ it("uses catalog defaults and typed tool-flow Blockly connections", () => {
     const foreach = workspace.newBlock("core.flow.foreach");
     const whileBlock = workspace.newBlock("core.flow.while");
     const retry = workspace.newBlock("core.flow.retry");
-    expect(loop.getFieldValue("MAX_TURNS")).toBe("4");
-    expect(loop.getFieldValue("OUTPUT_TOKENS")).toBe("512");
+    expect(loop.getFieldValue("MAX_TURNS")).toBe("32");
+    expect(loop.getFieldValue("OUTPUT_TOKENS")).toBe("32768");
     expect(loop.getInput("TOOLS")!.connection!.getCheck()).toEqual([
       "agent-tool",
     ]);

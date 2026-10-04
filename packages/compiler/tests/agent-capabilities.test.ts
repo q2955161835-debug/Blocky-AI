@@ -55,7 +55,7 @@ it("compiles tool-loop declarations into typed contracts and permission dependen
 
 it("requires a tools-capable model, one to sixteen distinct tools, and TOOLS-only declarations", async () => {
   const invalidBounds = toolLoop();
-  invalidBounds.loop.fields!.MAX_TURNS = "9";
+  invalidBounds.loop.fields!.MAX_TURNS = "4097";
   expect(
     (await compileProject(invalidBounds.project)).diagnostics.map(
       (d) => d.code,

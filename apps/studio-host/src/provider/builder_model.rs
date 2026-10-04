@@ -34,7 +34,12 @@ impl BuilderModel {
             draft["parameters"]["required"] = json!(["plan", "acceptanceCriteria", "explanation"]);
             draft["parameters"]["properties"]["explanation"]["minLength"] = json!(1);
         }
-        let request:GatewayRequest=serde_json::from_value(json!({"schemaVersion":"blocky.model-request/v2","requestId":request_id,"projectId":project_id,"resourceId":resource_id,"messages":[{"role":"user","content":"Blocky 构建会话"}],"tools":definitions,"toolChoice":"required","maxOutputTokens":1024,"timeoutMs":60000})).map_err(|_|ERROR)?;
+        let request:GatewayRequest=serde_json::from_value(json!({"schemaVersion":"blocky.model-request/v2","requestId":request_id,"projectId":project_id,"resourceId":resource_id,"messages":[{"role":"user","content":"Blocky 构建会话"}],"tools":definitions,"toolChoice":"required","timeoutMs":60000})).map_err(|_|ERROR)?;
+        let mut request = request;
+        let registry = crate::user_store::UserStore::new(root.join("user")).read("resources", "app")?.ok_or("BLK-MODEL-CONFIG")?;
+        let resource = crate::model_registry::resolve_resource(&registry, resource_id)?;
+        request.max_output_tokens = resource["definition"]["parameters"]["maxOutputTokens"].as_u64().map(|n|u32::try_from(n).map_err(|_| ERROR)).transpose()?;
+        request.timeout_ms = resource["definition"]["timeoutMs"].as_u64().ok_or(ERROR)?;
         let preview = Binding::load(root, &request)?.preview(&request);
         Ok(Self::Gateway { request, preview })
     }
@@ -53,20 +58,19 @@ impl BuilderModel {
             .ok_or("BLK-MODEL-CONFIG")?;
         let resource = crate::model_registry::resolve_resource(&registry, resource_id)?;
         let max_output = resource["definition"]["parameters"]["maxOutputTokens"]
-            .as_u64()
-            .unwrap_or(8192)
-            .min(8192);
+            .as_u64();
         let timeout = resource["definition"]["timeoutMs"]
             .as_u64()
-            .unwrap_or(60000)
-            .min(60000);
-        let request: GatewayRequest = serde_json::from_value(json!({"schemaVersion":"blocky.model-request/v2","requestId":request_id,"projectId":project_id,"resourceId":resource_id,"messages":[{"role":"user","content":"Blocky 代码会话"}],"tools":definitions,"toolChoice":"auto","maxOutputTokens":max_output,"timeoutMs":timeout})).map_err(|_| ERROR)?;
+            .unwrap_or(60000);
+        let request: GatewayRequest = serde_json::from_value(json!({"schemaVersion":"blocky.model-request/v2","requestId":request_id,"projectId":project_id,"resourceId":resource_id,"messages":[{"role":"user","content":"Blocky 代码会话"}],"tools":definitions,"toolChoice":"auto","timeoutMs":timeout})).map_err(|_| ERROR)?;
+        let mut request = request;
+        request.max_output_tokens = max_output.map(|n| u32::try_from(n).map_err(|_| ERROR)).transpose()?;
         let preview = Binding::load(root, &request)?.preview(&request);
         Ok(Self::Gateway { request, preview })
     }
-    pub(crate) fn max_output_tokens(&self) -> u32 {
+    pub(crate) fn max_output_tokens(&self) -> Option<u32> {
         match self {
-            Self::Legacy(r) => r.max_output_tokens,
+            Self::Legacy(r) => Some(r.max_output_tokens),
             Self::Gateway { request, .. } => request.max_output_tokens,
         }
     }

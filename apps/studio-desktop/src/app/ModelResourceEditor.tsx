@@ -1,6 +1,13 @@
 import { useCallback, useState } from "react";
 import type { Resource } from "@blocky/language-schema";
+import { resourceDefinitions } from "@blocky/resource-registry";
 import { ManagedModelPanel, localRuntimeError } from "./ManagedModelPanel";
+
+const modelDefinition = resourceDefinitions.find(({ kind }) => kind === "model")!;
+const modelProperties = modelDefinition.definitionSchema.properties!;
+const timeoutMsMaximum = modelProperties.timeoutMs.maximum!;
+const maxOutputTokensMaximum =
+  modelProperties.parameters.properties!.maxOutputTokens.maximum!;
 
 const presets = [
   { id: "deepseek", title: "DeepSeek", modelId: "deepseek-chat" },
@@ -52,9 +59,9 @@ export function modelResourceError(resource: Resource): string {
     typeof d.timeoutMs !== "number" ||
     !Number.isInteger(d.timeoutMs) ||
     d.timeoutMs < 1 ||
-    d.timeoutMs > 120000
+    d.timeoutMs > timeoutMsMaximum
   )
-    return "超时须为 1–120000 毫秒的整数。";
+    return `超时须为 1–${timeoutMsMaximum} 毫秒的整数。`;
   const params = d.parameters;
   if (params && typeof params === "object" && !Array.isArray(params)) {
     if (
@@ -70,9 +77,9 @@ export function modelResourceError(resource: Resource): string {
       (typeof params.maxOutputTokens !== "number" ||
         !Number.isInteger(params.maxOutputTokens) ||
         params.maxOutputTokens < 1 ||
-        params.maxOutputTokens > 32768)
+        params.maxOutputTokens > maxOutputTokensMaximum)
     )
-      return "输出上限须为 1–32768 的整数。";
+      return `输出上限须为 1–${maxOutputTokensMaximum} 的整数。`;
   }
   if (!Array.isArray(d.capabilities) || !d.capabilities.includes("text"))
     return "已声明能力须包含文本。";
@@ -170,7 +177,7 @@ export function ModelResourceEditor({
                 protocol: next.id === "managed-local" ? "local" : "openai-chat",
                 timeoutMs: 60000,
                 capabilities: [...managedCapabilities],
-                parameters: { temperature: 0.7, maxOutputTokens: 2048 },
+                parameters: { temperature: 0.7 },
                 implementationRef: { kind: "adapter", id: `${next.id}-v1` },
                 ...(next.id === "managed-local"
                   ? {
@@ -212,7 +219,7 @@ export function ModelResourceEditor({
               aria-label="超时（毫秒）"
               type="number"
               min={1}
-              max={120000}
+              max={timeoutMsMaximum}
               step={1}
               value={String(definition.timeoutMs ?? "")}
               onChange={(e) =>
@@ -240,12 +247,13 @@ export function ModelResourceEditor({
               aria-label="输出上限"
               type="number"
               min={1}
-              max={32768}
+              max={maxOutputTokensMaximum}
               step={1}
               value={String(params.maxOutputTokens ?? "")}
               onChange={(e) => parameter("maxOutputTokens", e.target.value)}
             />
           </label>
+          <small>留空时不设置输出上限，由模型服务自行决定。</small>
           <fieldset>
             <legend>已声明能力</legend>
             {capabilities

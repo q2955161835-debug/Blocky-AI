@@ -1,3 +1,5 @@
+import { agentBudgetLimits } from "@blocky/language-schema";
+
 /** Content-free diagnostic fields. Every imported object is rebuilt, never spread. */
 export type TraceDetails = {
   rpa?: { targetKind: "windows" | "browser"; phase: "authorized" | "performing" | "completed"; action?: "find" | "read" | "click" | "fill" | "wait" | "screenshot"; locatorKind?: "uia" | "browser" | "coordinate"; checkpointId?: string };
@@ -22,7 +24,7 @@ export function projectTraceDetails(input: unknown): TraceDetails {
   if (["roleBytes", "instructionBytes", "userBytes", "memoryBytes", "resultBytes", "evidenceCount", "evidenceBytes"].every(k => count(c[k])))
     result.context = { roleBytes: Number(c.roleBytes), instructionBytes: Number(c.instructionBytes), userBytes: Number(c.userBytes), memoryBytes: Number(c.memoryBytes), resultBytes: Number(c.resultBytes), evidenceCount: Number(c.evidenceCount), evidenceBytes: Number(c.evidenceBytes) };
   const m = record(raw.model);
-  if (count(m.maxOutputTokens) && m.maxOutputTokens > 0 && m.maxOutputTokens <= 4096) result.model = { maxOutputTokens: m.maxOutputTokens };
+  if (count(m.maxOutputTokens) && m.maxOutputTokens > 0 && m.maxOutputTokens <= agentBudgetLimits.outputTokensPerTurn) result.model = { maxOutputTokens: m.maxOutputTokens };
   const memory = record(raw.memory);
   if ((memory.action === "read" || memory.action === "write" || memory.action === "delete") && (memory.scope === "session" || memory.scope === "project"))
     result.memory = { action: memory.action, scope: memory.scope };

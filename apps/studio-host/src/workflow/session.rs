@@ -11,7 +11,7 @@ use std::{
     time::{Duration, Instant},
 };
 const WIRE: &str = "blocky.workflow-session/v1";
-const FRAME: usize = 1_052_672;
+const FRAME: usize = super::managed_wire::FRAME;
 fn read_frame(input: &mut impl BufRead) -> Result<Option<Value>, String> {
     let mut bytes = Vec::new();
     let count = Read::by_ref(input)
@@ -54,7 +54,7 @@ pub(crate) fn open_task(store: &Store, initial: &Value) -> Result<(super::Lease,
     )?;
     require(initial["schemaVersion"] == WIRE, INVALID)?;
     protocol::definition(&initial["definition"])?;
-    protocol::bounded(&initial["initial"], 131072)?;
+    protocol::bounded(&initial["initial"], protocol::STATE_LIMIT)?;
     let task = match initial.get("taskId") {
         Some(id) => {
             let id = id.as_str().ok_or(INVALID)?;

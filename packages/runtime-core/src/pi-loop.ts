@@ -1,10 +1,10 @@
 import { Agent, type AgentTool, type StreamFn } from "@earendil-works/pi-agent-core";
 import { createAssistantMessageEventStream, type AssistantMessage, type Message as PiMessage, type Model, type JsonObject } from "@earendil-works/pi-ai";
 import type { TSchema } from "typebox";
-import { canonicalJson, type Json } from "@blocky/language-schema";
+import { canonicalJson, agentBudgetLimits, agentMessageLimits, type Json } from "@blocky/language-schema";
 import { bindLoopTools, type ToolLoopContext } from "./tool-loop";
 import { abortable, integer, utf8 } from "./budget";
-import { messages, checkGeneration, checkGenerationMetadata, type Message } from "./agent-context";
+import { messages, modelOutputLimit, checkGeneration, checkGenerationMetadata, type Message } from "./agent-context";
 import { validateOutput } from "./output-schema";
 
 export type PiConversation = { role: "user" | "assistant"; content: string }[];
@@ -21,9 +21,9 @@ function wire(messages: PiMessage[]): Message[] {
 
 /** Official Pi owns the turn loop and dispatch. Host ports retain credentials, permissions and side effects. */
 export async function runPiLoop(context: ToolLoopContext, conversation: PiConversation = []): Promise<string> {
-  const { budget } = context, turns = integer(context.maxTurns, 1, 8), outputPerTurn = integer(context.outputPerTurn, 1, 4096);
+  const { budget } = context, turns = integer(context.maxTurns, 1, agentBudgetLimits.turns), outputPerTurn = modelOutputLimit(context.model, context.outputPerTurn);
   const bound = bindLoopTools(context, true);
-  if (conversation.length > 20 || utf8(canonicalJson(conversation)) > 16000 || conversation.some((m) => !["user", "assistant"].includes(m.role) || typeof m.content !== "string")) throw Error("BLK-CONTEXT-001");
+  if (conversation.length > 20 || utf8(canonicalJson(conversation)) > agentMessageLimits.historyBytes || conversation.some((m) => !["user", "assistant"].includes(m.role) || typeof m.content !== "string")) throw Error("BLK-CONTEXT-001");
   if (context.requireEvidence && !context.citations.length) return "资料没有提供足够依据，请补充资料或澄清问题。";
   const initial = messages(context.role, context.instruction, context.question, context.memory, context.value, context.citations);
   const model: Model<"blocky-host"> = { id: context.model.resourceId, name: context.model.displayName, api: "blocky-host", provider: "blocky-host", baseUrl: "", reasoning: false, input: ["text"], cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, contextWindow: 131072, maxTokens: outputPerTurn };
@@ -66,13 +66,14 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         budget.check();
         if (++turn > turns) throw Error("BLK-TOOL-LOOP-LIMIT");
         const history = wire(piContext.messages);
-        if (history.length > 128 || utf8(canonicalJson(history)) > 65536) throw Error("BLK-CONTEXT-001");
+        if (history.length > agentMessageLimits.historyMessages || utf8(canonicalJson(history)) > agentMessageLimits.historyBytes) throw Error("BLK-CONTEXT-001");
         budget.call(); const limit = budget.reserveOutput(outputPerTurn);
         requestId = `${context.requestId}-m${turn}`;
         context.onEvent({ type: "model.started", requestId, data: { summary: "Pi 模型选择下一步", engine: "pi-agent-core/0.86.0", turn, maxOutputTokens: limit } });
         const result = await abortable(context.generate({ projectId: context.project.manifest.projectId, resource: context.model, requestId, messages: history, maxOutputTokens: limit, tools: bound.map((t) => t.model), toolChoice: !bound.length || turn === turns ? "none" : "auto" }, budget.signal), budget.signal);
         budget.check(); checkGenerationMetadata(result);
         if (result.usage && result.usage.outputTokens > limit) throw Error("BLK-RUN-004");
+        budget.settleOutput(limit, result.usage?.outputTokens);
         context.onGeneration(structuredClone(result));
         if (result.toolCalls !== undefined && !Array.isArray(result.toolCalls)) throw Error("BLK-TOOL-PROPOSAL");
         let proposed = result.toolCalls ?? [];

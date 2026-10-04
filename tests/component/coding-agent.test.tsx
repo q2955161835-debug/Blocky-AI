@@ -17,38 +17,87 @@ const pickedWorkspaces = new Map<
   string,
   { workspaceId: string; displayName: string }
 >();
-it("budgets the formatted status prefixes in long saved conversations", () => {
+it("keeps complete long status-prefixed messages within the conversation byte budget", () => {
   const messages = Array.from({ length: 5 }, (_, index) => ({
     id: `message-${index}`,
     role: "assistant" as const,
-    text: "a".repeat(12800),
+    text: "😀".repeat(20000),
     status: "failed" as const,
   }));
   const context = codingContext(messages);
   expect(() => codingConversationSchema.parse(context)).not.toThrow();
-  expect(context.at(-1)?.text).toContain("[failed]");
+  expect(context).toHaveLength(messages.length);
+  expect(
+    context.every(
+      (message, index) =>
+        message.role === messages[index].role &&
+        message.text === `[failed] ${messages[index].text}`,
+    ),
+  ).toBe(true);
 });
-it("keeps persisted ASCII chat within the native 64000 character budget", async () => {
+it("keeps the newest complete messages under the 4 MiB persisted history budget", async () => {
   native.mockImplementation(async (name, args) => storage(name, args));
   const hook = renderHook(() => useCodingChat("sample", vi.fn()));
   await waitFor(() => expect(hook.result.current.ready).toBe(true));
+  const messages = Array.from({ length: 3 }, (_, index) => ({
+    id: `message-${index}`,
+    role: "assistant" as const,
+    text: "😀".repeat(400000),
+    status: "completed" as const,
+  }));
   act(() =>
-    hook.result.current.update("sample", () =>
-      Array.from({ length: 6 }, (_, index) => ({
-        id: `message-${index}`,
-        role: "assistant",
-        text: "a".repeat(16000),
-        status: "completed",
-      })),
-    ),
+    hook.result.current.update("sample", () => messages),
   );
   await act(() => hook.result.current.flush());
+  const retained = messages.slice(-2);
+  expect(hook.result.current.messages).toHaveLength(retained.length);
   expect(
-    hook.result.current.messages.reduce(
-      (sum, message) => sum + message.text.length,
-      0,
+    hook.result.current.messages.every(
+      (message, index) => message.text === retained[index].text,
     ),
-  ).toBeLessThanOrEqual(64000);
+  ).toBe(true);
+  const saved = persisted.get("coding-chat/sample") as {
+    messages: typeof messages;
+  };
+  expect(
+    new TextEncoder().encode(JSON.stringify(saved.messages)).length,
+  ).toBeLessThanOrEqual(4 * 1024 * 1024);
+  hook.unmount();
+  const reopened = renderHook(() => useCodingChat("sample", vi.fn()));
+  await waitFor(() => expect(reopened.result.current.ready).toBe(true));
+  expect(reopened.result.current.messages).toHaveLength(retained.length);
+  expect(
+    reopened.result.current.messages.every(
+      (message, index) => message.text === retained[index].text,
+    ),
+  ).toBe(true);
+});
+it("bounds coding request history by bytes while retaining newest complete messages", () => {
+  const messages = [
+    {
+      id: "context-old",
+      role: "assistant" as const,
+      text: "older context",
+      status: "completed" as const,
+    },
+    ...Array.from({ length: 3 }, (_, index) => ({
+      id: `context-${index}`,
+      role: "assistant" as const,
+      text: "😀".repeat(400000),
+      status: "completed" as const,
+    })),
+  ];
+  const context = codingContext(messages);
+  const retained = messages.slice(-2);
+  expect(context).toHaveLength(retained.length);
+  expect(
+    context.every(
+      (message, index) => message.text === retained[index].text,
+    ),
+  ).toBe(true);
+  expect(
+    new TextEncoder().encode(JSON.stringify(context)).length,
+  ).toBeLessThanOrEqual(4 * 1024 * 1024);
 });
 beforeEach(() => {
   vi.stubGlobal("isTauri", true);
@@ -510,26 +559,87 @@ it("does not place a late manual-undo error into another project's conversation"
   expect(hook.result.current.changes).toEqual([]);
 });
 
-it("preserves valid Unicode when saved answers and status-prefixed history are clipped", async () => {
+it("streams, saves, reloads, and reuses a complete response above 64 KiB", async () => {
   const context = codingContext([
     {
       id: "message-1",
       role: "assistant",
-      status: "failed",
-      text: "a".repeat(15990) + "😀",
+      status: "completed",
+      text: "😀".repeat(20000),
     },
   ]);
-  expect(/\p{Surrogate}/u.test(context[0].text)).toBe(false);
+  expect(context[0].text === "😀".repeat(20000)).toBe(true);
   const s = studio();
-  native.mockImplementation(async (name, args) =>
-    name === "coding_run"
-      ? { ...(await result(args.start)), text: "a".repeat(15999) + "😀" }
-      : storage(name, args),
+  const responseText = "😀".repeat(36000);
+  const chunks = Array.from({ length: 5 }, (_, index) =>
+    responseText.slice(index * 16000, (index + 1) * 16000),
   );
+  let codingRun = 0;
+  let start!: () => void;
+  let release!: (value: unknown) => void;
+  const runStarted = new Promise<void>((resolve) => (start = resolve));
+  const resultPending = new Promise<unknown>((resolve) => (release = resolve));
+  const starts: any[] = [];
+  native.mockImplementation(async (name, args) => {
+    if (name !== "coding_run") return storage(name, args);
+    starts.push(args.start);
+    if (codingRun++ === 0) {
+      start();
+      for (const [index, text] of chunks.entries()) {
+        args.onEvent.onmessage({
+          schemaVersion: "blocky.coding-event/v1",
+          requestId: args.start.requestId,
+          projectId: args.start.projectId,
+          sequence: index + 1,
+          kind: "text.delta",
+          text,
+        });
+      }
+      return resultPending;
+    }
+    return { ...(await result(args.start)), text: "已继续完成。" };
+  });
   const hook = renderHook(() => useCodingAgent(s));
   await waitFor(() => expect(hook.result.current.ready).toBe(true));
+  let pending!: Promise<void>;
   await act(() =>
-    hook.result.current.generate({ prompt: "解释", resourceId: "my-model" }),
+    {
+      pending = hook.result.current.generate({
+        prompt: "解释",
+        resourceId: "my-model",
+      });
+      return runStarted;
+    },
   );
-  expect(hook.result.current.messages.at(-1)?.text).toBe("a".repeat(15999));
+  const liveAtEndOfStream = hook.result.current.liveText;
+  await act(async () => {
+    release({
+      ...(await result(starts[0])),
+      text: responseText,
+      events: chunks.map((text, index) => ({
+        schemaVersion: "blocky.coding-event/v1",
+        requestId: starts[0].requestId,
+        projectId: starts[0].projectId,
+        sequence: index + 1,
+        kind: "text.delta",
+        text,
+      })),
+    });
+    await pending;
+  });
+  expect(liveAtEndOfStream === responseText).toBe(true);
+  expect(hook.result.current.messages.at(-1)?.text === responseText).toBe(true);
+  await act(() => hook.result.current.flush());
+  hook.unmount();
+  const reopened = renderHook(() => useCodingAgent(s));
+  await waitFor(() => expect(reopened.result.current.ready).toBe(true));
+  expect(reopened.result.current.messages.at(-1)?.text === responseText).toBe(true);
+  await act(() =>
+    reopened.result.current.generate({
+      prompt: "继续",
+      resourceId: "my-model",
+    }),
+  );
+  expect(starts.at(-1).conversation.at(-1).text === responseText).toBe(true);
+  expect(reopened.result.current.messages.at(-1)?.text).toBe("已继续完成。");
 });

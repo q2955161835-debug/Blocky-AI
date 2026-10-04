@@ -1,5 +1,5 @@
 import {sessionMetadataSchema,type SessionMetadata} from "./session-memory";
-import { stableId, type Json } from "@blocky/language-schema";
+import { stableId, agentMessageLimits, type Json } from "@blocky/language-schema";
 import { workflowJson, workflowKeys } from "./workflow/protocol";
 
 // Private, transient Host/worker state. Never a project artifact or an execution receipt.
@@ -43,7 +43,7 @@ export function parseRuntimeMailbox(input: unknown): RuntimeMailboxState {
 
 export function parseRuntimeSession(input: unknown): RuntimeSessionState {
   try {
-    const value = workflowJson(input, 2 * 1024 * 1024, 1048576, 1048576);
+    const value = workflowJson(input, agentMessageLimits.sessionBytes, 1048576, 1048576);
     workflowKeys(value, [
       "schemaVersion",
       "sessionId",
@@ -69,15 +69,15 @@ export function parseRuntimeSession(input: unknown): RuntimeSessionState {
       const key = JSON.stringify([item.projectId, value.sessionId, item.key]);
       if (seen.has(key)) throw invalid();
       seen.add(key);
-      workflowJson(item.value, 32768, 50000, 50000);
+      workflowJson(item.value, agentMessageLimits.historyBytes, 50000, 50000);
       encoded.push([key, item.value]);
     }
     // Match the live Runtime memory budget, including its encoded keys.
-    if (bytes(encoded) > 1048576) throw invalid();
+    if (bytes(encoded) > agentMessageLimits.sessionBytes) throw invalid();
     if(value.memoryMetadata!==undefined) {
       if(!Array.isArray(value.memoryMetadata)||value.memoryMetadata.length>1024)throw invalid();
       const seen=new Set();for(const item of value.memoryMetadata){workflowKeys(item,["projectId","key","entry"]);if(!id(item.projectId)||!id(item.key))throw invalid();const key=JSON.stringify([item.projectId,item.key]);if(seen.has(key))throw invalid();seen.add(key);sessionMetadataSchema.parse(item.entry);}
-      if(bytes(encoded)+bytes(value.memoryMetadata)>1048576)throw invalid();
+      if(bytes(encoded)+bytes(value.memoryMetadata)>agentMessageLimits.sessionBytes)throw invalid();
     }
     if(value.revokedMemorySources!==undefined) {
       if(!Array.isArray(value.revokedMemorySources)||value.revokedMemorySources.length>1024)throw invalid();

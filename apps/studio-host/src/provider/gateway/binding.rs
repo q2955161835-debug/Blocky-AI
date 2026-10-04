@@ -73,10 +73,10 @@ impl Binding {
         }
         super::images::validate(root,r)?;
         let timeout = d["timeoutMs"].as_u64().ok_or(ERROR)?;
-        if r.timeout_ms > timeout.min(120000)
+        if r.timeout_ms > timeout
             || d["parameters"]["maxOutputTokens"]
                 .as_u64()
-                .is_some_and(|n| r.max_output_tokens as u64 > n)
+                .is_some_and(|n| r.max_output_tokens.is_none_or(|requested| requested as u64 > n))
         {
             return Err("BLK-MODEL-BUDGET".into());
         }

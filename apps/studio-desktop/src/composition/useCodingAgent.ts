@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Channel, invoke } from "@tauri-apps/api/core";
-import { canonicalJson, containsCredential } from "@blocky/language-schema";
+import {
+  agentMessageLimits,
+  canonicalJson,
+  containsCredential,
+} from "@blocky/language-schema";
 import { parseProject, projectDigest } from "@blocky/project-model";
 import { encodeProject } from "@blocky/project-format";
 import {
   parseCodingStart,
-  codingTextPrefix,
   codingEventSchema,
   codingResultSchema,
   codingChangeSchema,
@@ -475,6 +478,7 @@ export function useCodingAgent(studio: Studio) {
     let appended = false,
       sequence = 0,
       streamed = "",
+      streamedBytes = 0,
       fault = "";
     const received = new Map<number, CodingEvent>();
     const answer = (text: string, status: CodingMessage["status"]) =>
@@ -483,7 +487,7 @@ export function useCodingAgent(studio: Studio) {
         {
           id: `${id}-answer`,
           role: "assistant",
-          text: codingTextPrefix(text, 16000),
+          text,
           status,
         },
       ]);
@@ -516,8 +520,11 @@ export function useCodingAgent(studio: Studio) {
         );
       if (owner.cancelled) return;
       if (event.kind === "text.delta") {
-        streamed += event.text ?? "";
-        if (streamed.length > 64000) throw Error("BLK-CODING-BUDGET");
+        const delta = event.text ?? "";
+        streamedBytes += new TextEncoder().encode(delta).length;
+        if (streamedBytes > agentMessageLimits.outputBytes)
+          throw Error("BLK-CODING-BUDGET");
+        streamed += delta;
         setLiveText(streamed);
       }
       setEvents((previous) => [...previous, event].slice(-200));

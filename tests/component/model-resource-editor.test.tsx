@@ -74,6 +74,7 @@ it("derives custom and Ollama adapters only on explicit selection without changi
     protocol: "openai-chat",
     implementationRef: { kind: "adapter", id: "openai-compatible-v1" },
   });
+  expect(current().definition.parameters).not.toHaveProperty("maxOutputTokens");
   expect(current().secretBindings).toEqual(resource().secretBindings);
   fireEvent.change(screen.getByLabelText("模型 ID"), {
     target: { value: "custom-model" },
@@ -149,14 +150,36 @@ it("changes declared capabilities and omits cleared optional parameters", () => 
   expect(current().definition.parameters).toEqual({ topP: 0.8 });
 });
 
-it("aligns ordinary generation budgets with the actual model gateway", () => {
+it("accepts resource-registry model limits and preserves existing values", () => {
   const value = resource();
-  value.definition.timeoutMs = 120001;
-  expect(modelResourceError(value)).toContain("120000");
-  value.definition.timeoutMs = 120000;
-  value.definition.parameters = { maxOutputTokens: 32769 };
-  expect(modelResourceError(value)).toContain("32768");
-  render(<Editor />);
+  value.definition.timeoutMs = 3600000;
+  value.definition.parameters = { maxOutputTokens: 10000000 };
+  expect(modelResourceError(value)).toBe("");
+  render(<Editor initial={value} />);
+  expect((screen.getByLabelText("超时（毫秒）") as HTMLInputElement).max).toBe(
+    "3600000",
+  );
+  expect((screen.getByLabelText("输出上限") as HTMLInputElement).max).toBe(
+    "10000000",
+  );
+  expect(current()).toEqual(value);
+  expect(screen.getByText(/留空时不设置输出上限/)).toBeTruthy();
+  value.definition.timeoutMs = 3600001;
+  expect(modelResourceError(value)).toContain("3600000");
+  value.definition.timeoutMs = 3600000;
+  value.definition.parameters = { maxOutputTokens: 10000001 };
+  expect(modelResourceError(value)).toContain("10000000");
+});
+
+it("explains that an empty output limit leaves the model output unrestricted", () => {
+  const initial = resource();
+  initial.definition.parameters = { maxOutputTokens: 12000 };
+  render(<Editor initial={initial} />);
+  expect(screen.getByText(/留空时不设置输出上限/)).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("输出上限"), {
+    target: { value: "" },
+  });
+  expect(current().definition.parameters).toEqual({});
   expect(screen.queryByLabelText("图像")).toBeNull();
   expect(screen.queryByLabelText("音频")).toBeNull();
   expect(screen.queryByLabelText("向量")).toBeNull();

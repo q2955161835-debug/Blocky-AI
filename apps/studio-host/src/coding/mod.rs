@@ -83,16 +83,11 @@ impl CodingStart {
                 .any(|s| s.len() > 200 || !crate::project_store::stable(s))
             || self.selection.iter().collect::<HashSet<_>>().len() != self.selection.len()
             || self.conversation.len() > 20
-            || self
-                .conversation
-                .iter()
-                .map(|m| m.text.encode_utf16().count())
-                .sum::<usize>()
-                > 64000
+            || serde_json::to_vec(&self.conversation).map_err(|_| ERROR)?.len() > 4 * 1024 * 1024
             || self.conversation.iter().any(|m| {
                 !["user", "assistant"].contains(&m.role.as_str())
                     || m.text.trim().is_empty()
-                    || m.text.encode_utf16().count() > 16000
+                    || m.text.len() > 2 * 1024 * 1024
             })
         {
             return Err(ERROR.into());
@@ -180,7 +175,7 @@ impl CodingHost {
         )?;
         let digest = self.approval_digest(start, &model)?;
         Ok(
-            json!({"requestDigest":digest,"provider":model.provider(),"modelId":model.model(),"destination":model.destination(root)?,"projectName":p["manifest"]["displayName"],"workspace":scope.as_ref().and_then(|s|s.root.file_name()).and_then(|s|s.to_str()).unwrap_or("未选择目录"),"maxTurns":12,"maxOutputTokens":model.max_output_tokens(),"task":start.prompt.chars().take(300).collect::<String>()}),
+            json!({"requestDigest":digest,"provider":model.provider(),"modelId":model.model(),"destination":model.destination(root)?,"projectName":p["manifest"]["displayName"],"workspace":scope.as_ref().and_then(|s|s.root.file_name()).and_then(|s|s.to_str()).unwrap_or("未选择目录"),"maxTurns":4096,"maxOutputTokens":model.max_output_tokens(),"task":start.prompt.chars().take(300).collect::<String>()}),
         )
     }
     fn approval_digest(&self, start: &CodingStart, model: &BuilderModel) -> Result<String, String> {
@@ -598,14 +593,14 @@ fn failure_receipt(host: &CodingHost, start: &CodingStart, code: &str) -> Value 
 }
 pub fn approval_description(preview: &Value) -> String {
     format!(
-        "代码助手将向 {} 发送当前项目、选择、本次对话和任务中读取的工作文件内容。\n任务：{}\n地址：{}\n项目：{}\n模型：{}\n目录范围：{}\n允许读取、编辑普通文本文件和调用确定性 Blocky CLI；每次修改保留差异，可按文件版本撤回。\n允许在隔离项目副本中生成、校验语义候选和补丁，候选仍需审查接受。\n最多 12 次模型请求，每次输出上限 {} tokens；任务最长 5 分钟。\n请求摘要：{}",
+        "代码助手将向 {} 发送当前项目、选择、本次对话和任务中读取的工作文件内容。\n任务：{}\n地址：{}\n项目：{}\n模型：{}\n目录范围：{}\n允许读取、编辑普通文本文件和调用确定性 Blocky CLI；每次修改保留差异，可按文件版本撤回。\n允许在隔离项目副本中生成、校验语义候选和补丁，候选仍需审查接受。\n最多 4096 次模型请求；{}；任务最长 24 小时。\n请求摘要：{}",
         preview["provider"],
         preview["task"],
         preview["destination"],
         preview["projectName"],
         preview["modelId"],
         preview["workspace"],
-        preview["maxOutputTokens"],
+        preview["maxOutputTokens"].as_u64().map(|n|format!("模型配置输出上限 {n} tokens")).unwrap_or_else(||"不设置软件 Token 上限".into()),
         preview["requestDigest"]
     )
 }

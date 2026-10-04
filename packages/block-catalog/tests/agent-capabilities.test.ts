@@ -13,7 +13,7 @@ it("publishes bounded control and tool-loop blocks with resource and slot metada
     inputs: ["TOOLS"],
     inputChecks: { TOOLS: "agent-tool" },
     resourceFields: { RESOURCE: "model" },
-    defaultFields: { MAX_TURNS: "4", OUTPUT_TOKENS: "512" },
+    defaultFields: { MAX_TURNS: "32", OUTPUT_TOKENS: "32768" },
   });
   expect(toolLoop?.requiredInputs ?? []).not.toContain("TOOLS");
   expect(getBlock("core.tool.expose")).toMatchObject({

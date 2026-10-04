@@ -36,7 +36,7 @@ export async function workflowReconcile(args: Args, signal: AbortSignal) {
     direction: required(args, "direction"),
     outcome,
     ...(args.options.has("state")
-      ? { state: await readJsonArtifact(required(args, "state"), 131072) }
+      ? { state: await readJsonArtifact(required(args, "state"), 8 * 1024 * 1024) }
       : {}),
     ...(args.options.has("approve")
       ? { approval: required(args, "approve") }

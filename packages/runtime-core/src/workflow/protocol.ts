@@ -1,5 +1,7 @@
 import { canonicalJson, stableId, type Json } from "@blocky/language-schema";
 
+export const workflowByteLimits = { state: 8 * 1024 * 1024, record: 16 * 1024 * 1024 } as const;
+
 export const WORKFLOW_INVALID = "BLK-WORKFLOW-INVALID";
 export type WorkflowStep =
   | { stepId: string; kind: "action"; compensate: boolean }
@@ -89,7 +91,7 @@ export function workflowKeys(
   );
 }
 /** No toJSON/accessor/prototype behavior, cycles, non-finite numbers or unbounded trees. */
-export function workflowJson(value: unknown, limit = 131072, maxNodes = 50000, maxDepth = 32): Json {
+export function workflowJson(value: unknown, limit = workflowByteLimits.state, maxNodes = 50000, maxDepth = 32): Json {
   type Frame = { value: unknown; depth: number } | { text: string } | { leave: object };
   const stack: Frame[] = [{ value, depth: 0 }], seen = new Set<object>(), chunks: string[] = [];
   const encoder = new TextEncoder();
@@ -195,7 +197,7 @@ export function effectKey(
   return `${record.taskId}:${record.definition.steps[index].stepId}:${record.phase}`;
 }
 export function parseWorkflow(value: unknown): WorkflowRecord {
-  const input = workflowJson(value, 1048576);
+  const input = workflowJson(value, workflowByteLimits.record);
   workflowKeys(
     input,
     [

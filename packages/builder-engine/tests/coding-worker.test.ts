@@ -263,3 +263,29 @@ it.each(["coding", "builder"])(
     }
   },
 );
+
+it("carries a long model response through coding IPC without truncating events or final text", async () => {
+  const h = harness(),
+    long = "中😀".repeat(50_000);
+  const run = h.worker.receive(
+    frame({ kind: "start", start: request, modelId: "fixture" }),
+  );
+  await h.next("provider.call");
+  await h.worker.receive(
+    frame({
+      kind: "provider.result",
+      turn: 1,
+      value: gen([{ type: "text", text: long }]),
+    }),
+  );
+  await run;
+  expect(h.frames.find((f) => f.kind === "complete")?.result).toMatchObject({
+    text: long,
+  });
+  expect(
+    h.frames
+      .filter((f) => f.kind === "event")
+      .map((f) => (f.event as { text?: string }).text ?? "")
+      .join(""),
+  ).toBe(long);
+});

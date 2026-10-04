@@ -99,7 +99,7 @@ export async function runCodingAgent(
   const timer = setTimeout(() => {
     timedOut = true;
     controller.abort();
-  }, 300000);
+  }, 86400000);
   const cancellation = () =>
     Error(timedOut ? "BLK-CODING-BUDGET" : "BLK-CODING-CANCELLED");
   // Host callbacks are expected to settle their own processes. This race also prevents a hung callback from trapping Pi's task.
@@ -138,7 +138,7 @@ export async function runCodingAgent(
     extra: Partial<CodingEvent> = {},
   ) => {
     if (signal.aborted) throw cancellation();
-    if (events.length >= 2048) throw Error("BLK-CODING-BUDGET");
+    if (events.length >= 262144) throw Error("BLK-CODING-BUDGET");
     const event = codingEventSchema.parse({
       schemaVersion: "blocky.coding-event/v1",
       requestId: start.requestId,
@@ -160,7 +160,8 @@ export async function runCodingAgent(
     input: ["text"],
     cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
     contextWindow: 131072,
-    maxTokens: 8192,
+    // This custom stream delegates output policy to Host; zero means unspecified metadata.
+    maxTokens: 0,
   };
   const tools: AgentTool[] = schemas.map((schema) => ({
     ...schema,
@@ -245,13 +246,13 @@ export async function runCodingAgent(
     void (async () => {
       try {
         if (failure) throw Error(failure);
-        if (++turns > 12) throw Error("BLK-CODING-BUDGET");
+        if (++turns > 4096) throw Error("BLK-CODING-BUDGET");
         const messages = wireMessages(context.messages);
         bounded(messages, 4 * 1024 * 1024);
         const generated = await pending(() =>
           options.generate({ turn: turns, messages }, signal),
         );
-        bounded(generated, 2 * 1024 * 1024);
+        bounded(generated, 16 * 1024 * 1024);
         if (
           !Array.isArray(generated.content) ||
           generated.content.length > 32 ||
@@ -263,10 +264,8 @@ export async function runCodingAgent(
           codingResultSchema.shape.generations.element.parse(metadata);
         // Validate every call before exposing any from this response to Pi's dispatcher.
         const currentIds = new Set<string>();
-        let addedText = 0;
         for (const block of content) {
           if (block.type === "text" && typeof block.text === "string") {
-            addedText += block.text.length;
             continue;
           }
           if (
@@ -284,7 +283,20 @@ export async function runCodingAgent(
             throw Error("BLK-CODING-TOOL");
           currentIds.add(block.id);
         }
-        if (text.length + addedText > 64000) throw Error("BLK-CODING-BUDGET");
+        if (
+          new TextEncoder().encode(text).length +
+            content
+              .filter((block) => block.type === "text")
+              .reduce(
+                (sum, block) =>
+                  sum + new TextEncoder().encode(block.text!).length,
+                0,
+              ) >
+          2 * 1024 * 1024
+        )
+          throw Error("BLK-CODING-BUDGET");
+        if (ids.size + currentIds.size > 65536)
+          throw Error("BLK-CODING-BUDGET");
         currentIds.forEach((id) => ids.add(id));
         generations.push(evidence);
         stream.push({ type: "start", partial: output });

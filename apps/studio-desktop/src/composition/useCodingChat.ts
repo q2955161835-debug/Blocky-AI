@@ -1,43 +1,50 @@
 import { useEffect, useRef, useState } from "react";
+import { agentMessageLimits } from "@blocky/language-schema";
 import {
   codingMessageSchema,
-  codingTextPrefix,
+  codingTextBytePrefix,
   codingChatStateSchema,
   type CodingMessage,
 } from "@blocky/builder-protocol";
 import { readUserState, writeUserState } from "./userState";
 
 export type { CodingMessage } from "@blocky/builder-protocol";
+const encoder = new TextEncoder();
 function bounded(messages: CodingMessage[]) {
-  let bytes = 0,
-    length = 0;
-  return messages
-    .slice(-40)
-    .reverse()
-    .filter((message) => {
-      bytes += new TextEncoder().encode(JSON.stringify(message)).length;
-      length += message.text.length;
-      return bytes <= 96000 && length <= 64000;
-    })
-    .reverse();
+  let bounded: CodingMessage[] = [];
+  for (const message of messages.slice(-40).reverse()) {
+    const candidate = [message, ...bounded];
+    if (
+      encoder.encode(JSON.stringify(candidate)).length <=
+      agentMessageLimits.historyBytes
+    )
+      bounded = candidate;
+    else break;
+  }
+  return bounded;
 }
 export function codingContext(messages: CodingMessage[]) {
-  let length = 0;
-  return messages
-    .slice(-20)
-    .map(({ role, text, status }) => ({
+  let context: { role: CodingMessage["role"]; text: string }[] = [];
+  for (const { role, text, status } of messages.slice(-20).reverse()) {
+    const message = {
       role,
       text:
         status && status !== "completed"
-          ? codingTextPrefix(`[${status}] ${text}`, 16000)
+          ? codingTextBytePrefix(
+              `[${status}] ${text}`,
+              agentMessageLimits.outputBytes,
+            )
           : text,
-    }))
-    .reverse()
-    .filter((message) => {
-      length += message.text.length;
-      return length <= 64000;
-    })
-    .reverse();
+    };
+    const candidate = [message, ...context];
+    if (
+      encoder.encode(JSON.stringify(candidate)).length <=
+      agentMessageLimits.historyBytes
+    )
+      context = candidate;
+    else break;
+  }
+  return context;
 }
 /** Only conversation text persists. Folder grants and editable candidates stay in Host memory. */
 export function useCodingChat(
@@ -68,7 +75,10 @@ export function useCodingChat(
       .then((raw) => {
         let messages: CodingMessage[] = [];
         if (raw != null) {
-          if (new TextEncoder().encode(JSON.stringify(raw)).length > 128000)
+          if (
+            encoder.encode(JSON.stringify(raw)).length >
+            agentMessageLimits.sessionBytes
+          )
             throw Error();
           const value = codingChatStateSchema.parse(raw);
           if (

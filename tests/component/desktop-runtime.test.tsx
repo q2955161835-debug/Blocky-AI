@@ -11,6 +11,28 @@ const result: RunResult = {
   events: [],
   modelApiCalled: false,
 };
+it("keeps a legitimate long task active beyond the former frontend timeout and still settles it", async () => {
+  vi.useFakeTimers();
+  const port: RuntimePort = {
+    open: async () => "runtime-owned", close: vi.fn(async () => {}), send: vi.fn(async () => {}),
+    run: async (_s, _r, _request, receive) => {
+      receive({ kind: "ready" });
+      return new Promise<RunResult>((resolve) => setTimeout(() => { receive({ kind: "settle" }); resolve(result); }, 700000));
+    },
+  };
+  const runtime = new DesktopRuntime(localAdapters, port);
+  let status = "pending";
+  const running = runtime.run(createStarter(), "on-question", "long task", {}).then((value) => { status = value.status; return value; }, (error) => { status = error.message; throw error; });
+  const settled = running.catch((error) => error);
+  try {
+    await vi.advanceTimersByTimeAsync(380001);
+    expect(status).toBe("pending");
+    expect(port.send).not.toHaveBeenCalledWith("runtime-owned", expect.any(String), {kind:"cancel"});
+    await vi.advanceTimersByTimeAsync(320000);
+    expect(await settled).toEqual(result);
+    expect(port.send).toHaveBeenCalledWith("runtime-owned", expect.any(String), {kind:"settled",ok:true});
+  } finally { await runtime.dispose(); vi.useRealTimers(); }
+});
 it("uses native run and waits for service cleanup acknowledgement without transporting private state", async () => {
   const adapters = localAdapters();
   let cleanup!: () => void;

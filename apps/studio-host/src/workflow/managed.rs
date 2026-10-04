@@ -42,7 +42,7 @@ fn serve(output: &Writer) -> Result<(), String> {
             && argv
                 .iter()
                 .all(|v| v.as_str().is_some_and(|s| s.len() <= 16384))
-            && first.to_string().len() <= 131072,
+            && first.to_string().len() <= super::protocol::RECORD_LIMIT,
         INVALID,
     )?;
     let root = crate::profile::cli_root()?.join("workflow");
@@ -63,7 +63,7 @@ fn serve(output: &Writer) -> Result<(), String> {
     let mut serial = 0u64;
     let mut approval = None;
     let mut cancelled = false;
-    let mut deadline = Instant::now() + Duration::from_secs(310);
+    let mut deadline = Instant::now() + Duration::from_secs(86410);
     let outcome: Result<Value, String> = (|| {
         loop {
             let (worker_frame, message) = receive
@@ -109,7 +109,7 @@ fn serve(output: &Writer) -> Result<(), String> {
                 }
                 Some("workflow") => {
                     let id = message["id"].as_u64().ok_or(INVALID)?;
-                    require(id == serial + 1 && id <= 4096, INVALID)?;
+                    wire::service_sequence(serial, id).map_err(|_| INVALID)?;
                     serial = id;
                     if message["operation"] == "approval" {
                         keys(&message, &["kind", "id", "operation", "value"], &[])?;

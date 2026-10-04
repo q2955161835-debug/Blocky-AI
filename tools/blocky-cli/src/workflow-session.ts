@@ -9,7 +9,7 @@ import {
 import { helper } from "./native-store";
 
 const WIRE = "blocky.workflow-session/v1",
-  MAX = 1_052_672;
+  MAX = 20 * 1024 * 1024;
 const codes = new Set(
   [
     "INVALID",

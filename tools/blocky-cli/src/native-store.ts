@@ -57,9 +57,9 @@ function request(
         finish(new CliError(6, "BLK-HOST-002", "原生存储请求超时。"));
       },
       String(input.operation).startsWith("coding-")
-        ? 310000
+        ? 86410000
         : /^(conversion-|provider-|builder-)/.test(String(input.operation))
-          ? 130000
+          ? 3610000
           : 30000,
     );
     const cancel = () => {

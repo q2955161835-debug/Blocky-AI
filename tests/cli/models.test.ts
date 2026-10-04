@@ -36,15 +36,41 @@ const response = {
   usage: null,
 };
 const signal = new AbortController().signal;
-it("accepts camelCase and Unicode JSON property names while retaining the resource ID rules",()=> {
-  expect(modelRequestSchema.safeParse({...request,outputSchema:{type:"object",properties:{acceptanceCriteria:{type:"string"},说明:{type:"string"}},required:["acceptanceCriteria","说明"]}}).success).toBe(true);
-  expect(modelRequestSchema.safeParse({...request,resourceId:"Invalid ID"}).success).toBe(false);
+it("accepts camelCase and Unicode JSON property names while retaining the resource ID rules", () => {
+  expect(
+    modelRequestSchema.safeParse({
+      ...request,
+      outputSchema: {
+        type: "object",
+        properties: {
+          acceptanceCriteria: { type: "string" },
+          说明: { type: "string" },
+        },
+        required: ["acceptanceCriteria", "说明"],
+      },
+    }).success,
+  ).toBe(true);
+  expect(
+    modelRequestSchema.safeParse({ ...request, resourceId: "Invalid ID" })
+      .success,
+  ).toBe(false);
 });
 beforeEach(() => {
   mocks.native.mockReset();
   mocks.read.mockReset();
   mocks.native.mockResolvedValue({ installed: false });
   mocks.read.mockResolvedValue(request);
+});
+it.each(["preflight", "generate"])("reads long model %s requests using the same history byte boundary as Host", async (action) => {
+  const large = { ...request, messages: [{ role: "user", content: "x".repeat(300000) }] };
+  mocks.read.mockImplementation(async (_file: string, max: number) => {
+    if (Buffer.byteLength(JSON.stringify(large)) > max) throw Error("artifact too large");
+    return large;
+  });
+  mocks.native.mockResolvedValue(action === "generate" ? response : { requestDigest: "a".repeat(64) });
+  const args = parse(["model", action, "--request", "long-request.json", ...(action === "generate" ? ["--approve", "a".repeat(64)] : []), "--json"]);
+  expect((await modelCommand(args, signal))?.code).toBe(0);
+  expect(mocks.native).toHaveBeenCalledWith(action === "generate" ? "provider-model-call" : "provider-model-preflight", expect.objectContaining({request:large}), signal);
 });
 it.each(["catalog", "status", "verify", "remove", "cleanup"])(
   "dispatches model %s to the owned Host",
@@ -271,4 +297,40 @@ it("forwards cancellation and does not start a pre-aborted operation", async () 
     modelCommand(parse(["model", "catalog"]), controller.signal),
   ).rejects.toBeDefined();
   expect(mocks.native).not.toHaveBeenCalled();
+});
+
+it("supports uncapped model requests, large explicit output limits and long UTF-8 model replies", () => {
+  const { maxOutputTokens: _max, ...uncapped } = request;
+  expect(modelRequestSchema.parse(uncapped).maxOutputTokens).toBeUndefined();
+  expect(
+    modelRequestSchema.safeParse({
+      ...request,
+      maxOutputTokens: 10_000_000,
+      timeoutMs: 3_600_000,
+    }).success,
+  ).toBe(true);
+  const long = "中".repeat(100_000);
+  expect(
+    modelResponseSchema.parse({
+      ...response,
+      text: long,
+      usageStatus: "reported",
+      usage: { inputTokens: 5, outputTokens: 100_000, totalTokens: 100_005 },
+    }).text,
+  ).toBe(long);
+  expect(
+    modelResponseSchema.safeParse({
+      ...response,
+      usageStatus: "reported",
+      usage: {
+        inputTokens: Number.MAX_SAFE_INTEGER,
+        outputTokens: 1,
+        totalTokens: Number.MAX_SAFE_INTEGER + 1,
+      },
+    }).success,
+  ).toBe(false);
+  expect(
+    modelResponseSchema.safeParse({ ...response, text: "中".repeat(700_000) })
+      .success,
+  ).toBe(false);
 });

@@ -1,4 +1,11 @@
-import { parseBudgetCheckpoint, type BudgetCheckpoint } from "./workflow/context";
+import {
+  parseBudgetCheckpoint,
+  type BudgetCheckpoint,
+} from "./workflow/context";
+import {
+  agentBudgetDefaults,
+  agentBudgetLimits,
+} from "@blocky/language-schema";
 export const utf8 = (text: string) => new TextEncoder().encode(text).length;
 export function integer(value: unknown, min: number, max: number): number {
   const n =
@@ -37,20 +44,21 @@ export class RunBudget {
   steps = 0;
   calls = 0;
   usedOutput = 0;
-  maxSteps = 2000;
-  maxCalls = 16;
-  maxOutput = 4096;
+  maxSteps: number = agentBudgetDefaults.steps;
+  maxCalls: number = agentBudgetDefaults.calls;
+  maxOutput: number = agentBudgetDefaults.outputTokens;
   readonly controller = new AbortController();
   private timer: ReturnType<typeof setTimeout>;
   private readonly started = Date.now();
   private timedOut = false;
-  private maxDuration = 120000;
+  private maxDuration: number = agentBudgetDefaults.durationMs;
+  private configured = false;
   private cancel: () => void;
   constructor(private parent?: AbortSignal) {
     this.cancel = () => this.controller.abort(parent?.reason);
     parent?.addEventListener("abort", this.cancel, { once: true });
     if (parent?.aborted) this.cancel();
-    this.timer = setTimeout(() => this.expire(), 120000);
+    this.timer = setTimeout(() => this.expire(), this.maxDuration);
   }
   get signal() {
     return this.controller.signal;
@@ -58,35 +66,75 @@ export class RunBudget {
   get timeout() {
     return this.timedOut;
   }
-  checkpoint():BudgetCheckpoint {
-    return parseBudgetCheckpoint({steps:this.steps,calls:this.calls,usedOutput:this.usedOutput,maxSteps:this.maxSteps,maxCalls:this.maxCalls,maxOutput:this.maxOutput,remainingMs:Math.max(0,this.maxDuration-(Date.now()-this.started))});
+  checkpoint(): BudgetCheckpoint {
+    return parseBudgetCheckpoint({
+      steps: this.steps,
+      calls: this.calls,
+      usedOutput: this.usedOutput,
+      maxSteps: this.maxSteps,
+      maxCalls: this.maxCalls,
+      maxOutput: this.maxOutput,
+      remainingMs: Math.max(0, this.maxDuration - (Date.now() - this.started)),
+    });
   }
-  restoreCheckpoint(input:unknown):void {
-    const value=parseBudgetCheckpoint(input);
+  restoreCheckpoint(input: unknown): void {
+    const value = parseBudgetCheckpoint(input);
     this.signal.throwIfAborted();
-    const elapsed=Date.now()-this.started,remaining=Math.min(this.maxDuration-elapsed,value.remainingMs);
-    if(remaining<=0)throw Error("BLK-RUN-007");
-    const steps=Math.max(this.steps,value.steps),calls=Math.max(this.calls,value.calls),output=Math.max(this.usedOutput,value.usedOutput);
-    const maxSteps=Math.min(this.maxSteps,value.maxSteps),maxCalls=Math.min(this.maxCalls,value.maxCalls),maxOutput=Math.min(this.maxOutput,value.maxOutput);
-    if(steps>maxSteps||calls>maxCalls||output>maxOutput)throw Error("BLK-RUN-004");
-    this.steps=steps;this.calls=calls;this.usedOutput=output;this.maxSteps=maxSteps;this.maxCalls=maxCalls;this.maxOutput=maxOutput;this.maxDuration=elapsed+remaining;
-    clearTimeout(this.timer);this.timer=setTimeout(()=>this.expire(),remaining);
+    // A fresh instance inherits a persisted run's policy; an already configured
+    // instance may only narrow it. Never replace the persisted remaining time.
+    const elapsed = Date.now() - this.started,
+      remaining = Math.min(
+        (this.configured ? this.maxDuration : agentBudgetLimits.durationMs) -
+          elapsed,
+        value.remainingMs,
+      );
+    if (remaining <= 0) throw Error("BLK-RUN-007");
+    const steps = Math.max(this.steps, value.steps),
+      calls = Math.max(this.calls, value.calls),
+      output = Math.max(this.usedOutput, value.usedOutput);
+    const maxSteps = Math.min(
+        this.configured ? this.maxSteps : agentBudgetLimits.steps,
+        value.maxSteps,
+      ),
+      maxCalls = Math.min(
+        this.configured ? this.maxCalls : agentBudgetLimits.calls,
+        value.maxCalls,
+      ),
+      maxOutput = Math.min(
+        this.configured ? this.maxOutput : agentBudgetLimits.outputTokens,
+        value.maxOutput,
+      );
+    if (steps > maxSteps || calls > maxCalls || output > maxOutput)
+      throw Error("BLK-RUN-004");
+    this.steps = steps;
+    this.calls = calls;
+    this.usedOutput = output;
+    this.maxSteps = maxSteps;
+    this.maxCalls = maxCalls;
+    this.maxOutput = maxOutput;
+    this.maxDuration = elapsed + remaining;
+    this.configured = true;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.expire(), remaining);
   }
   private expire() {
     this.timedOut = true;
     this.controller.abort(Error("BLK-RUN-007"));
   }
   configure(fields: Record<string, unknown>) {
-    this.maxSteps = Math.min(this.maxSteps, integer(fields.STEPS, 1, 2000));
-    this.maxCalls = Math.min(this.maxCalls, integer(fields.CALLS, 1, 16));
-    this.maxOutput = Math.min(
-      this.maxOutput,
-      integer(fields.OUTPUT_TOKENS, 1, 4096),
-    );
-    this.maxDuration = Math.min(
-      this.maxDuration,
-      integer(fields.TIMEOUT_MS, 1, 120000),
-    );
+    const limits = {
+      steps: integer(fields.STEPS, 1, agentBudgetLimits.steps),
+      calls: integer(fields.CALLS, 1, agentBudgetLimits.calls),
+      output: integer(fields.OUTPUT_TOKENS, 1, agentBudgetLimits.outputTokens),
+      duration: integer(fields.TIMEOUT_MS, 1, agentBudgetLimits.durationMs),
+    };
+    const narrow = (current: number, next: number) =>
+      this.configured ? Math.min(current, next) : next;
+    this.maxSteps = narrow(this.maxSteps, limits.steps);
+    this.maxCalls = narrow(this.maxCalls, limits.calls);
+    this.maxOutput = narrow(this.maxOutput, limits.output);
+    this.maxDuration = narrow(this.maxDuration, limits.duration);
+    this.configured = true;
     clearTimeout(this.timer);
     const remaining = this.maxDuration - (Date.now() - this.started);
     if (remaining <= 0) this.expire();
@@ -112,12 +160,21 @@ export class RunBudget {
   }
   reserveOutput(requested: number) {
     const allowed = Math.min(
-      integer(requested, 1, 4096),
+      integer(requested, 1, agentBudgetLimits.outputTokensPerTurn),
       this.maxOutput - this.usedOutput,
     );
     if (allowed < 1) throw Error("BLK-RUN-004");
     this.usedOutput += allowed;
     return allowed;
+  }
+  /** Keep reservations for unavailable usage; reported output refunds unused capacity. */
+  settleOutput(reserved: number, reported?: number | null): void {
+    integer(reserved, 1, agentBudgetLimits.outputTokensPerTurn);
+    if (reported === undefined || reported === null) return;
+    const actual = integer(reported, 0, reserved);
+    if (this.usedOutput < reserved - actual) throw Error("BLK-RUN-004");
+    this.usedOutput -= reserved - actual;
+    this.check();
   }
   dispose() {
     clearTimeout(this.timer);

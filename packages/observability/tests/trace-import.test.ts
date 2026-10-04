@@ -1,5 +1,11 @@
 import { expect, it } from "vitest";
-import { inspectTraceExport, TraceSession, EventFactory } from "../src";
+import {
+  inspectTraceExport,
+  TraceSession,
+  EventFactory,
+  projectTraceDetails,
+  redact,
+} from "../src";
 
 it("rebuilds detail metadata on live projection and import, dropping arbitrary nested data", () => {
   const factory = new EventFactory(() => "2026-09-26T00:00:00.000Z");
@@ -66,4 +72,25 @@ it("keeps bounded structural metadata but never imports arbitrary step contents"
   expect(JSON.stringify(inspectTraceExport(injected))).not.toContain("SECRET_BODY");
   injected.frames[0].inputPorts = ["secret content with spaces"];
   expect(inspectTraceExport(injected).frames[0].inputPorts).toBeUndefined();
+});
+
+it("keeps the shared per-turn output ceiling in projected trace details", () => {
+  expect(
+    projectTraceDetails({ model: { maxOutputTokens: 10000000 } }).model,
+  ).toEqual({ maxOutputTokens: 10000000 });
+});
+
+it("preserves usage counters above ten million when they are safe integers", () => {
+  const usage = {
+    inputTokens: 10000001,
+    outputTokens: 10000000,
+    totalTokens: 20000001,
+  };
+  expect(redact({ usage }).value).toEqual({ usage });
+});
+
+it("continues to redact secret keys alongside larger public counters", () => {
+  expect(redact({ apiKey: "keep-secret-redaction" }).value).toEqual({
+    apiKey: "[已脱敏]",
+  });
 });

@@ -10,6 +10,7 @@ import {
   type RuntimePort,
 } from "./runtime-port";
 import { serializeRegistryResources } from "@blocky/resource-registry";
+import { agentBudgetLimits, agentMessageLimits } from "@blocky/language-schema";
 const failure = () => Error("BLK-RUN-SERVICE");
 function wait<T>(
   promise: Promise<T>,
@@ -163,7 +164,7 @@ export class DesktopRuntime {
                 settling ||
                 !Number.isSafeInteger(frame.id) ||
                 frame.id < 1 ||
-                frame.id > 4096 ||
+                frame.id > agentMessageLimits.serviceCalls ||
                 seen.has(frame.id)
               )
                 throw failure();
@@ -235,7 +236,7 @@ export class DesktopRuntime {
           },
           receive,
         ),
-        380000,
+        agentBudgetLimits.durationMs + 10000,
       );
       if (!settling) throw failure();
       await settling;

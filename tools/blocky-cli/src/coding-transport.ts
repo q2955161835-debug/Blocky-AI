@@ -33,7 +33,7 @@ export function codingNativeRequest(
       child.stdin.end('{"cancel":true}\n');
     };
     const cancel = () => stop();
-    const timer = setTimeout(stop, 310000);
+    const timer = setTimeout(stop, 86400000 + 10000);
     signal?.addEventListener("abort", cancel, { once: true });
     child.stdout.setEncoding("utf8");
     child.stdout.on("data", (part: string) => {

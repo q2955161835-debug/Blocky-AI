@@ -143,3 +143,32 @@ it("bounds missing acknowledgement after cancellation without inventing settleme
   expect(child.kill).toHaveBeenCalledOnce();
   expect(child.stdin.write).toHaveBeenCalledTimes(2);
 });
+
+it("transmits large durable completion state and reads its sealed record without the old 1MiB frame limit", async () => {
+  const { child, record, emit, handle } = await session(),
+    long = "中".repeat(400_000);
+  const pendingBegin = handle.store.commit(handle.taskId, {
+    kind: "begin",
+    revision: 1,
+  });
+  const active = transitionWorkflow(record, { kind: "begin", revision: 1 });
+  emit("result", 1, active);
+  await pendingBegin;
+  const pendingComplete = handle.store.commit(handle.taskId, {
+    kind: "complete",
+    revision: 2,
+    state: long,
+  });
+  const complete = transitionWorkflow(active, {
+    kind: "complete",
+    revision: 2,
+    state: long,
+  });
+  emit("result", 2, complete);
+  expect((await pendingComplete).state).toBe(long);
+  const closing = handle.close();
+  await vi.advanceTimersByTimeAsync(0);
+  emit("closed", 3, { released: true });
+  child.emit("close", 0);
+  await closing;
+});

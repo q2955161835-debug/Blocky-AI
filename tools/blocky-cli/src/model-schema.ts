@@ -31,7 +31,12 @@ const schemaShape = z
       "boolean",
       "null",
     ]),
-    properties: z.record(text(128, 1).refine((s) => !/[\u0000-\u001f\u007f-\u009f]/u.test(s)), z.json()).optional(),
+    properties: z
+      .record(
+        text(128, 1).refine((s) => !/[\u0000-\u001f\u007f-\u009f]/u.test(s)),
+        z.json(),
+      )
+      .optional(),
     required: z.array(z.string()).max(64).optional(),
     additionalProperties: z.boolean().optional(),
     items: z.json().optional(),
@@ -77,16 +82,29 @@ export const modelToolCallSchema = z
   .object({
     id: token(128),
     name: token(64),
-    arguments: z.record(z.string(), z.json()).refine((v) => bytes(v) <= 32768),
+    arguments: z
+      .record(z.string(), z.json())
+      .refine((v) => bytes(v) <= 2 * 1024 * 1024),
   })
   .strict();
 const messageSchema = z
   .object({
     role: z.enum(["system", "user", "assistant", "tool"]),
-    content: text(65536),
+    content: text(2 * 1024 * 1024),
     toolCalls: modelToolCallSchema.array().max(8).optional(),
     toolCallId: token(128).optional(),
-    imageRefs:z.array(z.object({mediaId:modelIdSchema,sha256:z.string().regex(/^[a-f0-9]{64}$/),version:z.number().int().positive().max(Number.MAX_SAFE_INTEGER)}).strict()).max(4).optional(),
+    imageRefs: z
+      .array(
+        z
+          .object({
+            mediaId: modelIdSchema,
+            sha256: z.string().regex(/^[a-f0-9]{64}$/),
+            version: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+          })
+          .strict(),
+      )
+      .max(4)
+      .optional(),
   })
   .strict();
 const toolSchema = z
@@ -104,10 +122,10 @@ export const modelRequestSchema = z
     requestId: modelIdSchema,
     projectId: modelIdSchema,
     resourceId: modelIdSchema,
-    messages: messageSchema.array().min(1).max(128),
+    messages: messageSchema.array().min(1).max(8192),
     tools: toolSchema.array().max(32).optional(),
-    maxOutputTokens: z.number().int().min(1).max(32768),
-    timeoutMs: z.number().int().min(1).max(120000),
+    maxOutputTokens: z.number().int().min(1).max(10000000).optional(),
+    timeoutMs: z.number().int().min(1).max(3600000),
     temperature: z.number().min(0).max(2).optional(),
     topP: z.number().min(0).max(1).optional(),
     outputSchema: modelOutputSchema.optional(),
@@ -121,7 +139,7 @@ export const modelRequestSchema = z
         path,
         message: "模型请求结构或工具历史无效。",
       });
-    if (bytes(r) > 262144) fail([]);
+    if (bytes(r) > 4 * 1024 * 1024) fail([]);
     const names = new Set((r.tools ?? []).map((t) => t.name));
     if (
       names.size !== (r.tools ?? []).length ||
@@ -131,7 +149,8 @@ export const modelRequestSchema = z
     const used = new Set<string>(),
       pending = new Set<string>();
     r.messages.forEach((m, index) => {
-      if((m.imageRefs?.length??0)>0&&m.role!=='user')fail(['messages',index,'imageRefs']);
+      if ((m.imageRefs?.length ?? 0) > 0 && m.role !== "user")
+        fail(["messages", index, "imageRefs"]);
       const calls = m.toolCalls ?? [];
       if (m.role === "system" || m.role === "user") {
         if (
@@ -163,21 +182,22 @@ export const modelRequestSchema = z
         fail(["messages", index]);
     });
     if (pending.size) fail(["messages"]);
-    if(r.messages.reduce((sum,m)=>sum+(m.imageRefs?.length??0),0)>4)fail(['messages']);
+    if (r.messages.reduce((sum, m) => sum + (m.imageRefs?.length ?? 0), 0) > 4)
+      fail(["messages"]);
   });
 
 const usageSchema = z
   .object({
-    inputTokens: z.number().int().min(0).max(10000000),
-    outputTokens: z.number().int().min(0).max(32768),
-    totalTokens: z.number().int().min(0).max(10032768),
+    inputTokens: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+    outputTokens: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+    totalTokens: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
   })
   .strict();
 const metadata = text(256, 1).refine((s) => !/[\u0000-\u001f\u007f]/.test(s));
 export const modelResponseSchema = z
   .object({
     schemaVersion: z.literal("blocky.model-response/v2"),
-    text: text(65536),
+    text: text(2 * 1024 * 1024),
     toolCalls: modelToolCallSchema.array().max(8),
     finishReason: z.enum(["stop", "tool_calls"]),
     model: metadata.max(128),
@@ -201,7 +221,7 @@ export const modelResponseSchema = z
       (r.usageStatus === "reported") !== (r.usage !== null) ||
       (r.usage &&
         r.usage.inputTokens + r.usage.outputTokens !== r.usage.totalTokens) ||
-      bytes(r) > 262144
+      bytes(r) > 16 * 1024 * 1024
     )
       ctx.addIssue({ code: "custom", message: "模型响应或用量不一致。" });
   });

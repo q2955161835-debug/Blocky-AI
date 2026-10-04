@@ -115,7 +115,7 @@ it("rejects malformed or oversized state without invoking accessors", () => {
     { ...valid, memory: [{ projectId: "../p", key: "x", value: 1 }] },
     {
       ...valid,
-      memory: [{ projectId: "p", key: "x", value: "x".repeat(32769) }],
+      memory: [{ projectId: "p", key: "x", value: "x".repeat(4 * 1024 * 1024 + 1) }],
     },
     {
       ...valid,
@@ -135,7 +135,7 @@ it("rejects malformed or oversized state without invoking accessors", () => {
       memory: Array.from({ length: 40 }, (_, i) => ({
         projectId: "p",
         key: `k-${i}`,
-        value: "x".repeat(32700),
+        value: "x".repeat(210000),
       })),
     },
   ];

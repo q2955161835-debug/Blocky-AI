@@ -29,7 +29,7 @@ it("projects real memory, context and no-evidence decisions without leaking valu
   const frames = inspectTraceExport(trace.export()).frames;
   expect(frames.find(f => f.blockId === "recall" && f.type === "block.completed")?.details?.memory).toEqual({ action: "read", scope: "session" });
   const first = frames.find(f => f.blockId === "first-model" && f.type === "model.completed")!;
-  expect(first.details?.model?.maxOutputTokens).toBe(1024);
+  expect(first.details?.model?.maxOutputTokens).toBe(32768);
   expect(first.details?.context?.userBytes).toBe(18);
   expect(first.details?.guard?.decision).toBe("passed");
   const second = frames.find(f => f.blockId === "second-model" && f.type === "model.completed")!;

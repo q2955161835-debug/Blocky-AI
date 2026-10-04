@@ -1,5 +1,6 @@
 import {
   stableId,
+  agentBudgetDefaults,
   type Project,
   type WorkspaceBlock,
 } from "@blocky/language-schema";
@@ -82,8 +83,8 @@ function toolLoop(
     id: "assistant-tool-loop",
     fields: {
       RESOURCE: MODEL_RESOURCE_ID,
-      MAX_TURNS: "8",
-      OUTPUT_TOKENS: "512",
+      MAX_TURNS: String(agentBudgetDefaults.turns),
+      OUTPUT_TOKENS: String(agentBudgetDefaults.outputTokensPerTurn),
       ENGINE: engine,
       SESSION: "conversation",
     },
@@ -96,10 +97,10 @@ function budget(): WorkspaceBlock {
     type: "core.run.budget",
     id: "assistant-run-budget",
     fields: {
-      STEPS: "100",
-      CALLS: "16",
-      OUTPUT_TOKENS: "4096",
-      TIMEOUT_MS: "120000",
+      STEPS: String(agentBudgetDefaults.steps),
+      CALLS: String(agentBudgetDefaults.calls),
+      OUTPUT_TOKENS: String(agentBudgetDefaults.outputTokens),
+      TIMEOUT_MS: String(agentBudgetDefaults.durationMs),
     },
   };
 }

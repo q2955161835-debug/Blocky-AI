@@ -130,7 +130,7 @@ fn cancellation_size_and_failure_body_are_bounded() {
         "BLK-PROVIDER-CANCELLED"
     );
     assert_eq!(
-        transport::consume(&vec![b'x'; 262145][..], &AtomicBool::new(false)).unwrap_err(),
+        transport::consume(&vec![b'x'; 16 * 1024 * 1024 + 1][..], &AtomicBool::new(false)).unwrap_err(),
         "BLK-PROVIDER-LIMIT"
     );
     for (status, code) in [

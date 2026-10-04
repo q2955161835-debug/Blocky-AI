@@ -73,7 +73,7 @@
     "optionalFields": ["ENGINE", "SESSION"],
     "fieldOptions": { "ENGINE": ["blocky", "pi"], "SESSION": ["turn", "conversation"] },
     "resourceFields": { "RESOURCE": "model" },
-    "defaultFields": { "MAX_TURNS": "4", "OUTPUT_TOKENS": "512" },
+    "defaultFields": { "MAX_TURNS": "32", "OUTPUT_TOKENS": "32768" },
     "inputs": ["TOOLS"],
     "inputChecks": { "TOOLS": "agent-tool" },
     "statement": true

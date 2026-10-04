@@ -1,10 +1,12 @@
 import {
   canonicalJson,
+  agentMessageLimits,
+  agentBudgetLimits,
   type Json,
   type Resource,
 } from "@blocky/language-schema";
 import type { Citation } from "./adapters";
-import { utf8 } from "./budget";
+import { utf8, integer } from "./budget";
 export type Message = {
   role: "system" | "user" | "assistant" | "tool";
   content: string;
@@ -90,6 +92,12 @@ export type OutputFile = {
 };
 export const contextEvidence = (citations: Citation[]) =>
   citations.map((c) => ({ id: c.id, title: c.title, text: c.text }));
+/** Project per-turn quotas and an explicit model limit both constrain the request. */
+export function modelOutputLimit(resource: Resource, requested: number): number {
+  const parameters = resource.definition.parameters;
+  const configured = parameters && typeof parameters === "object" && !Array.isArray(parameters) ? parameters.maxOutputTokens : undefined;
+  return Math.min(integer(requested, 1, agentBudgetLimits.outputTokensPerTurn), configured === undefined ? agentBudgetLimits.outputTokensPerTurn : integer(configured, 1, agentBudgetLimits.outputTokensPerTurn));
+}
 export function messages(
   role: string,
   instruction: string,
@@ -107,7 +115,7 @@ export function messages(
     toolResult: value,
     evidence: contextEvidence(citations),
   });
-  if (utf8(system) + utf8(context) + utf8(input) > 32768)
+  if (utf8(system) > 32768 || utf8(system) + utf8(context) + utf8(input) > agentMessageLimits.historyBytes)
     throw Error("BLK-CONTEXT-001");
   return [
     { role: "system", content: system },
@@ -121,7 +129,7 @@ export function checkGenerationMetadata(result: Generation): void {
   if (
     !result ||
     typeof result.text !== "string" ||
-    utf8(result.text) > 65536 ||
+    utf8(result.text) > agentMessageLimits.outputBytes ||
     !["local", "remote"].includes(result.transport)
   )
     throw Error("BLK-MODEL-003");

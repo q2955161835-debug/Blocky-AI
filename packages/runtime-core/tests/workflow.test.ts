@@ -447,7 +447,7 @@ describe("durable workflow boundaries", () => {
         ...record,
         active: { stepId: "reserve", direction: "forward", effectKey: "wrong" },
       },
-      { ...record, state: "x".repeat(131073) },
+      { ...record, state: "x".repeat(8 * 1024 * 1024) },
     ])
       expect(() => parseWorkflow(changed)).toThrow();
     expect(() =>
@@ -492,4 +492,16 @@ describe("durable workflow boundaries", () => {
     expect(summary.status).toBe("ready");
     expect(JSON.stringify(summary)).not.toMatch(/PRIVATE_|state|before|after/);
   });
+});
+
+it("accepts large bounded durable states and rejects receipt duplication beyond the whole record limit", () => {
+  const state = "x".repeat(6 * 1024 * 1024),
+    record = createWorkflow("task-large-state", definition, state);
+  expect(parseWorkflow(record).state).toBe(state);
+  const active = transitionWorkflow(record, { kind: "begin", revision: 1 });
+  expect(() =>
+    transitionWorkflow(active, { kind: "complete", revision: 2, state }),
+  ).toThrow("BLK-WORKFLOW-LIMIT");
+  expect(active.state).toBe(state);
+  expect(active.revision).toBe(2);
 });

@@ -66,7 +66,7 @@ pub fn consume(mut reader: impl std::io::Read, cancel: &AtomicBool) -> Result<Ve
         if n == 0 {
             break;
         }
-        if bytes.len() + n > 262144 {
+        if bytes.len() + n > 16 * 1024 * 1024 {
             return Err("BLK-PROVIDER-LIMIT".into());
         }
         bytes.extend_from_slice(&chunk[..n]);
@@ -193,7 +193,7 @@ async fn exchange(
         }
     })?;
     status(response.status().as_u16())?;
-    if response.content_length().is_some_and(|n| n > 262144) {
+    if response.content_length().is_some_and(|n| n > 16 * 1024 * 1024) {
         return Err("BLK-PROVIDER-LIMIT".into());
     }
     let mut bytes = Vec::new();
@@ -204,7 +204,7 @@ async fn exchange(
             "BLK-PROVIDER-TRANSPORT"
         }
     })? {
-        if bytes.len() + chunk.len() > 262144 {
+        if bytes.len() + chunk.len() > 16 * 1024 * 1024 {
             return Err("BLK-PROVIDER-LIMIT".into());
         }
         bytes.extend_from_slice(&chunk);

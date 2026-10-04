@@ -21,7 +21,9 @@ const ERROR: &str = "BLK-CODING-WIRE";
 fn send(pipe: &mut impl Write, id: &str, mut value: Value) -> Result<(), String> {
     value["schemaVersion"] = json!("blocky.coding-ipc/v1");
     value["requestId"] = json!(id);
-    pipe.write_all(value.to_string().as_bytes())
+    let bytes = value.to_string();
+    if bytes.len() > 16 * 1024 * 1024 { return Err("BLK-CODING-BUDGET".into()); }
+    pipe.write_all(bytes.as_bytes())
         .and_then(|_| pipe.write_all(b"\n"))
         .and_then(|_| pipe.flush())
         .map_err(|_| ERROR.into())
@@ -139,7 +141,7 @@ pub(super) fn run(
             if cancel.load(Ordering::SeqCst) {
                 return Err("BLK-CODING-CANCELLED".into());
             }
-            if began.elapsed() > Duration::from_secs(300) {
+            if began.elapsed() > Duration::from_secs(86400) {
                 return Err("BLK-CODING-TIMEOUT".into());
             }
             let frame = match rx.recv_timeout(Duration::from_millis(20)) {
@@ -148,7 +150,7 @@ pub(super) fn run(
                 Err(_) => return Err("BLK-CODING-EXIT".into()),
             };
             count += 1;
-            if count > 4096
+            if count > 262144
                 || frame["schemaVersion"] != "blocky.coding-ipc/v1"
                 || frame["requestId"] != *id
             {
@@ -158,10 +160,10 @@ pub(super) fn run(
                 Some("provider.call") => {
                     keys(&frame, &["turn", "messages"])?;
                     turn += 1;
-                    if turn > 12 || frame["turn"].as_u64() != Some(turn) {
+                    if turn > 4096 || frame["turn"].as_u64() != Some(turn) {
                         return Err("BLK-CODING-BUDGET".into());
                     }
-                    let remaining = 300000u64.saturating_sub(began.elapsed().as_millis() as u64);
+                    let remaining = 86400000u64.saturating_sub(began.elapsed().as_millis() as u64);
                     let mut metadata = None;
                     if crate::builder::contains_credentials(&frame["messages"]) {
                         return Err("BLK-CODING-INPUT".into());
@@ -225,7 +227,7 @@ pub(super) fn run(
                         .as_str()
                         .filter(|n| super::TOOLS.contains(n))
                         .ok_or(ERROR)?;
-                    if !used.insert(call.to_owned()) || used.len() > 128 {
+                    if !used.insert(call.to_owned()) || used.len() > 65536 {
                         return Err(ERROR.into());
                     }
                     let value = host.tool(start, scope, &mut cli, name, &frame["args"], cancel);
@@ -272,7 +274,7 @@ pub(super) fn run(
                         || event["requestId"] != *id
                         || event["projectId"] != start.project_id
                         || event["sequence"].as_u64() != Some(sequence + 1)
-                        || events.len() >= 2048
+                        || events.len() >= 262144
                         || crate::builder::contains_credentials(event)
                     {
                         return Err(ERROR.into());
@@ -321,7 +323,7 @@ pub(super) fn run(
                         || result["requestId"] != *id
                         || result["projectId"] != start.project_id
                         || result["baseDigest"] != digest(&start.original_json)
-                        || bounded_text(&result["text"], 64000).is_err()
+                        || result["text"].as_str().is_none_or(|text| text.len() > 2 * 1024 * 1024)
                         || crate::builder::contains_credentials(&result["text"])
                     {
                         return Err(ERROR.into());

@@ -6,6 +6,14 @@ use std::{
     time::Duration,
 };
 pub(super) const FRAME: usize = 20 * 1024 * 1024;
+pub(super) const SERVICE_CALLS: u64 = 1_000_000;
+pub(super) const FRAMES: u64 = 3_000_000;
+pub(super) fn service_sequence(previous: u64, next: u64) -> Result<(), String> {
+    if previous.checked_add(1) == Some(next) && next <= SERVICE_CALLS { Ok(()) } else { Err(CHANNEL.into()) }
+}
+pub(super) fn frame_count(count: u64) -> Result<(), String> {
+    if count <= FRAMES { Ok(()) } else { Err("BLK-WORKFLOW-LIMIT".into()) }
+}
 pub(super) const CHANNEL: &str = "BLK-WORKFLOW-CHANNEL";
 pub(super) fn read(input: &mut impl BufRead) -> Result<Option<Value>, String> {
     let mut bytes = Vec::new();
@@ -36,11 +44,7 @@ pub(super) fn reader(
         let mut count = 0;
         loop {
             count += 1;
-            let next = if count > 20000 {
-                Err("BLK-WORKFLOW-LIMIT".into())
-            } else {
-                read(&mut input)
-            };
+            let next = frame_count(count).and_then(|_| read(&mut input));
             let terminal = !matches!(next, Ok(Some(_)));
             if send.send((worker, next)).is_err() || terminal {
                 break;

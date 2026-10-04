@@ -1,6 +1,7 @@
 import { isUserOnlineModel } from "@blocky/resource-registry";
 import type { Json } from "@blocky/language-schema";
 import type { GenerationRequest } from "./agent-context";
+import { modelOutputLimit } from "./agent-context";
 import { integer } from "./budget";
 
 /** Native resource resolution owns destinations and credentials. v1 remains a read-compatible adapter. */
@@ -10,6 +11,8 @@ export function nativeModelRequest(input: GenerationRequest) {
   const legacy = ["deepseek", "xirang"].includes(String(d.provider));
   const v2 =
     d.connectionRef !== undefined ||
+    input.maxOutputTokens > 1024 ||
+    Number(d.timeoutMs) > 120000 ||
     !legacy ||
     (d.parameters !== undefined && d.parameters !== null && typeof d.parameters === "object" && !Array.isArray(d.parameters) && d.parameters.topP !== undefined) ||
     !!input.tools?.length ||
@@ -34,8 +37,8 @@ export function nativeModelRequest(input: GenerationRequest) {
     projectId: input.projectId,
     resourceId: resource.resourceId,
     messages: input.messages,
-    maxOutputTokens: Math.min(v2 ? 32768 : 1024, input.maxOutputTokens),
-    timeoutMs: integer(d.timeoutMs, 1, 120000),
+    maxOutputTokens: modelOutputLimit(resource, input.maxOutputTokens),
+    timeoutMs: integer(d.timeoutMs, 1, 3600000),
     ...(p?.temperature !== undefined ? { temperature: p.temperature } : {}),
   };
   if (v2)

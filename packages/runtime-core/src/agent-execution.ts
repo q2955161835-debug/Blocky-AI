@@ -1,5 +1,8 @@
 import {
   stableId,
+  agentBudgetDefaults,
+  agentBudgetLimits,
+  agentMessageLimits,
   canonicalJson,
   validateParallelNode,
   type IrNode,
@@ -142,12 +145,12 @@ export class AgentExecution {
         JSON.stringify([value.projectId, this.sessionId, entry.key]),
         entry.value,
       );
-    if (utf8(JSON.stringify([...candidate])) > 1048576)
+    if (utf8(JSON.stringify([...candidate])) > agentMessageLimits.sessionBytes)
       throw Error("BLK-MEMORY-001");
     const metadata=new Map(this.sessionLedger.entries),revoked=new Set(this.sessionLedger.revoked);
     for(const item of value.sessionMemoryMetadata??[]){const key=JSON.stringify([value.projectId,this.sessionId,item.key]),old=metadata.get(key);if(old&&canonicalJson(old)!==canonicalJson(item.entry))throw Error('BLK-WORKFLOW-CONTEXT');metadata.set(key,item.entry);}
     for(const source of value.revokedMemorySources??[])revoked.add(JSON.stringify([value.projectId,this.sessionId,source]));
-    if(utf8(JSON.stringify([...candidate]))+utf8(JSON.stringify([...metadata]))>1048576||metadata.size>1024||revoked.size>1024)throw Error('BLK-MEMORY-001');
+    if(utf8(JSON.stringify([...candidate]))+utf8(JSON.stringify([...metadata]))>agentMessageLimits.sessionBytes||metadata.size>1024||revoked.size>1024)throw Error('BLK-MEMORY-001');
     // Last fallible operation before mutation: active waiters, queue conflicts and total capacity.
     this.mailbox.restoreCheckpoint(value.projectId, value.events);
     this.sessionMemory.clear();
@@ -262,6 +265,8 @@ export class AgentExecution {
     );
     this.budget.check();
     checkGenerationMetadata(result);
+    if (result.usage && result.usage.outputTokens > limit) throw Error("BLK-RUN-004");
+    this.budget.settleOutput(limit, result.usage?.outputTokens);
     this.generations.push({ ...result, text: "", toolCalls: [] });
     if (
       (result.toolCalls?.length ?? 0) > 0 ||
@@ -326,7 +331,7 @@ export class AgentExecution {
       | Record<string, Json>
       | undefined;
     const limit = this.budget.reserveOutput(
-      integer(parameters?.maxOutputTokens ?? 1024, 1, 4096),
+      integer(parameters?.maxOutputTokens ?? agentBudgetDefaults.outputTokensPerTurn, 1, agentBudgetLimits.outputTokensPerTurn),
     );
     details.model = { maxOutputTokens: limit };
     report(details);
@@ -371,6 +376,9 @@ export class AgentExecution {
     }
     this.budget.check();
     checkGenerationMetadata(result);
+    if (result.usage && result.usage.outputTokens > limit)
+      throw Error("BLK-RUN-004");
+    this.budget.settleOutput(limit, result.usage?.outputTokens);
     this.generations.push({ ...result, text: "", toolCalls: [] });
     try {
       await this.refreshMemoryContext();
@@ -391,8 +399,6 @@ export class AgentExecution {
     }
     details.guard!.decision = "passed";
     report(details);
-    if (result.usage && result.usage.outputTokens > limit)
-      throw Error("BLK-RUN-004");
     this.generations[this.generations.length - 1] = result;
     this.generated = result.text;
     this.value = result.text;
@@ -584,7 +590,7 @@ export class AgentExecution {
         const value = f.SOURCE === "input" ? this.question : this.value;
         const mediaSource=f.SOURCE==='result'?this.mediaSource():undefined;
         if(action==='write'&&mediaSource&&!await this.sessionSourceReadable(mediaSource))throw Error('BLK-PERM-001');
-        if (utf8(JSON.stringify(value)) > 32768) throw Error("BLK-MEMORY-001");
+        if (utf8(JSON.stringify(value)) > (f.SCOPE === "session" ? agentMessageLimits.outputBytes : 32768)) throw Error("BLK-MEMORY-001");
         this.budget.call();
         if (f.SCOPE === "session") {
           const key=String(f.KEY),current=sessionRequest(this.sessionMemory,this.sessionLedger,this.project.manifest.projectId,this.sessionId,{action:'read',key});
@@ -623,7 +629,7 @@ export class AgentExecution {
           this.memoryBinding=current.found?{scope:'project',keys:[{key:f.KEY,version:current.version!}]}:undefined;
         }
         this.budget.check();
-        if (utf8(JSON.stringify(this.memory)) > 32768)
+        if (utf8(JSON.stringify(this.memory)) > (f.SCOPE === "session" ? agentMessageLimits.outputBytes : 32768))
           throw Error("BLK-MEMORY-001");
         if (action === "read") this.value = this.memory;
         break;
@@ -715,7 +721,7 @@ export class AgentExecution {
               (typeof this.value === "string"
                 ? this.value
                 : JSON.stringify(this.value)));
-        if (utf8(content) > 65536) throw Error("BLK-OUTPUT-002");
+        if (utf8(content) > agentMessageLimits.outputBytes) throw Error("BLK-OUTPUT-002");
         this.files.push({ name, format: format as "text" | "json", content });
         break;
       }

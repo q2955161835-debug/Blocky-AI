@@ -24,16 +24,27 @@ export const codingConversationSchema = z
     z
       .object({
         role: z.enum(["user", "assistant"]),
-        text: z.string().trim().min(1).max(16000),
+        text: z
+          .string()
+          .trim()
+          .min(1)
+          .max(2 * 1024 * 1024)
+          .refine(
+            (text) => new TextEncoder().encode(text).length <= 2 * 1024 * 1024,
+          ),
       })
       .strict(),
   )
   .max(20)
   .refine(
     (messages) =>
-      messages.reduce((sum, message) => sum + message.text.length, 0) <= 64000,
+      new TextEncoder().encode(JSON.stringify(messages)).length <=
+      4 * 1024 * 1024,
   );
-const contextCode = z.string().regex(/^BLK-[A-Z0-9-]{1,124}$/).max(128);
+const contextCode = z
+  .string()
+  .regex(/^BLK-[A-Z0-9-]{1,124}$/)
+  .max(128);
 export const codingRuntimeContextSchema = z
   .object({
     diagnostics: z
@@ -96,7 +107,10 @@ export const codingMessageSchema = z
     text: z
       .string()
       .min(1)
-      .max(16000)
+      .max(2 * 1024 * 1024)
+      .refine(
+        (text) => new TextEncoder().encode(text).length <= 2 * 1024 * 1024,
+      )
       .refine((text) => !containsCredential(text)),
     status: z
       .enum([
@@ -121,8 +135,8 @@ export const codingChatStateSchema = z
       .max(40)
       .refine(
         (messages) =>
-          messages.reduce((sum, message) => sum + message.text.length, 0) <=
-          64000,
+          new TextEncoder().encode(JSON.stringify(messages)).length <=
+          4 * 1024 * 1024,
       ),
   })
   .strict();
@@ -209,11 +223,28 @@ const generationSchema = z
     transport: z.string().max(100),
     usage: z
       .object({
-        inputTokens: z.number().int().nonnegative(),
-        outputTokens: z.number().int().nonnegative(),
-        totalTokens: z.number().int().nonnegative(),
+        inputTokens: z
+          .number()
+          .int()
+          .nonnegative()
+          .max(Number.MAX_SAFE_INTEGER),
+        outputTokens: z
+          .number()
+          .int()
+          .nonnegative()
+          .max(Number.MAX_SAFE_INTEGER),
+        totalTokens: z
+          .number()
+          .int()
+          .nonnegative()
+          .max(Number.MAX_SAFE_INTEGER),
       })
       .strict()
+      .refine(
+        (usage) =>
+          Number.isSafeInteger(usage.inputTokens + usage.outputTokens) &&
+          usage.inputTokens + usage.outputTokens === usage.totalTokens,
+      )
       .nullable(),
   })
   .strict();
@@ -231,10 +262,15 @@ export const codingResultSchema = z
     requestId: id,
     projectId: id,
     baseDigest: digest,
-    text: z.string().max(64000),
+    text: z
+      .string()
+      .max(2 * 1024 * 1024)
+      .refine(
+        (text) => new TextEncoder().encode(text).length <= 2 * 1024 * 1024,
+      ),
     changes: z.array(codingChangeSchema).max(128),
-    events: z.array(codingEventSchema).max(2048),
-    generations: z.array(generationSchema).max(12),
+    events: z.array(codingEventSchema).max(262144),
+    generations: z.array(generationSchema).max(4096),
     engine: z.string().min(1).max(200),
     modelApiCalled: z.boolean(),
     project: projectSchema.optional(),
@@ -270,7 +306,7 @@ export function parseCodingStart(input: unknown): CodingStart {
       throw Error("credential");
     if (
       new TextEncoder().encode(JSON.stringify(parsed)).length >
-      9 * 1024 * 1024
+      16 * 1024 * 1024
     )
       throw Error("budget");
     return parsed;
@@ -291,5 +327,20 @@ export function codingTextPrefix(text: string, limit: number): string {
     text.charCodeAt(end) <= 0xdfff
   )
     end--;
+  return text.slice(0, end);
+}
+
+/** Preserve complete Unicode code points within the UTF-8 message byte boundary. */
+export function codingTextBytePrefix(text: string, maxBytes: number): string {
+  if (new TextEncoder().encode(text).length <= maxBytes) return text;
+  let used = 0,
+    end = 0;
+  for (const point of text) {
+    const code = point.codePointAt(0)!;
+    const bytes = code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
+    if (used + bytes > maxBytes) break;
+    used += bytes;
+    end += point.length;
+  }
   return text.slice(0, end);
 }

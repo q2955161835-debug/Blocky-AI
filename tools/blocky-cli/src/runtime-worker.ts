@@ -45,7 +45,7 @@ function call(operation: string, fields: Record<string, unknown> = {}) {
       operation === "approval"
         ? 310000
         : operation === "service"
-          ? 180000
+          ? 3610000
           : 10000,
     );
     pending.set(id, { resolve, reject, timer, operation });

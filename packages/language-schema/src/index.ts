@@ -5,6 +5,7 @@ export {
   type ExpressionProgram,
 } from "./expression";
 export { containsCredential } from "./credentials";
+export { agentBudgetDefaults, agentBudgetLimits, agentMessageLimits } from "./agent-budgets";
 export type Json =
   | null
   | boolean

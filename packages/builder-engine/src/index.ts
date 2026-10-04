@@ -96,7 +96,8 @@ export async function runBuilderEngine(
     input: ["text"],
     cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
     contextWindow: 32768,
-    maxTokens: 1024,
+    // Custom Host stream owns output policy; this metadata does not impose a Token quota.
+    maxTokens: 0,
   };
   const tools: AgentTool[] = schemas.map((schema) => ({
     ...schema,

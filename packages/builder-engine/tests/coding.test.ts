@@ -86,7 +86,9 @@ it("answers in plain text with Pi metadata and bounded conversation context", as
         expect(JSON.stringify(input.messages)).toContain("先前的问题");
         expect(JSON.stringify(input.messages)).toContain("BLK-LINK-001");
         expect(JSON.stringify(input.messages)).toContain("BLK-RUN-001");
-        expect(JSON.stringify(input.messages)).not.toContain("workspaceAvailable");
+        expect(JSON.stringify(input.messages)).not.toContain(
+          "workspaceAvailable",
+        );
         return generation([{ type: "text", text: "这是完整回答。" }]);
       },
     },
@@ -207,19 +209,22 @@ it.each(["unknown", "duplicate"])(
   },
 );
 
-it("bounds model requests at twelve", async () => {
+it("stops a long repeated task on cancellation", async () => {
+  const controller = new AbortController();
   let requests = 0;
   await expect(
     runCodingAgent(start, {
       modelId: "fixture",
+      signal: controller.signal,
       executeTool: async () => ({}),
       generate: async ({ turn }) => {
         requests++;
+        if (turn === 70) controller.abort();
         return generation([call(`call-${turn}`, "workspace_list")]);
       },
     }),
-  ).rejects.toThrow("BLK-CODING-BUDGET");
-  expect(requests).toBe(12);
+  ).rejects.toThrow("BLK-CODING-CANCELLED");
+  expect(requests).toBe(70);
 });
 
 it("cancels a pending generator even when its callback ignores the signal", async () => {
@@ -236,7 +241,7 @@ it("cancels a pending generator even when its callback ignores the signal", asyn
   await expect(running).rejects.toThrow("BLK-CODING-CANCELLED");
 });
 
-it("enforces the five minute deadline on a pending Host tool", async () => {
+it("enforces the 24 hour deadline on a pending Host tool", async () => {
   vi.useFakeTimers();
   try {
     let entered!: () => void;
@@ -251,7 +256,7 @@ it("enforces the five minute deadline on a pending Host tool", async () => {
     });
     const rejected = expect(running).rejects.toThrow("BLK-CODING-BUDGET");
     await ready;
-    await vi.advanceTimersByTimeAsync(300000);
+    await vi.advanceTimersByTimeAsync(86400000);
     await rejected;
   } finally {
     vi.useRealTimers();
@@ -264,7 +269,7 @@ it("bounds output and rejects malformed Host change/project projections", async 
       modelId: "fixture",
       executeTool: async () => ({}),
       generate: async () =>
-        generation([{ type: "text", text: "x".repeat(64001) }]),
+        generation([{ type: "text", text: "x".repeat(2 * 1024 * 1024 + 1) }]),
     }),
   ).rejects.toThrow("BLK-CODING-BUDGET");
   const result = await runCodingAgent(start, {
@@ -300,4 +305,39 @@ it("does not split emoji surrogate pairs across streaming frames", async () => {
       (chunk) => chunk.length <= 16384 && !/\p{Surrogate}/u.test(chunk),
     ),
   ).toBe(true);
+});
+
+it("continues beyond twelve turns and preserves a long response and tool argument", async () => {
+  const long = "中".repeat(100_000);
+  const executeTool = vi.fn(async (_name, args) => {
+    if (args.text && args.text !== "small") expect(args.text).toBe(long);
+    return { ok: true };
+  });
+  const result = await runCodingAgent(start, {
+    modelId: "fixture",
+    executeTool,
+    generate: async ({ turn, messages }) => {
+      if (turn <= 14)
+        return generation([
+          call(`long-${turn}`, "workspace_write", {
+            path: "large.txt",
+            text: turn === 1 ? long : "small",
+            expectedDigest: null,
+          }),
+        ]);
+      expect(
+        messages.find((message) => message.tool_call_id === "long-14")?.content,
+      ).toContain("true");
+      return generation([{ type: "text", text: long }]);
+    },
+  });
+  expect(result.text).toBe(long);
+  expect(result.generations).toHaveLength(15);
+  expect(executeTool).toHaveBeenCalledTimes(14);
+  expect(
+    result.events
+      .filter((event) => event.kind === "text.delta")
+      .map((event) => event.text)
+      .join(""),
+  ).toBe(long);
 });

@@ -1,5 +1,5 @@
 import {sessionMetadataSchema,type SessionMetadata} from "../session-memory";
-import { stableId, type Json } from "@blocky/language-schema";
+import { stableId, agentBudgetLimits, agentMessageLimits, type Json } from "@blocky/language-schema";
 import type { OutputFile } from "../agent-context";
 import { requireWorkflow, workflowJson, workflowKeys } from "./protocol";
 
@@ -50,7 +50,7 @@ export function parseMailboxCheckpoint(input: unknown): MailboxCheckpoint {
   return value as MailboxCheckpoint;
 }
 export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
-  const v = workflowJson(input);
+  const v = workflowJson(input, agentMessageLimits.sessionBytes);
   workflowKeys(
     v,
     [
@@ -74,7 +74,7 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
       text(v.instruction, 8192) &&
       typeof v.requireEvidence === "boolean",
   );
-  if (Object.hasOwn(v, "generated")) requireWorkflow(text(v.generated, 65536));
+  if (Object.hasOwn(v, "generated")) requireWorkflow(text(v.generated, agentMessageLimits.outputBytes));
   requireWorkflow(Array.isArray(v.files) && v.files.length <= 8);
   for (const file of v.files) {
     workflowKeys(file, ["name", "format", "content"]);
@@ -84,7 +84,7 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
         !/[. ]$/.test(file.name) &&
         !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(file.name) &&
         ["text", "json"].includes(String(file.format)) &&
-        text(file.content, 65536),
+        text(file.content, agentMessageLimits.outputBytes),
     );
   }
   requireWorkflow(
@@ -95,7 +95,7 @@ export function parseAgentCheckpoint(input: unknown): AgentCheckpoint {
     workflowKeys(entry, ["key", "value"]);
     requireWorkflow(validId(entry.key) && !seen.has(entry.key));
     seen.add(entry.key);
-    workflowJson(entry.value, 32768);
+    workflowJson(entry.value, agentMessageLimits.outputBytes);
   }
   if(v.sessionMemoryMetadata!==undefined){requireWorkflow(Array.isArray(v.sessionMemoryMetadata)&&v.sessionMemoryMetadata.length<=1024);const seen=new Set();for(const item of v.sessionMemoryMetadata){workflowKeys(item,["key","entry"]);requireWorkflow(validId(item.key)&&!seen.has(item.key));seen.add(item.key);sessionMetadataSchema.parse(item.entry);}}
   if(v.revokedMemorySources!==undefined){requireWorkflow(Array.isArray(v.revokedMemorySources)&&v.revokedMemorySources.length<=1024);for(const source of v.revokedMemorySources)requireWorkflow(typeof source==='string'&&source.length<=256);}
@@ -117,13 +117,13 @@ export function parseBudgetCheckpoint(input: unknown): BudgetCheckpoint {
     "remainingMs",
   ]);
   for (const [key, max, min] of [
-    ["steps", 2000, 0],
-    ["calls", 16, 0],
-    ["usedOutput", 4096, 0],
-    ["maxSteps", 2000, 1],
-    ["maxCalls", 16, 1],
-    ["maxOutput", 4096, 1],
-    ["remainingMs", 120000, 0],
+    ["steps", agentBudgetLimits.steps, 0],
+    ["calls", agentBudgetLimits.calls, 0],
+    ["usedOutput", agentBudgetLimits.outputTokens, 0],
+    ["maxSteps", agentBudgetLimits.steps, 1],
+    ["maxCalls", agentBudgetLimits.calls, 1],
+    ["maxOutput", agentBudgetLimits.outputTokens, 1],
+    ["remainingMs", agentBudgetLimits.durationMs, 0],
   ] as const) {
     requireWorkflow(
       typeof v[key] === "number" &&

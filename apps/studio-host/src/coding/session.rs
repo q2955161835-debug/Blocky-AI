@@ -13,10 +13,10 @@ pub fn session_main() -> i32 {
         let mut bytes = Vec::new();
         std::io::stdin()
             .lock()
-            .take(10 * 1024 * 1024 + 1)
+            .take(16 * 1024 * 1024 + 1)
             .read_until(b'\n', &mut bytes)
             .map_err(|_| "BLK-CODING-INPUT")?;
-        if bytes.len() > 10 * 1024 * 1024 || !bytes.ends_with(b"\n") {
+        if bytes.len() > 16 * 1024 * 1024 || !bytes.ends_with(b"\n") {
             return Err("BLK-CODING-INPUT".to_owned());
         }
         let value = crate::strict_json::parse(&bytes)?;

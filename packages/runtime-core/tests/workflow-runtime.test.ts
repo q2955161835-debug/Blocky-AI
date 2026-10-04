@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+import { createAgentExample } from "../../test-fixtures/src/scenarios";
 import { createArchitectureStarter } from "../../test-fixtures/src/scenarios";
 import { compileProject } from "@blocky/compiler";
 import { canonicalJson, type WorkspaceBlock } from "@blocky/language-schema";
@@ -460,4 +461,132 @@ it("cancels recovery while citation validation is pending and closes without res
     release();
     await run;
   }
+});
+
+it("persists a generated 100k answer through a checkpoint and resumes a fresh Runtime without replenishing budget", async () => {
+  const p = project(),
+    f = fixture(),
+    seed = createAgentExample("long-answer-seed"),
+    long = "x".repeat(100_000);
+  const model = structuredClone(seed.resources["agent-model"]);
+  model.definition.capabilities = ["text", "tools"];
+  model.definition.parameters = { maxOutputTokens: 32768 };
+  p.resources[model.resourceId] = model;
+  p.manifest.resources.push({
+    resourceId: model.resourceId,
+    kind: "model",
+    scope: "project",
+    definitionRef: "resources/agent-model.json",
+    secretRefs: [],
+  });
+  p.workspaces.main.blocks.blocks[0].inputs!.HANDLER = {
+    block: block(
+      "workflow",
+      "runtime.task.durable",
+      {},
+      {
+        STEPS: {
+          block: stack(
+            block(
+              "generate-action",
+              "runtime.compensate",
+              {},
+              {
+                DO: {
+                  block: stack(
+                    block("long-generation", "core.reason.tool_loop", {
+                      RESOURCE: "agent-model",
+                      ENGINE: "pi",
+                      MAX_TURNS: "2",
+                      OUTPUT_TOKENS: "32768",
+                      SESSION: "turn",
+                    }),
+                    block("long-presentation", "core.output.answer", {
+                      STYLE: "段落",
+                    }),
+                  ),
+                },
+              },
+            ),
+            block("saved-long", "runtime.checkpoint.save"),
+            block("approve", "core.human.approve", {
+              LABEL: "Review long answer",
+            }),
+            block(
+              "final-action",
+              "runtime.compensate",
+              {},
+              {
+                DO: {
+                  block: block("final-presentation", "core.output.answer", {
+                    STYLE: "段落",
+                  }),
+                },
+              },
+            ),
+          ),
+        },
+      },
+    ),
+  };
+  let generated = 0;
+  const adapters = {
+    ...localAdapters(),
+    workflow: f.ports,
+    agent: {
+      generate: async () => {
+        generated++;
+        return {
+          schemaVersion: "blocky.model-response/v2" as const,
+          provider: "fixture",
+          transport: "local" as const,
+          model: "fixture",
+          requestId: "generated-long",
+          usageStatus: "reported" as const,
+          usage: { inputTokens: 10, outputTokens: 25000, totalTokens: 25010 },
+          finishReason: "stop" as const,
+          text: long,
+          toolCalls: [],
+        };
+      },
+    },
+  };
+  expect(
+    (await compileProject(p)).diagnostics.filter((d) => d.severity === "error"),
+  ).toEqual([]);
+  const first = await new Runtime({ adapters }).run(
+    p,
+    "on-event",
+    "original input",
+  );
+  expect(
+    first.status,
+    JSON.stringify(first.events.filter((event) => event.type === "run.failed")),
+  ).toBe("waiting");
+  expect(first.answer).toBe(long);
+  const saved = JSON.parse(JSON.stringify(f.record));
+  expect(saved.state.agent.generated).toBe(long);
+  expect(saved.state.presentation.answer).toBe(long);
+  expect(saved.state.budget.usedOutput).toBe(25000);
+  expect(saved.state.budget.calls).toBe(1);
+  f.decide("approve");
+  const resumed = await new Runtime({ adapters }).run(
+    p,
+    "on-event",
+    "replacement input",
+    { workflowTaskId: "task-owned" },
+  );
+  expect(resumed.status).toBe("completed");
+  expect(resumed.answer).toBe(long);
+  expect(generated).toBe(1);
+  expect(f.record.state).toMatchObject({
+    budget: {
+      usedOutput: 25000,
+      calls: 1,
+      maxOutput: saved.state.budget.maxOutput,
+    },
+  });
+  expect((f.record.state as any).budget.remainingMs).toBeLessThanOrEqual(
+    saved.state.budget.remainingMs,
+  );
 });

@@ -1,5 +1,7 @@
 import {
   canonicalJson,
+  agentBudgetLimits,
+  agentMessageLimits,
   type Json,
   type Project,
   type Resource,
@@ -9,6 +11,7 @@ import { abortable, integer, RunBudget, utf8 } from "./budget";
 import {
   checkGeneration,
   checkGenerationMetadata,
+  modelOutputLimit,
   messages,
   type Generation,
   type GenerationRequest,
@@ -128,13 +131,13 @@ const code = (error: unknown) =>
     ? error.message
     : "BLK-TOOL-002";
 function historyLimit(history: Message[]): void {
-  if (history.length > 128 || utf8(canonicalJson(history)) > 65536)
+  if (history.length > agentMessageLimits.historyMessages || utf8(canonicalJson(history)) > agentMessageLimits.historyBytes)
     throw Error("BLK-CONTEXT-001");
 }
 /** Model proposals are validated as a whole before any tool in that turn runs. */
 export async function runToolLoop(context: ToolLoopContext): Promise<string> {
-  const turns = integer(context.maxTurns, 1, 8),
-    outputPerTurn = integer(context.outputPerTurn, 1, 4096);
+  const turns = integer(context.maxTurns, 1, agentBudgetLimits.turns),
+    outputPerTurn = modelOutputLimit(context.model, context.outputPerTurn);
   const tools = bindLoopTools(context),
     { budget } = context;
   if (context.requireEvidence && !context.citations.length)
@@ -181,6 +184,7 @@ export async function runToolLoop(context: ToolLoopContext): Promise<string> {
       checkGenerationMetadata(result);
       if (result.usage && result.usage.outputTokens > limit)
         throw Error("BLK-RUN-004");
+      budget.settleOutput(limit, result.usage?.outputTokens);
       context.onGeneration(structuredClone(result));
       context.onEvent({
         type: "model.completed",

@@ -1,5 +1,6 @@
 import {
   diagnostic,
+  agentBudgetLimits,
   validateParallelNode,
   validateControlNode,
   assertRetrySafe,
@@ -23,8 +24,8 @@ import { isRpaSession, isRpaStep, compileRpaSession } from "@blocky/rpa-core";
 function validateToolLoop(node: IrNode): void {
   if (node.fields.ENGINE !== undefined && !["blocky", "pi"].includes(String(node.fields.ENGINE))) throw Error("BLK-TOOL-LOOP-CONFIG");
   if (node.fields.SESSION !== undefined && !["turn", "conversation"].includes(String(node.fields.SESSION))) throw Error("BLK-TOOL-LOOP-CONFIG");
-  boundedField(node.fields.MAX_TURNS, 1, 8);
-  boundedField(node.fields.OUTPUT_TOKENS, 1, 4096);
+  boundedField(node.fields.MAX_TURNS, 1, agentBudgetLimits.turns);
+  boundedField(node.fields.OUTPUT_TOKENS, 1, agentBudgetLimits.outputTokensPerTurn);
   let declaration = node.inputs.TOOLS;
   const resourceIds = new Set<string>();
   let count = 0;
@@ -192,10 +193,10 @@ export function compileWorkspace(
     }
     if (b.type === "core.run.budget")
       for (const [field, max] of [
-        ["STEPS", 2000],
-        ["CALLS", 16],
-        ["OUTPUT_TOKENS", 4096],
-        ["TIMEOUT_MS", 120000],
+        ["STEPS", agentBudgetLimits.steps],
+        ["CALLS", agentBudgetLimits.calls],
+        ["OUTPUT_TOKENS", agentBudgetLimits.outputTokens],
+        ["TIMEOUT_MS", agentBudgetLimits.durationMs],
       ] as const) {
         const value = fields[field];
         if (

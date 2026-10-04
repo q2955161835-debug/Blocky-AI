@@ -9,7 +9,7 @@ fn request() -> Value {
 #[test]
 fn json_schema_properties_are_json_names_instead_of_block_identifiers() {
     let mut r = request();
-    r["tools"][0]["parameters"] = json!({"type":"object","properties":{"acceptanceCriteria":{"type":"array","items":{"type":"string"}},"说明":{"type":"string"}},"required":["acceptanceCriteria","说明"],"additionalProperties":false});
+    r["tools"][0]["parameters"] = json!({"type":"object","properties":{"acceptanceCriteria":{"type":"array","items":{"type":"string"}},"璇存槑":{"type":"string"}},"required":["acceptanceCriteria","璇存槑"],"additionalProperties":false});
     serde_json::from_value::<GatewayRequest>(r)
         .unwrap()
         .validate()
@@ -88,7 +88,7 @@ fn endpoint_profiles_do_not_admit_private_remote_or_non_loopback_local_targets()
 
 fn profile() -> tempfile::TempDir {
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../try/agent-capability-upgrade/gateway-tests");
+        .join("../../try/agent-token-budgets/gateway-tests");
     std::fs::create_dir_all(&root).unwrap();
     tempfile::tempdir_in(root).unwrap()
 }
@@ -197,4 +197,127 @@ fn local_request_uses_bound_model_and_tool_payload_without_fabricating_usage() {
     let body: Value = serde_json::from_str(wire.split_once("\r\n\r\n").unwrap().1).unwrap();
     assert_eq!(body["model"], "small:latest");
     assert_eq!(body["tools"][0]["function"]["name"], "count");
+}
+
+#[test]
+fn uncapped_request_omits_wire_limit_and_accepts_long_response_with_real_usage() {
+    let mut value = request();
+    value.as_object_mut().unwrap().remove("maxOutputTokens");
+    let req: GatewayRequest = serde_json::from_value(value).unwrap();
+    req.validate().unwrap();
+    assert!(req.body("fixture", "ollama").get("max_tokens").is_none());
+    let text = "中".repeat(100_000);
+    let wire = json!({"id":"long-response","model":"fixture","choices":[{"message":{"role":"assistant","content":text},"finish_reason":"stop"}],"usage":{"prompt_tokens":50,"completion_tokens":100_000,"total_tokens":100_050}});
+    let parsed = parse_response(&serde_json::to_vec(&wire).unwrap(), &req).unwrap();
+    assert_eq!(parsed["text"], wire["choices"][0]["message"]["content"]);
+    assert_eq!(parsed["usage"]["outputTokens"], 100_000);
+    let mut invalid = wire;
+    invalid["usage"] = json!({"prompt_tokens":9_007_199_254_740_991u64,"completion_tokens":1,"total_tokens":9_007_199_254_740_992u64});
+    assert!(parse_response(&serde_json::to_vec(&invalid).unwrap(), &req).is_err());
+}
+#[test]
+fn configured_limit_cannot_be_bypassed_with_an_uncapped_request() {
+    let root = profile();
+    let mut registry = install_resource(root.path(), "http://127.0.0.1:11434/v1");
+    registry["resources"][0]["definition"]["parameters"] = json!({"maxOutputTokens":100_000});
+    crate::user_store::UserStore::new(root.path().join("user")).write("resources", "app", registry).unwrap();
+    let mut value = request();
+    value.as_object_mut().unwrap().remove("maxOutputTokens");
+    let uncapped: GatewayRequest = serde_json::from_value(value.clone()).unwrap();
+    assert!(binding::Binding::load(root.path(), &uncapped).is_err());
+    value["maxOutputTokens"] = json!(100_000);
+    let configured: GatewayRequest = serde_json::from_value(value.clone()).unwrap();
+    let bound = binding::Binding::load(root.path(), &configured).unwrap();
+    assert_eq!(bound.body(root.path(), &configured).unwrap()["max_tokens"], 100_000);
+    value["maxOutputTokens"] = json!(100_001);
+    assert!(binding::Binding::load(root.path(), &serde_json::from_value(value).unwrap()).is_err());
+}
+
+#[test]
+fn uncapped_http_exchange_preserves_a_large_tool_argument_and_text() {
+    use std::io::{Read, Write};
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let addr = listener.local_addr().unwrap();
+    let root = profile();
+    install_resource(root.path(), &format!("http://{addr}/v1"));
+    let worker = std::thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(std::time::Duration::from_secs(3)))
+            .unwrap();
+        let mut bytes = vec![];
+        let mut buf = [0u8; 8192];
+        loop {
+            let n = stream.read(&mut buf).unwrap();
+            if n == 0 {
+                break;
+            }
+            bytes.extend_from_slice(&buf[..n]);
+            if let Some(index) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
+                let head = String::from_utf8_lossy(&bytes[..index]);
+                let size = head
+                    .lines()
+                    .find_map(|l| {
+                        l.to_lowercase()
+                            .strip_prefix("content-length: ")
+                            .and_then(|n| n.parse::<usize>().ok())
+                    })
+                    .unwrap();
+                if bytes.len() >= index + 4 + size {
+                    break;
+                }
+            }
+        }
+        let body = json!({"id":"large-http","model":"small:latest","choices":[{"message":{"role":"assistant","content":"中".repeat(100_000),"tool_calls":[{"id":"long-call","type":"function","function":{"name":"count","arguments":json!({"text":"中".repeat(100_000)}).to_string()}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":17,"completion_tokens":100_000,"total_tokens":100_017}}).to_string();
+        write!(
+            stream,
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            body
+        )
+        .unwrap();
+        String::from_utf8(bytes).unwrap()
+    });
+    let mut input = request();
+    input.as_object_mut().unwrap().remove("maxOutputTokens");
+    let req: GatewayRequest = serde_json::from_value(input).unwrap();
+    let host = crate::provider::ProviderHost::default();
+    let p = host.model_preflight(root.path(), &req).unwrap();
+    let value = host
+        .model_call(
+            root.path().to_owned(),
+            req,
+            p["requestDigest"].as_str().unwrap(),
+        )
+        .unwrap();
+    assert_eq!(value["transport"], "local");
+    assert_eq!(value["usageStatus"], "reported");
+    assert_eq!(value["text"], "中".repeat(100_000));
+    assert_eq!(value["toolCalls"][0]["arguments"]["text"], "中".repeat(100_000));
+    assert_eq!(value["toolCalls"][0]["name"], "count");
+    let wire = worker.join().unwrap();
+    assert!(wire.starts_with("POST /v1/chat/completions "));
+    assert!(!wire.to_lowercase().contains("authorization:"));
+    let body: Value = serde_json::from_str(wire.split_once("\r\n\r\n").unwrap().1).unwrap();
+    assert!(body.get("max_tokens").is_none());
+    assert_eq!(body["model"], "small:latest");
+    assert_eq!(body["tools"][0]["function"]["name"], "count");
+}
+
+#[test]
+fn coding_model_reads_the_exact_optional_output_and_timeout_configuration() {
+    use crate::provider::builder_model::BuilderModel;
+    let root = profile();
+    let mut registry = install_resource(root.path(), "http://127.0.0.1:11434/v1");
+    let model = BuilderModel::coding(root.path(), "coding-fixture", "project1", "model1").unwrap();
+    assert_eq!(model.max_output_tokens(), None);
+    registry["resources"][0]["definition"]["parameters"] = json!({"maxOutputTokens":10_000_000});
+    registry["resources"][0]["definition"]["timeoutMs"] = json!(3_600_000);
+    crate::user_store::UserStore::new(root.path().join("user")).write("resources", "app", registry).unwrap();
+    let configured = BuilderModel::coding(root.path(), "coding-configured", "project1", "model1").unwrap();
+    assert_eq!(configured.max_output_tokens(), Some(10_000_000));
+    if let BuilderModel::Gateway { request, .. } = configured {
+        assert_eq!(request.timeout_ms, 3_600_000);
+        assert_eq!(request.body("fixture", "ollama")["max_tokens"], 10_000_000);
+    } else { panic!("expected reference gateway"); }
 }

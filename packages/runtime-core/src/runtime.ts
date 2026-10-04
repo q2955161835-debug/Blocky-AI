@@ -15,6 +15,7 @@ import {
 import { parseProject } from "@blocky/project-model";
 import {
   evaluateExpression,
+  agentMessageLimits,
   canonicalJson,
   digest,
   containsCredential,
@@ -1063,11 +1064,11 @@ export class Runtime {
                 });
                 if (pi && node.fields.SESSION === "conversation") {
                   const next = ([...conversation, { role: "user", content: state.question }, { role: "assistant", content: state.generated }] as PiConversation).slice(-20);
-                  while (utf8(canonicalJson(next)) > 16000 && next.length > 2) next.splice(0, 2);
-                  if (utf8(canonicalJson(next)) <= 16000 && !containsCredential(canonicalJson(next))) {
+                  while (utf8(canonicalJson(next)) > agentMessageLimits.historyBytes && next.length > 2) next.splice(0, 2);
+                  if (utf8(canonicalJson(next)) <= agentMessageLimits.historyBytes && !containsCredential(canonicalJson(next))) {
                     const entry = { binding, messages: next } as Json;
                     const future = new Map(this.sessionMemory); future.set(conversationKey, entry);
-                    if (utf8(canonicalJson([...future])) <= 1048576) this.sessionMemory.set(conversationKey, entry);
+                    if (utf8(canonicalJson([...future])) <= agentMessageLimits.sessionBytes) this.sessionMemory.set(conversationKey, entry);
                   }
                 }
                 state.value = state.generated;

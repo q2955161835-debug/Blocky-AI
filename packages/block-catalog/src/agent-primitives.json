@@ -15,6 +15,7 @@
     "label": "运行预算",
     "category": 9,
     "color": "#ba6f4c",
+    "defaultFields": { "STEPS": "10000", "CALLS": "256", "OUTPUT_TOKENS": "1048576", "TIMEOUT_MS": "1800000" },
     "fields": [
       "STEPS",
       "CALLS",
