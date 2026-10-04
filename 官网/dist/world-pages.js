@@ -32,7 +32,7 @@ export function mountWorldPage(container,type){
     reading=requestedReading||reduced.matches||document.body.classList.contains('art-unavailable');
     tour.classList.toggle('reading',reading);container.classList.toggle('is-reading',reading);toggle.setAttribute('aria-pressed',String(reading));toggle.disabled=reduced.matches||document.body.classList.contains('art-unavailable');update();
   }
-  function go(event){const button=event.target.closest('[data-stop]');if(!button)return;const stop=Number(button.dataset.stop);if(reading)cards[stop].scrollIntoView({behavior:'auto',block:'start'});else window.scrollTo({top:(tour.scrollHeight-innerHeight)*stop/4,behavior:reduced.matches?'auto':'smooth'});}
+  function go(event){const button=event.target.closest('[data-stop]');if(!button)return;const stop=Number(button.dataset.stop);if(reading)cards[stop].parentElement.scrollIntoView({behavior:'auto',block:'start'});else window.scrollTo({top:(tour.scrollHeight-innerHeight)*stop/4,behavior:reduced.matches?'auto':'smooth'});}
   function read(){requestedReading=!requestedReading;setReading();window.scrollTo({top:0,behavior:'instant'});}
   function projection(point){
     if(reading)return;
