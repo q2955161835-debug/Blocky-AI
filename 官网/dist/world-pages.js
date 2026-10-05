@@ -19,7 +19,7 @@ export function mountWorldPage(container,type){
   for(const card of container.querySelectorAll('.story-card')){card.tabIndex=0;card.setAttribute('aria-label','场景详情');}
   const unmountPreferences=mountPreferenceControls(container.querySelector('#world-preferences'));
   const tour=container.querySelector('.world-tour'),stage=container.querySelector('.story-stage'),cards=[...container.querySelectorAll('.story-card')],buttons=[...container.querySelectorAll('[data-stop]')],toggle=container.querySelector('.reading-toggle'),connector=container.querySelector('.story-connector'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let art,reading=false,requestedReading=false,index=0,raf=0;
+  let art,reading=false,requestedReading=false,index=0,raf=0,layoutFrame=0;
   function update(){
     raf=0;
     const span=Math.max(1,tour.scrollHeight-innerHeight);
@@ -63,6 +63,7 @@ export function mountWorldPage(container,type){
   function attachArt(value){art=value;art?.enter(stage,type,projection);update();}
   container.querySelector('.story-nav').addEventListener('click',go);toggle.addEventListener('click',read);
   window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('resize',setReading);window.addEventListener('blocky-art-unavailable',setReading);reduced.addEventListener('change',setReading);
-  const unsubscribe=subscribePreferences(setReading);setReading();
-  return {name,stage,attachArt,dispose(){cancelAnimationFrame(raf);art?.leave();unsubscribe();unmountPreferences();window.removeEventListener('scroll',scroll);window.removeEventListener('resize',setReading);window.removeEventListener('blocky-art-unavailable',setReading);reduced.removeEventListener('change',setReading);container.replaceChildren();}};
+  function afterTranslation(){cancelAnimationFrame(layoutFrame);layoutFrame=requestAnimationFrame(()=>{layoutFrame=0;setReading();});}
+  const unsubscribe=subscribePreferences(afterTranslation);setReading();afterTranslation();
+  return {name,stage,attachArt,dispose(){cancelAnimationFrame(raf);cancelAnimationFrame(layoutFrame);art?.leave();unsubscribe();unmountPreferences();window.removeEventListener('scroll',scroll);window.removeEventListener('resize',setReading);window.removeEventListener('blocky-art-unavailable',setReading);reduced.removeEventListener('change',setReading);container.replaceChildren();}};
 }
