@@ -1,5 +1,5 @@
 {
-  "localTime": "2026-10-06 01:20:57",
+  "localTime": "2026-10-06 01:26:20",
   "authorization": "用户明确要求：合并并推送",
   "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
   "visibility": "PRIVATE",
@@ -49,8 +49,53 @@
     "reason": "本次仅文档和材料更新，已通过相关独立验收，不运行产品CI"
   },
   "remoteReadback": {
-    "status": "待推送后核对"
+    "status": "通过",
+    "verifiedAt": "2026-10-06 01:26:20",
+    "mainSha": "af3dd7255e3aff1774e2f87cd1a4337305be4777",
+    "treeSha": "80482b3bd21f6b72ec2e05f0a752533c5a20d240",
+    "treeNotTruncated": true,
+    "files": [
+      {
+        "path": "复赛/Blocky-Studio-商业计划书-2026-10-06.docx",
+        "remoteGitBlob": "ba1cf8ad72eca83eb9acf74ae103d8060637783d",
+        "bytes": 72012,
+        "localSha256": "edd3dbe56582f135fdb46b585e3e2993d6ab26104a914c45f3a906fc42cb41b8",
+        "matched": true
+      },
+      {
+        "path": "复赛/Blocky-Studio-商业计划书-2026-10-06.pdf",
+        "remoteGitBlob": "ae30bd708f16a9876878f472a6f6da29811686de",
+        "bytes": 456420,
+        "localSha256": "cd02a7c9648ee333b5c26e0df78953b34a19e53b00e273412a90694c90c7ae7c",
+        "matched": true
+      },
+      {
+        "path": "复赛/Blocky-Studio-积木AI创作-2026-10-06.pdf",
+        "remoteGitBlob": "104bba9cfb26385b58d16ed8026903c83a4168a3",
+        "bytes": 1970932,
+        "localSha256": "074fab9dffdf2f423fa3b1dfb71b509789de749e78ce7e177e2d77455c7ee5a3",
+        "matched": true
+      },
+      {
+        "path": "复赛/Blocky-Studio-积木AI创作-2026-10-06.pptx",
+        "remoteGitBlob": "25b12d1629461ca56a6afc5f2ef4e6c8eb64795d",
+        "bytes": 6294855,
+        "localSha256": "7b1cb73f27a3f5de091036bc0f5b7508f1a40c8ff94c67f3c15628aec7febafa",
+        "matched": true
+      },
+      {
+        "path": "复赛/Blocky-Studio-财务测算-2026-10-03.xlsx",
+        "remoteGitBlob": "96376338f681be0d530a15bcb30dbce569eba809",
+        "bytes": 85536,
+        "localSha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c",
+        "matched": true
+      }
+    ],
+    "unrelatedProjectComponentsInTree": false,
+    "taskRemoteBranchAbsent": true,
+    "ciRunsAtReadback": [],
+    "note": "五成品Git blob及字节数与本地一致，本地SHA256与验收封存一致；后续仅同步整合回执和状态文档"
   },
   "preservedUntracked": "项目组件/",
-  "errors": "查询猜测的windows-ci.yml不存在；随后以rg --files定位实际check.yml，已读取，无剩余阻塞"
+  "errors": "猜测windows-ci.yml路径不存在，改用rg --files定位check.yml；GitHub树查询按提交的返回sha不能直接当根树sha，改由commit.tree.sha定位并按树SHA查询后一致；初次异步核对未完成时收尾命令提前执行，未产生新提交，已改等待核对完成后继续。无成品或远端内容异常。"
 }
