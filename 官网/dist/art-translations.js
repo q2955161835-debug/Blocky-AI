@@ -1,4 +1,6 @@
 export const artEnglish={
+  '返回':'Back',
+  '打开导航':'Open navigation',
   '进入积木校园':'Explore the campus','进入创作园区':'Explore the district','积木校园':'The Blocky campus','创作园区':'The creator district',
   '学习':'Learning','课堂':'Classrooms','作品':'Projects','返回官网':'Back to website','阅读全部':'Read all',
   '校园全景':'Campus','学习空间':'Learning space','课堂工坊':'Classroom workshop','学校中心':'School hub','植物项目':'Botanical project',

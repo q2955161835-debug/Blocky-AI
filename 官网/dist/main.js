@@ -6,7 +6,11 @@ import {mountActiveNavigation} from './active-navigation.js';
 import {mountContentMotion} from './content-motion.js';
 import {mountBrandMotion} from './brand-motion.js';
 import {mountPricing} from './pricing.js';
+import {mountPageNavigation} from './page-navigation.js';
+import {mountFaqMotion} from './faq-motion.js';
+import {mountCompactNavigation} from './compact-navigation.js';
 mountContent();
+mountFaqMotion();
 mountContentMotion();
 mountPreferenceControls(document.querySelector('#site-preferences'));
 observeTranslations();
@@ -17,13 +21,17 @@ const studio = document.querySelector('#studio');
 const worldPage=document.querySelector('#world-page');
 const pricingPage=document.querySelector('#pricing-page');
 let world,worldType,pricingMounted=false,previousPage='';
+const navigation=mountPageNavigation();
+const compactMenu=mountCompactNavigation();
 function route() {
   const isStudio = location.hash.startsWith('#/studio');
   const isPricing=location.hash==='#/pricing';
   const type=location.hash.match(/^#\/(education|professional)$/)?.[1];
   const page=isPricing?'pricing':isStudio?'studio':type||'home';
-  website.hidden = isStudio||!!type;
-  document.querySelector('#main').hidden=isPricing;
+  navigation.leave(page);
+  website.hidden = !!type;
+  document.querySelector('#main').hidden=isPricing||isStudio;
+  website.querySelector('footer').hidden=isStudio;
   pricingPage.hidden=!isPricing;
   document.body.classList.toggle('pricing-mode',isPricing);
   if(isPricing&&!pricingMounted){mountPricing(pricingPage);pricingMounted=true;}
@@ -32,13 +40,14 @@ function route() {
   document.body.classList.toggle('experiencing', isStudio);
   document.body.classList.toggle('world-mode',!!type);
   document.body.dataset.world=type||'';
-  if(worldType!==type){world?.dispose();world=null;worldType=type;if(type){world=mountWorldPage(worldPage,type);window.scrollTo({top:0,behavior:'instant'});world.attachArt(art);}else if(!isStudio){requestAnimationFrame(()=>{const anchor=location.hash.startsWith('#/')?null:document.getElementById(location.hash.slice(1));if(anchor)anchor.scrollIntoView();else if(!location.hash||location.hash==='#')window.scrollTo({top:0,behavior:'instant'});});}}
+  if(worldType!==type){world?.dispose();world=null;worldType=type;if(type){world=mountWorldPage(worldPage,type);world.attachArt(art);}}
   updateMetadata();
-  if(page!==previousPage&&!type&&!isStudio)requestAnimationFrame(()=>{const anchor=!isPricing&&document.getElementById(location.hash.slice(1));if(anchor)anchor.scrollIntoView();else window.scrollTo({top:0,behavior:'instant'});});
+  compactMenu.refresh();
+  navigation.settle(previousPage);
   previousPage=page;
   art?.refresh();
   if (isStudio && !studio.hasChildNodes()) mountDemo();
-  if (isStudio) { window.scrollTo(0, 0); studio.querySelector('iframe').focus({preventScroll:true}); }
+  if (isStudio) { studio.querySelector('iframe').focus({preventScroll:true}); }
   else stopRun(false);
 }
 function updateMetadata() {

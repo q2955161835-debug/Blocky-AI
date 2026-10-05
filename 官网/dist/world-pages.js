@@ -25,29 +25,36 @@ export function mountWorldPage(container,type){
     const progress=reading?0:Math.max(0,Math.min(4,scrollY/span*4));tour.dataset.progress=String(progress);
     index=reading?Math.max(0,cards.findIndex(card=>{const r=card.getBoundingClientRect();return r.top<=innerHeight*.4&&r.bottom>=innerHeight*.4;})):Math.round(progress);
     cards.forEach((card,i)=>{card.classList.toggle('is-active',reading||i===index);card.setAttribute('aria-hidden',String(!reading&&i!==index));});
+    layout();
     buttons.forEach((button,i)=>button.setAttribute('aria-current',i===index?'step':'false'));art?.refresh();
   }
   function scroll(){if(!raf)raf=requestAnimationFrame(update);}
   function setReading(){
-    reading=requestedReading||reduced.matches||document.body.classList.contains('art-unavailable');
+    const shortViewport=innerHeight<650||(innerWidth<900&&innerHeight<780);
+    reading=requestedReading||reduced.matches||shortViewport||document.body.classList.contains('art-unavailable');
     tour.classList.toggle('reading',reading);container.classList.toggle('is-reading',reading);toggle.setAttribute('aria-pressed',String(reading));toggle.disabled=reduced.matches||document.body.classList.contains('art-unavailable');update();
   }
   function go(event){const button=event.target.closest('[data-stop]');if(!button)return;const stop=Number(button.dataset.stop);if(reading)cards[stop].parentElement.scrollIntoView({behavior:'auto',block:'start'});else window.scrollTo({top:(tour.scrollHeight-innerHeight)*stop/4,behavior:reduced.matches?'auto':'smooth'});}
   function read(){requestedReading=!requestedReading;setReading();window.scrollTo({top:0,behavior:'instant'});}
-  function projection(point){
+  function layout(){
     if(reading)return;
     const card=cards[index],w=card.offsetWidth,h=card.offsetHeight;
-    const x=innerWidth<700?16:innerWidth-w-Math.max(36,innerWidth*.04);
-    const y=innerWidth<700?Math.max(140,innerHeight-h-105):Math.max(150,Math.min(innerHeight-h-115,innerHeight*.26));
+    const stacked=innerWidth<900;
+    const x=stacked?16:innerWidth-w-Math.max(36,innerWidth*.04);
+    const y=stacked?Math.max(255,innerHeight-h-105):Math.max(160,Math.min(innerHeight-h-115,innerHeight*.26));
     card.style.left=`${x}px`;card.style.top=`${y}px`;
     tour.dataset.copyTop=String(y);tour.style.setProperty('--copy-y',`${y}px`);
-    stage.style.height=innerWidth<700?`${Math.max(64,y-112)}px`:'';
-    const endX=innerWidth<700?Math.max(x+25,Math.min(x+w-25,point.x)):x+15,endY=y+22,dx=endX-point.x,dy=endY-point.y;
+    Object.assign(tour.dataset,{safeLeft:'20',safeRight:String(stacked?innerWidth-20:x-32),safeTop:String(stacked?130:145),safeBottom:String(stacked?y-26:innerHeight-108)});
+  }
+  function projection(point){
+    if(reading)return;
+    const card=cards[index],x=Number.parseFloat(card.style.left),y=Number.parseFloat(card.style.top),w=card.offsetWidth;
+    const endX=innerWidth<900?Math.max(x+25,Math.min(x+w-25,point.x)):x-8,endY=y+22,dx=endX-point.x,dy=endY-point.y;
     connector.style.left=`${point.x}px`;connector.style.top=`${point.y}px`;connector.style.width=`${Math.hypot(dx,dy)}px`;connector.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
   }
   function attachArt(value){art=value;art?.enter(stage,type,projection);update();}
   container.querySelector('.story-nav').addEventListener('click',go);toggle.addEventListener('click',read);
-  window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('resize',scroll);window.addEventListener('blocky-art-unavailable',setReading);reduced.addEventListener('change',setReading);
+  window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('resize',setReading);window.addEventListener('blocky-art-unavailable',setReading);reduced.addEventListener('change',setReading);
   const unsubscribe=subscribePreferences(()=>{update();});setReading();
-  return {name,stage,attachArt,dispose(){cancelAnimationFrame(raf);art?.leave();unsubscribe();unmountPreferences();window.removeEventListener('scroll',scroll);window.removeEventListener('resize',scroll);window.removeEventListener('blocky-art-unavailable',setReading);reduced.removeEventListener('change',setReading);container.replaceChildren();}};
+  return {name,stage,attachArt,dispose(){cancelAnimationFrame(raf);art?.leave();unsubscribe();unmountPreferences();window.removeEventListener('scroll',scroll);window.removeEventListener('resize',setReading);window.removeEventListener('blocky-art-unavailable',setReading);reduced.removeEventListener('change',setReading);container.replaceChildren();}};
 }
