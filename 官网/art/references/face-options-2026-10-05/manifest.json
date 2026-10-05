@@ -1,0 +1,47 @@
+[
+  {
+    "displayOrder": 1,
+    "name": "quiet-dots",
+    "originalToolDefaultPath": "C:\\Users\\29551\\.codex\\generated_images\\01a10735-9c83-7b50-b7be-6ec75226c116\\exec-1986a98c-e45f-4c9a-8cc1-a7728f5b2cda.png",
+    "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\01-quiet-dots.png",
+    "operation": "Move-Item; SHA256 checked equal",
+    "mode": "built-in ImageGen with screenshot reference",
+    "status": "concept only; awaiting user selection"
+  },
+  {
+    "displayOrder": 2,
+    "name": "soft-beans",
+    "originalToolDefaultPath": "C:\\Users\\29551\\.codex\\generated_images\\01a10735-9c83-7b50-b7be-6ec75226c116\\exec-1dac26e3-a191-44d5-99b4-2e5a1e8f6306.png",
+    "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\02-soft-beans.png",
+    "operation": "Move-Item; SHA256 checked equal",
+    "mode": "built-in ImageGen with screenshot reference",
+    "status": "concept only; awaiting user selection"
+  },
+  {
+    "displayOrder": 3,
+    "name": "pixel-companions",
+    "originalToolDefaultPath": "C:\\Users\\29551\\.codex\\generated_images\\01a10735-9c83-7b50-b7be-6ec75226c116\\exec-1db7b836-12d4-4fe2-a588-07bc0839c1cd.png",
+    "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\03-pixel-companions.png",
+    "operation": "Move-Item; SHA256 checked equal",
+    "mode": "built-in ImageGen with screenshot reference",
+    "status": "concept only; awaiting user selection"
+  },
+  {
+    "displayOrder": 4,
+    "name": "ink-cartoon",
+    "originalToolDefaultPath": "C:\\Users\\29551\\.codex\\generated_images\\01a10735-9c83-7b50-b7be-6ec75226c116\\exec-25023858-48fa-4f06-b0e4-c6cf94148823.png",
+    "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\04-ink-cartoon.png",
+    "operation": "Move-Item; SHA256 checked equal",
+    "mode": "built-in ImageGen with screenshot reference",
+    "status": "concept only; awaiting user selection"
+  },
+  {
+    "displayOrder": 5,
+    "name": "gentle-arcs",
+    "originalToolDefaultPath": "C:\\Users\\29551\\.codex\\generated_images\\01a10735-9c83-7b50-b7be-6ec75226c116\\exec-5639db53-766c-4dd1-9235-9d6f61f248d4.png",
+    "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\05-gentle-arcs.png",
+    "operation": "Move-Item; SHA256 checked equal",
+    "mode": "built-in ImageGen with screenshot reference",
+    "status": "concept only; awaiting user selection"
+  }
+]
