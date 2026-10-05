@@ -1,0 +1,27 @@
+{
+  "authorization": "2026-10-05本聊天用户：是，然后推送",
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "visibility": "private",
+  "main_before": "7d5b67cb74eb4ed2384ad4af65e32b8edd23703a",
+  "integrated_commit": "25607768d9954b1df50f99145552d4c8409a8c4e",
+  "remote_main_verified": "25607768d9954b1df50f99145552d4c8409a8c4e",
+  "merge_mode": "fast-forward",
+  "task_branch": "codex/fix-world-closeups",
+  "local_task_exists": false,
+  "remote_task_exists": false,
+  "verification": "GitHub git/ref SHA readback and complete remote branch listing",
+  "scope_file_count": 177,
+  "outside_website_scope": [],
+  "unrelated_untracked_preserved": "项目组件/",
+  "frozen_product": "fa453c4c24f27d0029e85e84175fc6c3237d1220",
+  "site_version": 17,
+  "site_source": "2be04780eee4799ece4e1d5aa11a035c32b6e371",
+  "ci": {
+    "id": 37322203397,
+    "head_sha": "25607768d9954b1df50f99145552d4c8409a8c4e",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37322203397"
+  },
+  "documentation_closeout": "Documentation-only follow-up is pushed on main with [skip ci]; final main SHA is verified separately."
+}
