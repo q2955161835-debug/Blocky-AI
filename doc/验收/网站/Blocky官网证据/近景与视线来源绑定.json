@@ -1,0 +1,21 @@
+{
+  "product_commit": "fa453c4c24f27d0029e85e84175fc6c3237d1220",
+  "source_workflow": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网发布-2026-10-04\\source",
+    "commit_sha": "2be04780eee4799ece4e1d5aa11a035c32b6e371",
+    "archive": "D:/1Folder/Blocky-AI/try/官网近景与视线/site.tar.gz"
+  },
+  "public_asset_count": 50,
+  "archive_file_count": 51,
+  "archive_comparison": {
+    "missing": [],
+    "mismatches": []
+  },
+  "privacy_hits": [],
+  "forbidden_dependencies": [],
+  "studio_csp": "connect-src 'none'",
+  "archive_tar_sha256": "43cb23149c999622b95f35e4180e79d6265e5d8d4d041230fd317de4fc2bb1d4",
+  "temporary_evidence": "try/待清理/官网近景与视线-2026-10-05",
+  "private_docs_excluded": true
+}

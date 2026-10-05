@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "visibility": "private",
+  "branch": "codex/fix-world-closeups",
+  "product_commit": "fa453c4c24f27d0029e85e84175fc6c3237d1220",
+  "verified_product_remote_sha": "fa453c4c24f27d0029e85e84175fc6c3237d1220",
+  "verification": "GitHub git/ref API",
+  "authorization": "用户本轮：修改完后发布并推送",
+  "main_merged": false,
+  "branch_deleted": false,
+  "site_version": 17,
+  "documentation_closeout": "验收及进展随同一任务分支推送；最终HEAD另以GitHub API核对。"
+}
