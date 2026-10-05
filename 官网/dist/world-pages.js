@@ -30,7 +30,14 @@ export function mountWorldPage(container,type){
   }
   function scroll(){if(!raf)raf=requestAnimationFrame(update);}
   function setReading(){
-    const shortViewport=innerHeight<650||(innerWidth<900&&innerHeight<780);
+    // A long translated chapter must not shrink the world into an unreadable thumbnail.
+    tour.classList.remove('reading');
+    const crowded=innerWidth<900&&cards.some(card=>{
+      const display=card.style.display;card.style.display='block';
+      const height=card.offsetHeight;card.style.display=display;
+      return height>innerHeight-481; // 130 header + 220 model + 26 gap + 105 footer.
+    });
+    const shortViewport=innerHeight<650||(innerWidth<900&&innerHeight<780)||crowded;
     reading=requestedReading||reduced.matches||shortViewport||document.body.classList.contains('art-unavailable');
     tour.classList.toggle('reading',reading);container.classList.toggle('is-reading',reading);toggle.setAttribute('aria-pressed',String(reading));toggle.disabled=reduced.matches||document.body.classList.contains('art-unavailable');update();
   }
@@ -55,6 +62,6 @@ export function mountWorldPage(container,type){
   function attachArt(value){art=value;art?.enter(stage,type,projection);update();}
   container.querySelector('.story-nav').addEventListener('click',go);toggle.addEventListener('click',read);
   window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('resize',setReading);window.addEventListener('blocky-art-unavailable',setReading);reduced.addEventListener('change',setReading);
-  const unsubscribe=subscribePreferences(()=>{update();});setReading();
+  const unsubscribe=subscribePreferences(setReading);setReading();
   return {name,stage,attachArt,dispose(){cancelAnimationFrame(raf);art?.leave();unsubscribe();unmountPreferences();window.removeEventListener('scroll',scroll);window.removeEventListener('resize',setReading);window.removeEventListener('blocky-art-unavailable',setReading);reduced.removeEventListener('change',setReading);container.replaceChildren();}};
 }
