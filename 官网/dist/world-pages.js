@@ -32,10 +32,11 @@ export function mountWorldPage(container,type){
   function setReading(){
     // A long translated chapter must not shrink the world into an unreadable thumbnail.
     tour.classList.remove('reading');
-    const crowded=innerWidth<900&&cards.some(card=>{
+    const crowded=cards.some(card=>{
       const display=card.style.display;card.style.display='block';
       const height=card.offsetHeight;card.style.display=display;
-      return height>innerHeight-481; // 130 header + 220 model + 26 gap + 105 footer.
+      // Stacked: header, a 220px model, gap and footer. Desktop: top and footer.
+      return height>innerHeight-(innerWidth<900?481:275);
     });
     const shortViewport=innerHeight<650||(innerWidth<900&&innerHeight<780)||crowded;
     reading=requestedReading||reduced.matches||shortViewport||document.body.classList.contains('art-unavailable');
