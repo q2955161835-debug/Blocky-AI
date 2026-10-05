@@ -29,6 +29,7 @@
 - `.openai/hosting.json`：Sites 站点身份和静态目录配置。
 - `art/`：独立Three.js依赖与程序化几何；角色、积木、教育/专业世界、镜头与共享渲染器分模块。`art/references/`保存ImageGen建模参考，不进入发布包。
 - `art/expressions.js`、`character-accessories.js`：浅弧嘴与六种表情、四蓝图连贯配件；场景人物带接地脚部。`campus-buildings.js`、`district-buildings.js`按功能建筑建立固定地坪和连续结构；`world-camera.js`沿外部球面轨道插值位置与朝向，按当前建筑几何轮廓和可用画面取景。
+- `art/world-focus.js`：近景时当前建筑及底座/台阶保持实色，周边建筑柔和淡入背景；开场和连续阅读恢复完整世界。取景按当前建筑及支撑轮廓直接解算透视距离，避免整座世界强制退远。`art/gaze.js`：以各角色脸部投影为基准，用全视口比例与tanh饱和曲线控制小幅转头，眼睛与头部阻尼跟随，减少动态立即回正。
 - `build-art.mjs`：通过根esbuild生成公开`dist/art3d.js`及Three.js许可证。无远程模型、贴图、运行时CDN或真实模型连接。
 - `dist/world-pages.js`：`#/education`积木校园与`#/professional`创作园区。正常滚动驱动转向及远近镜头，章节按钮定位；“阅读全部”、减少动态效果或3D失败时按普通文档阅读原全部正文。
 - 世界画布全视口取景，透明文字使用安全留白；桌面长详情可滚轮/键盘阅读到底。窄屏长译文不足以同时容纳220px模型区时自动连续阅读，翻译后重测。

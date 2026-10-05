@@ -15,7 +15,7 @@ export function heroSculpture(scene){
   return {root,interact(ray,type){
     hovered=ray?.intersectObjects(objects.map(o=>o.mesh),true)[0]?.object.userData.owner||null;
     if(hovered&&type==='click')clicked=performance.now()/1000;return !!hovered;
-  },update(time,progress,pointer,reduced,aspect=1.6){
+  },update(time,progress,pointer,reduced,aspect=1.6,context){
     const height=8.45,age=time-clicked,wave=reduced||age>.9?0:Math.sin(age/.9*Math.PI)*.32;
     for(const o of objects){
       const narrow=aspect<.9,px=o.x*height*aspect,py=o.y*height;
@@ -26,7 +26,7 @@ export function heroSculpture(scene){
       if(!o.initialized){o.mesh.position.copy(target);o.initialized=true;}else o.mesh.position.lerp(target,reduced?1:.12);
       const scale=o.s*(narrow?.63:1);o.mesh.scale.setScalar(scale);
       o.mesh.rotation.set(o.rotation[0],o.rotation[1]+over*.13,o.rotation[2]+(reduced?0:Math.sin(time*.4+o.phase)*.035));
-      o.character?.look(pointer,reduced);
+      o.character?.look(pointer,reduced,context);
     }
   }};
 }

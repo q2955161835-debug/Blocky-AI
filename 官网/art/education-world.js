@@ -8,9 +8,10 @@ export function educationWorld(root){
   finish(box(root,'#ead5b2',[5,.76,11.5],[4.6,-.38,0],.32));
   finish(box(root,'#d5ba92',[13.8,.13,11.55],[.3,-.825,0],.10));
   // One continuous terrace replaces varying cell heights beneath buildings.
-  finish(box(root,'#e3c39a',[6.05,.75,4.8],[-3.15,.375,-3],.13));
-  for(let i=0;i<5;i++)finish(box(root,'#d0ae7c',[1.60,.15*(i+1),.32],[-3.15,.075*(i+1),.84-i*.32],.025));
-  finish(box(root,'#eddec1',[5.32,.16,.32],[-3.1,.83,-1.59],.025));
+  const libraryBase=new THREE.Group();libraryBase.userData.worldFocus=1;root.add(libraryBase);
+  finish(box(libraryBase,'#e3c39a',[6.05,.75,4.8],[-3.15,.375,-3],.13));
+  for(let i=0;i<5;i++)finish(box(libraryBase,'#d0ae7c',[1.60,.15*(i+1),.32],[-3.15,.075*(i+1),.84-i*.32],.025));
+  finish(box(libraryBase,'#eddec1',[5.32,.16,.32],[-3.1,.83,-1.59],.025));
   box(root,'#739d91',[1.20,.34,11.3],[1.5,-.59,0],.025);
   box(root,'#91cabe',[1.20,.155,11.3],[1.5,-.3425,0],.02);
   const ripples=[];
@@ -27,8 +28,9 @@ export function educationWorld(root){
   for(let i=0;i<6;i++)plant(root,3.3+(i%2)*.85,.1,4.75+Math.floor(i/2)*.3);
   for(let i=0;i<6;i++)finish(box(root,'#e6d8bd',[.72,.025,.56],[-1.35,.0125,.9+i*.55],.035));
   const character=mascot(root,{grounded:true,expression:'curious'}),scale=.34;
-  character.root.scale.setScalar(scale);character.root.position.set(-.78,.87*scale,1.72);
-  return {focus:[root,...buildings],anchors:[new THREE.Vector3(0,1,0),new THREE.Vector3(-3.1,2.5,-3.1),new THREE.Vector3(-3.25,1.35,2.65),new THREE.Vector3(4.5,1.7,3.05),new THREE.Vector3(4.2,1.6,-2.3)],animate(time,pointer,reduced){
-    character.look(pointer,reduced);ripples.forEach((m,i)=>{m.position.x=1.5+(reduced?0:Math.sin(time*.6+i)*.19);});
+  character.root.scale.setScalar(scale);character.root.position.set(-1.56,.16+.87*scale,4.0);
+  character.root.userData.worldFocus=2;
+  return {focus:[root,...buildings],anchors:[new THREE.Vector3(0,1,0),new THREE.Vector3(-3.1,2.5,-3.1),new THREE.Vector3(-3.25,1.35,2.65),new THREE.Vector3(4.5,1.7,3.05),new THREE.Vector3(4.2,1.6,-2.3)],animate(time,pointer,reduced,context){
+    character.look(pointer,reduced,context);ripples.forEach((m,i)=>{m.position.x=1.5+(reduced?0:Math.sin(time*.6+i)*.19);});
   }};
 }
