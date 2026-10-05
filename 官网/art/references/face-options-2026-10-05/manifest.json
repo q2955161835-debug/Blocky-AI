@@ -6,7 +6,8 @@
     "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\01-quiet-dots.png",
     "operation": "Move-Item; SHA256 checked equal",
     "mode": "built-in ImageGen with screenshot reference",
-    "status": "concept only; awaiting user selection"
+    "status": "Unselected concept retained as design decision evidence",
+    "previewPathRestored": "Original default path restored by Copy-Item after user reported broken image preview; workspace master retained."
   },
   {
     "displayOrder": 2,
@@ -15,7 +16,8 @@
     "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\02-soft-beans.png",
     "operation": "Move-Item; SHA256 checked equal",
     "mode": "built-in ImageGen with screenshot reference",
-    "status": "concept only; awaiting user selection"
+    "status": "User selected; face treatment implemented and published in Sites version 11",
+    "previewPathRestored": "Original default path restored by Copy-Item after user reported broken image preview; workspace master retained."
   },
   {
     "displayOrder": 3,
@@ -24,7 +26,8 @@
     "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\03-pixel-companions.png",
     "operation": "Move-Item; SHA256 checked equal",
     "mode": "built-in ImageGen with screenshot reference",
-    "status": "concept only; awaiting user selection"
+    "status": "Unselected concept retained as design decision evidence",
+    "previewPathRestored": "Original default path restored by Copy-Item after user reported broken image preview; workspace master retained."
   },
   {
     "displayOrder": 4,
@@ -33,7 +36,8 @@
     "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\04-ink-cartoon.png",
     "operation": "Move-Item; SHA256 checked equal",
     "mode": "built-in ImageGen with screenshot reference",
-    "status": "concept only; awaiting user selection"
+    "status": "Unselected concept retained as design decision evidence",
+    "previewPathRestored": "Original default path restored by Copy-Item after user reported broken image preview; workspace master retained."
   },
   {
     "displayOrder": 5,
@@ -42,6 +46,7 @@
     "savedPath": "D:\\1Folder\\Blocky-AI\\官网\\art\\references\\face-options-2026-10-05\\05-gentle-arcs.png",
     "operation": "Move-Item; SHA256 checked equal",
     "mode": "built-in ImageGen with screenshot reference",
-    "status": "concept only; awaiting user selection"
+    "status": "Unselected concept retained as design decision evidence",
+    "previewPathRestored": "Original default path restored by Copy-Item after user reported broken image preview; workspace master retained."
   }
 ]

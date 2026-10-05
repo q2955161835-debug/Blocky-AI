@@ -1,0 +1,43 @@
+{
+  "rootSourceCommit": "6e6e205f5336ac35ada447555c0c4decb8d1bd9a",
+  "siteSourceCommit": "5aebbf8dbda6bff1dd82acb8156260dde63c227f",
+  "savedVersion": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_7311061d554c81919160ead6d7d54b5a",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 11,
+    "source": {
+      "commit_sha": "5aebbf8dbda6bff1dd82acb8156260dde63c227f"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000893081fda95bb10edc4f6bd6",
+      "content_hash": "sha256:5879c74dad350d72f6c7873da076009d4e94a0f7bf6c8543f44ade3ce75d5f15",
+      "size_bytes": 3717120,
+      "file_count": 44
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ac307dea82481919cd4ec42103bc635",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_7311061d554c81919160ead6d7d54b5a",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-05T02:13:56.612490+00:00"
+  },
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "access_mode": "public",
+    "current_live_url": "https://blocky.donk55666.chatgpt.site",
+    "latest_version_number": 11
+  }
+}
