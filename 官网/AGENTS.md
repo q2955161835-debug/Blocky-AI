@@ -6,6 +6,8 @@
 
 独立静态官网与 UI 演示。官网手写源在 `dist/`；演示 React 源在 `experience/`，复用桌面真实积木画布、目录、蓝图和样式，通过 `build-experience.mjs` 输出 `dist/studio/`，不执行桌面整体构建。两者均纳入 Git。模块与命令见 README。
 
+四个子页统一使用`page-navigation.js/css`的Logo下方返回胶囊；首页滚动位置按同标签会话记忆，返回/刷新/浏览器后退恢复，显式点击首页锚点优先定位目标。Studio外层导航与返回独占上方空间，不能覆盖iframe。`compact-navigation.js`在1100px以内提供全部七项入口，支持Enter和Escape焦点返回；不可单纯隐藏主要导航。06 FAQ由`faq-motion.js`渐进增强原生details，快速反转从当前高度继续，减少动态立即结束。
+
 用户确定正文按完整产品方向展开教育/专业场景，开放进度见05开放方式与06 FAQ；主页黄绿、教育暖琥珀、专业冷蓝。在线体验在固定页头保留小入口，并在底部“找到你的创作起点”后提供次级按钮；页头必须在滚动和锚点跳转中保持可用。演示界面以当前普通包截图及桌面源码为准，不能另造一套工作台。
 
 开放程度链接定位首页05开放方式（`#access`）；06 FAQ保留独立入口。首屏品牌使用原2D Logo，滚动后连续转成圆环3D角色，不得以3D预览覆盖初始平面图标。
@@ -15,6 +17,8 @@
 在根目录通过 `node 官网/preview.mjs` 预览，Sites 配置在 `.openai/hosting.json`；复用既有站点和原生发布流程。验收由根目录 `doc/验收/网站/` 管理，真实桌面能力不在官网验收范围。
 
 中英文与深浅主题默认跟随系统，顶部紧凑控件允许手动选择并恢复系统模式。`dist/preferences-boot.js` 在样式前确定首次外观，`preferences.js` 共享偏好、翻译及切换控件；`translations.js`/`ui-translations.js` 维护官网和演示文案，`appearance.css` 分别适配三种场景。演示的 `localization.ts` 只适配真实 Blockly 的标签、预设字段和内置菜单，不修改产品源码或积木语言。仅 `blocky.site.preferences.v1` 保存语言/主题选项，不保存项目、输入或聊天；切换不重新挂载工作台。
+
+`blocky.site.home-position.v1`仅在sessionStorage保存首页公开布局的hash与y，不保存任何Studio项目、输入或聊天。长期localStorage仍仅保存上述显示偏好。
 
 Blockly视觉媒体随构建从既有依赖复制到 `dist/assets/blockly-media/`；网页适配通过公开CSS和Workspace选项使用本地媒体，禁止退回默认外部图标路径。声音仍关闭，不打包音频。
 
@@ -27,3 +31,5 @@ Blockly视觉媒体随构建从既有依赖复制到 `dist/assets/blockly-media/
 两个世界分别由`education-world.js`和`professional-world.js`建模，ImageGen参考仅在`art/references/`；不同地形、建筑、材质与镜头路径，不采用只改色的重复世界。`#/education`、`#/professional`是深链浏览页，原场景正文由共享内容投影，正常滚动改变镜头位置与朝向；不拦截滚轮。移动端取景随当前文字高度调整，透明信息必须清楚可读。一个WebGL渲染器只绘制可见区域，品牌最后绘制；退出场景释放专属几何/材质，页面隐藏暂停。减少动态效果停用自动运动与鼠标跟随；WebGL或资源失败转为全文阅读，导航与正文不得依赖3D成功。
 
 功能建筑拆分在`campus-buildings.js`、`district-buildings.js`，以`world-core.js`统一地坪、材质、梁柱和桌面支撑。模型必须可辨入口、结构与功能，接地且无明显穿模；`world-camera.js`使用建筑轮廓取景和外部轨道，逐章及过渡检查完整建筑、入口朝向与文字留白。角色表情与配件分别在`expressions.js`、`character-accessories.js`，书脊/书页必须相连，工作配件可辨，电脑屏幕与面部都完整可见，装饰轨道不得穿头。
+
+世界导览画布覆盖完整视口，不以文字分栏矩形截断几何；按整座世界轮廓拟合文字之外的透明安全区。窄屏最长龙正文若不能保留220px模型区则整页连续阅读，须在翻译完成后测量；桌面透明详情限制到顶栏/章节导航之间并可用滚轮或键盘独立阅读到底，不能只靠“阅读全部”补救默认尾部不可达。

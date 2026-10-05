@@ -1,0 +1,12 @@
+{
+  "sourceAssets": 50,
+  "mismatches": 0,
+  "rootCommit": "bd55640362663f03d99391ec816b7789007d6dd4",
+  "sitesCommit": "d1e3b41c3fc8d3cd73af1669dba975eb630a14d8",
+  "archiveSha256": "b14bd057a033eb667a1d7083589fc2811f2e527848f9768c1bf8c36fdb836eaa",
+  "assetBytes": 3713943,
+  "localCompressedArchiveBytes": 1884567,
+  "backendArchiveHash": "44280976ad73f5276688230160b732780eff51482053fdfe35688fb71871b91b",
+  "backendArchiveBytes": 3758080,
+  "archiveComparison": "serialization differs; all public assets verified by individual path, byte count and SHA256"
+}
