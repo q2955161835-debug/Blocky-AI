@@ -2,6 +2,8 @@
 
 公开地址：[blocky.donk55666.chatgpt.site](https://blocky.donk55666.chatgpt.site)
 
+定价页候选位于 `#/pricing`：个人客户端免费，托管 Token 服务采用拟定月度积分套餐，机构服务单独报价。方案及来源见根目录 `doc/产品设计/2026-10-05-官网定价拟案.md`。本轮开发检查已完成，独立验收范围待确认、尚未发布；当前公开版本仍为下方版本11。
+
 当前公开版本11采用用户选中的第2版豆形眼表情；造型参考`art/references/face-options-2026-10-05/02-soft-beans.png`，实时建模入口`art/expressions.js`。四角色以好奇、笑眼、专注和眨眼区分；独立验收见根目录`doc/验收/网站/验收-2026-10-05-Blocky豆形表情.md`。
 
 官网按完整产品愿景讲述教育与专业场景，具体开放进度见05开放方式与06 FAQ。主页黄绿色、教育暖琥珀、专业冷蓝；固定胶囊导航保留唯一在线体验入口。首屏居中文字与彩色3D积木角色环绕，蓝图四宫格角色跟随鼠标；品牌从初始原2D Logo连续转为左上圆环3D角色。
@@ -13,6 +15,7 @@
 - `dist/index.html`、`content.js`、`scenes.js`：官网内容。
 - `dist/styles.css`、`scenes.css`、`navigation.css`：官网样式与固定页头。
 - `dist/main.js`、`demo.js`：首页及 `#/studio` 路由、隔离演示 iframe。
+- `dist/pricing-data.js`、`pricing.js`、`pricing.css`：套餐数据、双语定价页与响应式样式；咨询为预填邮件链接，不收集资料或执行支付。
 - `dist/preferences-boot.js`、`preferences.js`、`preferences.css`：首次外观、共享偏好及紧凑切换控件；`translations.js`、`ui-translations.js` 为两类文案字典，`appearance.css` 为官网浅色与英文排版适配。
 - `experience/`：在线体验 React 源码。直接复用桌面 Canvas、MenuBar、CommandIcon、ResizeHandle、ChatControls，以及真实积木目录、四类蓝图、产品 CSS；演示壳与预设聊天拆分管理。
 - `build-experience.mjs`：用根目录既有 esbuild 构建 `dist/studio/`，输出哈希资源与第三方许可证。构建拒绝包含桌面 composition、Tauri Host 或 worker；不新增依赖。
