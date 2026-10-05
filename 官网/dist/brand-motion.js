@@ -6,7 +6,7 @@ export function mountBrandMotion(){
     document.body.classList.toggle('nav-compact',compact);
     const header=document.querySelector(world?'.world-header':'#website .site-header'),r=header?.getBoundingClientRect();
     const mobile=innerWidth<760,left=compact?Math.max(16,(innerWidth-1460)/2):Math.max(16,(r?.left||180)-(mobile?0:155));
-    badge.style.setProperty('--brand-left',`${left}px`);badge.hidden=false;
+    badge.style.setProperty('--brand-left',`${left}px`);badge.hidden=document.body.classList.contains('experiencing');
   }
   function schedule(){if(!frame)frame=requestAnimationFrame(update);}
   window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule);window.addEventListener('hashchange',schedule);update();

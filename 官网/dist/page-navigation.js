@@ -15,7 +15,7 @@ export function mountPageNavigation(){
     intent=url.hash&&!url.hash.startsWith('#/')?'anchor':'restore';
   },true);
   return {
-    leave(next){if(page==='home'&&next!=='home')remember();cancelAnimationFrame(frame);restoring=true;page=next;if(next==='home')homeHash=location.hash;back.hidden=next==='home';document.body.dataset.page=next;},
+    leave(next){if(page==='home'&&next!=='home')remember();cancelAnimationFrame(frame);restoring=true;page=next;if(next==='home')homeHash=location.hash;back.hidden=next==='home'||next==='studio';document.body.dataset.page=next;},
     settle(previous){
       const hash=location.hash,anchor=hash&&!hash.startsWith('#/')?document.getElementById(hash.slice(1)):null;
       const returnHome=page==='home'&&previous&&previous!=='home'&&intent!=='anchor';

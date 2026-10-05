@@ -29,7 +29,7 @@ function route() {
   const type=location.hash.match(/^#\/(education|professional)$/)?.[1];
   const page=isPricing?'pricing':isStudio?'studio':type||'home';
   navigation.leave(page);
-  website.hidden = !!type;
+  website.hidden = isStudio || !!type;
   document.querySelector('#main').hidden=isPricing||isStudio;
   website.querySelector('footer').hidden=isStudio;
   pricingPage.hidden=!isPricing;

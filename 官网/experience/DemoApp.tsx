@@ -147,7 +147,7 @@ export function DemoApp() {
   const draftWindow=guided.elapsed<6?{start:0,end:6,text:buildPrompt}:guided.elapsed>=36&&guided.elapsed<40?{start:36,end:40,text:taskPrompt}:null;
   const guidedDraft=draftWindow?translate(draftWindow.text).slice(0,Math.floor(translate(draftWindow.text).length*(guided.elapsed-draftWindow.start)/(draftWindow.end-draftWindow.start))):'';
   return <>
-    <div className="demo-banner"><span>在线体验 <span className="demo-banner-detail">· 预设内容</span></span>{!guided.active&&<button className="guided-banner-entry" onClick={beginGuided}>▶ 1 分钟完整演示</button>}<button onClick={()=>setDialog('info')}>体验说明</button><a href="../#" target="_top">返回官网 ↗</a><Preferences/></div>
+    <div className="demo-banner"><a href="../#" target="_top">← 返回官网</a><span>在线体验 <span className="demo-banner-detail">· 预设内容</span></span>{!guided.active&&<button className="guided-banner-entry" onClick={beginGuided}>▶ 1 分钟完整演示</button>}<button onClick={()=>setDialog('info')}>体验说明</button><Preferences/></div>
     <main className="studio demo-studio" onKeyDown={event=>{
       const target=event.target as HTMLElement;
       if(guided.active)return;
