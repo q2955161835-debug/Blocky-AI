@@ -1,0 +1,65 @@
+{
+  "assumptions": {
+    "usage": 1,
+    "other_cost_share": 0.1,
+    "target_contribution_margin": 0.5,
+    "scenario_credit_cost": 0.02
+  },
+  "results": [
+    {
+      "plan": "标准",
+      "price": 99,
+      "credits": 2000,
+      "rmb_per_credit": 0.0495,
+      "credit_cost_cap_for_50_percent": 0.0198,
+      "contribution_at_cost_0_02": 49.1,
+      "contribution_percent": 49.5959595959596
+    },
+    {
+      "plan": "进阶",
+      "price": 199,
+      "credits": 4500,
+      "rmb_per_credit": 0.044222222222222225,
+      "credit_cost_cap_for_50_percent": 0.01768888888888889,
+      "contribution_at_cost_0_02": 89.1,
+      "contribution_percent": 44.77386934673367
+    },
+    {
+      "plan": "专业",
+      "price": 999,
+      "credits": 25000,
+      "rmb_per_credit": 0.03996,
+      "credit_cost_cap_for_50_percent": 0.015984,
+      "contribution_at_cost_0_02": 399.1,
+      "contribution_percent": 39.949949949949946
+    },
+    {
+      "plan": "加量包",
+      "price": 50,
+      "credits": 1000,
+      "rmb_per_credit": 0.05,
+      "credit_cost_cap_for_50_percent": 0.02,
+      "contribution_at_cost_0_02": 25.0,
+      "contribution_percent": 50.0
+    }
+  ],
+  "benchmark": [
+    {
+      "plan": "标准",
+      "workbuddy_renewal_rmb_per_credit_with_listed_bonus": 0.0175,
+      "nominal_blocky_ratio": 2.8285714285714287
+    },
+    {
+      "plan": "进阶",
+      "workbuddy_renewal_rmb_per_credit_with_listed_bonus": 0.015555555555555555,
+      "nominal_blocky_ratio": 2.842857142857143
+    },
+    {
+      "plan": "专业",
+      "workbuddy_renewal_rmb_per_credit_with_listed_bonus": 0.014,
+      "nominal_blocky_ratio": 2.854285714285714
+    }
+  ],
+  "joint_constraint": 0.32,
+  "validation": "3 code cells executed in a fresh Python state, nbformat schema valid; target margins independently checked by substitution"
+}

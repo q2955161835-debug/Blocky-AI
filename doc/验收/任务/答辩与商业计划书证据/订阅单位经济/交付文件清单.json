@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-06",
+  "pptSlides": 47,
+  "bpPages": 26,
+  "bpVersion": "6.1",
+  "formulaWorkbookModified": false,
+  "files": [
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-06.docx",
+      "path": "D:/1Folder/Blocky-AI/复赛/Blocky-Studio-商业计划书-2026-10-06.docx",
+      "bytes": 72012,
+      "sha256": "edd3dbe56582f135fdb46b585e3e2993d6ab26104a914c45f3a906fc42cb41b8"
+    },
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-06.pdf",
+      "path": "D:/1Folder/Blocky-AI/复赛/Blocky-Studio-商业计划书-2026-10-06.pdf",
+      "bytes": 456420,
+      "sha256": "cd02a7c9648ee333b5c26e0df78953b34a19e53b00e273412a90694c90c7ae7c"
+    },
+    {
+      "name": "Blocky-Studio-积木AI创作-2026-10-06.pdf",
+      "path": "D:/1Folder/Blocky-AI/复赛/Blocky-Studio-积木AI创作-2026-10-06.pdf",
+      "bytes": 1970932,
+      "sha256": "074fab9dffdf2f423fa3b1dfb71b509789de749e78ce7e177e2d77455c7ee5a3"
+    },
+    {
+      "name": "Blocky-Studio-积木AI创作-2026-10-06.pptx",
+      "path": "D:/1Folder/Blocky-AI/复赛/Blocky-Studio-积木AI创作-2026-10-06.pptx",
+      "bytes": 6294855,
+      "sha256": "7b1cb73f27a3f5de091036bc0f5b7508f1a40c8ff94c67f3c15628aec7febafa"
+    },
+    {
+      "name": "Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "path": "D:/1Folder/Blocky-AI/复赛/Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "bytes": 85536,
+      "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c"
+    }
+  ]
+}

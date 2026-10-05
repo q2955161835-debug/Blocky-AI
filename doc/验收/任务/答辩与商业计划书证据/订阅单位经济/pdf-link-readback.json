@@ -1,0 +1,14 @@
+{
+  "change": "Added standard URI annotation over the native-rendered website address on page 47; visual content unchanged",
+  "nativePdfSha256": "ba1293eaeec234602e69ce19c102275b1f3494b20723967177738d6715c6ffdf",
+  "finalPdfSha256": "074fab9dffdf2f423fa3b1dfb71b509789de749e78ce7e177e2d77455c7ee5a3",
+  "page": 47,
+  "uri": "https://blocky.donk55666.chatgpt.site/",
+  "rect": [
+    55.512001037597656,
+    476.2377624511719,
+    305.39813232421875,
+    498.8918151855469
+  ],
+  "links": 1
+}

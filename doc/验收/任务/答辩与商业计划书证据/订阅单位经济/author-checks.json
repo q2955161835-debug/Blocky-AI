@@ -1,0 +1,367 @@
+{
+  "kind": "author-checks",
+  "formalAcceptance": false,
+  "modelApiCalled": false,
+  "imageGenerationCalled": false,
+  "existingImageGenAssetsReused": true,
+  "Blocky-Studio-商业计划书-2026-10-06.docx": {
+    "bytes": 72012,
+    "sha256": "edd3dbe56582f135fdb46b585e3e2993d6ab26104a914c45f3a906fc42cb41b8",
+    "publicLinks": [
+      "https://blocky.donk55666.chatgpt.site/",
+      "https://www.workbuddy.cn/docs/workbuddy/Pricing",
+      "https://www.codebuddy.cn/docs/workbuddy/Credits"
+    ]
+  },
+  "Blocky-Studio-商业计划书-2026-10-06.pdf": {
+    "pages": 26,
+    "links": [
+      "https://www.workbuddy.cn/docs/workbuddy/Pricing",
+      "https://www.codebuddy.cn/docs/workbuddy/Credits",
+      "https://blocky.donk55666.chatgpt.site/",
+      "https://blocky.donk55666.chatgpt.site/"
+    ],
+    "bytes": 456420,
+    "sha256": "cd02a7c9648ee333b5c26e0df78953b34a19e53b00e273412a90694c90c7ae7c",
+    "metadata": {
+      "format": "PDF 1.7",
+      "title": "",
+      "author": "",
+      "subject": "",
+      "keywords": "",
+      "creator": "Microsoft® Word 2024",
+      "producer": "Microsoft® Word 2024",
+      "creationDate": "D:20261006003416+08'00'",
+      "modDate": "D:20261006003416+08'00'",
+      "trapped": "",
+      "encryption": null
+    }
+  },
+  "Blocky-Studio-积木AI创作-2026-10-06.pdf": {
+    "pages": 47,
+    "links": [
+      "https://blocky.donk55666.chatgpt.site/"
+    ],
+    "bytes": 1970932,
+    "sha256": "074fab9dffdf2f423fa3b1dfb71b509789de749e78ce7e177e2d77455c7ee5a3",
+    "metadata": {
+      "format": "PDF 1.7",
+      "title": "Presentation",
+      "author": "Walnut Exporter",
+      "subject": "",
+      "keywords": "",
+      "creator": "Microsoft® PowerPoint® 2024",
+      "producer": "Microsoft® PowerPoint® 2024",
+      "creationDate": "D:20261006003053+08'00'",
+      "modDate": "D:20261006003053+08'00'",
+      "trapped": "",
+      "encryption": null
+    }
+  },
+  "Blocky-Studio-积木AI创作-2026-10-06.pptx": {
+    "bytes": 6294855,
+    "sha256": "7b1cb73f27a3f5de091036bc0f5b7508f1a40c8ff94c67f3c15628aec7febafa",
+    "publicLinks": [
+      "https://blocky.donk55666.chatgpt.site/"
+    ]
+  },
+  "privacyScan": {
+    "local_path": [],
+    "secret_like": [],
+    "internal_process": []
+  },
+  "unchangedFinanceTables": {
+    "37": true,
+    "38": true,
+    "41": true,
+    "42": true
+  },
+  "xlsx": {
+    "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c",
+    "unchanged": true,
+    "keyCells": [
+      {
+        "sheet": "Summary",
+        "cell": "C6",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C7",
+        "cachedValue": 173361.47399999996
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C11",
+        "cachedValue": 5732394.032
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C14",
+        "cachedValue": 5732394.032
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C18",
+        "cachedValue": 8664427.07972
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C19",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Summary",
+        "cell": "C20",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Cohorts",
+        "cell": "Z5",
+        "cachedValue": 900
+      },
+      {
+        "sheet": "Cohorts",
+        "cell": "Z24",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Costs",
+        "cell": "Z30",
+        "cachedValue": 173361.47399999996
+      },
+      {
+        "sheet": "Costs",
+        "cell": "Z36",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Revenue",
+        "cell": "Z15",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Income Statement",
+        "cell": "Z22",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "Y21",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "Z21",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "B27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "C27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "D27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "E27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "F27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "G27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "H27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "I27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "J27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "K27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "L27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "M27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "N27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "O27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "P27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "Q27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "R27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "S27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "T27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "U27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "V27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "W27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "X27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "Y27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Balance Sheet",
+        "cell": "Z27",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Z39",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Z44",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Z48",
+        "cachedValue": 5732394.032
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "B51",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Z51",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Y53",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Cash Flow",
+        "cell": "Z53",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C4",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C7",
+        "cachedValue": 9000000
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C10",
+        "cachedValue": 173361.47399999996
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C11",
+        "cachedValue": 3046032.5579999997
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C15",
+        "cachedValue": 5732394.032
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C17",
+        "cachedValue": 3267605.9679999957
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C18",
+        "cachedValue": 8999999.999999996
+      },
+      {
+        "sheet": "Financing",
+        "cell": "C26",
+        "cachedValue": 8664427.07972
+      }
+    ],
+    "sheets": 12,
+    "formulas": 5596
+  },
+  "websiteAssetContentMatchIgnoringNewlines": {
+    "content.js": true,
+    "pricing-data.js": true,
+    "scenes.js": true
+  }
+}
