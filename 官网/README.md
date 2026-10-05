@@ -2,7 +2,7 @@
 
 公开地址：[blocky.donk55666.chatgpt.site](https://blocky.donk55666.chatgpt.site)
 
-当前公开版本15：教育、专业、定价与在线体验均有左上Logo下方返回胶囊；首页按同标签会话恢复返回/刷新/后退前位置，显式锚点优先。窄屏七项菜单与06 FAQ拉伸开合支持键盘/减少动态。两世界全视口取景，透明详情可阅读到底；手机长译文自动连续阅读。产品来源`bd55640362663f03d99391ec816b7789007d6dd4`，Sites来源`d1e3b41c3fc8d3cd73af1669dba975eb630a14d8`，原生succeeded/public。验收与回执见根目录`doc/验收/网站/验收-2026-10-05-官网返回与场景取景.md`及`Blocky官网证据/返回与取景*.json`。此前13/14候选未部署，当前替代版本12。
+当前公开版本16：在线体验恢复完整视口的原Studio，只在原32px体验栏左侧提供“返回官网”，不显示外层官网导航、Logo及返回胶囊。教育、专业、定价页继续保留左上Logo下方返回胶囊；首页同标签返回/刷新/后退位置记忆及显式锚点优先保持。产品来源`b69be6c1509cca92a0d35df7243aa910284a554f`，Sites来源`e06d734e711cf0343b85e3c8fdf2c9600bf646a4`，原生succeeded/active/public。局部独立验收与回执见根目录`doc/验收/网站/验收-2026-10-05-在线体验全屏返修.md`及`Blocky官网证据/在线体验全屏*.json`。版本15的Studio外壳布局通过标准已按用户更正撤回；窄屏七项菜单、06 FAQ拉伸开合、两世界全视口取景及透明详情完整阅读保留原验收来源。
 
 版本12加入的定价咨询保持：顶栏先跳首页05（`#access`），该区域展示三档Token订阅摘要并提供“查看完整套餐”入口；完整定价页位于 `#/pricing`。底部“找到你的创作起点”后提供在线体验按钮。个人客户端免费，托管 Token 服务采用拟定月度积分套餐，机构服务单独报价；当前套餐只供咨询，尚未开放购买。方案及来源见根目录 `doc/产品设计/2026-10-05-官网定价拟案.md`；历史验收及部署回执见 `doc/验收/网站/验收-2026-10-05-Blocky官网定价咨询.md` 与 `doc/验收/网站/Blocky官网证据/定价咨询部署回执.json`。
 
@@ -19,7 +19,7 @@
 - `dist/index.html`、`content.js`、`scenes.js`：官网内容。
 - `dist/styles.css`、`scenes.css`、`navigation.css`：官网样式与固定页头。
 - `dist/main.js`、`demo.js`：首页及 `#/studio` 路由、隔离演示 iframe。
-- `dist/page-navigation.js/css`：四子页返回胶囊与首页会话位置；`compact-navigation.js`：窄屏完整七项菜单及键盘；`faq-motion.js`：06原生details拉伸开合。
+- `dist/page-navigation.js/css`：教育/专业/定价返回胶囊与首页会话位置，Studio全屏例外；`compact-navigation.js`：窄屏完整七项菜单及键盘；`faq-motion.js`：06原生details拉伸开合。
 - `dist/pricing-data.js`、`pricing.js`、`pricing.css`：套餐数据、双语定价页与响应式样式；咨询为预填邮件链接，不收集资料或执行支付。
 - `dist/preferences-boot.js`、`preferences.js`、`preferences.css`：首次外观、共享偏好及紧凑切换控件；`translations.js`、`ui-translations.js` 为两类文案字典，`appearance.css` 为官网浅色与英文排版适配。
 - `experience/`：在线体验 React 源码。直接复用桌面 Canvas、MenuBar、CommandIcon、ResizeHandle、ChatControls，以及真实积木目录、四类蓝图、产品 CSS；演示壳与预设聊天拆分管理。
