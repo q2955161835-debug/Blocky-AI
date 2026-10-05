@@ -16,6 +16,7 @@ export function mountWorldPage(container,type){
     <main class="world-tour" data-progress="0"><div class="story-stage" aria-hidden="true"></div><div class="story-connector" aria-hidden="true"></div><div class="story-scroll-cue">向下滚动，沿着作品探索<span aria-hidden="true">↓</span></div>${content.map((html,i)=>`<section class="story-chapter" id="${type}-chapter-${i}"><article class="story-card" data-chapter="${i}"><div class="story-location"><span>${String(i+1).padStart(2,'0')} / 05</span><span>${stops[type][i]}</span></div>${html}</article></section>`).join('')}</main>
     <nav class="story-nav" aria-label="场景章节">${stops[type].map((label,i)=>`<button type="button" data-stop="${i}" aria-current="${i===0?'step':'false'}"><span>${String(i+1).padStart(2,'0')}</span><span>${label}</span></button>`).join('')}</nav>`;
   for(const node of container.querySelectorAll('.story-card [id]'))node.removeAttribute('id');
+  for(const card of container.querySelectorAll('.story-card')){card.tabIndex=0;card.setAttribute('aria-label','场景详情');}
   const unmountPreferences=mountPreferenceControls(container.querySelector('#world-preferences'));
   const tour=container.querySelector('.world-tour'),stage=container.querySelector('.story-stage'),cards=[...container.querySelectorAll('.story-card')],buttons=[...container.querySelectorAll('[data-stop]')],toggle=container.querySelector('.reading-toggle'),connector=container.querySelector('.story-connector'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
   let art,reading=false,requestedReading=false,index=0,raf=0;
@@ -32,11 +33,10 @@ export function mountWorldPage(container,type){
   function setReading(){
     // A long translated chapter must not shrink the world into an unreadable thumbnail.
     tour.classList.remove('reading');
-    const crowded=cards.some(card=>{
+    const crowded=innerWidth<900&&cards.some(card=>{
       const display=card.style.display;card.style.display='block';
       const height=card.offsetHeight;card.style.display=display;
-      // Stacked: header, a 220px model, gap and footer. Desktop: top and footer.
-      return height>innerHeight-(innerWidth<900?481:275);
+      return height>innerHeight-481; // Header, a 220px model, gap and footer.
     });
     const shortViewport=innerHeight<650||(innerWidth<900&&innerHeight<780)||crowded;
     reading=requestedReading||reduced.matches||shortViewport||document.body.classList.contains('art-unavailable');

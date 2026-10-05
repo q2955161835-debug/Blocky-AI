@@ -30,5 +30,7 @@
 .world-mode{--world-bg:#201a14}.world-mode[data-world=professional]{--world-bg:#14202c}[data-theme=light] .world-mode{--world-bg:#fcf3e4}[data-theme=light] .world-mode[data-world=professional]{--world-bg:#eaf1fa}
 .story-stage{inset:0;z-index:6;pointer-events:none}.story-stage:after{display:none}.story-card,.story-connector{z-index:7}.reading .story-stage{inset:auto;height:410px}
 .reading .story-card{background:transparent;border:0;border-radius:0;box-shadow:none;backdrop-filter:none}
+@media(min-width:900px){.story-card{max-height:calc(100vh - 275px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--world-line) transparent;padding-right:8px}.story-card:focus-visible{outline:1px solid var(--world-line);outline-offset:8px}.reading .story-card{padding-right:32px}}
+.reading .story-card{max-height:none;overflow:visible}
 @media(max-width:899px){.story-card{width:calc(100vw - 32px);max-width:none}.story-stage{inset:0;height:auto}.story-connector{display:none}.reading .story-stage{inset:auto;height:310px!important}}
 @media(max-height:650px) and (max-width:899px){.story-card p{font-size:11px;line-height:1.65}.story-card h1{font-size:23px}.story-card h3{font-size:20px}.story-location{margin-bottom:10px}}
