@@ -1,0 +1,43 @@
+{
+  "checked_at_utc": "2026-10-07T16:20:18.269250+00:00",
+  "source_commit": "ec513306f8c71f8b214fb8b81f7e9168c0660021",
+  "origin_main": "ec513306f8c71f8b214fb8b81f7e9168c0660021",
+  "branch": "codex/docs-ppt-speech",
+  "source_ppt_sha256": "7b1cb73f27a3f5de091036bc0f5b7508f1a40c8ff94c67f3c15628aec7febafa",
+  "original_five_deliverables_sha256_unchanged": true,
+  "slide_coverage": "47/47，实际页码及章节标题与PPT对应",
+  "planned_seconds": 480,
+  "han_chars": 2100,
+  "estimated_units_per_minute_excluding_page_pause": 291.4104882459313,
+  "timing_is_rehearsal_target_not_measured": true,
+  "checks_passed": [
+    "严格UTF-8",
+    "逐页与逐标题对应",
+    "480秒连续计时",
+    "Word与Markdown正文完整字串一致",
+    "相对链接存在",
+    "DOCX完整性",
+    "敏感类别及占位符扫描",
+    "专业贡献率及预算近似数复算",
+    "PDF正文语义回读完整",
+    "现场提示无单独跨页"
+  ],
+  "word_rendered_pages": 9,
+  "command": "python try/答辩讲稿-2026-10-07/check_speech.py",
+  "command_exit": 0,
+  "real_external_llm_api_calls": false,
+  "product_regression_tests_run": false,
+  "outputs": [
+    {
+      "path": "doc/制作资料/2026-10-07-答辩讲稿/Blocky-Studio-8分钟讲稿-2026-10-07.md",
+      "bytes": 13055,
+      "sha256": "484903f37b4bfdb5c79625c76dd3af4fb09185c47aeb6a1b43ae5046928b2848"
+    },
+    {
+      "path": "doc/制作资料/2026-10-07-答辩讲稿/Blocky-Studio-8分钟讲稿-2026-10-07.docx",
+      "bytes": 44090,
+      "sha256": "eb5bfa59ce03668e9811508c43c9d66455e40a0f161855e3199344e7dcabff85"
+    }
+  ],
+  "new_speech_pushed_at_validation_time": false
+}
