@@ -1,0 +1,40 @@
+{
+  "verified_at_utc": "2026-10-07T16:21:07.170968+00:00",
+  "authorization": "用户在讲稿交付后要求“推送”",
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "branch": "codex/docs-ppt-speech",
+  "content_commit": "5f93ccfabfe5ae4f3fcfd8da49b207f31c663313",
+  "remote_commit": "5f93ccfabfe5ae4f3fcfd8da49b207f31c663313",
+  "fetched_commit": "5f93ccfabfe5ae4f3fcfd8da49b207f31c663313",
+  "tree_sha": "d26b93a813318c179704ce7a7674793820eec436",
+  "files": [
+    {
+      "path": "doc/制作资料/2026-10-07-答辩讲稿/Blocky-Studio-8分钟讲稿-2026-10-07.docx",
+      "bytes": 44090,
+      "sha256": "eb5bfa59ce03668e9811508c43c9d66455e40a0f161855e3199344e7dcabff85",
+      "remote_matches_local": true
+    },
+    {
+      "path": "doc/制作资料/2026-10-07-答辩讲稿/Blocky-Studio-8分钟讲稿-2026-10-07.md",
+      "bytes": 13055,
+      "sha256": "484903f37b4bfdb5c79625c76dd3af4fb09185c47aeb6a1b43ae5046928b2848",
+      "remote_matches_local": true
+    },
+    {
+      "path": "doc/制作资料/2026-10-07-答辩讲稿/校验与来源.json",
+      "bytes": 1661,
+      "sha256": "50ff32b47bdb2f024843d9e4cbf47d83cba826bdd9cf36c78b204e715ea4645d",
+      "remote_matches_local": true
+    },
+    {
+      "path": "doc/进展记录/2026-10-07.md",
+      "bytes": 3731,
+      "sha256": "99b4d0a8dbcdc55596331040751b454ea4fd4d473ac4bbc9446f82ffb361248a",
+      "remote_matches_local": true
+    }
+  ],
+  "push_success": true,
+  "main_merged": false,
+  "product_tests_run": false,
+  "real_external_llm_api_calls": false
+}
