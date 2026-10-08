@@ -12,3 +12,8 @@
 @media(max-width:360px){h1{font-size:46px}.closing h2{font-size:41px}}
 .skip-link:not(:focus){clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden;white-space:nowrap}
 .contact-inquiry{margin-top:18px;font-size:13px;gap:12px}.contact-email{display:flex;flex-direction:column;gap:5px;font-size:12px;overflow-wrap:anywhere}.contact-email>span:first-child{font-size:10px}.contact-email:hover{color:var(--accent)}
+.beta-download-link{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;white-space:normal;line-height:1.35}
+.beta-download-link small{font-size:11px;font-weight:500;opacity:.82}
+.beta-download-card h3{font-size:22px;overflow-wrap:anywhere}
+.faq-download-link{color:var(--accent);font-weight:600;text-underline-offset:3px}
+@media(max-width:320px){.hero-actions .beta-download-link{flex:0 1 100%;width:100%;max-width:276px;box-sizing:border-box}.access-details .beta-download-link{width:100%;box-sizing:border-box;padding-inline:10px}.beta-download-card h3{font-size:20px}}

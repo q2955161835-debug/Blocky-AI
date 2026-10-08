@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "blocky.beta-publication/v1",
+  "observedAt": {
+    "current_time": "2026-10-08 22:09:16 UTC"
+  },
+  "beta": "0.8.0-beta.1",
+  "publicBinaryRepository": "https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases",
+  "sourceRepositoryVisibility": "private",
+  "sourceBranch": "codex/fix-builder-markdown",
+  "sourcePushedCommit": "adc7febfe0b057153ac83358b40d2a5ba7433a54",
+  "installer": {
+    "path": "dist/Blocky-Studio-0.8.0-beta.1-setup.exe",
+    "bytes": 258235257,
+    "sha256": "ed8c805eb36fec6473a02e67bb6453acefdf9516b8dce57fda05dbce58b292e7",
+    "prerelease": true,
+    "anonymousDownloadVerified": true
+  },
+  "site": {
+    "projectId": "appgprj_6ac2611c78048191af586892e782d68f",
+    "commit": "0d012522c7b7ae499cb8c36a9d4562bb3790f5d2",
+    "version": 19,
+    "versionId": "appgprj_6ac2611c78048191af586892e782d68f~appgver_c61584d7e9708191952c962e00bb6991",
+    "archive": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000007b7481f69cba34c2ce9f7bf6",
+      "content_hash": "sha256:73978a5bf0d51d5d4b5ad71904aedfd4c9bfb468c598680f2c4adf947623e5ae",
+      "size_bytes": 3778560,
+      "file_count": 51
+    },
+    "deploymentId": "appgdep_6ac8144df5a8819186927803ba65dea3",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "audience": "public"
+  },
+  "mainIntegration": "approval pending"
+}
