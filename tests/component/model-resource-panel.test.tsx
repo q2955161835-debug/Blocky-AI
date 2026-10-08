@@ -35,6 +35,7 @@ vi.mock(
 afterEach(cleanup);
 function studio() {
   const upsert = vi.fn();
+  const save = vi.fn(async () => true);
   const value = {
     snapshot: { project: createStarter() },
     resources: {
@@ -48,9 +49,30 @@ function studio() {
     rpaInput:{request:vi.fn()},
     confirm: vi.fn(),
     setMessage: vi.fn(),
+    save,
   } as unknown as Studio;
-  return { value, upsert };
+  return { value, upsert, save };
 }
+it("saving a project resource also persists the current project file", async () => {
+  const s = studio();
+  render(<ResourcePanel studio={s.value} />);
+  const resource = Object.values(s.value.snapshot.project.resources).find(r => r.kind === "model")!;
+  fireEvent.click(screen.getByRole("button", { name: `${resource.displayName} · model` }));
+  fireEvent.click(screen.getByRole("button", { name: "保存资源" }));
+  await waitFor(() => expect(s.save).toHaveBeenCalledOnce());
+  expect(s.value.controller.edit).toHaveBeenCalledOnce();
+});
+
+it("retains the draft and reports when project configuration cannot reach disk", async () => {
+  const s = studio();
+  s.save.mockResolvedValue(false);
+  render(<ResourcePanel studio={s.value} />);
+  const resource = Object.values(s.value.snapshot.project.resources).find(r => r.kind === "model")!;
+  fireEvent.click(screen.getByRole("button", { name: `${resource.displayName} · model` }));
+  fireEvent.click(screen.getByRole("button", { name: "保存资源" }));
+  await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("项目文件"));
+  expect(screen.getByRole("button", { name: "保存资源" })).toBeTruthy();
+});
 it("edits a saved model through the ordinary form, preserves secrets and retains advanced configuration", () => {
   const s = studio();
   render(<ResourcePanel studio={s.value} />);

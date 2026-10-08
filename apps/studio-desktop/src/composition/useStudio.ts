@@ -310,7 +310,7 @@ export function useStudio(initialProject?: Project) {
     }
   };
   const save = async (asNew = false) => {
-    if (ioBusy.current) return;
+    if (ioBusy.current || closing.current) return false;
     ioBusy.current = true;
     setBusy(true);
     const p = controller.getSnapshot().project;
@@ -321,10 +321,13 @@ export function useStudio(initialProject?: Project) {
         controller.markSaved(p);
         setMessage("项目已保存");
         bus.write("host", "info", "项目已保存");
+        return true;
       }
+      return false;
     } catch {
       setMessage("保存失败，原文件保持不变。");
       bus.write("host", "error", "项目保存失败");
+      return false;
     } finally {
       ioBusy.current = false;
       setBusy(false);
@@ -489,6 +492,7 @@ export function useStudio(initialProject?: Project) {
       controller.edit((p) => {
         configureBlock(p, session.active, id, field, value);
       });
+      if (field === "RESOURCE") void save();
     } catch {
       setMessage("此配置值无效或超出长度限制，原配置保持不变。");
     }

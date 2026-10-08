@@ -52,6 +52,18 @@ afterEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
 });
+it("changing an existing block's resource selection saves it to the opened project handle", async () => {
+  const project = createStarter();
+  project.workspaces["research-agent"].blocks.blocks[0].inputs!.BODY.block!.next!.block!.next!.block!.fields!.RESOURCE = "";
+  io.open.mockResolvedValue({ project, handle: "configuration-file" });
+  io.save.mockResolvedValue({ handle: "configuration-file", displayName: "qa.blocky" });
+  const hook = renderHook(() => useStudio(createStarter()));
+  await act(() => hook.result.current.open());
+  act(() => hook.result.current.updateField("compose-answer", "RESOURCE", "local-composer"));
+  await waitFor(() => expect(io.save).toHaveBeenCalledOnce());
+  expect(io.save.mock.calls[0][1]).toBe("configuration-file");
+  await waitFor(() => expect(hook.result.current.snapshot.dirty).toBe(false));
+});
 it("editing the inspector changes the real project and undo restores it", async () => {
   const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));
@@ -111,7 +123,7 @@ it("save completion cannot mark later edits as saved and cancelled open preserve
       resolve = r;
     }),
   );
-  let pending: Promise<void>;
+  let pending: Promise<boolean>;
   act(() => {
     pending = hook.result.current.save();
   });

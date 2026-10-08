@@ -32,6 +32,42 @@ const call = (id: string, name: string, args: unknown = {}) => ({
   name,
   arguments: args,
 });
+it("receives the current unselected canvas structure on its first model turn", async () => {
+  const project = createStarter();
+  project.workspaces["research-agent"].blocks.blocks[0].fields!.ROLE = "当前画布的新角色";
+  await runCodingAgent({ ...start, prompt: "我当前画布中是什么？", originalJson: JSON.stringify(project) }, {
+    modelId: "fixture",
+    executeTool: async () => { throw Error("No tool needed for this canvas snapshot"); },
+    generate: async ({ messages }) => {
+      const input = JSON.parse([...messages].reverse().find(message => message.role === "user")!.content!);
+      expect(input.selection).toEqual([]);
+      expect(input.currentCanvas).toMatchObject({ moduleId: "research-agent", displayName: "研究助手", rootCount: 1, blockCount: 5, complete: true });
+      const canvas = JSON.stringify(input.currentCanvas);
+      expect(canvas).toContain("当前画布的新角色");
+      expect(canvas).toContain("on-question");
+      expect(canvas).toContain("core.model.compose");
+      expect(canvas).not.toContain("lookup-documents");
+      expect(messages[0].content).toContain("选中积木为空不代表画布为空");
+      return generation([{ type: "text", text: "当前画布是资料问答流程。" }]);
+    },
+  });
+});
+
+it("marks oversized canvas snapshots incomplete and directs full reads to project_context", async () => {
+  const project = createStarter();
+  for (let index = 0; index < 600; index++) project.workspaces["research-agent"].blocks.blocks.push({ id: `large-${index}`, type: "core.output.answer", fields: { STYLE: "正文".repeat(150) } });
+  await runCodingAgent({ ...start, originalJson: JSON.stringify(project) }, {
+    modelId: "fixture", executeTool: async () => ({}),
+    generate: async ({ messages }) => {
+      const input = JSON.parse([...messages].reverse().find(message => message.role === "user")!.content!);
+      expect(input.currentCanvas.complete).toBe(false);
+      expect(input.currentCanvas.blockCount).toBe(605);
+      expect(input.currentCanvas.readMoreTool).toBe("project_context");
+      expect(new TextEncoder().encode(JSON.stringify(input.currentCanvas)).length).toBeLessThan(131072);
+      return generation([{ type: "text", text: "需要读取完整结构。" }]);
+    },
+  });
+});
 it("does not begin a deferred Host tool when cancellation lands after tool.started", async () => {
   const controller = new AbortController(),
     executeTool = vi.fn(async () => ({}));

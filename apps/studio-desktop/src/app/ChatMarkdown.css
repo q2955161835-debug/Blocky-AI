@@ -42,7 +42,7 @@
   background: #17191e;
 }
 .chat-markdown pre code { padding: 0; background: transparent; white-space: pre; }
-.chat-markdown-table { max-width: 100%; overflow-x: auto; margin: 0.75em 0; scrollbar-width: thin; }
+.chat-markdown-table { max-width: 100%; overflow-x: auto; margin: 0.75em 0; }
 .chat-markdown table { border-collapse: collapse; width: max-content; min-width: 100%; font-size: 0.95em; }
 .chat-markdown td { max-width: 20em; }
 .chat-markdown th, .chat-markdown td { border: 1px solid #ffffff24; padding: 5px 8px; text-align: left; }

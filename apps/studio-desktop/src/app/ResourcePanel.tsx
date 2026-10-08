@@ -8,7 +8,7 @@ import {
   referenceUserResource,
   type ResourceFieldSchema,
 } from "@blocky/resource-registry";
-import type { Resource } from "@blocky/language-schema";
+import type { Project, Resource } from "@blocky/language-schema";
 import type { Studio } from "../composition/useStudio";
 import { SecretBindings } from "./SecretBindings";
 import {
@@ -307,7 +307,25 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
     setDraft(structuredClone(resource));
     setError("");
   };
+  const persistProjectConfiguration = async (next: Project) => {
+    s.controller.edit(p => Object.assign(p, next));
+    if ((await s.save()) === false) throw Error("BLK-CONFIG-PERSIST");
+  };
+  const reference = async (resource: Resource) => {
+    if (panelBusy) return;
+    setSaving(true);
+    try {
+      await persistProjectConfiguration(referenceUserResource(s.controller.getSnapshot().project, resource));
+      s.setMessage("已保存本机资源引用；资源内容不进入项目包。");
+      setError("");
+    } catch (failure) {
+      setError(failure instanceof Error && failure.message === "BLK-CONFIG-PERSIST"
+        ? "配置已更新，但项目文件未保存，请重试保存。"
+        : "资源引用无法添加，请检查同名资源。");
+    } finally { setSaving(false); }
+  };
   const save = async () => {
+    if (panelBusy) return;
     if (panelBusy) return;
     try {
       if (modelError) {
@@ -323,12 +341,14 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       if (resource.scope === "user") await s.resources.upsert(resource);
       else {
         const next = upsertProjectResource(project, resource);
-        s.controller.edit((p) => Object.assign(p, next));
+        await persistProjectConfiguration(next);
       }
       setDraft(undefined);
       setError("");
-    } catch {
-      setError("资源未保存，请检查字段、秘密引用或并发修改；原资源与草稿保留。");
+    } catch (failure) {
+      setError(failure instanceof Error && failure.message === "BLK-CONFIG-PERSIST"
+        ? "配置已更新，但项目文件未保存；草稿保留，请重试保存。"
+        : "资源未保存，请检查字段、秘密引用或并发修改；原资源与草稿保留。");
     } finally { setSaving(false); }
   };
   return (
@@ -336,7 +356,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
       <details><summary>厂商与模型</summary><ModelManagerPanel resources={s.resources}
         defaultModelId={s.settings ? String(resolveSetting("models.defaultResourceId",s.settings.layers).value) : ""}
         setDefault={async id=>{s.settings.change("app","models.defaultResourceId",id);await s.settings.flush();}}
-        reference={resource=>{try{const next=referenceUserResource(project,resource);s.controller.edit(p=>Object.assign(p,next));s.setMessage("已添加模型引用。");}catch{setError("模型引用无法添加，请检查同名资源。");}}}/></details>
+        reference={resource => { void reference(resource); }}/></details>
       <details><summary>项目媒体</summary><MediaPanel key={project.manifest.projectId} projectId={project.manifest.projectId}/></details>
       <details><summary>评估工作台</summary><EvaluationWorkspace key={project.manifest.projectId} studio={s}/></details>
       <details><summary>项目触发器</summary><TriggerPanel key={project.manifest.projectId} studio={s}/></details>
@@ -395,15 +415,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             </button>
             <button
               disabled={panelBusy}
-              onClick={() => {
-                try {
-                  const next = referenceUserResource(project, r);
-                  s.controller.edit((p) => Object.assign(p, next));
-                  s.setMessage("已添加本机资源引用；资源内容不进入项目包。");
-                } catch {
-                  setError("已有相同 ID 的其他范围资源，无法替换。");
-                }
-              }}
+              onClick={() => { void reference(r); }}
             >
               引用到当前项目
             </button>
@@ -435,16 +447,16 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
             onClick={() =>
               void s
                 .confirm("删除资源后，使用它的积木将报告缺失引用。继续？")
-                .then((yes) => {
+                .then(async (yes) => {
                   if (yes) {
                     const next = removeProjectResource(
                       s.controller.getSnapshot().project,
                       r.resourceId,
                     );
-                    s.controller.edit((p) => Object.assign(p, next));
+                    await persistProjectConfiguration(next);
                     if (draft?.resourceId === r.resourceId) setDraft(undefined);
                   }
-                })
+                }).catch(() => setError("配置删除未完成或项目文件未保存，请检查当前项目。"))
             }
           >
             删除
@@ -569,9 +581,12 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
                     s.controller.getSnapshot().project,
                     resource,
                   );
-                  s.controller.edit((p) => Object.assign(p, next));
                   setDraft(resource);
-                  s.setMessage("知识积木已绑定本机资料，请同步后运行。");
+                  setSaving(true);
+                  void persistProjectConfiguration(next).then(() => {
+                    s.setMessage("知识积木已保存资料配置，请同步后运行。");
+                  }).catch(() => setError("资料配置已更新，但项目文件未保存，请重试保存。"))
+                    .finally(() => setSaving(false));
                 }}
               />
             )}
@@ -579,10 +594,10 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           {draft.kind==='skill'&&<SkillPanel key={`${project.manifest.projectId}/${draft.resourceId}`} projectId={project.manifest.projectId} onBind={skill=>setDraft({...draft,definition:{...draft.definition,version:skill.metadata.version,sourceRef:{kind:'artifact',id:skill.metadata.skillId},contentDigest:skill.digest,implementationRef:{kind:'adapter',id:'installed-skill-v1'},permissions:[]}})}/>}
           {draft.kind === "memory" && <MemoryPanel key={`${project.manifest.projectId}/${draft.resourceId}`} projectId={project.manifest.projectId}
             retentionDays={Number(draft.definition.retentionDays ?? 0)} sourceRef={typeof draft.definition.sourceRef === "string" ? draft.definition.sourceRef : draft.definition.sourceRef && typeof draft.definition.sourceRef === "object" && !Array.isArray(draft.definition.sourceRef) ? String(draft.definition.sourceRef.id ?? "") : ""}/>} 
-          <button onClick={save} disabled={managedBusy || !!modelError || !!toolSchemaError}>
+          <button onClick={save} disabled={panelBusy || !!modelError || !!toolSchemaError}>
             保存资源
           </button>
-          <button disabled={managedBusy} onClick={() => setDraft(undefined)}>
+          <button disabled={panelBusy} onClick={() => setDraft(undefined)}>
             取消
           </button>
         </section>

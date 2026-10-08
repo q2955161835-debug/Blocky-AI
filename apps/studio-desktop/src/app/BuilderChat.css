@@ -83,7 +83,6 @@
   flex-direction: column;
   gap: 16px;
   padding: 6px 2px 12px;
-  scrollbar-width: thin;
 }
 .builder-chat-messages {
   display: flex;
