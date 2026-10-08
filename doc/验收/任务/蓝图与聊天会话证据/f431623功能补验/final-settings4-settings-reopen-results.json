@@ -1,0 +1,47 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "new native process keeps appearance and code font",
+      "ok": true,
+      "data": {
+        "theme": "dark",
+        "fontSize": "17px",
+        "font": "\"Microsoft YaHei UI\", \"Segoe UI\", sans-serif",
+        "codeFont": "\"Courier New\",monospace"
+      }
+    },
+    {
+      "name": "new native process keeps autosaved provider/model",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "new process connected model timeout and original model id",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "OS write failure warns and retains actual theme",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "pending failed save blocks closing with clear prompt",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "failed preference patch preserves original bytes",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "successful retry saves only requested field",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T14:59:50.389Z"
+}

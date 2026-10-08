@@ -1,0 +1,65 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "default mode selects actual block",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "mode switching cancels in-progress selection move without serialized edit",
+      "ok": false,
+      "data": null
+    },
+    {
+      "name": "pan cancel clears capture indicator and keeps IR",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "default field remains editable",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "default double-click search restored",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "canvas controls use light workbench theme",
+      "ok": true,
+      "data": {
+        "theme": "light",
+        "bg": "rgb(255, 255, 255)",
+        "fg": "rgb(40, 98, 207)"
+      }
+    },
+    {
+      "name": "canvas controls use dark workbench theme",
+      "ok": true,
+      "data": {
+        "theme": "dark",
+        "bg": "rgb(37, 42, 51)",
+        "fg": "rgb(75, 131, 245)"
+      }
+    },
+    {
+      "name": "ordinary native narrow settings controls reachable",
+      "ok": true,
+      "data": {
+        "pid": 43384,
+        "purpose": "native size fixture only, not evidence of dragging",
+        "desktop": "BlockyTest-7b6e5ff6f52541909ab6fba05726a86d",
+        "client": {
+          "left": 0,
+          "top": 0,
+          "right": 985,
+          "bottom": 751
+        }
+      }
+    }
+  ],
+  "completed": "2026-10-08T15:08:44.082Z"
+}

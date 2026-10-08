@@ -1,0 +1,328 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "text assistant labels with compact action icons",
+      "ok": true,
+      "data": [
+        {
+          "name": "Blocky Agent",
+          "title": "Blocky Agent",
+          "svg": false,
+          "text": "Blocky Agent",
+          "selected": "true"
+        },
+        {
+          "name": "构建助手",
+          "title": "构建助手",
+          "svg": false,
+          "text": "构建助手",
+          "selected": "false"
+        },
+        {
+          "name": "Blocky Agent 新会话",
+          "title": "新会话",
+          "svg": true,
+          "text": "",
+          "selected": null
+        },
+        {
+          "name": "Blocky Agent 历史会话",
+          "title": "Blocky Agent 历史会话",
+          "svg": true,
+          "text": "",
+          "selected": null
+        },
+        {
+          "name": "Blocky Agent 设置",
+          "title": "Blocky Agent 设置",
+          "svg": true,
+          "text": "",
+          "selected": null
+        }
+      ]
+    },
+    {
+      "name": "seven top menus use original text",
+      "ok": true,
+      "data": [
+        {
+          "name": "文件",
+          "title": "文件",
+          "text": "文件",
+          "svg": false
+        },
+        {
+          "name": "编辑",
+          "title": "编辑",
+          "text": "编辑",
+          "svg": false
+        },
+        {
+          "name": "视图",
+          "title": "视图",
+          "text": "视图",
+          "svg": false
+        },
+        {
+          "name": "运行",
+          "title": "运行",
+          "text": "运行",
+          "svg": false
+        },
+        {
+          "name": "构建",
+          "title": "构建",
+          "text": "构建",
+          "svg": false
+        },
+        {
+          "name": "终端",
+          "title": "终端",
+          "text": "终端",
+          "svg": false
+        },
+        {
+          "name": "帮助",
+          "title": "帮助",
+          "text": "帮助",
+          "svg": false
+        }
+      ]
+    },
+    {
+      "name": "chat icons keyboard selects Builder",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "header icons no overlap Home",
+      "ok": true,
+      "data": [
+        {
+          "name": "Blocky Agent",
+          "left": 1136.0714111328125,
+          "right": 1220.5356979370117,
+          "title": "Blocky Agent"
+        },
+        {
+          "name": "构建助手",
+          "left": 1222.52978515625,
+          "right": 1285.0992317199707,
+          "title": "构建助手"
+        },
+        {
+          "name": "构建助手新会话",
+          "left": 1289.0972900390625,
+          "right": 1315.0893535614014,
+          "title": "新会话"
+        },
+        {
+          "name": "构建助手历史会话",
+          "left": 1315.08935546875,
+          "right": 1341.0814189910889,
+          "title": "构建助手历史会话"
+        },
+        {
+          "name": "构建助手设置",
+          "left": 1341.0814208984375,
+          "right": 1367.0734844207764,
+          "title": "构建助手设置"
+        }
+      ]
+    },
+    {
+      "name": "header icons no overlap End",
+      "ok": true,
+      "data": [
+        {
+          "name": "Blocky Agent",
+          "left": 492.0635070800781,
+          "right": 946.4881286621094,
+          "title": "Blocky Agent"
+        },
+        {
+          "name": "构建助手",
+          "left": 948.482177734375,
+          "right": 1285.0992431640625,
+          "title": "构建助手"
+        },
+        {
+          "name": "构建助手新会话",
+          "left": 1289.0972900390625,
+          "right": 1315.0893535614014,
+          "title": "新会话"
+        },
+        {
+          "name": "构建助手历史会话",
+          "left": 1315.08935546875,
+          "right": 1341.0814189910889,
+          "title": "构建助手历史会话"
+        },
+        {
+          "name": "构建助手设置",
+          "left": 1341.0814208984375,
+          "right": 1367.0734844207764,
+          "title": "构建助手设置"
+        }
+      ]
+    },
+    {
+      "name": "icon hover retains semantic tooltip",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "seven settings categories",
+      "ok": true,
+      "data": [
+        "常规",
+        "外观",
+        "模型与厂商",
+        "构建助手",
+        "作品运行",
+        "快捷键",
+        "专业"
+      ]
+    },
+    {
+      "name": "global search routes to appearance",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "theme workbench light",
+      "ok": true,
+      "data": {
+        "theme": "light",
+        "background": "rgb(244, 245, 247)",
+        "bodyBackground": "rgba(0, 0, 0, 0)",
+        "systemDark": false
+      }
+    },
+    {
+      "name": "theme workbench dark",
+      "ok": true,
+      "data": {
+        "theme": "dark",
+        "background": "rgba(0, 0, 0, 0)",
+        "bodyBackground": "rgba(0, 0, 0, 0)",
+        "systemDark": false
+      }
+    },
+    {
+      "name": "theme workbench system",
+      "ok": true,
+      "data": {
+        "theme": "light",
+        "background": "rgb(244, 245, 247)",
+        "bodyBackground": "rgba(0, 0, 0, 0)",
+        "systemDark": false
+      }
+    },
+    {
+      "name": "11px and selected font on actual workbench",
+      "ok": true,
+      "data": {
+        "font": "SimSun, \"Songti SC\", serif",
+        "size": "11px"
+      }
+    },
+    {
+      "name": "24px actual workbench",
+      "ok": true,
+      "data": "24px"
+    },
+    {
+      "name": "old gear routes 构建助手设置",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "old gear routes Blocky Agent 设置",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "old command routes 资源管理",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "old command routes 快捷键",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "old command routes 设置",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "provider valid edit autosaves",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "connected model valid edit autosaves with original connection",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "invalid model draft survives category switch",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "invalid draft close is protected",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "edited existing local synthetic model still executes",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "beginner view really affects library",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "professional native setting persists",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "two native window field patches merge without overwrite",
+      "ok": true,
+      "data": {
+        "schemaVersion": "blocky.ui-preferences/v1",
+        "values": {
+          "codeFont": "courier",
+          "fontFamily": "yahei",
+          "fontSize": 17,
+          "theme": "dark"
+        }
+      }
+    }
+  ],
+  "requests": [
+    {
+      "assistant": "builder",
+      "prompt": "SETTINGS-CONNECTION 解释当前画布",
+      "stream": false
+    }
+  ],
+  "savedPreferences": {
+    "schemaVersion": "blocky.ui-preferences/v1",
+    "values": {
+      "codeFont": "courier",
+      "fontFamily": "yahei",
+      "fontSize": 17,
+      "theme": "dark"
+    }
+  },
+  "completed": "2026-10-08T14:53:58.926Z"
+}

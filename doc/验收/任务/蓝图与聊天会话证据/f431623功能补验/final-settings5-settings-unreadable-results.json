@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "corrupt UI preferences warns and prevents overwrite",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "corrupt UI file remains identical after natural exit",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T15:00:07.791Z"
+}

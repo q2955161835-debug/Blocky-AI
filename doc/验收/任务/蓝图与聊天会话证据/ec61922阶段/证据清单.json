@@ -1,0 +1,127 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "fullConversationExported": false,
+  "entries": [
+    {
+      "path": "普通包独立读回.json",
+      "bytes": 216,
+      "sha256": "d7f00f94bad41ad4db7327891c196df5e97177c29ab952a144e62b95c8b95e26",
+      "origin": "package-readback.json"
+    },
+    {
+      "path": "布局与历史判据.json",
+      "bytes": 4770,
+      "sha256": "d1e74569998fe0d2963a5654f85124e12e0c2f3f1882487c016a4f9400ea8679",
+      "origin": "run2/results.json"
+    },
+    {
+      "path": "布局与历史后台结算.json",
+      "bytes": 1718,
+      "sha256": "7b06c6ad82e06857f11a6be3d75a9242b7b889a0b61e3f53b1e5c13a2abe8d12",
+      "origin": "run2/background-result.json"
+    },
+    {
+      "path": "构建助手重开与阅读判据-含驱动中止.json",
+      "bytes": 2265,
+      "sha256": "5f10527e83cba73c64db2846b8322a95a45c6e4bee5802cd91cceb2462ee35bc",
+      "origin": "run3/reopen-results.json"
+    },
+    {
+      "path": "Agent重开与保存失败判据-含驱动中止.json",
+      "bytes": 3209,
+      "sha256": "d9a3a5b1e5ce77c6d024c12d70290ab60685c76e56cb47e4995556527192cf3c",
+      "origin": "run4/reopen-results.json"
+    },
+    {
+      "path": "读取失败与F5保护判据.json",
+      "bytes": 512,
+      "sha256": "339f032fcc5d79a6727b474963f859c54fe32921e50573fcde830f99d2feeb6b",
+      "origin": "run6/unreadable-results.json"
+    },
+    {
+      "path": "读取失败后台结算.json",
+      "bytes": 1719,
+      "sha256": "d7e56371752056ccb6b5d419877ad3e8f1dca3801c909707f7373a70f0b53d59",
+      "origin": "run6/background-result.json"
+    },
+    {
+      "path": "托盘原生边界与窄栏碰撞.json",
+      "bytes": 5169,
+      "sha256": "8a33e728a559179bc3f52bc4a2b691fd0c45db5d3e0ee4c117163a7c68e514d2",
+      "origin": "run8/tray-results.json"
+    },
+    {
+      "path": "托盘原生后台结算.json",
+      "bytes": 1721,
+      "sha256": "7ea03da9ab2d13bce527f9da595290b034f94adb8dd1844bc9a8efaad265e82b",
+      "origin": "run8/background-result.json"
+    },
+    {
+      "path": "实际拖动与分段输出判据.json",
+      "bytes": 1249,
+      "sha256": "88f0eb9ddc84ec8c007eafddff6a5f24e628f3600488b41784c85f436d674544",
+      "origin": "run10/drag-stream-results.json"
+    },
+    {
+      "path": "分段输出后台结算.json",
+      "bytes": 1719,
+      "sha256": "76aa820d9582d18f92e1fb159b2ab5589f9c01212e35c688d6739a6357fff5fa",
+      "origin": "run10/background-result.json"
+    },
+    {
+      "path": "蓝图展开.png",
+      "bytes": 281613,
+      "sha256": "93e6b931079a8c1c1367c3a6070572fe984087fc89e2e245f059ef52a197e8f7",
+      "origin": "run2/blueprint-open.png"
+    },
+    {
+      "path": "构建助手输入手动高度.png",
+      "bytes": 276324,
+      "sha256": "b936e937e56ace54f7601c6407b8f46adc5c357ec8d91b7226d07fcbc0da84e1",
+      "origin": "run2/builder-layout.png"
+    },
+    {
+      "path": "Agent输入手动高度.png",
+      "bytes": 227633,
+      "sha256": "56ed4a7cb658504309453638ce163b095338f7368240bc5928109507142d015a",
+      "origin": "run2/agent-layout.png"
+    },
+    {
+      "path": "240px标签碰撞.png",
+      "bytes": 303237,
+      "sha256": "b1bb4ebdcca28a44c43da447e5f6550caa614936837a6bd43dfb6461a537f316",
+      "origin": "run8/narrow-collision.png"
+    },
+    {
+      "path": "下拉恢复隐藏作品.png",
+      "bytes": 272093,
+      "sha256": "193af87707c6545c906eba5b4aea7ae3b7bb74d439fce65ffa8ec75c29ecf591",
+      "origin": "run8/dropdown-restored.png"
+    },
+    {
+      "path": "接替进程未保存提醒.png",
+      "bytes": 184524,
+      "sha256": "8434b9652e01fecccef5a02aa76bbce7be5b92b5ae275a554a17fc4f190b61a4",
+      "origin": "run8/child/exit-save-reminder.png"
+    },
+    {
+      "path": "读取失败输入禁用.png",
+      "bytes": 229782,
+      "sha256": "0692b8b1e25c56cd14eac78f428f0e8fcdd54b76fa0bbd7bf13517ac2fc98e09",
+      "origin": "run6/unreadable-history.png"
+    },
+    {
+      "path": "实际分段输出.png",
+      "bytes": 310420,
+      "sha256": "1306468b307387c4d12b697708f96994d85cee1c1a22be426cf0924d8c5d0613",
+      "origin": "run10/multipart-output.png"
+    },
+    {
+      "path": "普通包清单.json",
+      "bytes": 506344,
+      "sha256": "c68941a2005a4ca0cdb585d02d38342ef59a7775a1e934ac5ec1952937184b43",
+      "origin": "try/stage3-release/package.json at ec61922 freeze"
+    }
+  ]
+}

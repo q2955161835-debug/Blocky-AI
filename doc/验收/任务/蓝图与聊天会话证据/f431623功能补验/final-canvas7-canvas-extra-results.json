@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "default mode selects actual block",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "mode switching cancels in-progress selection move without serialized edit",
+      "ok": false,
+      "data": null
+    }
+  ],
+  "error": "Error: mode switching cancels in-progress selection move without serialized edit\n    at check (file:///D:/1Folder/Blocky-AI/try/chat-history-2026-10-08/acceptance/canvas-extra.mjs:1:323)\n    at file:///D:/1Folder/Blocky-AI/try/chat-history-2026-10-08/acceptance/canvas-extra.mjs:3:480\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+}

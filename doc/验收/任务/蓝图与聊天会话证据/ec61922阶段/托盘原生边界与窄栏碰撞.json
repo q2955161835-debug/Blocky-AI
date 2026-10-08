@@ -1,0 +1,180 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "single helper for actual two-process group",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:58:17.5603906Z",
+        "items": [
+          {
+            "hwnd": 28774584,
+            "pid": 39684,
+            "cls": "Tauri Window",
+            "title": "外部修改乙 — Blocky Studio",
+            "visible": true
+          },
+          {
+            "hwnd": 2888818,
+            "pid": 47640,
+            "cls": "Tauri Window",
+            "title": "合成法律配置验收 — Blocky Studio",
+            "visible": true
+          },
+          {
+            "hwnd": 1905960,
+            "pid": 47640,
+            "cls": "tray_icon_app",
+            "title": "",
+            "visible": false
+          }
+        ],
+        "desktop": "BlockyTest-090f7b3ad0a84f69a0c9fe5f70df729c",
+        "notificationAreaPresent": false
+      }
+    },
+    {
+      "name": "ordinary minimize hides owner",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:58:19.1276649Z",
+        "items": [
+          {
+            "hwnd": 28774584,
+            "pid": 39684,
+            "cls": "Tauri Window",
+            "title": "外部修改乙 — Blocky Studio",
+            "visible": true
+          },
+          {
+            "hwnd": 1905960,
+            "pid": 47640,
+            "cls": "tray_icon_app",
+            "title": "",
+            "visible": false
+          },
+          {
+            "hwnd": 2888818,
+            "pid": 47640,
+            "cls": "Tauri Window",
+            "title": "合成法律配置验收 — Blocky Studio",
+            "visible": false
+          }
+        ],
+        "desktop": "BlockyTest-090f7b3ad0a84f69a0c9fe5f70df729c",
+        "notificationAreaPresent": false
+      }
+    },
+    {
+      "name": "real project dropdown restores hidden same-profile window",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:58:20.7767215Z",
+        "items": [
+          {
+            "hwnd": 28774584,
+            "pid": 39684,
+            "cls": "Tauri Window",
+            "title": "外部修改乙 — Blocky Studio",
+            "visible": true
+          },
+          {
+            "hwnd": 1905960,
+            "pid": 47640,
+            "cls": "tray_icon_app",
+            "title": "",
+            "visible": false
+          },
+          {
+            "hwnd": 2888818,
+            "pid": 47640,
+            "cls": "Tauri Window",
+            "title": "合成法律配置验收 — Blocky Studio",
+            "visible": true
+          }
+        ],
+        "desktop": "BlockyTest-090f7b3ad0a84f69a0c9fe5f70df729c",
+        "notificationAreaPresent": false
+      }
+    },
+    {
+      "name": "follower takes actual helper lease after owner exit",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:58:23.7444426Z",
+        "items": [
+          {
+            "hwnd": 6098372,
+            "pid": 39684,
+            "cls": "tray_icon_app",
+            "title": "",
+            "visible": false
+          },
+          {
+            "hwnd": 28774584,
+            "pid": 39684,
+            "cls": "Tauri Window",
+            "title": "外部修改乙 — Blocky Studio",
+            "visible": true
+          }
+        ],
+        "desktop": "BlockyTest-090f7b3ad0a84f69a0c9fe5f70df729c",
+        "notificationAreaPresent": false
+      }
+    },
+    {
+      "name": "remaining dirty window has actual save reminder",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "cancel exit keeps dirty work",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "notificationAreaClickTested": false,
+  "narrowHeader": [
+    {
+      "name": "Blocky Agent",
+      "left": 1140.0694580078125,
+      "right": 1232.9365234375,
+      "textLeft": 1148.700439453125,
+      "textRight": 1224.3055419921875
+    },
+    {
+      "name": "构建助手",
+      "left": 1240.9326171875,
+      "right": 1306.2004776000977,
+      "textLeft": 1249.5634765625,
+      "textRight": 1297.5694580078125
+    },
+    {
+      "name": "构建助手新会话",
+      "left": 1289.0972900390625,
+      "right": 1315.0893535614014,
+      "textLeft": 1293.0953369140625,
+      "textRight": 1311.09130859375
+    },
+    {
+      "name": "构建助手历史会话",
+      "left": 1315.08935546875,
+      "right": 1341.0814189910889,
+      "textLeft": 1323.0953369140625,
+      "textRight": 1333.0655517578125
+    },
+    {
+      "name": "构建助手设置",
+      "left": 1341.0814208984375,
+      "right": 1367.0734844207764,
+      "textLeft": 1346.4881591796875,
+      "textRight": 1361.65673828125
+    }
+  ],
+  "completed": "2026-10-08T13:58:24.070Z"
+}

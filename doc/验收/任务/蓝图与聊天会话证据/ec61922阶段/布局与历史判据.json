@@ -1,0 +1,204 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "requests": [
+    {
+      "assistant": "builder",
+      "prompt": "BUILDER-NEW 合成解释",
+      "roles": [
+        "system",
+        "user"
+      ],
+      "containsLegacy": false,
+      "stream": false
+    },
+    {
+      "assistant": "agent",
+      "roles": [
+        "system",
+        "user"
+      ],
+      "containsLegacy": false,
+      "stream": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "entire blueprint dock default collapsed",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "all blueprint controls under single dock",
+      "ok": true,
+      "data": "蓝图\n⌃\n个人蓝图\n选择积木后可保存为蓝图\n导入蓝图\n更新所选蓝图\n还原所选蓝图默认内容\n项目画布\n▧ 主画布\n▧ 第二画布\n▧ 大型画布\n内置起始蓝图\n新建：知识问答助手\n新建：工作助手\n新建：Coding 助手\n新建：Pi Agent\n新建空白项目"
+    },
+    {
+      "name": "blueprint upper edge adjusts height",
+      "ok": true,
+      "data": {
+        "before": 200,
+        "after": 219.99005126953125
+      }
+    },
+    {
+      "name": "legacy migrated visible",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "构建助手 grows upward at 40% with internal caret scroll",
+      "ok": true,
+      "data": {
+        "height": 297.99603271484375,
+        "panel": 747.420654296875,
+        "scrollHeight": 1667,
+        "clientHeight": 253,
+        "scrollTop": 1413.96826171875,
+        "end": true
+      }
+    },
+    {
+      "name": "构建助手 manual idle height retained",
+      "ok": true,
+      "data": {
+        "manual": 118.998046875,
+        "current": 118.998046875
+      }
+    },
+    {
+      "name": "Blocky Agent grows upward at 40% with internal caret scroll",
+      "ok": true,
+      "data": {
+        "height": 297.99603271484375,
+        "panel": 747.420654296875,
+        "scrollHeight": 1667,
+        "clientHeight": 253,
+        "scrollTop": 1413.96826171875,
+        "end": true
+      }
+    },
+    {
+      "name": "Blocky Agent manual idle height retained",
+      "ok": true,
+      "data": {
+        "manual": 118.998046875,
+        "current": 118.998046875
+      }
+    },
+    {
+      "name": "labels/new/history/settings one row",
+      "ok": true,
+      "data": [
+        {
+          "name": "Blocky Agent",
+          "y": 47.18254089355469
+        },
+        {
+          "name": "构建助手",
+          "y": 47.18254089355469
+        },
+        {
+          "name": "构建助手新会话",
+          "y": 50.67460632324219
+        },
+        {
+          "name": "构建助手历史会话",
+          "y": 50.67460632324219
+        },
+        {
+          "name": "构建助手设置",
+          "y": 50.67460632324219
+        }
+      ]
+    },
+    {
+      "name": "manual reading stays when composer changes",
+      "ok": true,
+      "data": {
+        "reading": 50.15873336791992,
+        "current": 50.15873336791992
+      }
+    },
+    {
+      "name": "new builder session empty, old archived",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "builder running locks session changes",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "ordinary builder output follows bottom",
+      "ok": true,
+      "data": {
+        "gap": 0.1904296875,
+        "height": 600,
+        "scrollHeight": 4004
+      }
+    },
+    {
+      "name": "new session request excludes legacy",
+      "ok": true,
+      "data": [
+        {
+          "assistant": "builder",
+          "prompt": "BUILDER-NEW 合成解释",
+          "roles": [
+            "system",
+            "user"
+          ],
+          "containsLegacy": false,
+          "stream": false
+        },
+        {
+          "assistant": "agent",
+          "roles": [
+            "system",
+            "user"
+          ],
+          "containsLegacy": false,
+          "stream": false
+        }
+      ]
+    },
+    {
+      "name": "search selects legacy without replacing new",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "agent running locks session changes",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "new agent does not overwrite old session",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "agent archived answer restored",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "ordinary child process for same-profile tray group",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "other project histories isolated",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "child exits retaining primary histories",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T13:51:07.865Z"
+}

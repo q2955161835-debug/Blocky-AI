@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-08T14:59:44.0925802Z",
+  "application": "Blocky Studio.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\chat-history-2026-10-08\\acceptance\\final-settings4",
+  "timeoutSeconds": 120,
+  "focusViolation": false,
+  "foregroundBefore": 1247506,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-2a95a5d9998b4fea96beaf6df2b98fbc",
+  "pid": 18164,
+  "cdpPort": 19521,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [
+    "922670:10068:False:False",
+    "71242718:10068:True:False",
+    "15994568:10068:True:False",
+    "68358544:50584:False:False",
+    "11999250:17960:False:False",
+    "18747154:17960:False:False",
+    "5444474:17960:False:False",
+    "3806228:10068:False:False",
+    "15208260:17960:False:False",
+    "3609442:10068:False:False",
+    "12128542:10068:False:False",
+    "2560956:50584:False:False",
+    "47190250:17960:False:False",
+    "7541316:17960:False:False",
+    "110235054:17960:False:False",
+    "6491966:17960:False:False",
+    "8785462:17960:False:False",
+    "21368790:52356:False:False",
+    "4068478:52356:False:False"
+  ],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "role": "application",
+      "exited": true,
+      "threadHandleClosed": true,
+      "pid": 18164,
+      "processHandleClosed": true
+    },
+    {
+      "role": "controller",
+      "exited": true,
+      "threadHandleClosed": true,
+      "pid": 7816,
+      "processHandleClosed": true
+    }
+  ],
+  "desktopHandleClosed": true,
+  "cdpPortClosed": true,
+  "foregroundFinally": 1247506,
+  "endedAt": "2026-10-08T14:59:53.0413249Z"
+}

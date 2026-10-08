@@ -1,0 +1,219 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "ordinaryPackage": "D:/1Folder/Blocky-AI/dist/Blocky-Studio-0.8.0-canvas",
+  "externalApi": false,
+  "entries": [
+    {
+      "file": "final-settings3-settings-results.json",
+      "bytes": 7573,
+      "sha256": "5db551d31dcce4063d24786c293e7504a83c197879503b8772f24d7c21e878e6",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\settings-results.json"
+    },
+    {
+      "file": "final-settings3-background-result.json",
+      "bytes": 1723,
+      "sha256": "b96504c9b55ebf7fd0d66ddd1f3dee8a9c97298d97bd3593d1d3091fc778163a",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\background-result.json"
+    },
+    {
+      "file": "final-settings3-icons-home.png",
+      "bytes": 263535,
+      "sha256": "c1e0d96c060984778ce63cbb2204e78a394fecb57e3249d0dbba374566692100",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\icons-home.png"
+    },
+    {
+      "file": "final-settings3-icons-end.png",
+      "bytes": 181961,
+      "sha256": "f5f32826428b60b4d297210cddb5e5af8e72d00a93945f61d8a711500356f5c3",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\icons-end.png"
+    },
+    {
+      "file": "final-settings3-theme-light.png",
+      "bytes": 271634,
+      "sha256": "4cb1301f818e78550fb97f2c75887308e0cdc285f6bb41bbe06703de3bf5ed57",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\theme-light.png"
+    },
+    {
+      "file": "final-settings3-theme-dark.png",
+      "bytes": 263572,
+      "sha256": "288798c735ccfd0a66ac28ceac25502877c38c07ed1e86601004f5cb7a30a435",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\theme-dark.png"
+    },
+    {
+      "file": "final-settings3-invalid-draft-warning.png",
+      "bytes": 333205,
+      "sha256": "3fc8b9241149560e8ca50a2f3239701d7a5b63e5c28d541cac04950f60eabc2d",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\invalid-draft-warning.png"
+    },
+    {
+      "file": "final-settings3-professional.png",
+      "bytes": 381088,
+      "sha256": "b9f9c4bd5227ed57403d8fa8eff3525b72fda6c17d960ade68506cfa4d7ae704",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings3\\professional.png"
+    },
+    {
+      "file": "final-settings4-settings-reopen-results.json",
+      "bytes": 1144,
+      "sha256": "e3e64f430986cdce3ecea8233b2c0bc2677b609423a00a2a85d1fa915c008699",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings4\\settings-reopen-results.json"
+    },
+    {
+      "file": "final-settings4-background-result.json",
+      "bytes": 1731,
+      "sha256": "7f797195ea1d30c795db6c9bb9b5450d0f030178b7c6a4c519f5bfb46b2d32af",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings4\\background-result.json"
+    },
+    {
+      "file": "final-settings4-appearance-reopened.png",
+      "bytes": 272497,
+      "sha256": "4c23c607fdf238eaa360d984af97940443622dc74462e3f7ca0bd9013e961fb1",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings4\\appearance-reopened.png"
+    },
+    {
+      "file": "final-settings5-settings-unreadable-results.json",
+      "bytes": 388,
+      "sha256": "d5524f93f13c8c33a9d1d6bc664b755274400367e11a5880cc728d32752ac98e",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings5\\settings-unreadable-results.json"
+    },
+    {
+      "file": "final-settings5-background-result.json",
+      "bytes": 1663,
+      "sha256": "0e6342b11d5bb4fdec2026305c933718fd30705c75731dd9a8ed5a8b15af401d",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-settings5\\background-result.json"
+    },
+    {
+      "file": "final-canvas2-canvas-model-results.json",
+      "bytes": 3616,
+      "sha256": "bffce39f3c852eac087a31a261800dfa52a268d0ad4815d4ccc334da64418f59",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\canvas-model-results.json"
+    },
+    {
+      "file": "final-canvas2-background-result.json",
+      "bytes": 2884,
+      "sha256": "1e1e35afb37a9876341d62904a877f0b7e83ba985c5fda5b0579345593ba4be0",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\background-result.json"
+    },
+    {
+      "file": "final-canvas2-knowledge-assistant-models.png",
+      "bytes": 235037,
+      "sha256": "c89c362ea177f565a3b5fc257df17f957e9e3186fbd9640f5b7ce081d67c8464",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\knowledge-assistant-models.png"
+    },
+    {
+      "file": "final-canvas2-work-assistant-models.png",
+      "bytes": 272719,
+      "sha256": "a60cd2ef8f38029f48dbd3199e499bd80721dc34486e712f788bf36677f91fba",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\work-assistant-models.png"
+    },
+    {
+      "file": "final-canvas2-coding-assistant-models.png",
+      "bytes": 273772,
+      "sha256": "af40d94323ff4761e3c323c45ff6765c265acd4548df6cfe1008e9e3cece9b57",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\coding-assistant-models.png"
+    },
+    {
+      "file": "final-canvas2-pi-agent-models.png",
+      "bytes": 219837,
+      "sha256": "5ef738211f57e7c9e19093ba20e0a1a348f5a13e6cf8a2f5a874a7602b31c758",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas2\\pi-agent-models.png"
+    },
+    {
+      "file": "final-canvas6-canvas-model-results.json",
+      "bytes": 3097,
+      "sha256": "c3affb9470a8f06834f48ae7531c6e17ebaae45c0c6706e42157f0150dbd5a19",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas6\\canvas-model-results.json"
+    },
+    {
+      "file": "final-canvas6-background-result.json",
+      "bytes": 1730,
+      "sha256": "d1d9f8048a80ca0a8e08c91fc0b2fde8e5bd35eeddded8c8b4e03a8e87fca7e7",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas6\\background-result.json"
+    },
+    {
+      "file": "final-canvas6-canvas-final.png",
+      "bytes": 309401,
+      "sha256": "68d8e6c3896ea6e54462fcf36cda40ab25da4557455692c4da29fba6df133741",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas6\\canvas-final.png"
+    },
+    {
+      "file": "final-canvas7-canvas-extra-results.json",
+      "bytes": 734,
+      "sha256": "504add870c5ffd812af8172c52defc682717312a1329b0403c98668013c7dd88",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas7\\canvas-extra-results.json"
+    },
+    {
+      "file": "final-canvas7-background-result.json",
+      "bytes": 2082,
+      "sha256": "f84dfcc28ece33c08d5b450db65d9a6a1eb7fe55387dbe956920234ee2a1a081",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas7\\background-result.json"
+    },
+    {
+      "file": "final-canvas7-failure.png",
+      "bytes": 287826,
+      "sha256": "97fd3b4c207c1be85071c9228c404e4e9137ee56e00c07cbf5cdf2ea87a14e8c",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas7\\failure.png"
+    },
+    {
+      "file": "final-canvas8-canvas-extra-results.json",
+      "bytes": 1527,
+      "sha256": "ea2758e3d2c92517f6fa7597c937738270a51f8219771d8e97f923ed6ae33cde",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas8\\canvas-extra-results.json"
+    },
+    {
+      "file": "final-canvas8-background-result.json",
+      "bytes": 1730,
+      "sha256": "a92a7ed4ad94b4685916e0a5fa888874548d067683fd06319c4b3f1785d7c93a",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas8\\background-result.json"
+    },
+    {
+      "file": "final-canvas8-canvas-light.png",
+      "bytes": 276069,
+      "sha256": "bb627e6000946feb3c2c45a6fa1ab441fb7fcf1697951071ce38b79e59cd1253",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas8\\canvas-light.png"
+    },
+    {
+      "file": "final-canvas8-canvas-dark.png",
+      "bytes": 268134,
+      "sha256": "f3753fa97bed2663c16c61364d70d92ee64702a3f2794d5162549614c288fbd0",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas8\\canvas-dark.png"
+    },
+    {
+      "file": "final-canvas8-settings-narrow.png",
+      "bytes": 104714,
+      "sha256": "4afc9e923b43a299069f0f6153116a39f0ca9e06193cb5aa8a7e709e8269f1b2",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-canvas8\\settings-narrow.png"
+    },
+    {
+      "file": "final-models2-model-reopen-results.json",
+      "bytes": 758,
+      "sha256": "d2947f6b5faa67934a2cbe0ba47998971407336068d927f30c66672b903683f3",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-models2\\model-reopen-results.json"
+    },
+    {
+      "file": "final-models2-background-result.json",
+      "bytes": 1731,
+      "sha256": "7ec4cad0355eaed86f282ce13bbac2b904703e8527b69aa12a77308301fd7ce7",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-models2\\background-result.json"
+    },
+    {
+      "file": "final-models2-models-reopened.png",
+      "bytes": 265690,
+      "sha256": "c243c11d773aa850118c3f5399792aa4eef5e28b6e8e6195db20228f4ecf3302",
+      "original": "try\\chat-history-2026-10-08\\acceptance\\final-models2\\models-reopened.png"
+    },
+    {
+      "bytes": 2166,
+      "sha256": "ecd37b1ad5a7e9dec4fad3bdfdf0f2916aae7694abaa8158e94a23aecbca8b8a",
+      "original": "independent acceptance compact evidence",
+      "file": "前台工具阻塞及自有资源结算.json"
+    },
+    {
+      "bytes": 765,
+      "sha256": "dec2045e45bf07a8481f53faf56310c0f706a8b81966bb7c65a0c372f6eee5bc",
+      "original": "independent acceptance compact evidence",
+      "file": "取消移动两次复现.json"
+    }
+  ],
+  "unsealed": "仅合成原始记录保留try；不复制用户账户或完整用户对话。Sky错误Codex像素不封存为Blocky截图。",
+  "reused": "B/C01/C02/H精确来源ec61922阶段；本轮未重复全盘测试"
+}

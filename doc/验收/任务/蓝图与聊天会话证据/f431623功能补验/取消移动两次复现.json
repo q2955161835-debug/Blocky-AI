@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "procedure": "普通工作助手既有积木鼠标左键按住→移动45×25 CSS px→模式按钮focus+Space切纯拖拽→释放鼠标→Ctrl+S→实际文件读回",
+  "first": {
+    "run": "final-canvas7",
+    "before": {
+      "id": "assistant-root",
+      "x": 80,
+      "y": 70
+    },
+    "after": {
+      "id": "assistant-root",
+      "x": 133,
+      "y": 99
+    }
+  },
+  "second": {
+    "run": "final-canvas8",
+    "failedCheck": "mode switching cancels in-progress selection move without serialized edit",
+    "otherChecksPassed": true,
+    "naturalExit": true
+  },
+  "boundary": "进行中的默认单块移动；纯拖拽本身与纯平移取消未失败",
+  "conclusion": "不通过"
+}

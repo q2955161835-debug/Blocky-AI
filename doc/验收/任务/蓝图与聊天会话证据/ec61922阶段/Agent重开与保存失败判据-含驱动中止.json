@@ -1,0 +1,118 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "new process builder selected conversation restored",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "new process agent selected conversation restored",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Blocky Agent manual read retained during actual output update",
+      "ok": true,
+      "data": {
+        "before": 90.15873718261719,
+        "after": {
+          "top": 90.15873718261719,
+          "gap": 9229.841262817383
+        }
+      }
+    },
+    {
+      "name": "Blocky Agent returning bottom restores output follow",
+      "ok": true,
+      "data": {
+        "gap": 0.80859375
+      }
+    },
+    {
+      "name": "real OS save failure keeps selected old conversation",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "failed index write did not replace original index",
+      "ok": true,
+      "data": {
+        "activeId": "chat-36564c6e-06d2-4d66-895e-1a3051295f4f"
+      }
+    },
+    {
+      "name": "retry new chat succeeds and keeps old index entry",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "fresh process blueprint dock default remains collapsed",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "narrow header no horizontal clipping",
+      "ok": true,
+      "data": {
+        "width": 240,
+        "scrollWidth": 240,
+        "headerWidth": 240,
+        "headerScroll": 240
+      }
+    },
+    {
+      "name": "second native window alive for tray observation",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "one actual tray helper across two ordinary native processes",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:54:30.3779279Z",
+        "items": [
+          {
+            "hwnd": 3282110,
+            "pid": 50276,
+            "cls": "tray_icon_app",
+            "visible": false
+          }
+        ],
+        "desktop": "BlockyTest-4101c131fe7443aeb619a86695657494",
+        "notificationAreaPresent": false
+      }
+    },
+    {
+      "name": "follower has one actual tray helper after owner natural exit",
+      "ok": true,
+      "data": {
+        "boundary": "Native tray helper windows only; no Shell notification-area pixel/registered-icon proof",
+        "observedAt": "2026-10-08T13:54:33.8314552Z",
+        "items": [
+          {
+            "hwnd": 49287534,
+            "pid": 45088,
+            "cls": "tray_icon_app",
+            "visible": false
+          }
+        ],
+        "desktop": "BlockyTest-4101c131fe7443aeb619a86695657494",
+        "notificationAreaPresent": false
+      }
+    }
+  ],
+  "requests": [
+    {
+      "assistant": "agent",
+      "stream": false
+    },
+    {
+      "assistant": "agent",
+      "stream": false
+    }
+  ],
+  "error": "locator.innerText: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: '退出 Blocky Studio', exact: true })\u001b[22m\n\n    at D:\\1Folder\\Blocky-AI\\try\\chat-history-2026-10-08\\acceptance\\reopen.mjs:12:1187"
+}

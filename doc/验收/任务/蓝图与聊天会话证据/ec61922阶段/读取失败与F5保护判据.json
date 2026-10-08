@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "unreadable index gives prompt and disables agent input/send",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "F5 cannot start unowned conversation on unreadable history",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "unreadable file preserved on graceful exit",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T13:55:33.608Z"
+}

@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "ec61922a4863cba1a1762c2a3967df8b0e81abb5",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "blueprint actual pointer drag upper edge increases height",
+      "ok": true,
+      "data": {
+        "before": 200,
+        "after": 268.998046875
+      }
+    },
+    {
+      "name": "构建助手 actual pointer input resize",
+      "ok": true,
+      "data": {
+        "before": 98.998046875,
+        "after": 147.99603271484375
+      }
+    },
+    {
+      "name": "Blocky Agent actual pointer input resize",
+      "ok": true,
+      "data": {
+        "before": 98.998046875,
+        "after": 147.99603271484375
+      }
+    },
+    {
+      "name": "ordinary native live fragment rendered before second round",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "manual reading survives actual multipart text.delta updates",
+      "ok": true,
+      "data": {
+        "before": 80,
+        "after": {
+          "top": 80,
+          "gap": 14809
+        },
+        "modelRequests": 2
+      }
+    },
+    {
+      "name": "multipart stream follows again after return bottom",
+      "ok": true,
+      "data": {
+        "gap": -0.255859375
+      }
+    }
+  ],
+  "modelRequests": 4,
+  "completed": "2026-10-08T14:00:29.388Z"
+}

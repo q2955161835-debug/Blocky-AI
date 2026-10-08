@@ -1,0 +1,72 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "windowId": 18944522,
+  "reason": "Sky capture returns Codex pixels under Blocky metadata even after reset; no uncertain foreground input",
+  "naturalExit": false,
+  "cleanup": "forced task-owned process cleanup",
+  "processes": [
+    {
+      "pid": 51684,
+      "parentPid": 20064,
+      "exe": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas\\Blocky Studio.exe"
+    },
+    {
+      "pid": 26400,
+      "parentPid": 51684,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 48304,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 16812,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 53876,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 27924,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 25000,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    },
+    {
+      "pid": 35388,
+      "parentPid": 26400,
+      "exe": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\154.0.4258.62\\msedgewebview2.exe"
+    }
+  ],
+  "remaining": [],
+  "sky": {
+    "rebindAndKernelReset": true,
+    "returnedAccessibility": null,
+    "screenshot0": {
+      "id": "screenshot-0",
+      "width": 1443,
+      "height": 903,
+      "originX": 199,
+      "originY": 190
+    },
+    "screenshot1": {
+      "id": "screenshot-1",
+      "width": 1188,
+      "height": 714,
+      "originX": 210,
+      "originY": 192
+    },
+    "observedPixels": "Codex, not requested Blocky",
+    "inputAfterMismatch": false,
+    "shellReturned": false
+  },
+  "conclusion": "阻塞"
+}

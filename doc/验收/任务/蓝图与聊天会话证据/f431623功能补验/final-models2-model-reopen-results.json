@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "f431623d08185a61a091d7c09edc6461e53bc692",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "new native process reopened autosaved Agent choice",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Builder actual md-model-2 selection persists independent preference",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Builder actual md-model selection persists independent preference",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Builder switches preserve Agent choice and draft",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "real help menu opens shortcuts category",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T15:10:24.715Z"
+}
