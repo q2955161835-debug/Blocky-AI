@@ -37,6 +37,17 @@ afterEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
 });
+it("runs from the Agent editor on F5 and consumes the browser reload shortcut", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
+  const input = await screen.findByLabelText("向 Agent 提问");
+  await waitFor(() => expect(screen.getAllByRole("button", { name: "运行", exact: true }).every(b => !(b as HTMLButtonElement).disabled)).toBe(true));
+  fireEvent.change(input, { target: { value: "快捷键运行" } });
+  const key = new KeyboardEvent("keydown", { key: "F5", bubbles: true, cancelable: true });
+  act(() => input.dispatchEvent(key));
+  expect(key.defaultPrevented).toBe(true);
+  await waitFor(() => expect(screen.getByLabelText("Blocky Agent 聊天记录").textContent).toContain("快捷键运行"));
+});
 it("opens an anchored file menu, switches menus, and keeps the command center separate", async () => {
   render(<App />);
   const file = screen.getByRole("menuitem", { name: "文件" });

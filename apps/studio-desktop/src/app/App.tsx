@@ -309,7 +309,7 @@ export function App() {
       if (
         command &&
         (!input ||
-          ["file.save", "settings.open", "view.command-center"].includes(
+          ["file.save", "settings.open", "view.command-center", "run.start", "run.stop"].includes(
             command.commandId,
           ))
       ) {

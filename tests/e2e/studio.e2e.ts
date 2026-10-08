@@ -494,9 +494,11 @@ describe("Blocky native editor", () => {
           throw error;
         });
       if (viewport === "mobile")
+        // Native WebView2 bounding rectangles can differ by a floating-point
+        // subpixel; the exact clientWidth is already checked above.
         expect(
           (await page.locator("iframe").boundingBox())!.width,
-        ).toBeLessThanOrEqual(390);
+        ).toBeCloseTo(390, 2);
     }
     await mkdir("try/stage5/native", { recursive: true });
     await page.screenshot({ path: "try/stage5/native/generated-surface.png" });
