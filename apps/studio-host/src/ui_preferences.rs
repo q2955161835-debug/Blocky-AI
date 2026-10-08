@@ -17,13 +17,16 @@ pub fn validate(doc: &Value) -> Result<(), String> {
             "fontFamily" => matches!(value.as_str(), Some("system" | "yahei" | "simsun")),
             "codeFont" => matches!(value.as_str(), Some("consolas" | "courier" | "system")),
             "fontSize" => value.as_u64().is_some_and(|n| (11..=24).contains(&n)),
-            "builderModelId" => value.as_str().is_some_and(|id| {
+            "builderModelId" | "agentModelId" => value.as_str().is_some_and(|id| {
                 id.is_empty()
                     || id.len() <= 128
                         && crate::project_store::stable(id)
                         && !id.to_ascii_lowercase().starts_with("sk-")
                         && !["__proto__", "prototype", "constructor"].contains(&id)
             }),
+            "builderReasoningEffort" | "agentReasoningEffort" => {
+                matches!(value.as_str(), Some("none" | "low" | "high" | "max"))
+            }
             _ => false,
         };
         if !valid {

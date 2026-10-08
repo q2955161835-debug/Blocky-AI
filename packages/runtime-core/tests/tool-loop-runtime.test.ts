@@ -284,3 +284,10 @@ it("publishes the cancelled terminal only after native services have settled", a
   expect((await pending).status).toBe("cancelled");
   expect(terminal).toEqual(["run.cancelled"]);
 });
+
+it("applies the selected execution effort to every model decision without changing project budgets", async()=>{
+  const {project}=fixture(),{adapters,requests}=services(),before=structuredClone(project);
+  const result=await new Runtime({adapters,capabilities:["text.analyze"]}).run(project,"on-question","count twice",{reasoningEffort:"max"});
+  expect(result.status,JSON.stringify(result.events)).toBe("completed");expect(requests).toHaveLength(3);
+  expect(requests.every(r=>r.reasoningEffort==="max")).toBe(true);expect(project).toEqual(before);
+});

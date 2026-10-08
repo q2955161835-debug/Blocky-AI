@@ -15,6 +15,7 @@ pub(super) struct Cli {
     pub project: Value,
     revision: u32,
     profile: PathBuf,
+    patch: Option<PathBuf>,
 }
 impl Cli {
     pub fn new(root: &Path, start: &CodingStart, project: Value) -> Result<Self, String> {
@@ -29,6 +30,7 @@ impl Cli {
             project,
             revision: 0,
             profile: root.to_path_buf(),
+            patch: None,
         })
     }
     pub fn run(
@@ -53,6 +55,9 @@ impl Cli {
                     .join(format!("project-{}.blocky", self.revision))
                     .to_string_lossy()
                     .into_owned();
+            } else if args[index] == "$patch" {
+                args[index] = self.patch.as_ref().ok_or("BLK-CODING-CLI-ARTIFACT")?
+                    .to_string_lossy().into_owned();
             } else {
                 let path = &args[index];
                 let content = if let Some(inline) = path.strip_prefix("$json:") {
@@ -78,11 +83,16 @@ impl Cli {
             }
         }
         let mut next = None;
+        let mut next_patch = None;
         if let Some(i) = prepared.output {
-            if args[i] != "$project" {
+            if prepared.patch_output {
+                if args[i] != "$patch" { return Err("BLK-CODING-CLI-ARGS".into()); }
+                let path = self.staging.path().join(format!("patch-{}.json", uuid::Uuid::new_v4()));
+                args[i] = path.to_string_lossy().into_owned();
+                next_patch = Some(path);
+            } else if args[i] != "$project" {
                 return Err("BLK-CODING-CLI-ARGS".into());
-            }
-            if prepared.modifies {
+            } else if prepared.modifies {
                 let path = self
                     .staging
                     .path()
@@ -171,6 +181,14 @@ impl Cli {
             return Err(ERROR.into());
         }
         if status.success() {
+            if let Some(path) = next_patch {
+                if std::fs::metadata(&path).map_err(|_| ERROR)?.len() > 2 * 1024 * 1024 {
+                    return Err("BLK-CODING-BUDGET".into());
+                }
+                let patch = crate::strict_json::parse(&std::fs::read(&path).map_err(|_| ERROR)?)?;
+                crate::project_store::check_secrets(&patch, 0).map_err(|_| ERROR)?;
+                self.patch = Some(path);
+            }
             if let Some(path) = next {
                 let project = decode(&crate::project_store::read_archive(&path)?)?;
                 if project["manifest"]["projectId"] != self.project["manifest"]["projectId"] {
@@ -207,13 +225,14 @@ struct Prepared {
     inputs: Vec<usize>,
     output: Option<usize>,
     modifies: bool,
+    patch_output: bool,
 }
 fn prepare(args: &[String]) -> Result<Prepared, String> {
     if args.len() < 2
         || args.len() > 64
         || args
             .iter()
-            .any(|a| a.is_empty() || a.len() > 256 * 1024 + 6 || a.chars().any(char::is_control))
+            .any(|a| a.is_empty() || a.len() > 256 * 1024 + 6 || a.chars().any(|c| c.is_control() && !(a.starts_with("$json:") && matches!(c, '\n' | '\r' | '\t'))))
     {
         return Err(ERROR.into());
     }
@@ -222,9 +241,11 @@ fn prepare(args: &[String]) -> Result<Prepared, String> {
             inputs: Vec::new(),
             output: None,
             modifies: false,
+            patch_output: false,
         });
     }
     let command = format!("{}.{}", args[0], args[1]);
+    let patch_output = command == "patch.create";
     let (positional, keys, modifies): (usize, &[&str], bool) = match command.as_str() {
         "catalog.list" => (0, &["limit", "cursor"], false),
         "command.list" => (0, &["query"], false),
@@ -235,6 +256,7 @@ fn prepare(args: &[String]) -> Result<Prepared, String> {
         "project.configure" => (1, &["module", "block", "field", "value", "output"], true),
         "project.edit" => (1, &["operations", "expect-digest", "output"], true),
         "patch.preview" => (1, &["patch"], false),
+        "patch.create" => (1, &["operations", "output"], false),
         "patch.apply" => (1, &["patch", "approve-permissions", "output"], true),
         _ => return Err(ERROR.into()),
     };
@@ -281,13 +303,14 @@ fn prepare(args: &[String]) -> Result<Prepared, String> {
             i += 1;
         }
     }
-    if words != positional || !seen.contains("json") || modifies != output.is_some() {
+    if words != positional || !seen.contains("json") || (modifies || patch_output) != output.is_some() {
         return Err(ERROR.into());
     }
     Ok(Prepared {
         inputs,
         output,
         modifies,
+        patch_output,
     })
 }
 pub(super) fn assets() -> Result<(PathBuf, PathBuf), String> {
@@ -367,6 +390,17 @@ pub(super) fn decode(files: &BTreeMap<String, String>) -> Result<Value, String> 
 mod tests {
     use super::*;
     #[test]
+    fn patch_creation_uses_isolated_artifact_output_without_workspace_access() {
+        let args = ["patch", "create", "$project", "--operations", "$json:[]", "--output", "$patch", "--json"].map(str::to_owned);
+        let prepared = prepare(&args).unwrap();
+        assert!(prepared.patch_output && !prepared.modifies);
+        let mut pretty = args.clone();
+        pretty[4] = "$json:\n[\n]\n".into();
+        assert!(prepare(&pretty).is_ok());
+        pretty[4] = "$json:[\u{0000}]".into();
+        assert!(prepare(&pretty).is_err());
+    }
+    #[test]
     fn cli_is_closed_and_paths_cannot_escape() {
         assert!(prepare(&["project", "inspect", "$project", "--json"].map(str::to_owned)).is_ok());
         for args in [
@@ -396,4 +430,66 @@ mod tests {
             }
         }
     }
+    fn isolated_cli() -> Cli {
+        let base=Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().join("try");
+        std::fs::create_dir_all(&base).unwrap();
+        let staging=tempfile::Builder::new().prefix("coding-cli-patch-").tempdir_in(base).unwrap();
+        let project=json!({"manifest":{"schemaVersion":"blocky.project/v1","projectId":"cli-empty","displayName":"Empty regression","modules":[{"moduleId":"main","displayName":"Main","purpose":"general","workspaceRef":"workspaces/main.workspace.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"blocky-desktop/0.8.0","minimumReaderVersion":"0.2.0"}},"workspaces":{"main":{"blocks":{"languageVersion":0,"blocks":[]}}},"resources":{},"schemas":{},"surfaces":{}});
+        crate::project_store::create_archive(&staging.path().join("project-0.blocky"),&crate::patch_guard::project_files(&project).unwrap()).unwrap();
+        let profile=staging.path().join("profile");
+        Cli {staging,project,revision:0,profile,patch:None}
+    }
+    fn invoke(cli:&mut Cli,args:Vec<String>)->Result<Value,String> {
+        let label=args.iter().take(2).cloned().collect::<Vec<_>>().join(" ");
+        cli.run(&args,None,&AtomicBool::new(false)).map_err(|code|format!("{label}: {code}"))
+    }
+    fn succeeded(result:Result<Value,String>)->Value {
+        let value=result.expect("Real pinned CLI must execute; missing or stale bundle is a test failure");
+        assert_eq!(value["exitCode"],0,"{value}");value
+    }
+    fn rejected_without_change(cli:&mut Cli,args:Vec<String>) {
+        let before=cli.project.clone();let revision=cli.revision;
+        let archive=std::fs::read(cli.staging.path().join(format!("project-{revision}.blocky"))).unwrap();
+        if let Ok(value)=invoke(cli,args) {assert_ne!(value["exitCode"],0,"Unexpected accepted command: {value}");}
+        assert_eq!(cli.project,before);assert_eq!(cli.revision,revision);
+        assert_eq!(std::fs::read(cli.staging.path().join(format!("project-{revision}.blocky"))).unwrap(),archive);
+    }
+    #[test]
+    fn actual_cli_patch_create_preview_apply_compile_without_workspace_is_atomic() {
+        assets().expect("Run the existing project CLI build/install before this regression; never skip missing assets");
+        let mut cli=isolated_cli();let original=cli.project.clone();
+        let text=json!({"type":"core.data.literal","id":"reply-text","fields":{"VALUE":"\"Fixed answer\""}});
+        let message=json!({"type":"core.message.create","id":"reply-message","inputs":{"CONTENT":{"block":text}}});
+        let reply=json!({"type":"core.message.reply","id":"fixed-reply","inputs":{"MESSAGE":{"block":message}}});
+        let set=json!({"type":"core.data.set","id":"set-result","fields":{"VALUE":"\"fixed\""}});
+        let repeat=json!({"type":"core.flow.repeat","id":"repeat-three","fields":{"COUNT":"3"},"inputs":{"DO":{"block":set}},"next":{"block":reply}});
+        let condition=json!({"type":"core.logic.condition","id":"conditional","fields":{"SOURCE":"input","OP":"equals","VALUE":"go"},"inputs":{"THEN":{"block":repeat}}});
+        let entry=json!({"type":"core.interaction.chat","id":"chat-input","fields":{"NAME":"Question"},"next":{"block":condition}});
+        let root=json!({"type":"core.agent","id":"agent-root","fields":{"ROLE":"Fixed reply"},"inputs":{"BODY":{"block":entry}}});
+        let operations=json!([{"op":"block.add","moduleId":"main","blockId":"agent-root","payload":root}]);
+        let inline=format!("$json:{}",serde_json::to_string_pretty(&operations).unwrap());
+        succeeded(invoke(&mut cli,vec!["patch".into(),"create".into(),"$project".into(),"--operations".into(),inline,"--output".into(),"$patch".into()]));
+        assert_eq!(cli.project,original);assert_eq!(cli.revision,0);
+        let artifact=cli.patch.clone().expect("Real patch artifact");assert!(artifact.starts_with(cli.staging.path()));
+        succeeded(invoke(&mut cli,["patch","preview","$project","--patch","$patch"].map(str::to_owned).to_vec()));
+        assert_eq!(cli.project,original);
+        succeeded(invoke(&mut cli,["patch","apply","$project","--patch","$patch","--output","$project"].map(str::to_owned).to_vec()));
+        assert_eq!(cli.revision,1);assert_ne!(cli.project,original);assert_eq!(cli.project["manifest"]["projectId"],original["manifest"]["projectId"]);
+        let candidate=cli.project.clone();let built=succeeded(invoke(&mut cli,["project","compile","$project"].map(str::to_owned).to_vec()));
+        assert!(built["output"][0]["data"]["diagnostics"].as_array().unwrap().iter().all(|d|d["severity"]!="error"));
+        for (id,kind) in [("conditional","core.logic.condition"),("repeat-three","core.flow.repeat"),("fixed-reply","core.message.reply")] {
+            assert!(candidate.to_string().contains(id));assert!(built.to_string().contains(kind));
+        }
+        // The old artifact is digest-bound to the empty canvas and cannot be replayed.
+        rejected_without_change(&mut cli,["patch","apply","$project","--patch","$patch","--output","$project"].map(str::to_owned).to_vec());
+        let partial=json!([{"op":"block.update","moduleId":"main","blockId":"agent-root","payload":{"fields":{"ROLE":"must not apply"}}},{"op":"block.update","moduleId":"main","blockId":"missing","payload":{"fields":{"ROLE":"invalid"}}}]);
+        rejected_without_change(&mut cli,vec!["patch".into(),"create".into(),"$project".into(),"--operations".into(),format!("$json:{partial}"),"--output".into(),"$patch".into()]);
+        assert_eq!(cli.patch.as_ref(),Some(&artifact));
+        let outside=cli.staging.path().parent().unwrap().join(format!("coding-cli-outside-{}.blocky",uuid::Uuid::new_v4())).to_string_lossy().to_string();
+        rejected_without_change(&mut cli,vec!["patch".into(),"apply".into(),"$project".into(),"--patch".into(),"$patch".into(),"--output".into(),outside.clone()]);assert!(!Path::new(&outside).exists());
+        rejected_without_change(&mut cli,["patch","preview","$project","--patch","../outside.json"].map(str::to_owned).to_vec());
+        std::fs::remove_file(&artifact).unwrap();
+        rejected_without_change(&mut cli,["patch","preview","$project","--patch","$patch"].map(str::to_owned).to_vec());
+    }
+
 }

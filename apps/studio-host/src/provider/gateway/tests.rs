@@ -321,3 +321,16 @@ fn coding_model_reads_the_exact_optional_output_and_timeout_configuration() {
         assert_eq!(request.body("fixture", "ollama")["max_tokens"], 10_000_000);
     } else { panic!("expected reference gateway"); }
 }
+
+#[test]
+fn request_reasoning_is_translated_and_real_reasoning_is_preserved() {
+    let mut value=request();value["reasoningEffort"]=json!("max");
+    value["messages"].as_array_mut().unwrap().push(json!({"role":"assistant","content":"reply","reasoningContent":"provider reasoning"}));
+    let r:GatewayRequest=serde_json::from_value(value.clone()).unwrap();r.validate().unwrap();
+    let body=r.body("deepseek-v4-pro","xirang");
+    assert_eq!(body["thinking"]["type"],"enabled");assert_eq!(body["reasoning_effort"],"max");
+    assert_eq!(body["messages"][1]["reasoning_content"],"provider reasoning");
+    let mut wire=response();wire["choices"][0]["message"]["reasoning_content"]=json!("returned reasoning");
+    assert_eq!(parse_response(&serde_json::to_vec(&wire).unwrap(),&r).unwrap()["reasoningContent"],"returned reasoning");
+    value["reasoningEffort"]=json!("unrecognized");assert!(serde_json::from_value::<GatewayRequest>(value).unwrap().validate().is_err());
+}

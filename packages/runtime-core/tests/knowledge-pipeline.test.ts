@@ -192,6 +192,7 @@ it("uses the selected model to judge and rewrite retrieval while sharing the run
   const generationInputs: string[] = [];
   const adapters = hostAdapters(f.call, {
     generate: async (request) => {
+      expect(request.reasoningEffort).toBe("high");
       generationInputs.push(request.messages.at(-1)!.content);
       return {
         text: JSON.stringify(
@@ -212,6 +213,7 @@ it("uses the selected model to judge and rewrite retrieval while sharing the run
     project,
     "on-question",
     "Plants",
+    {reasoningEffort:"high"},
   );
   expect(run.status).toBe("completed");
   expect(generationInputs.length).toBe(2);

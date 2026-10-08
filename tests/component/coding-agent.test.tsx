@@ -45,9 +45,7 @@ it("keeps the newest complete messages under the 4 MiB persisted history budget"
     text: "😀".repeat(400000),
     status: "completed" as const,
   }));
-  act(() =>
-    hook.result.current.update("sample", () => messages),
-  );
+  act(() => hook.result.current.update("sample", () => messages));
   await act(() => hook.result.current.flush());
   const retained = messages.slice(-2);
   expect(hook.result.current.messages).toHaveLength(retained.length);
@@ -91,9 +89,7 @@ it("bounds coding request history by bytes while retaining newest complete messa
   const retained = messages.slice(-2);
   expect(context).toHaveLength(retained.length);
   expect(
-    context.every(
-      (message, index) => message.text === retained[index].text,
-    ),
+    context.every((message, index) => message.text === retained[index].text),
   ).toBe(true);
   expect(
     new TextEncoder().encode(JSON.stringify(context)).length,
@@ -151,6 +147,301 @@ function pickWorkspace(args: any) {
   pickedWorkspaces.set(args.projectId, workspace);
   return workspace;
 }
+it.each(["cancelled", "failed"] as const)(
+  "retains partial reply after %s and reopening, with the next turn kept separate",
+  async (outcome) => {
+    const s = studio();
+    let rejectRun!: (error: Error) => void;
+    let started = false;
+    let count = 0;
+    let lateEvent!: () => void;
+    native.mockImplementation(async (name, args) => {
+      if (name !== "coding_run") return storage(name, args);
+      if (++count > 1) return result(args.start);
+      const base = {
+        schemaVersion: "blocky.coding-event/v1",
+        requestId: args.start.requestId,
+        projectId: args.start.projectId,
+      };
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 1,
+        kind: "text.delta",
+        text: "已经分析出的部分答案",
+      });
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 2,
+        kind: "thinking.delta",
+        text: "先检查依赖关系",
+      });
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 3,
+        kind: "tool.started",
+        tool: "blocky_cli",
+        callId: "cli-1",
+        command: "blocky project validate",
+      });
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 4,
+        kind: "tool.completed",
+        tool: "blocky_cli",
+        callId: "cli-1",
+        exitCode: 0,
+      });
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 5,
+        kind: "tool.failed",
+        tool: "blocky_cli",
+        callId: "cli-failed",
+        command: "blocky project compile",
+        exitCode: 1,
+        code: "BLK-CODING-CHECK",
+      });
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 6,
+        kind: "tool.started",
+        tool: "workspace_list",
+        callId: "list-1",
+      });
+      lateEvent = () =>
+        args.onEvent.onmessage({
+          ...base,
+          sequence: 7,
+          kind: "tool.completed",
+          tool: "workspace_list",
+          callId: "list-1",
+        });
+      started = true;
+      return new Promise((_, reject) => {
+        rejectRun = reject;
+      });
+    });
+    const hook = renderHook(() => useCodingAgent(s));
+    await waitFor(() => expect(hook.result.current.ready).toBe(true));
+    let pending!: Promise<void>;
+    act(() => {
+      pending = hook.result.current.generate({
+        prompt: "分析",
+        resourceId: "my-model",
+      });
+    });
+    await waitFor(() => expect(started).toBe(true));
+    if (outcome === "cancelled") act(() => hook.result.current.stop());
+    if (outcome === "cancelled") act(lateEvent);
+    await act(async () => {
+      rejectRun(
+        Error(
+          outcome === "cancelled"
+            ? "BLK-CODING-CANCELLED"
+            : "BLK-CODING-ENGINE",
+        ),
+      );
+      await pending;
+      await hook.result.current.flush();
+    });
+    expect(hook.result.current.messages.at(-1)?.text).toContain(
+      "已经分析出的部分答案",
+    );
+    expect(hook.result.current.messages.at(-1)?.status).toBe(outcome);
+    expect(hook.result.current.messages.at(-1)?.thinking).toBe(
+      "先检查依赖关系",
+    );
+    expect(hook.result.current.messages.at(-1)?.activity).toEqual([
+      {
+        callId: "cli-1",
+        tool: "blocky_cli",
+        status: "completed",
+        command: "blocky project validate",
+        exitCode: 0,
+      },
+      {
+        callId: "cli-failed",
+        tool: "blocky_cli",
+        status: "failed",
+        command: "blocky project compile",
+        exitCode: 1,
+        code: "BLK-CODING-CHECK",
+      },
+      {
+        callId: "list-1",
+        tool: "workspace_list",
+        status: outcome === "cancelled" ? "cancelled" : "failed",
+      },
+    ]);
+    act(lateEvent);
+    expect(
+      hook.result.current.messages.filter(
+        (message) => message.role === "assistant",
+      ),
+    ).toHaveLength(1);
+    expect(hook.result.current.messages.at(-1)?.status).toBe(outcome);
+    const legacy = persisted.get("coding-chat/research-workbench") as {
+      messages: Record<string, unknown>[];
+    };
+    expect(legacy.messages.at(-1)).not.toHaveProperty("thinking");
+    expect(legacy.messages.at(-1)).not.toHaveProperty("activity");
+    hook.unmount();
+    const reopened = renderHook(() => useCodingAgent(s));
+    await waitFor(() => expect(reopened.result.current.ready).toBe(true));
+    expect(reopened.result.current.messages.at(-1)?.text).toContain(
+      "已经分析出的部分答案",
+    );
+    expect(reopened.result.current.messages.at(-1)?.thinking).toBe(
+      "先检查依赖关系",
+    );
+    expect(
+      reopened.result.current.messages.at(-1)?.activity?.[0].exitCode,
+    ).toBe(0);
+    expect(reopened.result.current.messages.at(-1)?.activity?.[1]).toEqual({
+      callId: "cli-failed",
+      tool: "blocky_cli",
+      status: "failed",
+      command: "blocky project compile",
+      exitCode: 1,
+      code: "BLK-CODING-CHECK",
+    });
+    await act(() =>
+      reopened.result.current.generate({
+        prompt: "下一轮",
+        resourceId: "my-model",
+      }),
+    );
+    expect(
+      reopened.result.current.messages.filter((message) =>
+        message.text.includes("已经分析出的部分答案"),
+      ),
+    ).toHaveLength(1);
+    expect(reopened.result.current.messages.at(-1)?.text).toBe("已读取项目");
+    expect(reopened.result.current.messages.at(-1)?.activity).toBeUndefined();
+    expect(reopened.result.current.messages.at(-1)?.thinking).toBeUndefined();
+  },
+);
+it("ignores an old successful callback while the next turn is active", async () => {
+  const s = studio();
+  let turn = 0;
+  let sendOld!: () => void;
+  let completeSecond!: () => Promise<void>;
+  native.mockImplementation(async (name, args) => {
+    if (name !== "coding_run") return storage(name, args);
+    const base = {
+      schemaVersion: "blocky.coding-event/v1",
+      requestId: args.start.requestId,
+      projectId: args.start.projectId,
+    };
+    if (++turn === 1) {
+      args.onEvent.onmessage({
+        ...base,
+        sequence: 1,
+        kind: "text.delta",
+        text: "第一轮正文",
+      });
+      sendOld = () => {
+        args.onEvent.onmessage({
+          ...base,
+          sequence: 2,
+          kind: "text.delta",
+          text: "旧轮晚到正文",
+        });
+        args.onEvent.onmessage({
+          ...base,
+          sequence: 3,
+          kind: "thinking.delta",
+          text: "旧轮晚到思考",
+        });
+        args.onEvent.onmessage({
+          ...base,
+          sequence: 4,
+          kind: "tool.started",
+          tool: "blocky_cli",
+          callId: "old-cli",
+          command: "blocky project compile",
+        });
+        args.onEvent.onmessage({
+          ...base,
+          sequence: 5,
+          kind: "tool.completed",
+          tool: "blocky_cli",
+          callId: "old-cli",
+          exitCode: 0,
+        });
+      };
+      return { ...(await result(args.start)), text: "第一轮完整正文" };
+    }
+    const secondEvents = [
+      { ...base, sequence: 1, kind: "text.delta", text: "新轮部分正文" },
+      { ...base, sequence: 2, kind: "thinking.delta", text: "新轮思考" },
+      {
+        ...base,
+        sequence: 3,
+        kind: "tool.started",
+        tool: "workspace_list",
+        callId: "new-list",
+      },
+      {
+        ...base,
+        sequence: 4,
+        kind: "tool.completed",
+        tool: "workspace_list",
+        callId: "new-list",
+      },
+    ];
+    for (const event of secondEvents) args.onEvent.onmessage(event);
+    return new Promise((resolve) => {
+      completeSecond = async () =>
+        resolve({
+          ...(await result(args.start)),
+          text: "新轮完整正文",
+          events: secondEvents,
+        });
+    });
+  });
+  const hook = renderHook(() => useCodingAgent(s));
+  await waitFor(() => expect(hook.result.current.ready).toBe(true));
+  await act(() =>
+    hook.result.current.generate({ prompt: "第一轮", resourceId: "my-model" }),
+  );
+  let next!: Promise<void>;
+  act(() => {
+    next = hook.result.current.generate({
+      prompt: "第二轮",
+      resourceId: "my-model",
+    });
+  });
+  await waitFor(() =>
+    expect(hook.result.current.liveText).toBe("新轮部分正文"),
+  );
+  expect(hook.result.current.busy).toBe(true);
+  const activity = structuredClone(hook.result.current.liveActivity);
+  const messages = structuredClone(hook.result.current.messages);
+  act(sendOld);
+  expect(hook.result.current.liveText).toBe("新轮部分正文");
+  expect(hook.result.current.liveThinking).toBe("新轮思考");
+  expect(hook.result.current.liveActivity).toEqual(activity);
+  expect(hook.result.current.messages).toEqual(messages);
+  expect(hook.result.current.stopping).toBe(false);
+  expect(hook.result.current.error).toBe("");
+  await act(async () => {
+    await completeSecond();
+    await next;
+    await hook.result.current.flush();
+  });
+  expect(hook.result.current.messages.at(-1)).toMatchObject({
+    text: "新轮完整正文",
+    thinking: "新轮思考",
+    activity: [
+      { callId: "new-list", tool: "workspace_list", status: "completed" },
+    ],
+  });
+  expect(JSON.stringify(hook.result.current.messages)).not.toContain(
+    "旧轮晚到",
+  );
+  expect(JSON.stringify(hook.result.current.messages)).not.toContain("old-cli");
+});
 async function result(start: any, project?: unknown) {
   return {
     schemaVersion: "blocky.coding-result/v1",
@@ -414,14 +705,26 @@ it("recovers Host changes after a failed task and keeps manual undo reversible",
   expect(
     native.mock.calls.find(([name]) => name === "coding_undo")?.[1],
   ).toEqual({ workspaceId: "workspace-1", changeId: "change-1" });
-  expect(hook.result.current.changes.find((item) => item.change.changeId === "undo-1"))
-    .toMatchObject({ undone: false, invalidated: false });
+  expect(
+    hook.result.current.changes.find(
+      (item) => item.change.changeId === "undo-1",
+    ),
+  ).toMatchObject({ undone: false, invalidated: false });
   await act(() => hook.result.current.undoChange("undo-1"));
   expect(hook.result.current.error).toBe("");
-  expect(hook.result.current.changes.map((item) => [item.change.changeId, item.undone]))
-    .toEqual([["change-1", true], ["undo-1", true], ["redo-1", false]]);
-  expect(native.mock.calls.filter(([name]) => name === "coding_undo").at(-1)?.[1])
-    .toEqual({ workspaceId: "workspace-1", changeId: "undo-1" });
+  expect(
+    hook.result.current.changes.map((item) => [
+      item.change.changeId,
+      item.undone,
+    ]),
+  ).toEqual([
+    ["change-1", true],
+    ["undo-1", true],
+    ["redo-1", false],
+  ]);
+  expect(
+    native.mock.calls.filter(([name]) => name === "coding_undo").at(-1)?.[1],
+  ).toEqual({ workspaceId: "workspace-1", changeId: "undo-1" });
 });
 
 it("shows an Agent undo receipt as the active inverse, marking the original withdrawn", async () => {
@@ -602,15 +905,13 @@ it("streams, saves, reloads, and reuses a complete response above 64 KiB", async
   const hook = renderHook(() => useCodingAgent(s));
   await waitFor(() => expect(hook.result.current.ready).toBe(true));
   let pending!: Promise<void>;
-  await act(() =>
-    {
-      pending = hook.result.current.generate({
-        prompt: "解释",
-        resourceId: "my-model",
-      });
-      return runStarted;
-    },
-  );
+  await act(() => {
+    pending = hook.result.current.generate({
+      prompt: "解释",
+      resourceId: "my-model",
+    });
+    return runStarted;
+  });
   const liveAtEndOfStream = hook.result.current.liveText;
   await act(async () => {
     release({
@@ -633,7 +934,9 @@ it("streams, saves, reloads, and reuses a complete response above 64 KiB", async
   hook.unmount();
   const reopened = renderHook(() => useCodingAgent(s));
   await waitFor(() => expect(reopened.result.current.ready).toBe(true));
-  expect(reopened.result.current.messages.at(-1)?.text === responseText).toBe(true);
+  expect(reopened.result.current.messages.at(-1)?.text === responseText).toBe(
+    true,
+  );
   await act(() =>
     reopened.result.current.generate({
       prompt: "继续",

@@ -68,6 +68,13 @@ impl BuilderModel {
         let preview = Binding::load(root, &request)?.preview(&request);
         Ok(Self::Gateway { request, preview })
     }
+    pub(crate) fn with_reasoning(mut self, root: &Path, effort: Option<&str>) -> Result<Self, String> {
+        if let Self::Gateway { request, preview } = &mut self {
+            request.reasoning_effort = effort.map(str::to_owned);
+            *preview = Binding::load(root, request)?.preview(request);
+        } else if effort.is_some_and(|e| e != "none") { return Err("BLK-MODEL-CAPABILITY".into()); }
+        Ok(self)
+    }
     pub(crate) fn max_output_tokens(&self) -> Option<u32> {
         match self {
             Self::Legacy(r) => Some(r.max_output_tokens),
@@ -119,6 +126,22 @@ impl BuilderModel {
         cancel: &AtomicBool,
         metadata: &mut Option<crate::builder::evidence::ResponseMetadata>,
         before_send: &mut dyn FnMut() -> Result<(), String>,
+    ) -> Result<Value, String> {
+        self.generate_inner(root, messages, remaining, cancel, metadata, before_send, None)
+    }
+    pub fn generate_stream(
+        &self, root: &Path, messages: Value, remaining: u64, cancel: &AtomicBool,
+        metadata: &mut Option<crate::builder::evidence::ResponseMetadata>,
+        before_send: &mut dyn FnMut() -> Result<(), String>,
+        on_delta: &mut dyn FnMut(Value) -> Result<(), String>,
+    ) -> Result<Value, String> {
+        self.generate_inner(root, messages, remaining, cancel, metadata, before_send, Some(on_delta))
+    }
+    fn generate_inner(
+        &self, root: &Path, messages: Value, remaining: u64, cancel: &AtomicBool,
+        metadata: &mut Option<crate::builder::evidence::ResponseMetadata>,
+        before_send: &mut dyn FnMut() -> Result<(), String>,
+        on_delta: Option<&mut dyn FnMut(Value) -> Result<(), String>>,
     ) -> Result<Value, String> {
         match self {
             Self::Legacy(r) => {
@@ -175,11 +198,12 @@ impl BuilderModel {
                             tool_calls: calls,
                             tool_call_id: m["tool_call_id"].as_str().map(str::to_owned),
                             image_refs: Vec::new(),
+                            reasoning_content: m["reasoning_content"].as_str().map(str::to_owned),
                         })
                     })
                     .collect::<Result<Vec<_>, String>>()?;
                 request.validate()?;
-                let result = super::gateway::execute(
+                let result = super::gateway::execute_stream(
                     root,
                     &request,
                     &bound,
@@ -189,6 +213,7 @@ impl BuilderModel {
                         *metadata =
                             crate::builder::evidence::response_metadata(bytes, &bound.provider);
                     },
+                    on_delta,
                 )?;
                 gateway_generation(result)
             }
@@ -198,6 +223,8 @@ impl BuilderModel {
 
 fn gateway_generation(mut result: Value) -> Result<Value, String> {
     let mut content = Vec::new();
+    if let Some(reasoning) = result["reasoningContent"].as_str().filter(|s|!s.is_empty()) { content.push(json!({"type":"thinking","thinking":reasoning})); }
+    result.as_object_mut().ok_or(ERROR)?.remove("reasoningContent");
     if result["text"].as_str().is_some_and(|s| !s.is_empty()) {
         content.push(json!({"type":"text","text":result["text"]}));
     }

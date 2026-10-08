@@ -163,10 +163,12 @@ export class Runtime {
       userRegistry?: Map<string, import("@blocky/language-schema").Resource>;
       workflowTaskId?: string;
       conversationId?: string;
+      reasoningEffort?: "none" | "low" | "high" | "max";
     } = {},
   ): Promise<RunResult> {
     if (this.running) throw Error("BLK-RUN-003: 已有运行");
     if (options.conversationId !== undefined && (options.conversationId.length > 128 || !stableId.test(options.conversationId))) throw Error("BLK-RUN-STATE");
+    if (options.reasoningEffort !== undefined && !["none", "low", "high", "max"].includes(options.reasoningEffort)) throw Error("BLK-RUN-STATE");
     const project = parseProject(input),
       runId = this.options.newId?.() ?? `run-${crypto.randomUUID()}`;
     // Reserve IDs synchronously, before an async adapter can observe shared budget changes.
@@ -193,7 +195,14 @@ export class Runtime {
     const events: RuntimeEvent[] = [];
     const runBudget = new RunBudget(options.signal);
     const signal = runBudget.signal;
-    const adapters = this.options.adapters ?? localAdapters();
+    const originalAdapters = this.options.adapters ?? localAdapters();
+    const effort = options.reasoningEffort;
+    // Scope the override to this invocation, including child agents and correction calls.
+    const adapters = effort === undefined || !originalAdapters.agent?.generate ? originalAdapters : {
+      ...originalAdapters,
+      agent: { ...originalAdapters.agent, generate: (request: import("./agent-context").GenerationRequest, signal: AbortSignal) =>
+        originalAdapters.agent!.generate!({ ...request, reasoningEffort: effort }, signal) },
+    };
     let settlement: Promise<void> | undefined;
     const settle = () =>
       (settlement ??= Promise.resolve()
@@ -1015,7 +1024,7 @@ export class Runtime {
                 }
                 const pi = node.fields.ENGINE === "pi";
                 const conversationKey = JSON.stringify([project.manifest.projectId, this.sessionId, `pi-${(await digest(options.conversationId === undefined ? [moduleId, node.nodeId] : [moduleId, node.nodeId, options.conversationId])).slice(0, 32)}`]);
-                const binding = await digest({ model: resource, role: scope.role, instruction: state.instruction, tools: resourceIds.map((id) => resolveResource(project, id, "tool", options.userRegistry)), citations: scope.citations });
+                const binding = await digest({ model: resource, ...(effort === undefined ? {} : { reasoningEffort: effort }), role: scope.role, instruction: state.instruction, tools: resourceIds.map((id) => resolveResource(project, id, "tool", options.userRegistry)), citations: scope.citations });
                 const stored = this.sessionMemory.get(conversationKey);
                 let conversation: PiConversation = [];
                 if (pi && node.fields.SESSION === "conversation" && stored && typeof stored === "object" && !Array.isArray(stored) && stored.binding === binding && Array.isArray(stored.messages)) conversation = stored.messages as PiConversation;
@@ -1023,6 +1032,7 @@ export class Runtime {
                 state.generated = await loop({
                   project,
                   registry: options.userRegistry,
+                  ...(effort === undefined ? {} : { reasoningEffort: effort }),
                   model: resource,
                   budget: runBudget,
                   capabilities,

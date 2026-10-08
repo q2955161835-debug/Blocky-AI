@@ -49,3 +49,16 @@ it("keeps two chat scopes separate while allowing a return to the earlier conver
   expect(requests[2].messages.some(m=>m.content==="first chat subject")).toBe(true);
   expect(requests[2].messages.some(m=>m.content==="second chat subject")).toBe(false);
 });
+
+it("binds the selected reasoning effort to each Pi execution and resets mismatched saved conversation", async()=>{
+  const requests:GenerationRequest[]=[];const adapters=localAdapters();adapters.agent={generate:async request=>{requests.push(structuredClone(request));return reply("answer");}};
+  const project=configured("pi-agent"),before=structuredClone(project),runtime=new Runtime({adapters});
+  await runtime.run(project,"assistant-chat-trigger","no thinking history",{moduleId:"main",reasoningEffort:"none"});
+  const restored=new Runtime({adapters,sessionState:runtime.captureSession()});
+  expect((await restored.run(project,"assistant-chat-trigger","start thinking",{moduleId:"main",reasoningEffort:"high"})).status).toBe("completed");
+  expect(requests[1].reasoningEffort).toBe("high");expect(requests[1].messages.some(m=>m.content==="no thinking history")).toBe(false);
+  await restored.run(project,"assistant-chat-trigger","same thinking",{moduleId:"main",reasoningEffort:"high"});
+  expect(requests[2].messages.some(m=>m.content==="start thinking")).toBe(true);
+  await restored.run(project,"assistant-chat-trigger","legacy execution",{moduleId:"main"});
+  expect(requests[3].reasoningEffort).toBeUndefined();expect(project).toEqual(before);
+});

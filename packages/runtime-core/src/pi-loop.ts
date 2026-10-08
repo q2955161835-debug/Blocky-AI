@@ -15,7 +15,7 @@ function wire(messages: PiMessage[]): Message[] {
     if (m.role === "system") return { role: "system", content: [typeof m.content === "string" ? m.content : m.content.map((c) => c.text).join("\n"), ...Object.values(m.sections ?? {}).filter(Boolean)].join("\n") };
     if (m.role === "user") return { role: "user", content: typeof m.content === "string" ? m.content : m.content.filter((c) => c.type === "text").map((c) => c.text).join("\n") };
     if (m.role === "toolResult") return { role: "tool", toolCallId: m.toolCallId, content: m.content.filter((c) => c.type === "text").map((c) => c.text).join("\n") };
-    return { role: "assistant", content: m.content.filter((c) => c.type === "text").map((c) => c.text).join("\n"), toolCalls: m.content.flatMap((c) => c.type === "toolCall" ? [{ id: c.id, name: c.name, arguments: c.arguments as Record<string, Json> }] : []) };
+    return { role: "assistant", reasoningContent: m.content.filter((c) => c.type === "thinking").map((c) => c.thinking).join(""), content: m.content.filter((c) => c.type === "text").map((c) => c.text).join("\n"), toolCalls: m.content.flatMap((c) => c.type === "toolCall" ? [{ id: c.id, name: c.name, arguments: c.arguments as Record<string, Json> }] : []) };
   });
 }
 
@@ -70,7 +70,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
         budget.call(); const limit = budget.reserveOutput(outputPerTurn);
         requestId = `${context.requestId}-m${turn}`;
         context.onEvent({ type: "model.started", requestId, data: { summary: "Pi 模型选择下一步", engine: "pi-agent-core/0.86.0", turn, maxOutputTokens: limit } });
-        const result = await abortable(context.generate({ projectId: context.project.manifest.projectId, resource: context.model, requestId, messages: history, maxOutputTokens: limit, tools: bound.map((t) => t.model), toolChoice: !bound.length || turn === turns ? "none" : "auto" }, budget.signal), budget.signal);
+        const result = await abortable(context.generate({ projectId: context.project.manifest.projectId, resource: context.model, ...(context.reasoningEffort !== undefined ? { reasoningEffort: context.reasoningEffort } : {}), requestId, messages: history, maxOutputTokens: limit, tools: bound.map((t) => t.model), toolChoice: !bound.length || turn === turns ? "none" : "auto" }, budget.signal), budget.signal);
         budget.check(); checkGenerationMetadata(result);
         if (result.usage && result.usage.outputTokens > limit) throw Error("BLK-RUN-004");
         budget.settleOutput(limit, result.usage?.outputTokens);
@@ -127,6 +127,7 @@ export async function runPiLoop(context: ToolLoopContext, conversation: PiConver
           }
         }
         context.onEvent({ type: "model.completed", requestId, data: { summary: rejectedInput ? "工具参数校验未通过，Pi 正在纠正未执行提案" : "Pi 模型已返回", engine: "pi-agent-core/0.86.0", turn, transport: result.transport, model: result.model, ...(rejectedInput ? { rejectedProposal: "BLK-OUTPUT-001" } : {}), ...(result.usage ? { usage: result.usage } : {}) } });
+        if (result.reasoningContent) output.content.push({ type: "thinking", thinking: result.reasoningContent });
         if (rejectedInput) output.content.push({ type: "text", text: "工具参数不符合声明，整批提案未执行。" });
         else if (result.text) output.content.push({ type: "text", text: result.text });
         for (const call of proposed) output.content.push({ type: "toolCall", id: call.id, name: call.name, arguments: call.arguments as JsonObject });

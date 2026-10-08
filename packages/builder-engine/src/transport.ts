@@ -3,6 +3,7 @@ import type { Message } from "@earendil-works/pi-ai";
 export type WireMessage = {
   role: string;
   content: string | null;
+  reasoning_content?: string;
   tool_calls?: {
     id: string;
     type: "function";
@@ -18,6 +19,7 @@ export type BuilderGeneration = {
   content: {
     type: string;
     text?: string;
+    thinking?: string;
     id?: string;
     name?: string;
     arguments?: unknown;
@@ -85,6 +87,7 @@ export function wireMessages(messages: Message[]): WireMessage[] {
     return {
       role: "assistant",
       content: content || null,
+      reasoning_content: message.content.filter((c) => c.type === "thinking").map((c) => c.thinking).join(""),
       ...(calls.length ? { tool_calls: calls } : {}),
     };
   });

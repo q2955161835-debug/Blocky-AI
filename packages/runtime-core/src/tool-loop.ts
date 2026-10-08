@@ -47,6 +47,7 @@ export type ToolLoopContext = {
   citations: Citation[];
   requireEvidence: boolean;
   resourceIds: string[];
+  reasoningEffort?: "none" | "low" | "high" | "max";
   maxTurns: number;
   outputPerTurn: number;
   generate(
@@ -170,6 +171,7 @@ export async function runToolLoop(context: ToolLoopContext): Promise<string> {
           {
             projectId: context.project.manifest.projectId,
             resource: context.model,
+            ...(context.reasoningEffort !== undefined ? { reasoningEffort: context.reasoningEffort } : {}),
             requestId,
             messages: structuredClone(history),
             maxOutputTokens: limit,
@@ -257,6 +259,7 @@ export async function runToolLoop(context: ToolLoopContext): Promise<string> {
       role: "assistant",
       content: result.text,
       toolCalls: structuredClone(proposed),
+      ...(result.reasoningContent !== undefined ? { reasoningContent: result.reasoningContent } : {}),
     });
     for (const [index, item] of batch.entries()) {
       budget.check();

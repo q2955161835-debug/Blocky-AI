@@ -10,6 +10,7 @@ export function nativeModelRequest(input: GenerationRequest) {
     d = resource.definition;
   const legacy = ["deepseek", "xirang"].includes(String(d.provider));
   const v2 =
+    input.reasoningEffort !== undefined ||
     d.connectionRef !== undefined ||
     input.maxOutputTokens > 1024 ||
     Number(d.timeoutMs) > 120000 ||
@@ -48,6 +49,7 @@ export function nativeModelRequest(input: GenerationRequest) {
       request: {
         schemaVersion: "blocky.model-request/v2",
         ...common,
+        ...(input.reasoningEffort !== undefined ? { reasoningEffort: input.reasoningEffort } : {}),
         ...(p?.topP !== undefined ? { topP: p.topP } : {}),
         ...(input.tools?.length ? { tools: input.tools } : {}),
         ...(input.outputSchema !== undefined

@@ -145,6 +145,13 @@ pub(crate) fn exchange_headers_using(
     cancel: &AtomicBool,
     before_send: &mut dyn FnMut() -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
+    exchange_headers_stream_using(client, endpoint, body, timeout_ms, key, headers, cancel, before_send, &mut |_| Ok(()))
+}
+pub(crate) fn exchange_headers_stream_using(
+    client: reqwest::Client, endpoint: &str, body: &Value, timeout_ms: u64, key: &str,
+    headers: Option<&reqwest::header::HeaderMap>, cancel: &AtomicBool,
+    before_send: &mut dyn FnMut() -> Result<(), String>, on_chunk: &mut dyn FnMut(&[u8]) -> Result<(), String>,
+) -> Result<Vec<u8>, String> {
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
@@ -161,7 +168,7 @@ pub(crate) fn exchange_headers_using(
             biased;
             _=cancelled=>Err("BLK-PROVIDER-CANCELLED".into()),
             _=tokio::time::sleep(Duration::from_millis(timeout_ms))=>Err("BLK-PROVIDER-TIMEOUT".into()),
-            result=exchange(client,endpoint,body,key,headers,before_send)=>result,
+            result=exchange(client,endpoint,body,key,headers,before_send,on_chunk)=>result,
         }
     })
 }
@@ -172,6 +179,7 @@ async fn exchange(
     key: &str,
     headers: Option<&reqwest::header::HeaderMap>,
     before_send: &mut dyn FnMut() -> Result<(), String>,
+    on_chunk: &mut dyn FnMut(&[u8]) -> Result<(), String>,
 ) -> Result<Vec<u8>, String> {
     let mut request = client
         .post(endpoint)
@@ -207,6 +215,7 @@ async fn exchange(
         if bytes.len() + chunk.len() > 16 * 1024 * 1024 {
             return Err("BLK-PROVIDER-LIMIT".into());
         }
+        on_chunk(&chunk)?;
         bytes.extend_from_slice(&chunk);
     }
     Ok(bytes)
@@ -256,5 +265,30 @@ mod observation_tests {
             assert!(result.is_err());
             assert!(!observed);
         }
+    }
+}
+
+#[cfg(test)]
+mod streaming_tests {
+    use super::*;
+    use std::io::{Read, Write};
+    #[test]
+    fn live_chunks_arrive_before_completion_and_cancel_closes_the_connection() {
+        let listener=std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint=format!("http://{}/stream",listener.local_addr().unwrap());
+        let server=std::thread::spawn(move || {
+            let (mut socket,_)=listener.accept().unwrap();
+            socket.set_read_timeout(Some(Duration::from_secs(2))).unwrap();
+            let mut received=Vec::new();let mut b=[0;1024];
+            loop {let n=socket.read(&mut b).unwrap();received.extend_from_slice(&b[..n]);if received.ends_with(b"\r\n\r\n{}") {break;}}
+            let data=b"data: {\"partial\":true}\n\n";
+            socket.write_all(b"HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n").unwrap();
+            write!(socket,"{:x}\r\n",data.len()).unwrap();socket.write_all(data).unwrap();socket.write_all(b"\r\n").unwrap();socket.flush().unwrap();
+            socket.read(&mut b).unwrap_or(0)
+        });
+        let cancel=AtomicBool::new(false);let mut seen=Vec::new();
+        let result=exchange_headers_stream_using(reqwest::Client::builder().no_proxy().build().unwrap(),&endpoint,&json!({}),1000,"",None,&cancel,&mut ||Ok(()),&mut |bytes| {seen.extend_from_slice(bytes);cancel.store(true,Ordering::SeqCst);Ok(())});
+        assert_eq!(result.unwrap_err(),"BLK-PROVIDER-CANCELLED");
+        assert_eq!(seen,b"data: {\"partial\":true}\n\n");assert_eq!(server.join().unwrap(),0);
     }
 }

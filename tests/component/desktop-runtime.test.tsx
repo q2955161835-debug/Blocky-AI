@@ -179,3 +179,10 @@ it("cancels renderer services on a native budget cancellation without poisoning 
   expect(runtime.needsRestart).toBe(false);
   await runtime.dispose();
 });
+
+it("forwards the chosen reasoning level in the private run envelope",async()=>{
+ let transmitted:any;
+ const port:RuntimePort={open:async()=>"runtime-owned",close:vi.fn(async()=>{}),send:vi.fn(async()=>{}),run:async(_s,_r,request,receive)=>{transmitted=request;receive({kind:"ready"});receive({kind:"settle"});return result;}};
+ const runtime=new DesktopRuntime(localAdapters,port);
+ try {await runtime.run(createStarter(),"on-question","input",{reasoningEffort:"max"});expect(transmitted.options.reasoningEffort).toBe("max");}finally{await runtime.dispose();}
+});

@@ -25,6 +25,8 @@ pub struct GatewayRequest {
     pub output_schema: Option<Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_choice: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reasoning_effort: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -35,6 +37,8 @@ pub struct ModelMessage {
     pub tool_calls: Vec<ToolCall>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_call_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reasoning_content: Option<String>,
     #[serde(default,skip_serializing_if="Vec::is_empty")]
     pub image_refs:Vec<ImageReference>,
 }
@@ -208,6 +212,7 @@ impl GatewayRequest {
         }) {
             return Err(INVALID.into());
         }
+        if self.reasoning_effort.as_deref().is_some_and(|s| !["none", "low", "high", "max"].contains(&s)) { return Err(INVALID.into()); }
         let mut names = BTreeSet::new();
         for tool in &self.tools {
             if !token(&tool.name, 64)
@@ -229,7 +234,7 @@ impl GatewayRequest {
         let mut used = BTreeSet::new();
         let mut image_count=0;
         for (index, m) in self.messages.iter().enumerate() {
-            if m.content.len() > 2 * 1024 * 1024 || m.tool_calls.len() > 8 {
+            if m.reasoning_content.as_ref().is_some_and(|s| m.role != "assistant" || s.len() > 2 * 1024 * 1024) || m.content.len() > 2 * 1024 * 1024 || m.tool_calls.len() > 8 {
                 return Err(INVALID.into());
             }
             image_count+=m.image_refs.len();
@@ -273,6 +278,7 @@ impl GatewayRequest {
         let messages:Vec<Value>=self.messages.iter().map(|m| {
             let mut v=json!({"role":m.role,"content":m.content});
             if !m.tool_calls.is_empty() {v["tool_calls"]=json!(m.tool_calls.iter().map(|t|json!({"id":t.id,"type":"function","function":{"name":t.name,"arguments":t.arguments.to_string()}})).collect::<Vec<_>>());}
+            if let Some(reasoning)=&m.reasoning_content {v["reasoning_content"]=json!(reasoning);}
             if let Some(id)=&m.tool_call_id {v["tool_call_id"]=json!(id);}
             v
         }).collect();
@@ -294,7 +300,9 @@ impl GatewayRequest {
             value["response_format"] = json!({"type":"json_schema","json_schema":{"name":"blocky_output","strict":true,"schema":schema}});
         }
         if ["deepseek", "xirang"].contains(&provider) {
-            value["thinking"] = json!({"type":"disabled"});
+            let effort = self.reasoning_effort.as_deref().unwrap_or("none");
+            value["thinking"] = json!({"type":if effort == "none" { "disabled" } else { "enabled" }});
+            if effort != "none" { value["reasoning_effort"] = json!(effort); }
         }
         value
     }
@@ -387,7 +395,8 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
             json!({"inputTokens":input,"outputTokens":output,"totalTokens":total})
         }
     };
-    Ok(
-        json!({"schemaVersion":"blocky.model-response/v2","text":text,"toolCalls":calls,"finishReason":finish,"model":model,"requestId":id,"usageStatus":if usage.is_null(){"unavailable"}else{"reported"},"usage":usage}),
-    )
+    let reasoning = choice["message"].get("reasoning_content").filter(|v| !v.is_null()).map(|v| v.as_str().filter(|s| s.len() <= 2 * 1024 * 1024).ok_or(RESPONSE)).transpose()?;
+    let mut result = json!({"schemaVersion":"blocky.model-response/v2","text":text,"toolCalls":calls,"finishReason":finish,"model":model,"requestId":id,"usageStatus":if usage.is_null(){"unavailable"}else{"reported"},"usage":usage});
+    if let Some(reasoning) = reasoning { result["reasoningContent"] = json!(reasoning); }
+    Ok(result)
 }

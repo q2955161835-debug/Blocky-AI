@@ -479,3 +479,29 @@
 .builder-chat-candidate-actions button:last-child {
   border-color: var(--border);
 }
+
+/* Reply-owned traces scroll with text, never in a shrinking sibling panel. */
+.builder-chat-thread .builder-chat-messages,
+.builder-chat-thread .builder-chat-message { flex: 0 0 auto; }
+.builder-chat-thread .coding-trace {
+  flex: 0 0 auto;
+  min-height: auto;
+  max-height: none;
+  overflow: visible;
+  border-top-color: var(--border);
+}
+.coding-trace summary { display: list-item; min-height: 30px; padding: 6px 0; cursor: pointer; line-height: 1.6; }
+.coding-trace summary:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
+.coding-thinking-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--muted); }
+.coding-command { display: block; margin: 5px 0; padding: 5px 7px; border: 1px solid var(--border); border-radius: 5px; white-space: pre-wrap; overflow-wrap: anywhere; color: inherit; }
+.coding-exit-code, .coding-history-note { color: var(--muted); }
+.chat-composer-toolbar { flex-wrap: wrap; row-gap: 5px; }
+.chat-run-model-pickers { display: flex; flex: 1 1 auto; align-items: center; gap: 5px; flex-wrap: wrap; min-width: 0; max-width: 100%; overflow: visible; }
+.chat-run-model-label { display: flex; min-width: 0; max-width: 100%; }
+.chat-model-picker, .chat-reasoning-picker, .chat-model-target { min-width: 0; max-width: 100%; padding: 4px 6px; border-radius: 6px; font-size: 0.846rem; }
+.chat-model-picker { flex: 1 1 100px; width: auto; max-width: min(240px, 100%); text-overflow: ellipsis; }
+.chat-reasoning-picker { flex: 0 1 auto; width: auto; }
+.chat-model-target { flex: 1 1 140px; width: auto; }
+.run-model-settings { display: grid; gap: 10px; }
+.chat-panel select.chat-reasoning-picker, .chat-panel select.chat-model-target { border: 0; background: transparent; color: var(--text, #c7ccd5); cursor: pointer; }
+.chat-panel select.chat-reasoning-picker option, .chat-panel select.chat-model-target option { background: var(--appearance-input, #303236); color: var(--text, #eef2f7); }

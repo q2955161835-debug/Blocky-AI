@@ -237,6 +237,7 @@ export class DesktopRuntime {
               ...(options.conversationId === undefined
                 ? {}
                 : { conversationId: options.conversationId }),
+              ...(options.reasoningEffort === undefined ? {} : { reasoningEffort: options.reasoningEffort }),
               ...(options.debug === undefined ? {} : { debug: options.debug }),
               ...(options.userRegistry === undefined
                 ? {}

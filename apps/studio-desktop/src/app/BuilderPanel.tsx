@@ -15,9 +15,10 @@ import "./BuilderChat.css";
 import { CodingTrace } from "./CodingTrace";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
+import { ReasoningPicker } from "./ReasoningPicker";
 import { useChatFollow } from "./useChatFollow";
-import type {SettingsSection} from "./settings/settingsNavigation";
-import {ModelPicker} from "./ModelPicker";
+import type { SettingsSection } from "./settings/settingsNavigation";
+import { ModelPicker } from "./ModelPicker";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -61,17 +62,26 @@ export function BuilderPanel({
   builder: CodingAgent;
   configureModel(): void;
   promptSuggestion?: { nonce: number; text: string };
-  openSettings?(section:SettingsSection):void;
+  openSettings?(section: SettingsSection): void;
 }) {
   const menu = useChatMenu(menuControl);
-  const [prompt, setPrompt] = useState(""),[resourceOverride,setOverride]=useState<string>();
+  const [prompt, setPrompt] = useState(""),
+    [resourceOverride, setOverride] = useState<string>();
   const [reviewing, setReviewing] = useState(false);
   const defaultResourceId = resolveSetting(
     "models.defaultResourceId",
     studio.settings.layers,
   ).value;
-  const resourceId = studio.settings.ui?.values.builderModelId || resourceOverride || defaultResourceId;
-  const setResourceId=(id:string)=>studio.settings.ui?studio.settings.ui.change("builderModelId",id):setOverride(id);
+  const resourceId =
+    studio.settings.ui?.values.builderModelId ||
+    resourceOverride ||
+    defaultResourceId;
+  const setResourceId = (id: string) =>
+    studio.settings.ui
+      ? studio.settings.ui.change("builderModelId", id)
+      : setOverride(id);
+  const reasoningEffort =
+    studio.settings.ui?.values.builderReasoningEffort ?? "none";
   const models = [...studio.resources.map.values()].filter(isUserOnlineModel);
   const supportsTools = (model: (typeof models)[number]) =>
     Array.isArray(model.definition.capabilities) &&
@@ -80,7 +90,10 @@ export function BuilderPanel({
     (model) => model.resourceId === resourceId && supportsTools(model),
   );
   const ready =
-    builder.ready && studio.settings.ready && studio.resources.ready && (studio.settings.ui?.ready ?? true);
+    builder.ready &&
+    studio.settings.ready &&
+    studio.resources.ready &&
+    (studio.settings.ui?.ready ?? true);
   const disabled =
     builder.busy || studio.busy || studio.running || studio.exiting;
   const canSend =
@@ -90,7 +103,14 @@ export function BuilderPanel({
     !!studio.snapshot.project.workspaces[studio.session.active];
   const thread = useChatFollow(
     builder.activeChatId ?? studio.snapshot.project.manifest.projectId,
-    [builder.messages, builder.liveText, builder.events, builder.result],
+    [
+      builder.messages,
+      builder.liveText,
+      builder.liveThinking,
+      builder.liveActivity,
+      builder.events,
+      builder.result,
+    ],
   );
   const previousChat = useRef(builder.activeChatId);
   useEffect(() => {
@@ -107,11 +127,12 @@ export function BuilderPanel({
   const submit = () => {
     if (!canSend) return;
     if (!availableModel) {
-      if(openSettings)openSettings("builder");else menu.set("settings");
+      if (openSettings) openSettings("builder");
+      else menu.set("settings");
       return;
     }
     menu.set(null);
-    void builder.generate({ prompt, resourceId });
+    void builder.generate({ prompt, resourceId, reasoningEffort });
     setPrompt("");
   };
   const keyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -157,7 +178,15 @@ export function BuilderPanel({
                   {message.status && <span>{status[message.status]}</span>}
                 </div>
                 {message.role === "assistant" ? (
-                  <ChatMarkdown text={message.text} />
+                  <>
+                    <CodingTrace
+                      activity={message.activity}
+                      thinking={message.thinking}
+                      activityTruncated={message.activityTruncated}
+                      thinkingTruncated={message.thinkingTruncated}
+                    />
+                    <ChatMarkdown text={message.text} />
+                  </>
                 ) : (
                   <p>{message.text}</p>
                 )}
@@ -165,12 +194,21 @@ export function BuilderPanel({
             ))}
           </ol>
         )}
-        {builder.liveText && (
+        {builder.busy && (
           <article
             className="builder-chat-message builder-chat-message-assistant coding-stream"
             aria-label="正在回复"
           >
-            <ChatMarkdown text={builder.liveText} />
+            <CodingTrace
+              activity={builder.liveActivity}
+              events={builder.liveActivity ? undefined : builder.events}
+              thinking={builder.liveThinking}
+              activityTruncated={builder.activityTruncated}
+              thinkingTruncated={builder.thinkingTruncated}
+              busy={builder.busy}
+              stopping={builder.stopping}
+            />
+            {builder.liveText && <ChatMarkdown text={builder.liveText} />}
           </article>
         )}
         {builder.error && (
@@ -278,7 +316,6 @@ export function BuilderPanel({
           </article>
         )}
       </div>
-      <CodingTrace events={builder.events} busy={builder.busy} stopping={builder.stopping} />
       <ChatPopover menu={menu} kind="add" label="构建助手上下文">
         <button
           type="button"
@@ -324,7 +361,22 @@ export function BuilderPanel({
         <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
           ＋
         </ChatMenuButton>
-        <ModelPicker label="构建助手模型" value={resourceId} models={models} disabled={disabled||!ready} change={setResourceId}/>
+        <ModelPicker
+          label="构建助手模型"
+          value={resourceId}
+          models={models}
+          disabled={disabled || !ready}
+          change={setResourceId}
+        />
+        <ReasoningPicker
+          label="构建助手思考等级"
+          value={reasoningEffort}
+          model={models.find((model) => model.resourceId === resourceId)}
+          disabled={disabled || !ready || !studio.settings.ui}
+          change={(value) =>
+            studio.settings.ui?.change("builderReasoningEffort", value)
+          }
+        />
         {builder.workspace && (
           <span
             className="chat-context-marker"

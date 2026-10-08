@@ -10,6 +10,7 @@ import { utf8, integer } from "./budget";
 export type Message = {
   role: "system" | "user" | "assistant" | "tool";
   content: string;
+  reasoningContent?: string;
   toolCalls?: ModelToolCall[];
   toolCallId?: string;
   imageRefs?: {mediaId:string;sha256:string;version:number}[];
@@ -26,6 +27,7 @@ export type GenerationRequest = {
   messages: Message[];
   maxOutputTokens: number;
   requestId: string;
+  reasoningEffort?: "none" | "low" | "high" | "max";
   tools?: ModelTool[];
   outputSchema?: Json;
   toolChoice?: "auto" | "required" | "none";
@@ -33,6 +35,7 @@ export type GenerationRequest = {
 export type Generation = {
   schemaVersion?: "blocky.model-response/v2";
   usageStatus?: "reported" | "unavailable";
+  reasoningContent?: string;
   toolCalls?: ModelToolCall[];
   finishReason?: "stop" | "tool_calls";
   text: string;

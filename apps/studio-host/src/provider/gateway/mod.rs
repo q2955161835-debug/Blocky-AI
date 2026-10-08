@@ -3,6 +3,7 @@ mod budget;
 mod endpoint;
 mod protocol;
 mod structured;
+mod stream;
 mod images;
 use super::ProviderHost;
 pub use endpoint::validate_endpoint;
@@ -74,6 +75,14 @@ pub(crate) fn execute(
     before_send: &mut dyn FnMut() -> Result<(), String>,
     observe: &mut dyn FnMut(&[u8]),
 ) -> Result<Value, String> {
+    execute_stream(root, request, bound, cancel, before_send, observe, None)
+}
+pub(crate) fn execute_stream(
+    root: &Path, request: &GatewayRequest, bound: &binding::Binding,
+    cancel: &std::sync::atomic::AtomicBool,
+    before_send: &mut dyn FnMut() -> Result<(), String>, observe: &mut dyn FnMut(&[u8]),
+    mut on_delta: Option<&mut dyn FnMut(Value) -> Result<(), String>>,
+) -> Result<Value, String> {
     budget::run(cancel, request.timeout_ms, |cancel| {
         let began = Instant::now();
         let cancelled = || {
@@ -126,16 +135,29 @@ pub(crate) fn execute(
                 .timeout(Duration::from_millis(remaining))
                 .build()
                 .map_err(|_| "BLK-PROVIDER-TRANSPORT")?;
-            let bytes = super::transport::exchange_headers_using(
+            let streaming = on_delta.is_some();
+            let mut body = bound.body(root, request)?;
+            if streaming { body["stream"] = true.into(); body["stream_options"] = serde_json::json!({"include_usage":true}); }
+            let mut stream = stream::Stream::default();
+            let mut chunk = |bytes: &[u8]| {
+                if let Some(emit) = on_delta.as_deref_mut() {
+                    stream.feed(bytes, emit)?;
+                    if let Some(metadata) = stream.metadata_snapshot() { observe(&metadata); }
+                    Ok(())
+                } else { Ok(()) }
+            };
+            let bytes = super::transport::exchange_headers_stream_using(
                 client,
                 endpoint.as_str(),
-                &bound.body(root,request)?,
+                &body,
                 remaining,
                 std::str::from_utf8(key).map_err(|_| "BLK-MODEL-CONFIG")?,
                 Some(&bound.headers),
                 cancel,
                 &mut ||{images::validate(root,request)?;before_send()},
+                &mut chunk,
             )?;
+            let bytes = if streaming { stream.complete()? } else { bytes };
             observe(&bytes);
             cancelled()?;
             images::validate(root,request)?;

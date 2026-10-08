@@ -1,5 +1,9 @@
-import type { CodingEvent, CodingTool } from "@blocky/builder-protocol";
-
+import type {
+  CodingActivity,
+  CodingEvent,
+  CodingTool,
+} from "@blocky/builder-protocol";
+import { updateCodingActivity } from "../composition/codingActivity";
 const toolNames: Record<CodingTool, string> = {
   workspace_list: "查看文件",
   workspace_search: "搜索代码",
@@ -10,56 +14,97 @@ const toolNames: Record<CodingTool, string> = {
   blocky_cli: "运行 Blocky CLI",
   project_context: "查看项目",
 };
-
-/** Tool metadata stays outside the conversation; never render arguments or tool output. */
+const statusTitles = {
+  started: "进行中",
+  completed: "已完成",
+  failed: "失败",
+  cancelled: "已停止",
+};
+/** Each reply owns its thinking and safe call metadata in the same scrolling flow. */
 export function CodingTrace({
   events,
-  busy,
-  stopping,
+  activity,
+  thinking,
+  busy = false,
+  stopping = false,
+  activityTruncated = 0,
+  thinkingTruncated = false,
+  label = "构建助手调用轨迹",
 }: {
-  events: CodingEvent[];
-  busy: boolean;
-  stopping: boolean;
+  events?: CodingEvent[];
+  activity?: CodingActivity[];
+  thinking?: string;
+  busy?: boolean;
+  stopping?: boolean;
+  activityTruncated?: number;
+  thinkingTruncated?: boolean;
+  label?: string;
 }) {
-  const calls = new Map<string, CodingEvent>();
-  for (const event of events) {
-    if (!event.tool || !event.kind.startsWith("tool.")) continue;
-    calls.set(event.callId ?? `event-${event.sequence}`, event);
-  }
-  if (!busy && !calls.size) return null;
-  const latest = [...calls.values()].at(-1);
-  const label = (event: CodingEvent) =>
-    event.kind === "tool.started"
-      ? "进行中"
-      : event.kind === "tool.failed"
-        ? "失败"
-        : "已完成";
+  const calls =
+    activity ??
+    (events ?? []).reduce(
+      (previous, event) => updateCodingActivity(previous, event).activity,
+      [] as CodingActivity[],
+    );
+  if (
+    !busy &&
+    !calls.length &&
+    !thinking &&
+    !activityTruncated &&
+    !thinkingTruncated
+  )
+    return null;
+  const latest = calls.at(-1);
   return (
-    <section className="coding-trace" aria-label="构建助手调用轨迹">
+    <section className="coding-trace" aria-label={label}>
       {busy && (
         <p className="builder-chat-progress" role="status">
           {stopping
             ? "正在停止并结算任务…"
-            : latest?.tool
-              ? `${toolNames[latest.tool]} · ${label(latest)}`
+            : latest
+              ? `${toolNames[latest.tool]} · ${statusTitles[latest.status]}`
               : "正在处理任务…"}
         </p>
       )}
-      {calls.size > 0 && (
+      {(thinking || thinkingTruncated) && (
+        <details className="coding-thinking" open={busy || undefined}>
+          <summary>思考{busy ? " · 进行中" : ""}</summary>
+          {thinking && <p className="coding-thinking-text">{thinking}</p>}
+          {thinkingTruncated && (
+            <p className="coding-history-note">思考记录已截断</p>
+          )}
+        </details>
+      )}
+      {(calls.length > 0 || activityTruncated > 0) && (
         <details className="coding-tool-history">
-          <summary>调用轨迹 · {calls.size} 项操作</summary>
+          <summary>
+            调用轨迹 · {calls.length} 项操作
+            {activityTruncated
+              ? ` · ${activityTruncated} 项较早操作已裁剪`
+              : ""}
+          </summary>
           <ol>
-            {[...calls.entries()].map(([id, event]) => (
-              <li key={id}>
+            {calls.map((call) => (
+              <li key={call.callId} data-call-state={call.status}>
                 <span aria-hidden="true">
-                  {event.kind === "tool.failed"
+                  {call.status === "failed"
                     ? "!"
-                    : event.kind === "tool.started"
+                    : call.status === "started"
                       ? "◌"
-                      : "✓"}
+                      : call.status === "cancelled"
+                        ? "■"
+                        : "✓"}
                 </span>{" "}
-                {toolNames[event.tool!]} · {label(event)}
-                {event.code && `（${event.code}）`}
+                {toolNames[call.tool]} · {statusTitles[call.status]}
+                {call.code && `（${call.code}）`}
+                {call.command && (
+                  <code className="coding-command">{call.command}</code>
+                )}
+                {call.exitCode !== undefined && (
+                  <small className="coding-exit-code">
+                    退出码 {call.exitCode}
+                  </small>
+                )}
               </li>
             ))}
           </ol>

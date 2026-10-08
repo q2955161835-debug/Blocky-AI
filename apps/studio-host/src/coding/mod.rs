@@ -1,4 +1,5 @@
 mod cli;
+mod events;
 mod files;
 mod process;
 mod session;
@@ -9,6 +10,8 @@ pub mod workspace_session;
 pub use session::{native_reply, session_main};
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod stream_tests;
 use crate::provider::builder_model::BuilderModel;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -50,6 +53,8 @@ pub struct CodingStart {
     pub prompt: String,
     pub original_json: String,
     pub resource_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reasoning_effort: Option<String>,
     pub selection: Vec<String>,
     pub conversation: Vec<Message>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -76,6 +81,7 @@ impl CodingStart {
                 .as_ref()
                 .is_some_and(|s| s.len() > 200 || !crate::project_store::stable(s))
             || self.prompt.trim().is_empty()
+            || self.reasoning_effort.as_deref().is_some_and(|effort| !["none", "low", "high", "max"].contains(&effort))
             || self.prompt.encode_utf16().count() > 16000
             || self.original_json.len() > 8 * 1024 * 1024
             || self.selection.len() > 100
@@ -174,7 +180,7 @@ impl CodingHost {
             &start.request_id,
             &start.project_id,
             &start.resource_id,
-        )?;
+        )?.with_reasoning(root, start.reasoning_effort.as_deref())?;
         let digest = self.approval_digest(start, &model)?;
         Ok(
             json!({"requestDigest":digest,"provider":model.provider(),"modelId":model.model(),"destination":model.destination(root)?,"projectName":p["manifest"]["displayName"],"workspace":scope.as_ref().and_then(|s|s.root.file_name()).and_then(|s|s.to_str()).unwrap_or("未选择目录"),"maxTurns":4096,"maxOutputTokens":model.max_output_tokens(),"task":start.prompt.chars().take(300).collect::<String>()}),
@@ -201,7 +207,7 @@ impl CodingHost {
             &start.request_id,
             &start.project_id,
             &start.resource_id,
-        )?;
+        )?.with_reasoning(&root, start.reasoning_effort.as_deref())?;
         if self.approval_digest(&start, &binding)? != approval {
             return Err("BLK-PERM-001".into());
         }
@@ -366,7 +372,7 @@ impl CodingHost {
             "project_context" => {
                 fields(args, &[])?;
                 Ok(
-                    json!({"project":cli.project,"moduleId":start.module_id,"selection":start.selection,"runtimeContext":start.runtime_context,"capabilities":{"projectContext":true,"blockyCli":true,"workspaceFiles":scope.is_some()}}),
+                    json!({"project":cli.project,"moduleId":start.module_id,"selection":start.selection,"runtimeContext":start.runtime_context,"capabilities":{"projectContext":true,"blockyCli":true,"inlineJson":true,"isolatedPatch":true,"workspaceFiles":scope.is_some(),"cliCommands":["--version","command list","schema list","schema show","catalog list","catalog show","project inspect","project validate","project compile","project map","project configure","project edit","surface list","run preflight","patch create","patch preview","patch apply"]}}),
                 )
             }
             "blocky_cli" => {

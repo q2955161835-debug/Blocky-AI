@@ -12,8 +12,6 @@ import "./ChatLayout.css";
 const MIN_TEXTAREA_HEIGHT = 54;
 const HANDLE_HEIGHT = 8;
 const TOOLBAR_HEIGHT = 28;
-const FORM_CHROME_HEIGHT = 2 + 7 + HANDLE_HEIGHT + TOOLBAR_HEIGHT;
-const DEFAULT_FORM_HEIGHT = FORM_CHROME_HEIGHT + MIN_TEXTAREA_HEIGHT;
 
 export function ChatComposer({
   value,
@@ -40,6 +38,8 @@ export function ChatComposer({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(TOOLBAR_HEIGHT);
   const [panelHeight, setPanelHeight] = useState(0);
   const [manualHeight, setManualHeight] = useState<number | null>(null);
   const [contentHeight, setContentHeight] = useState(MIN_TEXTAREA_HEIGHT);
@@ -55,6 +55,13 @@ export function ChatComposer({
       setPanelHeight((current) =>
         current === nextHeight ? current : nextHeight,
       );
+      const height =
+        toolbarRef.current?.getBoundingClientRect().height ||
+        toolbarRef.current?.clientHeight ||
+        TOOLBAR_HEIGHT;
+      setToolbarHeight((current) =>
+        current === height ? current : Math.max(TOOLBAR_HEIGHT, height),
+      );
     };
 
     measure();
@@ -63,6 +70,7 @@ export function ChatComposer({
         ? null
         : new ResizeObserver(measure);
     observer?.observe(panel);
+    if (toolbarRef.current) observer?.observe(toolbarRef.current);
     window.addEventListener("resize", measure);
     return () => {
       observer?.disconnect();
@@ -70,11 +78,13 @@ export function ChatComposer({
     };
   }, []);
 
-  const maxHeight = panelHeight > 0 ? Math.floor(panelHeight * 0.4) : null;
-  const minHeight = Math.min(
-    DEFAULT_FORM_HEIGHT,
-    maxHeight ?? DEFAULT_FORM_HEIGHT,
-  );
+  const formChromeHeight = 2 + 7 + HANDLE_HEIGHT + toolbarHeight;
+  const defaultFormHeight = formChromeHeight + MIN_TEXTAREA_HEIGHT;
+  const maxHeight =
+    panelHeight > 0
+      ? Math.max(defaultFormHeight, Math.floor(panelHeight * 0.4))
+      : null;
+  const minHeight = Math.min(defaultFormHeight, maxHeight ?? defaultFormHeight);
   const maxDragHeight = Math.max(
     minHeight,
     maxHeight ?? Number.MAX_SAFE_INTEGER,
@@ -91,10 +101,10 @@ export function ChatComposer({
     );
     const preferredHeight = Math.max(minHeight, manualHeight ?? minHeight);
     const naturalHeight = value
-      ? Math.max(preferredHeight, FORM_CHROME_HEIGHT + nextContentHeight)
+      ? Math.max(preferredHeight, formChromeHeight + nextContentHeight)
       : preferredHeight;
     const nextFormHeight = Math.min(maxHeight ?? naturalHeight, naturalHeight);
-    textarea.style.height = `${Math.max(0, nextFormHeight - FORM_CHROME_HEIGHT)}px`;
+    textarea.style.height = `${Math.max(0, nextFormHeight - formChromeHeight)}px`;
 
     if (document.activeElement === textarea) {
       if (
@@ -110,14 +120,21 @@ export function ChatComposer({
     setContentHeight((current) =>
       current === nextContentHeight ? current : nextContentHeight,
     );
-  }, [manualHeight, maxHeight, minHeight, panelHeight, value]);
+  }, [
+    manualHeight,
+    maxHeight,
+    minHeight,
+    panelHeight,
+    formChromeHeight,
+    value,
+  ]);
 
   const preferredHeight = Math.max(minHeight, manualHeight ?? minHeight);
   const naturalHeight = value
-    ? Math.max(preferredHeight, FORM_CHROME_HEIGHT + contentHeight)
+    ? Math.max(preferredHeight, formChromeHeight + contentHeight)
     : preferredHeight;
   const formHeight = Math.min(maxHeight ?? naturalHeight, naturalHeight);
-  const textareaHeight = Math.max(0, formHeight - FORM_CHROME_HEIGHT);
+  const textareaHeight = Math.max(0, formHeight - formChromeHeight);
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -159,7 +176,9 @@ export function ChatComposer({
         placeholder={placeholder}
         style={{ height: `${textareaHeight}px`, resize: "none" }}
       />
-      <div className="chat-composer-toolbar">{children}</div>
+      <div className="chat-composer-toolbar" ref={toolbarRef}>
+        {children}
+      </div>
     </form>
   );
 }

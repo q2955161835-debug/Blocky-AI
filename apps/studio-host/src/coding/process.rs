@@ -1,6 +1,7 @@
 use super::{
     CodingHost, CodingStart,
     cli::Cli,
+    events::EventLog,
     files::{Scope, digest},
 };
 use crate::provider::builder_model::BuilderModel;
@@ -124,11 +125,10 @@ pub(super) fn run(
     let began = Instant::now();
     let id = &start.request_id;
     let mut turn = 0;
-    let mut sequence = 0;
     let mut count = 0;
     let mut used = HashSet::new();
     let mut changes = Vec::new();
-    let mut events = Vec::new();
+    let mut events = EventLog::new(start);
     let mut generations = Vec::new();
     let mut network = false;
     let result = (|| {
@@ -159,6 +159,7 @@ pub(super) fn run(
             match frame["kind"].as_str() {
                 Some("provider.call") => {
                     keys(&frame, &["turn", "messages"])?;
+                    events.begin_generation()?;
                     turn += 1;
                     if turn > 4096 || frame["turn"].as_u64() != Some(turn) {
                         return Err("BLK-CODING-BUDGET".into());
@@ -168,7 +169,7 @@ pub(super) fn run(
                     if crate::builder::contains_credentials(&frame["messages"]) {
                         return Err("BLK-CODING-INPUT".into());
                     }
-                    let generated = binding.generate(
+                    let generated = binding.generate_stream(
                         root,
                         frame["messages"].clone(),
                         remaining,
@@ -180,6 +181,10 @@ pub(super) fn run(
                                 host.note_external_call(id)?;
                             }
                             Ok(())
+                        },
+                        &mut |delta| {
+                            if cancel.load(Ordering::SeqCst) { return Err("BLK-CODING-CANCELLED".into()); }
+                            events.delta(delta, on_event)
                         },
                     );
                     match generated {
@@ -254,54 +259,11 @@ pub(super) fn run(
                 }
                 Some("event") => {
                     keys(&frame, &["event"])?;
-                    let event = &frame["event"];
-                    let fields = [
-                        "schemaVersion",
-                        "requestId",
-                        "projectId",
-                        "sequence",
-                        "kind",
-                        "tool",
-                        "callId",
-                        "text",
-                        "code",
-                        "change",
-                    ];
-                    if event
-                        .as_object()
-                        .is_none_or(|e| e.keys().any(|k| !fields.contains(&k.as_str())))
-                        || event["schemaVersion"] != "blocky.coding-event/v1"
-                        || event["requestId"] != *id
-                        || event["projectId"] != start.project_id
-                        || event["sequence"].as_u64() != Some(sequence + 1)
-                        || events.len() >= 262144
-                        || crate::builder::contains_credentials(event)
-                    {
-                        return Err(ERROR.into());
-                    }
-                    if let Some(tool) = event.get("tool") {
-                        if tool.as_str().is_none_or(|t| !super::TOOLS.contains(&t)) {
-                            return Err(ERROR.into());
-                        }
-                    }
-                    if let Some(text) = event.get("text") {
-                        bounded_text(text, 16384)?;
-                    }
-                    match event["kind"].as_str() {
-                        Some("text.delta" | "tool.started" | "tool.completed" | "tool.failed") => {}
-                        Some("file.changed") => {
-                            if !changes.contains(&event["change"]) {
-                                return Err(ERROR.into());
-                            }
-                        }
-                        _ => return Err(ERROR.into()),
-                    }
-                    sequence += 1;
-                    on_event(event.clone())?;
-                    events.push(event.clone());
+                    events.worker(frame["event"].clone(), &changes, on_event)?;
                 }
                 Some("complete") => {
                     keys(&frame, &["result"])?;
+                    events.begin_generation()?;
                     let mut result = frame["result"].clone();
                     let fields = [
                         "schemaVersion",
@@ -329,7 +291,7 @@ pub(super) fn run(
                         return Err(ERROR.into());
                     }
                     result["changes"] = json!(changes);
-                    result["events"] = json!(events);
+                    result["events"] = json!(events.events);
                     result["generations"] = json!(generations);
                     result["modelApiCalled"] = json!(
                         network

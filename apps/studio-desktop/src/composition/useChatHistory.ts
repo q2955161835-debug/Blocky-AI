@@ -161,7 +161,9 @@ export function useChatHistory(
       messages,
       thread: {
         ...previous.conversation.thread,
-        title: previous.conversation.messages.some(message => message.role === "user")
+        title: previous.conversation.messages.some(
+          (message) => message.role === "user",
+        )
           ? previous.conversation.thread.title
           : chatTitle(messages),
         updatedAt: new Date().toISOString(),
@@ -184,7 +186,12 @@ export function useChatHistory(
           await writeUserState("coding-chat", id, {
             schemaVersion: "blocky.coding-chat/v1",
             projectId: id,
-            messages,
+            messages: messages.map(({ id, role, text, status }) => ({
+              id,
+              role,
+              text,
+              ...(status ? { status } : {}),
+            })),
           });
       });
     void queue.current.catch(notify);

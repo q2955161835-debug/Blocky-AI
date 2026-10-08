@@ -91,6 +91,7 @@ const messageSchema = z
   .object({
     role: z.enum(["system", "user", "assistant", "tool"]),
     content: text(2 * 1024 * 1024),
+    reasoningContent: text(2 * 1024 * 1024).optional(),
     toolCalls: modelToolCallSchema.array().max(8).optional(),
     toolCallId: token(128).optional(),
     imageRefs: z
@@ -130,6 +131,7 @@ export const modelRequestSchema = z
     topP: z.number().min(0).max(1).optional(),
     outputSchema: modelOutputSchema.optional(),
     toolChoice: z.enum(["auto", "required", "none"]).optional(),
+    reasoningEffort: z.enum(["none", "low", "high", "max"]).optional(),
   })
   .strict()
   .superRefine((r, ctx) => {
@@ -149,6 +151,7 @@ export const modelRequestSchema = z
     const used = new Set<string>(),
       pending = new Set<string>();
     r.messages.forEach((m, index) => {
+      if (m.reasoningContent !== undefined && m.role !== "assistant") fail(["messages", index, "reasoningContent"]);
       if ((m.imageRefs?.length ?? 0) > 0 && m.role !== "user")
         fail(["messages", index, "imageRefs"]);
       const calls = m.toolCalls ?? [];
@@ -198,6 +201,7 @@ export const modelResponseSchema = z
   .object({
     schemaVersion: z.literal("blocky.model-response/v2"),
     text: text(2 * 1024 * 1024),
+    reasoningContent: text(2 * 1024 * 1024).optional(),
     toolCalls: modelToolCallSchema.array().max(8),
     finishReason: z.enum(["stop", "tool_calls"]),
     model: metadata.max(128),

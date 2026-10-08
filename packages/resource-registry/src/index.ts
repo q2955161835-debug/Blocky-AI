@@ -47,3 +47,5 @@ export function resolveResource(
     throw Error("BLK-RESOURCE-002");
   return validateResource(resource);
 }
+
+export { getReasoningLevels, type ReasoningEffort } from "./model-capabilities";

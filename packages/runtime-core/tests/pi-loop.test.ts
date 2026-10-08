@@ -150,3 +150,17 @@ it("enforces the last-turn limit before executing tool proposals", async () => {
   try { await expect(runPiLoop(context)).rejects.toThrow("BLK-TOOL-LOOP-LIMIT"); expect(calls).toBe(0); }
   finally { budget.dispose(); }
 });
+
+it("preserves provider reasoning through the official Pi tool round trip", async () => {
+  const requests: GenerationRequest[]=[];
+  const {context,budget}=setup(async request=>{
+    requests.push(structuredClone(request));
+    return requests.length===1 ? {...response("",[{id:"think_call",name:"tool_1",arguments:{input:"two words"}}]),reasoningContent:"Actual provider reasoning"} : response("2 words");
+  }, async()=>({words:2,characters:9,lines:1}));
+  context.reasoningEffort="max";
+  try {
+    expect(await runPiLoop(context)).toBe("2 words");
+    expect(requests.every(r=>r.reasoningEffort==="max")).toBe(true);
+    expect(requests[1].messages.find(m=>m.role==="assistant")?.reasoningContent).toBe("Actual provider reasoning");
+  } finally {budget.dispose();}
+});

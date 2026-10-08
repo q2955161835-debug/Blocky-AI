@@ -80,7 +80,8 @@ fn validate_messages_with_tools(
     let mut pending = BTreeSet::new();
     let mut used = BTreeSet::new();
     for (index, message) in messages.iter().enumerate() {
-        fields(message, &["role", "content", "tool_calls", "tool_call_id"])?;
+        fields(message, &["role", "content", "tool_calls", "tool_call_id", "reasoning_content"])?;
+        if message.get("reasoning_content").is_some_and(|v| v.as_str().is_none_or(|s| s.len() > 2 * 1024 * 1024) || message["role"] != "assistant") { return Err(ERROR.into()); }
         if message["content"].as_str().is_some_and(|s| {
             s.len()
                 > if max_messages > 32 {

@@ -19,6 +19,18 @@ export const codingTools = [
   "project_context",
 ] as const;
 export type CodingTool = (typeof codingTools)[number];
+export const reasoningEffortSchema = z.enum(["none", "low", "high", "max"]);
+export type ReasoningEffort = z.infer<typeof reasoningEffortSchema>;
+const commandLabel = z.string().max(96).regex(/^(?:--version|[a-z][a-z0-9-]*(?: [a-z][a-z0-9-]*){0,2})$/);
+export const codingActivitySchema = z.object({
+  callId: z.string().min(1).max(128),
+  tool: z.enum(codingTools),
+  status: z.enum(["started", "completed", "failed", "cancelled"]),
+  code: z.string().regex(/^BLK-[A-Z0-9-]+$/).max(128).optional(),
+  command: commandLabel.optional(),
+  exitCode: z.number().int().min(-2147483648).max(2147483647).optional(),
+}).strict();
+export type CodingActivity = z.infer<typeof codingActivitySchema>;
 export const codingConversationSchema = z
   .array(
     z
@@ -87,6 +99,7 @@ export const codingStartSchema = z
     prompt: z.string().trim().min(1).max(16000),
     originalJson: z.string().max(8 * 1024 * 1024),
     resourceId: id,
+    reasoningEffort: reasoningEffortSchema.optional(),
     selection: z
       .array(id)
       .max(100)
@@ -123,6 +136,12 @@ export const codingMessageSchema = z
         "stale",
       ])
       .optional(),
+    thinking: z.string().max(2 * 1024 * 1024)
+      .refine(text => new TextEncoder().encode(text).length <= 2 * 1024 * 1024)
+      .refine(text => !containsCredential(text)).optional(),
+    activity: z.array(codingActivitySchema).max(200).optional(),
+    activityTruncated: z.number().int().min(0).max(65536).optional(),
+    thinkingTruncated: z.boolean().optional(),
   })
   .strict();
 export type CodingMessage = z.infer<typeof codingMessageSchema>;
@@ -194,6 +213,7 @@ export const codingEventSchema = z
     sequence: z.number().int().positive(),
     kind: z.enum([
       "text.delta",
+      "thinking.delta",
       "tool.started",
       "tool.completed",
       "tool.failed",
@@ -201,6 +221,8 @@ export const codingEventSchema = z
     ]),
     tool: z.enum(codingTools).optional(),
     callId: z.string().min(1).max(128).optional(),
+    command: commandLabel.optional(),
+    exitCode: z.number().int().min(-2147483648).max(2147483647).optional(),
     text: z.string().max(16384).optional(),
     code: z
       .string()

@@ -98,7 +98,7 @@
   },
   {
     "name": "blocky_cli",
-    "description": "Run actual Blocky CLI using a string argument array. Start with [\"--version\",\"--json\"] and [\"command\",\"list\",\"--json\"], not --help or a Shell string. JSON output is automatic. Use $project as the isolated project input and mutation output. Configure a field with project configure $project --module ID --block ID --field NAME --value TEXT --output $project. BLK-CODING-CLI-ARGS means invalid arguments or an unsupported command, not missing permissions. For --patch/--operations, use a workspace relative JSON file or $json:<compact JSON>. Only deterministic commands; no Shell or nested builder tasks.",
+    "description": "Run actual Blocky CLI using a string argument array. Discover --version, command list, schema list/show and catalog. JSON output is automatic. $project is the isolated project input and mutation output, independent of workspace permissions. Create blocks using patch create $project --operations $json:<JSON operations document> --output $patch; then patch preview/apply $project --patch $patch (apply needs --output $project); finally project compile. $patch references the latest isolated patch, and $json: accepts valid compact or multiline JSON. project edit only edits/copies existing selections. Configure a field with project configure $project --module ID --block ID --field NAME --value TEXT --output $project. A nonzero exitCode is a failed command. BLK-CODING-CLI-ARGS means invalid arguments or unsupported command, not missing permissions. Only deterministic commands; no Shell or nested builder tasks.",
     "parameters": {
       "type": "object",
       "properties": {

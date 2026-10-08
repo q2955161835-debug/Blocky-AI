@@ -63,6 +63,7 @@ impl Binding {
         {
             return Err(ERROR.into());
         }
+        if r.reasoning_effort.as_deref().is_some_and(|e| e != "none") && !(matches!(provider, "deepseek" | "xirang") && ["deepseek-flash", "deepseek-v4-flash", "deepseek-v4-pro"].contains(&model)) { return Err("BLK-MODEL-CAPABILITY".into()); }
         let capabilities = d["capabilities"].as_array().ok_or(ERROR)?;
         if !capabilities.contains(&json!("text"))
             || (r.messages.iter().any(|m|!m.image_refs.is_empty())&&!capabilities.contains(&json!("image")))

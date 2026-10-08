@@ -3,6 +3,7 @@ import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { useChatHistory } from "../../apps/studio-desktop/src/composition/useChatHistory";
 import { writeUserState } from "../../apps/studio-desktop/src/composition/userState";
+import { boundedChatMessages } from "../../apps/studio-desktop/src/composition/chatHistory";
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => false }));
 afterEach(() => {
   cleanup();
@@ -13,6 +14,32 @@ const user = (text: string) => ({
   id: crypto.randomUUID(),
   role: "user" as const,
   text,
+});
+it("retains the newest reply body and recent calls when thinking exceeds the history budget", () => {
+  const retained = boundedChatMessages([
+    {
+      id: "large-answer",
+      role: "assistant",
+      text: "😀".repeat(524288),
+      thinking: "😀".repeat(524288),
+      activity: Array.from({ length: 202 }, (_, index) => ({
+        callId: `call-${index}`,
+        tool: "blocky_cli" as const,
+        status: "completed" as const,
+        command: "blocky project validate",
+        exitCode: 0,
+      })),
+    },
+  ]);
+  expect(retained).toHaveLength(1);
+  expect(retained[0].text).toBe("😀".repeat(524288));
+  expect(retained[0].activity).toHaveLength(200);
+  expect(retained[0].activity?.[0].callId).toBe("call-2");
+  expect(retained[0].activityTruncated).toBe(2);
+  expect(retained[0].thinkingTruncated).toBe(true);
+  expect(
+    new TextEncoder().encode(JSON.stringify(retained)).length,
+  ).toBeLessThanOrEqual(4 * 1024 * 1024);
 });
 it("archives the legacy conversation before creating another and restores both after reopening", async () => {
   await writeUserState("coding-chat", "project", {
@@ -101,11 +128,18 @@ it("does not replace an unreadable history with an empty new conversation", asyn
   ).toBe("unknown");
 });
 it("keeps the original searchable title after the bounded transcript rotates", async () => {
-  const hook=renderHook(()=>useChatHistory("project","agent",vi.fn()));
-  await waitFor(()=>expect(hook.result.current.ready).toBe(true));
-  act(()=>hook.result.current.update("project",()=>[user("最初的会话主题")]));
-  act(()=>hook.result.current.update("project",messages=>[...messages,...Array.from({length:40},(_,i)=>user(`后续问题${i}`))]));
-  await act(()=>hook.result.current.flush());
+  const hook = renderHook(() => useChatHistory("project", "agent", vi.fn()));
+  await waitFor(() => expect(hook.result.current.ready).toBe(true));
+  act(() =>
+    hook.result.current.update("project", () => [user("最初的会话主题")]),
+  );
+  act(() =>
+    hook.result.current.update("project", (messages) => [
+      ...messages,
+      ...Array.from({ length: 40 }, (_, i) => user(`后续问题${i}`)),
+    ]),
+  );
+  await act(() => hook.result.current.flush());
   expect(hook.result.current.messages).toHaveLength(40);
   expect(hook.result.current.threads[0].title).toBe("最初的会话主题");
 });

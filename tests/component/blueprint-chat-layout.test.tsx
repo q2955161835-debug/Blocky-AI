@@ -136,6 +136,41 @@ describe("blueprint dock", () => {
 });
 
 describe("chat composer", () => {
+  it("reserves measured toolbar height when model and effort controls wrap in a narrow panel", () => {
+    vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockImplementation(
+      function (this: HTMLElement) {
+        return this.classList.contains("chat-composer-toolbar") ? 64 : 0;
+      },
+    );
+    render(
+      <div className="chat-panel">
+        <ChatComposer
+          value="draft"
+          onChange={vi.fn()}
+          onSubmit={vi.fn()}
+          label="窄栏输入"
+          placeholder="输入"
+        >
+          <select aria-label="模型">
+            <option>模型</option>
+          </select>
+          <select aria-label="思考等级">
+            <option>关闭</option>
+          </select>
+        </ChatComposer>
+      </div>,
+    );
+    const form = screen.getByRole("form", {
+      name: "窄栏输入输入区",
+    }) as HTMLFormElement;
+    const input = screen.getByRole("textbox", {
+      name: "窄栏输入",
+    }) as HTMLTextAreaElement;
+    expect(
+      parseFloat(form.style.height) - parseFloat(input.style.height),
+    ).toBeGreaterThanOrEqual(64 + 8 + 7 + 2);
+    expect(input.value).toBe("draft");
+  });
   it("submits through its form, forwards edits, and puts the toolbar inside the capped composer", () => {
     const onSubmit = vi.fn();
     const onChange = vi.fn();

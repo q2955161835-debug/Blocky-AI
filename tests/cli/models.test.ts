@@ -36,6 +36,19 @@ const response = {
   usage: null,
 };
 const signal = new AbortController().signal;
+it("round-trips request effort and provider reasoning without dropping tool history", async () => {
+  const value = { ...request, reasoningEffort: "high", messages: [
+    { role: "user", content: "Check" },
+    { role: "assistant", content: "Checked", reasoningContent: "Provider thinking" },
+  ] };
+  mocks.read.mockResolvedValue(value);
+  mocks.native.mockResolvedValue({ ...response, reasoningContent: "Returned thinking" });
+  const result = await modelCommand(parse(["model", "generate", "--request", "request.json", "--approve", "a".repeat(64)]), signal);
+  expect(mocks.native).toHaveBeenCalledWith("provider-model-call", expect.objectContaining({ request: value }), signal);
+  expect(result?.result.data).toMatchObject({ reasoningContent: "Returned thinking" });
+  expect(modelRequestSchema.safeParse({ ...value, reasoningEffort: "unknown" }).success).toBe(false);
+  expect(modelRequestSchema.safeParse({ ...value, messages: [{ role: "user", content: "x", reasoningContent: "forged" }] }).success).toBe(false);
+});
 it("accepts camelCase and Unicode JSON property names while retaining the resource ID rules", () => {
   expect(
     modelRequestSchema.safeParse({

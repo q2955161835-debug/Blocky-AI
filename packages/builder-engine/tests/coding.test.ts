@@ -32,6 +32,25 @@ const call = (id: string, name: string, args: unknown = {}) => ({
   name,
   arguments: args,
 });
+it("retains provider thinking through a tool follow-up and reports CLI failure accurately", async () => {
+  const result = await runCodingAgent(start, {
+    modelId: "fixture",
+    executeTool: async () => ({ exitCode: 1, output: [{ ok: false, error: { code: "BLK-PATCH-001", message: "Invalid patch" } }] }),
+    generate: async ({ turn, messages }) => {
+      if (turn === 1) return generation([
+        { type: "thinking", thinking: "先核对积木结构。" },
+        { type: "text", text: "正在核对。" },
+        call("compile-first", "blocky_cli", { args: ["project", "compile", "$project", "--json"] }),
+      ]);
+      expect(messages.find(message => message.role === "assistant")?.reasoning_content).toBe("先核对积木结构。");
+      expect(messages.find(message => message.tool_call_id === "compile-first")?.content).toContain("BLK-PATCH-001");
+      return generation([{ type: "text", text: "编译失败，需要修复。" }]);
+    },
+  });
+  expect(result.events.find(event => event.kind === "thinking.delta")?.text).toBe("先核对积木结构。");
+  expect(result.events.find(event => event.kind === "tool.failed")).toMatchObject({ command: "project compile", exitCode: 1, code: "BLK-PATCH-001" });
+  expect(result.events.some(event => event.kind === "tool.completed")).toBe(false);
+});
 it("receives the current unselected canvas structure on its first model turn", async () => {
   const project = createStarter();
   project.workspaces["research-agent"].blocks.blocks[0].fields!.ROLE = "当前画布的新角色";

@@ -18,7 +18,8 @@ import "./BuilderChat.css";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
-import {RunModelChoice} from "./RunModelChoice";
+import { RunModelChoice } from "./RunModelChoice";
+import { CodingTrace } from "./CodingTrace";
 export function RunPanel({
   studio: s,
   execute,
@@ -82,6 +83,13 @@ export function RunPanel({
                       : "回答"}
                 </span>
                 <ChatMarkdown text={message.text} />
+                <CodingTrace
+                  label="Blocky Agent 调用轨迹"
+                  activity={message.activity}
+                  thinking={message.thinking}
+                  activityTruncated={message.activityTruncated}
+                  thinkingTruncated={message.thinkingTruncated}
+                />
               </>
             )}
           </article>
@@ -102,7 +110,9 @@ export function RunPanel({
                     ? "等待工作流处理"
                     : "回答"}
             </span>
-            <ChatMarkdown text={s.result.answer || "请在运行日志中查看详情。"} />
+            <ChatMarkdown
+              text={s.result.answer || "请在运行日志中查看详情。"}
+            />
             <RunOutputs key={s.result.events[0]?.runId} result={s.result} />
             {s.result.citations.length > 0 && (
               <details>
@@ -131,7 +141,12 @@ export function RunPanel({
         )}
 
         {(s.running || s.events.length > 0) && (
-          <TracePanel key={s.events[0]?.runId} studio={s} onContext={onTraceContext} initiallyOpen />
+          <TracePanel
+            key={s.events[0]?.runId}
+            studio={s}
+            onContext={onTraceContext}
+            initiallyOpen
+          />
         )}
         {!entries.length && (
           <p className="chat-inline-hint">添加交互入口后即可对话。</p>
@@ -142,17 +157,20 @@ export function RunPanel({
         {context}
       </ChatPopover>
       <ChatPopover menu={menu} kind="settings" label="Blocky Agent 设置">
-        <RunSettings
-          studio={s}
-          execute={execute}
-        >
+        <RunSettings studio={s} execute={execute}>
           {settings}
         </RunSettings>
       </ChatPopover>
       <ChatComposer
         label="向 Agent 提问"
         value={s.question}
-        disabled={s.running || s.busy || s.exiting || !s.agentChat?.ready || s.agentChat?.switching}
+        disabled={
+          s.running ||
+          s.busy ||
+          s.exiting ||
+          !s.agentChat?.ready ||
+          s.agentChat?.switching
+        }
         onChange={s.setQuestion}
         onSubmit={submit}
         maxLength={16000}
@@ -172,7 +190,7 @@ export function RunPanel({
         <ChatMenuButton menu={menu} kind="add" label="Blocky Agent 添加上下文">
           ＋
         </ChatMenuButton>
-        <RunModelChoice studio={s} compact/>
+        <RunModelChoice studio={s} compact />
         <span className="chat-toolbar-spacer" />
         {s.running ? (
           <button

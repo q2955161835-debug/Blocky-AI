@@ -16,6 +16,9 @@ it("persists appearance and builder choice without modifying legacy settings", a
   act(() => first.result.current.change("theme", "light"));
   act(() => first.result.current.change("fontSize", 18));
   act(() => first.result.current.change("builderModelId", "model-test"));
+  act(() => first.result.current.change("agentModelId", "agent-model-test"));
+  act(() => first.result.current.change("builderReasoningEffort", "high"));
+  act(() => first.result.current.change("agentReasoningEffort", "low"));
   await act(() => first.result.current.flush());
   expect(localStorage.getItem("blocky.settings.app")).toBe(legacy);
   first.unmount();
@@ -25,6 +28,9 @@ it("persists appearance and builder choice without modifying legacy settings", a
       theme: "light",
       fontSize: 18,
       builderModelId: "model-test",
+      agentModelId: "agent-model-test",
+      builderReasoningEffort: "high",
+      agentReasoningEffort: "low",
     }),
   );
 });

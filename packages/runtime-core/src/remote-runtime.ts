@@ -35,7 +35,7 @@ function parse(input: unknown) {
     workflowKeys(
       value.options,
       [],
-      ["moduleId", "debug", "userRegistry", "workflowTaskId", "conversationId"],
+      ["moduleId", "debug", "userRegistry", "workflowTaskId", "conversationId", "reasoningEffort"],
     );
     const options = value.options;
     for (const key of ["moduleId", "workflowTaskId", "conversationId"])
@@ -46,6 +46,7 @@ function parse(input: unknown) {
     )
       throw invalid();
     if (typeof options.conversationId === "string" && options.conversationId.length > 128) throw invalid();
+    if (options.reasoningEffort !== undefined && (typeof options.reasoningEffort !== "string" || !["none", "low", "high", "max"].includes(options.reasoningEffort))) throw invalid();
     let debug:
       | {
           breakpoints?: { moduleId: string; blockId: string }[];
@@ -94,6 +95,7 @@ function parse(input: unknown) {
         moduleId: options.moduleId as string | undefined,
         workflowTaskId: options.workflowTaskId as string | undefined,
         conversationId: options.conversationId as string | undefined,
+        reasoningEffort: options.reasoningEffort as "none" | "low" | "high" | "max" | undefined,
         debug,
         userRegistry: registry,
       },

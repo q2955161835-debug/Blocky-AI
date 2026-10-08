@@ -20,6 +20,8 @@ import {
   type CodingResult,
   type CodingChange,
   type CodingRuntimeContext,
+  codingTextBytePrefix,
+  type CodingActivity,
 } from "@blocky/builder-protocol";
 import type { Studio } from "./useStudio";
 import {
@@ -27,6 +29,8 @@ import {
   useCodingChat,
   type CodingMessage,
 } from "./useCodingChat";
+import { updateCodingActivity } from "./codingActivity";
+import { fitCodingMessage } from "./chatHistory";
 
 type Workspace = { workspaceId: string; displayName: string };
 export type CodingProjectReview = {
@@ -60,16 +64,13 @@ function runtimeContext(studio: Studio): CodingRuntimeContext {
   });
   const recentEvents = studio.events
     .filter(
-      (event) =>
-        event.projectId === studio.snapshot.project.manifest.projectId,
+      (event) => event.projectId === studio.snapshot.project.manifest.projectId,
     )
     .map((event) => ({
       type: event.type,
       ...(stableContextId(event.moduleId) ? { moduleId: event.moduleId } : {}),
       ...(stableContextId(event.blockId) ? { blockId: event.blockId } : {}),
-      ...(stableContextCode(event.data.code)
-        ? { code: event.data.code }
-        : {}),
+      ...(stableContextCode(event.data.code) ? { code: event.data.code } : {}),
     }));
   const context = {
     diagnostics: diagnostics.slice(-20),
@@ -130,6 +131,10 @@ export function useCodingAgent(studio: Studio) {
     [projectReview, setProjectReview] = useState<CodingProjectReview>();
   const [error, setError] = useState(""),
     [liveText, setLiveText] = useState(""),
+    [liveThinking, setLiveThinking] = useState(""),
+    [liveActivity, setLiveActivity] = useState<CodingActivity[]>([]),
+    [activityTruncated, setActivityTruncated] = useState(0),
+    [thinkingTruncated, setThinkingTruncated] = useState(false),
     [events, setEvents] = useState<CodingEvent[]>([]);
   const [, refresh] = useState(0);
   const visible = (owner: {
@@ -178,6 +183,10 @@ export function useCodingAgent(studio: Studio) {
       setProjectReview(undefined);
       setError("");
       setLiveText("");
+      setLiveThinking("");
+      setLiveActivity([]);
+      setActivityTruncated(0);
+      setThinkingTruncated(false);
       setEvents([]);
     } finally {
       operation.current = false;
@@ -197,6 +206,10 @@ export function useCodingAgent(studio: Studio) {
     setProjectReview(undefined);
     setError("");
     setLiveText("");
+    setLiveThinking("");
+    setLiveActivity([]);
+    setActivityTruncated(0);
+    setThinkingTruncated(false);
     setEvents([]);
     return () => {
       if (active.current?.controller === studio.controller) stop();
@@ -324,8 +337,7 @@ export function useCodingAgent(studio: Studio) {
     const changes = codingChangesSchema.parse(value.changes);
     if (workspace) folders.current.set(id, workspace);
     else folders.current.delete(id);
-    for (const change of changes)
-      remember(change, workspace?.workspaceId, id);
+    for (const change of changes) remember(change, workspace?.workspaceId, id);
     refresh((n) => n + 1);
     return workspace;
   };
@@ -452,7 +464,11 @@ export function useCodingAgent(studio: Studio) {
       };
     }
   };
-  const generate = async (input: { prompt: string; resourceId: string }) => {
+  const generate = async (input: {
+    prompt: string;
+    resourceId: string;
+    reasoningEffort?: "none" | "low" | "high" | "max";
+  }) => {
     if (
       active.current ||
       operation.current ||
@@ -485,6 +501,10 @@ export function useCodingAgent(studio: Studio) {
     setProjectReview(undefined);
     setError("");
     setLiveText("");
+    setLiveThinking("");
+    setLiveActivity([]);
+    setActivityTruncated(0);
+    setThinkingTruncated(false);
     setEvents([]);
     let workspace = folders.current.get(projectId);
     let appended = false,
@@ -492,24 +512,59 @@ export function useCodingAgent(studio: Studio) {
       streamed = "",
       streamedBytes = 0,
       fault = "";
+    let thinking = "",
+      thinkingCut = false,
+      activity: CodingActivity[] = [],
+      activityCut = 0;
     const received = new Map<number, CodingEvent>();
+    const partialAnswer = (note: string) => {
+      const suffix = `\n\n${note}`;
+      const limit =
+        agentMessageLimits.outputBytes -
+        new TextEncoder().encode(suffix).length;
+      const prefix = codingTextBytePrefix(streamed, limit);
+      const marker = "…（部分回复已截断）";
+      return prefix === streamed
+        ? [streamed, note].filter(Boolean).join("\n\n")
+        : `${codingTextBytePrefix(streamed, limit - new TextEncoder().encode(marker).length)}${marker}${suffix}`;
+    };
     const answer = (text: string, status: CodingMessage["status"]) =>
       chat.update(owner.projectId, (messages) => [
         ...messages,
-        {
-          id: `${id}-answer`,
-          role: "assistant",
-          text,
-          status,
-        },
+        fitCodingMessage(
+          {
+            id: `${id}-answer`,
+            role: "assistant",
+            text,
+            status,
+            ...(thinking ? { thinking } : {}),
+            ...(activity.length
+              ? {
+                  activity: activity.map((call) => ({
+                    ...call,
+                    status:
+                      call.status === "started"
+                        ? status === "cancelled"
+                          ? "cancelled"
+                          : "failed"
+                        : call.status,
+                  })),
+                }
+              : {}),
+            ...(activityCut ? { activityTruncated: activityCut } : {}),
+            ...(thinkingCut ? { thinkingTruncated: true } : {}),
+          },
+          agentMessageLimits.historyBytes,
+        ),
       ]);
     const receive = (raw: unknown) => {
-      if (!visible(owner)) return;
+      if (!visible(owner) || active.current !== owner) return;
       const event = codingEventSchema.parse(raw);
       if (
         event.requestId !== id ||
         event.projectId !== owner.projectId ||
         containsCredential(event.text ?? "") ||
+        containsCredential(event.command ?? "") ||
         containsCredential(JSON.stringify(event.change ?? {}))
       )
         throw Error("BLK-CODING-EVENT");
@@ -539,6 +594,23 @@ export function useCodingAgent(studio: Studio) {
         streamed += delta;
         setLiveText(streamed);
       }
+      if (event.kind === "thinking.delta") {
+        const candidate = thinking + (event.text ?? "");
+        thinking = codingTextBytePrefix(
+          candidate,
+          agentMessageLimits.outputBytes,
+        );
+        thinkingCut ||= thinking !== candidate;
+        setLiveThinking(thinking);
+        setThinkingTruncated(thinkingCut);
+      }
+      const updated = updateCodingActivity(activity, event);
+      activity = updated.activity;
+      activityCut += updated.removed;
+      if (event.kind.startsWith("tool.")) {
+        setLiveActivity(activity);
+        setActivityTruncated(activityCut);
+      }
       setEvents((previous) => [...previous, event].slice(-200));
     };
     try {
@@ -554,6 +626,9 @@ export function useCodingAgent(studio: Studio) {
         prompt: input.prompt,
         originalJson: canonicalJson(project),
         resourceId: input.resourceId,
+        ...(input.reasoningEffort
+          ? { reasoningEffort: input.reasoningEffort }
+          : {}),
         selection: s.selectedRoots.length
           ? s.selectedRoots
           : s.selected
@@ -640,7 +715,7 @@ export function useCodingAgent(studio: Studio) {
       if (owner.cancelled || !visible(owner))
         throw Error("BLK-CODING-CANCELLED");
       answer(
-        value.text || "本轮任务已完成。",
+        value.text || streamed || "本轮任务已完成。",
         review?.status === "applied"
           ? "accepted"
           : review?.status === "conflict"
@@ -673,12 +748,13 @@ export function useCodingAgent(studio: Studio) {
       if (owner.cancelled && !fault) {
         if (appended)
           answer(
-            "已停止本轮任务。已完成的文件修改可以在差异中撤回。",
+            partialAnswer("已停止本轮任务。已完成的文件修改可以在差异中撤回。"),
             "cancelled",
           );
       } else if (visible(owner)) {
         setError(code);
-        if (appended) answer(`本轮任务未完成（${code}）。`, "failed");
+        if (appended)
+          answer(partialAnswer(`本轮任务未完成（${code}）。`), "failed");
       }
     } finally {
       owner.finish();
@@ -688,6 +764,8 @@ export function useCodingAgent(studio: Studio) {
           setBusy(false);
           setStopping(false);
           setLiveText("");
+          setLiveThinking("");
+          setLiveActivity([]);
         }
       }
     }
@@ -701,6 +779,10 @@ export function useCodingAgent(studio: Studio) {
     projectReview,
     error,
     liveText,
+    liveThinking,
+    liveActivity,
+    activityTruncated,
+    thinkingTruncated,
     events,
     workspace: folders.current.get(projectId),
     changes: [...receipts.current.values()].filter(

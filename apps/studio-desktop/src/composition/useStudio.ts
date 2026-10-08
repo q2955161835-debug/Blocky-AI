@@ -316,6 +316,7 @@ export function useStudio(initialProject?: Project) {
         runInput,
         {
           moduleId: entry.moduleId,
+          reasoningEffort: settings.ui.values.agentReasoningEffort,
           ...(agentChat.activeId ? { conversationId: agentChat.activeId } : {}),
           ...(workflow ? { workflowTaskId: workflow.taskId } : {}),
           debug: { breakpoints, ...debug },
