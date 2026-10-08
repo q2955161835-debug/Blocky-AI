@@ -1,0 +1,152 @@
+{
+  "sourceCommit": "b831083bf1668d78bea83933b7b78389edb66132",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "blueprints default collapsed",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "keyboard expands blueprints",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "five starting choices",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "select 新建：知识问答助手",
+      "ok": true,
+      "data": {
+        "text": "画布大纲 · 8\n迷你地图",
+        "title": "知识问答助手\n⌄"
+      }
+    },
+    {
+      "name": "select 新建：工作助手",
+      "ok": true,
+      "data": {
+        "text": "画布大纲 · 13\n迷你地图",
+        "title": "工作助手\n⌄"
+      }
+    },
+    {
+      "name": "select 新建：Coding 助手",
+      "ok": true,
+      "data": {
+        "text": "画布大纲 · 12\n迷你地图",
+        "title": "Coding 助手\n⌄"
+      }
+    },
+    {
+      "name": "select 新建：Pi Agent",
+      "ok": true,
+      "data": {
+        "text": "画布大纲 · 6\n迷你地图",
+        "title": "Pi Agent\n⌄"
+      }
+    },
+    {
+      "name": "select 新建空白项目",
+      "ok": true,
+      "data": {
+        "text": "画布大纲 · 0\n迷你地图",
+        "title": "未命名项目\n⌄"
+      }
+    },
+    {
+      "name": "narrow blueprint area has no horizontal overflow",
+      "ok": true,
+      "data": {
+        "width": 180,
+        "scrollWidth": 180,
+        "optionsOverflow": false
+      }
+    },
+    {
+      "name": "keyboard collapses downward area",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "new window shortcut creates second native page",
+      "ok": true,
+      "data": {
+        "pages": 2
+      }
+    },
+    {
+      "name": "same profile menu discovers both works only",
+      "ok": true,
+      "data": [
+        "窗口验收乙",
+        "✓窗口验收甲",
+        "＋ 新建窗口"
+      ]
+    },
+    {
+      "name": "A saved independently",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "B saved without changing A",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "duplicate refused m-a",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "duplicate refused m-a-copy",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "new project knowledge is isolated and readable",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n资料配置\n添加资料来源，然后同步资料。\n添加并同步资料"
+    },
+    {
+      "name": "external file is not overwritten",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "save cancel retains unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "save as recovers draft without replacing external original",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "closing A leaves B alive",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "exit releases project lease",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "separators": [
+    {
+      "name": "左侧积木库宽度",
+      "min": "180"
+    },
+    {
+      "name": "右侧面板宽度",
+      "min": "240"
+    }
+  ],
+  "completed": "2026-10-08T08:58:22.697Z"
+}

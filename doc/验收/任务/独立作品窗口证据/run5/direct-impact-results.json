@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "b831083bf1668d78bea83933b7b78389edb66132",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "new package Run model choice autosaves",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "existing synced knowledge remains ready",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "live empty selection context after autosave",
+      "ok": true,
+      "data": {
+        "selectionCount": 0,
+        "moduleId": "main",
+        "role": "MULTI-WINDOW-FRESH-CONTEXT",
+        "complete": true
+      }
+    },
+    {
+      "name": "file menu creates independent window",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "different profile ordinary window started",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "different profile window excluded from discovery",
+      "ok": false,
+      "data": [
+        "Blocky Studio",
+        "✓合成法律配置验收",
+        "＋ 新建窗口"
+      ]
+    }
+  ],
+  "foreignPid": 17460,
+  "error": "Error: different profile window excluded from discovery\n    at check (file:///D:/1Folder/Blocky-AI/try/multi-window-2026-10-08/acceptance/direct-impact.mjs:5:78)\n    at file:///D:/1Folder/Blocky-AI/try/multi-window-2026-10-08/acceptance/direct-impact.mjs:15:211",
+  "syntheticResponseCount": 1
+}

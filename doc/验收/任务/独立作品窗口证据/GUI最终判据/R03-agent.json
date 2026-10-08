@@ -1,0 +1,23 @@
+{
+  "source": "6f36e71a8b4be777baca8ea08cb36da7f97cf4e1",
+  "firstStart": 1791453599047,
+  "retryStart": 1791454007255,
+  "observedEnd": 1791454195293,
+  "secondsIncludingFailedRunAndConfiguration": 596.246,
+  "retrySeconds": 188.038,
+  "runCompleted": true,
+  "finalEventSequence": 40,
+  "artifact": "D:/1Folder/Blocky-AI/作品/鹈鹕骑车Coding/index.html",
+  "modelBinding": "model-36e601b0-c0ad-4931-8ebe-f9f4c2689466",
+  "failedFirstRun": {
+    "events": 14,
+    "phase": "Pi模型决策未完成",
+    "artifactWritten": false
+  },
+  "cancelledBuilderModelLink": {
+    "error": "BLK-CODING-CLI-ARGS",
+    "applied": false
+  },
+  "bindingMethod": "GUI资源管理引用到当前项目，再Inspector选择模型并自动保存",
+  "visualInspection": "pending"
+}

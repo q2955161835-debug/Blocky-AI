@@ -1,0 +1,43 @@
+{
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows\\Blocky Studio.exe",
+    "id": 5641990,
+    "title": "刑法条文问答 — Blocky Studio"
+  },
+  "source": "6f36e71",
+  "builder": {
+    "start": 1791450772746,
+    "acceptedFileAt": "2026-10-08T17:13:56+08:00",
+    "status": "accepted",
+    "changedFields": [
+      "assistant-root.ROLE",
+      "assistant-evidence-instructions.TEXT"
+    ],
+    "failedAttempts": 2
+  },
+  "agent": {
+    "start": 1791451751872,
+    "observedEnd": 1791451843678,
+    "seconds": 91.806,
+    "trigger": "F5",
+    "resultRows": [
+      "420 列标题 对比项",
+      "421 列标题 交通肇事罪",
+      "422 列标题 危险驾驶罪",
+      "424 项 法律依据",
+      "425 项 《刑法》第一百三十三条 [source:chunk-f4dede0ec9b2fc955c67f620f5cdff77d2509c1b956ac55116715a1fcac8f23c]",
+      "426 项 《刑法》第一百三十三条之一 [source:chunk-a041d84c0f78619ff1699eeb3de1642bed8319ccc0a9abd5fd76e1bebe9662ce]",
+      "428 项 重大事故条件",
+      "429 项 违反交通运输管理法规，因而发生重大事故，致人重伤、死亡或者使公私财产遭受重大损失的 [source:chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7]",
+      "430 项 资料未覆盖",
+      "432 项 醉酒驾驶情形",
+      "433 项 资料未覆盖",
+      "434 项 醉酒驾驶机动车的，构成危险驾驶罪 [source:chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5]",
+      "436 项 法定处罚",
+      "437 项 处三年以下有期徒刑或者拘役；交通运输肇事后逃逸或者有其他特别恶劣情节的，处三年以上七年以下有期徒刑；因逃逸致人死亡的，处七年以上有期徒刑 [source:chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7]",
+      "438 项 处拘役，并处罚金 [source:chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5]",
+      "443 文本 · 输入 744 / 输出 442 Token",
+      "450 按钮 项目 #22 run.completed 项目"
+    ]
+  }
+}

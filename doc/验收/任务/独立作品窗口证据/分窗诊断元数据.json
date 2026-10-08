@@ -1,0 +1,12 @@
+[
+  {
+    "path": "logs\\windows\\54c95d46-1bc8-43b0-9484-c1e3272c655a\\diagnostics.json",
+    "bytes": 311,
+    "sha256": "547e9814c803b2f5528c27fcfd36210ac37118fd45bc894199f7e40e15862262"
+  },
+  {
+    "path": "logs\\windows\\f674c7ef-2e9b-45c9-8312-4be6b4b69928\\diagnostics.json",
+    "bytes": 401,
+    "sha256": "4090264e6f41cf80ace7c939864c26850dda28e820ae89b1c89377d60178c075"
+  }
+]

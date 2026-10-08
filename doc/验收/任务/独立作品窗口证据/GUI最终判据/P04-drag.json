@@ -1,0 +1,71 @@
+{
+  "source": "6f36e71",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows\\Blocky Studio.exe",
+    "id": 5641990,
+    "title": "Blocky Studio"
+  },
+  "at": 1791451894991,
+  "action": {
+    "from_x": 700,
+    "from_y": 23,
+    "to_x": 750,
+    "to_y": 73
+  },
+  "before": [
+    {
+      "id": "screenshot-0",
+      "originX": 0,
+      "originY": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-1",
+      "originX": 9,
+      "originY": 0,
+      "width": 1688,
+      "height": 1016
+    },
+    {
+      "id": "screenshot-2",
+      "originX": 2476,
+      "originY": 57,
+      "width": 55,
+      "height": 27
+    }
+  ],
+  "immediate": [
+    {
+      "id": "screenshot-0",
+      "originX": 0,
+      "originY": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-1",
+      "originX": 9,
+      "originY": 0,
+      "width": 1688,
+      "height": 1016
+    }
+  ],
+  "after": [
+    {
+      "id": "screenshot-0",
+      "originX": 0,
+      "originY": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-1",
+      "originX": 9,
+      "originY": 0,
+      "width": 1688,
+      "height": 1016
+    }
+  ],
+  "interveningInputs": 0
+}

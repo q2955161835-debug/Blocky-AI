@@ -1,0 +1,40 @@
+{
+  "source": "69ff21e66bd56bcd6ab7a201edab41c2379d1c91",
+  "method": "真实桌面点击顶栏项目名下拉，随后只读目标窗口，未调用activate_window或外部焦点API",
+  "menuLabels": [
+    "Coding 助手",
+    "工作助手",
+    "刑法条文问答",
+    "＋ 新建窗口"
+  ],
+  "transitions": [
+    {
+      "observedAt": 1791454707270,
+      "nativeWindowId": 5641990,
+      "actualTitle": "Window: \"刑法条文问答 — Blocky Studio\", App: Blocky Studio.exe.",
+      "legalTable": true
+    },
+    {
+      "observedAt": 1791454738265,
+      "nativeWindowId": 3672328,
+      "actualTitle": "Window: \"工作助手 — Blocky Studio\", App: Blocky Studio.exe.",
+      "cpiReply": true,
+      "cpiArtifact": true,
+      "switchError": false
+    },
+    {
+      "observedAt": 1791454783102,
+      "nativeWindowId": 3674418,
+      "actualTitle": "Window: \"Coding 助手 — Blocky Studio\", App: Blocky Studio.exe.",
+      "codingReply": true,
+      "codingArtifact": true,
+      "switchError": false
+    }
+  ],
+  "screenshots": [
+    "M01-dropdown.jpg",
+    "M01-law.jpg",
+    "M01-work.jpg",
+    "M01-coding.jpg"
+  ]
+}

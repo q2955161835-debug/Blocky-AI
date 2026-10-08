@@ -1,0 +1,63 @@
+{
+  "sourceCommit": "69ff21e66bd56bcd6ab7a201edab41c2379d1c91",
+  "r03": {
+    "buildSeconds": 514.868,
+    "initialTotalSeconds": 596.246,
+    "initialRetrySeconds": 188.038,
+    "refineSeconds": 336.123,
+    "totalTwoRunsSeconds": 932.3689999999999,
+    "wallFirstAgentStartToFinalEnd": 1064.333,
+    "eachRecordedPhaseUnder600": true,
+    "completed": true,
+    "finalEventSequence": 70,
+    "actualBytes": 2752,
+    "actualCharacters": 2736,
+    "reportedSizesMatch": true,
+    "artifactSha256": "1f342d14f05f334ba5d450c3f046a2f913bb4a799caa4597d703ddaa411a0eeb",
+    "replyDigestPrefixMatches": true,
+    "titleAndHeading": true,
+    "svgViewBox": true,
+    "responsive": true,
+    "externalDependencies": false,
+    "svgCircles": 6,
+    "blocks": 12,
+    "tools": 6,
+    "projectSha256": "ec5dbf8a7af1fdb9f7988063ffcfc672fe7c11f3e116da8b26f033f7ad5a6a82",
+    "previewSha256": "155dd4d59d70ced4f2c324781b53a493495f2712c363e8950f41c02a78c06dbb",
+    "visual": "已独立观察Sharp从实际HTML提取SVG的静态预览；长橙色嘴、白色鸟头/身体/翅膀、两腿到踏板、两轮车架可辨，符合简单SVG图示。未宣称真实浏览器页面加载或动画。"
+  },
+  "m01": {
+    "sourceMatches": true,
+    "distinctWindowIds": true,
+    "targetContentsRetained": true,
+    "noReportedSwitchError": true,
+    "screenshotsObserved": [
+      "M01-dropdown.jpg",
+      "M01-law.jpg",
+      "M01-work.jpg",
+      "M01-coding.jpg"
+    ]
+  },
+  "p04": {
+    "observedChanged": false,
+    "mainBefore": {
+      "id": "screenshot-1",
+      "originX": 9,
+      "originY": 0,
+      "width": 1688,
+      "height": 1016
+    },
+    "mainAfter": {
+      "id": "screenshot-1",
+      "originX": 9,
+      "originY": 0,
+      "width": 1688,
+      "height": 1016
+    },
+    "status": "阻塞",
+    "reason": "两次Sky未证明稳定位移；用户同窗手动核对尚未回答，不按静态源码或早先位置推断签通过。"
+  },
+  "fullConversationsExported": false,
+  "accountProfileRead": false,
+  "checkedAt": "2026-10-08T10:23:29.790Z"
+}

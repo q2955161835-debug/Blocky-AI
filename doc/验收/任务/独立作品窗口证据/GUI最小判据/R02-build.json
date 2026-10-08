@@ -1,0 +1,21 @@
+{
+  "source": "6f36e71",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows\\Blocky Studio.exe",
+    "id": 3672328,
+    "title": "Blocky Studio"
+  },
+  "stageStart": 1791452061515,
+  "requestStart": 1791452345805,
+  "appliedObserved": 1791452418809,
+  "readyEnd": 1791452533426,
+  "seconds": 471.911,
+  "archive": "作品/农村CPI工作助手/农村CPI工作助手.blocky",
+  "blocks": 13,
+  "changedFields": [
+    "ROLE",
+    "TEXT",
+    "NAME"
+  ],
+  "tools": 6
+}

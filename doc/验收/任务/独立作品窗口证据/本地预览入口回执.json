@@ -1,0 +1,15 @@
+{
+  "time": "2026-10-08T18:25:07.0824652+08:00",
+  "path": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "deliveryStatus": "local-preview-final-acceptance-pending",
+  "before": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context\\Blocky Studio.exe,0"
+  },
+  "after": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows\\Blocky Studio.exe,0"
+  }
+}

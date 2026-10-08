@@ -1,0 +1,35 @@
+{
+  "time": "2026-10-08T18:32:01.201151+08:00",
+  "deleted": false,
+  "moves": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\canvas-repair-2026-10-08",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\canvas-repair-2026-10-08",
+      "files": 5875,
+      "bytes": 404319502.0,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\multi-window-2026-10-08",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\multi-window-2026-10-08",
+      "files": 1781,
+      "bytes": 94666272.0,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\multi-window-tests",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\multi-window-tests",
+      "files": 0,
+      "bytes": 0,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\desktop-scenes-2026-10-08",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\desktop-scenes-2026-10-08",
+      "files": 21,
+      "bytes": 1204147.0,
+      "readback": true
+    }
+  ],
+  "totalBytes": 500189921
+}

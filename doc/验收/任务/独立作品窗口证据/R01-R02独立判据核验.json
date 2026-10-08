@@ -1,0 +1,65 @@
+{
+  "ordinaryManifestSource": "69ff21e66bd56bcd6ab7a201edab41c2379d1c91",
+  "productChange": "6f36e71a8b4be777baca8ea08cb36da7f97cf4e1",
+  "r01": {
+    "builderSeconds": 63.254,
+    "builderProvenance": "Builder实际在candidate1/b831083完成并保存；最终普通69ff21e重新打开后F5运行。原记录source=6f36e71是最终运行产品版本，不外推为Builder来源。",
+    "agentSeconds": 91.806,
+    "completed": true,
+    "tokenUsage": "443 文本 · 输入 744 / 输出 442 Token",
+    "citations": [
+      "chunk-f4dede0ec9b2fc955c67f620f5cdff77d2509c1b956ac55116715a1fcac8f23c",
+      "chunk-a041d84c0f78619ff1699eeb3de1642bed8319ccc0a9abd5fd76e1bebe9662ce",
+      "chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7",
+      "chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5"
+    ],
+    "citationIdsInPriorSameSource": true,
+    "scopePenaltyMatchesProvidedStatute": true,
+    "sourceBytesSha256": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "citedSourceTextMatchesCurrentFile": true
+  },
+  "r02": {
+    "buildSeconds": 471.911,
+    "agentSeconds": 479.436,
+    "rows": 7,
+    "factor": 1.1292282951540908,
+    "reciprocal": 0.8855605233160964,
+    "maxYear": 2019,
+    "maxRate": 3.2,
+    "allCsvFactorsMatch": true,
+    "artifactContainsValues": true,
+    "csvSha256": "d6d5ea113f6c6ce51a7496a823329a0cb0d602202fd333f4dc26eb3fea7136ec",
+    "summarySha256": "531df34569745e8bed57acb9ae69d37875eb291e60f47b1c6c0e0748d51315dd",
+    "completed": true
+  },
+  "host": {
+    "claimSource": "b831083bf1668d78bea83933b7b78389edb66132 (Root提供；到69ff21e该模块无变化)",
+    "sha256": "871b92c6fdbbcc12eceea1293b44ccf25de099761b49e84604d59d71c5ac34a7",
+    "projectAccessTestsPassed": true,
+    "fullResult354plus1": true
+  },
+  "projects": [
+    {
+      "name": "刑法条文问答",
+      "sha256": "0f6632eebe83355c7fd83f33448e4b5231a95ba7c75f2ea08cf5dbcc0be3b808",
+      "projectId": "criminal-law-qa",
+      "blocks": 8,
+      "toolExposeCount": 0,
+      "bodyHasNext": true,
+      "modelReferencePresent": true
+    },
+    {
+      "name": "农村CPI工作助手",
+      "sha256": "7dcf3e4ad9f5526fc5ac27ba4a37d07cfedb899a5b1a93edc503ea8ba8c5f0ef",
+      "projectId": "project-cfba7399-79fe-4ed4-ac81-ada97be57913",
+      "blocks": 13,
+      "toolExposeCount": 6,
+      "bodyHasNext": true,
+      "modelReferencePresent": true
+    }
+  ],
+  "accountProfileRead": false,
+  "fullConversationExported": false,
+  "withinBudget": true,
+  "checkedAt": "2026-10-08T10:00:35.932Z"
+}

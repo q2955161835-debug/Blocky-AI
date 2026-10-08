@@ -1,0 +1,28 @@
+{
+  "time": "2026-10-08T18:04:06.1969249+08:00",
+  "deleted": false,
+  "moves": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\release-native-target",
+      "files": 8991,
+      "bytes": 4129707266,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\native-e2e-target",
+      "files": 19918,
+      "bytes": 11535817725,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows-candidate1",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\Blocky-Studio-0.8.0-windows-candidate1",
+      "files": 2595,
+      "bytes": 771964913,
+      "readback": true
+    }
+  ],
+  "totalBytes": 16437489904
+}

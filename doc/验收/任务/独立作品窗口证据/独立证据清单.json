@@ -1,0 +1,79 @@
+{
+  "sourceCommit": "b831083bf1668d78bea83933b7b78389edb66132",
+  "externalApi": false,
+  "syntheticResponseCount": 1,
+  "fullConversationsExported": false,
+  "profilesExported": false,
+  "files": [
+    {
+      "path": "run4/windows-results.json",
+      "bytes": 3284,
+      "sha256": "7f6ca79f7255d3247a4c2b8b5003f5e2d6d51448e01cf86fc5bec40327e7d033"
+    },
+    {
+      "path": "run4/background-start.json",
+      "bytes": 240,
+      "sha256": "79261007577dcdc78070be5e348692c3008efccf8cbf4c55fa699955a9e66e5c"
+    },
+    {
+      "path": "run4/background-result.json",
+      "bytes": 1710,
+      "sha256": "5c7d550a805c1b6d847022d3c79c584ef0c648c0808548cb5aae1e6e67b678fb"
+    },
+    {
+      "path": "run4/blueprints-open-narrow.png",
+      "bytes": 137099,
+      "sha256": "1802632897f6c3b560104ac225c7e7d5d5667cf70a4e232264800358147ce168"
+    },
+    {
+      "path": "run4/blueprints-collapsed.png",
+      "bytes": 137241,
+      "sha256": "5ad68d5f34435b4dc0ea9f91145e1ea51f05f611c19f470ba30c3eded86467a1"
+    },
+    {
+      "path": "run4/child/background-start.json",
+      "bytes": 386,
+      "sha256": "8e5ba4c4d6e6aa88b3e76d0cbfee3771aaae15181f8c5fb983a76e8caeee86f4"
+    },
+    {
+      "path": "run4/child/duplicate-refused.png",
+      "bytes": 263451,
+      "sha256": "fd5de1421716a83fe2f43361988745f6ba465cb494a3df4628929c61c086faa6"
+    },
+    {
+      "path": "run4/child/external-conflict.png",
+      "bytes": 266921,
+      "sha256": "94ce87dfa09f750b26e88976f9888d3ba07b28aa13aa94bc49db3611fc7d3058"
+    },
+    {
+      "path": "run4/child/remaining-window.png",
+      "bytes": 224092,
+      "sha256": "f0e3a966c3a33a8dc5c77c4243fce74b0cc44f5150db2fff0b643d8697e9255d"
+    },
+    {
+      "path": "run6/direct-impact-results.json",
+      "bytes": 808,
+      "sha256": "94205c881dc9b7c19335c31243ca6e5ba89fc6c56834ccda15a031178a215baa"
+    },
+    {
+      "path": "run6/background-start.json",
+      "bytes": 240,
+      "sha256": "5aa08362dada50be7cc479f789adcfa1d8e478b299a377ffc7cf1308234f067f"
+    },
+    {
+      "path": "run6/background-result.json",
+      "bytes": 1848,
+      "sha256": "763368026f0773cafed56829160192879899be97f768cc3944df91d6aba5dff9"
+    },
+    {
+      "path": "run6/profile-isolated-menu.png",
+      "bytes": 244539,
+      "sha256": "c9fb3ea1c8bbef395311e24d9b7fc6a1b099dc053428068625b80c0b795b0834"
+    },
+    {
+      "path": "run5/direct-impact-results.json",
+      "bytes": 1421,
+      "sha256": "65645b26082c5afda925ab1a773ba65ee0eb5bd613a0f7e11b91bb3a5f3b6966"
+    }
+  ]
+}

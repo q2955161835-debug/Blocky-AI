@@ -1,0 +1,37 @@
+{
+  "sourceCommit": "b831083bf1668d78bea83933b7b78389edb66132",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "file menu creates independent window",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "different profile ordinary window started",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "different profile window excluded from discovery",
+      "ok": true,
+      "data": [
+        "Blocky Studio",
+        "✓合成法律配置验收",
+        "＋ 新建窗口"
+      ]
+    },
+    {
+      "name": "closing child retains primary window",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "foreignPid": 23176,
+  "backgroundFocus": {
+    "requestSent": true,
+    "errorShown": true
+  },
+  "completed": "2026-10-08T09:01:59.835Z",
+  "syntheticResponseCount": 0
+}

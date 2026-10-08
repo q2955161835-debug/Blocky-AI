@@ -1,0 +1,395 @@
+   Compiling blocky-studio v0.8.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.81s
+     Running unittests src\lib.rs (try\native-e2e-target\debug\deps\blocky_studio-57c01ca85538d3c6.exe)
+
+running 380 tests
+test agent_data::decision::tests::actual_english_candidate_relevance_applicability ... ignored, requires pinned public CPU model assets through BLOCKY_MODEL_DIR
+test agent_data::decision::tests::actual_missing_backend_controlled_fallback ... ignored, set BLOCKY_MODEL_DIR to a nonexistent isolated test model root
+test agent_data::media_store::audio::tests::real_public_wav_and_cancel ... ignored, Explicit public WAV/locked runtime integration probe
+test agent_data::media_store::audio::tests::output_projection_never_returns_model_path ... ok
+test agent_data::media_store::tests::unsupported_audio_and_client_paths_rejected ... ok
+test agent_data::decision::tests::rules_bypass_scorer_and_invalid_input_fails ... ok
+test agent_data::decision::tests::cancellation_during_pair_prevents_next_pair_and_result ... ok
+test agent_data::decision::tests::deterministic_unit_scorer_threshold_and_backend_failures_are_explicit ... ok
+test agent_data::external_receiver::tests::strict_event_and_constant_time_comparison ... ok
+test agent_data::media_store::tests::jpeg_requires_a_complete_decodable_image ... ok
+test agent_data::tests::forged_cross_project_expired_revoked_and_stopped_grants_do_not_write ... ok
+test agent_data::evaluation_store::tests::invalid_types_summaries_hashes_and_result_bindings_fail_before_creation ... ok
+test agent_data::tests::tool_digest_replay_cancel_and_scope_are_enforced ... ok
+test agent_data::media_store::tests::native_hardlink_is_rejected ... ok
+test agent_data::tests::cli_tool_approval_is_single_use_across_host_instances ... ok
+test agent_data::trigger_api::session::tests::approval_and_frame_errors_fail_closed ... ok
+test agent_data::memory_store::tests::expiry_bad_write_and_old_kv_migration ... ok
+test agent_data::tests::cli_approval_is_exact_and_never_default ... ok
+test agent_data::media_store::tests::orphaned_payloads_count_toward_project_capacity ... ok
+test agent_data::memory_store::tests::stored_json_null_is_live_after_reload_not_a_tombstone ... ok
+test agent_data::trigger_api::session::tests::approved_session_is_bound_and_consumes_context_once ... ok
+test agent_data::tests::memory_roundtrip_delete_and_reload ... ok
+test agent_data::evaluation_store::tests::corrupt_ledger_and_hardlink_fail_closed ... ok
+test agent_data::media_store::tests::image_reference_bounds_and_no_audio_confusion ... ok
+test agent_data::memory_store::tests::cas_search_revoke_and_legacy_reload ... ok
+test agent_data::evaluation_store::tests::failed_atomic_replace_preserves_previous_ledger ... ok
+test agent_data::evaluation_store::tests::competing_cas_writers_have_one_winner ... ok
+test agent_data::evaluation_store::tests::cas_reload_opaque_key_and_project_scope ... ok
+test agent_data::evaluation_store::tests::legitimate_metadata_states_and_structured_business_json_roundtrip ... ok
+test agent_data::trigger_store::tests::concurrent_claims_have_one_reservation ... ok
+test agent_data::trigger_store::tests::corruption_hardlinks_and_state_fail_closed ... ok
+test agent_data::evaluation_store::tests::frozen_and_completed_are_immutable_checkpoint_is_mutable ... ok
+test approval_ledger::tests::corrupt_ledger_fails_closed ... ok
+test agent_data::trigger_store::tests::strict_config_metadata_event_ids_and_no_body ... ok
+test agent_data::trigger_api::session::tests::full_bounded_poll_batch_fits_private_response_frame ... ok
+test builder::evidence::tests::missing_usage_is_explicit_and_local_inference_is_not_remote ... ok
+test builder::evidence::tests::preserves_usage_for_rejected_response_without_content ... ok
+test approval_ledger::tests::replacement_with_open_read_snapshot_keeps_consumption_single_use ... ok
+test builder::evidence::tests::rejects_contradictory_attempts_and_timestamps ... ok
+test agent_data::trigger_store::tests::failed_atomic_commit_preserves_previous_ledger ... ok
+test builder::tests::conversation_is_bounded_private_input_bound_to_approval ... ok
+test builder::tests::approval_binds_model_provider_and_secret_reference ... ok
+test approval_ledger::tests::consumption_expiry_and_identity_binding_survive_reopen ... ok
+test builder::tests::request_and_approval_boundaries_reject_before_launch ... ok
+test builder::tests::rejects_credentials_before_sidecar ... ok
+test coding::cli::tests::cli_is_closed_and_paths_cannot_escape ... ok
+test approval_ledger::tests::failed_replace_preserves_pending_approval_and_cleans_temporary_file ... ok
+test builder::evidence::tests::evidence_read_is_strict_scoped_and_latest_only ... ok
+test coding::files::windows::tests::held_directory_cannot_be_renamed ... ok
+test coding::check::tests::json_check_reports_real_result_and_refuses_escapes_and_secrets ... ok
+test coding::files::windows::tests::regular_file_holds_write_and_delete_sharing_closed ... ok
+test coding::tests::both_native_entries_return_non_success_with_bound_failure_receipts ... ok
+test agent_data::trigger_store::tests::complete_claim_cas_and_final_state_never_regresses ... ok
+test coding::tests::coding_start_wire_omits_unselected_workspace_and_preserves_granted_id ... ok
+test agent_data::trigger_store::tests::durable_claim_dedup_unknown_pending_and_project_isolation ... ok
+test coding::files::windows::tests::grant_rejects_ancestor_junction_before_root_open ... ok
+test coding::files::windows::tests::relative_io_does_not_follow_retargeted_parent_or_child ... ok
+test coding::files::windows::tests::relative_roundtrip_noclobber_and_drop ... ok
+test coding::tests::failure_receipt_keeps_bound_actual_changes_after_cancel ... ok
+test coding::tests::deterministic_search_and_scope_owner ... ok
+test coding::tests::failed_undo_reports_invalidation_and_recovery_never_overwrites_an_occupant ... ok
+test coding::tests::failed_atomic_publish_restores_or_retains_recoverable_original ... ok
+test coding::tests::files_reject_traversal_secrets_binary_budget_and_links ... ok
+test coding::tests::streaming_and_final_text_use_protocol_utf16_units ... ok
+test agent_data::trigger_api::tests::external_direct_claim_binding_and_queue_limit_fail_closed ... ok
+test coding::tests::undo_returns_registered_inverse_and_removes_old_change ... ok
+test agent_data::evaluation_store::tests::list_only_metadata_and_invalid_schema_size_are_rejected ... ok
+test approval_ledger::tests::concurrent_approvals_serialize_without_replaying_consumed_entries ... ok
+test coding::tests::windows_grant_allows_child_publication_but_keeps_directory_identity_pinned ... ok
+test agent_data::memory_store::tests::knowledge_acl_changes_filter_stored_memories_before_read_and_search ... ok
+test agent_data::trigger_store::tests::pause_upsert_cas_and_revision_reject_old_occurrences ... ok
+test coding::tests::workspace_directory_dot_alias_uses_the_pinned_root_without_opening_file_aliases ... ok
+test coding::tests::host_receipts_survive_cancel_and_cancel_blocks_next_mutation ... ok
+test coding::tests::opaque_workspace_and_file_edit_create_conflict_undo ... ok
+test coding::workspace_session::tests::binding_is_project_scoped_and_edits_are_real_versioned_and_reversible ... ok
+test coding::workspace_session::tests::oversized_runtime_diffs_are_rejected_before_any_write ... ok
+test agent_data::media_store::tests::import_scope_cas_integrity_delete_and_reload ... ok
+test agent_data::trigger_store::tests::config_occurrence_and_byte_capacity_fail_closed ... ok
+test agent_data::trigger_api::tests::complete_requires_actual_bound_terminal_workflow ... ok
+test knowledge::document_result::tests::extracted_segments_keep_locator_and_source_identity_without_raw_paths ... ok
+test knowledge::document_result::tests::worker_output_rejects_forged_binding_secret_text_and_invalid_locators ... ok
+test knowledge::embedding_tests::interrupted_binary_tail_is_recovered_without_accepting_corrupt_complete_records ... ok
+test knowledge::embedding_tests::locked_model_rejects_unknown_and_missing_assets ... ok
+test knowledge::embedding_tests::real_embedding_cancel_resumes_binary_checkpoint_and_rejects_corruption ... ignored, requires locked E5 model assets; exercises real inference cancellation and persisted resume
+test knowledge::embedding_tests::real_model_migration_and_rerank_acl ... ignored, requires both pinned embedding models and the reranker
+test knowledge::embedding_tests::real_model_semantics_windows_binary_cache_and_revocation ... ignored, requires the locked E5 assets through BLOCKY_MODEL_DIR; run explicitly for real inference
+test knowledge::embedding_tests::vector_record_roundtrip_and_corruption_detection ... ok
+test knowledge::index_guard::compact_tests::legacy_checkpoint_shares_only_identical_chunks_and_preserves_existing_refs ... ok
+test knowledge::network::tests::conditional_http_reuses_only_verified_previous_document ... ok
+test knowledge::network::tests::redirects_to_private_targets_and_oversize_responses_are_rejected ... ok
+test knowledge::small_models::tests::actual_minilm_embeddings_and_neural_ranking ... ignored, requires pinned public model artifacts
+test coding::tests::coding_history_accepts_message_bytes_without_expanding_workspace_file_limits ... ok
+test knowledge::tests::cancellation_epoch_is_cross_instance_and_unknown_protocol_fields_fail ... ok
+test knowledge::tests::atomic_index_cas_acl_invalidation_and_restart ... ok
+test agent_data::external_receiver::tests::binding_time_size_http_and_rate_fail_closed ... ok
+test knowledge::tests::changed_resource_blob_is_rejected_instead_of_reused ... ok
+test knowledge::tests::changed_and_deleted_files_change_snapshot_and_old_cursor_is_rejected ... ok
+test agent_data::tests::quotas_paths_and_session_scope_fail_without_partial_commit ... ok
+test knowledge::tests::failed_document_extraction_preserves_the_last_source_snapshot ... ok
+test knowledge::tests::network_targets_reject_private_reserved_and_credentials ... ok
+test knowledge::tests::citation_read_rejects_stale_version_and_revoked_grant ... ok
+test knowledge::tests::real_source_paging_restart_and_cross_project_denial ... ok
+test conversion::tests::rejects_invalid_ids_scopes_and_unknown_fields ... ok
+test agent_data::evaluation_store::tests::strict_nested_report_and_checkpoint_cannot_persist_canaries_or_unknown_fields ... ok
+test coding::files::windows::tests::enumeration_continues_batches_and_enforces_limit ... ok
+test agent_data::external_receiver::tests::inactive_shutdown_and_slow_client_are_bounded ... ok
+test local_models::download::tests::cancellation_closes_a_stalled_download_connection ... ok
+test agent_data::external_receiver::tests::authenticated_tcp_rotation_duplicate_and_stop ... ok
+test local_models::process::runtime_tests::managed_deadline_and_shutdown_interrupt_hashing_without_leaving_busy_state ... ignored, requires the installed locked Qwen CPU fixture in try/agent-capability-upgrade/managed-profile
+test local_models::process::runtime_tests::managed_runtime_reaps_process_closes_port_and_releases_artifact_locks ... ignored, requires the installed locked Qwen CPU fixture in try/agent-capability-upgrade/managed-profile
+test local_models::install_session::tests::refuses_other_operations_and_unknown_fields ... ok
+test local_models::tests::deletion_requires_an_owned_verified_manifest_and_refuses_foreign_files ... ok
+test local_models::tests::cancelled_or_corrupt_import_never_publishes_a_model ... ok
+test knowledge::tests::source_add_rebinds_epoch_without_discarding_unchanged_index ... ok
+test local_models::tests::missing_or_unknown_models_are_reported_without_selecting_another_installation ... ok
+test log_store::tests::broken_document_blocks_until_explicit_clear_and_preserves_evidence ... ok
+test local_models::tests::interrupted_owned_removal_can_be_retried_and_busy_installs_cannot_be_removed ... ok
+test log_store::tests::corrupt_quarantine_is_never_overwritten_and_time_ranges_are_checked ... ok
+test log_store::tests::corrupt_record_is_quarantined_without_losing_good_records ... ok
+test agent_data::trigger_api::tests::authenticated_claim_precedes_ephemeral_queue_and_duplicates ... ok
+test log_store::tests::explicit_clear_audit_survives_reopen_retention_and_legacy_documents ... ok
+test log_store::tests::scope_filter_survives_reopen_and_rejects_non_metadata ... ok
+test log_store::tests::retention_bytes_and_disabled_storage ... ok
+test local_models::tests::interrupted_install_is_visible_and_cleanup_checks_ownership_before_deleting ... ok
+test log_store::tests::time_and_channel_selection_and_calendar_validation ... ok
+test mcp_client::http::tests::cancellation_drops_hanging_sse_connection ... ok
+test mcp_client::http::tests::chunked_sse_multiline_utf8_and_reverse_request_denial ... ok
+test mcp_client::http::tests::changed_session_is_rejected_and_old_session_settled ... ok
+test mcp_client::http::tests::expires_without_reinitializing_or_replaying ... ok
+test mcp_client::http::tests::disconnect_does_not_retry_post ... ok
+test mcp_client::http::tests::frame_total_and_notification_bounds_are_enforced_over_tcp ... ok
+test mcp_client::http::tests::json_session_headers_notification_and_delete_405 ... ok
+test mcp_client::http::tests::real_tcp_client_initialization_discovery_call_and_close ... ok
+test mcp_client::http::tests::rejects_invalid_utf8_and_nonempty_202 ... ok
+test mcp_client::http::tests::rejects_invalid_response_status_type_and_id ... ok
+test mcp_client::http::tests::rejects_unsafe_session_and_secret_header_values ... ok
+test mcp_client::http::tests::validates_endpoint_headers_and_budgets ... ok
+test mcp_client::stdio::tests::actual_stdio_cancel_hang_and_oversized_frame_settle ... ignored, real Windows sandbox with the pinned Node runtime
+test mcp_client::stdio::tests::actual_stdio_initialize_call_resource_and_reverse_request_refusal ... ignored, real Windows sandbox with the pinned Node runtime
+test mcp_client::stdio::tests::malformed_ownership_manifest_fails_before_the_execution_boundary ... ok
+test mcp_client::http::tests::timeout_drops_pending_http_headers ... ok
+test log_store::tests::larger_policy_really_exceeds_old_cap_and_preserves_loss_contract ... ok
+test knowledge::tests::directory_junction_cannot_escape_authorized_root ... ok
+test model_registry::tests::changing_shared_connection_and_secret_versions_invalidates_gateway_approvals ... ok
+test model_registry::tests::migration_write_cas_backup_and_explicit_rollback_preserve_state ... ok
+test model_registry::tests::provider_edits_require_a_new_connection_revision ... ok
+test model_registry::tests::resolves_only_declared_connections_and_rejects_overrides ... ok
+test model_registry::tests::connected_deepseek_builder_preflight_is_bound_to_connection_revision ... ok
+test native_confirmation::placement::tests::dialog_stays_in_left_hand_owner ... ok
+test native_confirmation::placement::tests::negative_monitor_coordinates_are_preserved ... ok
+test native_confirmation::placement::tests::partially_offscreen_owner_uses_visible_intersection ... ok
+test native_confirmation::placement::tests::unusable_bounds_cannot_offer_approval ... ok
+test native_confirmation::windows::tests::native_unplaceable_prompt_returns_no_without_user_input ... ignored, creates a bounded native test window
+test network_policy::dns::tests::authenticated_dns_answers_must_match_question_and_only_resolve_public_cname_chain ... ok
+test network_policy::dns::tests::consecutive_resolver_queries_reuse_one_connection ... ok
+test network_policy::dns::tests::dual_stack_benchmark_answers_use_authenticated_fallback_without_admitting_private_ranges ... ok
+test model_registry::tests::simultaneous_stores_cannot_silently_overwrite_each_other ... ok
+test model_registry::tests::rollback_rejects_corrupt_resource_backups_before_replacing_current_state ... ok
+test patch_guard::workflow_catalog_tests::workflow_declarations_use_the_shared_patch_catalog_without_accepting_runtime_state ... ok
+test patch_links::tests::standalone_entry_is_allowed_only_at_a_module_root ... ok
+test builder::tests::real_sidecar_is_read_only_and_reaped_before_completion ... ok
+test model_registry::tests::two_profiles_send_distinct_models_to_one_shared_local_connection ... ok
+test profile::tests::explicit_profile_never_falls_back_and_paths_are_local ... ok
+test project_access::tests::external_edits_are_not_overwritten_and_a_failed_open_keeps_the_current_lease ... ok
+test project_store::tests::current_reader_preserves_old_versions_and_rejects_future_formats ... ok
+test project_store::tests::creation_never_overwrites_an_existing_target ... ok
+test project_store::tests::failed_commit_preserves_existing_bytes ... ok
+test project_store::tests::generic_credential_fields_are_rejected_but_references_remain_valid ... ok
+test project_store::tests::legacy_archives_are_only_available_at_explicit_migration_boundary ... ok
+test project_store::tests::traversal_missing_workspaces_and_unknown_version_rejected ... ok
+test project_store::tests::undeclared_files_and_secrets_rejected ... ok
+test project_store::tests::native_archive_round_trip ... ok
+test project_access::tests::windows_edit_distinct_files_and_reject_same_file_or_project_identity ... ok
+test provider::builder_model::tests::gateway_bridge_consumes_wire_finish_reason_for_strict_generation_contract ... ok
+test provider::builder_tests::builder_accepts_provider_tool_index_but_rejects_invalid_indices ... ok
+test provider::builder_tests::builder_accepts_real_tool_calls_and_rejects_unknown_or_malformed_calls ... ok
+test provider::builder_tests::builder_wire_validates_tool_result_order_and_fixed_tools ... ok
+test provider::gateway::budget::tests::deadline_interrupts_pre_transport_work_and_preserves_user_cancel ... ok
+test provider::gateway::structured::tests::provider_structured_output_must_match_types_required_properties_and_bounds ... ok
+test provider::gateway::tests::approval_is_bound_to_secret_endpoint_and_resource_capabilities ... ok
+test provider::gateway::tests::coding_model_reads_the_exact_optional_output_and_timeout_configuration ... ok
+test coding::tests::repeated_undo_compacts_only_superseded_receipts_within_budget ... ok
+test provider::gateway::tests::configured_limit_cannot_be_bypassed_with_an_uncapped_request ... ok
+test provider::gateway::tests::endpoint_profiles_do_not_admit_private_remote_or_non_loopback_local_targets ... ok
+test provider::gateway::tests::json_schema_properties_are_json_names_instead_of_block_identifiers ... ok
+test provider::gateway::tests::model_request_is_reference_only_and_tool_results_must_resolve_pending_calls ... ok
+test provider::gateway::tests::local_request_uses_bound_model_and_tool_payload_without_fabricating_usage ... ok
+test provider::gateway::tests::uncapped_request_omits_wire_limit_and_accepts_long_response_with_real_usage ... ok
+test provider::gateway::tests::unknown_usage_is_explicit_and_undeclared_or_malformed_tool_calls_fail ... ok
+test provider::gateway::tests::uncapped_http_exchange_preserves_a_large_tool_argument_and_text ... ok
+test provider::tests::binding_is_host_owned_and_cannot_override_endpoint_or_secret ... ok
+test provider::tests::cancellation_size_and_failure_body_are_bounded ... ok
+test provider::tests::helper_rejects_unapproved_or_unknown_fields_without_network ... ok
+test provider::tests::provider_cli_consumes_ticket_before_transport_and_rejects_reopen ... ok
+test provider::tests::cancelling_headers_and_body_drops_connection_within_two_seconds ... ok
+test provider::tests::request_limits_and_exact_digest ... ok
+test provider::tests::responses_require_actual_usage_finished_text_and_identity ... ok
+test provider::tests::real_http_transport_with_local_only_mock_checks_auth_and_errors ... ok
+test provider::tests::xirang_route_is_fixed_bound_and_separate_from_official_credentials ... ok
+test provider::transport::observation_tests::rejected_preflight_never_marks_network_attempted ... ok
+test rpa::approval::native_tests::native_review_retains_long_text_and_only_approves_an_explicit_button ... ignored, opens bounded owned native consent windows; run explicitly
+test rpa::approval::tests::native_review_fits_top_left_and_rejects_unreadable_work_areas ... ok
+test rpa::browser::tests::cancellation_releases_a_pipe_reader_even_while_another_process_could_hold_its_writer ... ok
+test rpa::browser::tests::real_browser_private_pipe_and_job_cancel ... ignored, opens owned browser; run explicitly with locked browser runtime and installed Edge
+test rpa::browser::tests::runtime_rejects_modified_manifest_before_launch ... ok
+test rpa::capture_cli_tests::capture_cli_exports_encrypted_artifact_without_overwrite_and_deletes ... ignored, requires freshly built CLI and debug helper; no windows or input
+test rpa::capture_png::tests::strips_metadata_and_rejects_oversized_or_corrupt_content ... ok
+test agent_data::trigger_api::tests::last_owner_drop_releases_listener ... ok
+test provider::tests::transport_timeout_and_late_cancel_settle_without_orphans ... ok
+test mcp_client::http::tests::delete_settlement_deadline_and_failure_are_explicit ... ok
+test rpa::cleanup_tests::cleanup_fixture ... ok
+test agent_data::trigger_api::tests::grant_revoke_close_and_config_revision_release_ports ... ok
+test rpa::coordinate::tests::windows_coordinate_cancellation_and_partial_insertion_never_retry_the_effect ... ok
+test rpa::coordinate::tests::windows_coordinate_dispatch_requires_two_stable_observations_and_one_complete_click ... ok
+test rpa::coordinate::tests::windows_coordinate_guards_fail_before_move_or_click ... ok
+test rpa::input_policy::tests::coordinate_review_explains_risk_and_pixel_origin ... ok
+test rpa::input_policy::tests::sensitive_declaration_permits_only_fill_and_confirmation_contains_no_body ... ok
+test rpa::language::tests::scoped_actions_and_permissions ... ok
+test knowledge::tests::pages_are_bounded_and_persisted_objects_are_integrity_checked ... ok
+test rpa::module_session::tests::module_transport_rejects_extra_fields_and_operations ... ok
+test rpa::native_tests::native_approval_worker_is_cancelled_without_a_user_decision ... ignored, opens and cancels an owned confirmation window without clicking it
+test rpa::native_tests::recording_worker_captures_then_settles_and_detects_target_loss ... ignored, opens a short-lived owned native fixture; run explicitly
+test rpa::language::tests::sensitive_input_cannot_come_from_runtime_data ... ok
+test rpa::native_tests::uia_reads_fills_invokes_and_rejects_wrong_process_identity ... ignored, opens a short-lived owned native fixture; run explicitly
+test rpa::native_tests::uia_records_owned_actions_without_typed_content ... ignored, opens a short-lived owned native fixture; run explicitly
+test rpa::owner::tests::rejects_live_owner_and_distinguishes_reused_pid ... ok
+test rpa::protocol::tests::rejects_unscoped_locator_duplicate_effect_and_plaintext_input ... ok
+test rpa::protocol::tests::coordinates_are_click_only_and_must_be_risk_accepted ... ok
+test rpa::protocol::tests::sensitive_purpose_is_manual_only_and_survives_plan_roundtrip ... ok
+test rpa::protocol::tests::requires_secret_reference_and_bounded_unique_steps ... ok
+test rpa::recording::host::tests::cancellation_before_start_prevents_late_consent ... ok
+test rpa::recording::host::tests::settled_start_errors_do_not_block_exit_but_unconfirmed_settlement_does ... ok
+test rpa::protocol::tests::windows_coordinates_support_negative_monitors_but_browser_coordinates_do_not ... ok
+test rpa::recording::process::tests::initialization_failure_preserves_unconfirmed_settlement ... ok
+test rpa::recording::host::tests::stop_during_consent_settles_without_starting_capture ... ok
+test rpa::recording::protocol::tests::recording_never_accepts_value_or_grants_execution ... ok
+test rpa::capture_staging::tests::cleans_only_confirmed_exited_owners_and_bounds_live_reservations ... ok
+test rpa::recording::session::tests::controls_cannot_attach_to_another_session_or_inject_actions ... ok
+test rpa::recording::protocol::tests::recording_rejects_foreign_or_sensitive_metadata ... ok
+test rpa::recording::uia::tests::drain_leaves_work_for_the_next_bounded_turn ... ok
+test rpa::recording::worker::tests::worker_rejects_extra_fields_and_sequence_replay ... ok
+test rpa::tests::cancellation_before_authorization_dispatch_prevents_late_grant ... ok
+test rpa::tests::expired_unconfirmed_settlement_remains_reachable_and_blocks_exit ... ok
+test rpa::tests::expiry_and_shutdown_revoke_capabilities ... ok
+test rpa::recording::uia::tests::ambiguous_locators_are_removed_even_when_runtime_ids_differ ... ok
+test conversion::tests::cache_size_bound_preserves_previous_checkpoint ... ok
+test rpa::recording::protocol::tests::recording_bounds_time_and_wire_bytes ... ok
+test rpa::tests::journal_capacity_prevents_new_grant_without_removing_receipts ... ok
+test rpa::tests::hung_worker_is_terminated_before_timeout_returns ... ok
+test rpa::cleanup_tests::cleanup_preserves_legacy_uncertain_unsettled_and_recoverable_records ... ok
+test rpa::tests::journal_failed_completion_write_keeps_uncertain_disk_receipt_and_blocks_next_step ... ok
+test rpa::tests::journal_persistence_failure_prevents_effect_and_rejects_corruption ... ok
+test rpa::tests::journal_persistent_replace_denial_preserves_receipt_and_prevents_effect ... ok
+test rpa::tests::journal_records_pause_and_stop_and_rejects_dispatch_path_injection ... ok
+test rpa::tests::late_authorization_cancel_revokes_the_already_created_grant ... ok
+test rpa::tests::recovery_fixture ... ok
+test rpa::tests::pause_before_step_waits_until_resumed_and_does_not_fail_the_run ... ok
+test network_policy::dns::tests::public_resolver_accepts_slow_valid_response ... ok
+test rpa::tests::rejects_forged_grant_out_of_order_and_duplicate_effect ... ok
+test network_policy::dns::tests::public_resolver_remains_promptly_cancellable ... ok
+test rpa::tests::journal_records_uncertainty_before_effect_and_survives_host_restart ... ok
+test rpa::tests::settlement_failure_is_not_overwritten_by_cancel_or_shutdown ... ok
+test rpa::tests::shutdown_cancels_other_sessions_even_when_one_approval_cannot_settle ... ok
+test rpa::tests::rpa_cannot_resolve_provider_secret_references ... ok
+test rpa::tests::uncertain_effect_is_retained_after_failure_and_cannot_replay ... ok
+test rpa::tests::windows_coordinate_grant_requires_the_host_geometry_binding ... ok
+test rpa::tests::journal_retries_brief_replace_denial_without_repeating_effect ... ok
+test rpa::tests::windows_coordinate_preflight_checks_target_instead_of_rejecting_supported_action ... ok
+test rpa::tests::sensitive_input_does_not_enter_checkpoint_or_status ... ok
+test rpa::tests::worker_entry ... ok
+test strict_json::tests::nested_duplicate_keys_are_rejected ... ok
+test rpa::tests::retired_expired_grant_keeps_late_cancel_and_shutdown_settled ... ok
+test surface_spec::tests::typescript_generated_surface_roundtrip_and_tamper ... ok
+test surface_spec::tests::utf16_limits_match_typescript ... ok
+test rpa::tests::stop_waits_for_inflight_settlement_and_retains_uncertain_receipt ... ok
+test surface_spec::tests::surface_total_size_rejects_valid_but_oversized_fields ... ok
+test secret_store::tests::native_secret_import_is_encrypted_and_never_returned_by_status ... ok
+test task_host::tests::worker_entry ... ok
+test secret_store::tests::key_file_import_is_native_encrypted_and_ambiguous_input_preserves_old_key ... ok
+test tool_gateway::http::tests::chunked_json_and_streaming_size_limit ... ok
+test tool_gateway::http::tests::cancellation_drops_hanging_body_within_100ms ... ok
+test tool_gateway::http::tests::endpoint_and_timeout_policy_is_shared_without_network ... ok
+test tool_gateway::http::tests::get_encodes_scalars_and_retains_fixed_destination ... ok
+test tool_gateway::http::tests::invalid_inputs_and_headers_are_rejected_before_connect ... ok
+test tool_gateway::http::tests::post_preserves_input_and_fixed_auth_without_mcp ... ok
+test conversion::tests::excludes_secrets_binary_generated_and_oversize_with_reasons ... ok
+test tool_gateway::http::tests::redirect_is_not_followed ... ok
+test tool_gateway::http::tests::disconnected_post_is_not_retried ... ok
+test tool_gateway::http::tests::timeout_drops_pending_headers ... ok
+test tool_gateway::http::tests::responses_have_safe_errors_and_strict_json_bounds ... ok
+test tool_gateway::tests::a_stale_running_receipt_is_unknown_and_foreign_receipt_files_fail_closed ... ok
+test task_host::tests::host_tickets_are_scoped_single_use_and_not_caller_claims ... ok
+test rpa::tests::recovery_requires_all_effect_checks_and_rejects_uncertain_or_live_owner ... ok
+test tool_gateway::tests::configuration_schema_and_secret_changes_fail_before_effects ... ok
+test tool_gateway::tests::tool_request_only_contains_resource_references_and_bounded_business_input ... ok
+test rpa::tests::recovery_transfers_exited_owner_once_and_never_replays_completed_effect ... ok
+test tool_gateway::tests::native_operation_cancel_before_preflight_or_after_preview_blocks_approval_and_effects ... ok
+test provider::builder_model::tests::gateway_and_legacy_bridge_outputs_parse_the_production_typescript_contract ... ok
+test tool_gateway::tests::approved_http_call_returns_actual_json_and_cannot_replay ... ok
+test tool_sandbox::tests::appcontainer_runs_stdio_but_cannot_read_host_files_or_spawn_a_process ... ignored, runs a real isolated Node process using the pinned runtime in try/stage5
+test tool_gateway::tests::wrong_output_schema_does_not_claim_an_unapplied_operation ... ok
+test provider::builder_model::tests::bridge_preserves_unknown_metadata_for_strict_typescript_rejection ... ok
+test user_store::tests::chat_is_project_bound_and_does_not_store_candidates_or_credentials ... ok
+test user_store::tests::default_model_reference_reopens_and_rejects_secret_text_and_project_scope ... ok
+test tool_gateway::tests::known_prelaunch_failure_allows_only_a_new_request_and_old_unknown_stays_blocked ... ok
+test user_store::tests::native_scoped_settings_are_atomic_and_invalid_input_preserves_saved_values ... ok
+test tool_sandbox::cleanup::tests::a_link_in_scratch_cannot_escape_owned_cleanup ... ok
+test knowledge::tests::repository_dirty_probe_never_executes_clean_filters ... ok
+test tool_sandbox::cleanup::tests::partial_copy_is_counted_and_cleaned_without_touching_a_sibling ... ok
+test user_terminal::tests::utf8_split_and_tail_boundaries ... ok
+test rpa::captures::tests::capture_is_encrypted_bounded_expiring_and_not_a_path ... ok
+test tool_gateway::tests::active_cancel_keeps_unknown_receipt_until_explicit_reconciliation ... ok
+test conversion::tests::cancel_settles_scan_without_replacing_existing_snapshot ... ok
+test rpa::cleanup_tests::cleanup_deletes_only_exact_settled_revision_after_owner_exit_and_releases_capacity ... ok
+test tool_sandbox::cleanup::tests::active_session_is_retained_and_foreign_files_block_the_entire_cleanup ... ok
+test user_store::tests::coding_chat_preserves_long_unicode_answers_after_reopening_the_store ... ok
+test task_host::tests::registry_concurrency_cancel_inventory_and_budget ... ok
+test workflow::execution_tests::native_arguments_probe ... ignored, Private worker argv and inheritance fixture
+test conversion::tests::complete_unpublished_artifact_recovers_after_interrupted_publication ... ok
+test conversion::tests::pages_restart_cross_project_and_artifact_tampering ... ok
+test user_store::tests::coding_chat_is_strict_bounded_and_separate_from_builder_history ... ok
+test task_host::process::tests::job_settles_a_real_descendant_before_output_reader_finishes ... ok
+test workflow::execution_tests::native_execution_cannot_bind_after_effect_begin_or_accept_json_claims ... ok
+test workflow::execution_tests::native_grandchild_probe ... ignored, Owned descendant fixture; invoked only by native execution tests
+test workflow::execution_tests::native_owner_exit_probe ... ignored, Native coordinator exit fixture
+test workflow::execution_tests::desktop_reconciliation_reads_back_settled_outcomes_and_rejects_shutdown ... ok
+test workflow::execution_tests::native_reconciliation_accepts_a_settled_compensation_without_replaying_it ... ok
+test workflow::execution_tests::native_execution_binds_before_start_and_proves_real_worker_tree_settlement ... ok
+test workflow::execution_tests::native_execution_rejects_foreign_proofs_rebinding_and_post_stop_effects ... ok
+test workflow::execution_tests::native_execution_owner_exit_without_receipt_does_not_unlock_boundary ... ok
+test workflow::execution_tests::native_worker_probe ... ignored, Owned process fixture; invoked only by native execution tests
+test workflow::execution_tests::native_execution_requires_settlement_before_release_and_does_not_forge_it_on_drop ... ok
+test user_terminal::tests::real_conpty_isolation_resize_and_settlement ... ok
+test workflow::staging::tests::workflow_host_staging_identity_is_canonical_and_does_not_infer_death ... ok
+test workflow::execution_tests::native_runtime_bootstrap_shares_custody_but_keeps_each_task_receipt_bound ... ok
+test workflow::execution_tests::native_worker_quotes_arguments_and_excludes_unrelated_inheritable_handles ... ok
+test workflow::tests::desktop_workflow_unknown_intent_survives_close_and_runtime_cannot_decide ... ok
+test workflow::execution_tests::native_reconciliation_rejects_missing_or_unsettled_execution_and_hidden_fields ... ok
+test workflow::tests::runtime_service_and_frame_counts_admit_valid_high_budgets_without_unbounded_sequences ... ok
+test workflow::tests::workflow_cli_reads_approval_from_encrypted_ledger_in_new_processes ... ignored, requires freshly built CLI and native helper; no visible windows or input
+test workflow::tests::desktop_workflow_owns_one_bound_lease_and_preserves_cancelled_receipts ... ok
+test user_terminal::tests::bounds_and_overflow ... ok
+test workflow::tests::workflow_host_abandoned_live_owner_and_unknown_effect_are_not_replayed ... ok
+test workflow::execution_tests::native_worker_rejects_existing_job_without_terminating_its_processes ... ok
+test knowledge::tests::missing_promisor_blob_is_rejected_without_implicit_fetch ... ok
+test workflow::tests::workflow_decision_requires_exact_digest_revision_and_project_binding ... ok
+test workflow::tests::workflow_host_matches_shared_typescript_transition_and_summary_fixtures ... ok
+test workflow::tests::workflow_host_process_probe ... ignored, Child-process fixture invoked only by the process recovery test
+test knowledge::tests::repository_reads_commit_not_dirty_worktree_without_running_hooks ... ok
+test workflow::tests::workflow_host_failed_atomic_replace_leaves_previous_record_and_no_temp_file ... ok
+test workflow::tests::workflow_host_disk_encryption_binding_and_cas ... ok
+test workflow::tests::workflow_host_staging_retains_live_owner_and_unknown_files ... ok
+test workflow::tests::workflow_host_transitions_preserve_null_frames_and_reverse_compensation ... ok
+test workflow::execution_tests::native_reconciliation_requires_settlement_and_explicit_bound_approval ... ok
+test workflow::tests::workflow_host_two_writers_only_one_revision_wins ... ok
+test conversion::tests::byte_bounded_pages_and_nested_repository_selection_rejection ... ok
+test workflow::tests::workflow_host_rejects_corrupt_lock_and_reparse_root ... ok
+test workflow::tests::workflow_query_is_project_scoped_and_never_returns_private_context ... ok
+test workflow::tests::workflow_session_persists_steps_and_cannot_forge_business_approval ... ok
+test workflow::tests::workflow_session_explicit_close_releases_and_explicit_reopen_resumes_pause ... ok
+test workflow::tests::workflow_host_rejects_injected_fields_codes_conflicts_and_limits ... ok
+test user_terminal::tests::saturated_input_close_and_natural_exit ... ok
+test conversion::tests::analysis_cache_binds_existing_snapshot_and_reuses_project_hash_map ... ok
+test workflow::tests::workflow_host_recovers_dead_owner_staging_but_retains_unknown_intent ... ok
+test workflow::tests::workflow_host_new_process_reads_and_refuses_crashed_active_owner ... ok
+test user_terminal::tests::descendants_timeout_drop_and_capacity ... ok
+test conversion::tests::locked_scope_includes_root_evidence_and_never_runs_filters ... ok
+test workflow::desktop_tests::desktop_workflow_keeps_lease_until_services_settle_then_releases_for_approval ... ok
+test workflow::desktop_tests::desktop_missing_service_settlement_does_not_publish_a_reusable_execution_proof ... ok
+test knowledge::tests::repository_raw_dirty_policy_reports_comparison_scope_and_unchecked_files ... ok
+test workflow::execution_tests::native_reconciliation_cli_uses_private_state_file_and_public_summary_only ... ok
+test workflow::desktop_tests::desktop_rejects_imported_state_and_poisoned_session_cannot_silently_restart ... ok
+test workflow::tests::native_session_frames_carry_large_initial_and_receipt_states_and_reopen_the_store ... ok
+test workflow::tests::large_workflow_states_persist_privately_and_record_duplication_remains_bounded ... ok
+test coding::tests::undo_reserves_escaped_receipt_bytes_before_changing_file ... ok
+test workflow::desktop_tests::desktop_native_debug_and_cancel_are_bound_to_current_run ... ok
+test workflow::tests::workflow_host_limits_never_evict_an_existing_checkpoint ... ok
+test workflow::desktop_tests::desktop_budget_cancellation_reaches_service_owner_before_worker_settlement ... ok
+test workflow::desktop_tests::desktop_native_runtime_preserves_private_state_and_requires_service_settlement ... ok
+test conversion::tests::small_scope_works_when_unselected_tree_exceeds_twenty_thousand_files ... ok
+
+test result: ok. 354 passed; 0 failed; 26 ignored; 0 measured; 0 filtered out; finished in 26.65s
+
+     Running unittests src\bin\blocky-project-io.rs (try\native-e2e-target\debug\deps\blocky_project_io-2a8c65b0a1361f5f.exe)
+
+running 1 test
+test tests::rejects_unknown_protocol_and_undeclared_arguments ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

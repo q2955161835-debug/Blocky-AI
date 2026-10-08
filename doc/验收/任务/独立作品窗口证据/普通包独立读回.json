@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "69ff21e66bd56bcd6ab7a201edab41c2379d1c91",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-windows",
+  "actualFiles": 2595,
+  "actualBytes": 771964913.0,
+  "expectedFiles": 2595,
+  "mismatches": [],
+  "passed": true,
+  "checkedAt": "2026-10-08T17:28:15.0480071+08:00"
+}

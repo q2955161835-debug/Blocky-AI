@@ -1,0 +1,22 @@
+[
+  {
+    "path": "R01-final.json",
+    "bytes": 2089,
+    "sha256": "1b3e818ec2fc6737b9de5640476a27172ece5e9db76ac2dbc6aef576ab00f098"
+  },
+  {
+    "path": "R02-build.json",
+    "bytes": 507,
+    "sha256": "21bd7a9f4d997c2b77b7b7590b82b2832233482698e965602793be6b4df2ceec"
+  },
+  {
+    "path": "R02-agent.json",
+    "bytes": 414,
+    "sha256": "ac947094a62b4172afdb610817845343433a4dd6c7cbf6bf5efb763fe789c77f"
+  },
+  {
+    "path": "ProjectAccess-Host门禁.txt",
+    "bytes": 38209,
+    "sha256": "871b92c6fdbbcc12eceea1293b44ccf25de099761b49e84604d59d71c5ac34a7"
+  }
+]

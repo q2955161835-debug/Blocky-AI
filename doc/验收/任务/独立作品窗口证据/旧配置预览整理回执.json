@@ -1,0 +1,42 @@
+{
+  "time": "2026-10-08T18:25:48.2292146+08:00",
+  "deleted": false,
+  "moves": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\旧配置预览\\Blocky-Studio-0.8.0-context",
+      "files": 2595,
+      "bytes": 771841924,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context-candidate1",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\旧配置预览\\Blocky-Studio-0.8.0-context-candidate1",
+      "files": 2595,
+      "bytes": 770624655,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context-candidate2",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\旧配置预览\\Blocky-Studio-0.8.0-context-candidate2",
+      "files": 2595,
+      "bytes": 771841924,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context-candidate3",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\旧配置预览\\Blocky-Studio-0.8.0-context-candidate3",
+      "files": 2595,
+      "bytes": 771841924,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context-candidate4",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\独立作品窗口-2026-10-08\\旧配置预览\\Blocky-Studio-0.8.0-context-candidate4",
+      "files": 2595,
+      "bytes": 771841928,
+      "readback": true
+    }
+  ],
+  "totalBytes": 3857992355
+}

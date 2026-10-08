@@ -1,0 +1,17 @@
+{
+  "source": "6f36e71a8b4be777baca8ea08cb36da7f97cf4e1",
+  "start": 1791453057064,
+  "end": 1791453571932,
+  "seconds": 514.868,
+  "requestStart": 1791453488295,
+  "blocks": 12,
+  "tools": 6,
+  "changedFields": [
+    "ROLE",
+    "TEXT",
+    "NAME"
+  ],
+  "archive": "D:/1Folder/Blocky-AI/作品/鹈鹕骑车Coding/鹈鹕骑车Coding.blocky",
+  "workspaceReady": true,
+  "desktopInterruption": "通知遮挡及窗口激活失败，用户手动恢复；包括在本轮计时"
+}

@@ -1,0 +1,16 @@
+{
+  "source": "6f36e71a8b4be777baca8ea08cb36da7f97cf4e1",
+  "start": 1791452560605,
+  "end": 1791453040041,
+  "seconds": 479.436,
+  "runCompleted": true,
+  "eventCount": 50,
+  "artifact": "D:/1Folder/Blocky-AI/作品/农村CPI工作助手/CPI核对摘要.md",
+  "resultVerified": {
+    "rows": 7,
+    "factor": 1.1292282951540908,
+    "reciprocal": 0.8855605233160964,
+    "maxYear": 2019,
+    "maxRate": 3.2
+  }
+}
