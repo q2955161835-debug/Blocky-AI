@@ -1,3 +1,5 @@
+import type { Diagnostic } from "@blocky/language-schema";
+
 export type Envelope = {
   schemaVersion: "blocky.cli/v1";
   ok: boolean;
@@ -14,6 +16,7 @@ export class CliError extends Error {
     public code: string,
     message: string,
     public hint = "运行 blocky --help 查看命令。",
+    public diagnostics: Diagnostic[] = [],
   ) {
     super(message);
   }
@@ -37,7 +40,10 @@ export function failure(command: string, error: unknown) {
           "命令执行失败。",
           "请检查输入或运行 doctor；错误输出已省略输入内容。",
         );
-  const result = envelope(command, null);
+  const result = envelope(
+    command,
+    e.diagnostics.length ? { diagnostics: e.diagnostics } : null,
+  );
   result.ok = false;
   result.error = { code: e.code, message: e.message, path: "", hint: e.hint };
   return { exitCode: e.exitCode, result };

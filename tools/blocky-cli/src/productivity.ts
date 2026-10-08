@@ -1,4 +1,4 @@
-import { canonicalJson } from "@blocky/language-schema";
+import { canonicalJson, type Diagnostic } from "@blocky/language-schema";
 import { projectDigest } from "@blocky/project-model";
 import { compileProject } from "@blocky/compiler";
 import { makePatch, previewPatch } from "@blocky/builder-protocol";
@@ -81,8 +81,10 @@ export async function productivityCommand(args: Args, signal: AbortSignal) {
         "运行 schema show blocky.cli-operations/v1 获取严格输入格式。",
       );
     }
+    let candidateDiagnostics: Diagnostic[] = [];
     try {
       const patch = await makePatch(project, parsed.data, registry);
+      candidateDiagnostics = patch.diagnostics;
       const review = await previewPatch(project, patch, registry);
       const native = await validatePatch(project, patch, patch.permissionDelta);
       if (canonicalJson(native) !== canonicalJson(review.next))
@@ -110,6 +112,7 @@ export async function productivityCommand(args: Args, signal: AbortSignal) {
         code,
         advice?.message ?? "批量编辑失败；原项目与输出保持不变。",
         advice?.hint,
+        code === "BLK-PATCH-004" ? candidateDiagnostics : [],
       );
     }
   }
@@ -128,7 +131,7 @@ export async function productivityCommand(args: Args, signal: AbortSignal) {
   }
   const compiled = await compileProject(
     restored,
-    restored.manifest.resources.some(r => r.scope === "user")
+    restored.manifest.resources.some((r) => r.scope === "user")
       ? await userRegistryMap()
       : undefined,
   );

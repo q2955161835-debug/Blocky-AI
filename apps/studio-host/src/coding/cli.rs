@@ -171,15 +171,7 @@ impl Cli {
         let status = status?;
         let output = output?;
         let errors = errors?;
-        // Never send arbitrary process diagnostics, native paths or secrets to the model.
-        let mut frames = Vec::new();
-        for line in output.lines() {
-            frames.push(crate::strict_json::parse(line.as_bytes()).map_err(|_| ERROR)?);
-        }
-        let safe = serde_json::to_value(frames).map_err(|_| ERROR)?;
-        if crate::builder::contains_credentials(&safe) || !errors.trim().is_empty() {
-            return Err(ERROR.into());
-        }
+        let safe = safe_cli_output(&output, !errors.trim().is_empty(), status.success())?;
         if status.success() {
             if let Some(path) = next_patch {
                 if std::fs::metadata(&path).map_err(|_| ERROR)?.len() > 2 * 1024 * 1024 {
@@ -200,6 +192,31 @@ impl Cli {
         }
         Ok(json!({"exitCode":status.code().unwrap_or(-1),"output":safe}))
     }
+}
+fn safe_cli_output(output: &str, has_stderr: bool, succeeded: bool) -> Result<Value, String> {
+    // stderr is never returned. A normal CLI rejection writes the same public
+    // error to stderr and an already-redacted structured envelope to stdout.
+    let frames = output
+        .lines()
+        .map(|line| crate::strict_json::parse(line.as_bytes()).map_err(|_| ERROR.to_owned()))
+        .collect::<Result<Vec<Value>, _>>()?;
+    let trusted_failure = !succeeded
+        && frames.len() == 1
+        && frames[0]["schemaVersion"] == "blocky.cli/v1"
+        && frames[0]["ok"] == false
+        && frames[0]["error"]["code"].as_str().is_some_and(|code| {
+            code.starts_with("BLK-")
+                && code.len() > 4
+                && code.len() <= 128
+                && code
+                    .bytes()
+                    .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || byte == b'-')
+        });
+    let safe = serde_json::to_value(frames).map_err(|_| ERROR)?;
+    if crate::builder::contains_credentials(&safe) || (has_stderr && !trusted_failure) {
+        return Err(ERROR.into());
+    }
+    Ok(safe)
 }
 fn bounded(mut pipe: impl Read) -> Result<String, String> {
     let mut out = Vec::new();
@@ -390,6 +407,26 @@ pub(super) fn decode(files: &BTreeMap<String, String>) -> Result<Value, String> 
 mod tests {
     use super::*;
     #[test]
+    fn structured_failure_keeps_safe_diagnostics_without_forwarding_process_stderr() {
+        let frame = json!({"schemaVersion":"blocky.cli/v1","ok":false,"error":{"code":"BLK-PATCH-004"},"data":{"diagnostics":[{"code":"BLK-TYPE-009","message":"JSON required"}]}});
+        assert_eq!(
+            safe_cli_output(&frame.to_string(), true, false).unwrap(),
+            json!([frame])
+        );
+        assert!(safe_cli_output(&frame.to_string(), true, true).is_err());
+        assert!(safe_cli_output("", true, false).is_err());
+        assert!(safe_cli_output("native process diagnostic", true, false).is_err());
+        let mut invalid = frame.clone();
+        invalid["schemaVersion"] = json!("unknown/v1");
+        assert!(safe_cli_output(&invalid.to_string(), true, false).is_err());
+        invalid = frame.clone();
+        invalid["error"]["code"] = json!("private lowercase diagnostic");
+        assert!(safe_cli_output(&invalid.to_string(), true, false).is_err());
+        invalid = frame.clone();
+        invalid["data"]["apiKey"] = json!(format!("sk-{}", "a".repeat(32)));
+        assert!(safe_cli_output(&invalid.to_string(), true, false).is_err());
+    }
+    #[test]
     fn patch_creation_uses_isolated_artifact_output_without_workspace_access() {
         let args = ["patch", "create", "$project", "--operations", "$json:[]", "--output", "$patch", "--json"].map(str::to_owned);
         let prepared = prepare(&args).unwrap();
@@ -492,4 +529,59 @@ mod tests {
         rejected_without_change(&mut cli,["patch","preview","$project","--patch","$patch"].map(str::to_owned).to_vec());
     }
 
+    #[test]
+    fn actual_cli_returns_candidate_diagnostics_and_can_correct_the_same_request() {
+        assets().expect("Build the pinned CLI before this regression");
+        let mut cli = isolated_cli();
+        let original = cli.project.clone();
+        let mut operations = json!([{"op":"block.add","moduleId":"main","blockId":"fixed-text","payload":{"type":"core.data.set","id":"fixed-text","fields":{"VALUE":"unquoted fixed text"}}}]);
+        let args = |value: &Value| {
+            vec![
+                "patch".into(),
+                "create".into(),
+                "$project".into(),
+                "--operations".into(),
+                format!("$json:{value}"),
+                "--output".into(),
+                "$patch".into(),
+            ]
+        };
+        let failed = invoke(&mut cli, args(&operations))
+            .expect("Structured CLI failure must retain its error code and candidate diagnostics");
+        assert_eq!(failed["exitCode"], 3);
+        assert_eq!(failed["output"][0]["error"]["code"], "BLK-PATCH-004");
+        assert!(
+            failed["output"][0]["data"]["diagnostics"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|d| d["code"] == "BLK-TYPE-009")
+        );
+        assert_eq!(cli.project, original);
+        assert_eq!(cli.revision, 0);
+        assert!(cli.patch.is_none());
+        operations[0]["payload"]["fields"]["VALUE"] = json!("\"quoted fixed text\"");
+        succeeded(invoke(&mut cli, args(&operations)));
+        succeeded(invoke(
+            &mut cli,
+            ["patch", "preview", "$project", "--patch", "$patch"]
+                .map(str::to_owned)
+                .to_vec(),
+        ));
+        succeeded(invoke(
+            &mut cli,
+            [
+                "patch", "apply", "$project", "--patch", "$patch", "--output", "$project",
+            ]
+            .map(str::to_owned)
+            .to_vec(),
+        ));
+        assert_eq!(cli.revision, 1);
+        succeeded(invoke(
+            &mut cli,
+            ["project", "compile", "$project"]
+                .map(str::to_owned)
+                .to_vec(),
+        ));
+    }
 }

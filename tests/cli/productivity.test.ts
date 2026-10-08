@@ -9,8 +9,66 @@ import {
 import { projectDigest } from "../../packages/project-model/src";
 import { dispatch } from "../../tools/blocky-cli/src/commands";
 import { parse } from "../../tools/blocky-cli/src/arguments";
+import { failure } from "../../tools/blocky-cli/src/protocol";
 const run = (args: string[]) =>
   dispatch(parse([...args, "--json"]), () => {}, new AbortController().signal);
+
+it("reports candidate field diagnostics without changing the source or writing a rejected patch", async () => {
+  const root = await mkdtemp(resolve("try/cli-productivity-"));
+  try {
+    const file = join(root, "original.blocky"),
+      edits = join(root, "edits.json"),
+      patch = join(root, "rejected.json");
+    await createProject(file, createStarter());
+    const original = await readFile(file);
+    await writeFile(
+      edits,
+      JSON.stringify([
+        {
+          op: "block.add",
+          moduleId: "research-agent",
+          blockId: "invalid-fixed-value",
+          payload: {
+            type: "core.data.set",
+            id: "invalid-fixed-value",
+            fields: { VALUE: "unquoted fixed text" },
+          },
+        },
+      ]),
+    );
+    let rejected: unknown;
+    try {
+      await run([
+        "patch",
+        "create",
+        file,
+        "--operations",
+        edits,
+        "--output",
+        patch,
+      ]);
+    } catch (error) {
+      rejected = error;
+    }
+    expect(rejected).toBeDefined();
+    const response = failure("patch.create", rejected);
+    expect(response.exitCode).toBe(3);
+    expect(response.result.error?.code).toBe("BLK-PATCH-004");
+    expect(response.result.data).toMatchObject({
+      diagnostics: expect.arrayContaining([
+        expect.objectContaining({
+          code: "BLK-TYPE-009",
+          severity: "error",
+          source: expect.objectContaining({ blockId: "invalid-fixed-value" }),
+        }),
+      ]),
+    });
+    expect(await readFile(file)).toEqual(original);
+    await expect(access(patch)).rejects.toBeDefined();
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
 
 it("discovers actual input schemas and nested blocks without opening a window", async () => {
   const root = await mkdtemp(resolve("try/cli-productivity-"));
