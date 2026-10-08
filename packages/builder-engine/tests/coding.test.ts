@@ -4,6 +4,10 @@ import { digest } from "@blocky/language-schema";
 import { codingResultSchema, type CodingStart } from "@blocky/builder-protocol";
 import { runCodingAgent } from "../src/coding";
 import type { BuilderGeneration } from "../src/transport";
+import { createTextProject } from "../../test-fixtures/src/text-project";
+import { ProjectController } from "@blocky/project-model";
+import { makePatch, applyPatch } from "@blocky/builder-protocol";
+import { Runtime } from "../../runtime-core/src/runtime";
 
 const start: CodingStart = {
   schemaVersion: "blocky.coding-start/v1",
@@ -32,7 +36,8 @@ it("distinguishes JSON literal values, raw comparisons and explicit message repl
     executeTool: async () => { throw Error("This instruction check must not execute tools"); },
     generate: async ({ messages }) => {
       const system = messages[0].content!;
-      expect(system).toContain("core.data.set 与 core.data.literal 的 VALUE 是JSON文本");
+      expect(system).toContain("core.data.literal 的 VALUE 是直接 JSON 值");
+      expect(system).toContain("旧 core.data.set 没有 jsonFields");
       expect(system).toContain("core.logic.condition 的 VALUE 是裸比较文本");
       expect(system).toContain("SOURCE、OP");
       expect(system).toContain("optionalFields");
@@ -45,6 +50,33 @@ it("distinguishes JSON literal values, raw comparisons and explicit message repl
       return generation([{type: "text", text: "参数语义已核对。"}]);
     },
   });
+});
+it("its message example works inside an atomic root replacement and remains undoable", async () => {
+  let system = "";
+  await runCodingAgent(start, {
+    modelId: "fixture",
+    executeTool: async () => { throw Error("No live tools expected"); },
+    generate: async ({ messages }) => {
+      system = messages[0].content!;
+      return generation([{ type: "text", text: "fixture" }]);
+    },
+  });
+  const example = JSON.parse(system.match(/<message-block-example>(.*?)<\/message-block-example>/s)![1]);
+  const project = createTextProject("原有回复"), controller = new ProjectController(project);
+  const original = structuredClone(project);
+  const root = structuredClone(project.workspaces.main.blocks.blocks[0]);
+  root.inputs!.MEMBERS.block!.inputs!.HANDLER.block = example;
+  const patch = await makePatch(project, [
+    { op: "block.remove", moduleId: "main", blockId: root.id },
+    { op: "block.add", moduleId: "main", blockId: root.id, payload: root },
+  ]);
+  await applyPatch(controller, patch, []);
+  const result = await new Runtime().run(controller.getSnapshot().project, "entry-one", "测试", { moduleId: "main" });
+  expect(result.status).toBe("completed");
+  expect(result.answer).toBe("示例文本");
+  expect(result.events.filter(event => event.type === "model.chunk").map(event => event.blockId)).toEqual(["example-reply"]);
+  controller.undo();
+  expect(controller.getSnapshot().project).toEqual(original);
 });
 const call = (id: string, name: string, args: unknown = {}) => ({
   type: "toolCall",

@@ -1,0 +1,31 @@
+{
+  "baseCommit": "3e5c7a7",
+  "binding": "active task-owned worktree changes, not frozen ordinary package",
+  "componentsPassed": 18,
+  "nativeInputClassificationPassed": 1,
+  "taskRecoveryRedFailed": 1,
+  "sourceSnapshotSha256": "B49F0BE2680DAA3CEFEFD979DEF8FE45BA368FC01B6380BCA279CA03926BE16D",
+  "logs": [
+    {
+      "file": "independent-exit-local.log",
+      "sha256": "348320250ACEFEB67DC23174835E79BB99A3C43155DC76BAFA76EA1C2693F749"
+    },
+    {
+      "file": "independent-cli-input-classification.log",
+      "sha256": "18825BF3D1D9871227DCBF8A1D86AAD09B32084200CB2FA6A403D5ACAE099682"
+    },
+    {
+      "file": "task-settle-recovery.log",
+      "sha256": "9D3BEF5FEE37810D0733F6C4A0DC60EE6F3E442F128EB2918FA7C34AB1555A2B"
+    }
+  ],
+  "GUI": false,
+  "realAPI": false,
+  "recoveryRetest": {
+    "exitCode": 0,
+    "binding": "task-owned uncommitted repair; package validation pending",
+    "passed": 1,
+    "sourceUseTaskSha256": "B49F0BE2680DAA3CEFEFD979DEF8FE45BA368FC01B6380BCA279CA03926BE16D",
+    "greenLogSha256": "F895A762EA8B18446F433EFCAFE5DD295A209BDDA8B3109BAC4C4B487EBEC4A1"
+  }
+}

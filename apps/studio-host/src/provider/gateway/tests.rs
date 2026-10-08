@@ -77,10 +77,13 @@ fn failed_responses_return_only_fixed_diagnostic_codes() {
     cases.push((value, "BLK-MODEL-RESPONSE-TOOLS"));
     let mut value = response();
     value["usage"] = json!({"prompt_tokens":10,"completion_tokens":4,"total_tokens":15});
-    cases.push((value, "BLK-MODEL-RESPONSE-USAGE"));
+    cases.push((value, "BLK-MODEL-RESPONSE-USAGE-SUM"));
     let mut value = response();
     value["usage"] = json!({"prompt_tokens":10,"completion_tokens":513,"total_tokens":523});
-    cases.push((value, "BLK-MODEL-RESPONSE-USAGE"));
+    cases.push((value, "BLK-MODEL-RESPONSE-USAGE-MAX"));
+    let mut value = response();
+    value["usage"] = json!({"prompt_tokens":"synthetic-private-count","completion_tokens":1,"total_tokens":2});
+    cases.push((value, "BLK-MODEL-RESPONSE-USAGE-TYPE"));
     for (value, expected) in cases {
         let error = parse_response(&serde_json::to_vec(&value).unwrap(), &req).unwrap_err();
         assert_eq!(error, expected);
@@ -136,7 +139,7 @@ fn builder_stream_bridge_preserves_diagnostic_codes_without_raw_response_leaks()
         (wire(text.clone(), "length", true, None), "BLK-MODEL-TRUNCATED-LENGTH"),
         (wire(text.clone(), "stop", false, None), "BLK-MODEL-TRUNCATED-SSE"),
         (wire(malformed_tool, "tool_calls", true, None), "BLK-MODEL-RESPONSE-TOOL-JSON"),
-        (wire(text.clone(), "stop", true, Some(json!({"prompt_tokens":1,"completion_tokens":2,"total_tokens":99}))), "BLK-MODEL-RESPONSE-USAGE"),
+        (wire(text.clone(), "stop", true, Some(json!({"prompt_tokens":1,"completion_tokens":2,"total_tokens":99}))), "BLK-MODEL-RESPONSE-USAGE-SUM"),
         (wire(json!({"role":"synthetic-private-role"}), "stop", true, None), "BLK-MODEL-RESPONSE-SSE"),
         ("data: {synthetic-private-invalid-json\n\n".into(), "BLK-MODEL-RESPONSE-SSE"),
     ] {
@@ -456,4 +459,84 @@ fn public_synthetic_max_tool_round_trip_diagnostics() {
     value["requestId"]=json!(format!("max-diagnostic-{}-second",crate::builder::evidence::now()));value["toolChoice"]=json!("none");
     let second=call(value,2).expect("Second max turn must parse; diagnostic output contains only safe schema metadata");
     assert!(second["text"].as_str().map(str::trim)==Some("OK"),"Synthetic answer marker mismatch");
+}
+
+#[derive(Default)]
+struct SafeUsageProbe {
+    pending: Vec<u8>, data: Vec<String>, frames: usize, usage: Vec<Value>, finish: &'static str,
+}
+impl SafeUsageProbe {
+    fn feed(&mut self, bytes: &[u8]) -> Result<(), String> {
+        self.pending.extend_from_slice(bytes);
+        if self.pending.len() > 2 * 1024 * 1024 { return Err("BLK-PROBE-LIMIT".into()); }
+        while let Some(end) = self.pending.iter().position(|b| *b == b'\n') {
+            let bytes: Vec<_> = self.pending.drain(..=end).collect();
+            let line = std::str::from_utf8(&bytes[..bytes.len()-1]).map_err(|_| "BLK-PROBE-SSE")?.trim_end_matches('\r');
+            if line.is_empty() {
+                if self.data.is_empty() { continue; }
+                let data = std::mem::take(&mut self.data).join("\n");
+                if data == "[DONE]" { continue; }
+                let frame = crate::strict_json::parse(data.as_bytes()).map_err(|_| "BLK-PROBE-SSE")?;
+                self.frames += 1;
+                if let Some(usage) = frame.get("usage").filter(|v| !v.is_null()) {
+                    if self.usage.len() >= 512 { return Err("BLK-PROBE-LIMIT".into()); }
+                    let safe = |key: &str| usage[key].as_u64().filter(|n| *n <= 9_007_199_254_740_991);
+                    let input=safe("prompt_tokens"); let output=safe("completion_tokens"); let total=safe("total_tokens");
+                    self.usage.push(json!({"input":input,"output":output,"total":total,
+                        "allCountersValid":input.is_some()&&output.is_some()&&total.is_some(),
+                        "sumEqual":input.zip(output).zip(total).is_some_and(|((i,o),t)|i.checked_add(o)==Some(t)),
+                        "outputExceedsRequested":output.is_some_and(|n|n>8192),
+                        "promptDetailsPresent":usage.get("prompt_tokens_details").is_some(),
+                        "completionDetailsPresent":usage.get("completion_tokens_details").is_some()}));
+                }
+                if let Some(finish) = frame["choices"][0].get("finish_reason").filter(|v|!v.is_null()) {
+                    self.finish = match finish.as_str() {Some("stop")=>"stop",Some("tool_calls")=>"tool_calls",Some("length")=>"length",_=>"unknown"};
+                }
+            } else if let Some(data) = line.strip_prefix("data:") {
+                self.data.push(data.strip_prefix(' ').unwrap_or(data).into());
+            }
+        }
+        Ok(())
+    }
+}
+
+#[test]
+#[ignore = "One authorized real SSE request with public synthetic input and read-only existing profile"]
+fn public_synthetic_low_sse_usage_diagnostics() {
+    let root=std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().join("try/assistant-streaming-2026-10-09/api-profile");
+    let value=json!({"schemaVersion":"blocky.model-request/v2","requestId":format!("usage-probe-{}",crate::builder::evidence::now()),
+        "projectId":"reasoning-probe-project","resourceId":"reasoning-probe-model",
+        "messages":[{"role":"user","content":"This is a public synthetic streaming capability test. Call public_fixture exactly once with empty arguments. Do not answer before calling the tool."}],
+        "tools":[{"name":"public_fixture","description":"Returns a public synthetic fixture marker.","parameters":{"type":"object","properties":{},"additionalProperties":false}}],
+        "toolChoice":"auto","maxOutputTokens":8192,"timeoutMs":180000,"reasoningEffort":"low"});
+    let request:GatewayRequest=serde_json::from_value(value).unwrap();
+    request.validate().unwrap();
+    let bound=binding::Binding::load(&root,&request).expect("Existing read-only probe binding must be available");
+    let mut safe=SafeUsageProbe::default();
+    let cancelled=std::sync::atomic::AtomicBool::new(false);
+    let result=budget::run(&cancelled,180000,|cancel| {
+        let began=Instant::now();
+        let endpoint=bound.endpoint.as_ref().ok_or("BLK-MODEL-ENDPOINT")?;
+        let host=endpoint.host_str().ok_or("BLK-MODEL-ENDPOINT")?;
+        let addresses=crate::network_policy::resolve(host,endpoint.port_or_known_default().ok_or("BLK-MODEL-ENDPOINT")?,&|| {
+            if cancel.load(std::sync::atomic::Ordering::SeqCst) {Err("BLK-PROVIDER-CANCELLED".into())} else {Ok(())}
+        })?;
+        let remaining=180000u64.saturating_sub(began.elapsed().as_millis() as u64);
+        let client=reqwest::Client::builder().no_proxy().https_only(true).redirect(reqwest::redirect::Policy::none())
+            .resolve_to_addrs(host,&addresses).connect_timeout(Duration::from_millis(remaining.min(10000)))
+            .timeout(Duration::from_millis(remaining)).build().map_err(|_|"BLK-PROVIDER-TRANSPORT")?;
+        let mut body=bound.body(&root,&request)?;
+        body["stream"]=json!(true);body["stream_options"]=json!({"include_usage":true});
+        let mut stream=stream::Stream::default();
+        super::super::transport::exchange_headers_stream_using(client,endpoint.as_str(),&body,remaining,
+            std::str::from_utf8(&bound.key).map_err(|_|"BLK-MODEL-CONFIG")?,Some(&bound.headers),cancel,&mut ||Ok(()),&mut |bytes| {
+                safe.feed(bytes)?;
+                stream.feed(bytes,&mut |_|Ok(()))
+            })?;
+        parse_response(&stream.complete()?,&request)
+    });
+    let code=result.as_ref().err().map(|code| if code.len()<64 && code.starts_with("BLK-") && code.bytes().all(|b|b.is_ascii_uppercase()||b.is_ascii_digit()||b==b'-') {code.as_str()} else {"BLK-PROBE-UNKNOWN"});
+    println!("LOW_SSE_USAGE_DIAGNOSTICS {}",json!({"requestMax":8192,"timeoutMs":180000,"effort":"low","attempts":1,
+        "ok":result.is_ok(),"code":code,"frames":safe.frames,"usageFrames":safe.usage.len(),"usage":safe.usage,
+        "finish":if safe.finish.is_empty(){"unseen"}else{safe.finish}}));
 }

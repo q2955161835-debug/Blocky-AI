@@ -64,7 +64,7 @@ impl Stream {
         }
         if let Some(usage) = v.get("usage").filter(|v| !v.is_null()) {
             if self.usage.as_ref().is_some_and(|old| old != usage) {
-                return Err(super::protocol::RESPONSE_USAGE.into());
+                return Err(super::protocol::RESPONSE_USAGE_CHANGED.into());
             }
             self.usage = Some(usage.clone());
         }
@@ -221,6 +221,14 @@ mod tests {
     fn changing_usage_is_a_fixed_usage_error_not_a_protocol_error() {
         let mut stream = Stream::default();
         stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":1}}\n\n", &mut |_| Ok(())).unwrap();
-        assert_eq!(stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":2}}\n\n", &mut |_| Ok(())).unwrap_err(), "BLK-MODEL-RESPONSE-USAGE");
+        assert_eq!(stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":2}}\n\n", &mut |_| Ok(())).unwrap_err(), "BLK-MODEL-RESPONSE-USAGE-CHANGED");
+    }
+    #[test]
+    fn duplicate_usage_is_accepted_but_optional_detail_changes_remain_rejected() {
+        let frame=b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":1,\"completion_tokens\":2,\"total_tokens\":3}}\n\n";
+        let mut stream=Stream::default();
+        stream.feed(frame,&mut |_|Ok(())).unwrap();
+        stream.feed(frame,&mut |_|Ok(())).unwrap();
+        assert_eq!(stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":1,\"completion_tokens\":2,\"total_tokens\":3,\"completion_tokens_details\":{\"reasoning_tokens\":1}}}\n\n",&mut |_|Ok(())).unwrap_err(),"BLK-MODEL-RESPONSE-USAGE-CHANGED");
     }
 }

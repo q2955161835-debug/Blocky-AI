@@ -1,0 +1,11 @@
+{
+  "sourceCommit": "3fa86c13cc4604b34a4e9ab90a7ba7b4985054ac",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery",
+  "fileCount": 2595,
+  "totalBytes": 772289528,
+  "enumeration": "recursive -Force, each file independently SHA",
+  "manifestSha": "9E993FB7F837ECD9E2638F46CAC241ADB5E217626FEC45CF9081CEA5A2E9FDA8",
+  "exeSha": "84A0B35C76733D58E9381D259374C34ADA9E15A05BC180C3A0A71A7FC8673315",
+  "errors": [],
+  "passed": true
+}

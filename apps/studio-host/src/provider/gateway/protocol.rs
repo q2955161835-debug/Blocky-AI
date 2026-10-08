@@ -7,7 +7,10 @@ pub const RESPONSE: &str = "BLK-MODEL-RESPONSE-SHAPE";
 pub(super) const RESPONSE_JSON: &str = "BLK-MODEL-RESPONSE-JSON";
 pub(super) const RESPONSE_TOOLS: &str = "BLK-MODEL-RESPONSE-TOOLS";
 pub(super) const RESPONSE_TOOL_JSON: &str = "BLK-MODEL-RESPONSE-TOOL-JSON";
-pub(super) const RESPONSE_USAGE: &str = "BLK-MODEL-RESPONSE-USAGE";
+pub(super) const RESPONSE_USAGE_TYPE: &str = "BLK-MODEL-RESPONSE-USAGE-TYPE";
+pub(super) const RESPONSE_USAGE_SUM: &str = "BLK-MODEL-RESPONSE-USAGE-SUM";
+pub(super) const RESPONSE_USAGE_MAX: &str = "BLK-MODEL-RESPONSE-USAGE-MAX";
+pub(super) const RESPONSE_USAGE_CHANGED: &str = "BLK-MODEL-RESPONSE-USAGE-CHANGED";
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -386,16 +389,20 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
     let usage = match value.get("usage").filter(|v| !v.is_null()) {
         None => Value::Null,
         Some(u) => {
-            let input = u["prompt_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
-            let output = u["completion_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
-            let total = u["total_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
+            let input = u["prompt_tokens"].as_u64().ok_or(RESPONSE_USAGE_TYPE)?;
+            let output = u["completion_tokens"].as_u64().ok_or(RESPONSE_USAGE_TYPE)?;
+            let total = u["total_tokens"].as_u64().ok_or(RESPONSE_USAGE_TYPE)?;
             if input > 9_007_199_254_740_991
                 || output > 9_007_199_254_740_991
                 || total > 9_007_199_254_740_991
-                || request.max_output_tokens.is_some_and(|max| output > max as u64)
-                || input.checked_add(output) != Some(total)
             {
-                return Err(RESPONSE_USAGE.into());
+                return Err(RESPONSE_USAGE_TYPE.into());
+            }
+            if request.max_output_tokens.is_some_and(|max| output > max as u64) {
+                return Err(RESPONSE_USAGE_MAX.into());
+            }
+            if input.checked_add(output) != Some(total) {
+                return Err(RESPONSE_USAGE_SUM.into());
             }
             json!({"inputTokens":input,"outputTokens":output,"totalTokens":total})
         }

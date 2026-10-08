@@ -1,0 +1,130 @@
+{
+  "verdict": "通过",
+  "scope": "E01普通包暂时session写失败→返回编辑/本地运行→释放锁重试退出→新进程重开",
+  "sourceCommit": "3fa86c13cc4604b34a4e9ab90a7ba7b4985054ac",
+  "package": "D:/1Folder/Blocky-AI/dist/Blocky-Studio-0.8.0-exit-recovery",
+  "profile": "D:\\1Folder\\Blocky-AI\\try\\builder-repair-2026-10-08\\exit-gui-profile",
+  "ownedProcessIds": [
+    45160,
+    32236,
+    47572
+  ],
+  "lockProcessId": 45320,
+  "processSettlement": "均通过普通退出自然结算；锁显式释放，无强杀",
+  "lock": {
+    "state": "released",
+    "target": "D:\\1Folder\\Blocky-AI\\try\\builder-repair-2026-10-08\\exit-gui-profile\\user\\session\\exit-recovery-owned-20261009.json",
+    "pid": 45320,
+    "startedAt": "2026-10-09T02:45:40.4556501+08:00",
+    "endedAt": "2026-10-09T02:48:26.1173217+08:00",
+    "reason": "explicit-release"
+  },
+  "observations": {
+    "failure": "保存布局未完成（BLK-SET-001）",
+    "returnEnabled": true,
+    "hideEnabled": true,
+    "misleadingClearDiagnosticsAbsent": true,
+    "returnActionSucceeded": true,
+    "localRuns": 2,
+    "eventsPerRun": 13,
+    "fixedReplyCountAfterReopen": 2,
+    "finalCanvasName": "退出测试画布-故障后可编辑",
+    "normalRetryExited": true,
+    "freshProcessReopened": true
+  },
+  "fixture": {
+    "file": "D:\\1Folder\\Blocky-AI\\try\\builder-io-repair-2026-10-09\\acceptance\\exit-fixture.blocky",
+    "bytes": 855,
+    "sha256": "3f21ba9778b4c3e45ccfe5f7972c3ba434275ff8746359c20be4326b00de3215",
+    "moduleNames": [
+      "退出测试画布-故障后可编辑"
+    ]
+  },
+  "safeStorage": [
+    {
+      "file": "user\\chat-conversation\\chat-cb9bb69f-d791-4049-a420-8ebe422203f9.json",
+      "bytes": 755,
+      "sha256": "97c308944ddaa65a2f645961ccf6aac7a219fa375e7cb5b1fe8083ad72ce44ea",
+      "messageCount": 4,
+      "roles": [
+        "user",
+        "assistant",
+        "user",
+        "assistant"
+      ],
+      "assistantCount": 2
+    },
+    {
+      "file": "user\\chat-history-agent\\exit-recovery-owned-20261009.json",
+      "bytes": 331,
+      "sha256": "5605e1f7c4a2560643ac5566f6ededf86e1d6fd4b449ba653e4ac7506a4fb49d"
+    },
+    {
+      "file": "user\\session\\exit-recovery-owned-20261009.json",
+      "bytes": 661,
+      "sha256": "9e5e8669752d673bbe52aeec1f2de8af10aad72b77c97f4f4b984c0eacea5e6b"
+    },
+    {
+      "file": "user\\session\\project-1e974442-19d1-4318-9209-0fc00cd793c6.json",
+      "bytes": 587,
+      "sha256": "80d77ddce8603c542444737124fe14b1c895cbfb67531ff355ddb368787f4dec"
+    },
+    {
+      "file": "user\\session\\project-cc8d59f9-1ba9-4589-888f-a383492679b3.json",
+      "bytes": 587,
+      "sha256": "a93942be235264ecf55934ac556073df749185731cc5d784be9b7f08902ebc44"
+    },
+    {
+      "file": "user\\session\\project-f3e013ed-5be1-427e-9d9d-cc33ec4e21cd.json",
+      "bytes": 587,
+      "sha256": "e51a0f391d2c4b91f0b3008802a1fbfc16731f8bee7f093fbdacf95b5b794f32"
+    },
+    {
+      "file": "user\\settings\\app.json",
+      "bytes": 64,
+      "sha256": "ad56efb5bfcfcc56200bb2595fe2289e148e19ddf5cb6a22a6f9fe52f5e443f2"
+    },
+    {
+      "file": "user\\window\\main.json",
+      "bytes": 97,
+      "sha256": "77ae022d61d614e7c6acb7c651d6318a02bdee7a7d28f40715621fc737d4c941"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "exit-normal-reopened.jpg",
+      "sha256": "c3766178327ce4143832b67b434dae3ddf97e37de81038fc822dd0c0eeff3ecd",
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "exit-recoverable-buttons.jpg",
+      "sha256": "d188d27a9a026f560d9c72672ea3fcc3d329a7cecc6dd5a5de9530093d6bec04",
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "exit-return-run-success.jpg",
+      "sha256": "942b3e8dd192bfe90c92e535917ea9db02f6bbaf2dc9d32a45940a2ca072c02e",
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "exit-retry-reopened.jpg",
+      "sha256": "cd68bb87c5f9fd413d6138023249480d2926efac25a5d0e5ca1729d35459e093",
+      "width": 1443,
+      "height": 903
+    }
+  ],
+  "boundaries": [
+    "确定性无模型合成作品，不是真实Agent搭建或API测试",
+    "隐藏按钮仅核对失败后可用，未执行隐藏动作",
+    "真实故障注入为session目的文件FileShare.None写锁，非诊断损坏或不可逆Host部分失败注入",
+    "不可逆commit重试/全Host收集来自此前定向技术与静态证据",
+    "Sky新启动首捕获曾显示旧窗；仅激活精确自有新exe窗口后操作，未输入旧窗",
+    "旧composer-row RAM-only对话及关闭死锁现场未操作，不追认恢复",
+    "整体仍不通过，R01运行错误及其他未验范围不外推"
+  ],
+  "providerStaticReview": "仅8种固定子码，保留BLK-MODEL-RESPONSE/TRUNCATED前缀；不放宽解析、不输出响应正文；本次未调用API",
+  "recordedAt": "2026-10-09T02:50:55.774392+08:00"
+}

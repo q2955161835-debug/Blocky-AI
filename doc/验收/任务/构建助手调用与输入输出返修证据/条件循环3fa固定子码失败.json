@@ -1,0 +1,11 @@
+{
+  "source": "3fa86c13cc4604b34a4e9ab90a7ba7b4985054ac",
+  "startedAt": "2026-10-08T18:55:30.448Z",
+  "firstFailureObservedAt": "2026-10-08T19:02:45.788Z",
+  "elapsedUpperBoundSeconds": 435.34,
+  "exactCompletionTimestampAvailable": false,
+  "code": "BLK-MODEL-RESPONSE-USAGE",
+  "activities": 15,
+  "blocks": 8,
+  "projectChanged": false
+}
