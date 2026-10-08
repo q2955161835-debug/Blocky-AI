@@ -1,0 +1,16 @@
+{
+  "P04": "用户确认通过",
+  "agentDesktopActions": false,
+  "source": "用户在本轮聊天对明确手动验收问题回复，由Root转交独立验收Agent",
+  "ordinaryPackage": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+  "sourceCommit": "008d83a3bf26198d3703b50eae2cc0971bf269a2",
+  "notes": "只更新手动确认项，旧失败/工具异常与P04边界保留。",
+  "reply": "三项均正常",
+  "items": {
+    "T02": "用户确认通过",
+    "T03": "用户确认通过",
+    "T01": "用户确认通过"
+  },
+  "toolNotificationAreaScreenshot": false,
+  "shortcutReceipt": "桌面预览入口回执.json"
+}

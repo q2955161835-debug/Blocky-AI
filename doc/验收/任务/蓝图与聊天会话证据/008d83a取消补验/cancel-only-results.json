@@ -1,0 +1,118 @@
+{
+  "sourceCommit": "008d83a3bf26198d3703b50eae2cc0971bf269a2",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "root-cancel-one serialized connections/coordinates and undo unchanged",
+      "ok": true,
+      "data": {
+        "point": {
+          "x": 292.98809814453125,
+          "y": 125.98214721679688,
+          "hitId": "assistant-root"
+        },
+        "undoDisabledBefore": true,
+        "undoDisabledAfter": true,
+        "topBefore": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ],
+        "topAfter": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ]
+      }
+    },
+    {
+      "name": "root-cancel-two serialized connections/coordinates and undo unchanged",
+      "ok": true,
+      "data": {
+        "point": {
+          "x": 292.98809814453125,
+          "y": 125.98214721679688,
+          "hitId": "assistant-root"
+        },
+        "undoDisabledBefore": true,
+        "undoDisabledAfter": true,
+        "topBefore": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ],
+        "topAfter": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected-child-cancel serialized connections/coordinates and undo unchanged",
+      "ok": true,
+      "data": {
+        "point": {
+          "x": 586.9880981445312,
+          "y": 434.9821472167969,
+          "hitId": "assistant-answer"
+        },
+        "undoDisabledBefore": true,
+        "undoDisabledAfter": true,
+        "topBefore": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ],
+        "topAfter": [
+          {
+            "id": "assistant-root",
+            "x": 80,
+            "y": 70
+          }
+        ]
+      }
+    },
+    {
+      "name": "normal native movement still commits",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "one undo restores completed movement",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "default field opens editable input",
+      "ok": true,
+      "data": {
+        "x": 346.98809814453125,
+        "y": 152.98214721679688,
+        "text": "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的…",
+        "block": "assistant-work-instructions"
+      }
+    },
+    {
+      "name": "default field change still commits",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "one undo restores field change",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T15:28:35.498Z"
+}

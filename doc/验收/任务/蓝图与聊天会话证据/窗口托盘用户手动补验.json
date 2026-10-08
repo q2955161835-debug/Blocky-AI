@@ -1,0 +1,33 @@
+{
+  "unchangedImplementation": "共享托盘及WindowControls从f431623到008d83a未变",
+  "historicalEvidence": "旧阻塞与失败保留，不追认旧工具动作成功",
+  "results": {
+    "P04": "用户确认通过",
+    "T03": "用户确认通过",
+    "T01": "用户确认通过",
+    "T02": "用户确认通过"
+  },
+  "implementationSource": "008d83a3bf26198d3703b50eae2cc0971bf269a2",
+  "replies": {
+    "window": "全部正常",
+    "tray": "三项均正常"
+  },
+  "rootReadonlySupplement": {
+    "timeLocal": "2026-10-08 23:38",
+    "exe": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel\\Blocky Studio.exe",
+    "pids": [
+      45076,
+      13864
+    ],
+    "shortcut": "同目录TargetPath/WorkingDirectory"
+  },
+  "questions": {
+    "window": "顶部拖动、最小化、最大化和关闭按钮",
+    "tray": "单图标；隐藏恢复与作品下拉；Owner退出接替及未保存提醒"
+  },
+  "source": "用户本人对两组明确手动验收问题的确认；Root转交",
+  "manualBehaviorEvidence": "用户确认；不是工具截图/鼠标捕获",
+  "toolScreenshot": false,
+  "agentDesktopInput": false,
+  "oldScenarioTimeBoundary": "R03累计932.369秒/墙钟1064.333秒超600秒；本次仅T/P04确认，不追认全部尝试全过程60分钟，旧报告有条件通过"
+}

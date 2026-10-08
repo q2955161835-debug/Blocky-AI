@@ -1,0 +1,24 @@
+{
+  "timeLocal": "2026-10-08T23:33:14.1317186+08:00",
+  "path": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "product": "008d83a3bf26198d3703b50eae2cc0971bf269a2",
+  "status": "local preview; tray and window drag acceptance remain blocked",
+  "before": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project\\Blocky Studio.exe",
+    "workdir": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project\\Blocky Studio.exe,0"
+  },
+  "after": {
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel\\Blocky Studio.exe,0",
+    "workdir": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel\\Blocky Studio.exe"
+  },
+  "rollback": "Restore before.target/workdir/icon through WScript.Shell on the same shortcut; original accepted package retained",
+  "readOnlyRunningProcessBinding": {
+    "observedAtLocal": "2026-10-08 23:38",
+    "executablePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel\\Blocky Studio.exe",
+    "pids": [45076, 13864],
+    "shortcutReadbackMatches": true,
+    "note": "Root only read process executable paths and the existing shortcut; this binds the active preview but is not evidence of tray clicks or window dragging. User windows were not controlled or stopped."
+  }
+}

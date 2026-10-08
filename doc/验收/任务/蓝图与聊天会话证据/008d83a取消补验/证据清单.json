@@ -1,0 +1,38 @@
+{
+  "sourceCommit": "008d83a3bf26198d3703b50eae2cc0971bf269a2",
+  "package": "D:/1Folder/Blocky-AI/dist/Blocky-Studio-0.8.0-canvas-cancel",
+  "files": 2595,
+  "bytes": 771976342,
+  "entries": [
+    {
+      "file": "cancel-only-results.json",
+      "bytes": 2802,
+      "sha256": "794d38ca4476142014ac9282e47fe6a251168f5924be9c2807f7e4819576b700"
+    },
+    {
+      "file": "background-result.json",
+      "bytes": 1733,
+      "sha256": "b841d4599ea830715dd48c7390d72579add11dc40acc36ef5d9db53b4bd12fbc"
+    },
+    {
+      "file": "root-cancel-one.png",
+      "bytes": 307877,
+      "sha256": "eef86b7693bbd7429f677f73d8aff3c97666e6c8dfb6f70a24c62af95ff61d25"
+    },
+    {
+      "file": "root-cancel-two.png",
+      "bytes": 307877,
+      "sha256": "eef86b7693bbd7429f677f73d8aff3c97666e6c8dfb6f70a24c62af95ff61d25"
+    },
+    {
+      "file": "connected-child-cancel.png",
+      "bytes": 226231,
+      "sha256": "49d29bb8e2ba3f18260f8ef1ee8ad426b211516fe4431ce49d931fab16a36908"
+    }
+  ],
+  "externalApi": false,
+  "conclusion": "通过",
+  "scope": "仅D02及默认正常移动/字段编辑/一次undo直接影响；S/C/M/D01按f431来源复用；T/P04未操作",
+  "driverBoundary": "cancel-final1/2/3字段目标位于可视范围外导致驱动未命中，保留失败Job结算；修正为真实可见字段后final4局部及final5完整8项通过，未改产品/未伪造React状态",
+  "previousFailure": "f431623功能补验中两次取消移动失败证据保留，不追认旧包通过"
+}

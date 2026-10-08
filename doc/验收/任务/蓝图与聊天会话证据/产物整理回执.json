@@ -1,9 +1,8 @@
 {
   "schemaVersion": 1,
   "task": "2026-10-08蓝图聊天与统一设置临时产物整理",
-  "status": "部分恢复",
+  "status": "已完成",
   "startedAtLocal": "2026-10-08T23:10:49.7212647+08:00",
-  "completedAtLocal": "2026-10-08T23:14:07.6774571+08:00",
   "workspaceRoot": "D:\\1Folder\\Blocky-AI",
   "git": {
     "headAtStart": "822a2faa340d1d4a50b58b873b4e173c729f341c",
@@ -47,13 +46,16 @@
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
       "destinationExistsAfter": true,
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
-      "currentStatus": "已恢复至原暖缓存路径，等待Root后续通知再最终归档",
       "currentSourceExists": true,
       "currentPreviousArchiveExists": false,
       "restoreCountAndBytesMatch": true,
       "restoreAnchorHashMatches": true,
-      "restoredAtLocal": "2026-10-08T23:14:07.6774571+08:00"
+      "restoredAtLocal": "2026-10-08T23:14:07.6774571+08:00",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "currentStatus": "D02构建后最终归档；暖缓存保留，未声称释放磁盘",
+      "currentFileCount": 9242,
+      "currentBytes": 4430064819,
+      "currentAnchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849"
     },
     {
       "sourceRelative": "try/native-e2e-target",
@@ -79,7 +81,10 @@
       "sourceExistsAfter": false,
       "destinationExistsAfter": true,
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
-      "currentStatus": "仍位于归档目录"
+      "currentStatus": "positive control使用后再次归档；保留原scanPositiveControlRestore证据，不声明新NativeE2E",
+      "currentFileCount": 21070,
+      "currentBytes": 13527815874,
+      "currentAnchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a"
     },
     {
       "sourceRelative": "try/stage3-release",
@@ -105,7 +110,7 @@
       "sourceExistsAfter": false,
       "destinationExistsAfter": true,
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
-      "currentStatus": "仍位于归档目录"
+      "currentStatus": "旧stage3-release候选保留在原归档路径；新D02候选另存于D02返修子目录"
     },
     {
       "sourceRelative": "dist/Blocky-Studio-0.8.0-chat-layout",
@@ -171,11 +176,14 @@
     "totalFileCount": 35503.0,
     "totalBytes": 19507604169.0,
     "allCountsAndHashesVerified": true,
-    "currentlyArchivedRootCount": 4,
-    "currentlyArchivedFileCount": 26264,
-    "currentlyArchivedBytes": 15078238415,
     "restoredRootCount": 1,
-    "restoreCountsAndHashVerified": true
+    "restoreCountsAndHashVerified": true,
+    "currentlyArchivedRootCount": 8,
+    "currentlyArchivedFileCount": 46690,
+    "currentlyArchivedBytes": 20786151064,
+    "restoredRootEventCount": 2,
+    "rearchivedRootCount": 2,
+    "finalRearchiveAllCountsAndHashesVerified": true
   },
   "executionNotes": [
     "一次语法检查未通过的脚本因缺少闭合括号未执行；另一预运行因PowerShell New-Item不支持-LiteralPath参数在目标目录创建前停止。两次均未改动源目录，修正后同盘移动及全部核对通过。"
@@ -208,31 +216,431 @@
       "reverseMove": "若要撤回本次恢复，将原路径目录Move-Item回fromAbsolute；先确认原路径无正在使用者且目标空缺。"
     }
   ],
-  "currentPositionMap": [
+  "scanPositiveControlRestore": {
+    "timeLocal": "2026-10-08T23:22:49.7506732+08:00",
+    "from": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+    "to": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+    "reason": "check-release requires existing Native test binary as positive control; no new NativeE2E run",
+    "binarySha256": "8ECF5E83D4B26DA23FEECAB633B266261721E845968581B68DC9A97AAA1BB249",
+    "deleted": false
+  },
+  "finalRearchive": {
+    "status": "已完成",
+    "recordedAtLocal": "2026-10-08T23:43:56.8999681+08:00",
+    "archiveRoot": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08",
+    "destinationPattern": "旧缓存回原清理层；D02新stage3/chat-history/旧canvas失败候选进入D02返修子目录",
+    "movedRootCount": 5,
+    "items": [
+      {
+        "sourceRelative": "try/release-native-target",
+        "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+        "destinationAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+        "fileCountBefore": 9242,
+        "fileCountAfter": 9242,
+        "bytesBefore": 4430064819,
+        "bytesAfter": 4430064819,
+        "directoryCountBefore": 1514,
+        "directoryCountAfter": 1514,
+        "gitTrackedFileCount": 0,
+        "ignoredByGit": true,
+        "reparsePointCount": 0,
+        "lockNamedFileCount": 18,
+        "lockedFileProbeConflicts": 0,
+        "matchingProcessCount": 0,
+        "activeListenerCount": 0,
+        "anchorRelativePath": ".rustc_info.json",
+        "anchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+        "countsAndBytesMatch": true,
+        "anchorHashMatches": true,
+        "status": "已归档"
+      },
+      {
+        "sourceRelative": "try/native-e2e-target",
+        "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+        "destinationAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+        "fileCountBefore": 21070,
+        "fileCountAfter": 21070,
+        "bytesBefore": 13527815874,
+        "bytesAfter": 13527815874,
+        "directoryCountBefore": 3180,
+        "directoryCountAfter": 3180,
+        "gitTrackedFileCount": 0,
+        "ignoredByGit": true,
+        "reparsePointCount": 0,
+        "lockNamedFileCount": 62,
+        "lockedFileProbeConflicts": 0,
+        "matchingProcessCount": 0,
+        "activeListenerCount": 0,
+        "anchorRelativePath": ".rustc_info.json",
+        "anchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
+        "countsAndBytesMatch": true,
+        "anchorHashMatches": true,
+        "status": "已归档"
+      },
+      {
+        "sourceRelative": "try/stage3-release",
+        "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\stage3-release",
+        "destinationAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\stage3-release",
+        "fileCountBefore": 4,
+        "fileCountAfter": 4,
+        "bytesBefore": 6473960,
+        "bytesAfter": 6473960,
+        "directoryCountBefore": 0,
+        "directoryCountAfter": 0,
+        "gitTrackedFileCount": 0,
+        "ignoredByGit": true,
+        "reparsePointCount": 0,
+        "lockNamedFileCount": 0,
+        "lockedFileProbeConflicts": 0,
+        "matchingProcessCount": 0,
+        "activeListenerCount": 0,
+        "anchorRelativePath": "artifacts.json",
+        "anchorSha256": "dda38035da4025311e635c885f0860405f9a5d3734757d4d5c3a6b711488d85d",
+        "countsAndBytesMatch": true,
+        "anchorHashMatches": true,
+        "status": "已归档"
+      },
+      {
+        "sourceRelative": "try/chat-history-2026-10-08",
+        "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\chat-history-2026-10-08",
+        "destinationAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\chat-history-2026-10-08",
+        "fileCountBefore": 8585,
+        "fileCountAfter": 8585,
+        "bytesBefore": 499397528,
+        "bytesAfter": 499397528,
+        "directoryCountBefore": 3274,
+        "directoryCountAfter": 3274,
+        "gitTrackedFileCount": 0,
+        "ignoredByGit": true,
+        "reparsePointCount": 0,
+        "lockNamedFileCount": 1134,
+        "lockedFileProbeConflicts": 0,
+        "matchingProcessCount": 0,
+        "activeListenerCount": 0,
+        "anchorRelativePath": "cleanup-inventory.json",
+        "anchorSha256": "9f7af02bf284abe06cc9208df15d8d6f4e972d52f19e1010fbf153c12fd2bb04",
+        "countsAndBytesMatch": true,
+        "anchorHashMatches": true,
+        "status": "已归档"
+      },
+      {
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-canvas",
+        "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas",
+        "destinationAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\dist\\Blocky-Studio-0.8.0-canvas",
+        "fileCountBefore": 2595,
+        "fileCountAfter": 2595,
+        "bytesBefore": 771976342,
+        "bytesAfter": 771976342,
+        "directoryCountBefore": 420,
+        "directoryCountAfter": 420,
+        "gitTrackedFileCount": 0,
+        "ignoredByGit": true,
+        "reparsePointCount": 0,
+        "lockNamedFileCount": 2,
+        "lockedFileProbeConflicts": 0,
+        "matchingProcessCount": 0,
+        "activeListenerCount": 0,
+        "anchorRelativePath": "Blocky Studio.exe",
+        "anchorSha256": "18aad0a59c192466d47c1715930e63164a8da40058f871180fd2c03a21d50adc",
+        "countsAndBytesMatch": true,
+        "anchorHashMatches": true,
+        "status": "已归档"
+      }
+    ],
+    "previousArchivedItems": [
+      {
+        "variant": "旧stage3-release候选",
+        "sourceRelative": "try/stage3-release",
+        "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
+        "fileCount": 4,
+        "bytes": 6473953,
+        "anchorRelativePath": "artifacts.json",
+        "anchorSha256": "5eaf7e9b93e2fe368e28085b8981008eb80ed98cf99db9518695b03c734dd659",
+        "status": "旧stage3-release候选保留在原归档路径；新D02候选另存于D02返修子目录"
+      },
+      {
+        "variant": "chat-layout旧候选",
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-chat-layout",
+        "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-chat-layout",
+        "fileCount": 2595,
+        "bytes": 771976342,
+        "anchorRelativePath": "Blocky Studio.exe",
+        "anchorSha256": "b7fe97088eeba3e52bfec3cc2c892d79dbcfb8ec1d29e10745ed398dc2ae818a",
+        "status": "归档保留"
+      },
+      {
+        "variant": "settings旧候选",
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-settings",
+        "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-settings",
+        "fileCount": 2595,
+        "bytes": 771972246,
+        "anchorRelativePath": "Blocky Studio.exe",
+        "anchorSha256": "db096ea3e766b2396fdb114a2fa0e5dcfd4863f56c716ded4312b24609fde869",
+        "status": "归档保留"
+      }
+    ],
+    "archiveTotals": {
+      "fileCount": 46690,
+      "directoryCount": 9241,
+      "logicalBytes": 20786151064,
+      "logicalGiB": 19.359,
+      "diskReclaimed": false
+    },
+    "retainedDirectories": [
+      {
+        "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-canvas-cancel",
+        "fileCount": 2595,
+        "bytes": 771976342,
+        "status": "保留未移动",
+        "reason": "当前用户包/窗口按授权保留"
+      },
+      {
+        "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project",
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-new-project",
+        "fileCount": 2595,
+        "bytes": 771950577,
+        "status": "保留未移动",
+        "reason": "已验收回退包按授权保留"
+      },
+      {
+        "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-markdown",
+        "sourceRelative": "dist/Blocky-Studio-0.8.0-markdown",
+        "fileCount": 2595,
+        "bytes": 770622940,
+        "status": "保留未移动",
+        "reason": "已验收回退包按授权保留"
+      }
+    ],
+    "retainedLogicalBytes": 2314549859,
+    "oldCanvasProcessObservation": {
+      "sourceRelative": "dist/Blocky-Studio-0.8.0-canvas",
+      "firstPreflightProcessMatches": 3,
+      "finalPreMoveProcessMatches": 0,
+      "finalPreMoveListenerMatches": 0,
+      "action": "首轮发现进程后暂缓且未停止进程；新鲜复核为0后才执行归档。"
+    },
+    "scanPositiveControlRestorePreserved": true,
+    "nativeE2eRunClaim": "无新NativeE2E通过声明",
+    "chatHistoryBoundary": "仅移动try/chat-history-2026-10-08内已隔离测试资料；未触及当前默认用户配置",
+    "processesStopped": 0,
+    "copyPerformed": false,
+    "deletionPerformed": false,
+    "exceptions": [
+      "旧canvas候选早期检查发现3个Blocky Studio.exe路径命中，故当时不动且未停止进程；在最终Move-Item前的新鲜检查为0后才归档。",
+      "一轮批次预检因旧canvas进程匹配数变化而在创建目标前中止；未改动任何源目录。"
+    ]
+  },
+  "currentLocations": [
     {
-      "sourceRelative": "try/release-native-target",
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
-      "currentStatus": "已恢复至原暖缓存路径，等待Root后续通知再最终归档"
+      "variant": "release-native-target",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "fileCount": 9242,
+      "bytes": 4430064819,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "status": "D02构建后最终归档；暖缓存保留，未声称释放磁盘"
     },
     {
-      "sourceRelative": "try/native-e2e-target",
+      "variant": "native-e2e-target",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
-      "currentStatus": "仍位于归档目录"
+      "fileCount": 21070,
+      "bytes": 13527815874,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
+      "status": "positive control使用后再次归档；保留原scanPositiveControlRestore证据，不声明新NativeE2E",
+      "scanPositiveControlRestorePreserved": true
     },
     {
+      "variant": "旧stage3-release候选",
       "sourceRelative": "try/stage3-release",
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
-      "currentStatus": "仍位于归档目录"
+      "fileCount": 4,
+      "bytes": 6473953,
+      "anchorRelativePath": "artifacts.json",
+      "anchorSha256": "5eaf7e9b93e2fe368e28085b8981008eb80ed98cf99db9518695b03c734dd659",
+      "status": "旧stage3-release候选保留在原归档路径；新D02候选另存于D02返修子目录"
     },
     {
+      "variant": "chat-layout旧候选",
       "sourceRelative": "dist/Blocky-Studio-0.8.0-chat-layout",
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-chat-layout",
-      "currentStatus": "仍位于归档目录"
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "b7fe97088eeba3e52bfec3cc2c892d79dbcfb8ec1d29e10745ed398dc2ae818a",
+      "status": "归档保留"
     },
     {
+      "variant": "settings旧候选",
       "sourceRelative": "dist/Blocky-Studio-0.8.0-settings",
       "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-settings",
-      "currentStatus": "仍位于归档目录"
+      "fileCount": 2595,
+      "bytes": 771972246,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "db096ea3e766b2396fdb114a2fa0e5dcfd4863f56c716ded4312b24609fde869",
+      "status": "归档保留"
+    },
+    {
+      "variant": "try/stage3-release",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\stage3-release",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\stage3-release",
+      "fileCount": 4,
+      "bytes": 6473960,
+      "anchorRelativePath": "artifacts.json",
+      "anchorSha256": "dda38035da4025311e635c885f0860405f9a5d3734757d4d5c3a6b711488d85d",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "try/chat-history-2026-10-08",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\chat-history-2026-10-08",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\chat-history-2026-10-08",
+      "fileCount": 8585,
+      "bytes": 499397528,
+      "anchorRelativePath": "cleanup-inventory.json",
+      "anchorSha256": "9f7af02bf284abe06cc9208df15d8d6f4e972d52f19e1010fbf153c12fd2bb04",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-canvas",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\dist\\Blocky-Studio-0.8.0-canvas",
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "18aad0a59c192466d47c1715930e63164a8da40058f871180fd2c03a21d50adc",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-canvas-cancel",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "status": "保留未移动",
+      "reason": "当前用户包/窗口按授权保留"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-new-project",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project",
+      "fileCount": 2595,
+      "bytes": 771950577,
+      "status": "保留未移动",
+      "reason": "已验收回退包按授权保留"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-markdown",
+      "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-markdown",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-markdown",
+      "fileCount": 2595,
+      "bytes": 770622940,
+      "status": "保留未移动",
+      "reason": "已验收回退包按授权保留"
     }
-  ]
+  ],
+  "currentPositionMap": [
+    {
+      "variant": "release-native-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "fileCount": 9242,
+      "bytes": 4430064819,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "status": "D02构建后最终归档；暖缓存保留，未声称释放磁盘"
+    },
+    {
+      "variant": "native-e2e-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "fileCount": 21070,
+      "bytes": 13527815874,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
+      "status": "positive control使用后再次归档；保留原scanPositiveControlRestore证据，不声明新NativeE2E"
+    },
+    {
+      "variant": "旧stage3-release候选",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
+      "fileCount": 4,
+      "bytes": 6473953,
+      "anchorRelativePath": "artifacts.json",
+      "anchorSha256": "5eaf7e9b93e2fe368e28085b8981008eb80ed98cf99db9518695b03c734dd659",
+      "status": "旧stage3-release候选保留在原归档路径；新D02候选另存于D02返修子目录"
+    },
+    {
+      "variant": "chat-layout旧候选",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-chat-layout",
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "b7fe97088eeba3e52bfec3cc2c892d79dbcfb8ec1d29e10745ed398dc2ae818a",
+      "status": "归档保留"
+    },
+    {
+      "variant": "settings旧候选",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-settings",
+      "fileCount": 2595,
+      "bytes": 771972246,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "db096ea3e766b2396fdb114a2fa0e5dcfd4863f56c716ded4312b24609fde869",
+      "status": "归档保留"
+    },
+    {
+      "variant": "try/stage3-release",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\stage3-release",
+      "fileCount": 4,
+      "bytes": 6473960,
+      "anchorRelativePath": "artifacts.json",
+      "anchorSha256": "dda38035da4025311e635c885f0860405f9a5d3734757d4d5c3a6b711488d85d",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "try/chat-history-2026-10-08",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\try\\chat-history-2026-10-08",
+      "fileCount": 8585,
+      "bytes": 499397528,
+      "anchorRelativePath": "cleanup-inventory.json",
+      "anchorSha256": "9f7af02bf284abe06cc9208df15d8d6f4e972d52f19e1010fbf153c12fd2bb04",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-canvas",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\D02返修\\dist\\Blocky-Studio-0.8.0-canvas",
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "anchorRelativePath": "Blocky Studio.exe",
+      "anchorSha256": "18aad0a59c192466d47c1715930e63164a8da40058f871180fd2c03a21d50adc",
+      "status": "D02返修归档"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-canvas-cancel",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-canvas-cancel",
+      "fileCount": 2595,
+      "bytes": 771976342,
+      "anchorRelativePath": null,
+      "anchorSha256": null,
+      "status": "保留未移动"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-new-project",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-new-project",
+      "fileCount": 2595,
+      "bytes": 771950577,
+      "anchorRelativePath": null,
+      "anchorSha256": null,
+      "status": "保留未移动"
+    },
+    {
+      "variant": "dist/Blocky-Studio-0.8.0-markdown",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-markdown",
+      "fileCount": 2595,
+      "bytes": 770622940,
+      "anchorRelativePath": null,
+      "anchorSha256": null,
+      "status": "保留未移动"
+    }
+  ],
+  "completedAtLocal": "2026-10-08T23:43:56.8999681+08:00"
 }
