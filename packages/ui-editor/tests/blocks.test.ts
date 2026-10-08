@@ -76,6 +76,13 @@ it("uses catalog defaults and typed tool-flow Blockly connections", () => {
     expect(foreach.getFieldValue("SOURCE")).toBe("result");
     expect(whileBlock.getFieldValue("OP")).toBe("truthy");
     expect(retry.getFieldValue("ATTEMPTS")).toBe("2");
+    const condition = workspace.newBlock("core.logic.condition");
+    const reply = workspace.newBlock("core.message.reply");
+    repeat.getInput("DO")!.connection!.connect(reply.previousConnection!);
+    expect(repeat.getInputTargetBlock("DO")).toBe(reply);
+    reply.unplug();
+    condition.getInput("ELSE")!.connection!.connect(reply.previousConnection!);
+    expect(condition.getInputTargetBlock("ELSE")).toBe(reply);
   } finally {
     workspace.dispose();
   }

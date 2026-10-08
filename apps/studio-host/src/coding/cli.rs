@@ -10,6 +10,25 @@ use std::{
     time::{Duration, Instant},
 };
 const ERROR: &str = "BLK-CODING-CLI";
+/// Serialize an already parsed operation array once, then use the existing
+/// isolated CLI input, patch validation and publication path without new grants.
+pub(super) fn structured_args(mut args: Vec<String>, operations: Option<&Value>) -> Result<Vec<String>, String> {
+    let markers: Vec<_> = args.iter().enumerate().filter(|(_, value)| value.as_str() == "$operations").map(|(index, _)| index).collect();
+    match operations {
+        None if markers.is_empty() => Ok(args),
+        Some(value) if args.first().is_some_and(|a| a == "patch")
+            && args.get(1).is_some_and(|a| a == "create")
+            && markers.len() == 1 && markers[0] > 0
+            && args[markers[0] - 1] == "--operations"
+            && value.as_array().is_some_and(|items| !items.is_empty() && items.len() <= 500) => {
+                let encoded = value.to_string();
+                if encoded.len() > 256 * 1024 { return Err("BLK-CODING-BUDGET".into()); }
+                args[markers[0]] = format!("$json:{encoded}");
+                Ok(args)
+            }
+        _ => Err("BLK-CODING-CLI-ARGS".into()),
+    }
+}
 pub(super) struct Cli {
     staging: tempfile::TempDir,
     pub project: Value,

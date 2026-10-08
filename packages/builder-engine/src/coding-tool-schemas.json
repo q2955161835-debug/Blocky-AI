@@ -110,6 +110,13 @@
           },
           "minItems": 1,
           "maxItems": 64
+        },
+        "operations": {
+          "type": "array",
+          "items": { "type": "object" },
+          "minItems": 1,
+          "maxItems": 500,
+          "description": "For patch create only: pass the actual operation objects here, and use $operations as the --operations argument. Do not stringify this array. Host serializes it once before the actual CLI runs."
         }
       },
       "required": ["args"],

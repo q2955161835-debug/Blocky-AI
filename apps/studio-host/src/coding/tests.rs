@@ -1,6 +1,45 @@
 use super::*;
 use std::fs;
 #[test]
+fn structured_operations_reach_actual_cli_without_double_encoding_or_workspace() {
+    let directory = tempfile::tempdir().unwrap();
+    let project = json!({"manifest":{"schemaVersion":"blocky.project/v1","projectId":"structured-cli","displayName":"Structured regression","modules":[{"moduleId":"main","displayName":"Main","purpose":"general","workspaceRef":"workspaces/main.workspace.json","exports":[]}],"resources":[],"appSurfaces":[],"format":{"createdWith":"blocky-desktop/0.8.0","minimumReaderVersion":"0.2.0"}},"workspaces":{"main":{"blocks":{"languageVersion":0,"blocks":[]}}},"resources":{},"schemas":{},"surfaces":{}});
+    let start: CodingStart = serde_json::from_value(json!({"schemaVersion":"blocky.coding-start/v1","requestId":"structured-input","projectId":"structured-cli","moduleId":"main","prompt":"nested reply","originalJson":project.to_string(),"resourceId":"model","selection":[],"conversation":[]})).unwrap();
+    let mut cli = cli::Cli::new(directory.path(), &start, project.clone()).unwrap();
+    let host = CodingHost::default();
+    let cancelled = AtomicBool::new(false);
+    let literal = json!({"type":"core.data.literal","id":"text","fields":{"VALUE":"引号\"与换行\n正常"}});
+    let message = json!({"type":"core.message.create","id":"message","inputs":{"CONTENT":{"block":literal}}});
+    let reply = json!({"type":"core.message.reply","id":"reply","inputs":{"MESSAGE":{"block":message}}});
+    let entry = json!({"type":"core.interaction.chat_entry","id":"entry","fields":{"NAME":"测试"},"inputs":{"CAPABILITIES":{"block":{"type":"core.interaction.accept_text","id":"accept"}},"HANDLER":{"block":reply}}});
+    let operations = json!([{"op":"block.add","moduleId":"main","blockId":"entry","payload":entry}]);
+    let input = json!({"args":["patch","create","$project","--operations","$operations","--output","$patch"],"operations":operations});
+    let created = host.tool(&start, None, &mut cli, "blocky_cli", &input, &cancelled).unwrap();
+    assert_eq!(created["exitCode"], 0, "{created}");
+    assert_eq!(cli.project, project);
+    for args in [
+        json!(["patch","preview","$project","--patch","$patch"]),
+        json!(["patch","apply","$project","--patch","$patch","--output","$project"]),
+        json!(["project","compile","$project"]),
+    ] {
+        let value = host.tool(&start,None,&mut cli,"blocky_cli",&json!({"args":args}),&cancelled).unwrap();
+        assert_eq!(value["exitCode"],0,"{value}");
+    }
+    assert!(cli.project.to_string().contains("引号"));
+    let before = cli.project.clone();
+    for invalid in [
+        json!({"args":["project","inspect","$project"],"operations":operations}),
+        json!({"args":["patch","create","$project","--operations","$operations","--output","$patch"]}),
+        json!({"args":["patch","create","$project","--operations","$operations","--output","$patch"],"operations":"[]"}),
+        json!({"args":["patch","create","$project","--operations","$operations","--output","$patch"],"operations":[{"password":"synthetic"}]}),
+    ] {
+        assert!(host.tool(&start,None,&mut cli,"blocky_cli",&invalid,&cancelled).is_err());
+        assert_eq!(cli.project,before);
+    }
+    assert!(host.tool(&start,None,&mut cli,"blocky_cli",&input,&AtomicBool::new(true)).is_err());
+    assert_eq!(cli.project,before);
+}
+#[test]
 fn workspace_directory_dot_alias_uses_the_pinned_root_without_opening_file_aliases() {
     let dir = tempfile::tempdir().unwrap();
     fs::write(dir.path().join("note.txt"), "public marker").unwrap();

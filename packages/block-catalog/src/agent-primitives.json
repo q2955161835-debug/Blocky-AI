@@ -65,6 +65,7 @@
       "THEN",
       "ELSE"
     ],
+    "inputChecks": { "THEN": ["step", "command"], "ELSE": ["step", "command"] },
     "statement": true
   },
   {

@@ -376,14 +376,15 @@ impl CodingHost {
                 )
             }
             "blocky_cli" => {
-                fields(args, &["args"])?;
-                let args = args["args"]
+                fields(args, &["args", "operations"])?;
+                let cli_args = args["args"]
                     .as_array()
                     .ok_or(ERROR)?
                     .iter()
                     .map(|v| v.as_str().map(str::to_owned).ok_or(ERROR.to_owned()))
                     .collect::<Result<Vec<_>, _>>()?;
-                cli.run(&args, scope, cancel)
+                let cli_args = cli::structured_args(cli_args, args.get("operations"))?;
+                cli.run(&cli_args, scope, cancel)
             }
             _ => self.workspace_operation(start.workspace_id.as_deref(), scope, &start.request_id, name, args, cancel),
         }

@@ -84,6 +84,28 @@ const call = (id: string, name: string, args: unknown = {}) => ({
   name,
   arguments: args,
 });
+it("passes structured CLI operations intact through the model tool round trip", async () => {
+  const operations = [{ op: "block.add", moduleId: "main", blockId: "quoted", payload: {
+    id: "quoted", type: "core.data.literal", fields: { VALUE: '中文 "引号"\n第二行' },
+  } }];
+  const executeTool = vi.fn(async (name, args) => {
+    expect(name).toBe("blocky_cli");
+    expect(args).toEqual({ args: ["patch", "create", "$project", "--operations", "$operations", "--output", "$patch"], operations });
+    return { exitCode: 0, output: [{ ok: true }] };
+  });
+  const result = await runCodingAgent(start, {
+    modelId: "fixture", executeTool,
+    generate: async ({ turn, messages }) => {
+      if (turn === 1) return generation([call("structured", "blocky_cli", {
+        args: ["patch", "create", "$project", "--operations", "$operations", "--output", "$patch"], operations,
+      })]);
+      expect(messages.find(message => message.tool_call_id === "structured")?.content).toContain('"ok":true');
+      return generation([{ type: "text", text: "补丁已创建。" }]);
+    },
+  });
+  expect(executeTool).toHaveBeenCalledTimes(1);
+  expect(result.text).toBe("补丁已创建。");
+});
 it("retains provider thinking through a tool follow-up and reports CLI failure accurately", async () => {
   const result = await runCodingAgent(start, {
     modelId: "fixture",

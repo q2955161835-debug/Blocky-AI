@@ -35,7 +35,7 @@
     "fields": ["COUNT"],
     "defaultFields": { "COUNT": "1" },
     "inputs": ["DO"],
-    "inputChecks": { "DO": "step" },
+    "inputChecks": { "DO": ["step", "command"] },
     "requiredInputs": ["DO"],
     "statement": true
   },
@@ -48,7 +48,7 @@
     "fieldOptions": { "SOURCE": ["input", "result", "memory"] },
     "defaultFields": { "SOURCE": "result", "MAX_ITEMS": "50" },
     "inputs": ["DO"],
-    "inputChecks": { "DO": "step" },
+    "inputChecks": { "DO": ["step", "command"] },
     "requiredInputs": ["DO"],
     "statement": true
   },
@@ -69,7 +69,7 @@
       "MAX_ITERATIONS": "10"
     },
     "inputs": ["DO"],
-    "inputChecks": { "DO": "step" },
+    "inputChecks": { "DO": ["step", "command"] },
     "requiredInputs": ["DO"],
     "statement": true
   },
@@ -80,7 +80,7 @@
     "color": "#9971b5",
     "fields": [],
     "inputs": ["TRY", "CATCH"],
-    "inputChecks": { "TRY": "step", "CATCH": "step" },
+    "inputChecks": { "TRY": ["step", "command"], "CATCH": ["step", "command"] },
     "requiredInputs": ["TRY", "CATCH"],
     "statement": true
   },
