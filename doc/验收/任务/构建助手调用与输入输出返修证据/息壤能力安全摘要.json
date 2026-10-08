@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "scope": "Model API capability probe only; does not establish I01 or ordinary GUI acceptance",
+  "model": "deepseek-v4-pro",
+  "provider": "息壤",
+  "realExternalApi": true,
+  "reasoningEfforts": [
+    { "level": "none", "status": "passed", "usage": "reported", "toolRoundTrip": true },
+    { "level": "low", "status": "passed", "usage": "reported", "toolRoundTrip": true },
+    { "level": "high", "status": "passed", "usage": "reported", "toolRoundTrip": true }
+  ],
+  "maxFirstAttempt": {
+    "status": "failed",
+    "failureRound": 2,
+    "errorCode": "BLK-MODEL-RESPONSE",
+    "usage": "unknown",
+    "originalFailureRetained": true
+  },
+  "ignoredDiagnosticRetry": {
+    "test": "public_synthetic_max_tool_round_trip_diagnostics",
+    "status": "passed",
+    "turns": 2,
+    "toolCalls": [1, 0],
+    "finishReasons": ["tool_calls", "stop"],
+    "usageTokens": 651,
+    "usageByTurn": [441, 210],
+    "usageSumsMatch": true,
+    "diagnosticOutputContainsResponseBodies": false
+  },
+  "sourceEvidence": [
+    { "path": "try/assistant-streaming-2026-10-09/xirang-reasoning-results.json", "sha256": "8277A594A5A38EEB3738C78F3F736BF15E06D35283AF55809E57F2B3F437649A", "copied": false },
+    { "path": "try/builder-repair-2026-10-08/max-api-diagnostics.log", "sha256": "EEF3C42F850FE2C8A981216D62E4F7E65442158C493F391BA520311FE9BB44C4", "bytes": 1936, "copied": false }
+  ],
+  "privacyBoundary": "No .env, credentials, binaries, raw reasoning, response bodies, or full conversations are included.",
+  "ordinaryGuiStatus": "not executed; I01 remains not executed"
+}

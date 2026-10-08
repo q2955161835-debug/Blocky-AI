@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.41s
+     Running unittests src\lib.rs (try\native-e2e-target\debug\deps\blocky_studio-a9da6fb84fe3ffd2.exe)
+
+running 2 tests
+test coding::stream_tests::native_coding_cancel_settles_provider_and_keeps_public_prefix ... ok
+test coding::stream_tests::native_coding_streams_before_provider_finishes_and_preserves_tool_followup ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 393 filtered out; finished in 1.91s
+

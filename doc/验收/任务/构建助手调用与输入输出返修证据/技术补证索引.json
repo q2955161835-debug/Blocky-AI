@@ -1,0 +1,40 @@
+{
+  "sourceCommit": "9b847071856143b70f7a8b4741ce85f975bf1e9d",
+  "runtime": "ordinary source debug Native test + jsdom component/protocol, not packaged GUI",
+  "jsPassed": 14,
+  "nativePassed": 3,
+  "exitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "excludedTests": "16+3 selected-filter exclusions, not unavailable dependency skips",
+  "realExternalApi": false,
+  "desktopInput": false,
+  "packageBound": false,
+  "nativeTarget": "try/native-e2e-target",
+  "rawEvidence": "D:\\1Folder\\Blocky-AI\\try\\builder-io-repair-2026-10-09\\acceptance",
+  "logs": [
+    {
+      "file": "independent-js.log",
+      "sha256": "CBA63A78CCD4B195C6106E899D514C63E758FE6C76188E31757FB8BC1A6401EB",
+      "bytes": 234
+    },
+    {
+      "file": "independent-model-blueprints.log",
+      "sha256": "E5A915DFD94B7FED49721ADFBE13A05398727B7EAD82D20799970837D23EF2C8",
+      "bytes": 228
+    },
+    {
+      "file": "independent-native-stream.log",
+      "sha256": "F63EAA66212E52463378C09D16941B6B882A88B5C2B6C13B8ABF27C25E8E860A",
+      "bytes": 506
+    },
+    {
+      "file": "independent-native-cli.log",
+      "sha256": "4D61B9F2EE351B0EDFCAE9565FF617036D696BDAE65C12451BCFED1EF6335B24",
+      "bytes": 406
+    }
+  ]
+}

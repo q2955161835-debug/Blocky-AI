@@ -334,3 +334,38 @@ fn request_reasoning_is_translated_and_real_reasoning_is_preserved() {
     assert_eq!(parse_response(&serde_json::to_vec(&wire).unwrap(),&r).unwrap()["reasoningContent"],"returned reasoning");
     value["reasoningEffort"]=json!("unrecognized");assert!(serde_json::from_value::<GatewayRequest>(value).unwrap().validate().is_err());
 }
+
+// Explicit opt-in diagnostics. No raw provider fields are printed or persisted.
+fn response_diagnostics(bytes: &[u8], request: &GatewayRequest) -> Value {
+    fn kind(v:&Value)->&'static str {match v {Value::Null=>"null",Value::Bool(_)=>"boolean",Value::Number(_)=>"number",Value::String(_)=>"string",Value::Array(_)=>"array",Value::Object(_)=>"object"}}
+    let Ok(value)=crate::strict_json::parse(bytes) else {return json!({"bytes":bytes.len(),"strictJson":false});};
+    let choice=&value["choices"][0];let m=&choice["message"];let finish=choice["finish_reason"].as_str().filter(|f|["stop","tool_calls","length","content_filter","insufficient_system_resource"].contains(f)).unwrap_or("unknown");
+    let input=value["usage"]["prompt_tokens"].as_u64();let output=value["usage"]["completion_tokens"].as_u64();let total=value["usage"]["total_tokens"].as_u64();
+    let calls=m["tool_calls"].as_array().map(|calls|calls.iter().map(|call| {
+        let args=call["function"]["arguments"].as_str().and_then(|s|crate::strict_json::parse(s.as_bytes()).ok());
+        json!({"declaredName":call["function"]["name"].as_str().is_some_and(|name|request.tools.iter().any(|t|t.name==name)),"typeFunction":call["type"]=="function","idValid":call["id"].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=128&&s.bytes().all(|b|b.is_ascii_alphanumeric()||b"_-".contains(&b))),"argumentsString":call["function"]["arguments"].is_string(),"argumentsObject":args.is_some_and(|v|v.is_object())})
+    }).collect::<Vec<_>>());
+    json!({"bytes":bytes.len(),"strictJson":true,"choiceCount":value["choices"].as_array().map(Vec::len),"role":if m["role"]=="assistant" {"assistant"} else {"unknown"},"finish":finish,"contentType":kind(&m["content"]),"contentBytes":m["content"].as_str().map(str::len),"toolCallsPresent":m.get("tool_calls").is_some(),"toolCallsType":kind(&m["tool_calls"]),"toolCallCount":m["tool_calls"].as_array().map(Vec::len),"toolShapes":calls,"usageType":kind(&value["usage"]),"usage":{"input":input,"output":output,"total":total,"sumEqual":input.zip(output).zip(total).is_some_and(|((i,o),t)|i.checked_add(o)==Some(t))},"reasoningType":kind(&m["reasoning_content"]),"reasoningBytes":m["reasoning_content"].as_str().map(str::len),"modelValid":value["model"].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=128&&!s.chars().any(char::is_control)),"idValid":value["id"].as_str().is_some_and(|s|!s.is_empty()&&s.len()<=256&&!s.chars().any(char::is_control))})
+}
+#[test]
+#[ignore = "Calls the authorized real API with a public synthetic task; run explicitly only"]
+fn public_synthetic_max_tool_round_trip_diagnostics() {
+    let root=std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().join("try/assistant-streaming-2026-10-09/api-profile");
+    let tools=json!([{"name":"public_fixture","description":"Returns a fixed public marker. Call this once before answering.","parameters":{"type":"object","properties":{},"additionalProperties":false}}]);
+    let mut value=json!({"schemaVersion":"blocky.model-request/v2","requestId":format!("max-diagnostic-{}-first",crate::builder::evidence::now()),"projectId":"reasoning-probe-project","resourceId":"reasoning-probe-model","messages":[{"role":"user","content":"Call public_fixture exactly once with empty arguments. After the tool returns, reply exactly OK. This is a public synthetic capability test."}],"tools":tools,"toolChoice":"auto","timeoutMs":180000,"reasoningEffort":"max"});
+    let cancel=std::sync::atomic::AtomicBool::new(false);
+    let call=|value:Value,turn:u8| {
+        let request:GatewayRequest=serde_json::from_value(value).unwrap();let bound=binding::Binding::load(&root,&request).unwrap();
+        let generated=execute(&root,&request,&bound,&cancel,&mut ||Ok(()),&mut |bytes|println!("MAX_API_DIAGNOSTICS {}",json!({"turn":turn,"diagnostics":response_diagnostics(bytes,&request)})));
+        println!("MAX_API_PARSE {}",json!({"turn":turn,"ok":generated.is_ok(),"code":generated.as_ref().err()}));
+        generated
+    };
+    let first=call(value.clone(),1).expect("First max tool turn must pass");
+    assert_eq!(first["toolCalls"].as_array().map(Vec::len),Some(1));assert_eq!(first["toolCalls"][0]["name"],"public_fixture");
+    let assistant=json!({"role":"assistant","content":first["text"],"toolCalls":first["toolCalls"],"reasoningContent":first["reasoningContent"]});
+    value["messages"].as_array_mut().unwrap().push(assistant);
+    value["messages"].as_array_mut().unwrap().push(json!({"role":"tool","content":"public synthetic fixture","toolCallId":first["toolCalls"][0]["id"]}));
+    value["requestId"]=json!(format!("max-diagnostic-{}-second",crate::builder::evidence::now()));value["toolChoice"]=json!("none");
+    let second=call(value,2).expect("Second max turn must parse; diagnostic output contains only safe schema metadata");
+    assert!(second["text"].as_str().map(str::trim)==Some("OK"),"Synthetic answer marker mismatch");
+}

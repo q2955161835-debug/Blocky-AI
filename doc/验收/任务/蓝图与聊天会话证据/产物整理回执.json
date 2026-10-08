@@ -214,6 +214,52 @@
       "countsAndBytesMatch": true,
       "anchorHashMatches": true,
       "reverseMove": "若要撤回本次恢复，将原路径目录Move-Item回fromAbsolute；先确认原路径无正在使用者且目标空缺。"
+    },
+    {
+      "item": "try/release-native-target",
+      "fromAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "toAbsolute": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00",
+      "reason": "Root新结构返修需复用暖缓存，准备局部Rust红测试与后续release增量构建；不对旧验收来源或包签新通过",
+      "operation": "同盘Move-Item -LiteralPath；未复制、未删除、未关闭进程",
+      "fileCountBefore": 9242,
+      "fileCountAfter": 9242,
+      "bytesBefore": 4430064819,
+      "bytesAfter": 4430064819,
+      "directoryCountBefore": 1514,
+      "directoryCountAfter": 1514,
+      "reparsePointCount": 0,
+      "matchingProcessCount": 0,
+      "lockNamedFileCount": 18,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256Before": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "anchorSha256After": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "countsAndBytesMatch": true,
+      "anchorHashMatches": true,
+      "reverseMove": "如需归档回退，确认无活动使用者且原归档目标空缺后，将toAbsolute同盘Move-Item回fromAbsolute。"
+    },
+    {
+      "item": "try/native-e2e-target",
+      "fromAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "toAbsolute": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00",
+      "reason": "Root新结构返修需复用暖缓存，准备局部Rust红测试与后续release增量构建；不对旧验收来源或包签新通过",
+      "operation": "同盘Move-Item -LiteralPath；未复制、未删除、未关闭进程",
+      "fileCountBefore": 21070,
+      "fileCountAfter": 21070,
+      "bytesBefore": 13527815874,
+      "bytesAfter": 13527815874,
+      "directoryCountBefore": 3180,
+      "directoryCountAfter": 3180,
+      "reparsePointCount": 0,
+      "matchingProcessCount": 0,
+      "lockNamedFileCount": 62,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256Before": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
+      "anchorSha256After": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
+      "countsAndBytesMatch": true,
+      "anchorHashMatches": true,
+      "reverseMove": "如需归档回退，确认无活动使用者且原归档目标空缺后，将toAbsolute同盘Move-Item回fromAbsolute。"
     }
   ],
   "scanPositiveControlRestore": {
@@ -435,23 +481,25 @@
     {
       "variant": "release-native-target",
       "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
       "fileCount": 9242,
       "bytes": 4430064819,
       "anchorRelativePath": ".rustc_info.json",
       "anchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
-      "status": "D02构建后最终归档；暖缓存保留，未声称释放磁盘"
+      "status": "2026-10-09恢复至原暖缓存路径供新结构返修复用；本次不签旧验收来源或包新通过",
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00"
     },
     {
       "variant": "native-e2e-target",
       "sourceAbsolute": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
       "fileCount": 21070,
       "bytes": 13527815874,
       "anchorRelativePath": ".rustc_info.json",
       "anchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
-      "status": "positive control使用后再次归档；保留原scanPositiveControlRestore证据，不声明新NativeE2E",
-      "scanPositiveControlRestorePreserved": true
+      "status": "2026-10-09恢复至原暖缓存路径供新结构返修复用；本次不签旧验收来源或包新通过",
+      "scanPositiveControlRestorePreserved": true,
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00"
     },
     {
       "variant": "旧stage3-release候选",
@@ -544,21 +592,23 @@
   "currentPositionMap": [
     {
       "variant": "release-native-target",
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
       "fileCount": 9242,
       "bytes": 4430064819,
       "anchorRelativePath": ".rustc_info.json",
       "anchorSha256": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
-      "status": "D02构建后最终归档；暖缓存保留，未声称释放磁盘"
+      "status": "暖缓存已恢复至原try路径，供Root后续局部Rust测试与release增量构建；不代表新NativeE2E通过",
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00"
     },
     {
       "variant": "native-e2e-target",
-      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
       "fileCount": 21070,
       "bytes": 13527815874,
       "anchorRelativePath": ".rustc_info.json",
       "anchorSha256": "367cbffd8e2cec3408af48f1eacf1fe32a720c09e718a4a1240770ac45a1bf7a",
-      "status": "positive control使用后再次归档；保留原scanPositiveControlRestore证据，不声明新NativeE2E"
+      "status": "暖缓存已恢复至原try路径，供Root后续局部Rust测试与release增量构建；不代表新NativeE2E通过",
+      "restoredAtLocal": "2026-10-09T00:03:14.3271303+08:00"
     },
     {
       "variant": "旧stage3-release候选",

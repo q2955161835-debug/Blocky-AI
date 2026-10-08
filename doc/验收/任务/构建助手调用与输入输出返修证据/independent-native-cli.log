@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.74s
+     Running unittests src\lib.rs (try\native-e2e-target\debug\deps\blocky_studio-a9da6fb84fe3ffd2.exe)
+
+running 1 test
+test coding::cli::tests::actual_cli_patch_create_preview_apply_compile_without_workspace_is_atomic ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 394 filtered out; finished in 13.43s
+
