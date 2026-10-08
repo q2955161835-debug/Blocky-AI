@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "04fce4d82236bc364596fde55229537db1600f67",
+  "testFilter": "chat_history::tests",
+  "passed": 3,
+  "exitCode": 0,
+  "runtime": "debug Native real UserStore write/read, not packaged GUI",
+  "GUIExecuted": false,
+  "logSha256": "C6D18ABFDC469E663BA2498D12F100EACB68812046DE4C54FD05E9056204B869"
+}

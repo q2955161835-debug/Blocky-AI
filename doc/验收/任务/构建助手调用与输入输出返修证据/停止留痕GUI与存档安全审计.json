@@ -1,0 +1,90 @@
+{
+  "sourceCommit": "04fce4d82236bc364596fde55229537db1600f67",
+  "method": "exact files read-only; no full conversation or thinking exported",
+  "nativeUserRead": {
+    "ok": false,
+    "code": "BLK-PERM-001",
+    "exitCode": 1,
+    "boundary": "packaged user-read only permits settings/shortcuts/resources"
+  },
+  "index": {
+    "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio\\user\\chat-history-builder\\project-49aa4bf0-8bb1-407a-afd7-53d85e51b139.json",
+    "sha256": "e466b144aa0ed67f6214d3289285df658861274ee9b47c16a8206c849c08511e",
+    "bytes": 643,
+    "threadCount": 2,
+    "containsBothThreads": true
+  },
+  "conversations": [
+    {
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio\\user\\chat-conversation\\chat-dd96948d-6e8b-44aa-88aa-6896d3f332bc.json",
+      "sha256": "c3d7ab00ec68b06bbe857e4fd579f69fcde13f7efe4f9cfae72406b87e241d55",
+      "bytes": 8482,
+      "projectBound": true,
+      "assistant": "builder",
+      "threadBound": true,
+      "messageCount": 4,
+      "lastRole": "assistant",
+      "lastStatus": "cancelled",
+      "lastTextChars": 238,
+      "fourthRoundMarkerRetained": true,
+      "thinkingCharsTotal": 4031,
+      "thinkingBytesTotal": 4205,
+      "activityCountTotal": 5,
+      "activityStatuses": {
+        "completed": 4,
+        "cancelled": 1
+      },
+      "lastActivityCount": 3
+    },
+    {
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio\\user\\chat-conversation\\chat-c9c7082f-5241-44cd-b1b7-625ca412339e.json",
+      "sha256": "aad859d63ea6cc9fadebe87dbb54ddbe0aa01379865610223b6f5351394acd6d",
+      "bytes": 300,
+      "projectBound": true,
+      "assistant": "builder",
+      "threadBound": true,
+      "messageCount": 0,
+      "lastRole": null,
+      "lastStatus": null,
+      "lastTextChars": 0,
+      "fourthRoundMarkerRetained": false,
+      "thinkingCharsTotal": 0,
+      "thinkingBytesTotal": 0,
+      "activityCountTotal": 0,
+      "activityStatuses": {},
+      "lastActivityCount": 0
+    }
+  ],
+  "GUIEvidence": [
+    {
+      "file": "new-chat.png",
+      "sha256": "215086392b584049623f4d14231ce80e4ece01b023e38965ddbbddd6b53a403e",
+      "bytes": 96803
+    },
+    {
+      "file": "reopened-stopped.png",
+      "sha256": "235be49c5913e2f1ec11bfd03e63b6310f95cdb848c3d46f1bb4bde23164dccd",
+      "bytes": 137175
+    },
+    {
+      "file": "safe-timing.json",
+      "sha256": "efceb34707c4a6bf431bc345ebb9962bf777b76ac58bf3ea447ca4ae63a2ae77",
+      "bytes": 408
+    },
+    {
+      "file": "stopped-retained.png",
+      "sha256": "048b58f66711d2041ba474701f208d5584632c22cd9e3afb9ab5b9bd94f620dc",
+      "bytes": 148690
+    },
+    {
+      "file": "stopped-tools.png",
+      "sha256": "cb856d25f7ad60128959fc2066bce6d46b86e4099fd763602a1241493ff3ad47",
+      "bytes": 136911
+    }
+  ],
+  "savedProject": {
+    "path": "D:\\1Folder\\Blocky-AI\\作品\\桌面追加测试-2026-10-09\\停止留痕回归.blocky",
+    "sha256": "bbba372120b26fb9f14b22b4dec02dea076a106028e85c3767ba3a9cd6e54c91",
+    "bytes": 573
+  }
+}

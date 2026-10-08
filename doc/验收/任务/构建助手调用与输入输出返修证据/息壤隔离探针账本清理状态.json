@@ -1,0 +1,13 @@
+{
+  "time": "2026-10-09T01:34:00+08:00",
+  "target": "D:\\1Folder\\Blocky-AI\\try\\assistant-streaming-2026-10-09\\api-profile",
+  "files": 5,
+  "bytes": 2660,
+  "activeProbeCount": 0,
+  "removed": false,
+  "status": "blocked_by_execution_policy",
+  "reason": "The tool rejected recursive Remove-Item as blocked by policy without a more specific reason.",
+  "containsEncryptedCredentialClone": true,
+  "originalConfigurationUnchanged": true,
+  "defaultUserProfileUnchanged": true
+}

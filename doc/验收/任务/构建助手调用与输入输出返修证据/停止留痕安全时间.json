@@ -1,0 +1,13 @@
+{
+  "source": "04fce4d",
+  "thirdStartedAt": "2026-10-08T17:26:51.916Z",
+  "thirdStopped": false,
+  "reason": "completed early",
+  "fourthStartedAt": "2026-10-08T17:27:50.684Z",
+  "stopClickedAt": "2026-10-08T17:28:06.524Z",
+  "stopAfterAt": "2026-10-08T17:28:19.653Z",
+  "newChatAt": "2026-10-08T17:28:41.509Z",
+  "reopenedAt": "2026-10-08T17:31:43.893Z",
+  "stoppedPrefix": true,
+  "reopenedPrefix": true
+}

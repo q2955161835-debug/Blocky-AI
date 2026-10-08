@@ -1,0 +1,52 @@
+{
+  "sourceCommit": "04fce4d82236bc364596fde55229537db1600f67",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-history-metadata",
+  "checkedAt": "2026-10-09T01:26:58.7385348+08:00",
+  "enumeration": "recursive files -Force; independent all file SHA",
+  "actualFiles": 2595,
+  "expectedFiles": 2595,
+  "totalBytes": 772246198,
+  "manifestSha256": "DF10C700A53095D04A5D4D77508280726D0D5D3025A8FF665D2256640FE496EB",
+  "errors": [],
+  "frontendComparedTo": "e7dd40a4fab474851ce43edfff5ef4f772cfcca8",
+  "frontend": [
+    {
+      "path": "apps/studio-desktop/dist/assets/index-BrntiWeG.css",
+      "bytes": 55131,
+      "sha256": "bfefb3e752bce7df29a31030d13b60a21451ba6218a4e7bb2f3641a8c1ff0601",
+      "same": true
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/index-DrMnMB5c.js",
+      "bytes": 2365600,
+      "sha256": "f645d339c6745065b859e87bded543c79575ff590af5755642a3868f6dcc856b",
+      "same": true
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/logo-0dCHBSVz.png",
+      "bytes": 1222308,
+      "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "same": true
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-B1njb2Cr.css",
+      "bytes": 3962,
+      "sha256": "c2de618f9656c020d82d4b20996ed7efcd03fd4621fe78804b060f38e003412f",
+      "same": true
+    },
+    {
+      "path": "apps/studio-desktop/dist/assets/TerminalView-cFApyRpb.js",
+      "bytes": 334781,
+      "sha256": "9bca289f1bb4fb9e00bd5c2357149742ef3fca90a8ef937af8f0c7ed41f032bb",
+      "same": true
+    },
+    {
+      "path": "apps/studio-desktop/dist/index.html",
+      "bytes": 359,
+      "sha256": "3d0a329f1b1eb8a4877a5fd47ee7123963b05a9578a4cde2bce38769843d7225",
+      "same": true
+    }
+  ],
+  "frontendBoundary": "Compare both release scan exact SHA/bytes and current built files; Tauri embedded frontend not extracted from exe",
+  "passed": true
+}

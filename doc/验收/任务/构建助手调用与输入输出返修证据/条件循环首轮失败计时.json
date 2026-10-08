@@ -1,0 +1,19 @@
+{
+  "source": "04fce4d",
+  "windowId": 12260926,
+  "startedAt": "2026-10-08T17:32:26.433Z",
+  "retryAt": "2026-10-08T17:33:26.059Z",
+  "transportAt": "2026-10-08T17:33:14.412Z",
+  "stoppedAt": "2026-10-08T17:38:25.282Z",
+  "savedObservedAt": "2026-10-08T17:39:18.084Z",
+  "buildSeconds": 358.849,
+  "blocks": 0,
+  "activities": 26,
+  "result": "failed",
+  "errors": [
+    "BLK-PROVIDER-TRANSPORT",
+    "BLK-CODING-CLI"
+  ],
+  "savedProject": "D:/1Folder/Blocky-AI/作品/桌面追加测试-2026-10-09/条件循环-首次失败记录.blocky",
+  "runStage": "not executed"
+}
