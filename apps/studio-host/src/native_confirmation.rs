@@ -11,11 +11,9 @@ pub async fn runtime_request(
 ) -> Result<bool, String> {
     use tauri::Manager;
     if window.label() != "main" { return Err("BLK-PERM-001".into()); }
-    let ask = {
-        let store = window.state::<crate::user_store::UserStore>();
-        crate::permission_policy::requires_confirmation(&store)?
-    };
-    if ask { Ok(yes_no(window, title, description).await) } else { Ok(true) }
+    let store = window.state::<crate::user_store::UserStore>();
+    crate::permission_policy::authorize_request(&store, || yes_no(window, title, description)).await?;
+    Ok(true)
 }
 
 /// Native Yes/No approval, positioned inside its visible owner on Windows.
