@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "e7dd40a4fab474851ce43edfff5ef4f772cfcca8",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-composer-row",
+  "checkedAt": "2026-10-09T00:51:02.9797525+08:00",
+  "enumeration": "recursive -Force files; independent SHA of every file",
+  "expectedFiles": 2595,
+  "actualFiles": 2595,
+  "totalBytes": 772203190,
+  "manifestSha256": "4C646A0F0D560058843BA145709F892BED16E4E99BD9AAF27755EEFF6C168121",
+  "hiddenFiles": 0,
+  "errors": [],
+  "passed": true
+}

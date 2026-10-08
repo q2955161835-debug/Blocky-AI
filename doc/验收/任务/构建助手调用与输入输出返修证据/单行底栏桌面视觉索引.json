@@ -1,0 +1,89 @@
+{
+  "sourceCommit": "e7dd40a4fab474851ce43edfff5ef4f772cfcca8",
+  "captureBy": "Root using actual Sky, independent reviewer did not control desktop",
+  "sourceRoot": "D:\\1Folder\\Blocky-AI\\try\\builder-repair-2026-10-08\\composer-ui",
+  "screenshotPixels": [
+    1688,
+    1016
+  ],
+  "cssWidths": [
+    240,
+    340,
+    558
+  ],
+  "builder560ActualWidth": 558,
+  "comparison": "底栏源图实现同图比较.png",
+  "comparisonSha256": "FF418F7D791E90F1EE1412BCCA15C184670C8979B26F3631ACC366D475B60C9F",
+  "shots": [
+    {
+      "file": "agent-240.png",
+      "bytes": 97075,
+      "sha256": "BFBA0BDD611F84E3A69E1FC42A4802BB01B8D84DD26D95963A4CBD265AC405A8"
+    },
+    {
+      "file": "agent-240.txt",
+      "bytes": 12600,
+      "sha256": "76D2A02EAFC777C222E70BE6B34939A64D965B5FE65D422EF18741D2E47484FF"
+    },
+    {
+      "file": "agent-340.png",
+      "bytes": 96526,
+      "sha256": "01146CB68FE0A3D0CA0A35B0259CEDB3F6878796732EA6A0EB656BDD0F7E0798"
+    },
+    {
+      "file": "agent-340.txt",
+      "bytes": 12585,
+      "sha256": "1C67B8A1BC557A6CBAC1ECE1549C958DAD21A0DDFDC970DE73644659FDBC2D53"
+    },
+    {
+      "file": "agent-draft-restored.png",
+      "bytes": 100138,
+      "sha256": "D97309FDABBD6FE32E859AE53735AA0C4D53524D0DBB57965AE13CB6199B92EC"
+    },
+    {
+      "file": "agent-model-change-draft.png",
+      "bytes": 102903,
+      "sha256": "37412F281ABEA812F5E6846FD45FBF334B1091B1881920DA0586E452C006EBAC"
+    },
+    {
+      "file": "agent-model-change-draft.txt",
+      "bytes": 10782,
+      "sha256": "BBD8399326196A43AECCA0D29C2F3DE734D7BC9A91039271D36530CA6355A972"
+    },
+    {
+      "file": "agent-popup-240.png",
+      "bytes": 103092,
+      "sha256": "49C3FEBEFE7B3BFF704428A7C581577DE8567B46669AAE3608D745A84D15C15C"
+    },
+    {
+      "file": "agent-popup-240.txt",
+      "bytes": 13247,
+      "sha256": "0A5F020116865E2B5BAC6DA5B35CBB180869990DF78A810A5F3FAB4514903203"
+    },
+    {
+      "file": "builder-240.png",
+      "bytes": 95872,
+      "sha256": "D5746A4FC7411063F3F1B0B4310D307E7DE4DA6D78F5A2F16724595E083EBFE5"
+    },
+    {
+      "file": "builder-240.txt",
+      "bytes": 10344,
+      "sha256": "9E5A5CB501934801FB14C066A7763FA56BCBB5E5B6ABB1F3FB1AB47D12E711C3"
+    },
+    {
+      "file": "builder-560.png",
+      "bytes": 93932,
+      "sha256": "2FDC308EFA77E2DB0FBD3D325F097677A9A90E7D19ECE35E67F8D0062DBA4E2B"
+    },
+    {
+      "file": "builder-560.txt",
+      "bytes": 10344,
+      "sha256": "821B02A62B12318943BC9EAC2D800A10F93E9FC653FF1991E8B15D50C547EB09"
+    },
+    {
+      "file": "builder-running-558.png",
+      "bytes": 108499,
+      "sha256": "02E546BF7D7ACD5057583A683689B3733FCCBCDBF1E8098D436C386786E83D64"
+    }
+  ]
+}
