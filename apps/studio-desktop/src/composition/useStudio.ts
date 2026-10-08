@@ -3,6 +3,7 @@ import { useConfirmation } from "./useConfirmation";
 import { useSettings } from "./useSettings";
 import { useShortcuts } from "./useShortcuts";
 import { useRecovery } from "./useRecovery";
+import { useProjectStartup, type ProjectStarter } from "./useProjectStartup";
 import { useResources } from "./useResources";
 import { useSession } from "./useSession";
 import {
@@ -382,11 +383,21 @@ export function useStudio(initialProject?: Project) {
       setBusy(false);
     }
   };
+  const openingWindow = useRef(false);
+  const newWindow = async (starter?: ProjectStarter) => {
+    if (!isTauri() || closing.current || openingWindow.current) return;
+    openingWindow.current = true;
+    try { await invoke("open_new_window", starter ? { starter } : undefined); }
+    catch { setMessage("新窗口未能打开，请重试。原作品已保留。"); }
+    finally { openingWindow.current = false; }
+  };
   const beginProject = async (
     create: () => Project,
     confirmationMessage: string,
     successMessage: string,
+    starter: ProjectStarter,
   ) => {
+    if (started && isTauri()) return newWindow(starter);
     if (closing.current || runBusy.current || ioBusy.current) return;
     if (!settings.ready || !resources.ready) {
       setMessage("本机模型配置尚未就绪，请稍后重试。");
@@ -431,6 +442,7 @@ export function useStudio(initialProject?: Project) {
       createEmptyProject,
       "新建项目将放弃当前未保存的修改。",
       "已新建项目",
+      "blank",
     );
   const startBlueprint = (id: string) => {
     const blueprint = startingBlueprints.find((item) => item.id === id);
@@ -455,8 +467,14 @@ export function useStudio(initialProject?: Project) {
       },
       `开始“${blueprint.displayName}”将放弃当前未保存的修改。`,
       `已创建${blueprint.displayName}`,
+      blueprint.id,
     );
   };
+  useProjectStartup(
+    !started && settings.ready && resources.ready,
+    starter => starter === "blank" ? fresh() : startBlueprint(starter),
+    setMessage,
+  );
   const migrate = async () => {
     if (closing.current || runBusy.current || ioBusy.current) return;
     ioBusy.current = true;
@@ -571,11 +589,7 @@ export function useStudio(initialProject?: Project) {
     message,
     setMessage,
     busy,
-    newWindow: async () => {
-      if (!isTauri() || closing.current) return;
-      try { await invoke("open_new_window"); }
-      catch { setMessage("新窗口未能打开，请重试。"); }
-    },
+    newWindow,
     exiting,
     settle,
     paused,

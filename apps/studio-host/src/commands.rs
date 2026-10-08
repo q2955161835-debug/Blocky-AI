@@ -101,15 +101,23 @@ pub fn release_project(window: tauri::WebviewWindow, state: tauri::State<'_, Han
     Ok(())
 }
 #[tauri::command]
-pub fn open_new_window(window: tauri::WebviewWindow, app: tauri::AppHandle) -> Result<(), String> {
+pub fn open_new_window(window: tauri::WebviewWindow, app: tauri::AppHandle, starter: Option<String>) -> Result<(), String> {
     main_only(&window)?;
     crate::window_lifecycle::visible(&window)?;
+    let starter = starter.as_deref().map(blocky_studio::project_start::validate).transpose()?;
     let root = blocky_studio::profile::for_app(&app)?;
     let exe = std::env::current_exe().map_err(|_| "BLK-WINDOW-001")?;
-    std::process::Command::new(&exe).arg("--profile-dir").arg(root)
-        .current_dir(exe.parent().ok_or("BLK-WINDOW-001")?)
+    let mut command = std::process::Command::new(&exe);
+    command.arg("--profile-dir").arg(root).current_dir(exe.parent().ok_or("BLK-WINDOW-001")?);
+    if let Some(starter) = starter { command.arg("--starting-project").arg(starter); }
+    command
         .spawn().map_err(|_| "BLK-WINDOW-001")?;
     Ok(())
+}
+#[tauri::command]
+pub fn startup_project(window: tauri::WebviewWindow, start: tauri::State<'_, blocky_studio::project_start::StartupProject>) -> Result<Option<String>, String> {
+    main_only(&window)?;
+    Ok(start.inner().0.clone())
 }
 #[tauri::command]
 pub async fn open_migration(window: tauri::WebviewWindow) -> Result<Option<ProjectFiles>, String> {

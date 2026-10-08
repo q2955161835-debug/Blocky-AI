@@ -21,6 +21,7 @@ pub(crate) mod process_job;
 pub(crate) mod process_worker;
 pub mod profile;
 pub mod project_access;
+pub mod project_start;
 pub mod project_store;
 pub mod provider;
 pub mod rpa;

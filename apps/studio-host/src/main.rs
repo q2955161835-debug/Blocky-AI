@@ -34,6 +34,8 @@ fn main() {
         Some("--blocky-task-run") => std::process::exit(blocky_studio::task_host::runner_main()),
         _ => {}
     }
+    let starter = blocky_studio::project_start::from_options(std::env::args_os().skip(1))
+        .unwrap_or_else(|code| { eprintln!("{code}"); std::process::exit(2); });
     let mut selected = blocky_studio::profile::from_options(
         std::env::args_os().skip(1),
         std::env::var_os(blocky_studio::profile::VARIABLE),
@@ -72,6 +74,7 @@ fn main() {
         .plugin(tauri_plugin_wdio::init())
         .plugin(tauri_plugin_wdio_webdriver::init());
     builder
+        .manage(blocky_studio::project_start::StartupProject(starter))
         .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::coding::CodingHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
@@ -203,6 +206,7 @@ fn main() {
             commands::open_project,
             commands::release_project,
             commands::open_new_window,
+            commands::startup_project,
             studio_windows::studio_windows,
             studio_windows::focus_studio_window,
             conversion_commands::conversion_scan,
