@@ -1,0 +1,79 @@
+{
+  "notExecuted": [
+    "GUI",
+    "真实外部API",
+    "新普通包逐文件核验",
+    "Full/全盘回归"
+  ],
+  "verdict": "通过",
+  "logs": [
+    {
+      "bytes": 721,
+      "sha256": "F0523D0F0A778AB46569E36E4AAA1CB17D5A576C12A150F31443EA51A7FC2807",
+      "file": "0184-coding-events-tests.log"
+    },
+    {
+      "bytes": 557,
+      "sha256": "C25F639E374561BF802AC07591CBCB3DCAB419D6185D185D58673466C437788E",
+      "file": "0184-coding-process-provider_failure_tests.log"
+    },
+    {
+      "bytes": 568,
+      "sha256": "5478D31E20DA50868C54B90F8E2E73202E9B017D7F1144173703C504A0CE037C",
+      "file": "0184-permission_policy-tests.log"
+    },
+    {
+      "bytes": 229,
+      "sha256": "EAE0AFAC0C45E1F7DEA1F0F6D7DA4467D1F45A727E23B40981278F08A1649365",
+      "file": "0184-permission-ts.log"
+    },
+    {
+      "bytes": 399,
+      "sha256": "3CCFFD71979AAB78CFF32EEACC024A58C82FB50529CA9196F687453843FBC6F7",
+      "file": "0184-provider-gateway-stream-tests-malformed_stream_stages.log"
+    },
+    {
+      "bytes": 415,
+      "sha256": "BE19697B4255549A7A6812A0688EF18FCB5DA10AC6760510BCF3F9C82C59A62F",
+      "file": "0184-provider-gateway-stream-tests-nullable_role.log"
+    },
+    {
+      "bytes": 409,
+      "sha256": "8E6F76B707262749864BCAFF60933251A9199538D638063FFF5802A794247EB0",
+      "file": "0184-provider-gateway-stream-tests-official_null_role.log"
+    },
+    {
+      "bytes": 218,
+      "sha256": "569A22BEC5272D2B1FF55BF5E14FAE685C43279A280CF2BBE6F63317B5E51FB6",
+      "file": "0184-ts.log"
+    }
+  ],
+  "review": {
+    "corrections": "最多2次，仅TOOL-JSON；取消/预算错误/其他故障终止",
+    "accounting": "恢复成功final包含失败实际用量；Native覆盖Worker列表而非追加，不重复",
+    "failedAccountingBoundary": "最终失败/取消持久用量账本不在有限范围，不宣称",
+    "sse": "null role允许，非null非法role/content/tools/order/缺DONE仍拒绝，固定阶段码不输出raw",
+    "permission": "默认full/ask保存及坏偏好fail closed技术验证；真实Native拒绝弹窗/两助手API续轮未执行",
+    "noToolReplay": "拒绝响应不派发工具，旧工具结果保留；恢复测试只执行旧工具一次",
+    "eventLog": "拒绝只清待核对streamed/consumed，shown/events保留；完成settle后Native公开text作为final"
+  },
+  "scope": "最小独立技术补验，不是普通GUI/真实模型/整轮通过",
+  "checkedAt": "2026-10-09T03:39:59.5211236+08:00",
+  "sourceCommit": "0184fb3a4a3349c00a00d9a317b130809ffb25af",
+  "native": {
+    "gatewayNullRole": 2,
+    "passed": 11,
+    "providerFailure": 2,
+    "commands": 6,
+    "allExitCode": 0,
+    "target": "try/native-e2e-target",
+    "codingEvents": 4,
+    "gatewayFixedStages": 1,
+    "permissionPolicy": 2
+  },
+  "typescript": {
+    "passed": 24,
+    "files": 4,
+    "selectedPermissionExcluded": 3
+  }
+}

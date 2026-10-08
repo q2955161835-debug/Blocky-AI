@@ -1,0 +1,21 @@
+{
+  "denialOrdering": [
+    "provider_model_call返回在host.model_call/spawn_blocking前",
+    "provider_call返回在host.call/spawn_blocking前",
+    "tool_call返回在operation.call前，已有begin/preflight不执行外部副作用",
+    "agent_memory_authorize返回在host.authorize发token前",
+    "agent_tool_call返回在host.tool前",
+    "旧builder_run返回在host.run前",
+    "coding_run返回在host.run前"
+  ],
+  "actualGuiDenial": "未执行，需Root普通GUI实际拒绝证据或授权最小隔离复验",
+  "savedAsk": "每请求读取持久化偏好，并调用原yes_no",
+  "scope": "Native ask拒绝分支静态边界，复用已独立执行permission_policy2；不是模拟点击或真实弹窗拒绝",
+  "denialCode": "BLK-PERM-001",
+  "defaultMode": "full",
+  "checkedAt": "2026-10-09T03:47:25.4550620+08:00",
+  "preserved": "拒绝后不调用执行分支；原preflight/digest/路径/资源/取消边界不修改",
+  "sourceCommit": "0184fb3a4a3349c00a00d9a317b130809ffb25af",
+  "api": "未调用",
+  "evidenceReuse": "0184有限恢复与权限独立技术补验.json：permission_policy2实际通过；不重复已验源码测试"
+}

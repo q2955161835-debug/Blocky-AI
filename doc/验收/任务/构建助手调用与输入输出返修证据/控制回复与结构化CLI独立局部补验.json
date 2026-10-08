@@ -1,0 +1,62 @@
+{
+  "verdict": "通过",
+  "scope": "模块局部独立技术补验，未冻结新普通包，不含GUI/API/三场景通过",
+  "baseSource": "0184fb3a4a3349c00a00d9a317b130809ffb25af",
+  "sourceHashes": [
+    {
+      "file": "packages/block-catalog/src/flow-primitives.json",
+      "sha256": "af6ba25a16632213884c2cdfcbef3450b5b9b6b3463d03e7f3558eef0d4d2bf4"
+    },
+    {
+      "file": "packages/block-catalog/src/agent-primitives.json",
+      "sha256": "20e657569df5812863195b17311ee3c773e8500556a5082352581c1901372658"
+    },
+    {
+      "file": "apps/studio-host/src/coding/cli.rs",
+      "sha256": "372db9fe8b96cd7500f49401a602b9b8a54e15287eeafd7eed2a67f3bd98c82c"
+    },
+    {
+      "file": "apps/studio-host/src/coding/mod.rs",
+      "sha256": "aa998378b61fadd44af12fb92a966b00ff0d5c3f468f6cf1d2535688d59af90e"
+    },
+    {
+      "file": "packages/builder-engine/src/coding-tool-schemas.json",
+      "sha256": "7470c9af9835b57eada4722c0529faeeb4a3078a7a5fcf1034fb70b2bfd850fa"
+    },
+    {
+      "file": "packages/builder-engine/src/coding.ts",
+      "sha256": "544386db70d5822a1a970eeecb5b9d5f30a0bc6897313d867581636be6aa39ad"
+    }
+  ],
+  "tests": {
+    "typescript": 8,
+    "nativeActualCli": 1,
+    "typescriptIntentionalExcluded": 31,
+    "nativeFiltered": 417,
+    "allExitCode": 0
+  },
+  "logs": [
+    {
+      "file": "control-structured-independent-ts.log",
+      "sha256": "ffb156d6f57f24b02a683bd78789453ed0fb0dfb446a78bf8b7e834c506c56d8",
+      "bytes": 240
+    },
+    {
+      "file": "control-reply-independent-runtime.log",
+      "sha256": "ed930cd83e461d1f3060fedb574704d2859fb7dfcefd884dde97f1951a22a6b6",
+      "bytes": 213
+    },
+    {
+      "file": "control-structured-independent-native.log",
+      "sha256": "a6e4367d901d9fd1f89ea36196fb73d762d12ad0a6e3d171472d84c51b899280",
+      "bytes": 478
+    }
+  ],
+  "boundaries": [
+    "控制结构新增command连接；值/工具声明非法插槽仍拒绝，retry副作用guard保持",
+    "Native operations非空数组<=500/单占位/仅patch create/256KiB，经原命令白名单/秘密/结构/patch候选校验和取消；旧args-only兼容",
+    "真实CLIcreate/preview/apply/compile成功及非法/秘密/取消未改项目",
+    "Root相关312开发测试仅审阅，未独立重跑",
+    "未发现直接范围已证实新风险，新包三场景不外推"
+  ]
+}

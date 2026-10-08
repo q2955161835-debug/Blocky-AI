@@ -1,0 +1,21 @@
+{
+  "manifestSha256": "C6D72F527361AACBF6544636E3EA77DCDFC295CF33AE0D6444FC36B4B8174ACC",
+  "files": 2595,
+  "failures": [],
+  "exeSha256": "59BFFA4F6D5E226DD4EED8CC8C0EFBC185EF22C0AAA6C5761AC0A5789F343C7A",
+  "passed": true,
+  "bytes": 772337458,
+  "package": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-agent-flow",
+  "hiddenIncluded": true,
+  "scope": "独立普通整包逐文件SHA；未执行GUI/API/回归测试",
+  "checkedAt": "2026-10-09T04:25:29.0190216+08:00",
+  "manifestSourceCommit": "0184fb3a4a3349c00a00d9a317b130809ffb25af",
+  "productFrozenSource": "7d5a1c264f20ce563f4ee7247ceeb1ef47d8e5e8",
+  "sourceMapping": "原manifest 0184+未提交控制流/structured-CLI同字节源码；冻结后7d复扫，不称干净0184产品或干净7d重构建",
+  "scan": {
+    "commit": "7d5a1c264f20ce563f4ee7247ceeb1ef47d8e5e8",
+    "positiveControl": true,
+    "passed": true,
+    "sha256": "45ab13822e359c1d5d1e89d032bd37e1baa047802118e56a473bd1d5b060b757"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "source": "7d5a1c264f20ce563f4ee7247ceeb1ef47d8e5e8",
+  "R02": "通过",
+  "R03NewRun": "通过",
+  "memoryBuild": {
+    "source": "7d5a1c2",
+    "start": "2026-10-08T20:18:52.755Z",
+    "completedObserved": "2026-10-08T20:22:02.781Z",
+    "elapsedUpperSeconds": 190.026,
+    "blockCount": 8,
+    "origin": "built in work starter via real desktop builder",
+    "runtimeApprovalDialogsObserved": 0
+  },
+  "memoryRun": {
+    "source": "7d5a1c2 agent-flow ordinary package",
+    "startedAt": "2026-10-08T20:23:53.859Z",
+    "observedDoneAt": "2026-10-08T20:32:49.151Z",
+    "elapsedSeconds": 535.292,
+    "firstAnswer": "好的，记住了：你叫小林，喜欢蓝色。",
+    "followupAnswer": "你叫小林，喜欢蓝色。",
+    "newSessionAnswer": "不知道。你还没有告诉我你的称呼和喜欢的颜色呢。",
+    "historyRecovered": true,
+    "processExitAndFileReopenRecovered": true,
+    "actualApi": true,
+    "permissionDialogs": 0
+  },
+  "memoryBlocks": 8,
+  "memoryArtifact": {
+    "bytes": 7688,
+    "sha256": "f33b69be059719dd8e27d50fde989dbe981c2d77be99c79a8747101e071bd0dc"
+  },
+  "memoryHistory": {
+    "projectId": "project-ac8b87b9-d7d4-4108-ab23-0d0793695968",
+    "indexSha256": "47c6c882491e1dbd128d1e90d3a8e16ca98a62c5810514f3256aa4a2c72ddf04",
+    "threads": [
+      {
+        "thread": "chat-52fc39e0-921c-4142-8d77-81431786b8ba",
+        "sha256": "2ab39ae850d3e2ebd31488e46f45bed2015a9f06dfa19aad2bb73e7e4dc494bc",
+        "messages": 4,
+        "assistantMessages": 2,
+        "bindingCorrect": true,
+        "assistant": "agent",
+        "activityCount": 0,
+        "thinkingCharacters": 0,
+        "answerLengths": [
+          17,
+          10
+        ],
+        "syntheticAnswers": [
+          "好的，记住了：你叫小林，喜欢蓝色。",
+          "你叫小林，喜欢蓝色。"
+        ]
+      },
+      {
+        "thread": "chat-e556b5c3-ab06-4d25-86b2-c4497217ef5f",
+        "sha256": "1e67256bf81a6d3b77d5853c46a18276691c3464f767c3896d2bb79c047a625d",
+        "messages": 2,
+        "assistantMessages": 1,
+        "bindingCorrect": true,
+        "assistant": "agent",
+        "activityCount": 0,
+        "thinkingCharacters": 0,
+        "answerLengths": [
+          23
+        ],
+        "syntheticAnswers": [
+          "不知道。你还没有告诉我你的称呼和喜欢的颜色呢。"
+        ]
+      }
+    ],
+    "threadCount": 2
+  },
+  "csvRun": {
+    "source": "7d5a1c2 agent-flow ordinary package",
+    "startedAt": "2026-10-08T20:26:39.648Z",
+    "observedDoneAt": "2026-10-08T20:33:12.345Z",
+    "elapsedSeconds": 392.697,
+    "actualApi": true,
+    "permissionDialogs": 0,
+    "total": 250,
+    "mean": 50,
+    "max": 100,
+    "categories": {
+      "transport": 50,
+      "food": 100,
+      "office": 100
+    },
+    "output": "summary-new.md",
+    "readbackObserved": true
+  },
+  "csvHistory": {
+    "projectId": "project-498ff405-7173-4b5c-979e-0353a9340c90",
+    "indexSha256": "04af6857676fc345e5a08a6b0caabcbcd10cc5027b7fca9d56390d08f1899fd7",
+    "threads": [
+      {
+        "thread": "chat-87414e8f-c6ee-40e4-875d-8b9737627461",
+        "sha256": "8eb439e8b4c66c5a4371a0685b67074d96130769aa0cd6c873db758f04209df0",
+        "messages": 6,
+        "assistantMessages": 3,
+        "bindingCorrect": true,
+        "assistant": "agent",
+        "activityCount": 0,
+        "thinkingCharacters": 0,
+        "answerLengths": [
+          13,
+          718,
+          312
+        ],
+        "lastAnswerHasNewFile": true,
+        "lastAnswerHasNumbers": true
+      }
+    ],
+    "threadCount": 1
+  },
+  "csvOutput": {
+    "bytes": 166,
+    "sha256": "8c079a1adccccbf717aeb11f8a4cd6e4e853d1f499557bf3b899a853654babea",
+    "values": "250/50/100; transport50 food100 office100，与原CSV独立复算一致"
+  },
+  "screenshots": [
+    {
+      "file": "memory-7d-build-success.jpg",
+      "bytes": 189904,
+      "sha256": "39b4e2b73478c1cbac37eab52a35f6e18f543ac7a05eb3c47c8e375197de558a"
+    },
+    {
+      "file": "memory-7d-first-answer.jpg",
+      "bytes": 181246,
+      "sha256": "84fe967382958001846c693aafe91c555903c01c1fb3bc545b7e94ce8ee79587"
+    },
+    {
+      "file": "memory-7d-followup-answer.jpg",
+      "bytes": 179030,
+      "sha256": "3c6d38c14881470d70e10c8ead2177611f49bb062f4cabd5467c80ea5bac1262"
+    },
+    {
+      "file": "memory-7d-new-session-isolated.jpg",
+      "bytes": 179824,
+      "sha256": "9a9ba59c198be6fcbde0e00ed0532a248b56a88c4494ffbd5634b472cf91ee16"
+    },
+    {
+      "file": "memory-7d-history-restored.jpg",
+      "bytes": 164877,
+      "sha256": "a071935b8b21da95e4f122deab8353d49f3b317728c20f37dc110029e61995c6"
+    },
+    {
+      "file": "memory-7d-reopen-restored.jpg",
+      "bytes": 165192,
+      "sha256": "81f5f36433b52589906160b65a645221c58167b417bf8f0cb74a655896b64720"
+    },
+    {
+      "file": "csv-7d-new-run-success.jpg",
+      "bytes": 198079,
+      "sha256": "3ae9411c1f62b5149048d5db49da0ec4a94dbc5cf0b4aaae8d5210a77f5ac33c"
+    }
+  ],
+  "boundaries": [
+    "Root真实GUI/API操作，独立仅只读截图/稳定作品/指定projectId历史，不调用API",
+    "R02工作蓝图起点，非空白从零；535.292秒为两问/新会话/历史/退出重开整个观察上界",
+    "旧失败及多尝试累计不追认600秒内；最新单阶段分别<600",
+    "不会从此签晚到回调活跃轮隔离或Agent失败停止留痕",
+    "原错绑定图保持撤回，不覆盖"
+  ]
+}

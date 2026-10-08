@@ -47,8 +47,8 @@ export async function buildInstaller(argv) {
   const install = [], uninstall = [];
   for (const file of packageData.files) {
     const local = file.path.replaceAll("/", "\\"), folder = dirname(file.path).replaceAll("/", "\\");
-    install.push(`SetOutPath ${quoteNsis(folder === "." ? "$INSTDIR" : `$INSTDIR\\${folder}`).replace('"$$INSTDIR', '"$INSTDIR')}`);
-    install.push(`File ${quoteNsis(`/oname=${file.path.split("/").at(-1)}`)} ${quoteNsis(file.absolute)}`);
+    install.push('ClearErrors', `SetOutPath ${quoteNsis(folder === "." ? "$INSTDIR" : `$INSTDIR\\${folder}`).replace('"$$INSTDIR', '"$INSTDIR')}`, '!insertmacro CHECK_INSTALL_WRITE');
+    install.push('ClearErrors', `File ${quoteNsis(`/oname=${file.path.split("/").at(-1)}`)} ${quoteNsis(file.absolute)}`, '!insertmacro CHECK_INSTALL_WRITE');
     uninstall.push(`Delete ${quoteNsis(`$INSTDIR\\${local}`).replace('"$$INSTDIR', '"$INSTDIR')}`);
     let parent = dirname(file.path);
     while (parent !== ".") { directories.add(parent); parent = dirname(parent); }

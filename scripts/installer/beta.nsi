@@ -7,6 +7,43 @@ SetCompressorDictSize 32
 !include "LogicLib.nsh"
 !include "x64.nsh"
 !include "build-settings.nsh"
+Var PayloadStarted
+Var ManifestStarted
+Var UninstallerStarted
+Var DesktopShortcutStarted
+Var AppShortcutStarted
+Var UninstallShortcutStarted
+Var ShortcutDirectoryStarted
+Var RegistryStarted
+!macro CLEANUP_FAILED_INSTALL
+  ${If} $RegistryStarted == 1
+    DeleteRegKey HKCU "${BETA_UNINSTALL_KEY}"
+  ${EndIf}
+  ${If} $DesktopShortcutStarted == 1
+    Delete "$DESKTOP\Blocky Studio（测试版）.lnk"
+  ${EndIf}
+  ${If} $AppShortcutStarted == 1
+    Delete "$SMPROGRAMS\Blocky Studio（测试版）\Blocky Studio（测试版）.lnk"
+  ${EndIf}
+  ${If} $UninstallShortcutStarted == 1
+    Delete "$SMPROGRAMS\Blocky Studio（测试版）\卸载测试版.lnk"
+  ${EndIf}
+  ${If} $ShortcutDirectoryStarted == 1
+    RMDir "$SMPROGRAMS\Blocky Studio（测试版）"
+  ${EndIf}
+  ${If} $ManifestStarted == 1
+    Delete "$INSTDIR\installer-manifest.json"
+  ${EndIf}
+  ${If} $UninstallerStarted == 1
+    Delete "$INSTDIR\Uninstall.exe"
+  ${EndIf}
+  ${If} $PayloadStarted == 1
+    !insertmacro UNINSTALL_PACKAGE_FILES
+    !insertmacro REMOVE_EMPTY_PACKAGE_DIRECTORIES
+    RMDir "$INSTDIR"
+  ${EndIf}
+!macroend
+!include "install-safety.nsh"
 Name "${BETA_DISPLAY_NAME}"
 OutFile "${INSTALLER_OUTPUT}"
 InstallDir "$LOCALAPPDATA\Programs\Blocky Studio Beta"
@@ -60,53 +97,78 @@ Function .onInit
   !insertmacro CHECK_VC_DEPENDENCIES
 FunctionEnd
 
-Function CheckInstallDirectory
-  StrCmp $INSTDIR "" invalid_directory
-  ClearErrors
-  FindFirst $0 $1 "$INSTDIR\*.*"
-  IfErrors empty_directory
-  directory_loop:
-    StrCmp $1 "." directory_next
-    StrCmp $1 ".." directory_next
-    StrCmp $1 "" directory_done
-    FindClose $0
-    Goto invalid_directory
-  directory_next:
-    FindNext $0 $1
-    IfErrors directory_done directory_loop
-  directory_done:
-    FindClose $0
-  empty_directory:
-    Return
-  invalid_directory:
-    MessageBox MB_OK|MB_ICONSTOP "请选择新的空目录。测试版安装不会覆盖已有文件、作品或其他版本。" /SD IDOK
-    SetErrorLevel 7
-    Quit
-FunctionEnd
-
 Section "安装测试版"
   Call CheckInstallDirectory
   SetShellVarContext current
   SetRegView 64
   SetOverwrite off
+  StrCpy $PayloadStarted 1
   !insertmacro INSTALL_PACKAGE_FILES
+  ClearErrors
   SetOutPath "$INSTDIR"
+  !insertmacro CHECK_INSTALL_WRITE
+  StrCpy $ManifestStarted 1
+  ClearErrors
   File /oname=installer-manifest.json "${INSTALLER_MANIFEST}"
+  !insertmacro CHECK_INSTALL_WRITE
+  StrCpy $UninstallerStarted 1
+  ClearErrors
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+  !insertmacro CHECK_INSTALL_WRITE
+  StrCpy $ShortcutDirectoryStarted 1
+  ClearErrors
   CreateDirectory "$SMPROGRAMS\Blocky Studio（测试版）"
+  !insertmacro CHECK_INSTALL_WRITE
+  IfFileExists "$SMPROGRAMS\Blocky Studio（测试版）\Blocky Studio（测试版）.lnk" 0 +2
+  Call InstallationFailed
+  StrCpy $AppShortcutStarted 1
+  ClearErrors
   CreateShortcut "$SMPROGRAMS\Blocky Studio（测试版）\Blocky Studio（测试版）.lnk" "$INSTDIR\Blocky Studio.exe" "" "$INSTDIR\Blocky Studio.exe"
+  !insertmacro CHECK_INSTALL_WRITE
+  IfFileExists "$SMPROGRAMS\Blocky Studio（测试版）\卸载测试版.lnk" 0 +2
+  Call InstallationFailed
+  StrCpy $UninstallShortcutStarted 1
+  ClearErrors
   CreateShortcut "$SMPROGRAMS\Blocky Studio（测试版）\卸载测试版.lnk" "$INSTDIR\Uninstall.exe"
+  !insertmacro CHECK_INSTALL_WRITE
+  IfFileExists "$DESKTOP\Blocky Studio（测试版）.lnk" 0 +2
+  Call InstallationFailed
+  StrCpy $DesktopShortcutStarted 1
+  ClearErrors
   CreateShortcut "$DESKTOP\Blocky Studio（测试版）.lnk" "$INSTDIR\Blocky Studio.exe" "" "$INSTDIR\Blocky Studio.exe"
-  WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "DisplayName" "${BETA_DISPLAY_NAME}"
+  !insertmacro CHECK_INSTALL_WRITE
+  StrCpy $RegistryStarted 1
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "DisplayVersion" "${RELEASE_VERSION}"
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "Publisher" "Blocky"
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "InstallLocation" "$INSTDIR"
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\Blocky Studio.exe"
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "UninstallString" '$\"$INSTDIR\Uninstall.exe$\"'
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "QuietUninstallString" '$\"$INSTDIR\Uninstall.exe$\" /S'
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegDWORD HKCU "${BETA_UNINSTALL_KEY}" "NoModify" 1
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegDWORD HKCU "${BETA_UNINSTALL_KEY}" "NoRepair" 1
+  !insertmacro CHECK_INSTALL_WRITE
+  ClearErrors
   WriteRegDWORD HKCU "${BETA_UNINSTALL_KEY}" "EstimatedSize" ${INSTALLED_KIB}
+  !insertmacro CHECK_INSTALL_WRITE
+  ; Publish the visible uninstall entry only after all its metadata was written.
+  ClearErrors
+  WriteRegStr HKCU "${BETA_UNINSTALL_KEY}" "DisplayName" "${BETA_DISPLAY_NAME}"
+  !insertmacro CHECK_INSTALL_WRITE
 SectionEnd
 
 Section "Uninstall"

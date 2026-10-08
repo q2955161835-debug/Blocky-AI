@@ -1,0 +1,60 @@
+{
+  "source": "0184fb3",
+  "verdict": "未执行",
+  "scope": "CSV产物计算通过；真实GUI结果图待正确绑定补证，不签R03整体",
+  "rows": 5,
+  "total": 250.0,
+  "average": 50.0,
+  "maximum": 100.0,
+  "categories": {
+    "transport": 50.0,
+    "food": 100.0,
+    "office": 100.0
+  },
+  "blocks": 13,
+  "summaryBytes": 574,
+  "files": [
+    {
+      "file": "try\\desktop-scenarios-2026-10-09\\csv-workspace\\expenses.csv",
+      "sha256": "7bb01aa4ca5b949436b8a65d857fde67b8956d7c832b3d53cee23e7d4344a0ec",
+      "bytes": 129
+    },
+    {
+      "file": "try\\desktop-scenarios-2026-10-09\\csv-workspace\\summary.md",
+      "sha256": "23296c531949f62c44df5990d7e9448ba19152fae98b63f9343e47bcbe415a11",
+      "bytes": 574
+    },
+    {
+      "file": "作品\\桌面追加测试-2026-10-09\\CSV支出分析.blocky",
+      "sha256": "3f3ee999cf2e875752366c064fba77b03eb1725ffccaf21f06d3cef2c87fdb4a",
+      "bytes": 8061
+    },
+    {
+      "file": "try\\desktop-scenarios-2026-10-09\\csv-0184-success.json",
+      "sha256": "bcb38312edf90b8c9618bb444e29733645c0edaaaa2c6763a164720ee4bbfa79",
+      "bytes": 605
+    },
+    {
+      "file": "try\\desktop-scenarios-2026-10-09\\csv-0184-success.jpg",
+      "sha256": "dcc72ceabbd2dc5798f1e91042d7dc9224c137f7af7b59bec017bfb6179a2579",
+      "bytes": 87647
+    }
+  ],
+  "uiEvidence": "原success.jpg独立观察实际欢迎页，Root确认错绑定并撤回作为成功证据；原图不覆盖",
+  "timing": "JSON记录157.809秒观察上界/46事件，非独立精确完成计时",
+  "api": "未独立调用；Root真实息壤运行来源，待正确UI/持久证据补齐",
+  "replacementScreenshots": [
+    {
+      "sha256": "DCC72CEABBD2DC5798F1E91042D7DC9224C137F7AF7B59BEC017BFB6179A2579",
+      "result": "与原欢迎页图相同SHA，不能作为成功证据",
+      "bytes": 87647,
+      "file": "csv-0184-success-bound.jpg"
+    },
+    {
+      "sha256": "DCC72CEABBD2DC5798F1E91042D7DC9224C137F7AF7B59BEC017BFB6179A2579",
+      "result": "与原欢迎页图相同SHA，不能作为成功证据",
+      "bytes": 87647,
+      "file": "csv-0184-trace-bound.jpg"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "evidenceReuse": "旧0184偏好2及7d实际full两助手GUI续轮，不重跑",
+  "productionBinding": "runtime_request实际调用authorize_request，七入口await?在Host/operation执行前；原digest/资源/目录/取消不改",
+  "checkedAt": "2026-10-09T04:47:34.0694364+08:00",
+  "verdict": "通过",
+  "logSha256": "4C8CF3C6311BCCE589219682D3E9B0FD7432289F08D977517540E3F726A1AD62",
+  "target": "try/native-e2e-target",
+  "passed": 1,
+  "test": "permission_policy::tests::runtime_authorization_controls_confirmation_and_execution",
+  "exitCode": 0,
+  "sourceCommit": "efd3cfb41d7cc35c066802c8fd71abee3efcb033",
+  "sourceHashes": [
+    {
+      "sha256": "8C9D68E0A26455DA266C78746FA230E8F951D042ADC8F4556C1193962D36CF4F",
+      "file": "apps/studio-host/src/permission_policy.rs"
+    },
+    {
+      "sha256": "00FF73BEE4DB9216FB424DE1CEFAD59CE7C7E7E99D867C158EBA7FB338F12FBD",
+      "file": "apps/studio-host/src/native_confirmation.rs"
+    },
+    {
+      "sha256": "1668AF401CB79CD13BBC2A7EDF2B8761EF50CBC53CA777ADF65EBE1341E478D5",
+      "file": "apps/studio-host/src/provider_commands.rs"
+    },
+    {
+      "sha256": "3EFC146AE778EDF43367AA80408D96220FB7FC54EDA65357740C1B7A316DA1C6",
+      "file": "apps/studio-host/src/tool_commands.rs"
+    },
+    {
+      "sha256": "65B4412BC90B41E603379C42F3F5FE09528F7F3B685F900F68F97FED7408CB1F",
+      "file": "apps/studio-host/src/agent_data_commands.rs"
+    },
+    {
+      "sha256": "DB898393939ABAB8283509CCBC5446CAA2228F54FD957F5B73DB289399CB031D",
+      "file": "apps/studio-host/src/builder_commands.rs"
+    },
+    {
+      "sha256": "5194FA08C6E0F8E82261E3B97AF07FF8044ECA7330D38239BAAC3F51AD7ACFB3",
+      "file": "apps/studio-host/src/coding_commands.rs"
+    }
+  ],
+  "filtered": 418,
+  "cases": [
+    "full: confirm0/execute1",
+    "ask拒绝: confirm1/execute0/BLK-PERM-001",
+    "ask接受: confirm1/execute1",
+    "损坏偏好: confirm0/execute0/Err"
+  ],
+  "boundaries": [
+    "非GUI权限点击；确定性执行闭包计数，不称实际HTTP请求抓包",
+    "最小Native源码补证，新普通包来源尚待构建读回",
+    "不称Root未完成Full通过"
+  ]
+}

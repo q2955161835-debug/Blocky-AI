@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "0184fb3a4a3349c00a00d9a317b130809ffb25af",
+  "manifestSha256": "A8629175688379F9B66D4FC6EEDE5AD71AA1E010B2B3498F5B3FA9CB0505EC34",
+  "hiddenIncluded": true,
+  "passed": true,
+  "package": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-permissions",
+  "files": 2595,
+  "scope": "独立普通整包逐文件SHA；未执行GUI/API/回归测试",
+  "bytes": 772384132,
+  "checkedAt": "2026-10-09T03:46:42.1649569+08:00",
+  "exeSha256": "8D7D36EB84C7EEC5C4CEC02B80A5285712B68AAEEBB1096CC4840AD8025ECE0D",
+  "failures": []
+}
