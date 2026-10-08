@@ -9,6 +9,7 @@ import { overviewLabels, type Overview } from "./overview";
 import { applyCodeVisuals } from "./code-visuals";
 import { CanvasModeSwitch } from "./CanvasModeSwitch";
 import { installCanvasPanning, type CanvasPointerMode } from "./pointerPanning";
+import { cancelNativeBlockDrag, hasNativeBlockDrag } from "./nativeBlockDrag";
 export type CanvasHandle = {
   add(type: string): void;
   focus(id: string): void;
@@ -118,11 +119,16 @@ export function Canvas(props: Props) {
         return;
       }
       if (event.isUiEvent) return;
+      // Unplugging while a native block drag is active is temporary. The final
+      // move event publishes a completed drag; cancellation publishes nothing.
+      if (hasNativeBlockDrag(ws)) return;
       const value = Blockly.serialization.workspaces.save(ws) as Workspace;
       if (!value.blocks) value.blocks = { languageVersion: 0, blocks: [] };
       if (!value.blocks.blocks) value.blocks.blocks = [];
       applyCodeVisuals(ws, value);
-      serialized.current = canonicalJson(value);
+      const next = canonicalJson(value);
+      if (next === serialized.current) return;
+      serialized.current = next;
       latest.current.onChange(value, event.group || undefined);
     };
     ws.addChangeListener(listener);
@@ -174,6 +180,9 @@ export function Canvas(props: Props) {
       if (e.code === "Space") space = false;
     };
     const blur = () => { space = false; };
+    const cancelDrag = () => {
+      if (hasNativeBlockDrag(ws)) cancelNativeBlockDrag(ws);
+    };
     panController.current = installCanvasPanning(el, ws, {
       mode: () => pointerMode.current, space: () => space, changed: setPanning,
     });
@@ -214,6 +223,8 @@ export function Canvas(props: Props) {
     el.addEventListener("keydown", keydown, true);
     window.addEventListener("keyup", keyup);
     window.addEventListener("blur", blur);
+    window.addEventListener("blur", cancelDrag);
+    window.addEventListener("pointercancel", cancelDrag, true);
     el.addEventListener("wheel", wheel, { capture: true, passive: false });
     el.addEventListener("dblclick", dbl);
     el.addEventListener("contextmenu", context, true);
@@ -242,6 +253,8 @@ export function Canvas(props: Props) {
       editor.current = null;
       window.removeEventListener("keyup", keyup);
       window.removeEventListener("blur", blur);
+      window.removeEventListener("blur", cancelDrag);
+      window.removeEventListener("pointercancel", cancelDrag, true);
       el.removeEventListener("keydown", keydown, true);
       panController.current?.dispose();
       panController.current = null;
@@ -330,7 +343,7 @@ export function Canvas(props: Props) {
       <CanvasModeSwitch mode={mode} panning={panning} onChange={next => {
         panController.current?.cancel();
         selection.current?.cancel();
-        editor.current?.cancelCurrentGesture();
+        if (editor.current) cancelNativeBlockDrag(editor.current);
         editor.current?.hideChaff();
         pointerMode.current = next;
         setMode(next);

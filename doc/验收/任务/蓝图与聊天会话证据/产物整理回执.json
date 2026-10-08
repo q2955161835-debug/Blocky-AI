@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "task": "2026-10-08蓝图聊天与统一设置临时产物整理",
-  "status": "已完成",
+  "status": "部分恢复",
   "startedAtLocal": "2026-10-08T23:10:49.7212647+08:00",
-  "completedAtLocal": "2026-10-08T23:11:42.8384521+08:00",
+  "completedAtLocal": "2026-10-08T23:14:07.6774571+08:00",
   "workspaceRoot": "D:\\1Folder\\Blocky-AI",
   "git": {
     "headAtStart": "822a2faa340d1d4a50b58b873b4e173c729f341c",
@@ -12,7 +12,8 @@
     "scopeFilesAreGitIgnored": true,
     "scopeTrackedFileCount": 0,
     "commitCreated": false,
-    "dirtyEntryCountObservedAfter": 7
+    "dirtyEntryCountObservedAfter": 7,
+    "dirtyEntryCountObservedAtRestore": 1
   },
   "operation": {
     "type": "same-volume directory move",
@@ -45,7 +46,14 @@
       "countAndBytesMatch": true,
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
-      "destinationExistsAfter": true
+      "destinationExistsAfter": true,
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "currentStatus": "已恢复至原暖缓存路径，等待Root后续通知再最终归档",
+      "currentSourceExists": true,
+      "currentPreviousArchiveExists": false,
+      "restoreCountAndBytesMatch": true,
+      "restoreAnchorHashMatches": true,
+      "restoredAtLocal": "2026-10-08T23:14:07.6774571+08:00"
     },
     {
       "sourceRelative": "try/native-e2e-target",
@@ -69,7 +77,9 @@
       "countAndBytesMatch": true,
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
-      "destinationExistsAfter": true
+      "destinationExistsAfter": true,
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "currentStatus": "仍位于归档目录"
     },
     {
       "sourceRelative": "try/stage3-release",
@@ -93,7 +103,9 @@
       "countAndBytesMatch": true,
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
-      "destinationExistsAfter": true
+      "destinationExistsAfter": true,
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
+      "currentStatus": "仍位于归档目录"
     },
     {
       "sourceRelative": "dist/Blocky-Studio-0.8.0-chat-layout",
@@ -117,7 +129,9 @@
       "countAndBytesMatch": true,
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
-      "destinationExistsAfter": true
+      "destinationExistsAfter": true,
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-chat-layout",
+      "currentStatus": "仍位于归档目录"
     },
     {
       "sourceRelative": "dist/Blocky-Studio-0.8.0-settings",
@@ -141,7 +155,9 @@
       "countAndBytesMatch": true,
       "anchorHashMatches": true,
       "sourceExistsAfter": false,
-      "destinationExistsAfter": true
+      "destinationExistsAfter": true,
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-settings",
+      "currentStatus": "仍位于归档目录"
     }
   ],
   "heldItems": [
@@ -154,9 +170,69 @@
     "movedRootCount": 5,
     "totalFileCount": 35503.0,
     "totalBytes": 19507604169.0,
-    "allCountsAndHashesVerified": true
+    "allCountsAndHashesVerified": true,
+    "currentlyArchivedRootCount": 4,
+    "currentlyArchivedFileCount": 26264,
+    "currentlyArchivedBytes": 15078238415,
+    "restoredRootCount": 1,
+    "restoreCountsAndHashVerified": true
   },
   "executionNotes": [
     "一次语法检查未通过的脚本因缺少闭合括号未执行；另一预运行因PowerShell New-Item不支持-LiteralPath参数在目标目录创建前停止。两次均未改动源目录，修正后同盘移动及全部核对通过。"
+  ],
+  "restoreEvents": [
+    {
+      "item": "try/release-native-target",
+      "fromAbsolute": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\release-native-target",
+      "toAbsolute": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "restoredAtLocal": "2026-10-08T23:14:07.6774571+08:00",
+      "reason": "D02出现实际失败并需下一次增量重构；恢复原暖缓存以避免重复编译。",
+      "operation": "同盘Move-Item -LiteralPath；未复制、未删除；未关闭进程。",
+      "fileCountBefore": 9239,
+      "fileCountAfter": 9239,
+      "bytesBefore": 4429365754,
+      "bytesAfter": 4429365754,
+      "directoryCountBefore": 1514,
+      "directoryCountAfter": 1514,
+      "reparsePointCount": 0,
+      "matchingProcessCount": 0,
+      "lockNamedFileCount": 18,
+      "lockedFileProbeConflicts": 0,
+      "gitTrackedFileCount": 0,
+      "ignoredByGit": true,
+      "anchorRelativePath": ".rustc_info.json",
+      "anchorSha256Before": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "anchorSha256After": "0d5a42274603780e9d5b272e7ce5c2e44a4efe02fae056063196d3fe40972849",
+      "countsAndBytesMatch": true,
+      "anchorHashMatches": true,
+      "reverseMove": "若要撤回本次恢复，将原路径目录Move-Item回fromAbsolute；先确认原路径无正在使用者且目标空缺。"
+    }
+  ],
+  "currentPositionMap": [
+    {
+      "sourceRelative": "try/release-native-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "currentStatus": "已恢复至原暖缓存路径，等待Root后续通知再最终归档"
+    },
+    {
+      "sourceRelative": "try/native-e2e-target",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\native-e2e-target",
+      "currentStatus": "仍位于归档目录"
+    },
+    {
+      "sourceRelative": "try/stage3-release",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\try\\stage3-release",
+      "currentStatus": "仍位于归档目录"
+    },
+    {
+      "sourceRelative": "dist/Blocky-Studio-0.8.0-chat-layout",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-chat-layout",
+      "currentStatus": "仍位于归档目录"
+    },
+    {
+      "sourceRelative": "dist/Blocky-Studio-0.8.0-settings",
+      "currentAbsolutePath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\蓝图聊天与统一设置-2026-10-08\\dist\\Blocky-Studio-0.8.0-settings",
+      "currentStatus": "仍位于归档目录"
+    }
   ]
 }
