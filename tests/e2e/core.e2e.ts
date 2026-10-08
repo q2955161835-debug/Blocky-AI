@@ -4,8 +4,6 @@ import { chromium, type Browser, type Page } from "playwright-core";
 import { mkdir, writeFile, appendFile } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { resolve } from "node:path";
 type Api = {
   performance(): Promise<any>;
@@ -13,6 +11,7 @@ type Api = {
   cycle(n: number): Promise<any>;
   hiddenRunProbe(): Promise<{ status: string; hostAllowsNewRun: boolean }>;
   windowAllowsRun(): Promise<boolean>;
+  restoreWindow(): Promise<void>;
 };
 type InputObservation = { type: string; timeMs: number; targetTag: string };
 type TestWindow = Window & {
@@ -100,19 +99,15 @@ describe("formal native Core gates", function () {
     );
     expect(result).toMatchObject({ blocks: 100, nodes: 100, roundTrip: true });
   });
-  it("rejects new runs while hidden and restores authorization through the existing instance", async () => {
+  it("rejects new runs while hidden and restores authorization through the same window", async () => {
     let hidden: { status: string; hostAllowsNewRun: boolean } | undefined;
     try {
       hidden = await page.evaluate(() =>
         (window as TestWindow).__BLOCKY_ACCEPTANCE__.hiddenRunProbe(),
       );
     } finally {
-      // The shipped single-instance handler restores this same test window.
-      await promisify(execFile)(
-        resolve("try/native-e2e-target/release/blocky-studio.exe"),
-        [],
-        { windowsHide: true, timeout: 15000 },
-      );
+      // Test-only restoration; ordinary launches now create independent windows.
+      await page.evaluate(() => (window as TestWindow).__BLOCKY_ACCEPTANCE__.restoreWindow());
     }
     await page.waitForFunction(() =>
       (window as TestWindow).__BLOCKY_ACCEPTANCE__.windowAllowsRun(),

@@ -23,6 +23,7 @@ export type CommandDefinition = {
 const specs: [string, CommandDefinition["category"], string, string][] = [
   ["file.new", "file", "新建项目", "Ctrl+N"],
   ["file.open", "file", "打开项目", "Ctrl+O"],
+  ["file.new-window", "file", "新建窗口", "Ctrl+Shift+N"],
   ["file.migrate", "file", "迁移旧项目", ""],
   ["file.save", "file", "保存项目", "Ctrl+S"],
   ["file.save-as", "file", "另存为", "Ctrl+Shift+S"],

@@ -290,7 +290,7 @@ pub fn create_archive_checked(
 ) -> Result<(), String> {
     write_archive(path, files, false, check)
 }
-fn save_with_check(
+pub fn save_with_check(
     path: &Path,
     files: &ProjectFiles,
     before_commit: impl FnOnce() -> Result<(), String>,

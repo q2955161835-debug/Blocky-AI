@@ -220,6 +220,36 @@ kbd {
   text-align: left;
   font-size: 11px;
 }
+.starting-blueprints {
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: #252a33;
+}
+.project-window-menu { position: relative; min-width: 0; }
+.project-switch { display: flex; align-items: center; gap: 8px; padding: 6px 8px; }
+.project-window-options {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 100;
+  min-width: 230px; max-width: min(380px, 80vw); padding: 5px;
+  background: #252a33; border: 1px solid var(--border); border-radius: 6px;
+  box-shadow: 0 8px 24px #0006;
+}
+.project-window-options button { display: flex; gap: 8px; width: 100%; text-align: left; overflow-wrap: anywhere; padding: 9px; }
+.project-window-options button span { min-width: 12px; }
+.starting-blueprints summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #c9d2df;
+  list-style: none;
+}
+.starting-blueprints summary::-webkit-details-marker { display: none; }
+.starting-blueprints[open] summary span { transform: rotate(180deg); }
+.starting-blueprint-options { padding: 0 10px 10px; max-height: 180px; overflow: auto; }
+.starting-blueprint-options button { display: block; width: 100%; text-align: left; font-size: 11px; }
 .section-label {
   font-size: 11px;
   color: #c9d2df;

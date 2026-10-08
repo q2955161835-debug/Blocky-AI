@@ -39,6 +39,7 @@ import {
   saveProject,
   prepareMigration,
   saveMigration,
+  releaseProject,
 } from "./host";
 export function useStudio(initialProject?: Project) {
   const rpaInput = useRpaInput();
@@ -317,6 +318,7 @@ export function useStudio(initialProject?: Project) {
     try {
       const result = await saveProject(p, asNew ? undefined : handle.current);
       if (result) {
+        if (handle.current !== result.handle && isTauri()) await releaseProject(handle.current);
         handle.current = result.handle;
         controller.markSaved(p);
         setMessage("项目已保存");
@@ -324,8 +326,10 @@ export function useStudio(initialProject?: Project) {
         return true;
       }
       return false;
-    } catch {
-      setMessage("保存失败，原文件保持不变。");
+    } catch (error) {
+      setMessage(String(error).includes("BLK-PROJECT-CHANGED")
+        ? "文件已被外部修改，请重新打开或另存为新文件。"
+        : String(error).includes("BLK-PROJECT-OPEN") ? "该作品已在另一个窗口中打开。" : "保存失败，原文件保持不变。");
       bus.write("host", "error", "项目保存失败");
       return false;
     } finally {
@@ -354,8 +358,11 @@ export function useStudio(initialProject?: Project) {
           !(await confirm(
             "选择文件期间当前项目发生了新修改。继续打开将放弃这些修改。",
           ))
-        )
+        ) {
+          if (isTauri()) await releaseProject(opened.handle);
           return;
+        }
+        if (isTauri()) await releaseProject(handle.current);
         controller.replace(opened.project);
         handle.current = opened.handle;
         setStarted(true);
@@ -368,8 +375,8 @@ export function useStudio(initialProject?: Project) {
         setSelected(null);
         setMessage("已打开项目并重新编译");
       }
-    } catch {
-      setMessage("无法打开：项目损坏、版本不支持或包含未声明文件。");
+    } catch (error) {
+      setMessage(String(error).includes("BLK-PROJECT-OPEN") ? "该作品已在另一个窗口中打开。请在原窗口继续编辑。" : "无法打开：项目损坏、版本不支持或包含未声明文件。");
     } finally {
       ioBusy.current = false;
       setBusy(false);
@@ -394,6 +401,7 @@ export function useStudio(initialProject?: Project) {
       )
         return;
       const p = create();
+      if (isTauri()) await releaseProject(handle.current);
       controller.replace(p);
       handle.current = undefined;
       setStarted(true);
@@ -563,6 +571,11 @@ export function useStudio(initialProject?: Project) {
     message,
     setMessage,
     busy,
+    newWindow: async () => {
+      if (!isTauri() || closing.current) return;
+      try { await invoke("open_new_window"); }
+      catch { setMessage("新窗口未能打开，请重试。"); }
+    },
     exiting,
     settle,
     paused,
@@ -590,8 +603,9 @@ export function useStudio(initialProject?: Project) {
     resources,
     resetLayout: sessionStore.reset,
     recovery,
-    restoreRecovery: () => {
+    restoreRecovery: async () => {
       if (!recovery.candidate || running || busy) return;
+      if (isTauri()) await releaseProject(handle.current);
       handle.current = undefined;
       controller.recover(recovery.candidate.project);
       recovery.accept();

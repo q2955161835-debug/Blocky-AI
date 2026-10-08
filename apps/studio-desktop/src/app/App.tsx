@@ -2,6 +2,7 @@ import { Welcome } from "./Welcome";
 import { Library } from "./Library";
 import { StudioDialog, type Popup } from "./StudioDialog";
 import { useEffect, useRef, useState } from "react";
+import { isTauri } from "@tauri-apps/api/core";
 import {
   commands,
   shortcut,
@@ -34,6 +35,7 @@ import { WorkbenchLayout } from "./WorkbenchLayout";
 import { StudioSidebar } from "./StudioSidebar";
 import { ToolbarActions } from "./ToolbarActions";
 import { WindowControls } from "./WindowControls";
+import { ProjectWindowMenu } from "./ProjectWindowMenu";
 import logo from "../../../../logo/logo.png";
 export function App() {
   const s = useStudio(),
@@ -98,6 +100,7 @@ export function App() {
     "help.about": () => show("about"),
     "file.new": s.fresh,
     "file.open": () => void s.open(),
+    "file.new-window": () => void s.newWindow(),
     "file.migrate": () => void s.migrate(),
     "file.save": () => void s.save(),
     "edit.undo": () => s.controller.undo(),
@@ -232,6 +235,7 @@ export function App() {
       (!!s.session.active && s.started && !s.busy && !s.running)) &&
     !(s.busy && id.startsWith("file.")) &&
     (id !== "file.new" || (s.settings.ready && s.resources.ready)) &&
+    (id !== "file.new-window" || isTauri()) &&
     !(s.running && (id === "file.new" || id === "file.open")) &&
     (id !== "edit.undo" || s.snapshot.canUndo) &&
     (id !== "edit.redo" || s.snapshot.canRedo) &&
@@ -353,13 +357,10 @@ export function App() {
               ].includes(popup.kind))
           }
         />
-        {s.started && <div className="project-title" title={s.snapshot.project.manifest.displayName} data-tauri-drag-region>
-          <strong>{s.snapshot.project.manifest.displayName}</strong>
-          {s.snapshot.dirty && <span className="dirty" title="未保存">●</span>}
-        </div>}
+        {s.started && <ProjectWindowMenu title={s.snapshot.project.manifest.displayName} dirty={s.snapshot.dirty} newWindow={s.newWindow} onError={s.setMessage} />}
         <span className="spacer" data-tauri-drag-region />
         <ToolbarActions studio={s} execute={execute} enabled={enabled} />
-        <WindowControls onError={s.setMessage} />
+        <WindowControls onError={s.setMessage} projectTitle={s.started ? s.snapshot.project.manifest.displayName : ""} />
       </header>
       {!s.started ? (
         <Welcome studio={s} />

@@ -32,6 +32,21 @@ export function useResources(report: (text: string) => void) {
       active = false;
     };
   }, []);
+  useEffect(() => {
+    let active = true;
+    const refresh = () => {
+      void queue.current.catch(() => {}).then(async () => {
+        const raw = await readUserState("resources", "app");
+        const fresh = raw === null ? emptyRegistry() : parseRegistry(raw);
+        if (active && fresh.revision !== current.current.revision) {
+          current.current = fresh;
+          setRegistry(fresh);
+        }
+      }).catch(() => {});
+    };
+    window.addEventListener("focus", refresh);
+    return () => { active = false; window.removeEventListener("focus", refresh); };
+  }, []);
   const persist = (mutate: (doc: ReturnType<typeof emptyRegistry>) => ReturnType<typeof emptyRegistry>) => {
     if (!ready) throw Error("资源存储未就绪");
     const operation = queue.current

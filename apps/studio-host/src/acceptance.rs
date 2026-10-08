@@ -1,5 +1,11 @@
 use blocky_studio::project_store::{self, ProjectFiles};
 use tauri::Manager;
+#[tauri::command]
+pub fn acceptance_restore_window(window: tauri::WebviewWindow, app: tauri::AppHandle) -> Result<(), String> {
+    if window.label() != "main" { return Err("BLK-PERM-001".into()); }
+    crate::window_lifecycle::restore(&app);
+    Ok(())
+}
 // Entire module and registration are removed without the wdio feature.
 #[tauri::command]
 pub fn acceptance_round_trip(

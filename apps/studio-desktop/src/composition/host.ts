@@ -33,7 +33,12 @@ type Opened = {
 export async function openProject() {
   if (!isTauri()) throw Error("请在 Blocky Studio 桌面窗口打开本机项目");
   const result = await invoke<Opened | null>("open_project");
-  return result ? { ...result, project: decodeProject(result.files) } : null;
+  if (!result) return null;
+  try { return { ...result, project: decodeProject(result.files) }; }
+  catch (error) { await releaseProject(result.handle); throw error; }
+}
+export async function releaseProject(handle: string | undefined) {
+  if (isTauri() && handle) await invoke("release_project", { handle });
 }
 export async function saveProject(project: Project, handle?: string) {
   if (!isTauri()) throw Error("请在 Blocky Studio 桌面窗口保存本机项目");

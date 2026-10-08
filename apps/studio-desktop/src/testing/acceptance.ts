@@ -464,6 +464,7 @@ export function install(get: () => Studio) {
         () => false,
       );
     },
+    async restoreWindow() { await invoke("acceptance_restore_window"); },
     async cycle(cycle: number) {
       if (!Number.isInteger(cycle) || cycle < 1 || cycle > 360)
         throw Error("invalid cycle");

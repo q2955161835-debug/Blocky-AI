@@ -3,10 +3,13 @@ import { isTauri } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import "./WindowControls.css";
 
-export function WindowControls({ onError }: { onError(message: string): void }) {
+export function WindowControls({ onError, projectTitle = "" }: { onError(message: string): void; projectTitle?: string }) {
   const desktop = isTauri();
   const [maximized, setMaximized] = useState(false);
   const reportError = useEffectEvent(() => onError("窗口状态未能读取，请重试。"));
+  useEffect(() => {
+    if (desktop) void getCurrentWindow().setTitle(projectTitle ? `${projectTitle} — Blocky Studio` : "Blocky Studio").catch(() => reportError());
+  }, [desktop, projectTitle]);
   useEffect(() => {
     if (!desktop) return;
     const current = getCurrentWindow();

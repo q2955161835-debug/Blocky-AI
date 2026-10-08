@@ -20,6 +20,7 @@ mod tool_commands;
 mod user_commands;
 mod window_lifecycle;
 mod window_state;
+mod studio_windows;
 mod workflow_commands;
 use blocky_studio::project_store;
 use tauri::Manager;
@@ -42,7 +43,7 @@ fn main() {
         std::process::exit(2);
     });
     let mut context = tauri::generate_context!();
-    // Naming the default root explicitly must not create a second instance on it.
+    // Explicit default roots keep the same shared configuration identity.
     if selected
         .as_ref()
         .is_some_and(|root| blocky_studio::profile::is_default(root, &context.config().identifier))
@@ -64,16 +65,13 @@ fn main() {
             window.create = false;
         }
     }
-    let builder =
-        tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            window_lifecycle::restore(app);
-        }));
+    // Each Studio process owns its main window and task lifecycle.
+    let builder = tauri::Builder::default();
     #[cfg(feature = "wdio")]
     let builder = builder
         .plugin(tauri_plugin_wdio::init())
         .plugin(tauri_plugin_wdio_webdriver::init());
     builder
-        .manage(commands::Handles::default())
         .manage(blocky_studio::builder::BuilderHost::default())
         .manage(blocky_studio::coding::CodingHost::default())
         .manage(blocky_studio::provider::ProviderHost::default())
@@ -87,6 +85,9 @@ fn main() {
                 None => app.path().app_local_data_dir()?,
             };
             app.manage(blocky_studio::profile::DataRoot(root.clone()));
+            app.manage(commands::Handles(std::sync::Mutex::new(
+                blocky_studio::project_access::ProjectAccess::new(root.join("project-locks")),
+            )));
             app.manage(blocky_studio::workflow::host::WorkflowHost::new(
                 root.join("workflow"),
             ));
@@ -110,7 +111,7 @@ fn main() {
                 root.join("secrets"),
             ));
             app.manage(blocky_studio::log_store::LogStore::open(
-                root.join("logs/diagnostics.json"),
+                root.join("logs/windows").join(uuid::Uuid::new_v4().to_string()).join("diagnostics.json"),
             ));
             // Tauri's config conversion does not carry an absolute data directory
             // into WebviewAttributes. Set it on the native builder after conversion.
@@ -121,6 +122,7 @@ fn main() {
             }
             window_state::restore(app);
             window_lifecycle::setup(app)?;
+            studio_windows::register(app)?;
             if let Some(window) = app.get_webview_window("main") {
                 window.show()?;
             }
@@ -196,7 +198,13 @@ fn main() {
             provider_commands::provider_cancel,
             #[cfg(feature = "wdio")]
             acceptance::acceptance_round_trip,
+            #[cfg(feature = "wdio")]
+            acceptance::acceptance_restore_window,
             commands::open_project,
+            commands::release_project,
+            commands::open_new_window,
+            studio_windows::studio_windows,
+            studio_windows::focus_studio_window,
             conversion_commands::conversion_scan,
             conversion_commands::conversion_read,
             conversion_commands::conversion_cache_load,

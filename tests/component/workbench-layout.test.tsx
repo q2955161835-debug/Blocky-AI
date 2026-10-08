@@ -23,6 +23,24 @@ afterEach(() => {
   localStorage.clear();
 });
 
+it("folds the built-in blueprints downward while keeping canvas navigation available", async () => {
+  render(<App />);
+  await waitFor(() => expect((screen.getByRole("button", {name:"新建空白项目"}) as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole("button", {name:"新建空白项目"}));
+  await screen.findByLabelText("画布名称");
+  const summary = screen.getByText("内置起始蓝图");
+  const drawer = summary.closest("details");
+  expect(drawer).toBeTruthy();
+  expect(drawer!.open).toBe(false);
+  fireEvent.click(summary);
+  expect(drawer!.open).toBe(true);
+  expect(within(drawer!).getByRole("button", {name:"新建：知识问答助手"})).toBeTruthy();
+  expect(within(drawer!).getByRole("button", {name:"新建：Pi Agent"})).toBeTruthy();
+  fireEvent.click(summary);
+  expect(drawer!.open).toBe(false);
+  expect(screen.getByText("项目画布")).toBeTruthy();
+});
+
 it("resizes from the boundary with pointer and keyboard, respecting limits and ending capture", () => {
   const change = vi.fn();
   render(

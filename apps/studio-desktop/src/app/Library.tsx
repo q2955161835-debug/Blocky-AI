@@ -104,22 +104,6 @@ export function Library({
         })}
       </div>
       <div className="module-list">
-        <div className="section-label">内置起始蓝图</div>
-        {startingBlueprints.map((blueprint) => (
-          <button
-            key={blueprint.id}
-            disabled={s.busy || !s.settings.ready || !s.resources.ready}
-            onClick={() => void s.startBlueprint(blueprint.id)}
-          >
-            新建：{blueprint.displayName}
-          </button>
-        ))}
-        <button
-          disabled={s.busy || !s.settings.ready || !s.resources.ready}
-          onClick={() => void s.fresh()}
-        >
-          新建空白项目
-        </button>
         <div className="section-label">个人蓝图</div>
         {blueprints.map((blueprint) => (
           <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
@@ -182,6 +166,20 @@ export function Library({
           </button>
         ))}
       </div>
+      <details className="starting-blueprints">
+        <summary>内置起始蓝图<span aria-hidden="true">⌃</span></summary>
+        <div className="starting-blueprint-options">
+          {startingBlueprints.map((blueprint) => (
+            <button key={blueprint.id}
+              disabled={s.busy || !s.settings.ready || !s.resources.ready}
+              onClick={() => void s.startBlueprint(blueprint.id)}>
+              新建：{blueprint.displayName}
+            </button>
+          ))}
+          <button disabled={s.busy || !s.settings.ready || !s.resources.ready}
+            onClick={() => void s.fresh()}>新建空白项目</button>
+        </div>
+      </details>
     </aside>
   );
 }
