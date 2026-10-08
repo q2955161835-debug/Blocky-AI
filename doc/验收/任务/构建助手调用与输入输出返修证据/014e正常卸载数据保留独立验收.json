@@ -1,0 +1,44 @@
+{
+  "checks": {
+    "onlyUnknownRemaining": true,
+    "betaLinksAbsent": true,
+    "registryAbsent": true,
+    "fixedUnchanged": true,
+    "unknownContentExact": true,
+    "registeredPayloadGone": true,
+    "defaultMetadataUnchanged": true
+  },
+  "defaultMetadata": {
+    "sha256": "C305BAC837E6BCD497073359FE70C3B4DB5606D75827E1E067E451643812E932",
+    "files": 155,
+    "method": "仅文件名/大小/mtime聚合；不读取默认用户内容"
+  },
+  "remainingFiles": [
+    {
+      "sha256": "BD276D5C691D3F9BC278EE3CADCF90B080C0B8B9B6D949260A035174E0AF309D",
+      "name": "acceptance-unknown.keep.txt",
+      "bytes": 59
+    }
+  ],
+  "boundaries": [
+    "实际/S正常卸载，未强杀；自有安装进程已自然结束并独立确认不存在",
+    "卸载脚本在卸载完成后的回执构造发生null值错误；该错误保留，不重复卸载，不虚称保存了卸载前ownData哈希或退出码",
+    "默认profile仅元数据与实际安装前快照比较，固定快捷方式SHA相同；自有会话逐档仍在并另只读审核内容计数，未宣称前后全档SHA比较",
+    "未知59字节文件保留，payload及专属HKCU/3入口实际已移除；原安装2595SHA一致；静态uninstaller仅显式清单，无profile删除"
+  ],
+  "result": "通过",
+  "observedAt": "2026-10-09T05:57:48.0268399+08:00",
+  "source": "014e7cca38df3a7b9835fb053c081c05e8d94060",
+  "installPath": "D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed",
+  "ownDataAfter": {
+    "sha256": "C5F8E689ABA49ADD5529C3B4B3EB35697552A8C8AA3853087BCD6D0B49F146FA",
+    "files": 25,
+    "method": "本任务无秘密profile内容聚合SHA，不输出内容"
+  },
+  "ownTemporaryFiles": {
+    "state": "无归属活动进程；仅保留NSIS内部临时文件供本轮归档，非安装payload",
+    "path": "D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-nsis-temp",
+    "files": 1,
+    "bytes": 142996.0
+  }
+}

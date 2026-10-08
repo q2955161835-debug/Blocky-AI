@@ -1,0 +1,410 @@
+{
+  "source": "74e8049de0db39100b38067dd6cec1c019024e3c",
+  "I02": "通过",
+  "I01": "未执行",
+  "method": "Root普通包真实GUI，独立只读目标图/服务源码/安全请求计数及自有profile历史",
+  "requestsHash": "fd554118416b63c94549be5678f143fdfe9779b6a96a2bc0a96c7dba5f505ebb",
+  "serverHash": "16181ff6f589c5a406a41dde9bec377805d63fe6f77e1f2858b4927f7de5875b",
+  "requests": [
+    {
+      "time": "2026-10-08T20:48:03.636Z",
+      "event": "request",
+      "ordinal": 1,
+      "model": "controlled-complete",
+      "stage": "complete",
+      "stream": false,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T20:48:04.845Z",
+      "event": "complete",
+      "ordinal": 1,
+      "model": "controlled-complete",
+      "stage": "complete"
+    },
+    {
+      "time": "2026-10-08T20:48:04.871Z",
+      "event": "request",
+      "ordinal": 2,
+      "model": "controlled-text",
+      "stage": "hold",
+      "stream": true,
+      "toolResultCount": 0,
+      "maxTokens": null,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T20:48:08.381Z",
+      "event": "abort",
+      "ordinal": 2,
+      "model": "controlled-text",
+      "stage": "hold",
+      "abortCount": 1
+    },
+    {
+      "time": "2026-10-08T21:11:22.486Z",
+      "event": "request",
+      "ordinal": 3,
+      "model": "controlled-builder",
+      "stage": "context",
+      "stream": true,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:11:31.215Z",
+      "event": "complete",
+      "ordinal": 3,
+      "model": "controlled-builder",
+      "stage": "context"
+    },
+    {
+      "time": "2026-10-08T21:11:31.228Z",
+      "event": "request",
+      "ordinal": 4,
+      "model": "controlled-builder",
+      "stage": "compile",
+      "stream": true,
+      "toolResultCount": 1,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:11:35.958Z",
+      "event": "complete",
+      "ordinal": 4,
+      "model": "controlled-builder",
+      "stage": "compile"
+    },
+    {
+      "time": "2026-10-08T21:11:37.506Z",
+      "event": "request",
+      "ordinal": 5,
+      "model": "controlled-builder",
+      "stage": "cli-error",
+      "stream": true,
+      "toolResultCount": 2,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:11:42.237Z",
+      "event": "complete",
+      "ordinal": 5,
+      "model": "controlled-builder",
+      "stage": "cli-error"
+    },
+    {
+      "time": "2026-10-08T21:11:42.602Z",
+      "event": "request",
+      "ordinal": 6,
+      "model": "controlled-builder",
+      "stage": "cli-correction",
+      "stream": true,
+      "toolResultCount": 3,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:11:47.333Z",
+      "event": "complete",
+      "ordinal": 6,
+      "model": "controlled-builder",
+      "stage": "cli-correction"
+    },
+    {
+      "time": "2026-10-08T21:11:47.582Z",
+      "event": "request",
+      "ordinal": 7,
+      "model": "controlled-builder",
+      "stage": "hold",
+      "stream": true,
+      "toolResultCount": 4,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:12:12.386Z",
+      "event": "abort",
+      "ordinal": 7,
+      "model": "controlled-builder",
+      "stage": "hold",
+      "abortCount": 2
+    },
+    {
+      "time": "2026-10-08T21:14:04.869Z",
+      "event": "request",
+      "ordinal": 8,
+      "model": "controlled-text",
+      "stage": "hold",
+      "stream": true,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:14:24.706Z",
+      "event": "abort",
+      "ordinal": 8,
+      "model": "controlled-text",
+      "stage": "hold",
+      "abortCount": 3
+    },
+    {
+      "time": "2026-10-08T21:15:16.509Z",
+      "event": "request",
+      "ordinal": 9,
+      "model": "controlled-agent",
+      "stage": "agent-success",
+      "stream": false,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:15:17.717Z",
+      "event": "complete",
+      "ordinal": 9,
+      "model": "controlled-agent",
+      "stage": "agent-success"
+    },
+    {
+      "time": "2026-10-08T21:15:17.751Z",
+      "event": "request",
+      "ordinal": 10,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "stream": false,
+      "toolResultCount": 1,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:15:54.996Z",
+      "event": "abort",
+      "ordinal": 10,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "abortCount": 4
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "74e-builder-stream-first.jpg",
+      "sha256": "4153a7864ca95376a4058ed4a1e8953e975eac8e65195fc8cafa14b9a7991da9",
+      "bytes": 143661,
+      "observedAt": "2026-10-08T21:11:30.324Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-builder-stream-second.jpg",
+      "sha256": "636f8d99066042e387426ff695d4df02e60102759508a6a78fdc890e1e6fbf56",
+      "bytes": 152588,
+      "observedAt": "2026-10-08T21:11:42.141Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-builder-stream-tools-live.jpg",
+      "sha256": "99cd8c51405823a553a9a2c2cdb9c00c3ca2a513ca209db71981bf5b2161d225",
+      "bytes": 165471,
+      "observedAt": "2026-10-08T21:11:52.750Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-builder-stopped-cli-results.jpg",
+      "sha256": "bf4942c16f0a55136c56952afa2cdc7dc07dd6804070b125f7669a682aec3610",
+      "bytes": 161622,
+      "observedAt": "2026-10-08T21:13:11.442Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-builder-model-choice.jpg",
+      "sha256": "0bc498aa777b500973d898f7339ccd6ca18f8db19a4f94eb692f3fae204ac697",
+      "bytes": 139853,
+      "observedAt": "2026-10-08T21:11:00.342Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-builder-model-change-draft-kept.jpg",
+      "sha256": "2db765219acf27e3e1f1de07a41943074523430a1616ba7740241a6bc6e225e5",
+      "bytes": 136961,
+      "observedAt": "2026-10-08T21:13:55.653Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "74e-agent-independent-model.jpg",
+      "sha256": "b7411eab6ec481531453b13ec8e8b884ed083dacc54959fbeb7366f5ba2a82df",
+      "bytes": 139075,
+      "observedAt": "2026-10-08T21:14:57.334Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1\\Blocky Studio.exe",
+        "id": 53350358,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    }
+  ],
+  "historySafeCounts": [
+    {
+      "kind": "chat-history-agent",
+      "projectId": "project-df345486-846c-484d-9d65-55cd73747a84",
+      "indexSha256": "31b1c9a60abe8ec83c691a2d70e7492d08f8c2e7070b10bda0fd7724602e1831",
+      "threadCount": 2,
+      "threads": [
+        {
+          "id": "chat-c0f94225-6b1f-4c82-9154-a1959746d0f3",
+          "sha256": "520c594d0c2e535a168994d2b0145e4b1fabb21df782875b64771f9ee14d3063",
+          "messages": 2,
+          "assistantMessages": [
+            {
+              "status": "cancelled",
+              "textCharacters": 6,
+              "thinkingCharacters": 0,
+              "activities": 0
+            }
+          ],
+          "bindingCorrect": true,
+          "activityStatus": [],
+          "codes": [],
+          "exitCodes": []
+        },
+        {
+          "id": "chat-9f48f8a6-ba81-4a9c-a637-71df6a1a5944",
+          "sha256": "64306fb895e3c07b24ef361a7ff7fc057f2d7d700c01d87c17bf140792f39669",
+          "messages": 0,
+          "assistantMessages": [],
+          "bindingCorrect": true,
+          "activityStatus": [],
+          "codes": [],
+          "exitCodes": []
+        }
+      ]
+    },
+    {
+      "kind": "chat-history-builder",
+      "projectId": "project-df345486-846c-484d-9d65-55cd73747a84",
+      "indexSha256": "718d071206f9fc851f5af5303d4274de6ea2fb5f473935ab8faa51780d034600",
+      "threadCount": 2,
+      "threads": [
+        {
+          "id": "chat-7c8f3665-c910-4abf-85c4-a35df4fc56de",
+          "sha256": "fdb6878e2463b3104879e51a8fe4abe6612143a40282ab2f7079e46a4a1d8fe1",
+          "messages": 2,
+          "assistantMessages": [
+            {
+              "status": "cancelled",
+              "textCharacters": 553,
+              "thinkingCharacters": 170,
+              "activities": 4
+            }
+          ],
+          "bindingCorrect": true,
+          "activityStatus": [
+            "completed",
+            "completed",
+            "failed",
+            "completed"
+          ],
+          "codes": [
+            "BLK-CLI-002"
+          ],
+          "exitCodes": [
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "id": "chat-21e8897c-7058-4905-92a8-52f218212c8b",
+          "sha256": "38f3704955a118f306092c4d388047192127ed2f812fb85aa374c2a399632903",
+          "messages": 2,
+          "assistantMessages": [
+            {
+              "status": "cancelled",
+              "textCharacters": 367,
+              "thinkingCharacters": 78,
+              "activities": 0
+            }
+          ],
+          "bindingCorrect": true,
+          "activityStatus": [],
+          "codes": [],
+          "exitCodes": []
+        }
+      ]
+    }
+  ],
+  "observations": [
+    "first/second同一窗口53350358且服务未完成时正文/独立reasoning增长",
+    "服务以真实SSE两段工具JSON生成调用，续轮toolResultCount1/2/3/4递增；真实Host project_context/compile成功、schema.show失败BLK-CLI-002 exit2、schema.list纠正成功",
+    "Builder model controlled-text请求ordinal8，Agent独立controlled-agent请求9/10；切换模型本窗口草稿保留",
+    "240px Agent菜单完整、Escape焦点回入口，重开Agent低显示；真实息壤Builder high只读运行成功及Agent low精确源另复用"
+  ],
+  "boundaries": [
+    "本组模型响应是本地合成，不是息壤；CLI仍真实Host执行，不预写CLI结果",
+    "未发送草稿跨退出持久化不在不丢输入要求，本窗口切模型/助手保留才是判据，不伪称退出后保留",
+    "I01尚缺Builder配置自然重开安全读回/普通compose目标代表路径，其他模型底层及视觉不重跑",
+    "I03 Agent仅text/status存档，运行工具/reasoning遗漏为Root新发现真实不通过；I04晚到普通包尚待完成",
+    "新修Agent未冻结不追认当前包通过；Root Full尚在跑，不声明通过"
+  ]
+}

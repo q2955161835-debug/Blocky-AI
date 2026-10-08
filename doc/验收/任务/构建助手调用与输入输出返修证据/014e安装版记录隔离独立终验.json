@@ -1,0 +1,443 @@
+{
+  "source": "014e7cca38df3a7b9835fb053c081c05e8d94060",
+  "generatedLocksCommit": "dbefe9c",
+  "testOnlySelectorCommit": "ccde1aa",
+  "I03": "通过",
+  "I04": "通过",
+  "screenshots": [
+    {
+      "file": "014e-installed-agent-stop-thinking-reopen.jpg",
+      "sha256": "62522b5ab30e612506b7dbd72b96685c699174668e27696055d602a6939b6531",
+      "bytes": 147002,
+      "observedAt": "2026-10-08T21:49:05.171Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "014e-installed-agent-stop-tools-reopen.jpg",
+      "sha256": "10e673ed038f4e2c21ab88ca709b94d8db6e0a7e412142b3e9e614461367000b",
+      "bytes": 151270,
+      "observedAt": "2026-10-08T21:49:11.911Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "014e-installed-agent-error-tools-reopen.jpg",
+      "sha256": "65f58117c2d40698eef8e481c0b1eb69ca136d837769a358a82dcbd06f90ceb5",
+      "bytes": 151937,
+      "observedAt": "2026-10-08T21:48:34.944Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "014e-installed-builder-truncation-reopen.jpg",
+      "sha256": "7943338f498ee016435ded3df04466d4a38f12c504d76937b25005f9d31d9aee",
+      "bytes": 176331,
+      "observedAt": "2026-10-08T21:48:13.609Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "014e-installed-isolation-new-disabled.jpg",
+      "sha256": "9279fa0ae4aabe4726d9a2f0a3be29ab7f969223b312cc0a2d899d86ce412fbe",
+      "bytes": 164222,
+      "observedAt": "2026-10-08T21:51:53.482Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    },
+    {
+      "file": "014e-installed-isolation-second-tools-active.jpg",
+      "sha256": "c1546469910cc1f8765d6e0b3a1f83204515aab52935b78f58a87b53ed831ea3",
+      "bytes": 164727,
+      "observedAt": "2026-10-08T21:51:44.505Z",
+      "window": {
+        "app": "process:D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Blocky Studio.exe",
+        "id": 75504312,
+        "title": "工作助手 — Blocky Studio"
+      },
+      "width": 1443,
+      "height": 903
+    }
+  ],
+  "historySafeCounts": [
+    {
+      "kind": "chat-history-agent",
+      "projectId": "project-df345486-846c-484d-9d65-55cd73747a84",
+      "indexSha256": "c23f838638e887bca3a6c4856187952f306516bd259964ed338a2c9a498b32a4",
+      "threads": [
+        {
+          "id": "chat-c0f94225-6b1f-4c82-9154-a1959746d0f3",
+          "sha256": "520c594d0c2e535a168994d2b0145e4b1fabb21df782875b64771f9ee14d3063",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 6,
+              "thinkingCharacters": 0,
+              "activities": 0,
+              "runtimeActivities": 0,
+              "activityTruncated": 0,
+              "statuses": {},
+              "codes": [],
+              "exitCodes": {}
+            }
+          ]
+        },
+        {
+          "id": "chat-9f48f8a6-ba81-4a9c-a637-71df6a1a5944",
+          "sha256": "64306fb895e3c07b24ef361a7ff7fc057f2d7d700c01d87c17bf140792f39669",
+          "messages": 0,
+          "bindingCorrect": true,
+          "assistant": []
+        },
+        {
+          "id": "chat-6dee31e9-db7e-4328-8ad9-114948c3bf50",
+          "sha256": "655dc2030417148653ca4a578eb430980f125d24c7c78db2839d8f07705ebdc4",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 6,
+              "thinkingCharacters": 12,
+              "activities": 0,
+              "runtimeActivities": 3,
+              "activityTruncated": 0,
+              "statuses": {
+                "completed": 2,
+                "failed": 1
+              },
+              "codes": [
+                "BLK-TOOL-002"
+              ],
+              "exitCodes": {}
+            }
+          ]
+        },
+        {
+          "id": "chat-166431c6-6abb-4806-97b8-06a6ed7982e1",
+          "sha256": "e293ca8999e154525f42b1cc4a7412d62cb9d882066182fb8685d4103674f710",
+          "messages": 0,
+          "bindingCorrect": true,
+          "assistant": []
+        },
+        {
+          "id": "chat-a7591837-18ec-4c26-bea6-dad6aabe59ab",
+          "sha256": "d21c657ed853d24a9a94eecdd7cc1d713cc840544b8c2d08cc475e671d6ce9ad",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "failed",
+              "textCharacters": 13,
+              "thinkingCharacters": 12,
+              "activities": 0,
+              "runtimeActivities": 2,
+              "activityTruncated": 0,
+              "statuses": {
+                "completed": 1,
+                "failed": 1
+              },
+              "codes": [
+                "BLK-CALCULATE-001"
+              ],
+              "exitCodes": {}
+            }
+          ]
+        },
+        {
+          "id": "chat-f4e18e7d-330f-4240-89ad-03ac967a70e4",
+          "sha256": "cbeee08bdce3e98c4688a40958357b869103a10c6a7dd426f3a920b0aaa62a88",
+          "messages": 4,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 6,
+              "thinkingCharacters": 12,
+              "activities": 0,
+              "runtimeActivities": 3,
+              "activityTruncated": 0,
+              "statuses": {
+                "completed": 2,
+                "failed": 1
+              },
+              "codes": [
+                "BLK-TOOL-002"
+              ],
+              "exitCodes": {}
+            },
+            {
+              "status": "cancelled",
+              "textCharacters": 6,
+              "thinkingCharacters": 12,
+              "activities": 0,
+              "runtimeActivities": 3,
+              "activityTruncated": 0,
+              "statuses": {
+                "completed": 2,
+                "failed": 1
+              },
+              "codes": [
+                "BLK-TOOL-002"
+              ],
+              "exitCodes": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "chat-history-builder",
+      "projectId": "project-df345486-846c-484d-9d65-55cd73747a84",
+      "indexSha256": "d153aaa77879b6da02f15b5659404fea9c01026383364507be2ac551bc8b0cdd",
+      "threads": [
+        {
+          "id": "chat-7c8f3665-c910-4abf-85c4-a35df4fc56de",
+          "sha256": "fdb6878e2463b3104879e51a8fe4abe6612143a40282ab2f7079e46a4a1d8fe1",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 553,
+              "thinkingCharacters": 170,
+              "activities": 4,
+              "runtimeActivities": 0,
+              "activityTruncated": 0,
+              "statuses": {
+                "completed": 3,
+                "failed": 1
+              },
+              "codes": [
+                "BLK-CLI-002"
+              ],
+              "exitCodes": {
+                "0": 2,
+                "2": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "chat-21e8897c-7058-4905-92a8-52f218212c8b",
+          "sha256": "38f3704955a118f306092c4d388047192127ed2f812fb85aa374c2a399632903",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 367,
+              "thinkingCharacters": 78,
+              "activities": 0,
+              "runtimeActivities": 0,
+              "activityTruncated": 0,
+              "statuses": {},
+              "codes": [],
+              "exitCodes": {}
+            }
+          ]
+        },
+        {
+          "id": "chat-6222db58-17b8-4606-a3c3-32bf5216c2ee",
+          "sha256": "07c14f4b18e921776d7d4647dc03569e931d3f17fd3d026c41447e74af430b8c",
+          "messages": 2,
+          "bindingCorrect": true,
+          "assistant": [
+            {
+              "status": "cancelled",
+              "textCharacters": 598,
+              "thinkingCharacters": 604,
+              "activities": 200,
+              "runtimeActivities": 0,
+              "activityTruncated": 28,
+              "statuses": {
+                "completed": 200
+              },
+              "codes": [],
+              "exitCodes": {
+                "0": 200
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "requests39to42": [
+    {
+      "time": "2026-10-08T21:50:25.809Z",
+      "event": "request",
+      "ordinal": 39,
+      "model": "controlled-agent",
+      "stage": "agent-success",
+      "stream": false,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:50:27.019Z",
+      "event": "complete",
+      "ordinal": 39,
+      "model": "controlled-agent",
+      "stage": "agent-success"
+    },
+    {
+      "time": "2026-10-08T21:50:27.062Z",
+      "event": "request",
+      "ordinal": 40,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "stream": false,
+      "toolResultCount": 1,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:51:14.815Z",
+      "event": "abort",
+      "ordinal": 40,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "abortCount": 4
+    },
+    {
+      "time": "2026-10-08T21:51:16.823Z",
+      "event": "late-write-attempt",
+      "ordinal": 40,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "destroyed": true,
+      "writableEnded": false,
+      "accepted": false,
+      "writeThrew": false
+    },
+    {
+      "time": "2026-10-08T21:51:23.478Z",
+      "event": "request",
+      "ordinal": 41,
+      "model": "controlled-agent",
+      "stage": "agent-success",
+      "stream": false,
+      "toolResultCount": 0,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:51:24.694Z",
+      "event": "complete",
+      "ordinal": 41,
+      "model": "controlled-agent",
+      "stage": "agent-success"
+    },
+    {
+      "time": "2026-10-08T21:51:24.726Z",
+      "event": "request",
+      "ordinal": 42,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "stream": false,
+      "toolResultCount": 1,
+      "maxTokens": 8192,
+      "reasoningEffort": "absent",
+      "reasoningEffortNested": "absent",
+      "thinking": "absent"
+    },
+    {
+      "time": "2026-10-08T21:52:03.149Z",
+      "event": "abort",
+      "ordinal": 42,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "abortCount": 5
+    },
+    {
+      "time": "2026-10-08T21:52:05.156Z",
+      "event": "late-write-attempt",
+      "ordinal": 42,
+      "model": "controlled-agent",
+      "stage": "agent-hold",
+      "destroyed": true,
+      "writableEnded": false,
+      "accepted": false,
+      "writeThrew": false
+    }
+  ],
+  "requestLogSha256": "5219cda26ee7a9ff13071d3378cd1e80b29fbd6381fae08a073be69d0825461c",
+  "installedClose": {
+    "process": 21220,
+    "windowId": 75504312,
+    "normalStopAndExit": true,
+    "closedAt": "2026-10-08T21:52:50.029Z",
+    "reasoningAndCallsReopened": true,
+    "builderActivityKept": 200,
+    "builderActivityTruncated": 28
+  },
+  "directGates": [
+    {
+      "file": "beta-native-history-build.log",
+      "sha256": "3ca41fcd9194fdfb040bcca9505e417c6a3aa223576b4e34d738c37c35a3c0a4",
+      "bytes": 5217
+    },
+    {
+      "file": "beta-native-history-e2e.log",
+      "sha256": "9f465a4713bc1a5f59d1354642076a4d30d3b7b87e43e93afedeaaabaee3abaa",
+      "bytes": 4914
+    },
+    {
+      "file": "beta-native-history-e2e-final.log",
+      "sha256": "5dc147c0285fec3090673586719e7129b553948e35664bf19ae12bb419c5bd70",
+      "bytes": 3146
+    },
+    {
+      "file": "beta-native-history-core.log",
+      "sha256": "3a5d0e49b27e9aa0b5a1ce342ce08c17e200ad494851eb11d783426c17b9cbd5",
+      "bytes": 2062
+    }
+  ],
+  "observations": [
+    "原始尺寸独立观察安装版同窗75504312：Agent停止保留thinking/3活动，失败保留thinking/2活动与BLK-CALCULATE-001，均新进程重开",
+    "Builder实际228工具，存档200/明确早28裁剪；新进程同样显示，不称早28仍可查",
+    "运行中真实新会话点击禁用；第二轮活跃仍归属新输入，停止后保存；旧历史保留",
+    "abort40 late-write21:51:16.823早于request41 21:51:23.478，accepted=false：仅socket拒收，不称新轮收到旧帧。与独立JS旧事件/新轮fence和普通新轮无串扰合并判断",
+    "新Native构建dbefe来源、最终Native15/24.1s及Core3/6.1s通过；旧一次DOM定位失败保留。74eFull360/30/1803413ms只复用执行稳定性未变范围"
+  ],
+  "boundaries": [
+    "本批模型是localhost合成，Host CLI/calculator实际执行，不是息壤",
+    "只读自有无秘密profile计数/hash，不导出思考正文或全部对话",
+    "未重复三场景/GUI/API/产品修改；Root普通GUI操作与独立观察/存档审核分别记录"
+  ]
+}

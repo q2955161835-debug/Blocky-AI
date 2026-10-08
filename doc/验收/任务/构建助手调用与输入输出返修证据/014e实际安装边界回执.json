@@ -1,0 +1,51 @@
+{
+  "completedAt": "2026-10-09T05:43:00.1639607+08:00",
+  "after": {
+    "profile": {
+      "metadataSha256": "C305BAC837E6BCD497073359FE70C3B4DB5606D75827E1E067E451643812E932",
+      "method": "仅文件名/大小/mtime元数据；不读取用户文件内容/凭据",
+      "files": 155,
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio\\user"
+    },
+    "startMenu": "C:\\Users\\29551\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Blocky Studio（测试版）",
+    "registry": {
+      "DisplayName": "Blocky Studio（测试版）0.8.0-beta.1",
+      "DisplayVersion": "0.8.0-beta.1",
+      "InstallLocation": "D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed",
+      "UninstallString": "\"D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Uninstall.exe\"",
+      "QuietUninstallString": "\"D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed\\Uninstall.exe\" /S"
+    },
+    "betaShortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio（测试版）.lnk",
+    "fixedShortcut": {
+      "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery\\Blocky Studio.exe",
+      "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery",
+      "sha256": "CF6E5F1566DA5072F8F93B33791F05118C8217C5D964998D45755C4E586C9684",
+      "path": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk"
+    }
+  },
+  "before": {
+    "profile": {
+      "metadataSha256": "C305BAC837E6BCD497073359FE70C3B4DB5606D75827E1E067E451643812E932",
+      "method": "仅文件名/大小/mtime元数据；不读取用户文件内容/凭据",
+      "files": 155,
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio\\user"
+    },
+    "betaShortcutAbsent": true,
+    "startedAt": "2026-10-09T05:42:21.3824999+08:00",
+    "fixedShortcut": {
+      "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery\\Blocky Studio.exe",
+      "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery",
+      "sha256": "CF6E5F1566DA5072F8F93B33791F05118C8217C5D964998D45755C4E586C9684",
+      "path": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk"
+    },
+    "betaKeyAbsent": true
+  },
+  "installer": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1-setup.exe",
+  "installerSha256": "ED8C805EB36FEC6473A02E67BB6453ACEFDF9516B8DCE57FDA05DBCE58B292E7",
+  "installerPid": 17304,
+  "scope": "自有D空目录，静默非UI安装，先不卸载",
+  "fixedShortcutUnchanged": true,
+  "installPath": "D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09\\acceptance-installed",
+  "profileMetadataUnchanged": true,
+  "exitCode": 0
+}

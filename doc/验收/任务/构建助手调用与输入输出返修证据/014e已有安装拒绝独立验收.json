@@ -1,0 +1,9 @@
+{
+  "linksUnchanged": true,
+  "scope": "已安装时非UI第二安装拒绝；不修改原安装或用户配置",
+  "passed": true,
+  "checkedAt": "2026-10-09T05:46:38.1993244+08:00",
+  "targetCreated": false,
+  "exitCode": 4,
+  "installLocationUnchanged": true
+}

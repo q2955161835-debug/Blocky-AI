@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-10-08T21:23:21.321Z",
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-agent-flow\\Blocky Studio.exe",
+    "id": 32904484,
+    "title": "工作助手 — Blocky Studio"
+  },
+  "package": "dist/Blocky-Studio-0.8.0-agent-flow",
+  "builderModel": "model-36e601b0-c0ad-4931-8ebe-f9f4c2689466",
+  "builderReasoningEffort": "high",
+  "agentReasoningEffort": "low",
+  "inputEmpty": true,
+  "origin": "Root earlier normal exit and new-process file reopen, current read-only re-observation, no model/effort change after reopen",
+  "screenshotSha256": "EDA17563F2A6901E98B9D967A0214812264891546DCB13200FE80DE311DD15C3",
+  "verdict": "通过",
+  "boundary": "正常退出后同新进程Agent低/Builder高分别保留；输入空不宣称未发送草稿跨退出保存"
+}

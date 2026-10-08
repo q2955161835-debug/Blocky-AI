@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "bytes": 2500240,
+      "lock": "tools/blocky-cli/cli-runtime-lock.json",
+      "matches": true,
+      "sha256": "F7BB32ACB26B07E8268114212E07268D33B8F2F30BF74BF5C0060EFE4BC5DF10",
+      "payload": "cli/main.mjs"
+    },
+    {
+      "bytes": 2503066,
+      "lock": "tools/blocky-cli/runtime-worker-lock.json",
+      "matches": true,
+      "sha256": "87BA7EEF750DE0BD2C8B51F235F3C68C3C711D16FF3706E82162412CB5F9998F",
+      "payload": "cli/runtime-worker.mjs"
+    }
+  ],
+  "locksCommit": "dbefe9c",
+  "source": "014e7cca38df3a7b9835fb053c081c05e8d94060",
+  "testSelectorOnlyCommit": "ccde1aa",
+  "conclusion": "生成后锁提交与实际发布字节一致，无产品源码差异，不要求重复同字节重构建；原014e清单/安装器锚点保留"
+}
