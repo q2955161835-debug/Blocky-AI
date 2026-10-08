@@ -42,6 +42,19 @@ fn list(window: &tauri::WebviewWindow, app: &tauri::AppHandle) -> Result<Vec<Stu
     unsafe { EnumWindows(Some(visit), (&mut search as *mut Search) as LPARAM); }
     Ok(search.found)
 }
+pub fn restore_all(app: &tauri::AppHandle) {
+    if let Some(window)=app.get_webview_window("main") {
+        if let Ok(windows)=list(&window,app) {
+            for peer in windows {
+                if let Ok(id)=peer.id.parse::<usize>() {
+                    let hwnd=id as HWND;
+                    unsafe{ShowWindow(hwnd,if IsIconic(hwnd)!=0 {SW_RESTORE} else {SW_SHOW});}
+                }
+            }
+        }
+    }
+    crate::window_lifecycle::restore(app);
+}
 #[tauri::command]
 pub fn studio_windows(window: tauri::WebviewWindow, app: tauri::AppHandle) -> Result<Vec<StudioWindow>, String> {
     crate::window_lifecycle::visible(&window)?;

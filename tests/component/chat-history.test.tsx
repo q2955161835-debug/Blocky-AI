@@ -100,3 +100,12 @@ it("does not replace an unreadable history with an empty new conversation", asyn
       .schemaVersion,
   ).toBe("unknown");
 });
+it("keeps the original searchable title after the bounded transcript rotates", async () => {
+  const hook=renderHook(()=>useChatHistory("project","agent",vi.fn()));
+  await waitFor(()=>expect(hook.result.current.ready).toBe(true));
+  act(()=>hook.result.current.update("project",()=>[user("最初的会话主题")]));
+  act(()=>hook.result.current.update("project",messages=>[...messages,...Array.from({length:40},(_,i)=>user(`后续问题${i}`))]));
+  await act(()=>hook.result.current.flush());
+  expect(hook.result.current.messages).toHaveLength(40);
+  expect(hook.result.current.threads[0].title).toBe("最初的会话主题");
+});

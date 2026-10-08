@@ -161,7 +161,9 @@ export function useChatHistory(
       messages,
       thread: {
         ...previous.conversation.thread,
-        title: chatTitle(messages),
+        title: previous.conversation.messages.some(message => message.role === "user")
+          ? previous.conversation.thread.title
+          : chatTitle(messages),
         updatedAt: new Date().toISOString(),
       },
     };

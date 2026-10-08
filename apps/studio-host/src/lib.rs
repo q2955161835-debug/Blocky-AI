@@ -35,5 +35,6 @@ pub mod tool_gateway;
 mod tool_sandbox;
 pub mod user_store;
 mod chat_history;
+pub mod tray_owner;
 pub mod user_terminal;
 pub mod workflow;

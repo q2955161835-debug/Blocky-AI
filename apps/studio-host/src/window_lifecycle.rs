@@ -29,13 +29,15 @@ pub fn notify(app: &tauri::AppHandle, action: &str) {
     }
 }
 pub fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    app.state::<Lifecycle>().minimize_to_tray.store(true, Ordering::SeqCst);
+    crate::shared_tray::start(app)
+}
+pub(crate) fn build_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     use tauri::{
         menu::{Menu, MenuItem},
         tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     };
-    app.state::<Lifecycle>()
-        .minimize_to_tray
-        .store(true, Ordering::SeqCst);
+    if app.tray_by_id("blocky-tray").is_some() {return Ok(());}
     let restore_item = MenuItem::with_id(app, "restore", "打开 Blocky Studio", true, None::<&str>)?;
     let pause = MenuItem::with_id(app, "pause", "暂停 / 继续问答运行", true, None::<&str>)?;
     let logs = MenuItem::with_id(app, "logs", "运行日志", true, None::<&str>)?;
@@ -51,7 +53,7 @@ pub fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
-            "restore" => restore(app),
+            "restore" => crate::studio_windows::restore_all(app),
             "pause" => notify(app, "pause"),
             "logs" => {
                 restore(app);
@@ -72,7 +74,7 @@ pub fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
                     ..
                 }
             ) {
-                restore(tray.app_handle());
+                crate::studio_windows::restore_all(tray.app_handle());
             }
         })
         .build(app)?;

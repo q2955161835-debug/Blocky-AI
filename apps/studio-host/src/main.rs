@@ -21,6 +21,7 @@ mod user_commands;
 mod window_lifecycle;
 mod window_state;
 mod studio_windows;
+mod shared_tray;
 mod workflow_commands;
 use blocky_studio::project_store;
 use tauri::Manager;
@@ -124,8 +125,8 @@ fn main() {
                     .build()?;
             }
             window_state::restore(app);
-            window_lifecycle::setup(app)?;
             studio_windows::register(app)?;
+            window_lifecycle::setup(app)?;
             if let Some(window) = app.get_webview_window("main") {
                 window.show()?;
             }
