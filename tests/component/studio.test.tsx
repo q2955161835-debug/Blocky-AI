@@ -83,6 +83,15 @@ it("editing the inspector changes the real project and undo restores it", async 
     (screen.getByLabelText("角色与指令") as HTMLTextAreaElement).value,
   ).not.toBe("自然科学教师");
 });
+it("prevents changing a resource again while its project save is in progress", async () => {
+  const hook = renderHook(() => useStudio(createStarter()));
+  await waitFor(() => expect(hook.result.current.compiling).toBe(false));
+  act(() => hook.result.current.setSelected("compose-answer"));
+  const view = render(<Inspector studio={{ ...hook.result.current, busy: true }} />);
+  expect((screen.getByLabelText("资源") as HTMLSelectElement).disabled).toBe(true);
+  view.rerender(<Inspector studio={{ ...hook.result.current, busy: false }} />);
+  expect((screen.getByLabelText("资源") as HTMLSelectElement).disabled).toBe(false);
+});
 it("navigation reopens a closed tab and the problem panel uses compiler diagnostics", async () => {
   const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.compiling).toBe(false));

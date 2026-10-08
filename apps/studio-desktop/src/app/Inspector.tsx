@@ -126,6 +126,7 @@ export function Inspector({
           ) : def?.resourceFields?.[field] ? (
             <select
               aria-label="资源"
+              disabled={s.busy || s.running || s.exiting}
               value={String(block.fields?.RESOURCE ?? "")}
               onChange={(e) => s.updateField(block.id, field, e.target.value)}
             >
