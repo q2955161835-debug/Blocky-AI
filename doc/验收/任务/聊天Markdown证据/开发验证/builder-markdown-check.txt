@@ -1,0 +1,264 @@
+
+> blocky-studio@0.8.0 check D:\1Folder\Blocky-AI
+> pnpm typecheck && pnpm test:unit && pnpm test:contracts && pnpm test:deployment
+
+
+> blocky-studio@0.8.0 typecheck D:\1Folder\Blocky-AI
+> tsc --noEmit
+
+
+> blocky-studio@0.8.0 test:unit D:\1Folder\Blocky-AI
+> vitest run packages
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  124 passed | 5 skipped (129)
+      Tests  546 passed | 6 skipped (552)
+   Start at  14:24:03
+   Duration  28.75s (transform 6.68s, setup 0ms, import 116.43s, tests 23.23s, environment 3.95s)
+
+
+> blocky-studio@0.8.0 test:contracts D:\1Folder\Blocky-AI
+> vitest run tests/contracts
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  7 passed (7)
+      Tests  32 passed (32)
+   Start at  14:24:33
+   Duration  1.94s (transform 2.44s, setup 0ms, import 4.46s, tests 570ms, environment 1ms)
+
+
+> blocky-studio@0.8.0 test:deployment D:\1Folder\Blocky-AI
+> node --test tests/document-parser/*.test.mjs tests/audio/*.test.mjs scripts/knowledge-deployment.test.mjs scripts/knowledge-assets.test.mjs
+
+TAP version 13
+# Subtest: missing locked assets download once; verified files do not access network
+ok 1 - missing locked assets download once; verified files do not access network
+  ---
+  duration_ms: 43.8598
+  type: 'test'
+  ...
+# Subtest: bad download never publishes and removes its partial file
+ok 2 - bad download never publishes and removes its partial file
+  ---
+  duration_ms: 11.9482
+  type: 'test'
+  ...
+# Subtest: corrupt existing asset fails without replacement or network
+ok 3 - corrupt existing asset fails without replacement or network
+  ---
+  duration_ms: 13.3499
+  type: 'test'
+  ...
+# Subtest: oversize response is bounded and leaves no final file
+ok 4 - oversize response is bounded and leaves no final file
+  ---
+  duration_ms: 12.0043
+  type: 'test'
+  ...
+# Subtest: model lock fixes immutable URLs and runtime licenses
+ok 5 - model lock fixes immutable URLs and runtime licenses
+  ---
+  duration_ms: 0.4851
+  type: 'test'
+  ...
+# Subtest: linked model cache directories fail before network or publication
+ok 6 - linked model cache directories fail before network or publication
+  ---
+  duration_ms: 14.8826
+  type: 'test'
+  ...
+# Subtest: model deployment publishes exact locked model assets, and refuses changed source bytes
+ok 7 - model deployment publishes exact locked model assets, and refuses changed source bytes
+  ---
+  duration_ms: 116.5048
+  type: 'test'
+  ...
+# Subtest: model deployment rejects linked destination directories before copying
+ok 8 - model deployment rejects linked destination directories before copying
+  ---
+  duration_ms: 43.5105
+  type: 'test'
+  ...
+# Subtest: model deployment rejects linked source model directories before reading assets
+ok 9 - model deployment rejects linked source model directories before reading assets
+  ---
+  duration_ms: 32.6078
+  type: 'test'
+  ...
+# Subtest: offline audio installation verifies and preserves exact payload, licenses and idempotence
+ok 10 - offline audio installation verifies and preserves exact payload, licenses and idempotence
+  ---
+  duration_ms: 215.0952
+  type: 'test'
+  ...
+# Subtest: changed installation, unknown inventory and altered manifest never get overwritten
+ok 11 - changed installation, unknown inventory and altered manifest never get overwritten
+  ---
+  duration_ms: 190.1831
+  type: 'test'
+  ...
+# Subtest: audio installation rejects outside paths, source overlap and linked source/destination
+ok 12 - audio installation rejects outside paths, source overlap and linked source/destination
+  ---
+  duration_ms: 48.8245
+  type: 'test'
+  ...
+# Subtest: audio audit rejects hardlinked executable and hardlinked manifest
+ok 13 - audio audit rejects hardlinked executable and hardlinked manifest
+  ---
+  duration_ms: 47.2454
+  type: 'test'
+  ...
+# Subtest: audio audit enforces locked platform, paths, inventory count and aggregate byte bounds
+ok 14 - audio audit enforces locked platform, paths, inventory count and aggregate byte bounds
+  ---
+  duration_ms: 11.4962
+  type: 'test'
+  ...
+# Subtest: Windows document build refuses a different host before touching existing artifacts
+ok 15 - Windows document build refuses a different host before touching existing artifacts # SKIP
+  ---
+  duration_ms: 0.6503
+  type: 'test'
+  ...
+# Subtest: hash-valid Linux canvas cannot be accepted as a Windows document runtime
+ok 16 - hash-valid Linux canvas cannot be accepted as a Windows document runtime
+  ---
+  duration_ms: 19.7026
+  type: 'test'
+  ...
+# Subtest: parser installation preserves the exact verified payload and refuses corruption before replacing it
+ok 17 - parser installation preserves the exact verified payload and refuses corruption before replacing it
+  ---
+  duration_ms: 83.9732
+  type: 'test'
+  ...
+# Subtest: document notices verify every vendored native and WASM license before publishing
+ok 18 - document notices verify every vendored native and WASM license before publishing
+  ---
+  duration_ms: 62.6833
+  type: 'test'
+  ...
+# Subtest: release enumeration verifies parser manifest and hashes before exposing package files
+ok 19 - release enumeration verifies parser manifest and hashes before exposing package files
+  ---
+  duration_ms: 47.4966
+  type: 'test'
+  ...
+# Subtest: canvas JavaScript without its Windows native payload cannot form a deployable runtime
+ok 20 - canvas JavaScript without its Windows native payload cannot form a deployable runtime
+  ---
+  duration_ms: 11.8156
+  type: 'test'
+  ...
+# Subtest: release parser enumeration rejects a linked runtime root
+ok 21 - release parser enumeration rejects a linked runtime root
+  ---
+  duration_ms: 18.6301
+  type: 'test'
+  ...
+# Subtest: notice enumeration includes scoped packages and skips internal module package.json metadata
+ok 22 - notice enumeration includes scoped packages and skips internal module package.json metadata
+  ---
+  duration_ms: 40.6778
+  type: 'test'
+  ...
+# Subtest: CSV produces logical rows, fixed source digest and text segments
+ok 23 - CSV produces logical rows, fixed source digest and text segments
+  ---
+  duration_ms: 4.6292
+  type: 'test'
+  ...
+# Subtest: strict UTF8, malformed files, unsupported extension and source limit reject safely
+ok 24 - strict UTF8, malformed files, unsupported extension and source limit reject safely
+  ---
+  duration_ms: 48.7796
+  type: 'test'
+  ...
+# Subtest: ZIP rejects traversal, DTD, macros, external relationships, and compressed bombs
+ok 25 - ZIP rejects traversal, DTD, macros, external relationships, and compressed bombs
+  ---
+  duration_ms: 42.164
+  type: 'test'
+  ...
+# Subtest: DOCX paragraphs and table path, XLSX cells and cached formulas retain locators
+ok 26 - DOCX paragraphs and table path, XLSX cells and cached formulas retain locators
+  ---
+  duration_ms: 57.9105
+  type: 'test'
+  ...
+# Subtest: Chinese PDF text has page locators and does not need OCR assets
+ok 27 - Chinese PDF text has page locators and does not need OCR assets
+  ---
+  duration_ms: 39.6648
+  type: 'test'
+  ...
+# Subtest: CSV record and segment limits reject rather than truncate
+ok 28 - CSV record and segment limits reject rather than truncate
+  ---
+  duration_ms: 63.0126
+  type: 'test'
+  ...
+# Subtest: worker stdout is exactly one safe JSON line even when PDF parser warns
+ok 29 - worker stdout is exactly one safe JSON line even when PDF parser warns
+  ---
+  duration_ms: 2280.3107
+  type: 'test'
+  ...
+# Subtest: ZIP rejects case-equivalent duplicate names and traversal entries
+ok 30 - ZIP rejects case-equivalent duplicate names and traversal entries
+  ---
+  duration_ms: 4.1313
+  type: 'test'
+  ...
+# Subtest: oversized image header rejects before native decode or missing OCR assets
+ok 31 - oversized image header rejects before native decode or missing OCR assets
+  ---
+  duration_ms: 1.3973
+  type: 'test'
+  ...
+# Subtest: scan PDF and PNG/JPEG/WebP yield actual Chinese/English OCR with pixel regions
+ok 32 - scan PDF and PNG/JPEG/WebP yield actual Chinese/English OCR with pixel regions
+  ---
+  duration_ms: 1960.6755
+  type: 'test'
+  ...
+# Subtest: PDF page, XLSX sheet, UTF16 XML and aggregate text caps reject
+ok 33 - PDF page, XLSX sheet, UTF16 XML and aggregate text caps reject
+  ---
+  duration_ms: 354.4717
+  type: 'test'
+  ...
+# Subtest: missing language assets fail safely and parseFile digest authenticates input bytes
+ok 34 - missing language assets fail safely and parseFile digest authenticates input bytes
+  ---
+  duration_ms: 26.7997
+  type: 'test'
+  ...
+# Subtest: runtime verification rejects modified bytes, missing files and extra files
+ok 35 - runtime verification rejects modified bytes, missing files and extra files
+  ---
+  duration_ms: 23.3547
+  type: 'test'
+  ...
+# Subtest: build/install directory boundary refuses workspace exterior before creating it
+ok 36 - build/install directory boundary refuses workspace exterior before creating it
+  ---
+  duration_ms: 0.2679
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 9049.2248

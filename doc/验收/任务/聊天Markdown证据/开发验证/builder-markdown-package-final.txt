@@ -1,0 +1,1 @@
+{"directory":"dist\\Blocky-Studio-0.8.0-markdown-candidate1","files":2595,"bytes":770622940}
