@@ -41,7 +41,7 @@ it("runs from the Agent editor on F5 and consumes the browser reload shortcut", 
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "打开本机项目" }));
   const input = await screen.findByLabelText("向 Agent 提问");
-  await waitFor(() => expect(screen.getAllByRole("button", { name: "运行", exact: true }).every(b => !(b as HTMLButtonElement).disabled)).toBe(true));
+  await waitFor(() => expect(screen.getAllByRole("button", { name: /^运行$/ }).every(b => !(b as HTMLButtonElement).disabled)).toBe(true));
   fireEvent.change(input, { target: { value: "快捷键运行" } });
   const key = new KeyboardEvent("keydown", { key: "F5", bubbles: true, cancelable: true });
   act(() => input.dispatchEvent(key));
