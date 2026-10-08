@@ -1,0 +1,64 @@
+{
+  "totalBytes": 21352605692.0,
+  "server52020Stopped": true,
+  "recordedAt": "2026-10-09T06:11:45.1614162+08:00",
+  "blockedApiProfileUntouched": "D:\\1Folder\\Blocky-AI\\try\\assistant-streaming-2026-10-09\\api-profile",
+  "userActivePackagesUntouched": true,
+  "mapping": [
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\builder-repair-2026-10-08",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\builder-repair-2026-10-08",
+      "files": 663,
+      "bytes": 40256815.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\builder-repair-2026-10-09",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\builder-repair-2026-10-09",
+      "files": 1472,
+      "bytes": 125151971.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\installer-2026-10-09",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\installer-2026-10-09",
+      "files": 65,
+      "bytes": 263359307.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\native-e2e-target",
+      "files": 23773,
+      "bytes": 19893259252.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\Blocky-Studio-0.8.0-beta.1",
+      "files": 2595,
+      "bytes": 772343090.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\beta-release-2026-10-09\\anonymous-download.exe",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\anonymous-download.exe",
+      "files": 1,
+      "bytes": 258235257.0,
+      "operation": "same-volume Move-Item",
+      "restoration": "Move destination back to original path",
+      "countsAndBytesUnchanged": true
+    }
+  ],
+  "deleted": false
+}
