@@ -28,6 +28,10 @@
   position: absolute;
   bottom: 13px;
   left: 18px;
+  max-width: calc(100% - 110px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
   color: #6c7c92;
   font:
@@ -37,7 +41,8 @@
 .runtime-status {
   position: absolute;
   right: 18px;
-  bottom: 13px;
+  bottom: 56px;
+  max-width: calc(100% - 36px);
   pointer-events: none;
   color: #a9c9b9;
   font-size: 11px;

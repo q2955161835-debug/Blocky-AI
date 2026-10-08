@@ -7,6 +7,8 @@ import { installSelection } from "../selection/gestures";
 import { CanvasOverview } from "./CanvasOverview";
 import { overviewLabels, type Overview } from "./overview";
 import { applyCodeVisuals } from "./code-visuals";
+import { CanvasModeSwitch } from "./CanvasModeSwitch";
+import { installCanvasPanning, type CanvasPointerMode } from "./pointerPanning";
 export type CanvasHandle = {
   add(type: string): void;
   focus(id: string): void;
@@ -36,11 +38,18 @@ export function Canvas(props: Props) {
     editor = useRef<Blockly.WorkspaceSvg | null>(null),
     serialized = useRef("");
   const selection = useRef<ReturnType<typeof installSelection> | null>(null);
+  const panController = useRef<ReturnType<typeof installCanvasPanning> | null>(null);
+  const pointerMode = useRef<CanvasPointerMode>("default");
+  const [mode, setMode] = useState<CanvasPointerMode>("default");
+  const [panning, setPanning] = useState(false);
   latest.current = props;
   const [announcement, setAnnouncement] = useState("");
   const [overview, setOverview] = useState<Overview>({ blocks: [], viewport: { x: 0, y: 0, width: 1, height: 1 }, omitted: 0 });
   const refreshOverview = useRef<() => void>(() => {});
   useEffect(() => {
+    pointerMode.current = "default";
+    setMode("default");
+    setPanning(false);
     registerBlocks();
     Blockly.Scrollbar.scrollbarThickness = 8;
     const el = root.current!;
@@ -150,9 +159,7 @@ export function Canvas(props: Props) {
         selection.current?.collapse(value);
       },
     });
-    let space = false,
-      pan: { x: number; y: number; sx: number; sy: number; id: number } | null =
-        null;
+    let space = false;
     const keydown = (e: KeyboardEvent) => {
       if (e.code === "Space" && !isInput(e.target)) {
         space = true;
@@ -166,37 +173,10 @@ export function Canvas(props: Props) {
     const keyup = (e: KeyboardEvent) => {
       if (e.code === "Space") space = false;
     };
-    const down = (e: PointerEvent) => {
-      // Selection/panning cancel pointer defaults, including native focus.
-      if (!isInput(e.target)) el.focus({ preventScroll: true });
-      if (e.button === 1 || (e.button === 0 && space)) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        pan = {
-          x: e.clientX,
-          y: e.clientY,
-          sx: ws.scrollX,
-          sy: ws.scrollY,
-          id: e.pointerId,
-        };
-        el.setPointerCapture(e.pointerId);
-      }
-    };
-    const move = (e: PointerEvent) => {
-      if (pan) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        ws.scroll(pan.sx + e.clientX - pan.x, pan.sy + e.clientY - pan.y);
-      }
-    };
-    const up = (e: PointerEvent) => {
-      if (pan) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        if (el.hasPointerCapture(pan.id)) el.releasePointerCapture(pan.id);
-        pan = null;
-      }
-    };
+    const blur = () => { space = false; };
+    panController.current = installCanvasPanning(el, ws, {
+      mode: () => pointerMode.current, space: () => space, changed: setPanning,
+    });
     const wheel = (e: WheelEvent) => {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -233,10 +213,7 @@ export function Canvas(props: Props) {
     };
     el.addEventListener("keydown", keydown, true);
     window.addEventListener("keyup", keyup);
-    el.addEventListener("pointerdown", down, true);
-    el.addEventListener("pointermove", move, true);
-    el.addEventListener("pointerup", up, true);
-    el.addEventListener("pointercancel", up, true);
+    window.addEventListener("blur", blur);
     el.addEventListener("wheel", wheel, { capture: true, passive: false });
     el.addEventListener("dblclick", dbl);
     el.addEventListener("contextmenu", context, true);
@@ -264,11 +241,10 @@ export function Canvas(props: Props) {
       latest.current.handle(null);
       editor.current = null;
       window.removeEventListener("keyup", keyup);
+      window.removeEventListener("blur", blur);
       el.removeEventListener("keydown", keydown, true);
-      el.removeEventListener("pointerdown", down, true);
-      el.removeEventListener("pointermove", move, true);
-      el.removeEventListener("pointerup", up, true);
-      el.removeEventListener("pointercancel", up, true);
+      panController.current?.dispose();
+      panController.current = null;
       el.removeEventListener("wheel", wheel, true);
       el.removeEventListener("dblclick", dbl);
       el.removeEventListener("contextmenu", context, true);
@@ -337,7 +313,7 @@ export function Canvas(props: Props) {
   }, [props.events, props.moduleId, props.workspace]);
   return (
     <div
-      className={`canvas-shell ${props.reduceMotion ? "reduce-motion" : ""}`}
+      className={`canvas-shell ${props.reduceMotion ? "reduce-motion" : ""} ${mode === "pan" ? "canvas--pan" : ""} ${panning ? "canvas--panning" : ""}`}
     >
       <div
         ref={root}
@@ -346,11 +322,18 @@ export function Canvas(props: Props) {
         aria-label="积木画布"
       />
       <div className="canvas-hint">
-        Shift 多选 · 空白框选 · 中键平移 · 滚轮缩放 · Tab 搜索
+        {mode === "pan" ? "左键平移 · 滚轮缩放 · Tab 搜索" : "Shift 多选 · 空白框选 · 中键平移 · 滚轮缩放 · Tab 搜索"}
       </div>
       <div className="runtime-status" role="status">
         {announcement}
       </div>
+      <CanvasModeSwitch mode={mode} panning={panning} onChange={next => {
+        panController.current?.cancel();
+        editor.current?.cancelCurrentGesture();
+        editor.current?.hideChaff();
+        pointerMode.current = next;
+        setMode(next);
+      }} />
       <CanvasOverview data={overview} focus={id => {
         const ws = editor.current, block = ws?.getBlockById(id);
         if (ws && block) { block.select(); ws.centerOnBlock(id); }
