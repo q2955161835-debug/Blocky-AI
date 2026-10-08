@@ -27,4 +27,3 @@ Not implemented: HTMLCanvasElement's getContext() method: without installing the
       Tests  211 passed (211)
    Start at  14:24:11
    Duration  53.33s (transform 8.33s, setup 0ms, import 116.81s, tests 28.23s, environment 242.12s)
-
