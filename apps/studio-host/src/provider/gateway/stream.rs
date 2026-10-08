@@ -1,6 +1,13 @@
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
-const ERROR: &str = "BLK-MODEL-RESPONSE-SSE";
+const UTF8: &str = "BLK-MODEL-RESPONSE-SSE-UTF8";
+const JSON: &str = "BLK-MODEL-RESPONSE-SSE-JSON";
+const ORDER: &str = "BLK-MODEL-RESPONSE-SSE-ORDER";
+const META: &str = "BLK-MODEL-RESPONSE-SSE-META";
+const CHOICES: &str = "BLK-MODEL-RESPONSE-SSE-CHOICES";
+const ROLE: &str = "BLK-MODEL-RESPONSE-SSE-ROLE";
+const DELTA: &str = "BLK-MODEL-RESPONSE-SSE-DELTA";
+const TOOLS: &str = "BLK-MODEL-RESPONSE-SSE-TOOLS";
 const LIMIT: usize = 16 * 1024 * 1024;
 #[derive(Default)]
 pub(super) struct Stream {
@@ -30,7 +37,7 @@ impl Stream {
         while let Some(end) = self.pending.iter().position(|b| *b == b'\n') {
             let line: Vec<_> = self.pending.drain(..=end).collect();
             let line = std::str::from_utf8(&line[..line.len() - 1])
-                .map_err(|_| ERROR)?
+                .map_err(|_| UTF8)?
                 .trim_end_matches('\r');
             if line.is_empty() {
                 self.event(emit)?;
@@ -47,17 +54,17 @@ impl Stream {
         }
         let data = std::mem::take(&mut self.data).join("\n");
         if self.done {
-            return Err(ERROR.into());
+            return Err(ORDER.into());
         }
         if data == "[DONE]" {
             self.done = true;
             return Ok(());
         }
-        let v = crate::strict_json::parse(data.as_bytes()).map_err(|_| ERROR)?;
+        let v = crate::strict_json::parse(data.as_bytes()).map_err(|_| JSON)?;
         for (slot, key) in [(&mut self.id, "id"), (&mut self.model, "model")] {
             if let Some(value) = v.get(key) {
                 if slot.as_ref().is_some_and(|old| old != value) {
-                    return Err(ERROR.into());
+                    return Err(META.into());
                 }
                 *slot = Some(value.clone());
             }
@@ -71,16 +78,16 @@ impl Stream {
         let choices = v["choices"]
             .as_array()
             .filter(|a| a.len() <= 1)
-            .ok_or(ERROR)?;
+            .ok_or(CHOICES)?;
         let Some(c) = choices.first() else {
             return Ok(());
         };
         if c["index"].as_u64().is_some_and(|n| n != 0) {
-            return Err(ERROR.into());
+            return Err(CHOICES.into());
         }
         if let Some(finish) = c.get("finish_reason").filter(|v| !v.is_null()) {
             if self.finish.as_ref().is_some_and(|f| f != finish) {
-                return Err(ERROR.into());
+                return Err(ORDER.into());
             }
             self.finish = Some(finish.clone());
         }
@@ -91,11 +98,11 @@ impl Stream {
                 .iter()
                 .any(|key| d.get(key).is_some_and(|v| !v.is_null() && v != ""))
         {
-            return Err(ERROR.into());
+            return Err(ORDER.into());
         }
-        if let Some(role) = d.get("role") {
+        if let Some(role) = d.get("role").filter(|v| !v.is_null()) {
             if role != "assistant" {
-                return Err(ERROR.into());
+                return Err(ROLE.into());
             }
         }
         for (field, kind, target) in [
@@ -103,7 +110,7 @@ impl Stream {
             ("reasoning_content", "thinking_delta", &mut self.thinking),
         ] {
             if let Some(value) = d.get(field).filter(|v| !v.is_null()) {
-                let delta = value.as_str().ok_or(ERROR)?;
+                let delta = value.as_str().ok_or(DELTA)?;
                 target.push_str(delta);
                 if target.len() > 2 * 1024 * 1024 {
                     return Err("BLK-PROVIDER-LIMIT".into());
@@ -114,30 +121,30 @@ impl Stream {
             }
         }
         if let Some(calls) = d.get("tool_calls").filter(|v| !v.is_null()) {
-            for t in calls.as_array().filter(|a| a.len() <= 8).ok_or(ERROR)? {
-                let index = t["index"].as_u64().filter(|n| *n < 8).ok_or(ERROR)?;
+            for t in calls.as_array().filter(|a| a.len() <= 8).ok_or(TOOLS)? {
+                let index = t["index"].as_u64().filter(|n| *n < 8).ok_or(TOOLS)?;
                 let tool = self.tools.entry(index).or_insert_with(
                     || json!({"id":"","type":"function","function":{"name":"","arguments":""}}),
                 );
                 if t.get("type").is_some_and(|v| v != "function") {
-                    return Err(ERROR.into());
+                    return Err(TOOLS.into());
                 }
                 for (key, target) in [("id", &mut tool["id"])] {
                     if let Some(value) = t.get(key) {
-                        let s = value.as_str().ok_or(ERROR)?;
-                        let mut accumulated = target.as_str().ok_or(ERROR)?.to_owned();
+                        let s = value.as_str().ok_or(TOOLS)?;
+                        let mut accumulated = target.as_str().ok_or(TOOLS)?.to_owned();
                         accumulated.push_str(s);
                         if accumulated.len() > 128 {
-                            return Err(ERROR.into());
+                            return Err(TOOLS.into());
                         }
                         *target = json!(accumulated);
                     }
                 }
                 for key in ["name", "arguments"] {
                     if let Some(value) = t["function"].get(key) {
-                        let delta = value.as_str().ok_or(ERROR)?;
+                        let delta = value.as_str().ok_or(TOOLS)?;
                         let mut accumulated =
-                            tool["function"][key].as_str().ok_or(ERROR)?.to_owned();
+                            tool["function"][key].as_str().ok_or(TOOLS)?.to_owned();
                         accumulated.push_str(delta);
                         if accumulated.len() > if key == "name" { 64 } else { 2 * 1024 * 1024 } {
                             return Err("BLK-PROVIDER-LIMIT".into());
@@ -177,16 +184,59 @@ impl Stream {
                     .collect::<Vec<_>>()
             );
         }
-        let mut response = json!({"id":self.id.ok_or(ERROR)?,"model":self.model.ok_or(ERROR)?,"choices":[{"message":message,"finish_reason":self.finish.ok_or(ERROR)?}]});
+        let mut response = json!({"id":self.id.ok_or(META)?,"model":self.model.ok_or(META)?,"choices":[{"message":message,"finish_reason":self.finish.ok_or(ORDER)?}]});
         if let Some(usage) = self.usage {
             response["usage"] = usage;
         }
-        serde_json::to_vec(&response).map_err(|_| ERROR.into())
+        serde_json::to_vec(&response).map_err(|_| JSON.into())
     }
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn official_null_role_terminal_chunk_remains_a_complete_generation() {
+        let mut stream=Stream::default();
+        let wire=concat!(
+            "data: {\"id\":\"fixture\",\"model\":\"fixture\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"answer\"},\"finish_reason\":null}]}\n\n",
+            "data: {\"id\":\"fixture\",\"model\":\"fixture\",\"choices\":[{\"index\":0,\"delta\":{\"role\":null,\"content\":\"\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":1,\"completion_tokens\":2,\"total_tokens\":3}}\n\n",
+            "data: [DONE]\n\n");
+        stream.feed(wire.as_bytes(),&mut |_|Ok(())).expect("Official nullable role must be accepted");
+        let response:Value=serde_json::from_slice(&stream.complete().unwrap()).unwrap();
+        assert_eq!(response["choices"][0]["message"]["content"],"answer");
+        assert_eq!(response["usage"]["completion_tokens"],2);
+    }
+    #[test]
+    fn nullable_role_does_not_relax_non_null_roles_or_other_delta_validation() {
+        for role in [json!("user"),json!("synthetic-private-role"),json!(1),json!(false),json!({})] {
+            let wire=format!("data: {}\n\n",json!({"choices":[{"delta":{"role":role}}]}));
+            assert_eq!(Stream::default().feed(wire.as_bytes(),&mut |_|Ok(())).unwrap_err(),ROLE);
+        }
+        let wire=format!("data: {}\n\n",json!({"choices":[{"delta":{"role":null,"content":[]}}]}));
+        assert_eq!(Stream::default().feed(wire.as_bytes(),&mut |_|Ok(())).unwrap_err(),DELTA);
+        let wire=format!("data: {}\n\n",json!({"choices":[{"delta":{"role":null,"tool_calls":[{"index":9}]}}]}));
+        assert_eq!(Stream::default().feed(wire.as_bytes(),&mut |_|Ok(())).unwrap_err(),TOOLS);
+        let mut incomplete=Stream::default();
+        incomplete.feed(b"data: {\"id\":\"fixture\",\"model\":\"fixture\",\"choices\":[{\"delta\":{\"role\":null},\"finish_reason\":\"stop\"}]}\n\n",&mut |_|Ok(())).unwrap();
+        assert_eq!(incomplete.complete().unwrap_err(),"BLK-MODEL-TRUNCATED-SSE");
+    }
+    #[test]
+    fn malformed_stream_stages_return_only_fixed_diagnostics() {
+        let cases:Vec<(&[u8],&str)>=vec![
+            (b"data: \xff\n\n",UTF8),
+            (b"data: {synthetic-private-json\n\n",JSON),
+            (b"data: {\"synthetic-private-field\":true}\n\n",CHOICES),
+            (b"data: {\"choices\":[{\"index\":1,\"delta\":{}}]}\n\n",CHOICES),
+            (b"data: {\"id\":\"fixture\",\"choices\":[]}\n\ndata: {\"id\":\"synthetic-private-different\",\"choices\":[]}\n\n",META),
+            (b"data: [DONE]\n\ndata: {\"choices\":[]}\n\n",ORDER),
+            (b"data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"synthetic-private-content\"}}]}\n\n",ORDER),
+        ];
+        for (wire,expected) in cases {
+            let error=Stream::default().feed(wire,&mut |_|Ok(())).unwrap_err();
+            assert_eq!(error,expected);
+            assert!(error.len()<64 && !error.contains("synthetic-private"));
+        }
+    }
     #[test]
     fn fragmented_utf8_and_reasoning_and_tools_are_assembled() {
         let wire = concat!(

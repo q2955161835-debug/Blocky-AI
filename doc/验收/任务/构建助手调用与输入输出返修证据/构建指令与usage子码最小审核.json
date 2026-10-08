@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "d3fcabb89392c9240a477f77cc6938dc1f0b9c5c",
+  "exitReuse": {
+    "exitSourceChanged": false,
+    "boundary": "E01精确复用既有GUI与技术证据，没有新GUI重跑",
+    "guiSource": "3fa86c13cc4604b34a4e9ab90a7ba7b4985054ac"
+  },
+  "scope": "来源绑定、指令与固定usage子码最小静态/日志审核，不是整轮验收",
+  "overall": "不通过，R01错误/后续场景未满足仍保持",
+  "verdict": "通过",
+  "prompt": {
+    "atomicRootReplacementConsistent": true,
+    "literalNativePayloadConfigureText": true,
+    "fullNestedMessageConsistent": true,
+    "projectEditContradictionCorrected": true
+  },
+  "checkedAt": "2026-10-09T03:16:09.3674155+08:00",
+  "blockers": [],
+  "gateway": {
+    "counts": "Root开发19 passed / 2 ignored / 387 filtered",
+    "logSha256": "762B79342E8990DA1FAA756FE58270022180DEB7F871ED15EEE103DE977942B2",
+    "apiProbe": "Root另显式实际low诊断1项成功，20帧/2相同usage；仅单请求，不能归因旧USAGE失败或外推真实Builder场景",
+    "ignored": "两个实际API诊断测试不纳入19项",
+    "independentlyRerun": false,
+    "changes": "仅拆TYPE/SUM/MAX/CHANGED固定子码，拒绝条件保留、不输出原始响应",
+    "detailChangePolicy": "完全相同usage重复允许，optional details改变仍拒绝，与既有完整对象比较策略一致"
+  }
+}

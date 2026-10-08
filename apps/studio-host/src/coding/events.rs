@@ -63,6 +63,17 @@ impl EventLog {
         self.text.settle()?;
         self.thinking.settle()
     }
+    pub fn reject_generation(&mut self) {
+        // The rejected response has no worker replay. Its already-published
+        // prefix remains in shown/events; only replay bookkeeping is reset.
+        for track in [&mut self.text, &mut self.thinking] {
+            track.streamed.clear();
+            track.consumed = 0;
+        }
+    }
+    pub fn text(&self) -> &str {
+        &self.text.shown
+    }
     fn publish(
         &mut self,
         mut event: Value,
@@ -282,6 +293,24 @@ mod tests {
             log.worker(worker(1, "text.delta", "不同文本"), &[], &mut emit)
                 .is_err()
         );
+    }
+    #[test]
+    fn rejected_generation_keeps_public_prefix_and_accepts_correction_without_replay() {
+        let mut log = log();
+        let mut emitted = Vec::new();
+        let mut emit = |event| { emitted.push(event); Ok(()) };
+        log.delta(json!({"type":"thinking_delta","delta":"检查参数"}), &mut emit).unwrap();
+        log.delta(json!({"type":"text_delta","delta":"开始搭建"}), &mut emit).unwrap();
+        log.reject_generation();
+        log.worker(worker(1,"text.delta","正在重新生成"),&[],&mut emit).unwrap();
+        log.begin_generation().unwrap();
+        log.delta(json!({"type":"text_delta","delta":"完成"}), &mut emit).unwrap();
+        log.worker(worker(2,"text.delta","完成"),&[],&mut emit).unwrap();
+        log.begin_generation().unwrap();
+        assert_eq!(log.text.shown,"开始搭建正在重新生成完成");
+        assert_eq!(log.thinking.shown,"检查参数");
+        assert_eq!(log.events, emitted);
+        assert_eq!(log.events.len(), 4);
     }
     #[test]
     fn large_delta_splits_unicode_safely_and_cancellation_keeps_emitted_prefix() {

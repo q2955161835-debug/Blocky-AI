@@ -6,6 +6,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 const ERROR: &str = "BLK-BUILDER-EVIDENCE";
+const SAFE_INTEGER: u64 = 9_007_199_254_740_991;
 pub fn now() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -68,8 +69,9 @@ impl ResponseMetadata {
             && match (self.input_tokens, self.output_tokens, self.total_tokens) {
                 (Some(input), Some(output), Some(total)) => {
                     self.usage_status == "reported"
-                        && input <= 10_000_000
-                        && output <= 2048
+                        && input <= SAFE_INTEGER
+                        && output <= SAFE_INTEGER
+                        && total <= SAFE_INTEGER
                         && input.checked_add(output) == Some(total)
                 }
                 (None, None, None) => {
@@ -79,6 +81,17 @@ impl ResponseMetadata {
                 }
                 _ => false,
             }
+    }
+    /// Accounting is independent of content/tool acceptance and request budgets.
+    /// This contains only the existing generation receipt fields, never content.
+    pub(crate) fn generation(&self) -> Option<Value> {
+        if !self.valid() { return None; }
+        let usage=match (self.input_tokens,self.output_tokens,self.total_tokens) {
+            (Some(input),Some(output),Some(total))=>serde_json::json!({"inputTokens":input,"outputTokens":output,"totalTokens":total}),
+            _=>Value::Null,
+        };
+        Some(serde_json::json!({"schemaVersion":"blocky.model-response/v2","provider":self.provider,"model":self.model,
+            "requestId":self.response_id,"transport":self.transport,"usageStatus":self.usage_status,"usage":usage}))
     }
 }
 pub fn response_metadata(bytes: &[u8], provider: &str) -> Option<ResponseMetadata> {
@@ -254,6 +267,23 @@ pub fn read(root: &Path, id: &str) -> Result<Value, String> {
 mod tests {
     use super::*;
     use serde_json::json;
+    #[test]
+    fn rejected_tool_response_preserves_reported_usage_above_legacy_output_limit() {
+        let wire=json!({"id":"response-1","model":"deepseek-flash","choices":[{"finish_reason":"tool_calls","message":{"tool_calls":[{"function":{"arguments":"invalid-private-json"}}]}}],
+            "usage":{"prompt_tokens":10_000_001u64,"completion_tokens":8193,"total_tokens":10_008_194u64}});
+        let metadata=response_metadata(wire.to_string().as_bytes(),"xirang").expect("Actual safe reported usage must survive rejected tool content");
+        assert_eq!(metadata.input_tokens,Some(10_000_001));
+        assert_eq!(metadata.output_tokens,Some(8193));
+        assert_eq!(metadata.total_tokens,Some(10_008_194));
+        assert_eq!(metadata.usage_status,"reported");
+        assert!(!serde_json::to_string(&metadata).unwrap().contains("invalid-private-json"));
+        for usage in [json!({"prompt_tokens":1,"completion_tokens":2,"total_tokens":4}),
+            json!({"prompt_tokens":1,"completion_tokens":"private-invalid-number","total_tokens":2}),
+            json!({"prompt_tokens":9_007_199_254_740_991u64,"completion_tokens":1,"total_tokens":9_007_199_254_740_992u64})] {
+            let mut invalid=wire.clone();invalid["usage"]=usage;
+            assert!(response_metadata(invalid.to_string().as_bytes(),"xirang").is_none());
+        }
+    }
     #[test]
     fn missing_usage_is_explicit_and_local_inference_is_not_remote() {
         let v = json!({"id":"response-1","model":"qwen3-0.6b-q8-v1","choices":[{"finish_reason":"stop"}]});

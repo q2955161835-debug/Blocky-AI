@@ -27,6 +27,7 @@ import { parseProject, projectDigest } from "@blocky/project-model";
 import type { Project } from "@blocky/language-schema";
 import schemas from "./coding-tool-schemas.json";
 import { currentCanvasContext } from "./canvas-context";
+import { CodingGenerationError } from "./generation-error";
 import {
   wireMessages,
   type BuilderGeneration,
@@ -173,6 +174,7 @@ export async function runCodingAgent(
   const ids = new Set<string>();
   let text = "",
     turns = 0,
+    corrections = 0,
     failure: string | undefined,
     project: Project | undefined;
   const emit = (
@@ -290,12 +292,33 @@ export async function runCodingAgent(
     void (async () => {
       try {
         if (failure) throw Error(failure);
-        if (++turns > 4096) throw Error("BLK-CODING-BUDGET");
-        const messages = wireMessages(context.messages);
-        bounded(messages, 4 * 1024 * 1024);
-        const generated = await pending(() =>
-          options.generate({ turn: turns, messages }, signal),
-        );
+        let messages = wireMessages(context.messages);
+        let generated: BuilderGeneration;
+        for (;;) {
+          if (++turns > 4096) throw Error("BLK-CODING-BUDGET");
+          bounded(messages, 4 * 1024 * 1024);
+          try {
+            generated = await pending(() =>
+              options.generate({ turn: turns, messages }, signal),
+            );
+            break;
+          } catch (error) {
+            if (error instanceof CodingGenerationError && error.generation)
+              generations.push(error.generation);
+            // The gateway rejects this whole response before any call can execute.
+            // Ask for fresh parameters; never repair JSON or replay completed tools.
+            if (signal.aborted || safeCodingError(error) !== "BLK-MODEL-RESPONSE-TOOL-JSON" || corrections >= 2)
+              throw error;
+            corrections++;
+            const notice = `工具参数格式无效，正在重新生成（${corrections}/2）。\n`;
+            text += notice;
+            emit("text.delta", { text: notice });
+            messages = [...messages, {
+              role: "user",
+              content: "上一个模型响应的工具参数不是合法 JSON，该响应中的工具均未执行。请根据已有真实工具结果重新生成合法的工具参数；不要重复已完成的操作，不要只描述计划。字符串内的换行、引号和反斜线必须正确编码。",
+            }];
+          }
+        }
         bounded(generated, 16 * 1024 * 1024);
         if (
           !Array.isArray(generated.content) ||

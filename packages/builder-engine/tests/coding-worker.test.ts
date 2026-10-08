@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { createStarter } from "../../test-fixtures/src";
 import { createCodingWorker } from "../src/coding-worker";
 import type { BuilderGeneration } from "../src/transport";
@@ -58,6 +58,35 @@ function harness() {
     },
   };
 }
+
+it("keeps failed response usage across IPC correction and binds the next provider turn", async () => {
+  const h = harness();
+  const run = h.worker.receive(frame({ kind: "start", start: request, modelId: "fixture" }));
+  await h.next("provider.call");
+  const generation = {
+    provider: "fixture", model: "fixture", requestId: "rejected", transport: "local",
+    usageStatus: "reported", usage: { inputTokens: 20, outputTokens: 4096, totalTokens: 4116 },
+  };
+  await h.worker.receive(frame({ kind: "provider.error", turn: 1, code: "BLK-MODEL-RESPONSE-TOOL-JSON", generation }));
+  await vi.waitFor(() => expect(h.frames.some(f => f.kind === "provider.call" && f.turn === 2)).toBe(true));
+  expect(h.frames.some(f => f.kind === "tool.call")).toBe(false);
+  await h.worker.receive(frame({ kind: "provider.result", turn: 2, value: gen([{ type: "text", text: "完成" }]) }));
+  await run;
+  const result = h.frames.find(f => f.kind === "complete")?.result as { generations: unknown[] };
+  expect(result.generations).toHaveLength(2);
+  expect(result.generations[0]).toEqual(generation);
+});
+
+it("rejects unsafe generation metadata on provider errors without another request", async () => {
+  const h = harness();
+  const run = h.worker.receive(frame({ kind: "start", start: request, modelId: "fixture" }));
+  await h.next("provider.call");
+  await h.worker.receive(frame({ kind: "provider.error", turn: 1, code: "BLK-MODEL-RESPONSE-TOOL-JSON", generation: { secret: "private-canary" } }));
+  await run;
+  expect(h.frames.filter(f => f.kind === "provider.call")).toHaveLength(1);
+  expect(h.frames.find(f => f.kind === "error")?.code).toBe("BLK-CODING-WIRE");
+  expect(JSON.stringify(h.frames)).not.toContain("private-canary");
+});
 
 it("binds every coding frame to requestId and tool results to the outstanding callId", async () => {
   const h = harness();

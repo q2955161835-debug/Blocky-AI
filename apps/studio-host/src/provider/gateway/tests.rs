@@ -140,8 +140,8 @@ fn builder_stream_bridge_preserves_diagnostic_codes_without_raw_response_leaks()
         (wire(text.clone(), "stop", false, None), "BLK-MODEL-TRUNCATED-SSE"),
         (wire(malformed_tool, "tool_calls", true, None), "BLK-MODEL-RESPONSE-TOOL-JSON"),
         (wire(text.clone(), "stop", true, Some(json!({"prompt_tokens":1,"completion_tokens":2,"total_tokens":99}))), "BLK-MODEL-RESPONSE-USAGE-SUM"),
-        (wire(json!({"role":"synthetic-private-role"}), "stop", true, None), "BLK-MODEL-RESPONSE-SSE"),
-        ("data: {synthetic-private-invalid-json\n\n".into(), "BLK-MODEL-RESPONSE-SSE"),
+        (wire(json!({"role":"synthetic-private-role"}), "stop", true, None), "BLK-MODEL-RESPONSE-SSE-ROLE"),
+        ("data: {synthetic-private-invalid-json\n\n".into(), "BLK-MODEL-RESPONSE-SSE-JSON"),
     ] {
         let error = synthetic_builder_stream(wire).unwrap_err();
         assert_eq!(error, expected);

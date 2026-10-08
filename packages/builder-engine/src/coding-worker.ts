@@ -1,6 +1,7 @@
 import { parseCodingStart } from "@blocky/builder-protocol";
 import { runCodingAgent, safeCodingError } from "./coding";
 import type { BuilderGeneration } from "./transport";
+import { CodingGenerationError } from "./generation-error";
 
 /** A single-task IPC handler. worker.ts alone owns stdin and selects this protocol from its first frame. */
 export function createCodingWorker(io: {
@@ -129,7 +130,7 @@ export function createCodingWorker(io: {
     if (value.kind === "provider.result" || value.kind === "provider.error") {
       keys(
         value,
-        value.kind === "provider.result" ? ["turn", "value"] : ["turn", "code"],
+        value.kind === "provider.result" ? ["turn", "value"] : ["turn", "code", "generation"],
       );
       if (!provider || value.turn !== provider.turn)
         throw Error("BLK-CODING-WIRE");
@@ -137,7 +138,13 @@ export function createCodingWorker(io: {
       provider = undefined;
       if (value.kind === "provider.result")
         call.resolve(value.value as BuilderGeneration);
-      else call.reject(Error(safeCodingError(value.code)));
+      else {
+        try {
+          call.reject(new CodingGenerationError(safeCodingError(value.code), value.generation));
+        } catch {
+          call.reject(Error("BLK-CODING-WIRE"));
+        }
+      }
       return;
     }
     if (value.kind === "tool.result") {

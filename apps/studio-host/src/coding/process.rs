@@ -19,6 +19,17 @@ use std::{
     time::{Duration, Instant},
 };
 const ERROR: &str = "BLK-CODING-WIRE";
+fn provider_error_frame(turn:u64,code:&str,metadata:Option<&crate::builder::evidence::ResponseMetadata>,max_output_tokens:Option<u32>)->Value {
+    let code=if code.len()<100 && code.starts_with("BLK-") && code.bytes().all(|b|b.is_ascii_uppercase()||b.is_ascii_digit()||b==b'-') {code} else {ERROR};
+    let generation=metadata.and_then(|m|m.generation());
+    let code=if code=="BLK-MODEL-RESPONSE-TOOL-JSON" && max_output_tokens.is_some_and(|max|
+        generation.as_ref().and_then(|g|g["usage"]["outputTokens"].as_u64()).is_some_and(|output|output>max as u64)) {
+        "BLK-MODEL-RESPONSE-USAGE-MAX"
+    } else {code};
+    let mut frame=json!({"kind":"provider.error","turn":turn,"code":code});
+    if let Some(generation)=generation {frame["generation"]=generation;}
+    frame
+}
 fn send(pipe: &mut impl Write, id: &str, mut value: Value) -> Result<(), String> {
     value["schemaVersion"] = json!("blocky.coding-ipc/v1");
     value["requestId"] = json!(id);
@@ -214,7 +225,14 @@ pub(super) fn run(
                                 json!({"kind":"provider.result","turn":turn,"value":value}),
                             )?;
                         }
-                        Err(code) => return Err(code),
+                        Err(code) => {
+                            events.reject_generation();
+                            let frame=provider_error_frame(turn,&code,metadata.as_ref(),binding.max_output_tokens());
+                            if let Some(generation)=frame.get("generation") {generations.push(generation.clone());}
+                            // The Worker can recover a rejected generation; no calls from it
+                            // have reached the tool dispatcher. Preserve accounting first.
+                            send(&mut stdin,id,frame)?;
+                        },
                     }
                 }
                 Some("tool.call") => {
@@ -290,6 +308,8 @@ pub(super) fn run(
                     {
                         return Err(ERROR.into());
                     }
+                    events.begin_generation()?;
+                    result["text"] = json!(events.text());
                     result["changes"] = json!(changes);
                     result["events"] = json!(events.events);
                     result["generations"] = json!(generations);
@@ -335,4 +355,37 @@ pub(super) fn run(
         return Err("BLK-CODING-SETTLE".into());
     }
     result
+}
+#[cfg(test)]
+mod provider_failure_tests {
+    use super::*;
+    #[test]
+    fn rejected_generation_frame_preserves_real_accounting_without_raw_content() {
+        let wire=json!({"id":"response-1","model":"deepseek-flash","choices":[{"finish_reason":"tool_calls","message":{"content":"private-fixture-body","reasoning_content":"private-fixture-thought","tool_calls":[{"function":{"arguments":"private-fixture-invalid-json"}}]}}],
+            "usage":{"prompt_tokens":100,"completion_tokens":8193,"total_tokens":8293}});
+        let metadata=crate::builder::evidence::response_metadata(wire.to_string().as_bytes(),"xirang").unwrap();
+        let frame=provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",Some(&metadata),None);
+        assert_eq!(frame["generation"]["usageStatus"],"reported");
+        assert_eq!(frame["generation"]["usage"]["outputTokens"],8193);
+        assert_eq!(frame["generation"]["usage"]["totalTokens"],8293);
+        assert_eq!(frame["code"],"BLK-MODEL-RESPONSE-TOOL-JSON");
+        assert!(!frame.to_string().contains("private-fixture"));
+        assert!(frame["generation"].as_object().unwrap().keys().all(|k| ["schemaVersion","provider","model","requestId","transport","usageStatus","usage"].contains(&k.as_str())));
+        let mut invalid=metadata; invalid.total_tokens=Some(1);
+        assert!(provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",Some(&invalid),None).get("generation").is_none());
+        assert!(provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",None,None).get("generation").is_none());
+        assert_eq!(provider_error_frame(2,"raw private error",None,None)["code"],ERROR);
+    }
+    #[test]
+    fn malformed_tool_over_budget_cannot_trigger_regeneration_but_keeps_actual_usage() {
+        let wire=json!({"id":"response-1","model":"deepseek-flash","choices":[{"finish_reason":"tool_calls"}],
+            "usage":{"prompt_tokens":100,"completion_tokens":8193,"total_tokens":8293}});
+        let metadata=crate::builder::evidence::response_metadata(wire.to_string().as_bytes(),"xirang").unwrap();
+        let frame=provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",Some(&metadata),Some(8192));
+        assert_eq!(frame["code"],"BLK-MODEL-RESPONSE-USAGE-MAX");
+        assert_eq!(frame["generation"]["usage"]["outputTokens"],8193);
+        assert_eq!(frame["generation"]["usageStatus"],"reported");
+        assert_eq!(provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",Some(&metadata),Some(8193))["code"],"BLK-MODEL-RESPONSE-TOOL-JSON");
+        assert_eq!(provider_error_frame(2,"BLK-MODEL-RESPONSE-TOOL-JSON",None,Some(8192))["code"],"BLK-MODEL-RESPONSE-TOOL-JSON");
+    }
 }
