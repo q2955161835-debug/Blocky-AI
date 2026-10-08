@@ -125,6 +125,8 @@ fn messages(value: &Value) -> Result<(), String> {
                 "thinkingTruncated",
                 "activity",
                 "activityTruncated",
+                "runtimeActivity",
+                "runtimeActivityTruncated",
             ]
             .contains(&key.as_str())
         }) || fields
@@ -133,6 +135,7 @@ fn messages(value: &Value) -> Result<(), String> {
             || fields
                 .get("activityTruncated")
                 .is_some_and(|value| !value.as_u64().is_some_and(|count| count <= 65536))
+            || fields.get("runtimeActivityTruncated").is_some_and(|value| !value.as_u64().is_some_and(|count| count <= 65536))
         {
             return Err(ERROR.into());
         }
@@ -146,6 +149,27 @@ fn messages(value: &Value) -> Result<(), String> {
             }
             for item in items {
                 activity(item)?;
+            }
+        }
+        if let Some(items) = fields.get("runtimeActivity") {
+            if value["assistant"] != "agent" { return Err(ERROR.into()); }
+            let items = items.as_array().ok_or(ERROR)?;
+            if items.len() > 200 { return Err(ERROR.into()); }
+            for item in items {
+                let fields = item.as_object().ok_or(ERROR)?;
+                if fields.keys().any(|key| !["callId", "kind", "status", "toolId", "operation", "code"].contains(&key.as_str()))
+                    || !matches!(item["kind"].as_str(), Some("tool" | "model"))
+                    || !matches!(item["status"].as_str(), Some("started" | "completed" | "failed" | "cancelled")) {
+                    return Err(ERROR.into());
+                }
+                for key in ["callId", "toolId", "operation"] {
+                    if key == "callId" || fields.contains_key(key) {
+                        if !item[key].as_str().is_some_and(|id| id.len() <= 128 && crate::project_store::stable(id)) { return Err(ERROR.into()); }
+                    }
+                }
+                if let Some(code) = fields.get("code") {
+                    if !code.as_str().is_some_and(|code| code.len() > 4 && code.len() <= 128 && code.starts_with("BLK-") && code[4..].chars().all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '-')) { return Err(ERROR.into()); }
+                }
             }
         }
     }

@@ -37,10 +37,13 @@ export function fitCodingMessage(
   const fitted = {
     ...message,
     ...(message.activity ? { activity: message.activity.slice(-200) } : {}),
+    ...(message.runtimeActivity ? { runtimeActivity: message.runtimeActivity.slice(-200) } : {}),
   };
   if (message.activity && message.activity.length > 200)
     fitted.activityTruncated =
       (message.activityTruncated ?? 0) + message.activity.length - 200;
+  if (message.runtimeActivity && message.runtimeActivity.length > 200)
+    fitted.runtimeActivityTruncated = Math.min(65536, (message.runtimeActivityTruncated ?? 0) + message.runtimeActivity.length - 200);
   if (bytes([fitted]) <= maxBytes) return fitted;
   const thinking = fitted.thinking;
   delete fitted.thinking;
@@ -48,6 +51,10 @@ export function fitCodingMessage(
   while (fitted.activity?.length && bytes([fitted]) > maxBytes) {
     fitted.activity.shift();
     fitted.activityTruncated = (fitted.activityTruncated ?? 0) + 1;
+  }
+  while (fitted.runtimeActivity?.length && bytes([fitted]) > maxBytes) {
+    fitted.runtimeActivity.shift();
+    fitted.runtimeActivityTruncated = Math.min(65536, (fitted.runtimeActivityTruncated ?? 0) + 1);
   }
   if (bytes([fitted]) > maxBytes) {
     const original = fitted.text;

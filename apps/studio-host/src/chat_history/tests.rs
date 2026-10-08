@@ -15,6 +15,26 @@ fn conversation() -> Value {
             ]}]
     })
 }
+#[test]
+fn native_agent_activity_round_trip_and_rejects_payloads() {
+    let (_root, store) = store();
+    let mut value = conversation();
+    value["assistant"] = json!("agent");
+    value["messages"][0]["runtimeActivity"] = json!([
+        {"callId":"model-one","kind":"model","status":"completed"},
+        {"callId":"tool-one","kind":"tool","toolId":"calculator","operation":"core.tool.invoke","status":"failed","code":"BLK-TOOL-002"},
+        {"callId":"model-two","kind":"model","status":"cancelled","code":"BLK-RUN-005"}
+    ]);
+    value["messages"][0]["runtimeActivityTruncated"] = json!(3);
+    store.write("chat-conversation", "chat-one", value.clone()).unwrap();
+    assert_eq!(store.read("chat-conversation", "chat-one").unwrap(), Some(value.clone()));
+    for (field, bad) in [("output", json!("private response")), ("code", json!("raw error")), ("toolId", json!("https://invalid.example/private")), ("status", json!("unknown"))] {
+        let mut invalid = value.clone();
+        invalid["messages"][0]["runtimeActivity"][0][field] = bad;
+        assert!(store.write("chat-conversation", "chat-one", invalid).is_err());
+        assert_eq!(store.read("chat-conversation", "chat-one").unwrap(), Some(value.clone()));
+    }
+}
 fn store() -> (tempfile::TempDir, UserStore) {
     let parent =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../try/chat-history/store");

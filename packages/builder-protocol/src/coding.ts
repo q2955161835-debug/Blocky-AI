@@ -5,6 +5,7 @@ import {
   type Project,
 } from "@blocky/language-schema";
 import { parseProject } from "@blocky/project-model";
+import { runtimeActivitySchema } from "./runtime-activity";
 
 const id = z.string().regex(stableId).max(200);
 const digest = z.string().regex(/^[a-f0-9]{64}$/);
@@ -141,6 +142,8 @@ export const codingMessageSchema = z
       .refine(text => !containsCredential(text)).optional(),
     activity: z.array(codingActivitySchema).max(200).optional(),
     activityTruncated: z.number().int().min(0).max(65536).optional(),
+    runtimeActivity: z.array(runtimeActivitySchema).max(200).optional(),
+    runtimeActivityTruncated: z.number().int().min(0).max(65536).optional(),
     thinkingTruncated: z.boolean().optional(),
   })
   .strict();

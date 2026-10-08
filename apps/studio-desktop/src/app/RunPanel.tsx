@@ -21,7 +21,7 @@ import { useChatFollow } from "./useChatFollow";
 import { RunModelChoice } from "./RunModelChoice";
 import { ArrowUpIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { StopIcon } from "@heroicons/react/20/solid";
-import { CodingTrace } from "./CodingTrace";
+import { AgentTrace } from "./AgentTrace";
 export function RunPanel({
   studio: s,
   execute,
@@ -45,7 +45,7 @@ export function RunPanel({
   );
   const previousMessages = (s.agentChat?.messages ?? []).filter(
     (message) =>
-      message.id !== s.chatTurnId && message.id !== `${s.chatTurnId}-answer`,
+      message.id !== s.chatTurnId && (!s.result || message.id !== `${s.chatTurnId}-answer`),
   );
   const submit = () => {
     if (!s.canRun) return;
@@ -85,13 +85,7 @@ export function RunPanel({
                       : "回答"}
                 </span>
                 <ChatMarkdown text={message.text} />
-                <CodingTrace
-                  label="Blocky Agent 调用轨迹"
-                  activity={message.activity}
-                  thinking={message.thinking}
-                  activityTruncated={message.activityTruncated}
-                  thinkingTruncated={message.thinkingTruncated}
-                />
+                <AgentTrace message={message} />
               </>
             )}
           </article>
@@ -116,6 +110,7 @@ export function RunPanel({
               text={s.result.answer || "请在运行日志中查看详情。"}
             />
             <RunOutputs key={s.result.events[0]?.runId} result={s.result} />
+            <AgentTrace message={s.agentChat?.messages.find(message => message.id === `${s.chatTurnId}-answer`)} />
             {s.result.citations.length > 0 && (
               <details>
                 <summary>{s.result.citations.length} 条资料来源</summary>

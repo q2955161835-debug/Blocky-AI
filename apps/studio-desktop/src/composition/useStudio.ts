@@ -6,6 +6,7 @@ import { useRecovery } from "./useRecovery";
 import { useProjectStartup, type ProjectStarter } from "./useProjectStartup";
 import { useResources } from "./useResources";
 import { useChatHistory } from "./useChatHistory";
+import { emptyAgentActivity, recordAgentActivity, agentReplyTrace } from "./agentActivity";
 import { useSession } from "./useSession";
 import { exitStage } from "./exitStage";
 import {
@@ -285,6 +286,7 @@ export function useStudio(initialProject?: Project) {
     runBusy.current = true;
     const runInput = request?.question ?? question;
     const turnId = `turn-${crypto.randomUUID()}`;
+    const replyActivity = emptyAgentActivity(snapshot.project.manifest.projectId);
     setSubmittedInput({
       projectId: snapshot.project.manifest.projectId,
       text: runInput,
@@ -324,6 +326,7 @@ export function useStudio(initialProject?: Project) {
           signal: abort.current.signal,
           userRegistry: resources.map,
           onEvent(event) {
+            recordAgentActivity(replyActivity, event);
             if (event.type === "run.paused" && event.data?.reason !== "workflow-waiting") setPaused(true);
             if (event.type === "run.resumed") setPaused(false);
             eventBuffer.current.push(event);
@@ -370,10 +373,17 @@ export function useStudio(initialProject?: Project) {
               : value.status === "failed"
                 ? "failed"
                 : "completed",
+          ...agentReplyTrace(replyActivity, value),
         },
       ]);
       return value;
     } catch {
+      // A transport failure can follow real tool events even without a final result.
+      agentChat.update(snapshot.project.manifest.projectId, (messages) => [
+        ...messages,
+        { id: `${turnId}-answer`, role: "assistant", text: controller.signal.aborted ? "已停止运行。" : "运行失败，请查看运行日志。",
+          status: controller.signal.aborted ? "cancelled" : "failed", ...agentReplyTrace(replyActivity) },
+      ]);
       setMessage(
         runtime instanceof DesktopRuntime && runtime.needsRestart
           ? "运行连接已中断，请重新启动 Blocky。自动化的未确认结果请先查看执行记录。"
