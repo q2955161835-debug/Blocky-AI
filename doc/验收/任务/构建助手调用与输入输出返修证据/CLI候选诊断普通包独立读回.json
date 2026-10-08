@@ -1,0 +1,52 @@
+{
+  "sourceCommit": "2ba32591710a83f94b3d3e8af1b11eb357f52d44",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-cli-diagnostics",
+  "checkedAt": "2026-10-09T01:56:24.0009673+08:00",
+  "enumeration": "recursive files -Force; independent all file SHA",
+  "actualFiles": 2595,
+  "expectedFiles": 2595,
+  "totalBytes": 772236021,
+  "manifestSha256": "B8BCC98A2F1E64D5ADFA99B88ACB43F6E905680FF334FB26DFA0E798C0D06D4F",
+  "errors": [],
+  "frontendComparedTo": "e7dd40a4fab474851ce43edfff5ef4f772cfcca8",
+  "frontend": [
+    {
+      "bytes": 55131,
+      "path": "apps/studio-desktop/dist/assets/index-BrntiWeG.css",
+      "sha256": "bfefb3e752bce7df29a31030d13b60a21451ba6218a4e7bb2f3641a8c1ff0601",
+      "same": true
+    },
+    {
+      "bytes": 2365600,
+      "path": "apps/studio-desktop/dist/assets/index-DrMnMB5c.js",
+      "sha256": "f645d339c6745065b859e87bded543c79575ff590af5755642a3868f6dcc856b",
+      "same": true
+    },
+    {
+      "bytes": 1222308,
+      "path": "apps/studio-desktop/dist/assets/logo-0dCHBSVz.png",
+      "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "same": true
+    },
+    {
+      "bytes": 3962,
+      "path": "apps/studio-desktop/dist/assets/TerminalView-B1njb2Cr.css",
+      "sha256": "c2de618f9656c020d82d4b20996ed7efcd03fd4621fe78804b060f38e003412f",
+      "same": true
+    },
+    {
+      "bytes": 334781,
+      "path": "apps/studio-desktop/dist/assets/TerminalView-cFApyRpb.js",
+      "sha256": "9bca289f1bb4fb9e00bd5c2357149742ef3fca90a8ef937af8f0c7ed41f032bb",
+      "same": true
+    },
+    {
+      "bytes": 359,
+      "path": "apps/studio-desktop/dist/index.html",
+      "sha256": "3d0a329f1b1eb8a4877a5fd47ee7123963b05a9578a4cde2bce38769843d7225",
+      "same": true
+    }
+  ],
+  "frontendBoundary": "Both release scan SHA/bytes matched current built files; embedded frontend not extracted from exe",
+  "passed": true
+}

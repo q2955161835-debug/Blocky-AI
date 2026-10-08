@@ -1,0 +1,30 @@
+{
+  "source": "2ba32591710a83f94b3d3e8af1b11eb357f52d44",
+  "package": "dist/Blocky-Studio-0.8.0-cli-diagnostics",
+  "buildStartedAt": "2026-10-08T17:59:38.179Z",
+  "constructedObservedAt": "2026-10-08T18:05:34.104Z",
+  "savedObservedAt": "2026-10-08T18:05:56.931Z",
+  "buildThroughSaveSeconds": 378.752,
+  "runStartedAt": "2026-10-08T18:06:10.739Z",
+  "firstRunObservedAt": "2026-10-08T18:06:43.242Z",
+  "ordinaryRunAt": "2026-10-08T18:06:55.798Z",
+  "runObservedAt": "2026-10-08T18:07:21.576Z",
+  "runThroughObservationSeconds": 70.837,
+  "blockCount": 8,
+  "builderToolCount": 20,
+  "projectPath": "D:/1Folder/Blocky-AI/作品/桌面追加测试-2026-10-09/条件循环-修复后复测.blocky",
+  "questions": [
+    "请重复测试",
+    "普通测试"
+  ],
+  "actualAnswers": [
+    "课程资料没有说明，待核实。",
+    "课程资料没有说明，待核实。"
+  ],
+  "expected": [
+    "3次积木运行正常",
+    "1次普通分支正常"
+  ],
+  "runResult": "mismatch",
+  "previousFailedAttemptPreserved": true
+}

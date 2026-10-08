@@ -1,0 +1,54 @@
+{
+  "sourceCommit": "2ba32591710a83f94b3d3e8af1b11eb357f52d44",
+  "technicalPassed": 3,
+  "buildExit": 0,
+  "installExit": 0,
+  "testExits": [
+    0,
+    0,
+    0
+  ],
+  "GUIOrAPICalled": false,
+  "nativeCLI": "try/native-e2e-target/debug/cli/main.mjs",
+  "nativeCLIHash": "9412A78BCFC60584F74147DB300A0C4CD49A75F058B99A9708086687F61B2052",
+  "TSTestStorageHelperHash": "073D728B764F09FF143637A5EE46136DB2C1C69FEDDD1C6E4D51FDCE19F293C8",
+  "logs": [
+    {
+      "bytes": 149,
+      "sha256": "7ACABA87F0E3AAEEB5E225E5734828F32407CC40D3D7DD221A80EF945BEE3468",
+      "file": "candidate-native-build.log"
+    },
+    {
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "file": "candidate-cli-install.log"
+    },
+    {
+      "bytes": 226,
+      "sha256": "0DB1F4CCCB58C9655BF3B836106B502C4B56CCF0363812B293D6CDA8A29B8A4F",
+      "file": "independent-candidate-ts.log"
+    },
+    {
+      "bytes": 482,
+      "sha256": "1B2CB979935891C8BE4F4395DD53969719062DBDB64E784DCA3376EE15F4E547",
+      "file": "independent-native-candidate.log"
+    },
+    {
+      "bytes": 407,
+      "sha256": "8B055485D8EB8DDC6B634DE92981189DD6EEADEB2734ED441DF9BA57D73CDA89",
+      "file": "independent-native-structured-failure.log"
+    }
+  ],
+  "R01FirstAttempt": {
+    "runResult": "未执行",
+    "savedProjectHash": "47C9CE782C5F8F9779EC4A9318DBBC7858AB75C31B0C2EEBAB7CF1C32A1F7091",
+    "declaredSeconds": 358.849,
+    "source": "04fce4d",
+    "buildResult": "不通过",
+    "computedSeconds": 358.849,
+    "blocks": 0,
+    "screenshotHash": "F9AE975867E36F2A9C43AA6B649DADEA14C987F0DB17775976CB5CF27D92C459",
+    "method": "screenshot observed + ZIP workspace parsed + timing independently subtracted",
+    "toolActivities": 26
+  }
+}

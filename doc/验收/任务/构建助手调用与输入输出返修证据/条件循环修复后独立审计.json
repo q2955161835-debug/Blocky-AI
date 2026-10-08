@@ -1,0 +1,254 @@
+{
+  "sourceCommit": "2ba32591710a83f94b3d3e8af1b11eb357f52d44",
+  "projectId": "project-63b896bb-5163-4979-9032-a37fb2b23538",
+  "projectSha256": "f4ad32530435c476bdd5e22000f8c11726a78331fd50e24125ecc6846664ff50",
+  "blocks": 8,
+  "blockStructure": [
+    {
+      "id": "entry",
+      "type": "core.interaction.chat_entry",
+      "fields": null
+    },
+    {
+      "id": "condition",
+      "type": "core.logic.condition",
+      "fields": {
+        "OP": "contains",
+        "SOURCE": "input",
+        "VALUE": "\"重复\""
+      }
+    },
+    {
+      "id": "repeat",
+      "type": "core.flow.repeat",
+      "fields": {
+        "COUNT": "3"
+      }
+    },
+    {
+      "id": "repeat_set",
+      "type": "core.data.set",
+      "fields": {
+        "VALUE": "\"积木运行正常\""
+      }
+    },
+    {
+      "id": "repeat_answer",
+      "type": "core.output.answer",
+      "fields": null
+    },
+    {
+      "id": "else_set",
+      "type": "core.data.set",
+      "fields": {
+        "VALUE": "\"普通分支正常\""
+      }
+    },
+    {
+      "id": "else_answer",
+      "type": "core.output.answer",
+      "fields": null
+    },
+    {
+      "id": "accept_text",
+      "type": "core.interaction.accept_text",
+      "fields": null
+    }
+  ],
+  "buildSeconds": 378.752,
+  "runThroughObservationSeconds": 70.837,
+  "firstBuildFailureSeconds": 358.849,
+  "cumulativeBuildSeconds": 737.601,
+  "compileExit": 0,
+  "compileOk": true,
+  "compileDiagnosticsCount": 0,
+  "compileDataKeys": [
+    "modules",
+    "project",
+    "interaction",
+    "tools",
+    "diagnostics",
+    "digest"
+  ],
+  "historiesSafeCounts": [
+    {
+      "assistant": "builder",
+      "fileHash": "f54bbc83eb25aa28d9c5f32b45619c7c1ff1ece4012a093803babae45f4956cb",
+      "projectBound": true,
+      "messageCount": 2,
+      "activities": [
+        {
+          "tool": "project_context",
+          "status": "completed",
+          "code": null,
+          "command": null,
+          "exitCode": null
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "--version",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "command list",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "schema list",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "schema show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "schema show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog list",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "failed",
+          "code": "BLK-CODING-CLI",
+          "command": "patch create",
+          "exitCode": null
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "catalog show",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "failed",
+          "code": "BLK-CODING-CLI",
+          "command": "patch create",
+          "exitCode": null
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "patch create",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "failed",
+          "code": "BLK-CODING-CLI",
+          "command": "patch create",
+          "exitCode": null
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "failed",
+          "code": "BLK-PATCH-004",
+          "command": "patch create",
+          "exitCode": 3
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "patch create",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "patch preview",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "patch apply",
+          "exitCode": 0
+        },
+        {
+          "tool": "blocky_cli",
+          "status": "completed",
+          "code": null,
+          "command": "project compile",
+          "exitCode": 0
+        }
+      ],
+      "answersMatchObserved": 0
+    },
+    {
+      "assistant": "agent",
+      "fileHash": "494da4408ed1352e52c80a990f40a7f936c989a6c990d5d36408ae657a6aface",
+      "projectBound": true,
+      "messageCount": 4,
+      "activities": [],
+      "answersMatchObserved": 2
+    }
+  ],
+  "screens": [
+    {
+      "file": "condition-post-repair-built.png",
+      "sha256": "eb9af58030ebaa053e48e29640d57af6ba2ad0835032734efb2975b50efe0822"
+    },
+    {
+      "file": "condition-repeat-wrong-result.png",
+      "sha256": "9333de84f1cc360c4daabc669246b8c7749770f8f4cf03c401c37ad6216660f3"
+    },
+    {
+      "file": "condition-ordinary-wrong-result.png",
+      "sha256": "adf6264e81c3d35147703ef2d241ec9f4292298c46f3c58fa122859181cdddb0"
+    }
+  ],
+  "runResult": "不通过"
+}
