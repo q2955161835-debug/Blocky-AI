@@ -203,8 +203,19 @@ describe("Blocky native editor", () => {
       (window as any).__BLOCKY_ACCEPTANCE__.loadLegacyRegressionProject(),
     );
     await expect($("[aria-label='画布名称']")).toHaveValue("研究助手");
-    await $('.topbar button[aria-label="运行"]').click();
-    await $(".answer").waitForDisplayed();
+    await $('.topbar .icon-button[aria-label="运行"]').click();
+    await $(".answer").waitForDisplayed().catch(async error => {
+      console.log("LEGACY_RUN_FAILURE", JSON.stringify(await page.evaluate(() => ({
+        answerCount: document.querySelectorAll(".answer").length,
+        runPanelHidden: document.querySelector(".run-panel")?.closest("[hidden]") != null,
+        selectedTab: document.querySelector('[role="tab"][aria-selected="true"]')?.textContent,
+        status: document.querySelector(".statusbar")?.textContent,
+        runText: document.querySelector(".run-panel")?.textContent,
+        topbarDisabled: (document.querySelector('.topbar .icon-button[aria-label="运行"]') as HTMLButtonElement)?.disabled,
+      }))));
+      await page.screenshot({ path: "try/stage2-e2e/legacy-run-failure.png" });
+      throw error;
+    });
     await expect($(".answer")).toHaveText(expect.stringContaining("叶绿素"));
     await expect($(".answer summary")).toHaveText(
       expect.stringContaining("资料来源"),
@@ -289,13 +300,32 @@ describe("Blocky native editor", () => {
     await prompt.press("Enter");
     expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
     expect(await builder.getByRole("log", { name: "对话消息" }).locator("li").count()).toBe(0);
-    expect(await builder.getByRole("dialog", { name: "构建助手设置", exact: true }).isVisible()).toBe(true);
+    const settings = page.getByRole("dialog", { name: "设置", exact: true });
+    try {
+      expect(await settings.isVisible()).toBe(true);
+      expect(
+        await settings
+          .getByRole("button", { name: "构建助手", exact: true })
+          .getAttribute("aria-current"),
+      ).toBe("page");
+    } finally {
+      const closeSettings = page.getByRole("button", {
+        name: "关闭设置",
+        exact: true,
+      });
+      if (await closeSettings.count()) {
+        await closeSettings.click();
+        await settings.waitFor({ state: "detached" });
+      }
+    }
     await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
     expect(await page.getByLabel("向 Agent 提问", { exact: true }).inputValue()).toBe("运行对话草稿🌱");
     await page.getByRole("tab", { name: "构建助手", exact: true }).click();
     expect(await prompt.inputValue()).toBe("植物课堂助手😀\n第二行");
-    await builder.getByRole("button", { name: "新对话", exact: true }).click();
-    expect(await prompt.inputValue()).toBe("");
+    await page.getByRole("button", { name: "构建助手新会话", exact: true }).click();
+    await browser.waitUntil(async () => await prompt.inputValue() === "", {
+      timeout: 15000, timeoutMsg: "New Builder chat did not clear its draft",
+    });
     await page.getByRole("tab", { name: "Blocky Agent", exact: true }).click();
     expect(await page.getByLabel("向 Agent 提问", { exact: true }).inputValue()).toBe("运行对话草稿🌱");
   });
@@ -426,6 +456,8 @@ describe("Blocky native editor", () => {
     await browser.saveScreenshot("try/stage2-e2e/native-surface.png");
     await $("[aria-label='关闭 资料问答']").click();
     await expect($$("iframe")).toBeElementsArrayOfSize(0);
+    const blueprints = page.getByRole("button", { name: "蓝图", exact: true });
+    if (await blueprints.getAttribute("aria-expanded") === "false") await blueprints.click();
     await page
       .locator(".library")
       .getByRole("button", { name: "◉ 资料问答", exact: true })
@@ -553,7 +585,9 @@ describe("Blocky native editor", () => {
     expect(await page.locator(".answer pre").innerText()).toContain(
       '"ok": true',
     );
-    await page.getByLabel("向 Agent 提问").fill("no");
+    await page
+      .getByRole("textbox", { name: "向 Agent 提问", exact: true })
+      .fill("no");
     await page
       .locator(".run-panel")
       .getByRole("button", { name: "运行", exact: true })
@@ -580,7 +614,9 @@ describe("Blocky native editor", () => {
       ["finish", "done"],
       ["start", "done"],
     ]) {
-      await page.getByLabel("向 Agent 提问").fill(input);
+      await page
+        .getByRole("textbox", { name: "向 Agent 提问", exact: true })
+        .fill(input);
       const run = page
         .locator(".run-panel")
         .getByRole("button", { name: "运行", exact: true });
