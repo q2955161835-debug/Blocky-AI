@@ -91,7 +91,7 @@ export function StudioSidebar({
                 document.getElementById(`sidebar-tab-${next}`)?.focus();
               }}
             >
-              <UiIcon name={id} className="sidebar-tab-icon"/>
+              <span className="sidebar-tab-label">{label}</span>
               {id === "builder" && builder.busy && (
                 <span aria-label="正在构建"> ●</span>
               )}

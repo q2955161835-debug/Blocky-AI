@@ -18,6 +18,7 @@ import "./BuilderChat.css";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
+import {RunModelChoice} from "./RunModelChoice";
 export function RunPanel({
   studio: s,
   execute,
@@ -171,6 +172,7 @@ export function RunPanel({
         <ChatMenuButton menu={menu} kind="add" label="Blocky Agent 添加上下文">
           ＋
         </ChatMenuButton>
+        <RunModelChoice studio={s} compact/>
         <span className="chat-toolbar-spacer" />
         {s.running ? (
           <button

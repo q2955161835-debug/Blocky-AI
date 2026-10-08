@@ -1,0 +1,41 @@
+.canvas-mode-switch {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 12;
+  display: flex;
+  width: 68px;
+  height: 36px;
+  padding: 2px;
+  gap: 2px;
+  box-sizing: border-box;
+  border: 1px solid var(--border, #353c47);
+  border-radius: 7px;
+  background: var(--panel, #252a33);
+  box-shadow: 0 2px 8px #0002;
+  cursor: default;
+  touch-action: manipulation;
+}
+.canvas-mode-switch button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  padding: 5px;
+  border: 0;
+  border-radius: 4px;
+  color: var(--muted, #9aa5b4);
+  background: transparent;
+  cursor: pointer;
+}
+.canvas-mode-switch button:hover { background: color-mix(in srgb, var(--muted, #9aa5b4) 12%, transparent); }
+.canvas-mode-switch button[aria-pressed="true"] {
+  color: var(--action, #4b83f5);
+  background: color-mix(in srgb, var(--action, #4b83f5) 15%, transparent);
+}
+.canvas-mode-switch button:focus-visible { outline: 2px solid var(--action, #4b83f5); outline-offset: -2px; }
+.canvas-mode-switch svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+.canvas--pan, .canvas--pan .blocklySvg, .canvas--pan .blocklyDraggable { cursor: grab; }
+.canvas--panning, .canvas--panning .blocklySvg, .canvas--panning .blocklyDraggable { cursor: grabbing; }

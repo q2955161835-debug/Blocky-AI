@@ -1,8 +1,9 @@
 import { referenceUserResource } from "@blocky/resource-registry";
 import { walkBlocks } from "@blocky/block-catalog";
 import type { Studio } from "../composition/useStudio";
+import {ModelPicker} from "./ModelPicker";
 /** A user action changes only the selected model block; no effect-driven project edits. */
-export function RunModelChoice({ studio: s }: { studio: Studio }) {
+export function RunModelChoice({ studio: s,compact=false }: { studio: Studio;compact?:boolean }) {
   const project = s.snapshot.project;
   const models = [
     ...Object.values(project.resources),
@@ -15,20 +16,23 @@ export function RunModelChoice({ studio: s }: { studio: Studio }) {
   );
   if (!targets.length) return null;
   return (
-    <div>
+    <div className={compact?"chat-run-model-pickers":undefined}>
       {targets.map(({ moduleId, block }) => (
-        <label className="prompt-label" key={`${moduleId}/${block.id}`}>
+        <label className={compact?"chat-run-model-label":"prompt-label"} key={`${moduleId}/${block.id}`}>
+          {!compact&&<>
           模型 ·{" "}
           {
             project.manifest.modules.find((m) => m.moduleId === moduleId)
               ?.displayName
           }
-          <select
-            aria-label={`运行模型 ${block.id}`}
+          </>}
+          <ModelPicker
+            label={`${compact?"快捷运行模型":"运行模型"} ${block.id}`}
+            context={`${project.manifest.modules.find(m=>m.moduleId===moduleId)?.displayName} · ${block.id}`}
+            models={models}
             value={String(block.fields?.RESOURCE ?? "")}
-            disabled={s.running || s.busy}
-            onChange={(event) => {
-              const id = event.target.value;
+            disabled={s.running || s.busy || s.exiting || s.resources.ready===false}
+            change={(id) => {
               const resource = models.find((r) => r.resourceId === id);
               if (!resource) return;
               s.controller.edit((p) => {
@@ -41,13 +45,7 @@ export function RunModelChoice({ studio: s }: { studio: Studio }) {
               });
               void s.save();
             }}
-          >
-            {models.map((r) => (
-              <option key={`${r.scope}/${r.resourceId}`} value={r.resourceId}>
-                {r.displayName}
-              </option>
-            ))}
-          </select>
+          />
         </label>
       ))}
     </div>

@@ -17,6 +17,7 @@ import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
 import type {SettingsSection} from "./settings/settingsNavigation";
+import {ModelPicker} from "./ModelPicker";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -79,7 +80,7 @@ export function BuilderPanel({
     (model) => model.resourceId === resourceId && supportsTools(model),
   );
   const ready =
-    builder.ready && studio.settings.ready && studio.resources.ready;
+    builder.ready && studio.settings.ready && studio.resources.ready && (studio.settings.ui?.ready ?? true);
   const disabled =
     builder.busy || studio.busy || studio.running || studio.exiting;
   const canSend =
@@ -323,12 +324,7 @@ export function BuilderPanel({
         <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
           ＋
         </ChatMenuButton>
-        <span className="chat-model-chip">
-          <span className="chat-model-name">
-            {models.find((model) => model.resourceId === resourceId)
-              ?.displayName ?? "选择模型"}
-          </span>
-        </span>
+        <ModelPicker label="构建助手模型" value={resourceId} models={models} disabled={disabled||!ready} change={setResourceId}/>
         {builder.workspace && (
           <span
             className="chat-context-marker"

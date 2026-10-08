@@ -1,6 +1,5 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { commands } from "@blocky/command-system";
-import {UiIcon} from "./UiIcon";
 
 const menus = [
   ["file", "文件"],
@@ -105,7 +104,7 @@ export function MenuBar({
                 }
               }}
             >
-              <UiIcon className="menu-trigger-icon" name={category==="build"?"builder":category}/>
+              {label}
             </button>
             {expanded && (
               <div
