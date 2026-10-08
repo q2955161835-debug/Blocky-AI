@@ -105,14 +105,10 @@ small,
   color: #b4bdca;
 }
 .brand-mark {
-  display: grid;
-  place-items: center;
+  display: block;
   width: 27px;
   height: 27px;
-  background: #4b83f5;
-  color: white;
-  font-weight: 800;
-  font-size: 18px;
+  object-fit: contain;
   border-radius: 6px;
 }
 .topbar nav {

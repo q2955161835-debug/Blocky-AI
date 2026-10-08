@@ -33,6 +33,8 @@ import { RpaInputDialog } from "./RpaInputDialog";
 import { WorkbenchLayout } from "./WorkbenchLayout";
 import { StudioSidebar } from "./StudioSidebar";
 import { ToolbarActions } from "./ToolbarActions";
+import { WindowControls } from "./WindowControls";
+import logo from "../../../../logo/logo.png";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -316,13 +318,13 @@ export function App() {
   }, []);
   return (
     <main className="studio">
-      <header className="topbar" role="banner">
+      <header className="topbar" role="banner" data-tauri-drag-region>
         <button
           className="brand"
           onClick={() => s.setStarted(false)}
           aria-label="返回开始页"
         >
-          <span className="brand-mark">B</span>
+          <img className="brand-mark" src={logo} alt="Blocky" draggable={false} />
           <strong>Blocky</strong>
         </button>
         <MenuBar
@@ -351,12 +353,13 @@ export function App() {
               ].includes(popup.kind))
           }
         />
-        {s.started && <div className="project-title" title={s.snapshot.project.manifest.displayName}>
+        {s.started && <div className="project-title" title={s.snapshot.project.manifest.displayName} data-tauri-drag-region>
           <strong>{s.snapshot.project.manifest.displayName}</strong>
           {s.snapshot.dirty && <span className="dirty" title="未保存">●</span>}
         </div>}
-        <span className="spacer" />
+        <span className="spacer" data-tauri-drag-region />
         <ToolbarActions studio={s} execute={execute} enabled={enabled} />
+        <WindowControls onError={s.setMessage} />
       </header>
       {!s.started ? (
         <Welcome studio={s} />

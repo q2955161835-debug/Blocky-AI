@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { RunModelChoice } from "../../apps/studio-desktop/src/app/RunModelChoice";
 import { ProjectController } from "../../packages/project-model/src/index";
 import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
-it("model choice records a user resource reference and can undo the project edit", () => {
+it("model choice persists a user resource reference and can undo the project edit", () => {
   const controller = new ProjectController(createAgentExample("stage4-ui"));
   const resource = {
     ...controller.getSnapshot().project.resources["agent-model"],
@@ -21,12 +21,14 @@ it("model choice records a user resource reference and can undo the project edit
       implementationRef: { kind: "adapter", id: "deepseek-v1" },
     },
   };
+  const save = vi.fn(async () => true);
   const studio = {
     snapshot: controller.getSnapshot(),
     controller,
     resources: { map: new Map([[resource.resourceId, resource]]) },
     running: false,
     busy: false,
+    save,
   } as unknown as Studio;
   render(<RunModelChoice studio={studio} />);
   fireEvent.change(screen.getByLabelText("运行模型 compose-answer"), {
@@ -39,6 +41,7 @@ it("model choice records a user resource reference and can undo the project edit
         (r) => r.resourceId === "online-model" && r.scope === "user",
       ),
   ).toBe(true);
+  expect(save).toHaveBeenCalledOnce();
   controller.undo();
   expect(
     controller

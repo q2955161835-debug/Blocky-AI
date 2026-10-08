@@ -1,0 +1,36 @@
+.window-controls {
+  display: flex;
+  align-self: stretch;
+  flex-shrink: 0;
+  margin-left: 6px;
+  margin-right: -10px;
+  border-left: 1px solid var(--border);
+}
+.window-controls button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  padding: 0;
+  border-radius: 0;
+}
+.window-controls svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+.window-controls .window-close:hover {
+  color: white;
+  background: #c42b1c;
+}
+.topbar[data-tauri-drag-region] {
+  user-select: none;
+}
+.topbar > .spacer {
+  align-self: stretch;
+  min-width: 28px;
+}
+.project-title > * {
+  pointer-events: none;
+}

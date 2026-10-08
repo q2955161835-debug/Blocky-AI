@@ -39,6 +39,7 @@ export function RunModelChoice({ studio: s }: { studio: Studio }) {
                 ].find((b) => b.id === block.id);
                 if (target) target.fields = { ...target.fields, RESOURCE: id };
               });
+              void s.save();
             }}
           >
             {models.map((r) => (
