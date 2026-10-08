@@ -1,0 +1,24 @@
+﻿{
+    "action":  "inspect",
+    "pid":  45484,
+    "desktop":  "BlockyTest-a187d49eb48749baa69f77f45965ca0d",
+    "hwnd":  7343716,
+    "rect":  {
+                 "left":  51,
+                 "top":  51,
+                 "right":  1506,
+                 "bottom":  960
+             },
+    "client":  {
+                   "left":  0,
+                   "top":  0,
+                   "right":  1440,
+                   "bottom":  900
+               },
+    "visible":  true,
+    "iconic":  false,
+    "maximized":  false,
+    "style":  349110272,
+    "enteredNativeMove":  false,
+    "moving":  false
+}

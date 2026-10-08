@@ -1,0 +1,29 @@
+{
+  "checkboxFalse": true,
+  "minimized": {
+    "action": "inspect",
+    "pid": 32380,
+    "desktop": "BlockyTest-02bdbb9f22954df994f613adecf9e34e",
+    "hwnd": 4788472,
+    "rect": {
+      "left": 0,
+      "top": 993,
+      "right": 158,
+      "bottom": 1019
+    },
+    "client": {
+      "left": 0,
+      "top": 0,
+      "right": 143,
+      "bottom": 17
+    },
+    "visible": true,
+    "iconic": true,
+    "maximized": false,
+    "style": 885981184,
+    "enteredNativeMove": false,
+    "moving": false
+  },
+  "passed": true,
+  "completed": "2026-10-08T08:18:00.181Z"
+}

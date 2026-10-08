@@ -1,0 +1,128 @@
+{
+  "auditedAt": "2026-10-08T08:07:54.010Z",
+  "sourceCommit": "a856cda63ee5f2457723587385413943221c1872",
+  "legal": {
+    "checks": {
+      "completed": true,
+      "externalApi": true,
+      "bodyMatchesAnswer": true,
+      "everyCitedIdExists": true,
+      "allEvidenceFromLongTermSource": true,
+      "penalties": true,
+      "majorAccidentDistinguished": true,
+      "fourQualifiedBehaviors": true,
+      "longTermModelRef": true
+    },
+    "citationCount": 5,
+    "seconds": 15.188,
+    "answerSha256": "772f9b9504b7715a907e0e12a2962d7de862b39bc11365464fe6ec8f05d3dcfc",
+    "sourceSha256": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "unsupportedClassification": true,
+    "provenanceCorrection": "原驱动沿用候选1来源常量；依据实际启动候选2路径及package.json来源纠正，原控制台输出保留。"
+  },
+  "canvas": {
+    "checks": {
+      "externalApi": true,
+      "bodyMatchesAnswer": true,
+      "bodyNextExplicit": true,
+      "eightRealBlockIds": true
+    },
+    "answerSha256": "6d793e0896c636926dcd7adf5e67b1e1c9734d97285742b655489922a29b0395"
+  },
+  "longTermProject": {
+    "path": "D:\\1Folder\\Blocky-AI\\作品\\刑法条文问答\\刑法条文问答.blocky",
+    "sha256": "d66dc13be66a97572b3796fbc8f01bb5e038b40394d8eee93e0374d0ce292ce2",
+    "modelRefs": [
+      {
+        "resourceId": "xirang-personal",
+        "definitionRef": "xirang-personal",
+        "scope": "user"
+      }
+    ],
+    "workspaces": {
+      "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+          {
+            "type": "core.agent",
+            "id": "assistant-root",
+            "fields": {
+              "ROLE": "你是刑事法条学习问答助手，专门基于 assistant-knowledge 资料（仅覆盖《刑法》第133条与第133条之一）回答法律学习问题。回答必须引用资料原文并准确区分两个罪名：第133条是交通肇事罪，第133条之一是危险驾驶罪。只做条文学习与对比说明，不推断、不评判任何具体案件。"
+            },
+            "inputs": {
+              "BODY": {
+                "block": {
+                  "type": "core.interaction.chat",
+                  "id": "assistant-chat-trigger",
+                  "fields": {
+                    "NAME": "资料问答"
+                  },
+                  "next": {
+                    "block": {
+                      "type": "core.prompt.context",
+                      "id": "assistant-evidence-instructions",
+                      "fields": {
+                        "TEXT": "回答前必须先检索 assistant-knowledge 资料并通过证据护栏，只依据命中的条文原文作答。引用时可核对的原文并明确标注来自第133条还是第133条之一，清楚区分交通肇事罪与危险驾驶罪的构成差异。资料未命中或覆盖范围外时如实说明边界，不编造、不推断具体案件。"
+                      },
+                      "next": {
+                        "block": {
+                          "type": "core.run.budget",
+                          "id": "assistant-run-budget",
+                          "fields": {
+                            "CALLS": "256",
+                            "OUTPUT_TOKENS": "1048576",
+                            "STEPS": "10000",
+                            "TIMEOUT_MS": "1800000"
+                          },
+                          "next": {
+                            "block": {
+                              "type": "core.knowledge.retrieve",
+                              "id": "assistant-knowledge-retrieve",
+                              "fields": {
+                                "RESOURCE": "assistant-knowledge"
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "core.guardrail.evidence",
+                                  "id": "assistant-evidence-guardrail",
+                                  "fields": {
+                                    "POLICY": "require"
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "core.model.compose",
+                                      "id": "assistant-compose-answer",
+                                      "fields": {
+                                        "RESOURCE": "xirang-personal"
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "core.output.answer",
+                                          "id": "assistant-answer",
+                                          "fields": {
+                                            "STYLE": "段落"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "x": 80,
+            "y": 70
+          }
+        ]
+      }
+    }
+  },
+  "passed": true
+}

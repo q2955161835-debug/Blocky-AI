@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "name": "final Inspector clear is saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "final Inspector choice is saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "real save temporarily locks Inspector select",
+      "ok": true,
+      "data": [
+        {
+          "disabled": true,
+          "at": 5454.0999999996275
+        },
+        {
+          "disabled": false,
+          "at": 5465.200000001118
+        },
+        {
+          "disabled": true,
+          "at": 6745.700000001118
+        },
+        {
+          "disabled": false,
+          "at": 6758.700000001118
+        }
+      ]
+    }
+  ],
+  "sourceCommit": "28697a679d5e4a6bd01496ee5b73420b59e51968",
+  "completed": "2026-10-08T08:17:51.577Z"
+}

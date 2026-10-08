@@ -1,0 +1,33 @@
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+ ❯ tests/component/window-controls.test.tsx (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/component/window-controls.test.tsx [ tests/component/window-controls.test.tsx ]
+Error: Failed to resolve import "../../apps/studio-desktop/src/app/WindowControls" from "tests/component/window-controls.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: D:/1Folder/Blocky-AI/tests/component/window-controls.test.tsx:4:0
+  22 |  }) }));
+  23 |  const __vi_import_0__ = await import("@testing-library/react");
+  24 |  const __vi_import_1__ = await import("../../apps/studio-desktop/src/app/WindowControls");
+     |                                       ^
+  25 |  const __vi_import_2__ = await import("react/jsx-dev-runtime");
+  26 |  // @vitest-environment jsdom
+ ❯ TransformPluginContext._formatLog node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:8393:39
+ ❯ TransformPluginContext.error node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:8390:14
+ ❯ normalizeUrl node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:26058:18
+ ❯ node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:26128:30
+ ❯ TransformPluginContext.transform node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:26094:4
+ ❯ EnvironmentPluginContainer.transform node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:8172:14
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0_@types+node@22.2_9c8f6d0ff11c462dc9cccec3659d59b4/node_modules/vite/dist/node/chunks/node.js:19634:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  15:50:00
+   Duration  3.24s (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 2.84s)
+

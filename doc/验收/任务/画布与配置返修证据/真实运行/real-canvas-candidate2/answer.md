@@ -1,0 +1,21 @@
+我当前画布是一个刑事法条问答助手的主流程，共 8 个积木，串成一条顺序执行链。执行顺序如下：
+
+1. **core.agent（assistant-root）** — 定义助手角色：基于 `assistant-knowledge` 资料（仅覆盖《刑法》第 133 条交通肇事罪、第 133 条之一危险驾驶罪）做条文学习与对比，不推断、不评判具体案件。
+
+2. **core.interaction.chat（assistant-chat-trigger）** — 交互触发器，名称为「资料问答」，等待用户发起问答。
+
+3. **core.prompt.context（assistant-evidence-instructions）** — 注入回答约束：回答前必须先检索资料并通过证据护栏，引用原文并明确标注来自第 133 条还是第 133 条之一，区分两罪名构成差异；资料未命中时如实说明边界。
+
+4. **core.run.budget（assistant-run-budget）** — 运行预算限制：调用 256 次、输出 1048576 token、10000 步、超时 1800000 ms。
+
+5. **core.knowledge.retrieve（assistant-knowledge-retrieve）** — 知识检索，资源为 `assistant-knowledge`。
+
+6. **core.guardrail.evidence（assistant-evidence-guardrail）** — 证据护栏，策略为 `require`（强制要求命中证据）。
+
+7. **core.model.compose（assistant-compose-answer）** — 使用模型资源 `xirang-personal` 组合回答。
+
+8. **core.output.answer（assistant-answer）** — 输出答案，样式为「段落」。
+
+这些积木是通过 `next` 字段依次串接的（第 2～8 块都在第 1 块 agent 的 BODY 嵌套链内逐级 next 连接），形成一条单向、无分支的顺序流程：触发问答 → 注入指令 → 设置预算 → 检索资料 → 证据护栏 → 模型生成 → 输出答案。
+
+本轮没有做任何修改。

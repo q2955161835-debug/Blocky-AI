@@ -1,0 +1,33 @@
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+ ❯ tests/component/studio.test.tsx (9 tests | 1 failed) 1090ms
+   × prevents changing a resource again while its project save is in progress 79ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/component/studio.test.tsx > prevents changing a resource again while its project save is in progress
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/component/studio.test.tsx:91:71
+     89|   act(() => hook.result.current.setSelected("compose-answer"));
+     90|   const view = render(<Inspector studio={{ ...hook.result.current, bus…
+     91|   expect((screen.getByLabelText("资源") as HTMLSelectElement).disabled).…
+       |                                                                       ^
+     92|   view.rerender(<Inspector studio={{ ...hook.result.current, busy: fal…
+     93|   expect((screen.getByLabelText("资源") as HTMLSelectElement).disabled).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  16:05:29
+   Duration  6.91s (transform 1.13s, setup 0ms, import 2.81s, tests 1.09s, environment 2.66s)
+

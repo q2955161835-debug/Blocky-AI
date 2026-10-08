@@ -1,0 +1,121 @@
+{
+  "artifacts": [],
+  "command": "run.start",
+  "data": {
+    "answer": "",
+    "citations": [
+      {
+        "collectionId": "assistant-knowledge",
+        "digest": "6f83100b5e6514c9e6323eb4a64897234829f5fc9b364b43c5bb02245437825c",
+        "documentId": "doc-095a8caabbace1fd7dea9e269350bf0fff81b5c7e31890e2310ffee4b88f2427",
+        "id": "chunk-0aaf77c32860128b7585f033fa877c9c141309d5c7b5e68e260ae28165155afa",
+        "locator": {
+          "lineEnd": 1,
+          "lineStart": 1,
+          "path": "法条资料.md"
+        },
+        "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+        "score": 0.630370054461727,
+        "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+        "text": "# 交通肇事罪与危险驾驶罪",
+        "title": "法条资料.md (法条资料.md · 行 1–1)",
+        "truncated": false
+      },
+      {
+        "collectionId": "assistant-knowledge",
+        "digest": "88cdeb258e58549dce2d6e2ab53c249c754d28453605563a17648fa83670def7",
+        "documentId": "doc-095a8caabbace1fd7dea9e269350bf0fff81b5c7e31890e2310ffee4b88f2427",
+        "id": "chunk-a041d84c0f78619ff1699eeb3de1642bed8319ccc0a9abd5fd76e1bebe9662ce",
+        "locator": {
+          "lineEnd": 11,
+          "lineStart": 11,
+          "path": "法条资料.md"
+        },
+        "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+        "score": 0.5857569236545279,
+        "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+        "text": "## 第一百三十三条之一：危险驾驶罪",
+        "title": "法条资料.md (法条资料.md · 行 11–11)",
+        "truncated": false
+      },
+      {
+        "collectionId": "assistant-knowledge",
+        "digest": "31cb105f3021a51d6e1863b64a54a13757d1d890d84700acf10d73800824327b",
+        "documentId": "doc-095a8caabbace1fd7dea9e269350bf0fff81b5c7e31890e2310ffee4b88f2427",
+        "id": "chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7",
+        "locator": {
+          "lineEnd": 9,
+          "lineStart": 9,
+          "path": "法条资料.md"
+        },
+        "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+        "score": 0.5844467646661065,
+        "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+        "text": "违反交通运输管理法规，因而发生重大事故，致人重伤、死亡或者使公私财产遭受重大损失的，处三年以下有期徒刑或者拘役；交通运输肇事后逃逸或者有其他特别恶劣情节的，处三年以上七年以下有期徒刑；因逃逸致人死亡的，处七年以上有期徒刑。",
+        "title": "法条资料.md (法条资料.md · 行 9–9)",
+        "truncated": false
+      },
+      {
+        "collectionId": "assistant-knowledge",
+        "digest": "583e07003f5eca4d5fa0b05b6910c8445d9954d2375a2cb0e0abd14da959ee33",
+        "documentId": "doc-095a8caabbace1fd7dea9e269350bf0fff81b5c7e31890e2310ffee4b88f2427",
+        "id": "chunk-f4dede0ec9b2fc955c67f620f5cdff77d2509c1b956ac55116715a1fcac8f23c",
+        "locator": {
+          "lineEnd": 7,
+          "lineStart": 7,
+          "path": "法条资料.md"
+        },
+        "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+        "score": 0.5434273903319076,
+        "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+        "text": "## 第一百三十三条：交通肇事罪",
+        "title": "法条资料.md (法条资料.md · 行 7–7)",
+        "truncated": false
+      },
+      {
+        "collectionId": "assistant-knowledge",
+        "digest": "2b262548588219d6acbdb247e75b86509aa406a2d0c0288e88b57c673fcd3bf8",
+        "documentId": "doc-095a8caabbace1fd7dea9e269350bf0fff81b5c7e31890e2310ffee4b88f2427",
+        "id": "chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5",
+        "locator": {
+          "lineEnd": 17,
+          "lineStart": 13,
+          "path": "法条资料.md"
+        },
+        "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+        "score": 0.5343277651798015,
+        "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+        "text": "在道路上驾驶机动车，有下列情形之一的，处拘役，并处罚金：\n（一）追逐竞驶，情节恶劣的；\n（二）醉酒驾驶机动车的；\n（三）从事校车业务或者旅客运输，严重超过额定乘员载客，或者严重超过规定时速行驶的；\n（四）违反危险化学品安全管理规定运输危险化学品，危及公共安全的。",
+        "title": "法条资料.md (法条资料.md · 行 13–17)",
+        "truncated": false
+      }
+    ],
+    "eventCount": 20,
+    "generations": [
+      {
+        "finishReason": "stop",
+        "model": "deepseek-v4-pro",
+        "provider": "xirang",
+        "requestId": "chatcmpl-3b97ca56-40d2-931d-85f4-fa9cdce9ca68",
+        "schemaVersion": "blocky.model-response/v2",
+        "text": "",
+        "toolCalls": [],
+        "transport": "remote",
+        "usage": {
+          "inputTokens": 766,
+          "outputTokens": 273,
+          "totalTokens": 1039
+        },
+        "usageStatus": "reported"
+      }
+    ],
+    "modelApiCalled": true,
+    "pendingApprovals": [],
+    "runId": "run-d9df0e04-a389-4806-91bb-91db9c29ae73",
+    "status": "failed"
+  },
+  "nextCursor": null,
+  "ok": false,
+  "schemaVersion": "blocky.cli/v1",
+  "warnings": []
+}

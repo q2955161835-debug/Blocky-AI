@@ -1,0 +1,221 @@
+{
+  "file": "D:\\1Folder\\Blocky-AI\\作品\\刑法条文问答\\刑法条文问答.blocky",
+  "source": "D:\\1Folder\\Blocky-AI\\doc\\验收\\任务\\聊天Markdown证据\\三轮实际任务\\知识问答\\built.blocky",
+  "projectId": "criminal-law-qa",
+  "modelResourceId": "xirang-personal",
+  "sourcePath": "D:\\1Folder\\Blocky-AI\\作品\\刑法条文问答\\法条资料.md",
+  "compile": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": true,
+    "command": "project.compile",
+    "data": {
+      "modules": [
+        {
+          "schemaVersion": "blocky.module-ir/v1",
+          "projectId": "criminal-law-qa",
+          "moduleId": "main",
+          "roots": [
+            {
+              "nodeId": "assistant-root",
+              "blockType": "core.agent",
+              "fields": {
+                "ROLE": "你是刑事法条学习问答助手，专门基于 assistant-knowledge 资料（仅覆盖《刑法》第133条与第133条之一）回答法律学习问题。回答必须引用资料原文并准确区分两个罪名：第133条是交通肇事罪，第133条之一是危险驾驶罪。只做条文学习与对比说明，不推断、不评判任何具体案件。"
+              },
+              "inputs": {
+                "BODY": {
+                  "nodeId": "assistant-chat-trigger",
+                  "blockType": "core.interaction.chat",
+                  "fields": {
+                    "NAME": "资料问答"
+                  },
+                  "inputs": {},
+                  "next": {
+                    "nodeId": "assistant-evidence-instructions",
+                    "blockType": "core.prompt.context",
+                    "fields": {
+                      "TEXT": "回答前必须先检索 assistant-knowledge 资料并通过证据护栏，只依据命中的条文原文作答。引用时可核对的原文并明确标注来自第133条还是第133条之一，清楚区分交通肇事罪与危险驾驶罪的构成差异。资料未命中或覆盖范围外时如实说明边界，不编造、不推断具体案件。"
+                    },
+                    "inputs": {},
+                    "next": {
+                      "nodeId": "assistant-run-budget",
+                      "blockType": "core.run.budget",
+                      "fields": {
+                        "CALLS": "256",
+                        "OUTPUT_TOKENS": "1048576",
+                        "STEPS": "10000",
+                        "TIMEOUT_MS": "1800000"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "assistant-knowledge-retrieve",
+                        "blockType": "core.knowledge.retrieve",
+                        "fields": {
+                          "RESOURCE": "assistant-knowledge"
+                        },
+                        "inputs": {},
+                        "next": {
+                          "nodeId": "assistant-evidence-guardrail",
+                          "blockType": "core.guardrail.evidence",
+                          "fields": {
+                            "POLICY": "require"
+                          },
+                          "inputs": {},
+                          "next": {
+                            "nodeId": "assistant-compose-answer",
+                            "blockType": "core.model.compose",
+                            "fields": {
+                              "RESOURCE": "xirang-personal"
+                            },
+                            "inputs": {},
+                            "next": {
+                              "nodeId": "assistant-answer",
+                              "blockType": "core.output.answer",
+                              "fields": {
+                                "STYLE": "段落"
+                              },
+                              "inputs": {}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "exports": [],
+          "sourceMap": {
+            "assistant-root": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-root"
+            },
+            "assistant-chat-trigger": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-chat-trigger"
+            },
+            "assistant-evidence-instructions": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-evidence-instructions"
+            },
+            "assistant-run-budget": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-run-budget"
+            },
+            "assistant-knowledge-retrieve": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-knowledge-retrieve"
+            },
+            "assistant-evidence-guardrail": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-evidence-guardrail"
+            },
+            "assistant-compose-answer": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-compose-answer"
+            },
+            "assistant-answer": {
+              "projectId": "criminal-law-qa",
+              "moduleId": "main",
+              "blockId": "assistant-answer"
+            }
+          }
+        }
+      ],
+      "project": {
+        "schemaVersion": "blocky.project-ir/v1",
+        "projectId": "criminal-law-qa",
+        "modules": [
+          {
+            "moduleId": "main",
+            "digest": "3a4c5772a1db6c84af68a0be0ab6c55cdfa05df39af8da8a091e8281ef710b45"
+          }
+        ],
+        "links": []
+      },
+      "interaction": {
+        "schemaVersion": "blocky.interaction/v1alpha1",
+        "projectId": "criminal-law-qa",
+        "entries": [
+          {
+            "interactionId": "assistant-chat-trigger",
+            "moduleId": "main",
+            "ownerAgentId": "assistant-root",
+            "displayName": "资料问答",
+            "acceptedParts": [
+              "text"
+            ],
+            "exposedSkills": [],
+            "exposedActions": [],
+            "executionRequirements": []
+          }
+        ]
+      },
+      "tools": [
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-knowledge-retrieve",
+          "moduleId": "main",
+          "displayName": "我的资料",
+          "description": "检索带来源的资料",
+          "inputSchemaRef": "schemas/query.json",
+          "outputSchemaRef": "schemas/citations.json",
+          "permissions": [
+            "knowledge.read"
+          ],
+          "approval": "never",
+          "implementationRef": "adapter://knowledge-local-v1"
+        }
+      ],
+      "diagnostics": [],
+      "digest": "2f68a7d3aa0be7935bb8408e58c48b5cf3e7a18ae28713e948b202bde53e070d"
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  },
+  "add": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": true,
+    "command": "knowledge.add",
+    "data": {
+      "allowedPrincipals": [
+        "local-user"
+      ],
+      "kind": "file",
+      "metadata": {},
+      "readable": true,
+      "revision": "",
+      "sourceId": "src-c66f084a-7eb7-4f6b-a2dd-5285bee97949",
+      "title": "法条资料.md"
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  },
+  "sync": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": true,
+    "command": "knowledge.sync",
+    "data": {
+      "status": "completed",
+      "counts": {
+        "added": 1,
+        "updated": 0,
+        "deleted": 0,
+        "skipped": 0,
+        "chunks": 7
+      }
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  }
+}

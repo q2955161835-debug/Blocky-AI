@@ -1,0 +1,74 @@
+{
+  "synthetic": true,
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "user reference automatically saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "resource editor automatically saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "knowledge binding persisted",
+      "ok": true,
+      "data": {
+        "chunking": {
+          "overlap": 64,
+          "size": 768,
+          "strategy": "paragraph"
+        },
+        "collection": "assistant-knowledge",
+        "implementationRef": {
+          "id": "knowledge-local-v1",
+          "kind": "adapter"
+        },
+        "index": {
+          "strategy": "keyword"
+        },
+        "retrieval": {
+          "contextBudget": 4000,
+          "fallback": "error",
+          "filters": [],
+          "maxCandidates": 40,
+          "minScore": 0,
+          "modelId": "multilingual-e5-small-int8-v1",
+          "rerank": true,
+          "strategy": "keyword",
+          "timeoutMs": 10000,
+          "topK": 3
+        },
+        "sourceRef": {
+          "id": "assistant-knowledge",
+          "kind": "resource"
+        }
+      }
+    },
+    {
+      "name": "Run settings model field automatically saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Inspector clear resource field automatically saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "Inspector resource field automatically saved",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "named disk bytes changed",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "initialSha": "f498c0e8eeb05a28eadef47e976b8ffff36a767ad39077427ba3158826bca457",
+  "finalSha": "d2d78425a4894bb29e88c1cf2101526496e420293196d574f280a8985b9428d3",
+  "completed": "2026-10-08T07:57:40.949Z"
+}

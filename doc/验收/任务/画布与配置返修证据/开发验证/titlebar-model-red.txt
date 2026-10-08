@@ -1,0 +1,40 @@
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+ ❯ tests/component/window-controls.test.tsx (3 tests | 1 failed) 228ms
+   × reports a failed native action and keeps controls usable 81ms
+ ❯ tests/component/stage4-model-choice.test.tsx (1 test | 1 failed) 31ms
+   × model choice persists a user resource reference and can undo the project edit 31ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/component/stage4-model-choice.test.tsx > model choice persists a user resource reference and can undo the project edit
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ ❯ tests/component/stage4-model-choice.test.tsx:44:16
+     42|       ),
+     43|   ).toBe(true);
+     44|   expect(save).toHaveBeenCalledOnce();
+       |                ^
+     45|   controller.undo();
+     46|   expect(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/component/window-controls.test.tsx > reports a failed native action and keeps controls usable
+Error: Invalid Chai property: toBeEnabled. Did you mean "toBeCalled"?
+ ❯ tests/component/window-controls.test.tsx:47:55
+     45|   fireEvent.click(screen.getByRole("button", { name: "最小化窗口" }));
+     46|   await waitFor(() => expect(onError).toHaveBeenCalledWith("窗口操作未能完成，请…
+     47|   expect(screen.getByRole("button", { name: "关闭窗口" })).toBeEnabled();
+       |                                                       ^
+     48| });
+     49|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 2 passed (4)
+   Start at  15:51:06
+   Duration  4.82s (transform 464ms, setup 0ms, import 1.77s, tests 259ms, environment 6.53s)
+

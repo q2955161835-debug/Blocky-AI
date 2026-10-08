@@ -1,0 +1,180 @@
+{
+  "sourceCommit": "a856cda63ee5f2457723587385413943221c1872",
+  "files": [
+    {
+      "path": "真实运行/real-law/receipt.json",
+      "bytes": 523,
+      "sha256": "09c954b282e9e5b75b66100b8b947c65f1755ec0440e0418ffc759b943a0032c"
+    },
+    {
+      "path": "真实运行/real-law/result.json",
+      "bytes": 5471,
+      "sha256": "8983976b72187a2caa97eebc86e5e51e912a0ca90d58c7e7055ce7a775248619"
+    },
+    {
+      "path": "真实运行/real-law/trace.json",
+      "bytes": 10555,
+      "sha256": "b73bedea3115a46b34ae3017e6760e2f12e12e372832523468bc3d415b78cb70"
+    },
+    {
+      "path": "真实运行/real-law/answer.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "真实运行/real-law-retry2/receipt.json",
+      "bytes": 523,
+      "sha256": "5b4ab097909a5f59ac27554ba12d5acd951da146d109fc64ec1a077d181d88f4"
+    },
+    {
+      "path": "真实运行/real-law-retry2/result.json",
+      "bytes": 5471,
+      "sha256": "b7d1fedd1a8c4efc9f9d2e5d0f8f941a7fbcecb31fe924dd65c09b0fcc9e073d"
+    },
+    {
+      "path": "真实运行/real-law-retry2/trace.json",
+      "bytes": 10555,
+      "sha256": "dd51e716fa3e3e13d32e8397d3e70bb03c6c4a1b111714b237162f32aa2a302f"
+    },
+    {
+      "path": "真实运行/real-law-retry2/answer.md",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "真实运行/real-law-candidate2/receipt.json",
+      "bytes": 694,
+      "sha256": "ac898a0a066f9e90fdee2172ff73331247c7b25160a380f63b55673276b773a1"
+    },
+    {
+      "path": "真实运行/real-law-candidate2/result.json",
+      "bytes": 9048,
+      "sha256": "45fb626ba09570a66700a152a655e02efad2f7d900b028aa79471e4e43fe051e"
+    },
+    {
+      "path": "真实运行/real-law-candidate2/trace.json",
+      "bytes": 11941,
+      "sha256": "51d26965321f4c988c937ccf68b0157a3e2f87cd9cca119adeac6bc35feffc4d"
+    },
+    {
+      "path": "真实运行/real-law-candidate2/answer.md",
+      "bytes": 1754,
+      "sha256": "772f9b9504b7715a907e0e12a2962d7de862b39bc11365464fe6ec8f05d3dcfc"
+    },
+    {
+      "path": "真实运行/real-canvas/receipt.json",
+      "bytes": 143,
+      "sha256": "4bf9c427a6f0a7f3e5cbab651074d43d3569c0664a5feb8adb006686c6ec685f"
+    },
+    {
+      "path": "真实运行/real-canvas/result.json",
+      "bytes": 5108,
+      "sha256": "93b850c100c9b54bf62b6aba762380d7949120f085a359d0471e479ee397a2a6"
+    },
+    {
+      "path": "真实运行/real-canvas/answer.md",
+      "bytes": 2059,
+      "sha256": "94851759dc4a50db3494b08f61cfe842f9dce34d6d871bc607affe1dad18dcf0"
+    },
+    {
+      "path": "真实运行/real-canvas-candidate2/receipt.json",
+      "bytes": 143,
+      "sha256": "cd05c3db8da92b9443d0e64872a57c1dbfabd3c2f214106880103ef806e9851b"
+    },
+    {
+      "path": "真实运行/real-canvas-candidate2/result.json",
+      "bytes": 4474,
+      "sha256": "e2fd4748472c5274df3c64f1cf85af023bcecc38b11d2dd21466dcd1ff901e0c"
+    },
+    {
+      "path": "真实运行/real-canvas-candidate2/answer.md",
+      "bytes": 1750,
+      "sha256": "6d793e0896c636926dcd7adf5e67b1e1c9734d97285742b655489922a29b0395"
+    },
+    {
+      "path": "真实运行/law-diagnostic.json",
+      "bytes": 895,
+      "sha256": "7da4509a62e23939c0a32f585be9dcc0b949321270633d1da501cabb27e0edf6"
+    },
+    {
+      "path": "真实运行/law-diagnostic-response.json",
+      "bytes": 1779,
+      "sha256": "54d72d2611b0d67a2125d2d92ec6b07ce8d7e37215940c64435e776f28578cf9"
+    },
+    {
+      "path": "真实运行/法律配置恢复.json",
+      "bytes": 7991,
+      "sha256": "5c1651d2e3e34b2bee1408defdc0ffb8a01cfadc7b129f005cf1759fc1456cd2"
+    },
+    {
+      "path": "真实运行/real-canvas-harness2/background-start.json",
+      "bytes": 173,
+      "sha256": "1046ddeb831a0c0557b6199f50b39ff3c820ab0e9ed769e963de9e17c13277f1"
+    },
+    {
+      "path": "真实运行/real-canvas-harness2/background-result.json",
+      "bytes": 855,
+      "sha256": "c34005970fe2dde177c5b6f60a38edc6cb589478b1ad28acee44a0489e731952"
+    },
+    {
+      "path": "开发验证/window-controls-red.txt",
+      "bytes": 2237,
+      "sha256": "869cc45d9feaa3a9a26fd5659d18303b2b6b1aa4edcdc1b1173a80b23b5cb885"
+    },
+    {
+      "path": "开发验证/titlebar-model-red.txt",
+      "bytes": 1805,
+      "sha256": "bbe8dfaa764bf6fd75ac5a9931c36a2bd4175f801fa55517e9c8f46f0e6a89f7"
+    },
+    {
+      "path": "开发验证/titlebar-config-green.txt",
+      "bytes": 219,
+      "sha256": "7e7201c75f0db62869514cadb72590ea8bbec1269c9553934bc49841e214d5dd"
+    },
+    {
+      "path": "开发验证/titlebar-typecheck.txt",
+      "bytes": 74,
+      "sha256": "7a35d7a7a3ef79026f66bd83007c9cc39fdcb566cbc5b585dad72ec57091bb69"
+    },
+    {
+      "path": "开发验证/canvas-context-final.txt",
+      "bytes": 215,
+      "sha256": "0062a2786620d619f15c5f57228efab1f82acff69da08578e0026e7416052e52"
+    },
+    {
+      "path": "开发验证/components-final.txt",
+      "bytes": 2038,
+      "sha256": "096ad3fb96f8a3a721e73d5ff54ce8695f54aef35c1d645a9d437c8714ec97d0"
+    },
+    {
+      "path": "开发验证/build-release2.txt",
+      "bytes": 4131,
+      "sha256": "934001bf08a1a02157de25140682739c1a7d5b05626fa2f7fa3353845c25fe44"
+    },
+    {
+      "path": "开发验证/release-scan2.txt",
+      "bytes": 163,
+      "sha256": "b6a4a073540f2529fd8928fcf3a268333cbf36ead8f3d8e2213bf7c6244c8414"
+    },
+    {
+      "path": "开发验证/package2.txt",
+      "bytes": 239,
+      "sha256": "84c54c3d1006db9002cbee63ca3dbd29de6fc874940672deb412c9e187943bc4"
+    },
+    {
+      "path": "候选2/package.json",
+      "bytes": 506351,
+      "sha256": "c5bb2dd6b3096a86693502f577d76a707ab519e15f98f7a7fe60d70cbbfd5ebf"
+    },
+    {
+      "path": "候选2/artifacts.json",
+      "bytes": 641129,
+      "sha256": "804e24b45c217e7650eca6d938324fe1f1a03d8a0e007b6fc8bf7cba924649d6"
+    },
+    {
+      "path": "候选2/license-coverage.json",
+      "bytes": 57,
+      "sha256": "62a4d0ad054f240fe7e1eacd83513d755f8dfeec5f70b58928b4711c8f2ca075"
+    }
+  ]
+}

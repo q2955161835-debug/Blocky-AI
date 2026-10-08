@@ -1,0 +1,55 @@
+{
+  "before": [
+    {
+      "id": "screenshot-0",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-1",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-2",
+      "x": 9,
+      "y": 16,
+      "width": 1688,
+      "height": 988
+    }
+  ],
+  "after": [
+    {
+      "id": "screenshot-0",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-1",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 15
+    },
+    {
+      "id": "screenshot-2",
+      "x": 9,
+      "y": 16,
+      "width": 1688,
+      "height": 988
+    }
+  ],
+  "window": {
+    "app": "process:D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context\\Blocky Studio.exe",
+    "id": 399094,
+    "title": "Blocky Studio"
+  },
+  "passed": false,
+  "scope": "One real Sky drag of the original project title; no position change observed."
+}

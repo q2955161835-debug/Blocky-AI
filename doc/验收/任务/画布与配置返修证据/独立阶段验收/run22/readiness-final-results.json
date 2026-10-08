@@ -1,0 +1,55 @@
+{
+  "sourceCommit": "f708ef1c147b21e5dc5c7f7baaed44d544ed5c4d",
+  "synthetic": true,
+  "externalApi": false,
+  "requests": [],
+  "checks": [
+    {
+      "name": "native readiness refresh 0",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 1",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 2",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 3",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 4",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 5",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "unsaved close warning and cancel",
+      "ok": true,
+      "data": "关闭 Blocky Studio\n\n当前项目有未保存的修改。停止并退出将放弃这些修改。\n\n返回工作台\n隐藏并继续\n停止并退出"
+    },
+    {
+      "name": "cancel close retains window and settles task",
+      "ok": true,
+      "data": "关闭 Blocky Studio\n\n当前项目有未保存的修改。停止并退出将放弃这些修改。\n\n返回工作台\n隐藏并继续\n停止并退出"
+    },
+    {
+      "name": "brand returns welcome",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "cancelSemantics": "Existing lifecycle request clears Builder before confirmation; cancel keeps the window while the Builder settles.",
+  "completed": "2026-10-08T08:28:16.495Z"
+}

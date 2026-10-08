@@ -1,0 +1,50 @@
+{
+  "sourceCommit": "28697a679d5e4a6bd01496ee5b73420b59e51968",
+  "files": [
+    {
+      "path": "开发验证/inspector-lock-red.txt",
+      "bytes": 1299,
+      "sha256": "c8d58c17d23c054ac5bc2131c8a656d2a4ab862dcf93013feef6fef0fc49af68"
+    },
+    {
+      "path": "开发验证/config-titlebar-final3.txt",
+      "bytes": 219,
+      "sha256": "cddfa89fbfc7a037290915618cdb3b68a48b2d5f4f1461b08fda27100c7dc48f"
+    },
+    {
+      "path": "开发验证/typecheck-final3.txt",
+      "bytes": 74,
+      "sha256": "7a35d7a7a3ef79026f66bd83007c9cc39fdcb566cbc5b585dad72ec57091bb69"
+    },
+    {
+      "path": "开发验证/build-release3.txt",
+      "bytes": 4130,
+      "sha256": "2bdd327f58705dca5ab13fe24ef50f465ffc73c3d7919eed5946737e3de90fee"
+    },
+    {
+      "path": "开发验证/release-scan3.txt",
+      "bytes": 163,
+      "sha256": "b6a4a073540f2529fd8928fcf3a268333cbf36ead8f3d8e2213bf7c6244c8414"
+    },
+    {
+      "path": "开发验证/package3.txt",
+      "bytes": 239,
+      "sha256": "5dcce4573daf22c89aa6f4acbe88e6a355dc709c7712f44e25991edd820db901"
+    },
+    {
+      "path": "候选3/package.json",
+      "bytes": 506351,
+      "sha256": "a66abe538e9d14c02182a5f217172e18c3f5c3ffa9534399a029a0730f72928e"
+    },
+    {
+      "path": "候选3/artifacts.json",
+      "bytes": 641129,
+      "sha256": "8bc79552b7bdf35361a2d30e85f8e88d8a78b3267c4968a7c3c919cd9c822a07"
+    },
+    {
+      "path": "候选3/license-coverage.json",
+      "bytes": 57,
+      "sha256": "62a4d0ad054f240fe7e1eacd83513d755f8dfeec5f70b58928b4711c8f2ca075"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "oldSource": "a856cda63ee5f2457723587385413943221c1872",
+  "newSource": "28697a679d5e4a6bd01496ee5b73420b59e51968",
+  "totalFiles": 2595,
+  "changed": [
+    {
+      "path": "Blocky Studio.exe",
+      "bytes": 51864576,
+      "sha256": "d0957041c9fda35fcbc405166b6d3df0051fc4b0ad6c8ae1b7d60527406e03f4"
+    },
+    {
+      "path": "cli/bin/blocky-project-io.exe",
+      "bytes": 38394880,
+      "sha256": "27f0e5b771a4e315edafbab690364f04394a1a54d850d38406c300e9bc510a84"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "code": 3,
+  "status": "failed",
+  "seconds": 12.567,
+  "sourceCommit": "1b7401e4aa1a2adb2ed2b7eee2031c1ebefe531b",
+  "file": "D:\\1Folder\\Blocky-AI\\作品\\刑法条文问答\\刑法条文问答.blocky",
+  "input": "仅依据同步法条资料，简短比较交通肇事罪与危险驾驶罪。列明第133条和133条之一的处罚，危险驾驶是否要求已发生重大事故？使用Markdown标题和列表，并引用资料。",
+  "realApi": true,
+  "modelResource": "xirang-personal",
+  "citationCount": 5
+}

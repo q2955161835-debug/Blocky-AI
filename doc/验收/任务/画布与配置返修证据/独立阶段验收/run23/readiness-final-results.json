@@ -1,0 +1,39 @@
+{
+  "sourceCommit": "f708ef1c147b21e5dc5c7f7baaed44d544ed5c4d",
+  "synthetic": true,
+  "externalApi": false,
+  "requests": [],
+  "checks": [
+    {
+      "name": "native readiness refresh 0",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 1",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 2",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 3",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 4",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    },
+    {
+      "name": "native readiness refresh 5",
+      "ok": true,
+      "data": "运行配置\n刷新状态\n\n资料已同步：3 个片段可供检索。\n\n运行配置已就绪。"
+    }
+  ],
+  "completed": "2026-10-08T08:28:46.891Z"
+}

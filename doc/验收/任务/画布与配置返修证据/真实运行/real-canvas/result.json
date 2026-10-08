@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "blocky.coding-result/v1",
+  "requestId": "real-canvas-1791445402813",
+  "projectId": "criminal-law-qa",
+  "baseDigest": "c83328e43ccbe32b755122ca2ccdf1f943c64463a4dc04d7647030b3e2a4f80a",
+  "text": "你的当前画布（模块 `main`，显示名“主画布”）共 8 个积木，构成一条**单链顺序执行**流程。起始是 1 个根积木，下面按 `next` 依次串联 7 个。\n\n执行顺序如下：\n\n1. **core.agent**（`assistant-root`）\n   - ROLE：设定助手身份——“刑事法条学习问答助手”，只基于 `assistant-knowledge` 资料（仅覆盖《刑法》第 133 条与第 133 条之一）回答，须引用原文并区分“交通肇事罪”（第133条）与“危险驾驶罪”（第133条之一），只做条文学习与对比，不推断/评判具体案件。\n\n2. **core.interaction.chat**（`assistant-chat-trigger`）\n   - NAME：资料问答。作为对话触发入口。\n\n3. **core.prompt.context**（`assistant-evidence-instructions`）\n   - TEXT：注入约束——回答前必须先检索 `assistant-knowledge` 并通过证据护栏，只依据命中的条文原文作答；引用须标明来自第 133 条还是第 133 条之一，清楚区分两罪名构成差异；资料未命中或超出覆盖范围时如实说明边界，不编造、不推断。\n\n4. **core.run.budget**（`assistant-run-budget`）\n   - 运行预算：CALLS=256，OUTPUT_TOKENS=1048576，STEPS=10000，TIMEOUT_MS=1800000。\n\n5. **core.knowledge.retrieve**（`assistant-knowledge-retrieve`）\n   - RESOURCE：`assistant-knowledge`。检索知识资料。\n\n6. **core.guardrail.evidence**（`assistant-evidence-guardrail`）\n   - POLICY：`require`。要求答案必须有资料证据支撑。\n\n7. **core.model.compose**（`assistant-compose-answer`）\n   - RESOURCE：`xirang-personal`。调用模型生成答案。\n\n8. **core.output.answer**（`assistant-answer`）\n   - STYLE：段落。以段落形式输出最终回答。\n\n整条链的逻辑是：**设定刑事法条学习助手角色 → 用户聊天触发 → 注入“先检索+证据护栏”的约束 → 设定运行预算 → 检索 `assistant-knowledge` → 证据强制校验 → 模型组织答案 → 输出段落回答**。当前无诊断错误，未做任何修改。",
+  "changes": [],
+  "events": [
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "real-canvas-1791445402813",
+      "projectId": "criminal-law-qa",
+      "sequence": 1,
+      "kind": "text.delta",
+      "text": "你的当前画布（模块 `main`，显示名“主画布”）共 8 个积木，构成一条**单链顺序执行**流程。起始是 1 个根积木，下面按 `next` 依次串联 7 个。\n\n执行顺序如下：\n\n1. **core.agent**（`assistant-root`）\n   - ROLE：设定助手身份——“刑事法条学习问答助手”，只基于 `assistant-knowledge` 资料（仅覆盖《刑法》第 133 条与第 133 条之一）回答，须引用原文并区分“交通肇事罪”（第133条）与“危险驾驶罪”（第133条之一），只做条文学习与对比，不推断/评判具体案件。\n\n2. **core.interaction.chat**（`assistant-chat-trigger`）\n   - NAME：资料问答。作为对话触发入口。\n\n3. **core.prompt.context**（`assistant-evidence-instructions`）\n   - TEXT：注入约束——回答前必须先检索 `assistant-knowledge` 并通过证据护栏，只依据命中的条文原文作答；引用须标明来自第 133 条还是第 133 条之一，清楚区分两罪名构成差异；资料未命中或超出覆盖范围时如实说明边界，不编造、不推断。\n\n4. **core.run.budget**（`assistant-run-budget`）\n   - 运行预算：CALLS=256，OUTPUT_TOKENS=1048576，STEPS=10000，TIMEOUT_MS=1800000。\n\n5. **core.knowledge.retrieve**（`assistant-knowledge-retrieve`）\n   - RESOURCE：`assistant-knowledge`。检索知识资料。\n\n6. **core.guardrail.evidence**（`assistant-evidence-guardrail`）\n   - POLICY：`require`。要求答案必须有资料证据支撑。\n\n7. **core.model.compose**（`assistant-compose-answer`）\n   - RESOURCE：`xirang-personal`。调用模型生成答案。\n\n8. **core.output.answer**（`assistant-answer`）\n   - STYLE：段落。以段落形式输出最终回答。\n\n整条链的逻辑是：**设定刑事法条学习助手角色 → 用户聊天触发 → 注入“先检索+证据护栏”的约束 → 设定运行预算 → 检索 `assistant-knowledge` → 证据强制校验 → 模型组织答案 → 输出段落回答**。当前无诊断错误，未做任何修改。"
+    }
+  ],
+  "generations": [
+    {
+      "schemaVersion": "blocky.model-response/v2",
+      "usageStatus": "reported",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "021791445407838d6f60410e67e178f28d968f0420b51c36e3cad",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 2156,
+        "outputTokens": 553,
+        "totalTokens": 2709
+      }
+    }
+  ],
+  "engine": "pi-agent-core/0.86.0",
+  "modelApiCalled": true
+}

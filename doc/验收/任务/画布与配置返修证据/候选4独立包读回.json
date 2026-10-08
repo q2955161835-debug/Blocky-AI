@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "f708ef1c147b21e5dc5c7f7baaed44d544ed5c4d",
+  "packageRoot": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-context-candidate4",
+  "expectedFiles": 2595,
+  "actualFiles": 2595,
+  "actualBytes": 771841928.0,
+  "mismatches": [],
+  "passed": true,
+  "checkedAt": "2026-10-08T16:29:14.3247625+08:00"
+}

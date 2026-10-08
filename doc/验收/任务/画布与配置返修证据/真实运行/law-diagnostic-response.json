@@ -1,0 +1,16 @@
+{
+  "finishReason": "stop",
+  "model": "deepseek-v4-pro",
+  "provider": "xirang",
+  "requestId": "chatcmpl-2b4d6fa7-6415-9343-8b8b-8888a5ab10a9",
+  "schemaVersion": "blocky.model-response/v2",
+  "text": "以下是基于所提供法条资料的简短比较：\n\n### 第133条：交通肇事罪\n*   **构成核心**：必须“发生重大事故”并造成严重后果 [source:chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7]。\n*   **处罚**：根据情节轻重，分为三个档次的有期徒刑或拘役 [source:chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7]。\n    *   基本刑：三年以下有期徒刑或者拘役。\n    *   加重情节：交通运输肇事后逃逸的，处三年以上七年以下有期徒刑。\n    *   特别加重情节：因逃逸致人死亡的，处七年以上有期徒刑。\n\n### 第133条之一：危险驾驶罪\n*   **构成核心**：包括追逐竞驶、醉驾、特定车辆严重超载或超速、违规运输危险化学品四种行为，不要求已发生重大事故 [source:chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5]。\n*   **处罚**：统一处拘役，并处罚金 [source:chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5]。\n\n### 罪名比较\n*   **是否要求发生重大事故**：\n    *   **交通肇事罪**：**要求**已经发生重大事故，造成人员重伤、死亡或公私财产重大损失。\n    *   **危险驾驶罪**：**不要求**已发生重大事故，只要实施了法条所列的特定危险驾驶行为即可构成。",
+  "toolCalls": [],
+  "transport": "remote",
+  "usage": {
+    "inputTokens": 766,
+    "outputTokens": 420,
+    "totalTokens": 1186
+  },
+  "usageStatus": "reported"
+}

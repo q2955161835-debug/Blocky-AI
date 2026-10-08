@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+
+ Test Files  4 passed (4)
+      Tests  19 passed (19)
+   Start at  16:05:38
+   Duration  9.07s (transform 2.78s, setup 0ms, import 9.34s, tests 1.82s, environment 16.10s)
+

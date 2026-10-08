@@ -1,0 +1,23 @@
+{
+  "finish": "stop",
+  "usage": {
+    "inputTokens": 766,
+    "outputTokens": 420,
+    "totalTokens": 1186
+  },
+  "markers": [
+    "chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7",
+    "chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7",
+    "chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5",
+    "chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5"
+  ],
+  "missing": false,
+  "unknown": [],
+  "knowledgeIds": [
+    "chunk-0aaf77c32860128b7585f033fa877c9c141309d5c7b5e68e260ae28165155afa",
+    "chunk-a041d84c0f78619ff1699eeb3de1642bed8319ccc0a9abd5fd76e1bebe9662ce",
+    "chunk-e32385ac79d0f35a6b56338ae85b5d649ee719518d5f91e8e00dee7e424a57a7",
+    "chunk-f4dede0ec9b2fc955c67f620f5cdff77d2509c1b956ac55116715a1fcac8f23c",
+    "chunk-88b53a9118aa9d50f131dbf32c65912c61c9bb560ece56781e6ee1bef6b520e5"
+  ]
+}

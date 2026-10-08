@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "blocky.trace/v1",
+  "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+  "dropped": 0,
+  "frames": [
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 1,
+      "timestamp": "2026-10-08T07:56:33.685Z",
+      "type": "run.started",
+      "projectId": "criminal-law-qa",
+      "summary": "run.started",
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 2,
+      "timestamp": "2026-10-08T07:56:33.690Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-root",
+      "summary": "block.started",
+      "blockType": "core.agent",
+      "inputPorts": [
+        "BODY"
+      ],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 3,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-chat-trigger",
+      "summary": "block.started",
+      "blockType": "core.interaction.chat",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 4,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-chat-trigger",
+      "summary": "block.completed",
+      "elapsedMs": 0,
+      "outputType": "null",
+      "budget": {
+        "steps": 2,
+        "calls": 0,
+        "reservedOutputTokens": 0
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 5,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-evidence-instructions",
+      "summary": "block.started",
+      "blockType": "core.prompt.context",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 6,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-evidence-instructions",
+      "summary": "block.completed",
+      "elapsedMs": 0,
+      "outputType": "null",
+      "budget": {
+        "steps": 3,
+        "calls": 0,
+        "reservedOutputTokens": 0
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 7,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-run-budget",
+      "summary": "block.started",
+      "blockType": "core.run.budget",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 8,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-run-budget",
+      "summary": "block.completed",
+      "elapsedMs": 0,
+      "outputType": "null",
+      "budget": {
+        "steps": 4,
+        "calls": 0,
+        "reservedOutputTokens": 0
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 9,
+      "timestamp": "2026-10-08T07:56:33.691Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-knowledge-retrieve",
+      "summary": "block.started",
+      "blockType": "core.knowledge.retrieve",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 10,
+      "timestamp": "2026-10-08T07:56:33.692Z",
+      "type": "tool.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-knowledge-retrieve",
+      "correlationId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd-request-6",
+      "summary": "tool.started",
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 11,
+      "timestamp": "2026-10-08T07:56:33.761Z",
+      "type": "tool.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-knowledge-retrieve",
+      "correlationId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd-request-6",
+      "summary": "tool.completed",
+      "resultCount": 5,
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 12,
+      "timestamp": "2026-10-08T07:56:33.761Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-knowledge-retrieve",
+      "summary": "block.completed",
+      "elapsedMs": 69,
+      "outputType": "null",
+      "budget": {
+        "steps": 5,
+        "calls": 1,
+        "reservedOutputTokens": 0
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 13,
+      "timestamp": "2026-10-08T07:56:33.761Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-evidence-guardrail",
+      "summary": "block.started",
+      "blockType": "core.guardrail.evidence",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 14,
+      "timestamp": "2026-10-08T07:56:33.761Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-evidence-guardrail",
+      "summary": "block.completed",
+      "elapsedMs": 0,
+      "outputType": "null",
+      "budget": {
+        "steps": 6,
+        "calls": 1,
+        "reservedOutputTokens": 0
+      },
+      "details": {
+        "guard": {
+          "policy": "require",
+          "decision": "configured"
+        }
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 15,
+      "timestamp": "2026-10-08T07:56:33.762Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-compose-answer",
+      "summary": "block.started",
+      "blockType": "core.model.compose",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 16,
+      "timestamp": "2026-10-08T07:56:33.762Z",
+      "type": "model.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-compose-answer",
+      "correlationId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd-request-9",
+      "summary": "model.started",
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 17,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "model.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-compose-answer",
+      "correlationId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd-request-9",
+      "summary": "model.completed",
+      "transport": "remote",
+      "model": "deepseek-v4-pro",
+      "usage": {
+        "inputTokens": 766,
+        "outputTokens": 566,
+        "totalTokens": 1332
+      },
+      "details": {
+        "context": {
+          "roleBytes": 363,
+          "instructionBytes": 352,
+          "userBytes": 218,
+          "memoryBytes": 4,
+          "resultBytes": 4,
+          "evidenceCount": 5,
+          "evidenceBytes": 1587
+        },
+        "model": {
+          "maxOutputTokens": 1024
+        },
+        "guard": {
+          "policy": "require",
+          "decision": "passed"
+        }
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 18,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-compose-answer",
+      "summary": "block.completed",
+      "elapsedMs": 13255,
+      "outputType": "string",
+      "budget": {
+        "steps": 7,
+        "calls": 2,
+        "reservedOutputTokens": 566
+      },
+      "details": {
+        "context": {
+          "roleBytes": 363,
+          "instructionBytes": 352,
+          "userBytes": 218,
+          "memoryBytes": 4,
+          "resultBytes": 4,
+          "evidenceCount": 5,
+          "evidenceBytes": 1587
+        },
+        "model": {
+          "maxOutputTokens": 1024
+        },
+        "guard": {
+          "policy": "require",
+          "decision": "passed"
+        }
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 19,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "block.started",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-answer",
+      "summary": "block.started",
+      "blockType": "core.output.answer",
+      "inputPorts": [],
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 20,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-answer",
+      "summary": "block.completed",
+      "elapsedMs": 0,
+      "outputType": "string",
+      "budget": {
+        "steps": 8,
+        "calls": 2,
+        "reservedOutputTokens": 566
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 21,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "block.completed",
+      "projectId": "criminal-law-qa",
+      "moduleId": "main",
+      "blockId": "assistant-root",
+      "summary": "block.completed",
+      "elapsedMs": 13327,
+      "outputType": "string",
+      "budget": {
+        "steps": 8,
+        "calls": 2,
+        "reservedOutputTokens": 566
+      },
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    },
+    {
+      "runId": "run-8673c9b3-9c66-49cb-be9d-2456b302f6bd",
+      "sequence": 22,
+      "timestamp": "2026-10-08T07:56:47.017Z",
+      "type": "run.completed",
+      "projectId": "criminal-law-qa",
+      "summary": "run.completed",
+      "redaction": {
+        "applied": false,
+        "categories": []
+      }
+    }
+  ]
+}

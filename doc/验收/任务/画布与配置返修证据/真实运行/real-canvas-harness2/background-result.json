@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "blocky.background-ui/v1",
+  "startedAt": "2026-10-08T07:58:17.4606481Z",
+  "application": "node.exe",
+  "runDirectory": "D:\\1Folder\\Blocky-AI\\try\\canvas-repair-2026-10-08\\real-canvas-harness2",
+  "timeoutSeconds": 180,
+  "focusViolation": false,
+  "foregroundBefore": 1247506,
+  "callerDesktop": "Default",
+  "desktop": "BlockyTest-6566097687c54c0584a82bcebdfc6301",
+  "pid": 25924,
+  "controllerOrRunnerExitCode": 0,
+  "applicationExitedNaturally": true,
+  "ownedWindowsBeforeCleanup": [],
+  "jobHandleClosed": true,
+  "processes": [
+    {
+      "processHandleClosed": true,
+      "exited": true,
+      "threadHandleClosed": true,
+      "pid": 25924,
+      "role": "application"
+    }
+  ],
+  "desktopHandleClosed": true,
+  "foregroundFinally": 1247506,
+  "endedAt": "2026-10-08T07:58:32.9972024Z"
+}
