@@ -1,0 +1,79 @@
+
+> blocky-studio@0.8.0 build:release D:\1Folder\Blocky-AI
+> pwsh -NoProfile -File scripts/build-release.ps1
+
+{"files":[{"name":"builder.mjs","bytes":670721,"sha256":"d7cccd832d86af3dcc3f9bf749dba51c2a87cf0801ee63777179cb20689664de"},{"name":"node.exe","bytes":86989128,"sha256":"f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed"}],"builtins":[],"forbidden":[]}
+{"directory":"D:\\1Folder\\Blocky-AI\\try\\agent-capability-upgrade\\document-runtime","files":2430,"directories":380,"bytes":181841453}
+{"directory":"D:\\1Folder\\Blocky-AI\\try\\release-native-target\\release\\document-parser","files":2430,"directories":380,"bytes":181841453}
+Locked E5, MiniLM and reranking models installed.
+{"directory":"D:\\1Folder\\Blocky-AI\\try\\release-native-target\\release\\audio-runtime","files":9,"bytes":79858590}
+{"files":116,"bytes":100805609,"externals":["node:crypto","playwright-core"]}
+{"directml":"1.15.4","vcRuntime":{"status":"available","version":"14.51.36247","redistribution":"system prerequisite; not bundled","files":["msvcp140.dll","msvcp140_1.dll","vcruntime140.dll","vcruntime140_1.dll"]}}
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `pnpm --dir ../studio-desktop build`
+
+> @blocky/studio-desktop@0.8.0 build D:\1Folder\Blocky-AI\apps\studio-desktop
+> vite build
+
+vite v8.2.1 building client environment for production...
+transforming...
+✓ 1381 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.35 kB │ gzip:   0.26 kB
+dist/assets/logo-0dCHBSVz.png          1,222.30 kB
+dist/assets/TerminalView-B1njb2Cr.css      3.96 kB │ gzip:   1.02 kB
+dist/assets/index-DoYtBGiy.css            50.78 kB │ gzip:  11.06 kB
+dist/assets/TerminalView-CkeLed7X.js     334.76 kB │ gzip:  84.53 kB
+dist/assets/index-DhYXhGLT.js          2,349.05 kB │ gzip: 704.65 kB
+
+✓ built in 819ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+warning: variable does not need to be mutable
+   --> src\coding\cli.rs:300:9
+    |
+300 |     let mut candidates = vec![
+    |         ----^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> src\workflow\managed_assets.rs:24:9
+   |
+24 |     let mut candidates = vec![parent.parent().ok_or(ERROR)?.to_path_buf(), parent.join("cli")];
+   |         ----^^^^^^^^^^
+   |         |
+   |         help: remove this `mut`
+
+warning: `blocky-studio` (lib) generated 2 warnings (run `cargo fix --lib -p blocky-studio` to apply 2 suggestions)
+   Compiling blocky-studio v0.8.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 37.76s
+       Built application at: D:\1Folder\Blocky-AI\try\release-native-target\release\blocky-studio.exe
+warning: variable does not need to be mutable
+   --> src\coding\cli.rs:300:9
+    |
+300 |     let mut candidates = vec![
+    |         ----^^^^^^^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> src\workflow\managed_assets.rs:24:9
+   |
+24 |     let mut candidates = vec![parent.parent().ok_or(ERROR)?.to_path_buf(), parent.join("cli")];
+   |         ----^^^^^^^^^^
+   |         |
+   |         help: remove this `mut`
+
+warning: `blocky-studio` (lib) generated 2 warnings (run `cargo fix --lib -p blocky-studio` to apply 2 suggestions)
+   Compiling blocky-studio v0.8.0 (D:\1Folder\Blocky-AI\apps\studio-host)
+    Finished `release` profile [optimized] target(s) in 4.64s
+{"packages":777,"missing":0}

@@ -1,0 +1,1417 @@
+
+> blocky-studio@0.8.0 test:component D:\1Folder\Blocky-AI
+> vitest run tests/component
+
+
+ RUN  v4.1.10 D:/1Folder/Blocky-AI
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/component/workbench-layout.test.tsx (3 tests | 1 failed) 920ms
+   × fully hides panels, keeps the assistant draft when switching views, and exposes named toolbar actions 494ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/component/workbench-layout.test.tsx > fully hides panels, keeps the assistant draft when switching views, and exposes named toolbar actions
+TestingLibraryElementError: Unable to find an accessible element with the role "dialog" and name "构建助手设置"
+
+Here are the accessible roles:
+
+  main:
+
+  Name "":
+  <main
+    class="studio"
+  />
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  <header
+    class="topbar"
+    data-tauri-drag-region="true"
+    role="banner"
+  />
+
+  Name "":
+  <header
+    class="settings-main-heading"
+  />
+
+  --------------------------------------------------
+  button:
+
+  Name "返回开始页":
+  <button
+    aria-label="返回开始页"
+    class="brand"
+  />
+
+  Name "搜索命令":
+  <button
+    aria-label="搜索命令"
+    class="icon-button "
+    title="搜索命令 (Ctrl+K / Ctrl+Shift+P)"
+  />
+
+  Name "保存为蓝图":
+  <button
+    aria-label="保存为蓝图"
+    class="icon-button "
+    disabled=""
+    title="保存为蓝图"
+  />
+
+  Name "从仓库快照生成候选":
+  <button
+    aria-label="从仓库快照生成候选"
+    class="icon-button "
+    title="从仓库快照生成候选"
+  />
+
+  Name "Blocky 构建助手":
+  <button
+    aria-label="Blocky 构建助手"
+    class="icon-button "
+    title="Blocky 构建助手"
+  />
+
+  Name "创建应用界面":
+  <button
+    aria-label="创建应用界面"
+    class="icon-button "
+    title="创建应用界面"
+  />
+
+  Name "保存项目":
+  <button
+    aria-label="保存项目"
+    class="icon-button "
+    title="保存项目 (Ctrl+S)"
+  />
+
+  Name "撤销":
+  <button
+    aria-label="撤销"
+    class="icon-button "
+    disabled=""
+    title="撤销 (Ctrl+Z)"
+  />
+
+  Name "重做":
+  <button
+    aria-label="重做"
+    class="icon-button "
+    disabled=""
+    title="重做 (Ctrl+Y / Ctrl+Shift+Z)"
+  />
+
+  Name "运行":
+  <button
+    aria-label="运行"
+    class="icon-button primary"
+    disabled=""
+    title="运行 (F5 / Ctrl+Enter)"
+  />
+
+  Name "隐藏左侧积木库":
+  <button
+    aria-label="隐藏左侧积木库"
+    aria-pressed="true"
+    class="icon-button "
+    title="隐藏左侧积木库 (Ctrl+B)"
+  />
+
+  Name "显示底部面板":
+  <button
+    aria-label="显示底部面板"
+    aria-pressed="false"
+    class="icon-button "
+    title="显示底部面板 (Ctrl+J)"
+  />
+
+  Name "隐藏右侧面板":
+  <button
+    aria-label="隐藏右侧面板"
+    aria-pressed="true"
+    class="icon-button "
+    title="隐藏右侧面板 (Ctrl+Alt+B)"
+  />
+
+  Name "打开设置":
+  <button
+    aria-label="打开设置"
+    class="icon-button "
+    title="打开设置 (Ctrl+,)"
+  />
+
+  Name "搜索积木":
+  <button
+    aria-label="搜索积木"
+  />
+
+  Name "入门":
+  <button
+    class=""
+  />
+
+  Name "专业":
+  <button
+    class="active"
+  />
+
+  Name "收到问题＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(204, 138, 24);"
+  />
+
+  Name "文本聊天入口＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(204, 138, 24);"
+  />
+
+  Name "接受文本＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(204, 138, 24);"
+  />
+
+  Name "智能体＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(118, 96, 201);"
+  />
+
+  Name "智能体容器＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(118, 96, 201);"
+  />
+
+  Name "补充指令＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "组织回答＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(81, 120, 206);"
+  />
+
+  Name "调用可用工具＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(81, 120, 206);"
+  />
+
+  Name "英文候选评分（实验）＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "添加项目图片＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "查找资料＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "查看资料来源＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "预览解析片段＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "预览资料分段＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "同步资料＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "建立向量索引＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "查看索引状态＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "检查并纠正检索＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(79, 156, 134);"
+  />
+
+  Name "读取记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "保存记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "删除记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "搜索记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "保存有来源的记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "撤销来源记忆＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "工具入口＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(65, 142, 172);"
+  />
+
+  Name "提供给模型的工具＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(65, 142, 172);"
+  />
+
+  Name "连接 Windows 窗口＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "打开隔离浏览器＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "查找窗口控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "读取窗口控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "操作窗口控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "等待窗口控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "捕获窗口区域＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "操作网页控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "读取网页控件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(75, 143, 170);"
+  />
+
+  Name "调用工具＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(65, 142, 172);"
+  />
+
+  Name "转写项目音频＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(99, 132, 184);"
+  />
+
+  Name "发现已安装 Skill＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "加载 Skill 指令＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "执行 Skill 声明工具＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "读取 Skill 附属资料＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "调用模块＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(181, 92, 145);"
+  />
+
+  Name "发送事件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "接收事件＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "并行计算后汇合＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "等待一段时间＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "报告流程失败＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "重复执行＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "逐项处理＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "满足条件时循环＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "尝试并处理错误＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "安全重试＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "持久工作流＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "执行步骤与补偿＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "等待业务审批＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "保存工作流检查点＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(153, 113, 181);"
+  />
+
+  Name "委派 Agent 子任务＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(136, 99, 178);"
+  />
+
+  Name "运行预算＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(186, 111, 76);"
+  />
+
+  Name "引用护栏＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(186, 111, 76);"
+  />
+
+  Name "自定义计算＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(133, 150, 74);"
+  />
+
+  Name "JSON 值＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(133, 150, 74);"
+  />
+
+  Name "设置结果＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(99, 132, 184);"
+  />
+
+  Name "如果＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(99, 132, 184);"
+  />
+
+  Name "回答＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(69, 153, 126);"
+  />
+
+  Name "创建消息＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(69, 153, 126);"
+  />
+
+  Name "回复消息＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(69, 153, 126);"
+  />
+
+  Name "结构化输出＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(69, 153, 126);"
+  />
+
+  Name "文件输出＋":
+  <button
+    class="palette-block"
+    style="border-left-color: rgb(69, 153, 126);"
+  />
+
+  Name "蓝图":
+  <button
+    aria-controls="blueprint-dock-_r_6_"
+    aria-expanded="false"
+    class="blueprint-dock-toggle"
+    type="button"
+  />
+
+  Name "▧ 主画布":
+  <button />
+
+  Name "关闭 主画布":
+  <button
+    aria-label="关闭 主画布"
+  />
+
+  Name "返回上一位置":
+  <button
+    aria-label="返回上一位置"
+    disabled=""
+  />
+
+  Name "缩小画布":
+  <button
+    aria-label="缩小画布"
+  />
+
+  Name "放大画布":
+  <button
+    aria-label="放大画布"
+  />
+
+  Name "构建助手新会话":
+  <button
+    aria-label="构建助手新会话"
+    class="chat-icon"
+    title="新会话"
+    type="button"
+  />
+
+  Name "构建助手历史会话":
+  <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    aria-label="构建助手历史会话"
+    class="chat-icon"
+    data-chat-trigger="true"
+    title="构建助手历史会话"
+    type="button"
+  />
+
+  Name "构建助手设置":
+  <button
+    aria-label="构建助手设置"
+    class="chat-icon"
+    title="设置"
+    type="button"
+  />
+
+  Name "构建助手添加上下文":
+  <button
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    aria-label="构建助手添加上下文"
+    class="chat-icon"
+    data-chat-trigger="true"
+    title="构建助手添加上下文"
+    type="button"
+  />
+
+  Name "发送":
+  <button
+    aria-label="发送"
+    class="chat-send"
+    title="发送"
+    type="submit"
+  />
+
+  Name "收起分类":
+  <button
+    aria-controls="_r_f_-navigation"
+    aria-expanded="true"
+    class="settings-navigation-toggle"
+    type="button"
+  />
+
+  Name "常规":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "外观":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "模型与厂商":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "构建助手":
+  <button
+    aria-current="page"
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "作品运行":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "快捷键":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "专业":
+  <button
+    class="settings-navigation-item"
+    type="button"
+  />
+
+  Name "关闭设置":
+  <button
+    aria-label="关闭设置"
+    class="settings-close"
+    type="button"
+  />
+
+  Name "配置模型":
+  <button
+    type="button"
+  />
+
+  Name "恢复默认模型":
+  <button />
+
+  Name "选择工作文件夹":
+  <button />
+
+  --------------------------------------------------
+  img:
+
+  Name "Blocky":
+  <img
+    alt="Blocky"
+    class="brand-mark"
+    draggable="false"
+    src="/logo/logo.png"
+  />
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  <strong />
+
+  Name "":
+  <strong />
+
+  --------------------------------------------------
+  menubar:
+
+  Name "应用菜单":
+  <nav
+    aria-label="应用菜单"
+    class="menu-bar"
+    role="menubar"
+  />
+
+  --------------------------------------------------
+  none:
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  Name "":
+  <div
+    class="menu-anchor"
+    role="none"
+  />
+
+  --------------------------------------------------
+  menuitem:
+
+  Name "文件":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-file"
+    role="menuitem"
+    tabindex="0"
+  />
+
+  Name "编辑":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-edit"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  Name "视图":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-view"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  Name "运行":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-run"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  Name "构建":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-build"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  Name "终端":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-terminal"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  Name "帮助":
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    id="menu-trigger-help"
+    role="menuitem"
+    tabindex="-1"
+  />
+
+  --------------------------------------------------
+  group:
+
+  Name "项目操作":
+  <div
+    aria-label="项目操作"
+    class="toolbar-actions"
+    role="group"
+  />
+
+  Name "面板布局":
+  <div
+    aria-label="面板布局"
+    class="layout-actions"
+    role="group"
+  />
+
+  Name "跟随默认模型":
+  <div
+    aria-labelledby="_r_h_-title"
+    class="settings-row"
+    role="group"
+  />
+
+  Name "当前文件夹":
+  <div
+    aria-describedby="_r_j_-description"
+    aria-labelledby="_r_j_-title"
+    class="settings-row"
+    role="group"
+  />
+
+  --------------------------------------------------
+  complementary:
+
+  Name "":
+  <aside
+    class="library"
+  />
+
+  Name "右侧面板":
+  <aside
+    aria-label="右侧面板"
+    class="right-sidebar chat-sidebar"
+  />
+
+  Name "设置导航":
+  <aside
+    aria-label="设置导航"
+    class="settings-sidebar"
+  />
+
+  --------------------------------------------------
+  heading:
+
+  Name "触发与交互":
+  <h3 />
+
+  Name "智能体":
+  <h3 />
+
+  Name "指令与上下文":
+  <h3 />
+
+  Name "模型":
+  <h3 />
+
+  Name "知识库":
+  <h3 />
+
+  Name "记忆":
+  <h3 />
+
+  Name "工具":
+  <h3 />
+
+  Name "技能与扩展":
+  <h3 />
+
+  Name "协作与编排":
+  <h3 />
+
+  Name "护栏与权限":
+  <h3 />
+
+  Name "数据与逻辑":
+  <h3 />
+
+  Name "输出与渠道":
+  <h3 />
+
+  Name "设置":
+  <h2 />
+
+  Name "构建助手":
+  <h2
+    id="_r_f_-heading"
+  />
+
+  Name "模型":
+  <h3
+    class="settings-group-title"
+    id="_r_g_"
+  />
+
+  Name "工作文件夹":
+  <h3
+    class="settings-group-title"
+    id="_r_i_"
+  />
+
+  --------------------------------------------------
+  separator:
+
+  Name "左侧积木库宽度":
+  <div
+    aria-label="左侧积木库宽度"
+    aria-orientation="vertical"
+    aria-valuemax="436"
+    aria-valuemin="180"
+    aria-valuenow="240"
+    class="resize-handle resize-x  left-boundary"
+    role="separator"
+    tabindex="0"
+  />
+
+  Name "右侧面板宽度":
+  <div
+    aria-label="右侧面板宽度"
+    aria-orientation="vertical"
+    aria-valuemax="536"
+    aria-valuemin="240"
+    aria-valuenow="340"
+    class="resize-handle resize-x  right-boundary"
+    role="separator"
+    tabindex="0"
+  />
+
+  Name "调整聊天输入框高度":
+  <div
+    aria-label="调整聊天输入框高度"
+    aria-orientation="horizontal"
+    aria-valuemax="9007199254740991"
+    aria-valuemin="99"
+    aria-valuenow="99"
+    class="resize-handle resize-y  chat-composer-resize"
+    role="separator"
+    tabindex="0"
+  />
+
+  --------------------------------------------------
+  textbox:
+
+  Name "画布名称":
+  <input
+    aria-label="画布名称"
+    value="主画布"
+  />
+
+  Name "构建需求":
+  <textarea
+    aria-label="构建需求"
+    class="chat-composer-input"
+    id="builder-chat-prompt"
+    maxlength="16000"
+    placeholder="描述要构建的内容"
+    rows="2"
+    style="height: 54px; resize: none;"
+  />
+
+  --------------------------------------------------
+  tablist:
+
+  Name "右侧工具":
+  <div
+    aria-label="右侧工具"
+    class="sidebar-tabs"
+    role="tablist"
+  />
+
+  --------------------------------------------------
+  tab:
+
+  Name "Blocky Agent":
+  <button
+    aria-controls="sidebar-view-agent"
+    aria-selected="false"
+    id="sidebar-tab-agent"
+    role="tab"
+    tabindex="-1"
+  />
+
+  Name "构建助手":
+  <button
+    aria-controls="sidebar-view-builder"
+    aria-selected="true"
+    id="sidebar-tab-builder"
+    role="tab"
+    tabindex="0"
+  />
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "构建助手":
+  <div
+    aria-labelledby="sidebar-tab-builder"
+    class="sidebar-content"
+    id="sidebar-view-builder"
+    role="tabpanel"
+  />
+
+  --------------------------------------------------
+  region:
+
+  Name "Blocky 构建助手":
+  <section
+    aria-label="Blocky 构建助手"
+    class="builder-panel builder-chat-panel chat-panel"
+  />
+
+  Name "构建助手":
+  <section
+    aria-labelledby="_r_f_-heading"
+    class="settings-main"
+  />
+
+  Name "模型":
+  <section
+    aria-labelledby="_r_g_"
+    class="settings-group"
+  />
+
+  Name "工作文件夹":
+  <section
+    aria-labelledby="_r_i_"
+    class="settings-group"
+  />
+
+  --------------------------------------------------
+  log:
+
+  Name "对话消息":
+  <ol
+    aria-label="对话消息"
+    aria-live="polite"
+    class="builder-chat-messages"
+    role="log"
+  />
+
+  --------------------------------------------------
+  form:
+
+  Name "构建需求输入区":
+  <form
+    aria-label="构建需求输入区"
+    class="chat-composer chat-composer--resizable"
+    style="height: 99px;"
+  />
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  <footer
+    class="statusbar"
+  />
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  <span
+    role="status"
+  />
+
+  Name "":
+  <p
+    role="status"
+  />
+
+  --------------------------------------------------
+  dialog:
+
+  Name "设置":
+  <section
+    aria-label="设置"
+    aria-modal="true"
+    class="popup  unified-settings-popup"
+    role="dialog"
+  />
+
+  --------------------------------------------------
+  searchbox:
+
+  Name "搜索设置":
+  <input
+    aria-label="搜索设置"
+    placeholder="搜索设置"
+    type="search"
+    value=""
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "设置分类":
+  <nav
+    aria-label="设置分类"
+    class="settings-navigation"
+    id="_r_f_-navigation"
+  />
+
+  --------------------------------------------------
+  combobox:
+
+  Name "构建模型资源":
+  <select
+    aria-label="构建模型资源"
+  />
+
+  --------------------------------------------------
+  option:
+
+  Name "选择模型":
+  <option
+    value=""
+  />
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  <p
+    class="settings-row-description"
+    id="_r_j_-description"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <main
+      class="studio"
+    >
+      <header
+        class="topbar"
+        data-tauri-drag-region="true"
+        role="banner"
+      >
+        <button
+          aria-label="返回开始页"
+          class="brand"
+        >
+          <img
+            alt="Blocky"
+            class="brand-mark"
+            draggable="false"
+            src="/logo/logo.png"
+          />
+          <strong>
+            Blocky
+          </strong>
+        </button>
+        <nav
+          aria-label="应用菜单"
+          class="menu-bar"
+          role="menubar"
+        >
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-file"
+              role="menuitem"
+              tabindex="0"
+            >
+              文件
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-edit"
+              role="menuitem"
+              tabindex="-1"
+            >
+              编辑
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-view"
+              role="menuitem"
+              tabindex="-1"
+            >
+              视图
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-run"
+              role="menuitem"
+              tabindex="-1"
+            >
+              运行
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-build"
+              role="menuitem"
+              tabindex="-1"
+            >
+              构建
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-terminal"
+              role="menuitem"
+              tabindex="-1"
+            >
+              终端
+            </button>
+          </div>
+          <div
+            class="menu-anchor"
+            role="none"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              id="menu-trigger-help"
+              role="menuitem"
+              tabindex="-1"
+            >
+              帮助
+            </button>
+          </div>
+        </nav>
+        <div
+          class="project-title"
+          title="未命名项目"
+        >
+          <strong>
+            未命名项目
+          </strong>
+        </div>
+        <span
+          class="spacer"
+          data-tauri-drag-region="true"
+        />
+        <button
+          aria-label="搜索命令"
+          class="icon-button "
+          title="搜索命令 (Ctrl+K / Ctrl+Shift+P)"
+        >
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="17"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.6"
+            viewBox="0 0 24 24"
+            width="17"
+          >
+            <path
+              d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14 M15 15l6 6"
+            />
+          </svg>
+        </button>
+        <div
+          aria-label="项目操作"
+          class="toolbar-actions"
+          role="group"
+        >
+          <button
+            aria-label="保存为蓝图"
+            class="icon-button "
+            disabled=""
+            title="保存为蓝图"
+          >
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="17"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.6"
+              viewBox=[...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/component/workbench-layout.test.tsx:118:17
+    116|   );
+    117|   fireEvent.click(screen.getByRole("button", { name: "发送" }));
+    118|   expect(screen.getByRole("dialog", {name:"设置"})).toBeTruthy();
+       |                 ^
+    119|   expect(screen.getByRole("navigation", {name:"设置分类"}).querySelector('…
+    120|   expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 54 passed (55)
+      Tests  1 failed | 254 passed (255)
+   Start at  21:57:14
+   Duration  67.88s (transform 11.47s, setup 0ms, import 150.85s, tests 34.42s, environment 308.46s)
+
+ ELIFECYCLE  Command failed with exit code 1.
