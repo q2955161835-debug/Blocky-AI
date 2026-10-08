@@ -217,7 +217,7 @@ describe("Blocky native editor", () => {
       throw error;
     });
     await expect($(".answer")).toHaveText(expect.stringContaining("叶绿素"));
-    await expect($(".answer summary")).toHaveText(
+    await expect($(".answer > details:not([class]) > summary")).toHaveText(
       expect.stringContaining("资料来源"),
     );
     await $(".trace summary").click();
