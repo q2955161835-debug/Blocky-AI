@@ -12,11 +12,15 @@ import type { ProjectController } from "@blocky/project-model";
 import type { Project } from "@blocky/language-schema";
 import type { Preferences } from "./host";
 import { readUserState, writeUserState } from "./userState";
+import {useUiPreferences} from "./useUiPreferences";
+import {useAppearance} from "./useAppearance";
 export function useSettings(
   project: Project,
   controller: ProjectController,
   report: (message: string) => void,
 ) {
+  const ui=useUiPreferences(report);
+  useAppearance(ui.values);
   const [app, setApp] = useState(() => createSettings("app"));
   const [ready, setReady] = useState(false),
     [error, setError] = useState("");
@@ -113,6 +117,7 @@ export function useSettings(
       });
   };
   return {
+    ui,
     app,
     project: projectSettings,
     layers,
@@ -126,6 +131,6 @@ export function useSettings(
       setError("");
       setReady(true);
     },
-    flush: () => queue.current,
+    flush: async () => {await queue.current;await ui.flush();},
   };
 }

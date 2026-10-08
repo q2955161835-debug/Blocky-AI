@@ -16,6 +16,7 @@ import { CodingTrace } from "./CodingTrace";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
+import type {SettingsSection} from "./settings/settingsNavigation";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -52,22 +53,24 @@ export function BuilderPanel({
   configureModel,
   promptSuggestion,
   menu: menuControl,
+  openSettings,
 }: {
   menu?: ChatMenuControl;
   studio: Studio;
   builder: CodingAgent;
   configureModel(): void;
   promptSuggestion?: { nonce: number; text: string };
+  openSettings?(section:SettingsSection):void;
 }) {
   const menu = useChatMenu(menuControl);
-  const [prompt, setPrompt] = useState(""),
-    [resourceOverride, setResourceId] = useState<string>();
+  const [prompt, setPrompt] = useState(""),[resourceOverride,setOverride]=useState<string>();
   const [reviewing, setReviewing] = useState(false);
   const defaultResourceId = resolveSetting(
     "models.defaultResourceId",
     studio.settings.layers,
   ).value;
-  const resourceId = resourceOverride ?? defaultResourceId;
+  const resourceId = studio.settings.ui?.values.builderModelId || resourceOverride || defaultResourceId;
+  const setResourceId=(id:string)=>studio.settings.ui?studio.settings.ui.change("builderModelId",id):setOverride(id);
   const models = [...studio.resources.map.values()].filter(isUserOnlineModel);
   const supportsTools = (model: (typeof models)[number]) =>
     Array.isArray(model.definition.capabilities) &&
@@ -103,7 +106,7 @@ export function BuilderPanel({
   const submit = () => {
     if (!canSend) return;
     if (!availableModel) {
-      menu.set("settings");
+      if(openSettings)openSettings("builder");else menu.set("settings");
       return;
     }
     menu.set(null);

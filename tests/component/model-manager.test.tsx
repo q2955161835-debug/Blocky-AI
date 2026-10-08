@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { useResources } from "../../apps/studio-desktop/src/composition/useResources";
 import { ModelManagerPanel } from "../../apps/studio-desktop/src/app/ModelManagerPanel";
-import { SettingsPanel } from "../../apps/studio-desktop/src/app/SettingsPanel";
+import { PreferenceRows } from "../../apps/studio-desktop/src/app/settings/PreferenceRows";
 import { createSettings } from "../../packages/settings-core/src";
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { modelResource } from "../fixtures/model-resource";
@@ -45,7 +45,7 @@ it("shows vendor models and default groups and retains a failed provider edit",a
   expect((screen.getByLabelText("厂商名称") as HTMLInputElement).value).toBe("Unsaved vendor");
   expect(resources!.registry.providers[0].displayName).toBe("Shared vendor");
   const studio={resources:resources!,settings:{ready:true,error:"",layers:{app:createSettings("app")},change:vi.fn()},resetLayout:vi.fn(),session:{leftWidth:260,rightWidth:340,bottomHeight:240},setSession:vi.fn()} as unknown as Studio;
-  render(<SettingsPanel studio={studio}/>);
+  render(<PreferenceRows studio={studio} ids={["models.defaultResourceId"]}/>);
   expect(screen.getByRole("group",{name:"Shared vendor"})).toBeTruthy();
 });
 it("edits model identity, capabilities and parameters without duplicating provider credentials",async()=>{

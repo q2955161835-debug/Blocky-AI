@@ -29,6 +29,14 @@ export default function TerminalView({
     const fit = new FitAddon();
     terminal.loadAddon(fit);
     terminal.open(container.current);
+    const appearance=()=>{
+      const root=document.documentElement, style=getComputedStyle(root), light=root.dataset.theme==="light";
+      terminal.options.fontFamily=style.getPropertyValue("--code-font").trim()||"Consolas, monospace";
+      terminal.options.fontSize=parseFloat(style.getPropertyValue("--ui-font-size"))||13;
+      terminal.options.theme=light?{background:"#ffffff",foreground:"#202938",cursor:"#2563eb",selectionBackground:"#c9def5"}:{background:"#20242c",foreground:"#eef2f7",cursor:"#eef2f7",selectionBackground:"#40516a"};
+      fitRef.current();
+    };
+    appearance();window.addEventListener("blocky-appearance",appearance);
     let disposed = false,
       consumed = 0,
       timer: ReturnType<typeof setTimeout> | undefined;
@@ -102,6 +110,7 @@ export default function TerminalView({
       clearTimeout(timer);
       clearTimeout(sizeTimer);
       observer.disconnect();
+      window.removeEventListener("blocky-appearance",appearance);
       input.dispose();
       terminal.dispose();
     };

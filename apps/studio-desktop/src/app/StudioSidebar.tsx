@@ -12,6 +12,7 @@ import {
   type ChatMenuControl,
 } from "./ChatControls";
 import { ChatHistoryMenu } from "./ChatHistoryMenu";
+import type {SettingsSection} from "./settings/settingsNavigation";
 
 export function StudioSidebar({
   studio: s,
@@ -21,6 +22,7 @@ export function StudioSidebar({
   enabled,
   onTraceContext,
   chatMenu,
+  openSettings,
 }: {
   studio: Studio;
   builder: CodingAgent;
@@ -29,6 +31,7 @@ export function StudioSidebar({
   enabled(id: string): boolean;
   onTraceContext(x: number, y: number, source: SourceRef): void;
   chatMenu?: ChatMenuControl;
+  openSettings?(section:SettingsSection):void;
 }) {
   const menu = useChatMenu(chatMenu);
   const isBuilder = s.session.rightView === "builder";
@@ -61,6 +64,7 @@ export function StudioSidebar({
               key={id}
               id={`sidebar-tab-${id}`}
               role="tab"
+              title={label}
               aria-selected={s.session.rightView === id}
               aria-controls={`sidebar-view-${id}`}
               tabIndex={s.session.rightView === id ? 0 : -1}
@@ -115,13 +119,13 @@ export function StudioSidebar({
           >
             ⌄
           </ChatMenuButton>
-          <ChatMenuButton
+          {openSettings?<button type="button" className="chat-icon" aria-label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"} title="设置" onClick={()=>{menu.set(null);openSettings(isBuilder?"builder":"agent");}}>⚙</button>:<ChatMenuButton
             menu={menu}
             kind="settings"
             label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"}
           >
             ⚙
-          </ChatMenuButton>
+          </ChatMenuButton>}
         </div>
       </div>
       <ChatHistoryMenu
@@ -171,6 +175,7 @@ export function StudioSidebar({
           menu={{ ...menu, value: isBuilder ? menu.value : null }}
           promptSuggestion={promptSuggestion}
           configureModel={() => execute("settings.resources")}
+          openSettings={openSettings}
         />
       </div>
     </aside>

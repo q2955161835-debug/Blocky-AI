@@ -37,6 +37,7 @@ import { ToolbarActions } from "./ToolbarActions";
 import { WindowControls } from "./WindowControls";
 import { ProjectWindowMenu } from "./ProjectWindowMenu";
 import logo from "../../../../logo/logo.png";
+import "./Appearance.css";
 export function App() {
   const s = useStudio(),
     api = useRef<CanvasHandle | null>(null);
@@ -387,7 +388,7 @@ export function App() {
               onContext={(blockType, x, y) => setPopup({ kind: "context", scope: "library", blockType, x, y })}
             />
             }
-            right={<StudioSidebar studio={s} builder={builder} promptSuggestion={builderPrompt}
+            right={<StudioSidebar studio={s} builder={builder} promptSuggestion={builderPrompt} openSettings={section=>setPopup({kind:"settings",section})}
               chatMenu={{ value: !s.confirmation && popup?.kind === "chat" ? popup.menu : null, set: menu => setPopup(menu ? {kind:"chat",menu} : null) }}
               execute={execute} enabled={enabled}
               onTraceContext={(x, y, source) => setPopup({ kind: "context", scope: "event", x, y, source })}
@@ -619,6 +620,7 @@ export function App() {
         !s.confirmation && (
           <StudioDialog
             studio={s}
+            builder={builder}
             popup={popup}
             setPopup={setPopup}
             query={query}

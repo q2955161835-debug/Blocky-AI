@@ -1,179 +1,238 @@
-import { useState, useEffect } from "react";
-import { searchSettings, resolveSetting } from "@blocky/settings-core";
-import { isUserOnlineModel } from "@blocky/resource-registry";
+import { useEffect, useState } from "react";
+import { resolveSetting } from "@blocky/settings-core";
 import type { Studio } from "../composition/useStudio";
-function NumericSetting({
-  title,
-  value,
-  disabled,
-  change,
+import type { CodingAgent } from "../composition/useCodingAgent";
+import { SettingsShell } from "./settings/SettingsShell";
+import { SettingsRow, SettingsGroup } from "./settings/SettingsRow";
+import { PreferenceRows } from "./settings/PreferenceRows";
+import { AppearanceSettings } from "./settings/AppearanceSettings";
+import {
+  settingsSections,
+  type SettingsSection,
+} from "./settings/settingsNavigation";
+import { ResourcePanel } from "./ResourcePanel";
+import { BuilderModelSettings } from "./BuilderModelSettings";
+import { RunSettings } from "./RunSettings";
+import { ShortcutsPanel } from "./ShortcutsPanel";
+import { ProjectMap } from "./ProjectMap";
+import { EditorTools } from "./EditorTools";
+import { Inspector } from "./Inspector";
+const searchTerms: Record<SettingsSection, string> = {
+  general: "视图 专业 入门 最小化 托盘 工作台 布局 左侧 右侧 宽度",
+  appearance:
+    "主题 深色 浅色 跟随系统 界面字号 界面字体 代码字体 微软雅黑 宋体 Consolas Courier 减少动态",
+  models:
+    "默认模型 厂商 连接 模型 ID 超时 Token 温度 工具 MCP 知识 记忆 技能 媒体 评估 触发器",
+  builder: "构建助手 模型 工具调用 工作文件夹 权限",
+  agent:
+    "作品运行 Blocky Agent 模型 预算 入口 断点 调试 单步 项目画布 积木 属性 工作流",
+  shortcuts: "快捷键 搜索 命令 导入 导出 恢复",
+  advanced: "专业 终端 输出 容量 字节 日志 保留 天数 存储",
+};
+export function SettingsPanel({
+  studio: s,
+  builder,
+  initialSection = "general",
+  execute = () => {},
+  enabled = () => true,
+  onClose,
+  onDirty,
 }: {
-  title: string;
-  value: number;
-  disabled: boolean;
-  change(value: number): void;
+  studio: Studio;
+  builder?: CodingAgent;
+  initialSection?: SettingsSection;
+  execute?(id: string): void;
+  enabled?(id: string): boolean;
+  onClose?(): void;
+  onDirty?(dirty: boolean): void;
 }) {
-  const [text, setText] = useState(String(value));
-  useEffect(() => setText(String(value)), [value]);
-  return (
-    <input
-      aria-label={title}
-      type="number"
-      disabled={disabled}
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      onBlur={() => change(text.trim() ? Number(text) : NaN)}
-    />
-  );
-}
-export function SettingsPanel({ studio: s }: { studio: Studio }) {
-  const [query, setQuery] = useState(""),
-    [scope, setScope] = useState<"app" | "project">("app"),
-    [error, setError] = useState("");
-  const models = [...s.resources.map.values()].filter(isUserOnlineModel);
-  const change = (id: string, value: unknown, reset = false) => {
-    try {
-      s.settings.change(scope, id, value, reset);
-      setError("");
-    } catch {
-      setError("设置值或作用域无效，原值保持不变。");
-    }
+  const [section, setSection] = useState(initialSection),
+    [query, setQuery] = useState("");
+  const [visited, setVisited] = useState<SettingsSection[]>([initialSection]);
+  useEffect(() => {
+    setSection(initialSection);
+    setVisited((v) =>
+      v.includes(initialSection) ? v : [...v, initialSection],
+    );
+  }, [initialSection]);
+  const select = (next: SettingsSection) => {
+    setSection(next);
+    setQuery("");
+    setVisited((v) => (v.includes(next) ? v : [...v, next]));
   };
+  const defaultModel = resolveSetting(
+    "models.defaultResourceId",
+    s.settings.layers,
+  ).value;
+  const builderModel = s.settings.ui.values.builderModelId || defaultModel;
+  const filtered = settingsSections.filter((item) =>
+    (
+      item.title +
+      " " +
+      searchTerms[item.id] +
+      (item.id === "models"
+        ? " " +
+          s.resources.registry.providers.map((p) => p.displayName).join(" ") +
+          " " +
+          s.resources.registry.resources.map((r) => r.displayName).join(" ")
+        : "")
+    )
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
+  );
   return (
-    <div className="settings settings-panel">
-      <button onClick={s.resetLayout}>恢复默认工作台布局</button>
-      <input
-        aria-label="搜索设置"
-        placeholder="搜索设置…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <label>
-        保存位置{" "}
-        <select
-          aria-label="设置作用域"
-          value={scope}
-          onChange={(e) => setScope(e.target.value as "app" | "project")}
-        >
-          <option value="app">应用</option>
-          <option value="project">当前项目</option>
-        </select>
-      </label>
-      {(s.settings.error || error) && (
-        <p role="alert">{s.settings.error || error}</p>
+    <SettingsShell
+      section={section}
+      onSection={select}
+      query={query}
+      onQuery={setQuery}
+      onClose={onClose}
+    >
+      {query.trim() && (
+        <div className="settings-search-results" aria-label="设置搜索结果">
+          {filtered.length ? (
+            filtered.map((item) => (
+              <button key={item.id} onClick={() => select(item.id)}>
+                {item.title}
+                <small>{searchTerms[item.id]}</small>
+              </button>
+            ))
+          ) : (
+            <p>没有找到匹配设置。</p>
+          )}
+        </div>
       )}
-      {s.settings.error && (
-        <button
-          onClick={() =>
-            void s
-              .confirm("恢复默认将替换损坏的应用设置。继续？")
-              .then((yes) => yes && s.settings.recover())
-          }
-        >
-          恢复应用默认值
-        </button>
-      )}
-      {searchSettings(query).map((def) => {
-        const resolved = resolveSetting(def.id, s.settings.layers),
-          disabled = !s.settings.ready || !def.allowedScopes.includes(scope);
-        return (
-          <section className="setting-row" key={def.id}>
-            <label>
-              {def.title}
-              {def.valueType === "boolean" ? (
-                <input
-                  aria-label={def.title}
-                  type="checkbox"
-                  disabled={disabled}
-                  checked={resolved.value === true}
-                  onChange={(e) => change(def.id, e.target.checked)}
+      {visited.map((id) => (
+        <div key={id} hidden={id !== section || !!query.trim()}>
+          {id === "general" && (
+            <>
+              <SettingsGroup title="常规">
+                <PreferenceRows
+                  studio={s}
+                  ids={["ui.view", "window.minimizeToTray"]}
                 />
-              ) : def.valueType === "model-resource" ? (
-                <select aria-label={def.title} value={String(resolved.value)} disabled={disabled || !s.resources.ready}
-                  onChange={(e) => change(def.id, e.target.value)}>
-                  <option value="">使用本地默认</option>
-                  {resolved.value && !models.some(model => model.resourceId === resolved.value) &&
-                    <option value={String(resolved.value)} disabled>默认模型不可用</option>}
-                  {(s.resources.registry.providers ?? []).map(provider=><optgroup key={provider.providerId} label={provider.displayName}>
-                    {models.filter(model=>model.definition.connectionRef===provider.providerId).map(model=><option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}
-                  </optgroup>)}
-                  <optgroup label="独立与本机模型">{models.filter(model=>!model.definition.connectionRef).map(model => <option key={model.resourceId} value={model.resourceId}>{model.displayName}</option>)}</optgroup>
-                </select>
-              ) : def.valueType === "enum" ? (
-                <select
-                  aria-label={def.title}
-                  value={String(resolved.value)}
-                  disabled={disabled}
-                  onChange={(e) => change(def.id, e.target.value)}
+              </SettingsGroup>
+              <SettingsGroup title="工作台布局">
+                <SettingsRow title="左侧积木库宽度">
+                  <input
+                    aria-label="左侧积木库宽度"
+                    type="range"
+                    min="180"
+                    max="1200"
+                    value={s.session.leftWidth}
+                    onChange={(e) =>
+                      s.setSession((v) => ({
+                        ...v,
+                        leftWidth: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </SettingsRow>
+                <SettingsRow title="右侧面板宽度">
+                  <input
+                    aria-label="右侧面板宽度"
+                    type="range"
+                    min="240"
+                    max="1200"
+                    value={s.session.rightWidth}
+                    onChange={(e) =>
+                      s.setSession((v) => ({
+                        ...v,
+                        rightWidth: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </SettingsRow>
+                <SettingsRow title="恢复布局">
+                  <button onClick={s.resetLayout}>恢复默认工作台布局</button>
+                </SettingsRow>
+              </SettingsGroup>
+            </>
+          )}
+          {id === "appearance" && <AppearanceSettings studio={s} />}
+          {id === "models" && (
+            <>
+              <SettingsGroup title="默认模型">
+                <PreferenceRows studio={s} ids={["models.defaultResourceId"]} />
+              </SettingsGroup>
+              <ResourcePanel studio={s} unified onDirty={onDirty} />
+            </>
+          )}
+          {id === "builder" && (
+            <>
+              <SettingsGroup title="模型">
+                <BuilderModelSettings
+                  studio={s}
+                  resourceId={builderModel}
+                  disabled={
+                    !s.settings.ui.ready ||
+                    !!builder?.busy ||
+                    s.running ||
+                    s.busy
+                  }
+                  select={(value) =>
+                    s.settings.ui.change("builderModelId", value)
+                  }
+                  configure={() => select("models")}
+                />
+                <SettingsRow title="跟随默认模型">
+                  <button
+                    disabled={!s.settings.ui.ready}
+                    onClick={() => s.settings.ui.change("builderModelId", "")}
+                  >
+                    恢复默认模型
+                  </button>
+                </SettingsRow>
+              </SettingsGroup>
+              <SettingsGroup title="工作文件夹">
+                <SettingsRow
+                  title="当前文件夹"
+                  description={builder?.workspace?.displayName || "尚未选择"}
                 >
-                  <option value="professional">专业</option>
-                  <option value="beginner">入门</option>
-                </select>
-              ) : (
-                <NumericSetting
-                  title={def.title}
-                  disabled={disabled}
-                  value={Number(resolved.value)}
-                  change={(value) => change(def.id, value)}
+                  <button
+                    disabled={!builder || builder.busy || s.running || s.busy}
+                    onClick={() => void builder?.pickWorkspace()}
+                  >
+                    选择工作文件夹
+                  </button>
+                </SettingsRow>
+              </SettingsGroup>
+            </>
+          )}
+          {id === "agent" && (
+            <>
+              <SettingsGroup title="运行与调试">
+                <RunSettings studio={s} execute={execute} />
+              </SettingsGroup>
+              <SettingsGroup title="画布与积木">
+                <ProjectMap studio={s} />
+                <EditorTools studio={s} execute={execute} enabled={enabled} />
+                <Inspector
+                  studio={s}
+                  configureResource={() => select("models")}
                 />
-              )}
-            </label>
-            <small>
-              {def.description} · 来源：
-              {
-                {
-                  app: "应用",
-                  project: "项目",
-                  resource: "资源",
-                  block: "积木",
-                  default: "默认",
-                }[resolved.source]
-              }
-            </small>
-            <button
-              disabled={disabled}
-              onClick={() => change(def.id, null, true)}
-            >
-              恢复继承
-            </button>
-          </section>
-        );
-      })}
-      {!query && (
-        <>
-          <h3>工作台布局</h3>
-          <label>
-            左侧积木库宽度
-            <input
-              type="range"
-              min="180"
-              max="1200"
-              value={s.session.leftWidth}
-              onChange={(e) =>
-                s.setSession((v) => ({
-                  ...v,
-                  leftWidth: Number(e.target.value),
-                }))
-              }
-            />
-          </label>
-          <label>
-            右侧面板宽度
-            <input
-              type="range"
-              min="240"
-              max="1200"
-              value={s.session.rightWidth}
-              onChange={(e) =>
-                s.setSession((v) => ({
-                  ...v,
-                  rightWidth: Number(e.target.value),
-                }))
-              }
-            />
-          </label>
-        </>
-      )}
-    </div>
+              </SettingsGroup>
+            </>
+          )}
+          {id === "shortcuts" && (
+            <SettingsGroup title="键盘快捷键">
+              <ShortcutsPanel studio={s} />
+            </SettingsGroup>
+          )}
+          {id === "advanced" && (
+            <SettingsGroup title="输出与日志">
+              <PreferenceRows
+                studio={s}
+                ids={[
+                  "terminal.outputBudgetBytes",
+                  "logs.retentionDays",
+                  "logs.maxStoredBytes",
+                ]}
+              />
+            </SettingsGroup>
+          )}
+        </div>
+      ))}
+    </SettingsShell>
   );
 }

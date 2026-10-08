@@ -1,14 +1,35 @@
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
 import type { Resource } from "@blocky/language-schema";
-import { validateResource, type ModelProvider } from "@blocky/resource-registry";
+import { validateResource,parseModelProvider, type ModelProvider } from "@blocky/resource-registry";
 import type { useResources } from "../composition/useResources";
 import { ModelProviderEditor } from "./ModelProviderEditor";
 import { ConnectedModelEditor } from "./ConnectedModelEditor";
-export function ModelManagerPanel({resources,defaultModelId,setDefault,reference}:{
-  resources:ReturnType<typeof useResources>;defaultModelId:string;setDefault(id:string):Promise<unknown>;reference(resource:Resource):void;
+export function ModelManagerPanel({resources,defaultModelId,setDefault,reference,autoSave=false,onDirty}:{
+  resources:ReturnType<typeof useResources>;defaultModelId:string;setDefault(id:string):Promise<unknown>;reference(resource:Resource):void;autoSave?:boolean;onDirty?(dirty:boolean):void;
 }) {
   const [provider,setProvider]=useState<ModelProvider>(),[model,setModel]=useState<Resource>(),[error,setError]=useState(""),[busy,setBusy]=useState(false);
   const providers=resources.registry.providers??[];
+  const failed=useRef("");
+  const signature=JSON.stringify(provider??model??null);
+  const stored=provider?providers.find(p=>p.providerId===provider.providerId):model?resources.registry.resources.find(r=>r.resourceId===model.resourceId):undefined;
+  const dirty=!!(provider||model)&&signature!==JSON.stringify(stored??null);
+  useEffect(()=>{onDirty?.(dirty||busy);},[dirty,busy,onDirty]);
+  useEffect(()=>{
+    if(!autoSave||!dirty||busy||failed.current===signature)return;
+    try{if(provider)parseModelProvider(provider);else if(model)validateResource(model);else return;}catch{return;}
+    const timer=setTimeout(()=>{
+      setBusy(true);setError("");
+      const task=provider?resources.upsertProvider(provider):resources.upsert(model!);
+      void task.then(()=>{
+        if(provider)setProvider({...provider,revision:stored?(stored as ModelProvider).revision+1:1});
+        failed.current="";
+      }).catch(cause=>{
+        failed.current=signature;
+        setError(String(cause).includes("BLK-RESOURCE-CONFLICT")?"配置已被其他窗口修改，草稿保留。请重新打开记录核对差异。":"自动保存失败，原配置与草稿保留，请检查字段或重试保存。");
+      }).finally(()=>setBusy(false));
+    },650);
+    return()=>clearTimeout(timer);
+  },[autoSave,dirty,busy,signature,resources.registry.revision]);
   const perform=async(task:()=>Promise<unknown>,done?:()=>void)=>{
     setBusy(true);setError("");try{await task();done?.();}catch(cause){
       const conflict=String(cause).includes("BLK-RESOURCE-CONFLICT");

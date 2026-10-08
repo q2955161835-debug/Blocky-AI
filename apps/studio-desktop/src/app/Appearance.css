@@ -1,0 +1,154 @@
+/* Preferences are applied to the document root by the settings owner. */
+:root {
+  font-family: var(--ui-font, "Microsoft YaHei UI", "Segoe UI", sans-serif);
+  font-size: var(--ui-font-size, 13px);
+  --text: #eef2f7;
+  --appearance-background: #20242c;
+  --appearance-raised: #292f3a;
+  --appearance-input: #1e222b;
+  --appearance-hover: #ffffff0c;
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] {
+  color-scheme: light;
+  color: #252b35;
+  background: #f4f5f7;
+  --text: #252b35;
+  --panel: #ffffff;
+  --border: #d4d8df;
+  --muted: #626b79;
+  --action: #2862cf;
+  --appearance-background: #f4f5f7;
+  --appearance-raised: #ffffff;
+  --appearance-input: #f7f8fa;
+  --appearance-hover: #252b350a;
+}
+:root :is(button, input, textarea, select, kbd, .canvas-hint) {
+  font-family: var(--ui-font, "Microsoft YaHei UI", "Segoe UI", sans-serif);
+}
+:root :is(pre, code, textarea.coding, .program-editor textarea) {
+  font-family: var(--code-font, ui-monospace, Consolas, monospace);
+}
+:root .blocklyText { font-family: var(--ui-font, "Microsoft YaHei UI", "Segoe UI", sans-serif) !important; }
+/* Use the existing 13px hierarchy as ratios so preference changes reach controls. */
+:root :is(.topbar nav button, .palette-block, .project-title, .sidebar-tabs button,
+  .chat-sidebar-header .sidebar-tabs button, .chat-popover-header, .chat-popover-content,
+  .builder-chat-progress, .builder-chat-empty, .chat-inline-hint, .answer p,
+  .prompt-label textarea, .empty-state, .panel-empty, .blueprint-import) { font-size: 0.923rem; }
+:root :is(.view-switch button, .palette h3, .module-list button, .starting-blueprint-options button,
+  .starting-blueprints summary, .starting-blueprints-heading, .blueprint-dock-toggle,
+  .workspace-tabs button, .canvas-toolbar input, .run-limits, .prompt-label,
+  .run-actions button, .answer-heading, .answer details, .answer details p, .trace,
+  .project-map, .editor-tools, .inspector label, .inspector input, .inspector textarea,
+  .inspector select, .inspector > button, .resource-config p, .panel-tabs button,
+  .log-row, .canvas-overview, .runtime-status, .coding-trace,
+  .chat-run-status, .chat-panel .chat-model-chip, .builder-chat-evidence,
+  .builder-chat-candidate details, .builder-chat-candidate .builder-chat-result-source,
+  .task-controls label, .task-output, .patch-review pre, .builder-panel pre) { font-size: 0.846rem; }
+:root :is(kbd, .dirty, .unavailable, .section-label span, .run-actions > span,
+  .trace button, .resource-config small, .log-row time, .log-row code, .log-row small,
+  .statusbar, .chat-history-list time, .builder-chat-message-heading span,
+  .builder-chat-candidate-heading div span, .canvas-hint) { font-size: 0.769rem; }
+:root :is(.section-label, .blueprint-dock-content .starting-blueprints-heading) { font-size: 0.846rem; }
+:root :is(.popup > input, .popup header strong, .builder-panel h3, .builder-chat-candidate-heading strong) { font-size: 1rem; }
+:root .brand strong { font-size: 1.154rem; }
+:root .settings-sidebar-heading h2 { font-size: 1.538rem; }
+:root .settings-main-heading h2 { font-size: 2.154rem; }
+:root .settings-group-title { font-size: 1.154rem; }
+
+/* Light appearance changes surfaces, never block-category fills or brand assets. */
+:root[data-theme="light"] :is(.studio, .workspace, .workspace-tabs, .bottom-panel,
+  .statusbar, .mini-blocks, .canvas-toolbar) { background: var(--appearance-background); }
+:root[data-theme="light"] :is(.topbar, .library, .right-sidebar,
+  .right-sidebar.chat-sidebar, .starting-blueprints, .blueprint-dock,
+  .popup, .menu-dropdown, .project-window-options, .confirmation-dialog,
+  .chat-popover, .rpa-controls, .popup:has(.resource-panel) > header,
+  .popup:has(.settings-panel) > header) {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--border);
+}
+:root[data-theme="light"] :is(input, textarea, select) {
+  color: var(--text);
+  background: var(--appearance-input);
+  border-color: var(--border);
+  accent-color: var(--action);
+}
+:root[data-theme="light"] :is(input, textarea)::placeholder { color: var(--muted); opacity: 1; }
+:root[data-theme="light"] button:hover { background: var(--appearance-hover); }
+:root[data-theme="light"] :is(button, input, textarea, select):focus-visible { outline-color: var(--action); }
+:root[data-theme="light"] button.primary { color: #ffffff; background: #2862cf; border-color: #2862cf; }
+:root[data-theme="light"] button.primary:hover { background: #204fa7; }
+:root[data-theme="light"] :is(.view-switch, .palette-block, .ghost-block,
+  .answer details, .chat-composer, .builder-chat-message-user,
+  .builder-chat-candidate, .builder-chat-candidate-heading > span) {
+  background: #edf0f5;
+  color: var(--text);
+  border-color: var(--border);
+}
+:root[data-theme="light"] :is(.view-switch .active, .workspace-tabs .active,
+  .menu-bar > .menu-anchor > button[aria-expanded="true"],
+  .chat-history-list button.active, .chat-history-list button:hover,
+  .menu-dropdown button:focus-visible) { background: #e2e7ef; color: var(--text); }
+:root[data-theme="light"] :is(.brand strong span, .project-title, .palette h3,
+  .starting-blueprints summary, .blueprint-dock-toggle,
+  .blueprint-dock-content .starting-blueprints-heading, .section-label,
+  .sidebar-tabs [aria-selected="true"], .panel-tabs .active,
+  .chat-header-actions button.chat-icon, .chat-panel button.chat-icon,
+  .chat-panel .chat-model-chip, .builder-chat-candidate .builder-chat-explanation,
+  .builder-chat-candidate details, .builder-chat-evidence) { color: var(--text); }
+:root[data-theme="light"] :is(.palette-block span, .unavailable, .run-limits,
+  .prompt-label, .answer details, .trace, .inspector label, .empty-inspector p,
+  .panel-tabs button, .log-row time, .log-row code, .panel-empty, .statusbar,
+  .empty-canvas, .welcome-heading p, .empty-state, .menu-dropdown kbd,
+  .canvas-outline small, .canvas-outline p, .canvas-hint, kbd) { color: var(--muted); }
+:root[data-theme="light"] :is(.answer-heading, .eyebrow, .icon-button[aria-pressed="true"]) { color: #285da8; }
+:root[data-theme="light"] :is(.log-row.error, .code-state-invalid) { color: #a62f2c; }
+:root[data-theme="light"] :is(.warning, .log-row.warning, .dirty, .code-state-warning) { color: #80560d; }
+:root[data-theme="light"] :is(.code-state-official-default, .code-state-custom-valid, .runtime-status) { color: #236544; }
+:root[data-theme="light"] .panel-tabs b { background: #fae5c3; color: #80560d; }
+:root[data-theme="light"] .recovery-notice { background: #fff6e6; border-color: #b48e4c; color: #63470f; }
+:root[data-theme="light"] .builder-chat-alert { background: #fff0ee; border-color: #c78982; color: #852f28; }
+:root[data-theme="light"] .coding-trace { border-top-color: var(--border); }
+:root[data-theme="light"] .chat-composer:focus-within { border-color: #748aae; }
+:root[data-theme="light"] .chat-panel .chat-composer textarea,
+:root[data-theme="light"] .chat-panel .chat-composer--resizable .chat-composer-input { background: transparent; }
+:root[data-theme="light"] .chat-panel .chat-send { background: #315f9a; color: #ffffff; }
+:root[data-theme="light"] .chat-panel .chat-send:hover { background: #254b7c; }
+:root[data-theme="light"] .chat-markdown a { color: #245db2; }
+:root[data-theme="light"] .chat-markdown a:focus-visible { outline-color: #245db2; }
+:root[data-theme="light"] .chat-markdown blockquote { color: #535f70; border-color: #8090a7; }
+:root[data-theme="light"] .chat-markdown hr { border-color: var(--border); }
+:root[data-theme="light"] .chat-markdown code { color: #253249; background: #e7ebf1; }
+:root[data-theme="light"] .chat-markdown pre { color: #253249; background: #f0f3f8; border-color: var(--border); }
+:root[data-theme="light"] .chat-markdown pre code { background: transparent; }
+:root[data-theme="light"] .chat-markdown :is(th, td) { border-color: var(--border); }
+:root[data-theme="light"] .chat-markdown th { background: #e9edf3; }
+:root[data-theme="light"] .canvas-shell { background: #f5f6f8; }
+:root[data-theme="light"] .blocklySvg { background: #f5f6f8 !important; }
+:root[data-theme="light"] .blocklyMainBackground { stroke: var(--border); }
+:root[data-theme="light"] .canvas-overview { color: var(--text); background: #ffffffed; border-color: var(--border); }
+:root[data-theme="light"] .canvas-outline button:hover,
+:root[data-theme="light"] .canvas-outline button:focus-visible { background: #e7edf5; }
+:root[data-theme="light"] .overview-viewport { fill: #2862cf18; stroke: #315f9a; }
+:root[data-theme="light"] .resize-handle { background: #d4d8df80; }
+:root[data-theme="light"] .resize-handle:hover,
+:root[data-theme="light"] .resize-handle:focus-visible,
+:root[data-theme="light"] .resize-handle.resizing { background: var(--action); }
+:root[data-theme="light"] ::-webkit-scrollbar-thumb { background: #a3acba; }
+:root[data-theme="light"] :is(.popup, .menu-dropdown, .project-window-options, .chat-popover, .confirmation-dialog) { box-shadow: 0 12px 38px #26314726; }
+:root[data-theme="light"] .settings-shell {
+  --settings-background: #ffffff;
+  --settings-line: #d4d8df;
+  --settings-secondary: #626b79;
+  --settings-foreground: #252b35;
+  --settings-focus: #2862cf;
+  --settings-search-background: #f0f1f3;
+  --settings-selected: #e8eaed;
+  --settings-hover: #f2f3f5;
+  --settings-card-background: #fafbfc;
+  --settings-control-background: #f3f5f7;
+}
+@media (max-width: 640px) {
+  :root .settings-main-heading h2 { font-size: 1.846rem; }
+}

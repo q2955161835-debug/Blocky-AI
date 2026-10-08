@@ -115,6 +115,7 @@ it("fully hides panels, keeps the assistant draft when switching views, and expo
     ).toBe(false),
   );
   fireEvent.click(screen.getByRole("button", { name: "发送" }));
-  expect(screen.getByRole("dialog", {name:"构建助手设置"})).toBeTruthy();
+  expect(screen.getByRole("dialog", {name:"设置"})).toBeTruthy();
+  expect(screen.getByRole("navigation", {name:"设置分类"}).querySelector('[aria-current="page"]')?.textContent).toBe("构建助手");
   expect((screen.getByLabelText("构建需求") as HTMLTextAreaElement).value).toBe("帮我讲解这些积木");
 });

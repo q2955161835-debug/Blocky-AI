@@ -15,6 +15,7 @@ impl UserStore {
     fn path(&self, kind: &str, id: &str) -> Result<PathBuf, String> {
         if ![
             "settings",
+            "ui-preferences",
             "shortcuts",
             "resources",
             "session",
@@ -83,6 +84,10 @@ impl UserStore {
         }
         Ok(())
     }
+    pub fn patch_ui_preferences(&self,id:&str,value:Value)->Result<Value,String>{
+        let _guard=self.lock.lock().map_err(|_|ERROR)?;
+        crate::ui_preferences::patch(&self.root,id,value)
+    }
 }
 pub fn validate_settings(value: &Value) -> Result<(), String> {
     let map = value.as_object().ok_or(ERROR)?;
@@ -125,6 +130,7 @@ pub fn validate_settings(value: &Value) -> Result<(), String> {
 }
 fn validate(kind: &str, value: &Value) -> Result<(), String> {
     crate::project_store::check_secrets(value, 0)?;
+    if kind=="ui-preferences" {return crate::ui_preferences::validate(value);}
     if kind.starts_with("chat-") {return crate::chat_history::validate(kind,value);}
     if kind == "resources" && value["schemaVersion"] == "blocky.resource-registry/v2" {
         return crate::model_registry::validate_registry(value);

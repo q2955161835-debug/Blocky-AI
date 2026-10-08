@@ -232,6 +232,7 @@ fn main() {
             knowledge_commands::knowledge_embedding_status,
             knowledge_commands::knowledge_embedding_activate,
             user_commands::read_user_state,
+            user_commands::patch_ui_preferences,
             user_commands::write_user_state,
             user_commands::clear_user_state,
             secret_commands::import_secret,

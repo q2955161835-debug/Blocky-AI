@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
 import {
   resourceDefinitions,
   validateResource,
@@ -210,7 +210,8 @@ function ArrayField({
     </>
   );
 }
-export function ResourcePanel({ studio: s }: { studio: Studio }) {
+export function ResourcePanel({ studio: s,unified=false,onDirty }: { studio: Studio;unified?:boolean;onDirty?(dirty:boolean):void }) {
+  const [modelDirty,setModelDirty]=useState(false);
   const [draft, setDraft] = useState<Resource>(),
     [error, setError] = useState("");
   const [kind, setKind] = useState("model");
@@ -219,8 +220,13 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
   const [operationResourceId, setOperationResourceId] = useState("");
   const [saving, setSaving] = useState(false);
   const panelBusy = managedBusy || toolOperationsBusy || saving;
+  const failedAuto=useRef("");
   const [scope, setScope] = useState<"project" | "user">("project");
   const project = s.snapshot.project;
+  const draftSignature=JSON.stringify(draft??null);
+  const storedDraft=draft?.scope==="user"?s.resources.registry.resources.find(r=>r.resourceId===draft.resourceId):draft?project.resources[draft.resourceId]:undefined;
+  const draftDirty=!!draft&&draftSignature!==JSON.stringify(storedDraft??null);
+  useEffect(()=>{onDirty?.(draftDirty||modelDirty||panelBusy);},[draftDirty,modelDirty,panelBusy,onDirty]);
   const operationResources = s.resources.registry.resources.filter(supportsHostOperation);
   const operationResource = operationResources.find(
     (resource) => resource.resourceId === operationResourceId,
@@ -324,7 +330,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         : "资源引用无法添加，请检查同名资源。");
     } finally { setSaving(false); }
   };
-  const save = async () => {
+  const save = async (automatic=false) => {
     if (panelBusy) return;
     if (panelBusy) return;
     try {
@@ -343,17 +349,25 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
         const next = upsertProjectResource(project, resource);
         await persistProjectConfiguration(next);
       }
-      setDraft(undefined);
+      if(!automatic)setDraft(undefined);
+      failedAuto.current="";
       setError("");
     } catch (failure) {
+      if(automatic)failedAuto.current=draftSignature;
       setError(failure instanceof Error && failure.message === "BLK-CONFIG-PERSIST"
         ? "配置已更新，但项目文件未保存；草稿保留，请重试保存。"
         : "资源未保存，请检查字段、秘密引用或并发修改；原资源与草稿保留。");
     } finally { setSaving(false); }
   };
+  useEffect(()=>{
+    if(!unified||!draftDirty||panelBusy||modelError||toolSchemaError||failedAuto.current===draftSignature)return;
+    try{validateResource(draft);}catch{return;}
+    const timer=setTimeout(()=>{void save(true);},650);
+    return()=>clearTimeout(timer);
+  },[unified,draftDirty,draftSignature,panelBusy,modelError,toolSchemaError]);
   return (
     <div className="settings resource-panel">
-      <details><summary>厂商与模型</summary><ModelManagerPanel resources={s.resources}
+      <details open={unified?true:undefined}><summary>厂商与模型</summary><ModelManagerPanel resources={s.resources} autoSave={unified} onDirty={setModelDirty}
         defaultModelId={s.settings ? String(resolveSetting("models.defaultResourceId",s.settings.layers).value) : ""}
         setDefault={async id=>{s.settings.change("app","models.defaultResourceId",id);await s.settings.flush();}}
         reference={resource => { void reference(resource); }}/></details>
@@ -594,7 +608,7 @@ export function ResourcePanel({ studio: s }: { studio: Studio }) {
           {draft.kind==='skill'&&<SkillPanel key={`${project.manifest.projectId}/${draft.resourceId}`} projectId={project.manifest.projectId} onBind={skill=>setDraft({...draft,definition:{...draft.definition,version:skill.metadata.version,sourceRef:{kind:'artifact',id:skill.metadata.skillId},contentDigest:skill.digest,implementationRef:{kind:'adapter',id:'installed-skill-v1'},permissions:[]}})}/>}
           {draft.kind === "memory" && <MemoryPanel key={`${project.manifest.projectId}/${draft.resourceId}`} projectId={project.manifest.projectId}
             retentionDays={Number(draft.definition.retentionDays ?? 0)} sourceRef={typeof draft.definition.sourceRef === "string" ? draft.definition.sourceRef : draft.definition.sourceRef && typeof draft.definition.sourceRef === "object" && !Array.isArray(draft.definition.sourceRef) ? String(draft.definition.sourceRef.id ?? "") : ""}/>} 
-          <button onClick={save} disabled={panelBusy || !!modelError || !!toolSchemaError}>
+          <button onClick={()=>void save()} disabled={panelBusy || !!modelError || !!toolSchemaError}>
             保存资源
           </button>
           <button disabled={panelBusy} onClick={() => setDraft(undefined)}>

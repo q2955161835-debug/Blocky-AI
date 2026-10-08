@@ -7,6 +7,10 @@ fn main_only(window: &tauri::WebviewWindow) -> Result<(), String> {
     Ok(())
 }
 #[tauri::command]
+pub fn patch_ui_preferences(window:tauri::WebviewWindow,store:tauri::State<'_,UserStore>,id:String,value:Value)->Result<Value,String>{
+    main_only(&window)?;store.patch_ui_preferences(&id,value)
+}
+#[tauri::command]
 pub fn read_user_state(
     window: tauri::WebviewWindow,
     store: tauri::State<'_, UserStore>,

@@ -75,10 +75,10 @@ it("shows a missing default and prevents an implicit switch to another online mo
 
 it("offers configured user models in settings and resets the preference to local defaults", async () => {
   const hook = await configuredStudio();
-  const panel = render(<SettingsPanel studio={hook.result.current} />);
-  expect((screen.getByLabelText("默认模型") as HTMLSelectElement).value).toBe("saved-model");
-  fireEvent.change(screen.getByLabelText("默认模型"), { target: { value: "" } });
+  const panel = render(<SettingsPanel studio={hook.result.current} initialSection="models" />);
+  expect((screen.getByRole("combobox",{name:"默认模型"}) as HTMLSelectElement).value).toBe("saved-model");
+  fireEvent.change(screen.getByRole("combobox",{name:"默认模型"}), { target: { value: "" } });
   await act(() => hook.result.current.settings.flush());
-  panel.rerender(<SettingsPanel studio={hook.result.current} />);
-  expect((screen.getByLabelText("默认模型") as HTMLSelectElement).value).toBe("");
+  panel.rerender(<SettingsPanel studio={hook.result.current} initialSection="models" />);
+  expect((screen.getByRole("combobox",{name:"默认模型"}) as HTMLSelectElement).value).toBe("");
 });

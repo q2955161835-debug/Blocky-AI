@@ -15,6 +15,19 @@
   border-radius: 16px;
   container-type: inline-size;
 }
+.popup.unified-settings-popup { width:min(1120px,calc(100vw - 32px));height:min(820px,calc(100vh - 48px));max-height:calc(100vh - 48px);padding:0;overflow:hidden;display:flex;flex-direction:column;background:var(--panel); }
+.popup-backdrop:has(.unified-settings-popup) {align-items:center;padding-top:0;}
+.unified-settings-popup>.settings-shell {flex:1;width:100%;border:0;border-radius:inherit;}
+.settings-close-warning {padding:14px;border-top:1px solid var(--border);background:var(--panel);display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.settings-search-results {display:grid;gap:10px;}
+.settings-search-results button {text-align:left;padding:14px;}
+.settings-search-results small {display:block;margin-top:6px;color:var(--muted);font-weight:normal;}
+.settings-shell :is(.resource-panel,.settings) {padding:0;max-height:none;overflow:visible;}
+.settings-shell :is(fieldset,details,.model-manager>section) {min-width:0;border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0;}
+.settings-shell label {display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0;}
+.settings-shell :is(input:not([type=checkbox]):not([type=range]),select,textarea) {max-width:100%;min-width:0;}
+.settings-shell :is(pre,code,small) {overflow-wrap:anywhere;}
+.settings-shell .settings-row-controls {flex-wrap:wrap;}
 .settings-sidebar {
   display: flex;
   flex-direction: column;
