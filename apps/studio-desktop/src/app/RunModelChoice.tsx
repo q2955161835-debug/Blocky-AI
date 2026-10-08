@@ -11,7 +11,7 @@ export function RunModelChoice({ studio: s,compact=false }: { studio: Studio;com
   ].filter((r) => r.kind === "model");
   const targets = Object.entries(project.workspaces).flatMap(([moduleId, w]) =>
     [...walkBlocks(w.blocks.blocks)]
-      .filter((b) => b.type === "core.model.compose")
+      .filter((b) => b.type === "core.model.compose" || b.type === "core.reason.tool_loop")
       .map((block) => ({ moduleId, block })),
   );
   if (!targets.length) return null;

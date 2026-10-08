@@ -329,6 +329,7 @@ export function Canvas(props: Props) {
       </div>
       <CanvasModeSwitch mode={mode} panning={panning} onChange={next => {
         panController.current?.cancel();
+        selection.current?.cancel();
         editor.current?.cancelCurrentGesture();
         editor.current?.hideChaff();
         pointerMode.current = next;

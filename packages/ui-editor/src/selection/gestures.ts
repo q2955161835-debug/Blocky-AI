@@ -155,27 +155,33 @@ export function installSelection(
       else if (gesture.moved) moved();
       else positionBlocks(0, 0);
     }
-    if (element.hasPointerCapture(event.pointerId))
-      element.releasePointerCapture(event.pointerId);
     gesture = undefined;
     marquee.hidden = true;
+    if (element.hasPointerCapture(event.pointerId))
+      element.releasePointerCapture(event.pointerId);
   };
+  const cancel = () => {
+    if (!gesture) return;
+    if (gesture.kind === "move") positionBlocks(0, 0);
+    const pointer = gesture.pointer;
+    gesture = undefined;
+    marquee.hidden = true;
+    if (element.hasPointerCapture(pointer)) element.releasePointerCapture(pointer);
+  };
+  const lost = (event: PointerEvent) => { if (gesture?.pointer === event.pointerId) cancel(); };
   element.addEventListener("pointerdown", down, true);
   element.addEventListener("pointermove", move, true);
   element.addEventListener("pointerup", up, true);
   element.addEventListener("pointercancel", up, true);
+  element.addEventListener("lostpointercapture", lost, true);
+  window.addEventListener("blur", cancel);
   return {
+    cancel,
     current: () => [...ids],
     refresh: () => publish(ids),
     selectAll: () => publish(ws.getTopBlocks(false).map((b) => b.id)),
     clear: () => {
-      if (gesture) {
-        if (gesture.kind === "move") positionBlocks(0, 0);
-        if (element.hasPointerCapture(gesture.pointer))
-          element.releasePointerCapture(gesture.pointer);
-        gesture = undefined;
-        marquee.hidden = true;
-      }
+      cancel();
       for (const b of ws.getAllBlocks(false)) b.unselect();
       publish([]);
     },
@@ -192,10 +198,13 @@ export function installSelection(
       }
     },
     dispose() {
+      cancel();
       element.removeEventListener("pointerdown", down, true);
       element.removeEventListener("pointermove", move, true);
       element.removeEventListener("pointerup", up, true);
       element.removeEventListener("pointercancel", up, true);
+      element.removeEventListener("lostpointercapture", lost, true);
+      window.removeEventListener("blur", cancel);
       marquee.remove();
     },
   };
