@@ -5,6 +5,7 @@ import { useShortcuts } from "./useShortcuts";
 import { useRecovery } from "./useRecovery";
 import { useProjectStartup, type ProjectStarter } from "./useProjectStartup";
 import { useResources } from "./useResources";
+import { useChatHistory } from "./useChatHistory";
 import { useSession } from "./useSession";
 import {
   ProjectController,
@@ -16,10 +17,18 @@ import {
   createEmptyProject,
   type SelectionEdit,
 } from "@blocky/project-model";
-import { createStartingBlueprint, startingBlueprints } from "@blocky/block-catalog";
+import {
+  createStartingBlueprint,
+  startingBlueprints,
+} from "@blocky/block-catalog";
 import { resolveSetting } from "@blocky/settings-core";
 import { compileProject, IncrementalCompiler } from "@blocky/compiler";
-import { Runtime, hostAdapters, type RunResult, type WorkflowSummary } from "@blocky/runtime-core";
+import {
+  Runtime,
+  hostAdapters,
+  type RunResult,
+  type WorkflowSummary,
+} from "@blocky/runtime-core";
 import { knowledgeNative } from "./knowledge";
 import { studioAgentServices } from "./agent";
 import { studioRpaModules } from "./rpaModules";
@@ -32,7 +41,12 @@ import {
   projectLog,
   type RuntimeEvent,
 } from "@blocky/observability";
-import { digest, interactionKey, type SourceRef, type Project } from "@blocky/language-schema";
+import {
+  digest,
+  interactionKey,
+  type SourceRef,
+  type Project,
+} from "@blocky/language-schema";
 import { isUserOnlineModel, resolveResource } from "@blocky/resource-registry";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
@@ -46,7 +60,9 @@ export function useStudio(initialProject?: Project) {
   const rpaInput = useRpaInput();
   const { confirmation, confirmationLabels, answerConfirmation, confirm } =
     useConfirmation();
-  const [controller] = useState(() => new ProjectController(initialProject ?? createEmptyProject()));
+  const [controller] = useState(
+    () => new ProjectController(initialProject ?? createEmptyProject()),
+  );
   const snapshot = useSyncExternalStore(
     controller.subscribe,
     controller.getSnapshot,
@@ -65,6 +81,11 @@ export function useStudio(initialProject?: Project) {
   const settings = useSettings(snapshot.project, controller, setMessage);
   const shortcuts = useShortcuts(setMessage);
   const resources = useResources(setMessage);
+  const agentChat = useChatHistory(
+    snapshot.project.manifest.projectId,
+    "agent",
+    setMessage,
+  );
   const workflowRegistry = useRef(resources.map);
   workflowRegistry.current = resources.map;
   const recovery = useRecovery(
@@ -103,7 +124,11 @@ export function useStudio(initialProject?: Project) {
   const [events, setEvents] = useState<RuntimeEvent[]>([]),
     [droppedEvents, setDroppedEvents] = useState(0),
     [result, setResult] = useState<RunResult>(),
-    [submittedInput, setSubmittedInput] = useState<{ projectId: string; text: string }>(),
+    [submittedInput, setSubmittedInput] = useState<{
+      projectId: string;
+      text: string;
+      turnId: string;
+    }>(),
     [running, setRunning] = useState(false),
     [question, setQuestion] = useState("");
   const handle = useRef<string | undefined>(undefined),
@@ -112,16 +137,26 @@ export function useStudio(initialProject?: Project) {
     abort = useRef<AbortController | null>(null),
     runBusy = useRef(false),
     ioBusy = useRef(false);
-  const [runtime] = useState(
-      () =>
-        isTauri()
-          ? new DesktopRuntime(() => hostAdapters(
-              knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request),
-            ))
-          : new Runtime({
-              delayMs: 160,
-              adapters: { ...hostAdapters(knowledgeNative, studioAgentServices(), studioRpaModules(rpaInput.request)), workflow: studioWorkflowPorts() },
-            }),
+  const [runtime] = useState(() =>
+      isTauri()
+        ? new DesktopRuntime(() =>
+            hostAdapters(
+              knowledgeNative,
+              studioAgentServices(),
+              studioRpaModules(rpaInput.request),
+            ),
+          )
+        : new Runtime({
+            delayMs: 160,
+            adapters: {
+              ...hostAdapters(
+                knowledgeNative,
+                studioAgentServices(),
+                studioRpaModules(rpaInput.request),
+              ),
+              workflow: studioWorkflowPorts(),
+            },
+          }),
     ),
     [bus] = useState(() => new RedactedBus());
   const [compiler] = useState(() => new IncrementalCompiler());
@@ -222,6 +257,8 @@ export function useStudio(initialProject?: Project) {
       closing.current ||
       runBusy.current ||
       ioBusy.current ||
+      !agentChat.ready ||
+      agentChat.switching ||
       compiling ||
       !compiled ||
       compiled.diagnostics.some((d) => d.severity === "error")
@@ -237,12 +274,26 @@ export function useStudio(initialProject?: Project) {
         ? workflowEntry(compiled, workflow)
         : activeEntry;
     if (!entry) {
-      setMessage(workflow ? "工作流原入口已不存在，无法继续任务。" : "请先添加收到问题积木。");
+      setMessage(
+        workflow
+          ? "工作流原入口已不存在，无法继续任务。"
+          : "请先添加收到问题积木。",
+      );
       return;
     }
     runBusy.current = true;
     const runInput = request?.question ?? question;
-    setSubmittedInput({ projectId: snapshot.project.manifest.projectId, text: runInput });
+    const turnId = `turn-${crypto.randomUUID()}`;
+    setSubmittedInput({
+      projectId: snapshot.project.manifest.projectId,
+      text: runInput,
+      turnId,
+    });
+    if (runInput.trim())
+      agentChat.update(snapshot.project.manifest.projectId, (messages) => [
+        ...messages,
+        { id: turnId, role: "user", text: runInput },
+      ]);
     if (request) setQuestion(request.question);
     setRunning(true);
     eventBuffer.current = [];
@@ -265,6 +316,7 @@ export function useStudio(initialProject?: Project) {
         runInput,
         {
           moduleId: entry.moduleId,
+          ...(agentChat.activeId ? { conversationId: agentChat.activeId } : {}),
           ...(workflow ? { workflowTaskId: workflow.taskId } : {}),
           debug: { breakpoints, ...debug },
           signal: abort.current.signal,
@@ -298,11 +350,35 @@ export function useStudio(initialProject?: Project) {
         },
       );
       setResult(value);
+      agentChat.update(snapshot.project.manifest.projectId, (messages) => [
+        ...messages,
+        {
+          id: `${turnId}-answer`,
+          role: "assistant",
+          text:
+            value.answer ||
+            (value.status === "cancelled"
+              ? "已停止运行。"
+              : value.status === "failed"
+                ? "运行失败，请查看运行日志。"
+                : "请在运行日志中查看详情。"),
+          status:
+            value.status === "cancelled"
+              ? "cancelled"
+              : value.status === "failed"
+                ? "failed"
+                : "completed",
+        },
+      ]);
       return value;
     } catch {
-      setMessage(runtime instanceof DesktopRuntime && runtime.needsRestart
-        ? "运行连接已中断，请重新启动 Blocky。自动化的未确认结果请先查看执行记录。"
-        : controller.signal.aborted ? "已停止运行。" : "无法启动运行，请检查问题面板。");
+      setMessage(
+        runtime instanceof DesktopRuntime && runtime.needsRestart
+          ? "运行连接已中断，请重新启动 Blocky。自动化的未确认结果请先查看执行记录。"
+          : controller.signal.aborted
+            ? "已停止运行。"
+            : "无法启动运行，请检查问题面板。",
+      );
     } finally {
       request?.signal.removeEventListener("abort", cancel);
       runBusy.current = false;
@@ -328,9 +404,13 @@ export function useStudio(initialProject?: Project) {
       }
       return false;
     } catch (error) {
-      setMessage(String(error).includes("BLK-PROJECT-CHANGED")
-        ? "文件已被外部修改，请重新打开或另存为新文件。"
-        : String(error).includes("BLK-PROJECT-OPEN") ? "该作品已在另一个窗口中打开。" : "保存失败，原文件保持不变。");
+      setMessage(
+        String(error).includes("BLK-PROJECT-CHANGED")
+          ? "文件已被外部修改，请重新打开或另存为新文件。"
+          : String(error).includes("BLK-PROJECT-OPEN")
+            ? "该作品已在另一个窗口中打开。"
+            : "保存失败，原文件保持不变。",
+      );
       bus.write("host", "error", "项目保存失败");
       return false;
     } finally {
@@ -377,7 +457,11 @@ export function useStudio(initialProject?: Project) {
         setMessage("已打开项目并重新编译");
       }
     } catch (error) {
-      setMessage(String(error).includes("BLK-PROJECT-OPEN") ? "该作品已在另一个窗口中打开。请在原窗口继续编辑。" : "无法打开：项目损坏、版本不支持或包含未声明文件。");
+      setMessage(
+        String(error).includes("BLK-PROJECT-OPEN")
+          ? "该作品已在另一个窗口中打开。请在原窗口继续编辑。"
+          : "无法打开：项目损坏、版本不支持或包含未声明文件。",
+      );
     } finally {
       ioBusy.current = false;
       setBusy(false);
@@ -462,7 +546,11 @@ export function useStudio(initialProject?: Project) {
             ? resources.map.get(defaultModelId)
             : undefined;
         if (model && isUserOnlineModel(model))
-          project = applyDefaultModel(project, defaultModelId as string, resources.map);
+          project = applyDefaultModel(
+            project,
+            defaultModelId as string,
+            resources.map,
+          );
         return project;
       },
       `开始“${blueprint.displayName}”将放弃当前未保存的修改。`,
@@ -472,7 +560,7 @@ export function useStudio(initialProject?: Project) {
   };
   useProjectStartup(
     !started && settings.ready && resources.ready,
-    starter => starter === "blank" ? fresh() : startBlueprint(starter),
+    (starter) => (starter === "blank" ? fresh() : startBlueprint(starter)),
     setMessage,
   );
   const migrate = async () => {
@@ -562,6 +650,7 @@ export function useStudio(initialProject?: Project) {
     await recovery.flush();
     await resources.flush();
     await sessionStore.flush();
+    await agentChat.flush();
     const until = Date.now() + 5000;
     while (runBusy.current || ioBusy.current) {
       if (Date.now() > until) throw Error("BLK-WINDOW-001");
@@ -639,7 +728,38 @@ export function useStudio(initialProject?: Project) {
     events,
     droppedEvents,
     result,
-    runInput: submittedInput?.projectId === snapshot.project.manifest.projectId ? submittedInput.text : undefined,
+    agentChat,
+    chatTurnId:
+      submittedInput?.projectId === snapshot.project.manifest.projectId
+        ? submittedInput.turnId
+        : undefined,
+    changeAgentChat: async (id?: string) => {
+      if (
+        runBusy.current ||
+        ioBusy.current ||
+        closing.current ||
+        agentChat.switching
+      )
+        return;
+      ioBusy.current = true;
+      try {
+        const changed = id
+          ? await agentChat.select(id)
+          : await agentChat.newChat();
+        if (!changed) return;
+        setResult(undefined);
+        setEvents([]);
+        setDroppedEvents(0);
+        setSubmittedInput(undefined);
+        setQuestion("");
+      } finally {
+        ioBusy.current = false;
+      }
+    },
+    runInput:
+      submittedInput?.projectId === snapshot.project.manifest.projectId
+        ? submittedInput.text
+        : undefined,
     invalidateKnowledgeEvidence: () => {
       abort.current?.abort();
       setResult(undefined);
@@ -653,10 +773,21 @@ export function useStudio(initialProject?: Project) {
     validateWorkflow: async (task: WorkflowSummary) => {
       const current = controller.getSnapshot(), registry = workflowRegistry.current;
       const project = current.project;
-      const resolved = project.manifest.resources.map(reference => resolveResource(project, reference.resourceId, reference.kind, registry));
-      const planDigest = await digest({project, resources:resolved});
-      if (project.manifest.projectId !== task.projectId || planDigest !== task.planDigest ||
-        controller.getSnapshot().revision !== current.revision || workflowRegistry.current !== registry)
+      const resolved = project.manifest.resources.map((reference) =>
+        resolveResource(
+          project,
+          reference.resourceId,
+          reference.kind,
+          registry,
+        ),
+      );
+      const planDigest = await digest({ project, resources: resolved });
+      if (
+        project.manifest.projectId !== task.projectId ||
+        planDigest !== task.planDigest ||
+        controller.getSnapshot().revision !== current.revision ||
+        workflowRegistry.current !== registry
+      )
         throw Error("BLK-WORKFLOW-BINDING");
     },
     stop: () => abort.current?.abort(),
@@ -669,6 +800,8 @@ export function useStudio(initialProject?: Project) {
     copySelectionToModule,
     interactionId: activeEntry ? interactionKey(activeEntry) : "",
     canRun:
+      agentChat.ready &&
+      !agentChat.switching &&
       !exiting &&
       !busy &&
       !running &&

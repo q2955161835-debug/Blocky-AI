@@ -12,7 +12,7 @@ import {
 import { createStarter } from "../../packages/test-fixtures/src";
 import type { WorkspaceBlock } from "../../packages/language-schema/src";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
-import { RunPanel } from "../../apps/studio-desktop/src/app/RunPanel";
+import { RunPanel } from "../fixtures/ChatPanelHarness";
 vi.mock("../../apps/studio-desktop/src/composition/host", () => ({
   openProject: vi.fn(),
   saveProject: vi.fn(),
@@ -58,7 +58,7 @@ it("binds the displayed input to common run entry, including external requests a
   panel.rerender(<RunPanel studio={hook.result.current} execute={() => {}} />);
   const thread = screen.getByLabelText("Blocky Agent 聊天记录");
   expect(thread.textContent).toContain("第二次顶部运行 🚀");
-  expect(thread.textContent).not.toContain("第一次聊天 中文😀");
+  expect(thread.textContent).toContain("第一次聊天 中文😀");
   const entry = hook.result.current.compiled!.interaction.entries[0];
   await act(() =>
     hook.result.current.run({
@@ -78,7 +78,7 @@ it("binds the displayed input to common run entry, including external requests a
   ).toBeGreaterThan(0);
   await act(() => hook.result.current.fresh());
   panel.rerender(<RunPanel studio={hook.result.current} execute={() => {}} />);
-  expect(thread.textContent).not.toContain("界面桥接输入");
+  expect(screen.getByLabelText("Blocky Agent 聊天记录").textContent).not.toContain("界面桥接输入");
 });
 it("sends runtime input once on Enter, preserving composition and multiline editing", async () => {
   const hook = renderHook(() => useStudio(createStarter()));

@@ -22,6 +22,9 @@ impl UserStore {
             "recovery",
             "builder-chat",
             "coding-chat",
+            "chat-history-builder",
+            "chat-history-agent",
+            "chat-conversation",
         ]
         .contains(&kind)
             || !crate::project_store::stable(id)
@@ -41,6 +44,7 @@ impl UserStore {
         }
         let value = crate::strict_json::parse(&std::fs::read(path).map_err(|_| ERROR)?)?;
         validate(kind, &value)?;
+        if kind.starts_with("chat-") {crate::chat_history::binding(kind,id,&value)?;}
         if ["builder-chat", "coding-chat"].contains(&kind) && value["projectId"] != id {
             return Err(ERROR.into());
         }
@@ -50,6 +54,7 @@ impl UserStore {
         let _guard = self.lock.lock().map_err(|_| ERROR)?;
         let path = self.path(kind, id)?;
         validate(kind, &value)?;
+        if kind.starts_with("chat-") {crate::chat_history::binding(kind,id,&value)?;}
         if kind == "resources" && id == "app" {
             return crate::model_registry::write_registry(&self.root, &value);
         }
@@ -120,6 +125,7 @@ pub fn validate_settings(value: &Value) -> Result<(), String> {
 }
 fn validate(kind: &str, value: &Value) -> Result<(), String> {
     crate::project_store::check_secrets(value, 0)?;
+    if kind.starts_with("chat-") {return crate::chat_history::validate(kind,value);}
     if kind == "resources" && value["schemaVersion"] == "blocky.resource-registry/v2" {
         return crate::model_registry::validate_registry(value);
     }
@@ -150,7 +156,7 @@ fn validate(kind: &str, value: &Value) -> Result<(), String> {
     }
     Ok(())
 }
-fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
+pub(crate) fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
     if crate::builder::contains_credentials(value) {
         return Err(ERROR.into());
     }
@@ -227,6 +233,30 @@ fn validate_chat(value: &Value, coding: bool) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn conversation_archives_are_project_bound_and_text_only() {
+        let parent=PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../try/chat-history/store");
+        std::fs::create_dir_all(&parent).unwrap();
+        let temp=tempfile::tempdir_in(parent).unwrap();
+        let store=UserStore::new(temp.path().to_owned());
+        let thread=serde_json::json!({"id":"chat-one","title":"第一会话","createdAt":"2026-10-08T12:00:00.000Z","updatedAt":"2026-10-08T12:00:00.000Z"});
+        let index=serde_json::json!({"schemaVersion":"blocky.chat-index/v1","projectId":"sample","assistant":"builder","activeId":"chat-one","threads":[thread.clone()]});
+        let body=serde_json::json!({"schemaVersion":"blocky.chat-conversation/v1","projectId":"sample","assistant":"builder","thread":thread,"messages":[{"id":"answer","role":"assistant","text":"已完成","status":"completed"}]});
+        store.write("chat-conversation","chat-one",body.clone()).unwrap();
+        store.write("chat-history-builder","sample",index.clone()).unwrap();
+        assert_eq!(store.read("chat-conversation","chat-one").unwrap(),Some(body.clone()));
+        assert!(store.write("chat-conversation","chat-two",body.clone()).is_err());
+        assert!(store.write("chat-history-builder","other",index.clone()).is_err());
+        assert!(store.write("chat-history-agent","sample",index.clone()).is_err());
+        let mut extra=body.clone();extra["workspaceId"]="grant".into();
+        assert!(store.write("chat-conversation","chat-one",extra).is_err());
+        let mut secret=body.clone();secret["messages"][0]["text"]=format!("sk-{}","a".repeat(40)).into();
+        assert!(store.write("chat-conversation","chat-one",secret).is_err());
+        let mut duplicate=index.clone();duplicate["threads"].as_array_mut().unwrap().push(index["threads"][0].clone());
+        assert!(store.write("chat-history-builder","sample",duplicate).is_err());
+        assert_eq!(store.read("chat-history-builder","sample").unwrap(),Some(index));
+        assert_eq!(store.read("chat-conversation","chat-one").unwrap(),Some(body));
+    }
     #[test]
     fn coding_chat_is_strict_bounded_and_separate_from_builder_history() {
         let root = tempfile::tempdir().unwrap();

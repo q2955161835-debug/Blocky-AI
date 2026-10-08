@@ -3,7 +3,7 @@ import { afterEach, beforeAll, expect, it } from "vitest";
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { useCodingAgent } from "../../apps/studio-desktop/src/composition/useCodingAgent";
-import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
+import { BuilderPanel } from "../fixtures/ChatPanelHarness";
 import { SettingsPanel } from "../../apps/studio-desktop/src/app/SettingsPanel";
 import { createAgentExample } from "../../packages/test-fixtures/src/scenarios";
 import { modelResource } from "../fixtures/model-resource";

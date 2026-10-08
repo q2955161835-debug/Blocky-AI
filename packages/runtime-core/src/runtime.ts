@@ -19,6 +19,7 @@ import {
   canonicalJson,
   digest,
   containsCredential,
+  stableId,
   type IrNode,
   type Project,
   type Json,
@@ -161,9 +162,11 @@ export class Runtime {
       };
       userRegistry?: Map<string, import("@blocky/language-schema").Resource>;
       workflowTaskId?: string;
+      conversationId?: string;
     } = {},
   ): Promise<RunResult> {
     if (this.running) throw Error("BLK-RUN-003: 已有运行");
+    if (options.conversationId !== undefined && (options.conversationId.length > 128 || !stableId.test(options.conversationId))) throw Error("BLK-RUN-STATE");
     const project = parseProject(input),
       runId = this.options.newId?.() ?? `run-${crypto.randomUUID()}`;
     // Reserve IDs synchronously, before an async adapter can observe shared budget changes.
@@ -1011,7 +1014,7 @@ export class Runtime {
                   declaration = declaration.next ?? null;
                 }
                 const pi = node.fields.ENGINE === "pi";
-                const conversationKey = JSON.stringify([project.manifest.projectId, this.sessionId, `pi-${(await digest([moduleId, node.nodeId])).slice(0, 32)}`]);
+                const conversationKey = JSON.stringify([project.manifest.projectId, this.sessionId, `pi-${(await digest(options.conversationId === undefined ? [moduleId, node.nodeId] : [moduleId, node.nodeId, options.conversationId])).slice(0, 32)}`]);
                 const binding = await digest({ model: resource, role: scope.role, instruction: state.instruction, tools: resourceIds.map((id) => resolveResource(project, id, "tool", options.userRegistry)), citations: scope.citations });
                 const stored = this.sessionMemory.get(conversationKey);
                 let conversation: PiConversation = [];

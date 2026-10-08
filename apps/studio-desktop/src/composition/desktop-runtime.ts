@@ -179,7 +179,13 @@ export class DesktopRuntime {
                       kind: "reply",
                       id: frame.id,
                       ok: false,
-                      value: { code: cause instanceof Error && /^BLK-[A-Z0-9-]{3,64}$/.test(cause.message) ? cause.message : "BLK-RUN-SERVICE" },
+                      value: {
+                        code:
+                          cause instanceof Error &&
+                          /^BLK-[A-Z0-9-]{3,64}$/.test(cause.message)
+                            ? cause.message
+                            : "BLK-RUN-SERVICE",
+                      },
                     }),
                 )
                 .catch(fail);
@@ -228,10 +234,17 @@ export class DesktopRuntime {
               ...(options.workflowTaskId === undefined
                 ? {}
                 : { workflowTaskId: options.workflowTaskId }),
+              ...(options.conversationId === undefined
+                ? {}
+                : { conversationId: options.conversationId }),
               ...(options.debug === undefined ? {} : { debug: options.debug }),
               ...(options.userRegistry === undefined
                 ? {}
-                : { userRegistry: serializeRegistryResources(options.userRegistry) }),
+                : {
+                    userRegistry: serializeRegistryResources(
+                      options.userRegistry,
+                    ),
+                  }),
             },
           },
           receive,

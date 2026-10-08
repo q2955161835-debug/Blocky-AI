@@ -16,6 +16,8 @@ import {
 } from "./ChatControls";
 import "./BuilderChat.css";
 import { ChatMarkdown } from "./ChatMarkdown";
+import { ChatComposer } from "./ChatComposer";
+import { useChatFollow } from "./useChatFollow";
 export function RunPanel({
   studio: s,
   execute,
@@ -33,6 +35,14 @@ export function RunPanel({
 }) {
   const menu = useChatMenu(menuControl);
   const entries = s.compiled?.interaction.entries ?? [];
+  const thread = useChatFollow(
+    s.agentChat?.activeId ?? s.snapshot.project.manifest.projectId,
+    [s.agentChat?.messages, s.result, s.events],
+  );
+  const previousMessages = (s.agentChat?.messages ?? []).filter(
+    (message) =>
+      message.id !== s.chatTurnId && message.id !== `${s.chatTurnId}-answer`,
+  );
   const submit = () => {
     if (!s.canRun) return;
     menu.set(null);
@@ -40,23 +50,41 @@ export function RunPanel({
   };
   return (
     <section className="run-panel chat-panel" aria-label="Blocky Agent 聊天">
-      <div className="chat-panel-header">
-        {s.running && (
-          <span className="chat-run-status" role="status">
-            {s.paused ? "已暂停" : "运行中…"}
-          </span>
-        )}
-        <ChatMenuButton menu={menu} kind="settings" label="Blocky Agent 设置">
-          ⚙
-        </ChatMenuButton>
-      </div>
+      {s.running && (
+        <span className="chat-run-status" role="status">
+          {s.paused ? "已暂停" : "运行中…"}
+        </span>
+      )}
       <div
         className="builder-chat-thread"
         aria-label="Blocky Agent 聊天记录"
         role="log"
         aria-live="polite"
+        ref={thread.ref}
+        onScroll={thread.onScroll}
       >
         <StartingConfiguration studio={s} execute={execute} />
+        {previousMessages.map((message) => (
+          <article
+            key={message.id}
+            className={`builder-chat-message builder-chat-message-${message.role}`}
+          >
+            {message.role === "user" ? (
+              <p>{message.text}</p>
+            ) : (
+              <>
+                <span className="answer-heading">
+                  {message.status === "failed"
+                    ? "运行失败"
+                    : message.status === "cancelled"
+                      ? "已停止"
+                      : "回答"}
+                </span>
+                <ChatMarkdown text={message.text} />
+              </>
+            )}
+          </article>
+        ))}
         {s.runInput && (
           <article className="builder-chat-message builder-chat-message-user">
             <p>{s.runInput}</p>
@@ -120,73 +148,52 @@ export function RunPanel({
           {settings}
         </RunSettings>
       </ChatPopover>
-      <form
-        className="chat-composer"
-        onSubmit={(event) => {
+      <ChatComposer
+        label="向 Agent 提问"
+        value={s.question}
+        disabled={s.running || s.busy || s.exiting || !s.agentChat?.ready || s.agentChat?.switching}
+        onChange={s.setQuestion}
+        onSubmit={submit}
+        maxLength={16000}
+        placeholder="向 Agent 提问"
+        onKeyDown={(event) => {
+          if (
+            event.key !== "Enter" ||
+            event.shiftKey ||
+            event.nativeEvent.isComposing ||
+            event.nativeEvent.keyCode === 229
+          )
+            return;
           event.preventDefault();
           submit();
         }}
       >
-        <textarea
-          aria-label="向 Agent 提问"
-          rows={2}
-          value={s.question}
-          disabled={s.running || s.busy || s.exiting}
-          onChange={(event) => s.setQuestion(event.target.value)}
-          placeholder="向 Agent 提问"
-          title="Enter 发送 · Shift+Enter 换行"
-          onKeyDown={(event) => {
-            if (
-              event.key !== "Enter" ||
-              event.shiftKey ||
-              event.nativeEvent.isComposing ||
-              event.nativeEvent.keyCode === 229
-            )
-              return;
-            event.preventDefault();
-            submit();
-          }}
-        />
-        <div className="chat-composer-toolbar">
-          <ChatMenuButton
-            menu={menu}
-            kind="add"
-            label="Blocky Agent 添加上下文"
+        <ChatMenuButton menu={menu} kind="add" label="Blocky Agent 添加上下文">
+          ＋
+        </ChatMenuButton>
+        <span className="chat-toolbar-spacer" />
+        {s.running ? (
+          <button
+            className="chat-icon"
+            type="button"
+            aria-label="停止"
+            title="停止"
+            onClick={s.stop}
           >
-            ＋
-          </ChatMenuButton>
-          <ChatMenuButton
-            menu={menu}
-            kind="settings"
-            label="运行设置"
-            className="chat-model-chip"
+            ■
+          </button>
+        ) : (
+          <button
+            className="chat-send"
+            type="submit"
+            aria-label="运行"
+            title="发送并运行"
+            disabled={!s.canRun}
           >
-            运行设置<span aria-hidden="true">⌄</span>
-          </ChatMenuButton>
-          <span className="chat-toolbar-spacer" />
-          {s.running ? (
-            <button
-              className="chat-icon"
-              type="button"
-              aria-label="停止"
-              title="停止"
-              onClick={s.stop}
-            >
-              ■
-            </button>
-          ) : (
-            <button
-              className="chat-send"
-              type="submit"
-              aria-label="运行"
-              title="发送并运行"
-              disabled={!s.canRun}
-            >
-              ↑
-            </button>
-          )}
-        </div>
-      </form>
+            ↑
+          </button>
+        )}
+      </ChatComposer>
     </section>
   );
 }

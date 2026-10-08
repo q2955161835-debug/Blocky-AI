@@ -14,6 +14,8 @@ import { BuilderModelSettings } from "./BuilderModelSettings";
 import "./BuilderChat.css";
 import { CodingTrace } from "./CodingTrace";
 import { ChatMarkdown } from "./ChatMarkdown";
+import { ChatComposer } from "./ChatComposer";
+import { useChatFollow } from "./useChatFollow";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -82,11 +84,16 @@ export function BuilderPanel({
     !disabled &&
     !!prompt.trim() &&
     !!studio.snapshot.project.workspaces[studio.session.active];
-  const thread = useRef<HTMLDivElement>(null);
+  const thread = useChatFollow(
+    builder.activeChatId ?? studio.snapshot.project.manifest.projectId,
+    [builder.messages, builder.liveText, builder.events, builder.result],
+  );
+  const previousChat = useRef(builder.activeChatId);
   useEffect(() => {
-    const element = thread.current;
-    if (element) element.scrollTop = element.scrollHeight;
-  }, [builder.messages, builder.liveText, builder.events, builder.result]);
+    if (previousChat.current && previousChat.current !== builder.activeChatId)
+      setPrompt("");
+    previousChat.current = builder.activeChatId;
+  }, [builder.activeChatId]);
   useEffect(() => {
     setReviewing(false);
   }, [builder.result?.requestId]);
@@ -119,29 +126,11 @@ export function BuilderPanel({
       className="builder-panel builder-chat-panel chat-panel"
       aria-label="Blocky 构建助手"
     >
-      <div className="chat-panel-header">
-        <button
-          className="chat-icon"
-          type="button"
-          aria-label="新对话"
-          title="新对话"
-          disabled={disabled}
-          onClick={() => {
-            builder.newChat();
-            setPrompt("");
-            menu.set(null);
-          }}
-        >
-          ＋
-        </button>
-        <ChatMenuButton menu={menu} kind="settings" label="构建助手设置">
-          ⚙
-        </ChatMenuButton>
-      </div>
       <div
         className="builder-chat-thread"
         aria-label="构建助手聊天记录"
-        ref={thread}
+        ref={thread.ref}
+        onScroll={thread.onScroll}
       >
         {!ready ? (
           <p className="builder-chat-empty" role="status">
@@ -163,7 +152,11 @@ export function BuilderPanel({
                   <strong>{message.role === "user" ? "你" : "构建助手"}</strong>
                   {message.status && <span>{status[message.status]}</span>}
                 </div>
-                {message.role === "assistant" ? <ChatMarkdown text={message.text} /> : <p>{message.text}</p>}
+                {message.role === "assistant" ? (
+                  <ChatMarkdown text={message.text} />
+                ) : (
+                  <p>{message.text}</p>
+                )}
               </li>
             ))}
           </ol>
@@ -313,73 +306,59 @@ export function BuilderPanel({
           }}
         />
       </ChatPopover>
-      <form
-        className="builder-chat-composer chat-composer"
-        onSubmit={(event) => {
-          event.preventDefault();
-          submit();
-        }}
+      <ChatComposer
+        id="builder-chat-prompt"
+        label="构建需求"
+        maxLength={16000}
+        value={prompt}
+        disabled={disabled}
+        onChange={setPrompt}
+        onSubmit={submit}
+        onKeyDown={keyDown}
+        placeholder="描述要构建的内容"
       >
-        <textarea
-          id="builder-chat-prompt"
-          aria-label="构建需求"
-          rows={2}
-          maxLength={16000}
-          value={prompt}
-          disabled={disabled}
-          onChange={(event) => setPrompt(event.target.value)}
-          onKeyDown={keyDown}
-          placeholder="描述要构建的内容"
-          title="Enter 发送 · Shift+Enter 换行"
-        />
-        <div className="chat-composer-toolbar">
-          <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
-            ＋
-          </ChatMenuButton>
-          <ChatMenuButton
-            menu={menu}
-            kind="settings"
-            label="选择构建模型"
-            className="chat-model-chip"
+        <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
+          ＋
+        </ChatMenuButton>
+        <span className="chat-model-chip">
+          <span className="chat-model-name">
+            {models.find((model) => model.resourceId === resourceId)
+              ?.displayName ?? "选择模型"}
+          </span>
+        </span>
+        {builder.workspace && (
+          <span
+            className="chat-context-marker"
+            title={builder.workspace.displayName}
+            aria-label={`工作文件夹：${builder.workspace.displayName}`}
           >
-            <span className="chat-model-name">{models.find((model) => model.resourceId === resourceId)
-              ?.displayName ?? "选择模型"}</span>
-            <span aria-hidden="true">⌄</span>
-          </ChatMenuButton>
-          {builder.workspace && (
-            <span
-              className="chat-context-marker"
-              title={builder.workspace.displayName}
-              aria-label={`工作文件夹：${builder.workspace.displayName}`}
-            >
-              ▱
-            </span>
-          )}
-          <span className="chat-toolbar-spacer" />
-          {builder.busy ? (
-            <button
-              className="chat-icon"
-              type="button"
-              aria-label={builder.stopping ? "正在停止" : "停止"}
-              title="停止"
-              disabled={builder.stopping}
-              onClick={builder.stop}
-            >
-              ■
-            </button>
-          ) : (
-            <button
-              className="chat-send"
-              type="submit"
-              aria-label="发送"
-              title="发送"
-              disabled={!canSend}
-            >
-              ↑
-            </button>
-          )}
-        </div>
-      </form>
+            ▱
+          </span>
+        )}
+        <span className="chat-toolbar-spacer" />
+        {builder.busy ? (
+          <button
+            className="chat-icon"
+            type="button"
+            aria-label={builder.stopping ? "正在停止" : "停止"}
+            title="停止"
+            disabled={builder.stopping}
+            onClick={builder.stop}
+          >
+            ■
+          </button>
+        ) : (
+          <button
+            className="chat-send"
+            type="submit"
+            aria-label="发送"
+            title="发送"
+            disabled={!canSend}
+          >
+            ↑
+          </button>
+        )}
+      </ChatComposer>
     </section>
   );
 }

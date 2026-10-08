@@ -35,16 +35,17 @@ function parse(input: unknown) {
     workflowKeys(
       value.options,
       [],
-      ["moduleId", "debug", "userRegistry", "workflowTaskId"],
+      ["moduleId", "debug", "userRegistry", "workflowTaskId", "conversationId"],
     );
     const options = value.options;
-    for (const key of ["moduleId", "workflowTaskId"])
+    for (const key of ["moduleId", "workflowTaskId", "conversationId"])
       if (options[key] !== undefined && !id(options[key])) throw invalid();
     if (
       typeof options.workflowTaskId === "string" &&
       options.workflowTaskId.length > 128
     )
       throw invalid();
+    if (typeof options.conversationId === "string" && options.conversationId.length > 128) throw invalid();
     let debug:
       | {
           breakpoints?: { moduleId: string; blockId: string }[];
@@ -92,6 +93,7 @@ function parse(input: unknown) {
       options: {
         moduleId: options.moduleId as string | undefined,
         workflowTaskId: options.workflowTaskId as string | undefined,
+        conversationId: options.conversationId as string | undefined,
         debug,
         userRegistry: registry,
       },

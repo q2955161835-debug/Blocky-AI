@@ -11,7 +11,7 @@ import {
 } from "@testing-library/react";
 import type { CodingAgent } from "../../apps/studio-desktop/src/composition/useCodingAgent";
 import type { Studio } from "../../apps/studio-desktop/src/composition/useStudio";
-import { BuilderPanel } from "../../apps/studio-desktop/src/app/BuilderPanel";
+import { BuilderPanel } from "../fixtures/ChatPanelHarness";
 import { useStudio } from "../../apps/studio-desktop/src/composition/useStudio";
 import { modelResource } from "../fixtures/model-resource";
 
@@ -180,7 +180,7 @@ it("shows real loading and stopping state and disables new chat while busy", asy
   );
   const stop = screen.getByRole("button", { name: "停止" });
   const newChat = screen.getByRole("button", {
-    name: "新对话",
+    name: "构建助手新会话",
   }) as HTMLButtonElement;
   expect(newChat.disabled).toBe(true);
   fireEvent.click(stop);
@@ -261,7 +261,7 @@ it("starts a new conversation when idle", async () => {
     messages: [{ id: "a1", role: "assistant", text: "Old chat" }],
   });
   panel(studio, builder);
-  fireEvent.click(screen.getByRole("button", { name: "新对话" }));
+  fireEvent.click(screen.getByRole("button", { name: "构建助手新会话" }));
   expect(builder.newChat).toHaveBeenCalledOnce();
 });
 

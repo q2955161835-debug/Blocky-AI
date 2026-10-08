@@ -6,7 +6,12 @@ import { RunPanel } from "./RunPanel";
 import { ProjectMap } from "./ProjectMap";
 import { EditorTools } from "./EditorTools";
 import { Inspector } from "./Inspector";
-import type { ChatMenuControl } from "./ChatControls";
+import {
+  ChatMenuButton,
+  useChatMenu,
+  type ChatMenuControl,
+} from "./ChatControls";
+import { ChatHistoryMenu } from "./ChatHistoryMenu";
 
 export function StudioSidebar({
   studio: s,
@@ -25,51 +30,108 @@ export function StudioSidebar({
   onTraceContext(x: number, y: number, source: SourceRef): void;
   chatMenu?: ChatMenuControl;
 }) {
+  const menu = useChatMenu(chatMenu);
+  const isBuilder = s.session.rightView === "builder";
+  const disabled =
+    s.running ||
+    s.busy ||
+    s.exiting ||
+    builder.busy ||
+    !!s.agentChat?.switching;
+  const threads = isBuilder
+    ? (builder.threads ?? [])
+    : (s.agentChat?.threads ?? []);
+  const activeId = isBuilder ? builder.activeChatId : s.agentChat?.activeId;
+  const selectChat = (id: string) =>
+    isBuilder ? builder.selectChat(id) : s.changeAgentChat(id);
   const views = [
     ["agent", "Blocky Agent"],
     ["builder", "构建助手"],
   ] as const;
   const select = (rightView: "agent" | "builder") => {
-    chatMenu?.set(null);
+    menu.set(null);
     s.setSession((current) => ({ ...current, rightView }));
   };
   return (
     <aside className="right-sidebar chat-sidebar" aria-label="右侧面板">
-      <div className="sidebar-tabs" role="tablist" aria-label="右侧工具">
-        {views.map(([id, label]) => (
-          <button
-            key={id}
-            id={`sidebar-tab-${id}`}
-            role="tab"
-            aria-selected={s.session.rightView === id}
-            aria-controls={`sidebar-view-${id}`}
-            tabIndex={s.session.rightView === id ? 0 : -1}
-            onClick={() => select(id)}
-            onKeyDown={(event) => {
-              if (
-                !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
-              )
-                return;
-              event.preventDefault();
-              const next =
-                event.key === "Home"
-                  ? "agent"
-                  : event.key === "End"
-                    ? "builder"
-                    : id === "agent"
+      <div className="chat-sidebar-header">
+        <div className="sidebar-tabs" role="tablist" aria-label="右侧工具">
+          {views.map(([id, label]) => (
+            <button
+              key={id}
+              id={`sidebar-tab-${id}`}
+              role="tab"
+              aria-selected={s.session.rightView === id}
+              aria-controls={`sidebar-view-${id}`}
+              tabIndex={s.session.rightView === id ? 0 : -1}
+              onClick={() => select(id)}
+              onKeyDown={(event) => {
+                if (
+                  !["ArrowLeft", "ArrowRight", "Home", "End"].includes(
+                    event.key,
+                  )
+                )
+                  return;
+                event.preventDefault();
+                const next =
+                  event.key === "Home"
+                    ? "agent"
+                    : event.key === "End"
                       ? "builder"
-                      : "agent";
-              select(next);
-              document.getElementById(`sidebar-tab-${next}`)?.focus();
+                      : id === "agent"
+                        ? "builder"
+                        : "agent";
+                select(next);
+                document.getElementById(`sidebar-tab-${next}`)?.focus();
+              }}
+            >
+              {label}
+              {id === "builder" && builder.busy && (
+                <span aria-label="正在构建"> ●</span>
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="chat-header-actions">
+          <button
+            type="button"
+            className="chat-icon"
+            aria-label={isBuilder ? "构建助手新会话" : "Blocky Agent 新会话"}
+            title="新会话"
+            disabled={
+              disabled || (isBuilder ? !builder.ready : !s.agentChat?.ready)
+            }
+            onClick={() => {
+              menu.set(null);
+              void (isBuilder ? builder.newChat() : s.changeAgentChat());
             }}
           >
-            {label}
-            {id === "builder" && builder.busy && (
-              <span aria-label="正在构建"> ●</span>
-            )}
+            ＋
           </button>
-        ))}
+          <ChatMenuButton
+            menu={menu}
+            kind="history"
+            label={isBuilder ? "构建助手历史会话" : "Blocky Agent 历史会话"}
+          >
+            ⌄
+          </ChatMenuButton>
+          <ChatMenuButton
+            menu={menu}
+            kind="settings"
+            label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"}
+          >
+            ⚙
+          </ChatMenuButton>
+        </div>
       </div>
+      <ChatHistoryMenu
+        key={`${s.snapshot.project.manifest.projectId}-${s.session.rightView}`}
+        menu={menu}
+        threads={threads}
+        activeId={activeId ?? ""}
+        select={selectChat}
+        disabled={disabled}
+      />
       <div
         id="sidebar-view-agent"
         role="tabpanel"
@@ -82,12 +144,17 @@ export function StudioSidebar({
           studio={s}
           execute={execute}
           onTraceContext={onTraceContext}
-          menu={chatMenu && { ...chatMenu, value: s.session.rightView === "agent" ? chatMenu.value : null }}
-          settings={<>
-            <ProjectMap studio={s} />
-            <EditorTools studio={s} execute={execute} enabled={enabled} />
-            <Inspector studio={s} configureResource={() => execute("settings.resources")} />
-          </>}
+          menu={{ ...menu, value: !isBuilder ? menu.value : null }}
+          settings={
+            <>
+              <ProjectMap studio={s} />
+              <EditorTools studio={s} execute={execute} enabled={enabled} />
+              <Inspector
+                studio={s}
+                configureResource={() => execute("settings.resources")}
+              />
+            </>
+          }
         />
       </div>
       <div
@@ -101,7 +168,7 @@ export function StudioSidebar({
           key={s.snapshot.project.manifest.projectId}
           studio={s}
           builder={builder}
-          menu={chatMenu && { ...chatMenu, value: s.session.rightView === "builder" ? chatMenu.value : null }}
+          menu={{ ...menu, value: isBuilder ? menu.value : null }}
           promptSuggestion={promptSuggestion}
           configureModel={() => execute("settings.resources")}
         />

@@ -8,6 +8,7 @@ import type { Studio } from "../composition/useStudio";
 import { surfaceTitle } from "@blocky/app-surface";
 import type { Blueprint } from "@blocky/block-catalog";
 import type { Construction } from "../composition/useConstruction";
+import { BlueprintDock } from "./BlueprintDock";
 const projection: Record<number, number> = {
   0: 0,
   1: 1,
@@ -103,83 +104,91 @@ export function Library({
           );
         })}
       </div>
-      <div className="module-list">
-        <div className="section-label">个人蓝图</div>
-        {blueprints.map((blueprint) => (
-          <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
-            {blueprint.displayName} ＋
-          </button>
-        ))}
-        {!blueprints.length && (
-          <small className="muted">选择积木后可保存为蓝图</small>
-        )}
-        <label className="blueprint-import">
-          导入蓝图
-          <input
-            aria-label="导入蓝图文件"
-            type="file"
-            accept=".json"
-            disabled={c.busy}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (file) void c.importBlueprint(file);
-              event.target.value = "";
-            }}
-          />
-        </label>
-        {!!c.legacy.length && (
-          <button disabled={c.busy} onClick={() => void c.migrateLibrary()}>
-            迁移旧蓝图库（{c.legacy.length}）
-          </button>
-        )}
-        {!!c.importedLegacy && (
-          <button disabled={c.busy} onClick={() => void c.migrateImported()}>
-            将所选旧蓝图迁移为 v1 副本
-          </button>
-        )}
-        <button disabled={c.busy} onClick={() => update("update")}>
-          更新所选蓝图
-        </button>
-        <button disabled={c.busy} onClick={() => update("restore")}>
-          还原所选蓝图默认内容
-        </button>
-        <div className="section-label">项目画布</div>
-        {s.snapshot.project.manifest.appSurfaces.map((surface) => (
-          <button
-            key={surface.surfaceId}
-            onClick={() => s.openSurface(surface.surfaceId)}
-          >
-            ◉ {surfaceTitle(s.snapshot.project, surface.surfaceId)}
-          </button>
-        ))}
-        {s.snapshot.project.manifest.modules.map((m) => (
-          <button
-            key={m.moduleId}
-            onClick={() =>
-              s.navigate({
-                projectId: s.snapshot.project.manifest.projectId,
-                moduleId: m.moduleId,
-              })
-            }
-          >
-            ▧ {m.displayName}
-          </button>
-        ))}
-      </div>
-      <details className="starting-blueprints">
-        <summary>内置起始蓝图<span aria-hidden="true">⌃</span></summary>
-        <div className="starting-blueprint-options">
-          {startingBlueprints.map((blueprint) => (
-            <button key={blueprint.id}
-              disabled={s.busy || !s.settings.ready || !s.resources.ready}
-              onClick={() => void s.startBlueprint(blueprint.id)}>
-              新建：{blueprint.displayName}
+      <BlueprintDock>
+        <div className="module-list">
+          <div className="section-label">个人蓝图</div>
+          {blueprints.map((blueprint) => (
+            <button key={blueprint.blueprintId} onClick={() => insert(blueprint)}>
+              {blueprint.displayName} ＋
             </button>
           ))}
-          <button disabled={s.busy || !s.settings.ready || !s.resources.ready}
-            onClick={() => void s.fresh()}>新建空白项目</button>
+          {!blueprints.length && (
+            <small className="muted">选择积木后可保存为蓝图</small>
+          )}
+          <label className="blueprint-import">
+            导入蓝图
+            <input
+              aria-label="导入蓝图文件"
+              type="file"
+              accept=".json"
+              disabled={c.busy}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void c.importBlueprint(file);
+                event.target.value = "";
+              }}
+            />
+          </label>
+          {!!c.legacy.length && (
+            <button disabled={c.busy} onClick={() => void c.migrateLibrary()}>
+              迁移旧蓝图库（{c.legacy.length}）
+            </button>
+          )}
+          {!!c.importedLegacy && (
+            <button disabled={c.busy} onClick={() => void c.migrateImported()}>
+              将所选旧蓝图迁移为 v1 副本
+            </button>
+          )}
+          <button disabled={c.busy} onClick={() => update("update")}>
+            更新所选蓝图
+          </button>
+          <button disabled={c.busy} onClick={() => update("restore")}>
+            还原所选蓝图默认内容
+          </button>
+          <div className="section-label">项目画布</div>
+          {s.snapshot.project.manifest.appSurfaces.map((surface) => (
+            <button
+              key={surface.surfaceId}
+              onClick={() => s.openSurface(surface.surfaceId)}
+            >
+              ◉ {surfaceTitle(s.snapshot.project, surface.surfaceId)}
+            </button>
+          ))}
+          {s.snapshot.project.manifest.modules.map((m) => (
+            <button
+              key={m.moduleId}
+              onClick={() =>
+                s.navigate({
+                  projectId: s.snapshot.project.manifest.projectId,
+                  moduleId: m.moduleId,
+                })
+              }
+            >
+              ▧ {m.displayName}
+            </button>
+          ))}
         </div>
-      </details>
+        <section className="starting-blueprints">
+          <div className="starting-blueprints-heading">内置起始蓝图</div>
+          <div className="starting-blueprint-options">
+            {startingBlueprints.map((blueprint) => (
+              <button
+                key={blueprint.id}
+                disabled={s.busy || !s.settings.ready || !s.resources.ready}
+                onClick={() => void s.startBlueprint(blueprint.id)}
+              >
+                新建：{blueprint.displayName}
+              </button>
+            ))}
+            <button
+              disabled={s.busy || !s.settings.ready || !s.resources.ready}
+              onClick={() => void s.fresh()}
+            >
+              新建空白项目
+            </button>
+          </div>
+        </section>
+      </BlueprintDock>
     </aside>
   );
 }

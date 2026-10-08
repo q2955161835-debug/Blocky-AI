@@ -34,5 +34,6 @@ pub mod tool_gateway;
 #[cfg(windows)]
 mod tool_sandbox;
 pub mod user_store;
+mod chat_history;
 pub mod user_terminal;
 pub mod workflow;

@@ -1,0 +1,128 @@
+.blueprint-dock {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  background: #252a33;
+}
+
+.blueprint-dock-resize {
+  flex: 0 0 8px;
+  width: 100%;
+  height: 8px;
+}
+
+.blueprint-dock-toggle {
+  width: 100%;
+  height: 38px;
+  flex: 0 0 38px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  color: #c9d2df;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.blueprint-dock-toggle:hover,
+.blueprint-dock-toggle:focus-visible {
+  background: #ffffff0a;
+}
+
+.blueprint-dock-chevron {
+  transition: transform 120ms ease;
+}
+
+.blueprint-dock-toggle[aria-expanded="true"] .blueprint-dock-chevron {
+  transform: rotate(180deg);
+}
+
+.blueprint-dock-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.blueprint-dock-content[hidden] {
+  display: none;
+}
+
+.blueprint-dock-content .module-list {
+  max-height: none;
+  overflow: visible;
+}
+
+.blueprint-dock-content .starting-blueprints {
+  flex-shrink: 0;
+}
+
+.blueprint-dock-content .starting-blueprint-options {
+  max-height: none;
+  overflow: visible;
+}
+
+.blueprint-dock-content .starting-blueprints-heading {
+  padding: 8px 14px 4px;
+  color: #c9d2df;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chat-panel .chat-composer--resizable {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0;
+  box-sizing: border-box;
+  min-height: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0 7px 7px;
+}
+
+.chat-panel .chat-composer--resizable .chat-composer-resize {
+  position: relative;
+  flex: 0 0 8px;
+  width: calc(100% + 14px);
+  height: 8px;
+  margin: 0 -7px;
+}
+
+.chat-panel .chat-composer--resizable .chat-composer-input {
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 5px 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  resize: none;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.chat-panel .chat-composer--resizable .chat-composer-input:focus-visible {
+  outline: none;
+}
+
+.chat-panel .chat-composer--resizable .chat-composer-toolbar {
+  flex: 0 0 auto;
+  min-height: 28px;
+}

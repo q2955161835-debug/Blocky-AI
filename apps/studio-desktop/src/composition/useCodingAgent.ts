@@ -93,6 +93,8 @@ export function useCodingAgent(studio: Studio) {
   current.current = studio;
   const projectId = studio.snapshot.project.manifest.projectId;
   const chat = useCodingChat(projectId, studio.setMessage);
+  const currentChatId = useRef(chat.activeId);
+  currentChatId.current = chat.activeId;
   const mounted = useRef(true);
   const active = useRef<
     | {
@@ -133,9 +135,11 @@ export function useCodingAgent(studio: Studio) {
   const visible = (owner: {
     projectId: string;
     controller: Studio["controller"];
+    chatId?: string;
   }) =>
     mounted.current &&
     current.current.controller === owner.controller &&
+    (owner.chatId === undefined || owner.chatId === currentChatId.current) &&
     current.current.snapshot.project.manifest.projectId === owner.projectId;
   const stop = () => {
     const owner = active.current;
@@ -164,15 +168,23 @@ export function useCodingAgent(studio: Studio) {
     }
     setError("");
   };
-  const newChat = () => {
+  const changeChat = async (target?: string) => {
     if (active.current || operation.current) return;
-    chat.update(projectId, () => []);
-    setResult(undefined);
-    setProjectReview(undefined);
-    setError("");
-    setLiveText("");
-    setEvents([]);
+    operation.current = true;
+    try {
+      const changed = target ? await chat.select(target) : await chat.newChat();
+      if (!changed) return;
+      setResult(undefined);
+      setProjectReview(undefined);
+      setError("");
+      setLiveText("");
+      setEvents([]);
+    } finally {
+      operation.current = false;
+    }
   };
+  const newChat = () => changeChat();
+  const selectChat = (id: string) => changeChat(id);
   useEffect(() => {
     mounted.current = true;
     return () => {
@@ -288,9 +300,7 @@ export function useCodingAgent(studio: Studio) {
     if (
       Object.keys(value).some(
         (key) =>
-          !["available", "workspaceId", "displayName", "changes"].includes(
-            key,
-          ),
+          !["available", "workspaceId", "displayName", "changes"].includes(key),
       )
     )
       throw Error("BLK-CODING-WORKSPACE");
@@ -447,6 +457,7 @@ export function useCodingAgent(studio: Studio) {
       active.current ||
       operation.current ||
       !chat.ready ||
+      chat.switching ||
       current.current.busy ||
       current.current.running ||
       current.current.exiting
@@ -461,6 +472,7 @@ export function useCodingAgent(studio: Studio) {
     const owner = {
       id,
       projectId,
+      chatId: chat.activeId,
       controller: s.controller,
       cancelled: false,
       settled,
@@ -621,9 +633,7 @@ export function useCodingAgent(studio: Studio) {
           review = await applyProjectCandidate(s, value, review);
         } else {
           setError("BLK-PATCH-001");
-          s.setMessage(
-            "项目已变化，代码助手保留了候选修改，未覆盖当前内容。",
-          );
+          s.setMessage("项目已变化，代码助手保留了候选修改，未覆盖当前内容。");
           review = { ...review, status: "conflict", error: "BLK-PATCH-001" };
         }
       } else delete value.project;
@@ -683,7 +693,7 @@ export function useCodingAgent(studio: Studio) {
     }
   };
   return {
-    busy: busy || working,
+    busy: busy || working || chat.switching,
     stopping,
     ready: chat.ready,
     messages: chat.messages,
@@ -700,6 +710,9 @@ export function useCodingAgent(studio: Studio) {
     stop,
     clear,
     newChat,
+    selectChat,
+    threads: chat.threads,
+    activeChatId: chat.activeId,
     pickWorkspace,
     undoChange,
     reject: discardProjectCandidate,

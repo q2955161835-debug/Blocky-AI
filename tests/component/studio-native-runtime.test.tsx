@@ -52,3 +52,24 @@ it("routes the Studio entry through the native facade and disposes it during exi
   await act(() => hook.result.current.settle());
   expect(calls.dispose).toHaveBeenCalledOnce();
 });
+it("waits for Agent history before F5 can start a native run and refuses an unreadable index", async () => {
+  let release!: (value:unknown)=>void;
+  const delayed=new Promise(resolve=>{release=resolve;});
+  const invoke=vi.fn(async(command:string,args:any)=>command==="read_user_state"?(args.kind==="chat-history-agent"?delayed:null):undefined);
+  vi.stubGlobal("__TAURI_INTERNALS__",{invoke});vi.stubGlobal("isTauri",true);
+  const hook=renderHook(()=>useStudio(createStarter()));
+  await waitFor(()=>expect(hook.result.current.compiling).toBe(false));
+  expect(hook.result.current.canRun).toBe(false);
+  await act(()=>hook.result.current.run());
+  expect(calls.run).not.toHaveBeenCalled();
+  await act(async()=>{release(null);await delayed;});
+  await waitFor(()=>expect(hook.result.current.canRun).toBe(true));
+  hook.unmount();
+  const invalidInvoke=vi.fn(async(command:string,args:any)=>command==="read_user_state"?(args.kind==="chat-history-agent"?{schemaVersion:"damaged"}:null):undefined);
+  vi.stubGlobal("__TAURI_INTERNALS__",{invoke:invalidInvoke});
+  const invalid=renderHook(()=>useStudio(createStarter()));
+  await waitFor(()=>expect(invalid.result.current.message).toContain("会话"));
+  expect(invalid.result.current.canRun).toBe(false);
+  await act(()=>invalid.result.current.run());
+  expect(calls.run).not.toHaveBeenCalled();
+});

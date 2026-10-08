@@ -39,3 +39,13 @@ it("keeps conversation across a restored session, isolates projects and discards
   const fresh=new Runtime({adapters});await fresh.run(project,"assistant-chat-trigger","fresh session",{moduleId:"main"});
   expect(requests[4].messages.some((m)=>m.content==="new role")).toBe(false);
 });
+it("keeps two chat scopes separate while allowing a return to the earlier conversation",async()=>{
+  const requests:GenerationRequest[]=[];const adapters=localAdapters();adapters.agent={generate:async(request)=>{requests.push(request);return reply(`reply ${requests.length}`);}};
+  const project=configured("pi-agent"),runtime=new Runtime({adapters});
+  await runtime.run(project,"assistant-chat-trigger","first chat subject",{moduleId:"main",conversationId:"chat-one"});
+  await runtime.run(project,"assistant-chat-trigger","second chat subject",{moduleId:"main",conversationId:"chat-two"});
+  expect(requests[1].messages.some(m=>m.content==="first chat subject")).toBe(false);
+  await runtime.run(project,"assistant-chat-trigger","return to first",{moduleId:"main",conversationId:"chat-one"});
+  expect(requests[2].messages.some(m=>m.content==="first chat subject")).toBe(true);
+  expect(requests[2].messages.some(m=>m.content==="second chat subject")).toBe(false);
+});

@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type ChatMenu = "add" | "settings" | null;
+export type ChatMenu = "add" | "settings" | "history" | null;
 export type ChatMenuControl = { value: ChatMenu; set(value: ChatMenu): void };
 
 export function useChatMenu(control?: ChatMenuControl): ChatMenuControl {
@@ -58,6 +58,7 @@ export function ChatPopover({
       ref={root}
       hidden={!open}
       className="chat-popover"
+      data-chat-kind={kind}
       role="dialog"
       aria-labelledby={titleId}
       onKeyDown={(event) => {
@@ -108,7 +109,10 @@ export function ChatMenuButton({
       title={label}
       aria-haspopup="dialog"
       aria-expanded={menu.value === kind}
-      onClick={event => { event.currentTarget.focus(); menu.set(menu.value === kind ? null : kind); }}
+      onClick={(event) => {
+        event.currentTarget.focus();
+        menu.set(menu.value === kind ? null : kind);
+      }}
     >
       {children}
     </button>

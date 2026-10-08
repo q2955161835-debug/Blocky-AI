@@ -189,6 +189,7 @@ it("keeps personal blueprints while listing all four official starts in the libr
       onContext={() => {}}
     />,
   );
+  fireEvent.click(screen.getByRole("button", { name: "蓝图" }));
   expect(screen.getByRole("button", { name: "新建：知识问答助手" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "新建：工作助手" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "新建：Coding 助手" })).toBeTruthy();

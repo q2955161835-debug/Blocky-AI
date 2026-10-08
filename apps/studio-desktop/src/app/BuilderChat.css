@@ -5,6 +5,84 @@
 .sidebar-content {
   overflow: hidden;
 }
+.chat-sidebar {
+  position: relative;
+}
+.chat-sidebar-header {
+  display: flex;
+  align-items: center;
+  flex: 0 0 42px;
+  min-width: 0;
+  border-bottom: 1px solid var(--border);
+  padding-right: 5px;
+}
+.chat-sidebar-header .sidebar-tabs {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+}
+.chat-sidebar-header .sidebar-tabs button {
+  padding: 10px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.chat-header-actions {
+  display: flex;
+  gap: 0;
+  flex: 0 0 auto;
+}
+.chat-header-actions button.chat-icon {
+  width: 26px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #bfc5ce;
+  font-size: 18px;
+}
+.chat-header-actions button.chat-icon:hover {
+  background: #ffffff0d;
+}
+.chat-popover[data-chat-kind="settings"] {
+  top: 0;
+  bottom: auto;
+  max-height: calc(100% - 20px);
+}
+.chat-sidebar > .chat-popover[data-chat-kind="history"] {
+  top: 46px;
+  bottom: auto;
+  max-height: calc(100% - 65px);
+}
+.chat-history-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+.chat-history-list button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 9px;
+  border: 0;
+  background: transparent;
+}
+.chat-history-list button.active,
+.chat-history-list button:hover {
+  background: #ffffff12;
+}
+.chat-history-list button span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chat-history-list time {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 10px;
+}
 .chat-panel.run-panel,
 .chat-panel.builder-panel {
   position: relative;
