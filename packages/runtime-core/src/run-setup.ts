@@ -34,7 +34,9 @@ export async function inspectRunSetup(project: Project, options: { registry?: Ma
       const resource=resolveResource(project,resourceId,"knowledge",options.registry);
       if (implementationKey(resource.definition.implementationRef)!=="adapter://knowledge-local-v1") continue;
       const port=knowledgePort(options.knowledgeCall,project.manifest.projectId,String(resource.definition.collection));
-      const [sources,stored]=await Promise.all([port.sources(),port.load()]);
+      // Both reads acquire the same exclusive collection lock in the native Host.
+      const sources=await port.sources();
+      const stored=await port.load();
       const state=readKnowledgeState(stored.value), readable=sources.sources.filter((source)=>source.readable);
       const status=!sources.sources.length ? "empty" : !readable.length ? "access-denied" : !state.index ? "not-synchronized" : state.pending || state.index.generation!==sources.generation ? "stale" : "ready";
       knowledge.push({resourceId,state:status,sources:sources.sources.length,readableSources:readable.length,chunks:state.index?.chunks.length??0});

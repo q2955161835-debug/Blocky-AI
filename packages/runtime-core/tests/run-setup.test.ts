@@ -43,3 +43,20 @@ it("projects source/index readiness from the shared ingestion protocol, includin
   generation++;expect((await check()).knowledge[0].state).toBe("stale");
   readable=false;expect((await check()).issues).toMatchObject([{kind:"knowledge",code:"BLK-KNOWLEDGE-ACCESS"}]);
 });
+it("does not race source and index reads against the same collection's exclusive Host lock", async () => {
+  const project = configure(createStartingBlueprint("knowledge-assistant"));
+  let reading = false;
+  const call: KnowledgeCall = async operation => {
+    if (reading) throw Error("BLK-KNOW-BUSY");
+    reading = true;
+    try {
+      await Promise.resolve();
+      if (operation === "knowledge-sources") return {generation:1,sources:[{sourceId:"manual",readable:true}]};
+      if (operation === "knowledge-load-index") return {revision:0,generation:1,value:null};
+      throw Error(operation);
+    } finally { reading = false; }
+  };
+  const setup = await inspectRunSetup(project, {knowledgeCall:call});
+  expect(setup.knowledge).toMatchObject([{state:"not-synchronized",sources:1}]);
+  expect(setup.issues).toMatchObject([{code:"BLK-KNOWLEDGE-NO-INDEX"}]);
+});
