@@ -72,7 +72,7 @@ export function StudioDialog({
         role="dialog"
         aria-modal="true"
         aria-label={
-          popup.kind === "settings"
+          isSettings
             ? "设置"
             : popup.kind === "resources"
               ? "资源管理"

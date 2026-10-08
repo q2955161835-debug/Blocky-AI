@@ -64,6 +64,12 @@
 .settings-row-description { margin: 4px 0 0; color: var(--settings-secondary); line-height: 1.6; overflow-wrap: anywhere; }
 .settings-row-controls { display: flex; flex: 0 1 45%; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
 .settings-row-controls > * { max-width: 100%; }
+.settings-row-controls input[role="switch"] {appearance:none;position:relative;width:42px;height:24px;margin:0;border:0;border-radius:20px;background:var(--settings-switch-off,#646b75);cursor:pointer;flex:0 0 auto;}
+.settings-row-controls input[role="switch"]::before {content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .12s ease;}
+.settings-row-controls input[role="switch"]:checked {background:var(--action,#4b83f5);}
+.settings-row-controls input[role="switch"]:checked::before {transform:translateX(18px);}
+.settings-row-controls input[role="switch"]:disabled {opacity:.5;cursor:default;}
+@media (prefers-reduced-motion:reduce) {.settings-row-controls input[role="switch"]::before {transition:none;}}
 .settings-row-controls :is(input, select, textarea) { color: var(--settings-foreground); background: var(--settings-control-background, var(--settings-background)); border-color: var(--settings-line); }
 .settings-row-controls input:not([type="checkbox"]):not([type="radio"]), .settings-row-controls select, .settings-row-controls textarea { width: 100%; }
 .settings-row-controls button { background: var(--settings-control-background, color-mix(in srgb, var(--settings-foreground) 6%, var(--settings-background))); border: 1px solid var(--settings-line); border-radius: 10px; }
