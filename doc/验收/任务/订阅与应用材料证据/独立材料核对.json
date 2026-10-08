@@ -1,0 +1,957 @@
+{
+  "baseline": "ec513306f8c71f8b214fb8b81f7e9168c0660021",
+  "originalPptSlides": 47,
+  "finalPptSlides": 51,
+  "retainedOldParts": 47,
+  "changedOriginalSlidesExcludingPageNumbers": [
+    5,
+    12,
+    15,
+    31,
+    47
+  ],
+  "bpTableCount": 27,
+  "bp27TablesEqualGitBaseline": true,
+  "styleIdsPreserved": true,
+  "bodyFills": [
+    "FFFFFF"
+  ],
+  "actualDirectRunProperties": 238,
+  "directRunFonts": [],
+  "footerFields": [
+    [
+      " PAGE ",
+      " NUMPAGES "
+    ]
+  ],
+  "privacyFindings": {
+    "Blocky-Studio-商业计划书-2026-10-08.docx": [],
+    "Blocky-Studio-商业计划书-2026-10-08.pdf": [],
+    "Blocky-Studio-积木AI创作-2026-10-08.pdf": [],
+    "Blocky-Studio-积木AI创作-2026-10-08.pptx": [],
+    "Blocky-Studio-财务测算-2026-10-03.xlsx": []
+  },
+  "files": {
+    "Blocky-Studio-商业计划书-2026-10-08.docx": {
+      "bytes": 74444,
+      "sha256": "03c8210b4cf19541753d7c969da6c489dff113f511adeda635019c16998c6d0e"
+    },
+    "Blocky-Studio-商业计划书-2026-10-08.pdf": {
+      "bytes": 450079,
+      "sha256": "542512f7decda03f370c8970397f722b998b2126f3fafee679198c6c84424117"
+    },
+    "Blocky-Studio-积木AI创作-2026-10-08.pdf": {
+      "bytes": 1792202,
+      "sha256": "db46a478ff609047b28b79cbe8740aa30ae6c639664b539e4ef9e43dab4d920b"
+    },
+    "Blocky-Studio-积木AI创作-2026-10-08.pptx": {
+      "bytes": 6312499,
+      "sha256": "4f3daf8e84876303023d4ac5a36b8e79601214592e7ce469f4eb6c70495d4e35"
+    },
+    "Blocky-Studio-财务测算-2026-10-03.xlsx": {
+      "bytes": 85536,
+      "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c"
+    }
+  },
+  "reviewedFullSize": [
+    "ppt7",
+    "ppt14",
+    "ppt51",
+    "bp2",
+    "bp5",
+    "bp6",
+    "bp26"
+  ],
+  "pptNotes": {
+    "ppt/notesSlides/notesSlide1.xml": [
+      "Blocky面向普通创作者与学校教育，用嵌套积木组合智能体。教育是优先验证场景，专业创作共享同一底座。官网已经开放产品介绍与预设在线体验，Windows桌面产品仍在持续完善。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+      "封面使用ImageGen品牌概念插画，不是官网截图或软件界面。"
+    ],
+    "ppt/notesSlides/notesSlide2.xml": [
+      "讲述时间参考25秒。",
+      "这是项目要验证的研发命题，教育价值由产品能力和后续真实场景共同验证。Scratch是创作学习方式参照，Agent部件引入模型、记忆和工具。当前工程成果为结构表达、修改审阅和运行映射提供基础，下一阶段先完成专业模板和后续产品开发。",
+      "转场：专业模板与后续开发先行，真实场景随后进入"
+    ],
+    "ppt/notesSlides/notesSlide3.xml": [
+      "当前成果包括Windows创作工作台及四类起始蓝图。后续重点是创作接口、教育组织、专业部署、开源社区和目标端，不再采用六框架模板依次交付的旧路线。真实课堂、合同和用户用量需要在相关产品准备完成后验证。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide4.xml": [
+      "讲述时间参考20秒。",
+      "图来自已交付0.8.0-chat普通包，合成水循环资料作品。左侧选择部件，中间保存编辑结构，右侧在构建助手与作品Agent间切换，底部有问题、日志和输出。此页介绍产品全貌，不将这个资料作品当作故事课程或真实学生作品。",
+      "转场：开源底座之上，连接作品语义与实际运行"
+    ],
+    "ppt/notesSlides/notesSlide5.xml": [
+      "讲述时间参考25秒。",
+      "Blockly、Tauri和Pi提供开源组件基础，Blocky围绕项目格式、语义编译、运行映射、Host隔离和受控修改组织产品。界面、CLI和构建助手共用领域能力。持续研发将这些工程资产发展为可改造模板、入门任务和可交付应用。",
+      "转场：角色、模型、记忆和工具，成为可改造部件"
+    ],
+    "ppt/notesSlides/notesSlide6.xml": [
+      "讲述时间参考25秒。",
+      "这些部件属于现有领域和运行能力。入门活动先用少量积木，教师预选模型、资料和权限，逐步增加记忆或工具。地图解释学生动作与观察点，不能当作全部小学教学活动已运行。专业能力和入门任务视图共用项目格式。",
+      "转场：从代码审阅，到积木审阅"
+    ],
+    "ppt/notesSlides/notesSlide7.xml": [
+      "讲述时间参考25秒。",
+      "关键价值是非专业用户可以审阅Agent行为。作品结构显示设计，候选差异支持审阅修改，运行事件把实际步骤带回积木。轨迹不展示模型内部推理，也不保证模型内容正确，师生需要结合任务和资料核对。OPC后续方向在发展章节简述，小学学习保持主线。",
+      "转场：从准备资料到运行作品，保留可回查过程"
+    ],
+    "ppt/notesSlides/notesSlide8.xml": [
+      "讲述时间参考25秒。",
+      "画面展示Blocky构建助手处理合成水循环资料并生成学习卡。它读取资料、写入文件并展示修改差异，已有模型记录为息壤deepseek-v4-pro三次响应共7717Token。后续本地故事规则对照单独展示结构改造，课堂故事生成则属于未来教学设计。",
+      "转场：继续完善四类蓝图与创作产品",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide9.xml": [
+      "四类起始蓝图是可展开、可修改的项目，不是四个封闭聊天功能。Pi Agent来源于真实上游Pi核心积木化。空白项目和个人蓝图为另外的创作入口。四类蓝图已交付，不代表完整产品愿景或所有上游框架兼容完成。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+      "角色为ImageGen概念插画，不承担实现证明。"
+    ],
+    "ppt/notesSlides/notesSlide10.xml": [
+      "公开在线体验是预设UI与合成工具轨迹演示，普通播放约60秒，不执行真实API、CLI或文件读写。它用于理解创作方法，与历史Windows真实模型调用证据分别陈列。入口：https://blocky.donk55666.chatgpt.site/#/studio",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide11.xml": [
+      "校园植物小向导和研究报告工作台是官网场景设计，不是实际课堂或客户成果。现有技术能力与教师组织、团队权限、部署、社区、多端等后续能力分别说明。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+      "场景为ImageGen概念插画，不是真实课堂、客户现场或软件界面。"
+    ],
+    "ppt/notesSlides/notesSlide12.xml": [
+      "四类起始蓝图已经交付，后续建设按实际缺口和模块依赖推进。官网展示完整愿景，不能据此宣称班级后台、团队部署、社区或独立App已开放。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide13.xml": [
+      "讲述时间参考25秒。",
+      "七类入门任务投影为开始、角色、会思考、会查找、会记住、会行动、会回答，专业视图十二类Agent语义，但使用相同项目格式。教学活动先约束可用部件，再逐步解释复杂能力。这不是已经做过小学易用性测试的结论。",
+      "转场：桌面完成创作，移动端延续作品使用"
+    ],
+    "ppt/notesSlides/notesSlide14.xml": [
+      "讲述时间参考25秒。",
+      "当前产品证据是Windows。完整计划要求macOS同等搭建能力，Android、iOS和HarmonyOS定位运行已搭建的Agent，不把移动端写成完整积木编辑器。Android/iOS可参考Tauri能力，HarmonyOS沿用ArkTS/ArkUI原生壳及共享协议路线。平台能力协商决定本地或经授权远端执行；模型连接、文件与工具权限、签名分发和真机测试分别实现。Pake桌面封装不证明移动适配已完成。",
+      "转场：把Agent页面与积木作品，生成独立应用",
+      "公开来源，2026-10-03核对：",
+      "https://v2.tauri.app/start/",
+      "https://v2.tauri.app/distribute/"
+    ],
+    "ppt/notesSlides/notesSlide15.xml": [
+      "后续一键导出规划，Windows、macOS与手机应用。Pake/Tauri仅为封装或应用壳选择；必须交付运行内核并逐端验证依赖、权限、签名和分发。模型调用沿用Blocky Token套餐体系，实际模型用量由设置指定账户承担。并不承诺所有桌面工具无需适配即可在手机运行。"
+    ],
+    "ppt/notesSlides/notesSlide16.xml": [
+      "工程成果与公开开放状态分别核对。Windows四蓝图已有成果，公开下载与源码渠道仍在准备。后续真实场景按实际使用范围核对组织、安全、权限与恢复，不把预算日历当功能交付。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide17.xml": [
+      "讲述时间参考20秒。",
+      "这里是由官方学习资源、教育方向和当前工具能力形成的教学设计问题，不是已做访谈后的需求比例。教育部2024年分学段方向支持感知体验、理解应用及任务和项目实践。孩子能否独立完成、教师采用理由将在共创中记录。",
+      "转场：参照 Scratch，在读、改、搭、讲中学习 Agent",
+      "公开来源，2026-10-03核对：",
+      "https://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/s5987/202412/t20241202_1165500.html",
+      "https://scratchfoundation.org/learn/learning-library/getting-started"
+    ],
+    "ppt/notesSlides/notesSlide18.xml": [
+      "讲述时间参考20秒。",
+      "Scratch提供起始作品、编辑器教程、改编与调试资源。Blocky借鉴的是创作方式。Agent作品中，模型按任务生成、记忆提供跨轮上下文、工具执行具体动作；学生在作品中理解这些部件。小学适用性与效果不能由Scratch参照直接推断。",
+      "转场：先读懂故事搭档，再预测它怎样回应",
+      "公开来源，2026-10-03核对：",
+      "https://scratchfoundation.org/learn/learning-library/getting-started"
+    ],
+    "ppt/notesSlides/notesSlide19.xml": [
+      "讲述时间参考25秒。",
+      "故事搭档是一项未来教学设计：输入勇敢小猫，由条件选择方向，再把方向、友善角色和三句并提问的任务交给教师预选模型。孩子先预测路线，再检查实际回应。下一页用已运行的本地规则对照说明一次改动如何改变步骤，完整故事活动在产品准备之后实施。",
+      "转场：只改一处，对照结构、步骤和结果"
+    ],
+    "ppt/notesSlides/notesSlide20.xml": [
+      "讲述时间参考30秒。",
+      "本地规则两次执行分别经过forest与garden。输入保持不变，只把条件从勇敢改成友善，得到不同路线和短方向输出。孩子指出改变的位置，解释步骤为什么改变，再换一个输入检验；后续可用同样方法比较真实模型回应。",
+      "转场：换一个目标，组合自己的海底向导"
+    ],
+    "ppt/notesSlides/notesSlide21.xml": [
+      "讲述时间参考30秒。",
+      "这是不同于故事搭档的新目标，要求孩子自主决定角色、输入和任务。每次增加一种能力。记忆把本次方向保存下轮使用，工具可以统计文本，知识部件可提供教师选择的资料。教师负责模型和工具权限。这里是迁移任务设计，不是学生已完成的课堂证据。",
+      "转场：一次增加一种能力，解释它带来的变化"
+    ],
+    "ppt/notesSlides/notesSlide22.xml": [
+      "讲述时间参考25秒。",
+      "能力按学习任务逐步加入。模型负责生成回应，记忆保留后续需要的信息，资料为任务提供上下文，工具完成具体动作。每一步保存输入、结构、实际结果和孩子的解释，教师准备对应模型、资料与工具权限。",
+      "转场：用运行轨迹定位步骤，再回到作品修改"
+    ],
+    "ppt/notesSlides/notesSlide23.xml": [
+      "讲述时间参考30秒。",
+      "两个局部来自同次真实普通包运行。黄色虚线是编辑选中状态，运行事件可定位具体积木。它证明轨迹与作品对应能力，截图不是故事搭档。孩子先预测，再找实际步骤，定位修改后重新运行并讲解。",
+      "转场：作品、过程和帮助程度共同说明学习进展"
+    ],
+    "ppt/notesSlides/notesSlide24.xml": [
+      "讲述时间参考25秒。",
+      "表中的四个任务可以各自使用0到3的帮助等级，不是一行任务只对应一种等级。用匿名编号、作品版本、输入输出和口述解释记录，迁移任务与练习题分开。目标完成比例需连同样本、课时和帮助等级解读；不是课堂效果实验。",
+      "转场：用作品包组织课前、课中和课后"
+    ],
+    "ppt/notesSlides/notesSlide25.xml": [
+      "讲述时间参考25秒。",
+      "教师先准备可运行原作品并明确权限，学生保存自己的副本。课中通过预测、单一改动、迁移任务和解释观察学习。课后收集项目文件与记录，用它准备下一次活动。组织后台与评价辅助按后续建设规划推进；此页给出使用现有项目保存、蓝图与轨迹的人工组织方案，不把课程包当已售成果。",
+      "转场：先保存原作品，再组织学生副本与复盘"
+    ],
+    "ppt/notesSlides/notesSlide26.xml": [
+      "讲述时间参考25秒。",
+      "这里用项目文件与保存重开组织课程，不承诺自动班级账户、云分发或自动评分。原作品与学生副本保留版本，资源和模型密钥不放进作品文件。支持服务可以提供重开检查和恢复说明。课程指南属于服务设计。",
+      "转场：围绕创作对象、可改部件和过程解释比较"
+    ],
+    "ppt/notesSlides/notesSlide27.xml": [
+      "讲述时间参考25秒。",
+      "Scratch提供作品创作学习参照，Blocks Builder AI提供可视化AI和组织教学方案参照。比较围绕同一教学任务进行：创作什么、可以修改哪些部件、怎样查看运行过程、教师怎样组织。Blocky重点连接结构审阅、修改审阅与运行事件映射，后续教师活动进一步核对适配价值。",
+      "转场：对照同一个教学任务，依据官方公开信息",
+      "公开来源，2026-10-03核对：",
+      "https://scratchfoundation.org/learn/learning-library/getting-started",
+      "https://scratchfoundation.org/learn/learning-library/teacher-accounts",
+      "https://blocksbuilder.ai/features",
+      "https://blocksbuilder.ai/pricing"
+    ],
+    "ppt/notesSlides/notesSlide28.xml": [
+      "讲述时间参考25秒。",
+      "竞争比较在同一任务中进行，后续教师共创记录准备成本、阅读理解、调试解释与复用。官网声明不等于竞品实测，Blocky小学效果不能由工程能力推出。Tynker课堂30学生许可证只是示例，学校Premium按人数与需求定制。组织方案参照是建设方向，非当前后台交付。",
+      "转场：学生使用，教师组织，机构决定合作",
+      "公开来源，2026-10-03核对：",
+      "https://scratchfoundation.org/learn/learning-library/getting-started",
+      "https://scratchfoundation.org/learn/learning-library/teacher-accounts",
+      "https://blocksbuilder.ai/features",
+      "https://blocksbuilder.ai/pricing",
+      "https://www.tynker.com/school/coding-curriculum/request",
+      "https://www.tynker.com/classroom-school/coding-curriculum/"
+    ],
+    "ppt/notesSlides/notesSlide29.xml": [
+      "讲述时间参考25秒。",
+      "使用者、组织者与采购方分开。首批不以全国学校数量当市场规模；先筛有设备、组织者和具体活动的小学或机构。公开交流从教学任务和作品开始，再与预算负责人界定人工服务和模型成本。这是客户进入计划，不是已经签约名单。",
+      "转场：产品准备完成后，进入教师与机构真实使用"
+    ],
+    "ppt/notesSlides/notesSlide30.xml": [
+      "讲述时间参考25秒。",
+      "产品准备完成后，先找到明确教学任务，再共同开展活动，最后形成适配与采购范围。20次有效接触、8次深入演示和4份交付合同是可调整的条件漏斗，不绑定特定年份。每一步留下任务、使用、教师复用与支付条件的记录，按实际反馈决定是否扩展。",
+      "转场：个人版开源，组织与算力分别收费"
+    ],
+    "ppt/notesSlides/notesSlide31.xml": [
+      "标准99元每月2000积分、进阶199元每月4500积分、专业999元每月25000积分。加量包50元1000积分30天。月度额度拟当期有效不结转，优先用最早到期额度。积分按模型实际输入、输出和缓存等费率折算，不承诺固定Token数量、任务数或无限额度。价格为拟案，尚未购买或计费。https://blocky.donk55666.chatgpt.site/#/pricing",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+      "软件、托管用量和机构服务分账。"
+    ],
+    "ppt/notesSlides/notesSlide32.xml": [
+      "拟定套餐参考WorkBuddy分档订阅与加量包结构。官方定价于2026-10-06重新核对：标准/高级/旗舰单次月付99/199/999元；连续包月70/140/700元，基础2000/4000/20000积分，限时赠送2000/5000/30000积分，当前实得4000/9000/50000。Blocky标准99/2000、进阶199/4500、专业999/25000，对应0.04950、0.04422、0.03996元/积分；加量50/1000=0.05000元/积分。按WorkBuddy当前连续包月含限时赠送，Blocky名义单价约2.83、2.84、2.85倍；按单次月付含赠送恰为2倍。积分消耗规则、模型选择和权益不同，倍数不能证明同任务成本、API优惠或质量差异；赠送与续费条件可能变化。Blocky暂未开放购买，套餐未计入原财务预测。来源：WorkBuddy Pricing和Credits，访问2026-10-06。https://www.workbuddy.cn/docs/workbuddy/Pricing ; https://www.codebuddy.cn/docs/workbuddy/Credits ; Blocky官网咨询拟案https://blocky.donk55666.chatgpt.site/#/pricing"
+    ],
+    "ppt/notesSlides/notesSlide33.xml": [
+      "贡献利润=P−Q×u×c−P×v，其中P为套餐收入，Q为额度，u为使用率，c为实际模型结算元/积分，v为其他可变成本占收入比例。不是净利润，未扣固定研发、管理与获客支出。假设u=100%、v=10%、目标贡献利润率50%，成本上限标准0.01980、进阶0.01769、专业0.01598、加量0.02000元/积分。c=0.02时贡献额49.10/89.10/399.10/25.00元，贡献率49.60%/44.77%/39.95%/50.00%。c=0.04压力时分别9.10/-0.90/-100.90/5.00元，贡献率9.19%/-0.45%/-10.10%/10.00%。这是独立情景测算，不代表采购报价、实现利润或原24个月模型预测。若客户在可比模型任务上比直付公开API节省20%，且全部用满、其他可变成本10%、目标贡献率50%，模型结算成本须不超过该可比API账单32%；未获得此采购条件。上线前需公布模型输入、输出、缓存及工具费用的积分折算；核对实际用量、成本、续订意愿与服务范围。来源：本方案明示假设与公式推导，竞品价格只用于结构参照。",
+      "与原XLSX和BP表12衔接：专业创作者参考月模型成本1,347.02元为2026-10-03假设，已高于999元拟价；若同工作量全部纳入且模型成本不降，再扣10%其他可变成本，贡献额999−1347.02−99.90=−447.92元，贡献率−44.84%。原工作量尚未映射25,000积分，不能当实际亏损或已经覆盖成本的证明。"
+    ],
+    "ppt/notesSlides/notesSlide34.xml": [
+      "讲述时间参考20秒。",
+      "BBAI官网教育方案列师生账户、课堂管理、进度分析、课程支持与优先支持；Tynker学校方案列管理、自动评分和教师发展，Premium按学生数和学校需求报价；其课堂课程页面另有30学生许可证示例，不能将所有学校固定为30人。Blocky借鉴采购结构，不照搬价格或宣称后台已可购买。Agent作品的评价规划先用明确规则检查、过程记录与教师复核，不能把自动评分等同模型答案正确或学习提升。报价按学生规模、管理、部署和支持范围，与算力分开。",
+      "转场：以开放创作，积累作品和扩展生态",
+      "公开来源，2026-10-03核对：",
+      "https://blocksbuilder.ai/pricing",
+      "https://www.tynker.com/school/coding-curriculum/request",
+      "https://www.tynker.com/classroom-school/coding-curriculum/",
+      "https://www.tynker.com/school/"
+    ],
+    "ppt/notesSlides/notesSlide35.xml": [
+      "讲述时间参考20秒。",
+      "个人版完全开源与社区建设沿产品路线推进。贡献入口承接可复现作品、蓝图、积木包、教学资料和改进建议，第三方资源保留来源、版本与权限说明。社区复用推动产品与课程积累，组织托管和云算力提供独立的持续服务。",
+      "转场：让产品能力沉淀为可重复使用的教学资产"
+    ],
+    "ppt/notesSlides/notesSlide36.xml": [
+      "讲述时间参考25秒。",
+      "这里介绍项目可核对成果和复用资产。后两行是服务建设规划，不是已完成课程资产。复用可能减少工时，但财务未预先计入未经实测的节省；应比较初次制作和第二次复用的实际工时。",
+      "转场：服务报价连接教学规模、交付资产与支持"
+    ],
+    "ppt/notesSlides/notesSlide37.xml": [
+      "讲述时间参考25秒。",
+      "样例范围为1班30名学生、6次活动与3个可编辑作品，配置、准备、培训和支持合计80小时。它用于说明教学服务如何按范围组织。真实场景准备完成后，以实际活动、设备、支持工作量形成报价，组织后台与模型算力分别核算，机构可使用自有API账户。",
+      "转场：短任务用量与专业Agent月成本分别测算"
+    ],
+    "ppt/notesSlides/notesSlide38.xml": [
+      "本轮保留配套2026-10-03 XLSX中的历史预算输入，不将其中供应商价格称为最新价格。历史短任务、供应商专业统计、使用频次假设及汇率分别说明。采购前重新核价，不能将专业资源参照套给小学生。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide39.xml": [
+      "讲述时间参考35秒。",
+      "人数是产品准备后条件容量，月序19为排期假设。短任务参考和专业档公开统计分别使用；人均月预算不是套餐售价或真实课堂费用。专业中点200美元按参考汇率换算，研发预算另列。实际模型、Token、缓存、重试和合同须按账单校准。",
+      "转场：24个月资金覆盖研发与后续条件场景",
+      "公开来源，2026-10-03核对：",
+      "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "https://code.claude.com/docs/en/costs",
+      "https://www.chinamoney.com.cn/chinese/index.html"
+    ],
+    "ppt/notesSlides/notesSlide40.xml": [
+      "讲述时间参考40秒。",
+      "基准现金支出573.239万元，最低追加866.443万元，取整规划900.000万元。等效资源前6月3、后18月4，综合人月2万元，非团队履历。研发内部与场景算力分开；产品准备关口后才启用场景容量。收入与自有资金未知，默认不抵减。现金储备、预留和设备资产均不重复费用。",
+      "转场：资金按研发关口投入，再支持真实场景"
+    ],
+    "ppt/notesSlides/notesSlide41.xml": [
+      "原工作簿各阶段金额和月份保持。当前研发对象改为四蓝图与场景配套，不再按六品牌模板投入。原24个月模型是资源容量假设，尚未重新估计工时，也未计入官网拟定套餐收入；排期按实际关口更新。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide42.xml": [
+      "讲述时间参考35秒。",
+      "30万元只是现金预算判断，不是大模型厂商的报价。非退合作费、可消费额度预付与可退保证金当前输入0表示未录入条款，不表示厂商免费。已发生的非退费用以及期末占用的保证金、未消耗额度占用预留余额，预留余额最低为0。预付额度在消耗时抵扣模型采购现金，不能把充值和后续被抵扣的消耗再收两遍；保证金不进入损益。基准暂不假定返还到账，签约后按实际条款增加返还时点。",
+      "转场：用回款与合作条款，校准资金计划"
+    ],
+    "ppt/notesSlides/notesSlide43.xml": [
+      "官网已有拟定价格，积分与Token转换费率、采用人数和实际收款未确认。本页仍是原资金模型的成本回收敏感性，80%表示采购成本回收假设，不能当作套餐毛利、销售预测或已确认回款。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide44.xml": [
+      "讲述时间参考35秒。",
+      "三个资源情景同时改变等效人力、条件用户容量、用量成本及现金储备。专业基准来自公开使用统计中点，精简75%对应150美元月参考，高用量2.5倍为独立压力参数。场景关口与容量均不代表已经采用、付费或上线。",
+      "转场：近期90天推进四类蓝图与创作产品与后续开发准备",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide45.xml": [
+      "90天为可调整研发窗口，不承诺完整组织后台、计费、多端同时上线。现有官网可支持产品交流，公开下载和开源入口待准备。真实课堂和专业客户成果仍需采证。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide46.xml": [
+      "官网与拟定套餐本轮于2026-10-05核对；其他竞品及供应商资料保留2026-10-03原访问快照。OPC不计入新增合同或营收。https://blocky.donk55666.chatgpt.site/",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide47.xml": [
+      "合作沟通以明确范围和准备条件为前提。官网提供产品介绍、教育与专业场景、预设在线体验及价格咨询。个人软件免费方向不变，托管与机构合作按实际条件讨论。公开下载、源码和社区入口仍在准备。",
+      "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+    ],
+    "ppt/notesSlides/notesSlide48.xml": [
+      "托管订阅与应用商业能力为规划，实际模型调用按对应账户累计。应用订阅收入、企业折扣与用量分布须经实际验证。",
+      "OpenAI ChatGPT/API独立计费：https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform",
+      "Claude部分方案支持Agent SDK及第三方应用使用订阅额度（2026-10-07更新，2026-10-08核对）：https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+    ],
+    "ppt/notesSlides/notesSlide49.xml": [
+      "托管订阅与应用商业能力为规划，实际模型调用按对应账户累计。应用订阅收入、企业折扣与用量分布须经实际验证。",
+      "OpenAI ChatGPT/API独立计费：https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform",
+      "Claude部分方案支持Agent SDK及第三方应用使用订阅额度（2026-10-07更新，2026-10-08核对）：https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+    ],
+    "ppt/notesSlides/notesSlide50.xml": [
+      "Blocky CLI是外部开发Agent使用Blocky的开放入口，内置构建助手只是选择之一。开发Agent需要能够执行CLI命令，并遵守项目资源和工具权限；可查询、修改、校验、运行与读取诊断。",
+      "零迁移描述保留原来的开发Agent与工作方式，已有代码转为积木仍需按项目结构适配。CLI能力持续按共享领域接口完善。 外部开发Agent自身模型调用按其服务规则结算，Blocky订阅覆盖Blocky托管模型请求。"
+    ],
+    "ppt/notesSlides/notesSlide51.xml": [
+      "自定义积木是Blocky完整产品中释放表达上限的扩展机制。可视化自定义积木封装现有结构并允许无损展开；代码自定义积木表达边界清楚的算法、工具与业务能力，声明输入输出、依赖、错误、权限和运行目标。",
+      "现有受控计算、工具与转换基础不等同于完整自定义编辑、封装和社区分发已开放。能力扩展按产品路线建设，不承诺任意仓库整包转换或绕过工具权限与运行预算。",
+      "CLI提供其他开发Agent参与创建与复用的入口；自定义积木提供可扩展能力，二者与项目、编译及运行语义统一。"
+    ]
+  },
+  "xlsxMatchesBaseline": true,
+  "acceptedAtLocal": "2026-10-08 22:07",
+  "role": "Independent investment adviser",
+  "finalConclusion": "通过",
+  "itemResults": {
+    "M01": "通过",
+    "M02": "通过",
+    "M03": "通过",
+    "M04": "通过",
+    "M05": "通过"
+  },
+  "previous50PageAcceptance": {
+    "baseline": "ec513306f8c71f8b214fb8b81f7e9168c0660021",
+    "originalPptSlides": 47,
+    "finalPptSlides": 50,
+    "retainedOldParts": 47,
+    "changedOriginalSlidesExcludingPageNumbers": [
+      5,
+      12,
+      15,
+      31
+    ],
+    "bpTableCount": 27,
+    "bp27TablesEqualGitBaseline": true,
+    "styleIdsPreserved": true,
+    "bodyFills": [
+      "FFFFFF"
+    ],
+    "actualDirectRunProperties": 238,
+    "directRunFonts": [],
+    "footerFields": [
+      [
+        " PAGE ",
+        " NUMPAGES "
+      ]
+    ],
+    "privacyFindings": {
+      "Blocky-Studio-商业计划书-2026-10-08.docx": [],
+      "Blocky-Studio-商业计划书-2026-10-08.pdf": [],
+      "Blocky-Studio-积木AI创作-2026-10-08.pdf": [],
+      "Blocky-Studio-积木AI创作-2026-10-08.pptx": [],
+      "Blocky-Studio-财务测算-2026-10-03.xlsx": []
+    },
+    "files": {
+      "Blocky-Studio-商业计划书-2026-10-08.docx": {
+        "bytes": 73859,
+        "sha256": "faafb5b085d6b7298795a16d890a10aadcd4b7df8f8ae950bacef52c7e54615d"
+      },
+      "Blocky-Studio-商业计划书-2026-10-08.pdf": {
+        "bytes": 447493,
+        "sha256": "ea81466831df8a7c26eb9adec497a928a6a092731c6200ddeb9148f329b818ca"
+      },
+      "Blocky-Studio-积木AI创作-2026-10-08.pdf": {
+        "bytes": 1721269,
+        "sha256": "5ed066b1abd932f6dc28577fff7e7236cbd1d5ca732ae5d099ad0f7445d09862"
+      },
+      "Blocky-Studio-积木AI创作-2026-10-08.pptx": {
+        "bytes": 6307380,
+        "sha256": "515010276ded3bd2930d7f0197b99a2f30e2af24230fddc66d814ebf44a9d08a"
+      },
+      "Blocky-Studio-财务测算-2026-10-03.xlsx": {
+        "bytes": 85536,
+        "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c"
+      }
+    },
+    "reviewedPages": {
+      "ppt": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "bp": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    },
+    "reviewedFullSize": [
+      "ppt6",
+      "ppt16",
+      "ppt33",
+      "ppt34",
+      "bp11",
+      "bp14",
+      "bp22",
+      "bp26"
+    ],
+    "pptNotes": {
+      "ppt/notesSlides/notesSlide1.xml": [
+        "Blocky面向普通创作者与学校教育，用嵌套积木组合智能体。教育是优先验证场景，专业创作共享同一底座。官网已经开放产品介绍与预设在线体验，Windows桌面产品仍在持续完善。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+        "封面使用ImageGen品牌概念插画，不是官网截图或软件界面。"
+      ],
+      "ppt/notesSlides/notesSlide2.xml": [
+        "讲述时间参考25秒。",
+        "这是项目要验证的研发命题，教育价值由产品能力和后续真实场景共同验证。Scratch是创作学习方式参照，Agent部件引入模型、记忆和工具。当前工程成果为结构表达、修改审阅和运行映射提供基础，下一阶段先完成专业模板和后续产品开发。",
+        "转场：专业模板与后续开发先行，真实场景随后进入"
+      ],
+      "ppt/notesSlides/notesSlide3.xml": [
+        "当前成果包括Windows创作工作台及四类起始蓝图。后续重点是创作接口、教育组织、专业部署、开源社区和目标端，不再采用六框架模板依次交付的旧路线。真实课堂、合同和用户用量需要在相关产品准备完成后验证。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide4.xml": [
+        "讲述时间参考20秒。",
+        "图来自已交付0.8.0-chat普通包，合成水循环资料作品。左侧选择部件，中间保存编辑结构，右侧在构建助手与作品Agent间切换，底部有问题、日志和输出。此页介绍产品全貌，不将这个资料作品当作故事课程或真实学生作品。",
+        "转场：开源底座之上，连接作品语义与实际运行"
+      ],
+      "ppt/notesSlides/notesSlide5.xml": [
+        "讲述时间参考25秒。",
+        "Blockly、Tauri和Pi提供开源组件基础，Blocky围绕项目格式、语义编译、运行映射、Host隔离和受控修改组织产品。界面、CLI和构建助手共用领域能力。持续研发将这些工程资产发展为可改造模板、入门任务和可交付应用。",
+        "转场：角色、模型、记忆和工具，成为可改造部件"
+      ],
+      "ppt/notesSlides/notesSlide6.xml": [
+        "讲述时间参考25秒。",
+        "这些部件属于现有领域和运行能力。入门活动先用少量积木，教师预选模型、资料和权限，逐步增加记忆或工具。地图解释学生动作与观察点，不能当作全部小学教学活动已运行。专业能力和入门任务视图共用项目格式。",
+        "转场：从代码审阅，到积木审阅"
+      ],
+      "ppt/notesSlides/notesSlide7.xml": [
+        "讲述时间参考25秒。",
+        "关键价值是非专业用户可以审阅Agent行为。作品结构显示设计，候选差异支持审阅修改，运行事件把实际步骤带回积木。轨迹不展示模型内部推理，也不保证模型内容正确，师生需要结合任务和资料核对。OPC后续方向在发展章节简述，小学学习保持主线。",
+        "转场：从准备资料到运行作品，保留可回查过程"
+      ],
+      "ppt/notesSlides/notesSlide8.xml": [
+        "讲述时间参考25秒。",
+        "画面展示Blocky构建助手处理合成水循环资料并生成学习卡。它读取资料、写入文件并展示修改差异，已有模型记录为息壤deepseek-v4-pro三次响应共7717Token。后续本地故事规则对照单独展示结构改造，课堂故事生成则属于未来教学设计。",
+        "转场：继续完善四类蓝图与创作产品",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide9.xml": [
+        "四类起始蓝图是可展开、可修改的项目，不是四个封闭聊天功能。Pi Agent来源于真实上游Pi核心积木化。空白项目和个人蓝图为另外的创作入口。四类蓝图已交付，不代表完整产品愿景或所有上游框架兼容完成。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+        "角色为ImageGen概念插画，不承担实现证明。"
+      ],
+      "ppt/notesSlides/notesSlide10.xml": [
+        "公开在线体验是预设UI与合成工具轨迹演示，普通播放约60秒，不执行真实API、CLI或文件读写。它用于理解创作方法，与历史Windows真实模型调用证据分别陈列。入口：https://blocky.donk55666.chatgpt.site/#/studio",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide11.xml": [
+        "校园植物小向导和研究报告工作台是官网场景设计，不是实际课堂或客户成果。现有技术能力与教师组织、团队权限、部署、社区、多端等后续能力分别说明。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+        "场景为ImageGen概念插画，不是真实课堂、客户现场或软件界面。"
+      ],
+      "ppt/notesSlides/notesSlide12.xml": [
+        "四类起始蓝图已经交付，后续建设按实际缺口和模块依赖推进。官网展示完整愿景，不能据此宣称班级后台、团队部署、社区或独立App已开放。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide13.xml": [
+        "讲述时间参考25秒。",
+        "七类入门任务投影为开始、角色、会思考、会查找、会记住、会行动、会回答，专业视图十二类Agent语义，但使用相同项目格式。教学活动先约束可用部件，再逐步解释复杂能力。这不是已经做过小学易用性测试的结论。",
+        "转场：桌面完成创作，移动端延续作品使用"
+      ],
+      "ppt/notesSlides/notesSlide14.xml": [
+        "讲述时间参考25秒。",
+        "当前产品证据是Windows。完整计划要求macOS同等搭建能力，Android、iOS和HarmonyOS定位运行已搭建的Agent，不把移动端写成完整积木编辑器。Android/iOS可参考Tauri能力，HarmonyOS沿用ArkTS/ArkUI原生壳及共享协议路线。平台能力协商决定本地或经授权远端执行；模型连接、文件与工具权限、签名分发和真机测试分别实现。Pake桌面封装不证明移动适配已完成。",
+        "转场：把Agent页面与积木作品，生成独立应用",
+        "公开来源，2026-10-03核对：",
+        "https://v2.tauri.app/start/",
+        "https://v2.tauri.app/distribute/"
+      ],
+      "ppt/notesSlides/notesSlide15.xml": [
+        "后续一键导出规划，Windows、macOS与手机应用。Pake/Tauri仅为封装或应用壳选择；必须交付运行内核并逐端验证依赖、权限、签名和分发。模型调用沿用Blocky Token套餐体系，实际模型用量由设置指定账户承担。并不承诺所有桌面工具无需适配即可在手机运行。"
+      ],
+      "ppt/notesSlides/notesSlide16.xml": [
+        "工程成果与公开开放状态分别核对。Windows四蓝图已有成果，公开下载与源码渠道仍在准备。后续真实场景按实际使用范围核对组织、安全、权限与恢复，不把预算日历当功能交付。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide17.xml": [
+        "讲述时间参考20秒。",
+        "这里是由官方学习资源、教育方向和当前工具能力形成的教学设计问题，不是已做访谈后的需求比例。教育部2024年分学段方向支持感知体验、理解应用及任务和项目实践。孩子能否独立完成、教师采用理由将在共创中记录。",
+        "转场：参照 Scratch，在读、改、搭、讲中学习 Agent",
+        "公开来源，2026-10-03核对：",
+        "https://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/s5987/202412/t20241202_1165500.html",
+        "https://scratchfoundation.org/learn/learning-library/getting-started"
+      ],
+      "ppt/notesSlides/notesSlide18.xml": [
+        "讲述时间参考20秒。",
+        "Scratch提供起始作品、编辑器教程、改编与调试资源。Blocky借鉴的是创作方式。Agent作品中，模型按任务生成、记忆提供跨轮上下文、工具执行具体动作；学生在作品中理解这些部件。小学适用性与效果不能由Scratch参照直接推断。",
+        "转场：先读懂故事搭档，再预测它怎样回应",
+        "公开来源，2026-10-03核对：",
+        "https://scratchfoundation.org/learn/learning-library/getting-started"
+      ],
+      "ppt/notesSlides/notesSlide19.xml": [
+        "讲述时间参考25秒。",
+        "故事搭档是一项未来教学设计：输入勇敢小猫，由条件选择方向，再把方向、友善角色和三句并提问的任务交给教师预选模型。孩子先预测路线，再检查实际回应。下一页用已运行的本地规则对照说明一次改动如何改变步骤，完整故事活动在产品准备之后实施。",
+        "转场：只改一处，对照结构、步骤和结果"
+      ],
+      "ppt/notesSlides/notesSlide20.xml": [
+        "讲述时间参考30秒。",
+        "本地规则两次执行分别经过forest与garden。输入保持不变，只把条件从勇敢改成友善，得到不同路线和短方向输出。孩子指出改变的位置，解释步骤为什么改变，再换一个输入检验；后续可用同样方法比较真实模型回应。",
+        "转场：换一个目标，组合自己的海底向导"
+      ],
+      "ppt/notesSlides/notesSlide21.xml": [
+        "讲述时间参考30秒。",
+        "这是不同于故事搭档的新目标，要求孩子自主决定角色、输入和任务。每次增加一种能力。记忆把本次方向保存下轮使用，工具可以统计文本，知识部件可提供教师选择的资料。教师负责模型和工具权限。这里是迁移任务设计，不是学生已完成的课堂证据。",
+        "转场：一次增加一种能力，解释它带来的变化"
+      ],
+      "ppt/notesSlides/notesSlide22.xml": [
+        "讲述时间参考25秒。",
+        "能力按学习任务逐步加入。模型负责生成回应，记忆保留后续需要的信息，资料为任务提供上下文，工具完成具体动作。每一步保存输入、结构、实际结果和孩子的解释，教师准备对应模型、资料与工具权限。",
+        "转场：用运行轨迹定位步骤，再回到作品修改"
+      ],
+      "ppt/notesSlides/notesSlide23.xml": [
+        "讲述时间参考30秒。",
+        "两个局部来自同次真实普通包运行。黄色虚线是编辑选中状态，运行事件可定位具体积木。它证明轨迹与作品对应能力，截图不是故事搭档。孩子先预测，再找实际步骤，定位修改后重新运行并讲解。",
+        "转场：作品、过程和帮助程度共同说明学习进展"
+      ],
+      "ppt/notesSlides/notesSlide24.xml": [
+        "讲述时间参考25秒。",
+        "表中的四个任务可以各自使用0到3的帮助等级，不是一行任务只对应一种等级。用匿名编号、作品版本、输入输出和口述解释记录，迁移任务与练习题分开。目标完成比例需连同样本、课时和帮助等级解读；不是课堂效果实验。",
+        "转场：用作品包组织课前、课中和课后"
+      ],
+      "ppt/notesSlides/notesSlide25.xml": [
+        "讲述时间参考25秒。",
+        "教师先准备可运行原作品并明确权限，学生保存自己的副本。课中通过预测、单一改动、迁移任务和解释观察学习。课后收集项目文件与记录，用它准备下一次活动。组织后台与评价辅助按后续建设规划推进；此页给出使用现有项目保存、蓝图与轨迹的人工组织方案，不把课程包当已售成果。",
+        "转场：先保存原作品，再组织学生副本与复盘"
+      ],
+      "ppt/notesSlides/notesSlide26.xml": [
+        "讲述时间参考25秒。",
+        "这里用项目文件与保存重开组织课程，不承诺自动班级账户、云分发或自动评分。原作品与学生副本保留版本，资源和模型密钥不放进作品文件。支持服务可以提供重开检查和恢复说明。课程指南属于服务设计。",
+        "转场：围绕创作对象、可改部件和过程解释比较"
+      ],
+      "ppt/notesSlides/notesSlide27.xml": [
+        "讲述时间参考25秒。",
+        "Scratch提供作品创作学习参照，Blocks Builder AI提供可视化AI和组织教学方案参照。比较围绕同一教学任务进行：创作什么、可以修改哪些部件、怎样查看运行过程、教师怎样组织。Blocky重点连接结构审阅、修改审阅与运行事件映射，后续教师活动进一步核对适配价值。",
+        "转场：对照同一个教学任务，依据官方公开信息",
+        "公开来源，2026-10-03核对：",
+        "https://scratchfoundation.org/learn/learning-library/getting-started",
+        "https://scratchfoundation.org/learn/learning-library/teacher-accounts",
+        "https://blocksbuilder.ai/features",
+        "https://blocksbuilder.ai/pricing"
+      ],
+      "ppt/notesSlides/notesSlide28.xml": [
+        "讲述时间参考25秒。",
+        "竞争比较在同一任务中进行，后续教师共创记录准备成本、阅读理解、调试解释与复用。官网声明不等于竞品实测，Blocky小学效果不能由工程能力推出。Tynker课堂30学生许可证只是示例，学校Premium按人数与需求定制。组织方案参照是建设方向，非当前后台交付。",
+        "转场：学生使用，教师组织，机构决定合作",
+        "公开来源，2026-10-03核对：",
+        "https://scratchfoundation.org/learn/learning-library/getting-started",
+        "https://scratchfoundation.org/learn/learning-library/teacher-accounts",
+        "https://blocksbuilder.ai/features",
+        "https://blocksbuilder.ai/pricing",
+        "https://www.tynker.com/school/coding-curriculum/request",
+        "https://www.tynker.com/classroom-school/coding-curriculum/"
+      ],
+      "ppt/notesSlides/notesSlide29.xml": [
+        "讲述时间参考25秒。",
+        "使用者、组织者与采购方分开。首批不以全国学校数量当市场规模；先筛有设备、组织者和具体活动的小学或机构。公开交流从教学任务和作品开始，再与预算负责人界定人工服务和模型成本。这是客户进入计划，不是已经签约名单。",
+        "转场：产品准备完成后，进入教师与机构真实使用"
+      ],
+      "ppt/notesSlides/notesSlide30.xml": [
+        "讲述时间参考25秒。",
+        "产品准备完成后，先找到明确教学任务，再共同开展活动，最后形成适配与采购范围。20次有效接触、8次深入演示和4份交付合同是可调整的条件漏斗，不绑定特定年份。每一步留下任务、使用、教师复用与支付条件的记录，按实际反馈决定是否扩展。",
+        "转场：个人版开源，组织与算力分别收费"
+      ],
+      "ppt/notesSlides/notesSlide31.xml": [
+        "标准99元每月2000积分、进阶199元每月4500积分、专业999元每月25000积分。加量包50元1000积分30天。月度额度拟当期有效不结转，优先用最早到期额度。积分按模型实际输入、输出和缓存等费率折算，不承诺固定Token数量、任务数或无限额度。价格为拟案，尚未购买或计费。https://blocky.donk55666.chatgpt.site/#/pricing",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/",
+        "软件、托管用量和机构服务分账。"
+      ],
+      "ppt/notesSlides/notesSlide32.xml": [
+        "拟定套餐参考WorkBuddy分档订阅与加量包结构。官方定价于2026-10-06重新核对：标准/高级/旗舰单次月付99/199/999元；连续包月70/140/700元，基础2000/4000/20000积分，限时赠送2000/5000/30000积分，当前实得4000/9000/50000。Blocky标准99/2000、进阶199/4500、专业999/25000，对应0.04950、0.04422、0.03996元/积分；加量50/1000=0.05000元/积分。按WorkBuddy当前连续包月含限时赠送，Blocky名义单价约2.83、2.84、2.85倍；按单次月付含赠送恰为2倍。积分消耗规则、模型选择和权益不同，倍数不能证明同任务成本、API优惠或质量差异；赠送与续费条件可能变化。Blocky暂未开放购买，套餐未计入原财务预测。来源：WorkBuddy Pricing和Credits，访问2026-10-06。https://www.workbuddy.cn/docs/workbuddy/Pricing ; https://www.codebuddy.cn/docs/workbuddy/Credits ; Blocky官网咨询拟案https://blocky.donk55666.chatgpt.site/#/pricing"
+      ],
+      "ppt/notesSlides/notesSlide33.xml": [
+        "贡献利润=P−Q×u×c−P×v，其中P为套餐收入，Q为额度，u为使用率，c为实际模型结算元/积分，v为其他可变成本占收入比例。不是净利润，未扣固定研发、管理与获客支出。假设u=100%、v=10%、目标贡献利润率50%，成本上限标准0.01980、进阶0.01769、专业0.01598、加量0.02000元/积分。c=0.02时贡献额49.10/89.10/399.10/25.00元，贡献率49.60%/44.77%/39.95%/50.00%。c=0.04压力时分别9.10/-0.90/-100.90/5.00元，贡献率9.19%/-0.45%/-10.10%/10.00%。这是独立情景测算，不代表采购报价、实现利润或原24个月模型预测。若客户在可比模型任务上比直付公开API节省20%，且全部用满、其他可变成本10%、目标贡献率50%，模型结算成本须不超过该可比API账单32%；未获得此采购条件。上线前需公布模型输入、输出、缓存及工具费用的积分折算；核对实际用量、成本、续订意愿与服务范围。来源：本方案明示假设与公式推导，竞品价格只用于结构参照。",
+        "与原XLSX和BP表12衔接：专业创作者参考月模型成本1,347.02元为2026-10-03假设，已高于999元拟价；若同工作量全部纳入且模型成本不降，再扣10%其他可变成本，贡献额999−1347.02−99.90=−447.92元，贡献率−44.84%。原工作量尚未映射25,000积分，不能当实际亏损或已经覆盖成本的证明。"
+      ],
+      "ppt/notesSlides/notesSlide34.xml": [
+        "讲述时间参考20秒。",
+        "BBAI官网教育方案列师生账户、课堂管理、进度分析、课程支持与优先支持；Tynker学校方案列管理、自动评分和教师发展，Premium按学生数和学校需求报价；其课堂课程页面另有30学生许可证示例，不能将所有学校固定为30人。Blocky借鉴采购结构，不照搬价格或宣称后台已可购买。Agent作品的评价规划先用明确规则检查、过程记录与教师复核，不能把自动评分等同模型答案正确或学习提升。报价按学生规模、管理、部署和支持范围，与算力分开。",
+        "转场：以开放创作，积累作品和扩展生态",
+        "公开来源，2026-10-03核对：",
+        "https://blocksbuilder.ai/pricing",
+        "https://www.tynker.com/school/coding-curriculum/request",
+        "https://www.tynker.com/classroom-school/coding-curriculum/",
+        "https://www.tynker.com/school/"
+      ],
+      "ppt/notesSlides/notesSlide35.xml": [
+        "讲述时间参考20秒。",
+        "个人版完全开源与社区建设沿产品路线推进。贡献入口承接可复现作品、蓝图、积木包、教学资料和改进建议，第三方资源保留来源、版本与权限说明。社区复用推动产品与课程积累，组织托管和云算力提供独立的持续服务。",
+        "转场：让产品能力沉淀为可重复使用的教学资产"
+      ],
+      "ppt/notesSlides/notesSlide36.xml": [
+        "讲述时间参考25秒。",
+        "这里介绍项目可核对成果和复用资产。后两行是服务建设规划，不是已完成课程资产。复用可能减少工时，但财务未预先计入未经实测的节省；应比较初次制作和第二次复用的实际工时。",
+        "转场：服务报价连接教学规模、交付资产与支持"
+      ],
+      "ppt/notesSlides/notesSlide37.xml": [
+        "讲述时间参考25秒。",
+        "样例范围为1班30名学生、6次活动与3个可编辑作品，配置、准备、培训和支持合计80小时。它用于说明教学服务如何按范围组织。真实场景准备完成后，以实际活动、设备、支持工作量形成报价，组织后台与模型算力分别核算，机构可使用自有API账户。",
+        "转场：短任务用量与专业Agent月成本分别测算"
+      ],
+      "ppt/notesSlides/notesSlide38.xml": [
+        "本轮保留配套2026-10-03 XLSX中的历史预算输入，不将其中供应商价格称为最新价格。历史短任务、供应商专业统计、使用频次假设及汇率分别说明。采购前重新核价，不能将专业资源参照套给小学生。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide39.xml": [
+        "讲述时间参考35秒。",
+        "人数是产品准备后条件容量，月序19为排期假设。短任务参考和专业档公开统计分别使用；人均月预算不是套餐售价或真实课堂费用。专业中点200美元按参考汇率换算，研发预算另列。实际模型、Token、缓存、重试和合同须按账单校准。",
+        "转场：24个月资金覆盖研发与后续条件场景",
+        "公开来源，2026-10-03核对：",
+        "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+        "https://code.claude.com/docs/en/costs",
+        "https://www.chinamoney.com.cn/chinese/index.html"
+      ],
+      "ppt/notesSlides/notesSlide40.xml": [
+        "讲述时间参考40秒。",
+        "基准现金支出573.239万元，最低追加866.443万元，取整规划900.000万元。等效资源前6月3、后18月4，综合人月2万元，非团队履历。研发内部与场景算力分开；产品准备关口后才启用场景容量。收入与自有资金未知，默认不抵减。现金储备、预留和设备资产均不重复费用。",
+        "转场：资金按研发关口投入，再支持真实场景"
+      ],
+      "ppt/notesSlides/notesSlide41.xml": [
+        "原工作簿各阶段金额和月份保持。当前研发对象改为四蓝图与场景配套，不再按六品牌模板投入。原24个月模型是资源容量假设，尚未重新估计工时，也未计入官网拟定套餐收入；排期按实际关口更新。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide42.xml": [
+        "讲述时间参考35秒。",
+        "30万元只是现金预算判断，不是大模型厂商的报价。非退合作费、可消费额度预付与可退保证金当前输入0表示未录入条款，不表示厂商免费。已发生的非退费用以及期末占用的保证金、未消耗额度占用预留余额，预留余额最低为0。预付额度在消耗时抵扣模型采购现金，不能把充值和后续被抵扣的消耗再收两遍；保证金不进入损益。基准暂不假定返还到账，签约后按实际条款增加返还时点。",
+        "转场：用回款与合作条款，校准资金计划"
+      ],
+      "ppt/notesSlides/notesSlide43.xml": [
+        "官网已有拟定价格，积分与Token转换费率、采用人数和实际收款未确认。本页仍是原资金模型的成本回收敏感性，80%表示采购成本回收假设，不能当作套餐毛利、销售预测或已确认回款。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide44.xml": [
+        "讲述时间参考35秒。",
+        "三个资源情景同时改变等效人力、条件用户容量、用量成本及现金储备。专业基准来自公开使用统计中点，精简75%对应150美元月参考，高用量2.5倍为独立压力参数。场景关口与容量均不代表已经采用、付费或上线。",
+        "转场：近期90天推进四类蓝图与创作产品与后续开发准备",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide45.xml": [
+        "90天为可调整研发窗口，不承诺完整组织后台、计费、多端同时上线。现有官网可支持产品交流，公开下载和开源入口待准备。真实课堂和专业客户成果仍需采证。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide46.xml": [
+        "官网与拟定套餐本轮于2026-10-05核对；其他竞品及供应商资料保留2026-10-03原访问快照。OPC不计入新增合同或营收。https://blocky.donk55666.chatgpt.site/",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide47.xml": [
+        "合作沟通以明确范围和准备条件为前提。官网提供产品介绍、教育与专业场景、预设在线体验及价格咨询。个人软件免费方向不变，托管与机构合作按实际条件讨论。公开下载、源码和社区入口仍在准备。",
+        "来源：Blocky官网，2026-10-05。https://blocky.donk55666.chatgpt.site/"
+      ],
+      "ppt/notesSlides/notesSlide48.xml": [
+        "托管订阅与应用商业能力为规划，实际模型调用按对应账户累计。应用订阅收入、企业折扣与用量分布须经实际验证。",
+        "OpenAI ChatGPT/API独立计费：https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform",
+        "Claude部分方案支持Agent SDK及第三方应用使用订阅额度（2026-10-07更新，2026-10-08核对）：https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+      ],
+      "ppt/notesSlides/notesSlide49.xml": [
+        "托管订阅与应用商业能力为规划，实际模型调用按对应账户累计。应用订阅收入、企业折扣与用量分布须经实际验证。",
+        "OpenAI ChatGPT/API独立计费：https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform",
+        "Claude部分方案支持Agent SDK及第三方应用使用订阅额度（2026-10-07更新，2026-10-08核对）：https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan"
+      ],
+      "ppt/notesSlides/notesSlide50.xml": [
+        "Blocky CLI是外部开发Agent使用Blocky的开放入口，内置构建助手只是选择之一。开发Agent需要能够执行CLI命令，并遵守项目资源和工具权限；可查询、修改、校验、运行与读取诊断。",
+        "零迁移描述保留原来的开发Agent与工作方式，已有代码转为积木仍需按项目结构适配。CLI能力持续按共享领域接口完善。 外部开发Agent自身模型调用按其服务规则结算，Blocky订阅覆盖Blocky托管模型请求。"
+      ]
+    },
+    "xlsxMatchesBaseline": true,
+    "acceptedAtLocal": "2026-10-08 21:45",
+    "role": "Independent investment adviser",
+    "finalConclusion": "通过",
+    "itemResults": {
+      "M01": "通过",
+      "M02": "通过",
+      "M03": "通过",
+      "M04": "通过",
+      "M05": "通过"
+    },
+    "visualMethod": "Initial complete 49-slide/27-page review plus changed-range recheck after CLI addition; final 50-slide/27-page scope.",
+    "incrementalRecheck": {
+      "ppt": [
+        5,
+        6,
+        33,
+        34
+      ],
+      "bp": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        26
+      ]
+    },
+    "wordValidation": {
+      "exitCode": 0,
+      "approvedTemplateParsingReviewed": true,
+      "candidateEqualsDelivered": true
+    },
+    "financialRecalculation": [
+      {
+        "P": 99,
+        "Q": 2000,
+        "unitPrice": 0.0495,
+        "costCap50pct": 0.0198,
+        "contribution002": 49.1,
+        "contribution004": 9.1
+      },
+      {
+        "P": 199,
+        "Q": 4500,
+        "unitPrice": 0.044222222222222225,
+        "costCap50pct": 0.01768888888888889,
+        "contribution002": 89.1,
+        "contribution004": -0.9
+      },
+      {
+        "P": 999,
+        "Q": 25000,
+        "unitPrice": 0.03996,
+        "costCap50pct": 0.015984,
+        "contribution002": 399.1,
+        "contribution004": -100.9
+      },
+      {
+        "P": 50,
+        "Q": 1000,
+        "unitPrice": 0.05,
+        "costCap50pct": 0.02,
+        "contribution002": 25.0,
+        "contribution004": 5.0
+      }
+    ]
+  },
+  "cumulativeCoverage": {
+    "ppt": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "bp": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ]
+  },
+  "visualMethod": "Reuse previous independent full/changed-range review; localized recheck of custom blocks, address and direct pagination impacts.",
+  "incrementalRecheck": {
+    "ppt": [
+      7,
+      14,
+      51
+    ],
+    "bp": [
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      26
+    ]
+  },
+  "nativePdfTextCheck": {
+    "pptAllSourceTextInCorrespondingPdfPage": true,
+    "pptAllPageLabels51": true,
+    "bpAffectedTocHeadingPages": [
+      6,
+      7,
+      8,
+      8,
+      8,
+      9
+    ]
+  },
+  "wordValidation": {
+    "exitCode": 0,
+    "candidateEqualsDelivered": true,
+    "parsingRulesReused": true
+  },
+  "financialRecalculationReusedFrom50Page": true
+}

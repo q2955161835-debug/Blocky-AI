@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "04ed4dbc52d2fc6822eac75b691945ccb9630057",
+  "archive": "D:\\29551\\.codex\\worktrees\\subscription-agent-app\\Blocky-AI\\try\\subscription-agent-app-20261008\\site-final.tar.gz",
+  "archiveBytes": 1889055,
+  "archiveSha256": "e8235b5048efc862c5d42ede8149610c022dddb2ae97e6ede0d2ad5f0feb80a3",
+  "manifestSha256": "76e4b1e6fc3381099d46328cd57aee27eab36c6e868dc49d22f770fd744e2fb0",
+  "publicAssets": 50,
+  "packagedFiles": 51,
+  "allAssetsMatch": true,
+  "hostingMatches": true,
+  "hostingArchivePath": "dist/.openai/hosting.json",
+  "privateSourceOrMaterialsInArchive": false,
+  "intermediateSourceNotSavedOrDeployed": "d389de9388c8e7d9e8d25a8d4230acd2d0332306"
+}

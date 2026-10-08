@@ -1,0 +1,13 @@
+PASS: Black-and-white formatting
+PASS: Typeface and paragraph styling
+PASS: Page architecture
+PASS: Cover and file identity
+PASS: Headers and footers
+PASS: TOC
+PASS: Heading hierarchy
+PASS: Lists
+PASS: Tables
+PASS: Named-style discipline
+PASS: Language and placeholders
+INFO: Approved template styles used: Body Text, Document Head, Document Subhead, Footer, Header, Heading 1, Heading 2, Hyperlink, Strong, TOC Heading, Table Grid, Table title, toc 1, toc 2
+INFO: Approved template styles unused: Heading 3, Normal, toc 3

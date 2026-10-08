@@ -1,0 +1,41 @@
+{
+  "states": [
+    {
+      "language": "en",
+      "scrollWidth": 305,
+      "section": "AGENT APPS · PLANNED\nBring your creation to the people who use it.\n01\nOne-click app export\n\nTargeting Windows, macOS, and mobile apps with an independent interface and block execution. Tools, permissions, and distribution are adapted for each platform.\n\n02\nChoose who pays for usage\n\nApp settings will let you choose user-paid or developer-paid hosted usage. Building, testing, and running consume the responsible account’s shared allowance.\n\n03\nCreate a subscription for your app\n\nDevelopers will be able to create app subscriptions, set their own prices, and discuss enterprise Token plans. App pricing and model compute costs are accounted for separately.\n\nDiscuss enterprise Token pricing ↗",
+      "theme": "light",
+      "title": "Pricing & inquiries · Blocky",
+      "url": "http://127.0.0.1:4181/#/pricing",
+      "width": 320
+    },
+    {
+      "contact": "mailto:q2955161835@gmail.com?subject=Blocky%20%C2%B7%20%E5%BC%80%E5%8F%91%E8%80%85%E5%BA%94%E7%94%A8%E8%AE%A2%E9%98%85%E4%B8%8E%E4%BC%81%E4%B8%9A%20Token%20%E5%AE%9A%E4%BB%B7%E5%92%A8%E8%AF%A2&body=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%20Blocky%E3%80%82%0A%0A%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9A%0A%E9%A2%84%E8%AE%A1%E4%BD%BF%E7%94%A8%E4%BA%BA%E6%95%B0%EF%BC%9A%0A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%94%A8%E9%87%8F%E9%9C%80%E6%B1%82%EF%BC%9A%0A%E9%A2%84%E7%AE%97%E6%88%96%E4%BA%A4%E4%BB%98%E6%97%B6%E9%97%B4%EF%BC%9A",
+      "language": "zh-CN",
+      "scrollWidth": 1425,
+      "section": "AGENT APPS · 后续规划\n把作品，带给真正使用它的人。\n01\n一键导出应用\n\n以 Windows、macOS 与手机应用为目标，交付独立界面与积木执行。各端工具、权限与分发分别适配。\n\n02\n设置用量承担方式\n\n在应用设置中选择使用者账户或开发者承担托管用量。构建、调试与运行按实际消耗合并扣减对应账户额度。\n\n03\n为你的应用创建订阅\n\n开发者可快捷创建应用订阅、自主定价，并咨询企业级 Token 方案。应用售价与模型算力费用分别核算。\n\n咨询企业 Token 定价 ↗",
+      "theme": "dark",
+      "url": "http://127.0.0.1:4181/#/pricing",
+      "width": 1440
+    },
+    {
+      "height": 960,
+      "iframe": [
+        {
+          "rect": {
+            "height": 960.0000610351562,
+            "width": 1440,
+            "x": 0,
+            "y": 0
+          },
+          "src": "./studio/index.html"
+        }
+      ],
+      "url": "http://127.0.0.1:4181/#/studio",
+      "visibleNav": 0,
+      "width": 1440
+    }
+  ],
+  "logs": [],
+  "flow": "home05 -> full pricing; app subscription FAQ; English light 320px; Chinese dark 1440px; professional read-all; full viewport Studio"
+}

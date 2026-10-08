@@ -1,0 +1,51 @@
+{
+  "readBackAt": "2026-10-08 14:10:42 UTC",
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "access_mode": "public",
+    "latest_version_number": 18,
+    "current_live_url": "https://blocky.donk55666.chatgpt.site"
+  },
+  "version": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_2512a00b97108191bb1d7ea7eb51f63f",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 18,
+    "source": {
+      "commit_sha": "04ed4dbc52d2fc6822eac75b691945ccb9630057"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000b75c81f5aef5df935a75d79c",
+      "content_hash": "sha256:c49b8e1e85f29e2043b91433b23cb2b4aa6e2f1ed690fc66057630eb5fd151d6",
+      "size_bytes": 3778560,
+      "file_count": 51
+    },
+    "screenshot_url": null,
+    "deployment_id": "appgdep_6ac7a43fcef08191ab42bc3aa884c4ed"
+  },
+  "deployment": {
+    "id": "appgdep_6ac7a43fcef08191ab42bc3aa884c4ed",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_2512a00b97108191bb1d7ea7eb51f63f",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-08T14:10:18.485043+00:00"
+  },
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\29551\\.codex\\worktrees\\subscription-agent-app\\Blocky-AI\\try\\subscription-agent-app-20261008\\site-source",
+    "commit_sha": "04ed4dbc52d2fc6822eac75b691945ccb9630057",
+    "archive": "D:/29551/.codex/worktrees/subscription-agent-app/Blocky-AI/try/subscription-agent-app-20261008/site-final.tar.gz"
+  },
+  "publishedOnlyPublicAssets": 50,
+  "archiveFileCount": 51,
+  "previousPublicVersion": 17
+}
