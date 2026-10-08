@@ -1,0 +1,128 @@
+{
+  "sourceCommit": "a4f853aeed14c4254f578bec63d489abce18536b",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "original is dirty before new requests",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：知识问答助手 creates another native page",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：知识问答助手 child initialized correctly",
+      "ok": true,
+      "data": {
+        "title": "知识问答助手",
+        "count": 8,
+        "observed": "画布大纲 · 8\n迷你地图"
+      }
+    },
+    {
+      "name": "新建：知识问答助手 retains original unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：工作助手 creates another native page",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：工作助手 child initialized correctly",
+      "ok": true,
+      "data": {
+        "title": "工作助手",
+        "count": 13,
+        "observed": "画布大纲 · 13\n迷你地图"
+      }
+    },
+    {
+      "name": "新建：工作助手 retains original unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "child saves to independent named file",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：Coding 助手 creates another native page",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：Coding 助手 child initialized correctly",
+      "ok": true,
+      "data": {
+        "title": "Coding 助手",
+        "count": 12,
+        "observed": "画布大纲 · 12\n迷你地图"
+      }
+    },
+    {
+      "name": "新建：Coding 助手 retains original unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：Pi Agent creates another native page",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "新建：Pi Agent child initialized correctly",
+      "ok": true,
+      "data": {
+        "title": "Pi Agent",
+        "count": 6,
+        "observed": "画布大纲 · 6\n迷你地图"
+      }
+    },
+    {
+      "name": "新建：Pi Agent retains original unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "文件新建 creates another native page",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "文件新建 child initialized correctly",
+      "ok": true,
+      "data": {
+        "title": "未命名项目",
+        "count": 0,
+        "observed": "画布大纲 · 0\n迷你地图"
+      }
+    },
+    {
+      "name": "文件新建 retains original unsaved state",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "original undo history survives new windows",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "actual native launch failure quota ready",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "native launch failure keeps original draft",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "savedChild": "D:\\1Folder\\Blocky-AI\\try\\new-project-protection-2026-10-08\\acceptance\\child-saved.blocky",
+  "error": "SyntaxError: Unexpected token '﻿', \"﻿{\r\n    \"p\"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at file:///D:/1Folder/Blocky-AI/try/new-project-protection-2026-10-08/acceptance/verify.mjs:28:132"
+}

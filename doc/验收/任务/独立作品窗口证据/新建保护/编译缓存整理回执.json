@@ -1,0 +1,22 @@
+{
+  "time": "2026-10-08T20:10:47.6383901+08:00",
+  "deleted": false,
+  "moves": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\release-native-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\新建作品保护-2026-10-08\\release-native-target",
+      "files": 8994,
+      "bytes": 4130406728,
+      "readback": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\新建作品保护-2026-10-08\\native-e2e-target",
+      "files": 19918,
+      "bytes": 11535817725,
+      "readback": true
+    }
+  ],
+  "totalBytes": 15666224453,
+  "previousReceiptsAreHistorical": true
+}

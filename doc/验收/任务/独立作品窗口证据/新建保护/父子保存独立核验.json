@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "a4f853aeed14c4254f578bec63d489abce18536b",
+  "files": [
+    {
+      "file": "original.blocky",
+      "projectId": "m-a",
+      "displayName": "窗口验收甲",
+      "moduleName": "N01 原窗口未保存画布",
+      "blocks": 8,
+      "sha256": "ab91c044ddbc4796feb067bb6bf6c54e669513da43185794429ba9a70da693cf"
+    },
+    {
+      "file": "child-saved.blocky",
+      "projectId": "project-d3de6d5b-1016-4884-9748-7988555c0f8c",
+      "displayName": "工作助手",
+      "moduleName": "N02 子作品独立保存",
+      "blocks": 13,
+      "sha256": "f6b888677913d1ebaf23400e2fd9ec2a95f8368ba01685c55cff8b5e739eae45"
+    }
+  ],
+  "distinctIds": true,
+  "parentDraftPersisted": true,
+  "childDraftPersisted": true,
+  "expectedCounts": true
+}

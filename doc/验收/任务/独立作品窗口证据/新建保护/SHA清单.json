@@ -1,0 +1,119 @@
+{
+  "sourceCommit": "a4f853aeed14c4254f578bec63d489abce18536b",
+  "externalApi": false,
+  "profilesExported": false,
+  "fullConversationsExported": false,
+  "files": [
+    {
+      "path": "acceptance/run1/child-save/background-start.json",
+      "bytes": 387,
+      "sha256": "a57d135c5be1579b03ccbc8b12a55c5f3d1266218411a47ac7ed83ef99b16218"
+    },
+    {
+      "path": "acceptance/run1/child-save/saved-child.png",
+      "bytes": 275277,
+      "sha256": "befb57e134337539197b3e1796f6b60e78bda21d158cb209d442456e8f82ff0e"
+    },
+    {
+      "path": "./components.txt",
+      "bytes": 222,
+      "sha256": "26d2102690770504733528f80069792c871181b7969449001b7cfbea9e0886d4"
+    },
+    {
+      "path": "./host.txt",
+      "bytes": 12351,
+      "sha256": "324f12e2e8105fee9427809e755a47f57f73e8a936cdfbcebe9e286e5005cc73"
+    },
+    {
+      "path": "./typecheck.txt",
+      "bytes": 74,
+      "sha256": "7a35d7a7a3ef79026f66bd83007c9cc39fdcb566cbc5b585dad72ec57091bb69"
+    },
+    {
+      "path": "./all-components.txt",
+      "bytes": 1946,
+      "sha256": "740c7f569fa3ff57c740c5957cb2192600b65d797ec06d74bd2be51abaf4d1f9"
+    },
+    {
+      "path": "acceptance/run2/acceptance-results.json",
+      "bytes": 902,
+      "sha256": "57f9a27f96848f0eabba73ea90e19b61d8828c5b532ff2e06965466c923531c0"
+    },
+    {
+      "path": "acceptance/run2/background-start.json",
+      "bytes": 233,
+      "sha256": "3637f2b81e29d3748f05e07c73ed36a6006fa2fde1b42628bff47238b29ded5a"
+    },
+    {
+      "path": "acceptance/run2/background-result.json",
+      "bytes": 1723,
+      "sha256": "e4d36f4effb16a147adf60c5f680ff81a1727bfa7ba44aa2a2abbbdec23a1866"
+    },
+    {
+      "path": "acceptance/run2/spawn-limit-result.json",
+      "bytes": 194,
+      "sha256": "fea53fbefd33ccf947460344ae1083e01510be722364edf3079aebb16d33a3e2"
+    },
+    {
+      "path": "acceptance/run2/failed-launch-original-preserved.png",
+      "bytes": 228173,
+      "sha256": "a820b5d2ee938f9be6a10afdc2c63fecf8ae58ed8799fd8a25afe8657ef2cc59"
+    },
+    {
+      "path": "acceptance/run2/parent-saved.png",
+      "bytes": 226143,
+      "sha256": "a9a9c51efe71a45ecaea9197788ace409de603e372d956fb787e759d984c4abf"
+    },
+    {
+      "path": "gui/GUI新建保护.json",
+      "bytes": 568,
+      "sha256": "8e2cdc86c35fb2fc5c9c9a00c9b97ad7ddcf9fac271630de5d623656339ea452"
+    },
+    {
+      "path": "gui/parent-before.jpg",
+      "bytes": 152436,
+      "sha256": "a8f9130dcec369477ee5225e120221918fb216563be7fc0b59a6bff5940de824"
+    },
+    {
+      "path": "gui/child-blank.jpg",
+      "bytes": 89024,
+      "sha256": "173478f72062891a39f680e80f9046b15c1426b9008fa64fb23807507713eca1"
+    },
+    {
+      "path": "gui/parent-preserved.jpg",
+      "bytes": 153149,
+      "sha256": "5641b3a100bd6e91e2dc4fca45b2c131cada60976dbb5144b6b721312ef04042"
+    },
+    {
+      "path": "gui/parent-undone.jpg",
+      "bytes": 152057,
+      "sha256": "266d1ddfa99d3dd5eb444bc063ca9320d25b174f2a4cc0f13b2276b69904031b"
+    },
+    {
+      "path": "acceptance/run1/acceptance-results.json",
+      "bytes": 3309,
+      "sha256": "d5548971a8a9cc7301f39b0b6a60d0e7dc8422678d48082bc9105c03951bb143"
+    },
+    {
+      "path": "acceptance/run1/background-start.json",
+      "bytes": 232,
+      "sha256": "3808ab6358edd0aed7a3c445052707a691d9343c33f9ebd8ff4b45b6a7a270d9"
+    },
+    {
+      "path": "acceptance/run1/background-result.json",
+      "bytes": 2211,
+      "sha256": "506533cd14606285e3fccc39e810df1a9d5ccbd7e2ddbf140e29d7d63a7861be"
+    },
+    {
+      "path": "acceptance/run1/original-after-five-new-requests.png",
+      "bytes": 227030,
+      "sha256": "92aacb4dc8d1cd6c8bf3bc0211541ba086195f0b329821ce9433b2eea022bcbe"
+    },
+    {
+      "path": "acceptance/run1/spawn-limit-result.json",
+      "bytes": 193,
+      "sha256": "e7b90cc7c8928305705d2381ecd7aac49eb9db033c4a23b0ca489d0810b0df48"
+    }
+  ],
+  "checkedAt": "2026-10-08T20:09:33.1965181+08:00"
+}

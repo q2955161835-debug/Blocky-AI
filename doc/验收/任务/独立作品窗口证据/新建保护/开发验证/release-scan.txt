@@ -1,0 +1,5 @@
+
+> blocky-studio@0.8.0 check:release D:\1Folder\Blocky-AI
+> node scripts/check-release.mjs
+
+{"passed":true,"positiveControl":true,"files":2597,"failures":[]}

@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "a4f853aeed14c4254f578bec63d489abce18536b",
+  "externalApi": false,
+  "checks": [
+    {
+      "name": "original is dirty before new requests",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "original undo history survives new windows",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "actual native launch failure quota ready",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "native launch failure keeps original draft",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "task-only native quota restored",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "failed launch also preserves undo history",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "original can save after children and failure",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "completed": "2026-10-08T12:04:20.420Z"
+}

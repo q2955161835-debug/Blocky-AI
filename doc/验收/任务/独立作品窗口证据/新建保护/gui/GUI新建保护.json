@@ -1,0 +1,26 @@
+{
+  "source": "a4f853a",
+  "time": "2026-10-08T12:02:56.558Z",
+  "method": "GUI starting blueprint, edit canvas name, click new blank, switch back with native project dropdown, click toolbar undo",
+  "parentId": 4986262,
+  "childId": 1052536,
+  "before": {
+    "name": true,
+    "blocks13": true,
+    "undoEnabled": true
+  },
+  "child": {
+    "blank": true
+  },
+  "preserved": {
+    "name": true,
+    "blocks13": true,
+    "undoEnabled": true
+  },
+  "undone": {
+    "name": true,
+    "blocks13": true,
+    "redoEnabled": true
+  },
+  "parentClosedChildSurvived": true
+}

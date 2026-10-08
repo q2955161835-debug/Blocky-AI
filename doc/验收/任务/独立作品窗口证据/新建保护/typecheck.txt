@@ -1,0 +1,4 @@
+
+> blocky-studio@0.8.0 typecheck D:\1Folder\Blocky-AI
+> tsc --noEmit
+

@@ -31,6 +31,7 @@ doc/验收/任务/画布与配置返修证据/** -text whitespace=cr-at-eol
 doc/验收/任务/独立作品窗口证据/** -text whitespace=cr-at-eol
 # Preserve the independently sealed raw Host log, including its final blank line.
 doc/验收/任务/独立作品窗口证据/GUI最小判据/ProjectAccess-Host门禁.txt -text whitespace=cr-at-eol,-blank-at-eof
+doc/验收/任务/独立作品窗口证据/新建保护/**/*.txt -text whitespace=cr-at-eol,-blank-at-eof
 作品/刑法条文问答/** -text whitespace=cr-at-eol
 作品/农村CPI工作助手/** -text whitespace=cr-at-eol
 作品/鹈鹕骑车Coding/** -text whitespace=cr-at-eol
