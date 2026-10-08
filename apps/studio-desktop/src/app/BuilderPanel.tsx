@@ -13,6 +13,7 @@ import {
 import { BuilderModelSettings } from "./BuilderModelSettings";
 import "./BuilderChat.css";
 import { CodingTrace } from "./CodingTrace";
+import { ChatMarkdown } from "./ChatMarkdown";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -162,7 +163,7 @@ export function BuilderPanel({
                   <strong>{message.role === "user" ? "你" : "构建助手"}</strong>
                   {message.status && <span>{status[message.status]}</span>}
                 </div>
-                <p>{message.text}</p>
+                {message.role === "assistant" ? <ChatMarkdown text={message.text} /> : <p>{message.text}</p>}
               </li>
             ))}
           </ol>
@@ -172,7 +173,7 @@ export function BuilderPanel({
             className="builder-chat-message builder-chat-message-assistant coding-stream"
             aria-label="正在回复"
           >
-            <p>{builder.liveText}</p>
+            <ChatMarkdown text={builder.liveText} />
           </article>
         )}
         {builder.error && (

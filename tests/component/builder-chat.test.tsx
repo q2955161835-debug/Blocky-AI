@@ -72,7 +72,7 @@ function panel(studio: Studio, builder: CodingAgent, review = vi.fn()) {
   );
 }
 
-it("renders saved chat as plain text and keeps the candidate while editing", async () => {
+it("keeps user input literal and the candidate while editing", async () => {
   const studio = await readyStudio();
   const builder = makeBuilder({
     messages: [
@@ -100,6 +100,53 @@ it("renders saved chat as plain text and keeps the candidate while editing", asy
   fireEvent.click(screen.getByRole("button", { name: "舍弃项目修改" }));
   expect(builder.reject).toHaveBeenCalledOnce();
   expect(builder.clear).not.toHaveBeenCalled();
+});
+
+it("formats saved assistant Markdown while preserving literal user input", async () => {
+  const studio = await readyStudio();
+  const markdown = "## 🧩 项目操作\n\n- **查看项目**：使用 `project inspect`\n- 编译项目\n\n> 保留当前画布\n\n---";
+  panel(studio, makeBuilder({ messages: [
+    { id: "u-markdown", role: "user", text: "## **原始输入**" },
+    { id: "a-markdown", role: "assistant", text: markdown, status: "completed" },
+  ] }));
+  expect(screen.getByRole("heading", { level: 2, name: "🧩 项目操作" })).toBeTruthy();
+  const thread = screen.getByLabelText("构建助手聊天记录");
+  expect(screen.getByText("查看项目").tagName).toBe("STRONG");
+  expect(thread.querySelector("code")?.textContent).toBe("project inspect");
+  expect(thread.querySelector("blockquote")?.textContent).toContain("保留当前画布");
+  expect(thread.querySelector("hr")).toBeTruthy();
+  expect(screen.getByText("## **原始输入**")).toBeTruthy();
+});
+
+it("formats streaming replies and their final history with tables and code", async () => {
+  const studio = await readyStudio();
+  const text = "## 结果\n\n| 工具 | 状态 |\n| --- | --- |\n| CLI | 完成 |\n\n```js\nconst markup = '<img src=x>';\n```";
+  const view = panel(studio, makeBuilder({ liveText: text, busy: true }));
+  expect(screen.getByLabelText("正在回复").querySelector("h2")?.textContent).toBe("结果");
+  expect(screen.getByRole("cell", { name: "完成" })).toBeTruthy();
+  expect(screen.getByLabelText("正在回复").querySelector("pre code")?.textContent).toBe("const markup = '<img src=x>';\n");
+  view.rerender(<BuilderPanel studio={studio} builder={makeBuilder({ messages: [
+    { id: "a-final", role: "assistant", text, status: "completed" },
+  ] })} configureModel={vi.fn()} />);
+  expect(screen.queryByLabelText("正在回复")).toBeNull();
+  expect(screen.getByRole("heading", { name: "结果" })).toBeTruthy();
+  expect(screen.getByRole("table")).toBeTruthy();
+  expect(screen.queryByRole("img")).toBeNull();
+});
+
+it("never executes reply HTML or loads Markdown images and only links public web or mail URLs", async () => {
+  const studio = await readyStudio();
+  const text = '<img src=x onerror=alert(1)>\n\n<script>alert(1)</script>\n\n[危险](javascript:alert%281%29) [本地](file:///secret.txt) [相对](/settings) [官网](https://example.com)\n\n![说明](https://example.com/tracker.png)';
+  panel(studio, makeBuilder({ messages: [
+    { id: "a-unsafe", role: "assistant", text, status: "completed" },
+  ] }));
+  const thread = screen.getByLabelText("构建助手聊天记录");
+  expect(thread.querySelector("script, img, iframe")).toBeNull();
+  expect(screen.queryByRole("link", { name: "危险" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "本地" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "相对" })).toBeNull();
+  expect(screen.getByRole("link", { name: "官网" }).getAttribute("href")).toBe("https://example.com");
+  expect(screen.getByText("说明")).toBeTruthy();
 });
 
 it("sends on Enter, keeps Shift+Enter for a newline, and does not send during IME composition", async () => {

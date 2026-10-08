@@ -27,6 +27,20 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
 });
+it("formats the Blocky Agent answer without interpreting the submitted input", async () => {
+  const hook = renderHook(() => useStudio(createStarter()));
+  await waitFor(() => expect(hook.result.current.canRun).toBe(true));
+  await act(() => hook.result.current.run());
+  const result = hook.result.current.result!;
+  render(<RunPanel studio={{ ...hook.result.current,
+    runInput: "## **用户原文**",
+    result: { ...result, answer: "## Agent 结果\n\n- **已完成**：`compile`\n\n| 项目 | 状态 |\n| --- | --- |\n| 画布 | 正常 |", citations: [] },
+  }} execute={() => {}} />);
+  expect(screen.getByRole("heading", { name: "Agent 结果", level: 2 })).toBeTruthy();
+  expect(screen.getByText("已完成").tagName).toBe("STRONG");
+  expect(screen.getByRole("cell", { name: "正常" })).toBeTruthy();
+  expect(screen.getByText("## **用户原文**")).toBeTruthy();
+});
 it("binds the displayed input to common run entry, including external requests and debug runs", async () => {
   const hook = renderHook(() => useStudio(createStarter()));
   await waitFor(() => expect(hook.result.current.canRun).toBe(true));

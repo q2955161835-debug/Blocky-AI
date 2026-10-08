@@ -15,6 +15,7 @@ import {
   type ChatMenuControl,
 } from "./ChatControls";
 import "./BuilderChat.css";
+import { ChatMarkdown } from "./ChatMarkdown";
 export function RunPanel({
   studio: s,
   execute,
@@ -72,7 +73,7 @@ export function RunPanel({
                     ? "等待工作流处理"
                     : "回答"}
             </span>
-            <p>{s.result.answer || "请在运行日志中查看详情。"}</p>
+            <ChatMarkdown text={s.result.answer || "请在运行日志中查看详情。"} />
             <RunOutputs key={s.result.events[0]?.runId} result={s.result} />
             {s.result.citations.length > 0 && (
               <details>
