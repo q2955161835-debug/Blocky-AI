@@ -136,7 +136,7 @@ describe("blueprint dock", () => {
 });
 
 describe("chat composer", () => {
-  it("reserves measured toolbar height when model and effort controls wrap in a narrow panel", () => {
+  it("keeps footer height to one row instead of expanding when the panel is narrow", () => {
     vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockImplementation(
       function (this: HTMLElement) {
         return this.classList.contains("chat-composer-toolbar") ? 64 : 0;
@@ -168,7 +168,7 @@ describe("chat composer", () => {
     }) as HTMLTextAreaElement;
     expect(
       parseFloat(form.style.height) - parseFloat(input.style.height),
-    ).toBeGreaterThanOrEqual(64 + 8 + 7 + 2);
+    ).toBe(36 + 8 + 7 + 2);
     expect(input.value).toBe("draft");
   });
   it("submits through its form, forwards edits, and puts the toolbar inside the capped composer", () => {
@@ -285,7 +285,7 @@ describe("chat composer", () => {
         selectionEnd: firstValue.length,
       },
     });
-    expect(input.style.height).toBe("155px");
+    expect(input.style.height).toBe("147px");
     expect(input.scrollTop).toBe(600);
 
     input.scrollTop = 35;
@@ -297,7 +297,7 @@ describe("chat composer", () => {
         selectionEnd: secondValue.length,
       },
     });
-    expect(input.style.height).toBe("155px");
+    expect(input.style.height).toBe("147px");
     expect(input.scrollTop).toBe(600);
 
     input.scrollTop = 42;

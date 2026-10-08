@@ -15,10 +15,11 @@ import "./BuilderChat.css";
 import { CodingTrace } from "./CodingTrace";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
-import { ReasoningPicker } from "./ReasoningPicker";
+import { ChatModelControl } from "./ChatModelControl";
+import { ArrowUpIcon, PlusIcon, FolderIcon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/20/solid";
 import { useChatFollow } from "./useChatFollow";
 import type { SettingsSection } from "./settings/settingsNavigation";
-import { ModelPicker } from "./ModelPicker";
 
 const status: Record<NonNullable<CodingMessage["status"]>, string> = {
   completed: "已完成",
@@ -359,44 +360,36 @@ export function BuilderPanel({
         placeholder="描述要构建的内容"
       >
         <ChatMenuButton menu={menu} kind="add" label="构建助手添加上下文">
-          ＋
+          <PlusIcon aria-hidden="true" className="chat-action-icon" />
         </ChatMenuButton>
-        <ModelPicker
-          label="构建助手模型"
+        {builder.workspace && (
+          <span className="chat-context-marker" title={builder.workspace.displayName} aria-label={`工作文件夹：${builder.workspace.displayName}`}><FolderIcon aria-hidden="true" className="chat-action-icon" /></span>
+        )}
+        <ChatModelControl
+          label="构建助手模型与思考"
+          modelLabel="构建助手模型"
+          reasoningLabel="构建助手思考等级"
           value={resourceId}
           models={models}
           disabled={disabled || !ready}
-          change={setResourceId}
-        />
-        <ReasoningPicker
-          label="构建助手思考等级"
-          value={reasoningEffort}
-          model={models.find((model) => model.resourceId === resourceId)}
-          disabled={disabled || !ready || !studio.settings.ui}
-          change={(value) =>
+          reasoningDisabled={!studio.settings.ui}
+          changeModel={setResourceId}
+          effort={reasoningEffort}
+          menu={menu}
+          changeEffort={(value) =>
             studio.settings.ui?.change("builderReasoningEffort", value)
           }
         />
-        {builder.workspace && (
-          <span
-            className="chat-context-marker"
-            title={builder.workspace.displayName}
-            aria-label={`工作文件夹：${builder.workspace.displayName}`}
-          >
-            ▱
-          </span>
-        )}
-        <span className="chat-toolbar-spacer" />
         {builder.busy ? (
           <button
-            className="chat-icon"
+            className="chat-send chat-stop"
             type="button"
             aria-label={builder.stopping ? "正在停止" : "停止"}
             title="停止"
             disabled={builder.stopping}
             onClick={builder.stop}
           >
-            ■
+            <StopIcon aria-hidden="true" className="chat-action-icon" />
           </button>
         ) : (
           <button
@@ -406,7 +399,7 @@ export function BuilderPanel({
             title="发送"
             disabled={!canSend}
           >
-            ↑
+            <ArrowUpIcon aria-hidden="true" className="chat-action-icon" />
           </button>
         )}
       </ChatComposer>

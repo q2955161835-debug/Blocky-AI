@@ -124,5 +124,8 @@
 
 .chat-panel .chat-composer--resizable .chat-composer-toolbar {
   flex: 0 0 auto;
-  min-height: 28px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  flex-wrap: nowrap;
 }

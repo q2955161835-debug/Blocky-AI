@@ -32,6 +32,7 @@ it("keeps a model and effort picker on blank works without adding model blocks",
     },
   } as unknown as Studio;
   render(<RunModelChoice studio={s} compact />);
+  fireEvent.click(screen.getByRole("button", { name: "Blocky Agent 模型与思考" }));
   fireEvent.change(screen.getByRole("combobox", { name: "快捷运行模型" }), {
     target: { value: "blank-model" },
   });
@@ -68,6 +69,7 @@ it("targets knowledge correction's MODEL field without overwriting another model
     save: vi.fn(async () => true),
   } as unknown as Studio;
   render(<RunModelChoice studio={s} compact />);
+  fireEvent.click(screen.getByRole("button", { name: "Blocky Agent 模型与思考" }));
   const target = screen.getByRole("combobox", { name: "运行模型目标" });
   const correction = [...(target as HTMLSelectElement).options].find((option) =>
     option.value.endsWith("/correct-answer"),
@@ -103,6 +105,7 @@ it.each(["work-assistant", "coding-assistant", "pi-agent"] as const)(
       save,
     } as unknown as Studio;
     render(<RunModelChoice studio={studio} compact />);
+    fireEvent.click(screen.getByRole("button", { name: "Blocky Agent 模型与思考" }));
     fireEvent.change(
       screen.getByRole("combobox", {
         name: "快捷运行模型 assistant-tool-loop",

@@ -26,7 +26,7 @@ export type Popup =
     }
   | { kind: "context"; scope: "blank" | "block" | "multi" | "library" | "event"; x: number; y: number; blockType?: string; blockId?: string; source?: SourceRef }
   | { kind: "menu"; category: MenuCategory }
-  | { kind: "chat"; menu: "add" | "settings" | "history" }
+  | { kind: "chat"; menu: "add" | "settings" | "history" | "model" }
   | null;
 export function StudioDialog({
   studio: s,

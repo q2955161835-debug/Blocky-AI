@@ -19,6 +19,8 @@ import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
 import { RunModelChoice } from "./RunModelChoice";
+import { ArrowUpIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { StopIcon } from "@heroicons/react/20/solid";
 import { CodingTrace } from "./CodingTrace";
 export function RunPanel({
   studio: s,
@@ -188,19 +190,18 @@ export function RunPanel({
         }}
       >
         <ChatMenuButton menu={menu} kind="add" label="Blocky Agent 添加上下文">
-          ＋
+          <PlusIcon aria-hidden="true" className="chat-action-icon" />
         </ChatMenuButton>
-        <RunModelChoice studio={s} compact />
-        <span className="chat-toolbar-spacer" />
+        <RunModelChoice studio={s} compact menu={menu} />
         {s.running ? (
           <button
-            className="chat-icon"
+            className="chat-send chat-stop"
             type="button"
             aria-label="停止"
             title="停止"
             onClick={s.stop}
           >
-            ■
+            <StopIcon aria-hidden="true" className="chat-action-icon" />
           </button>
         ) : (
           <button
@@ -210,7 +211,7 @@ export function RunPanel({
             title="发送并运行"
             disabled={!s.canRun}
           >
-            ↑
+            <ArrowUpIcon aria-hidden="true" className="chat-action-icon" />
           </button>
         )}
       </ChatComposer>

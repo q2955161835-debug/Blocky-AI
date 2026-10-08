@@ -88,6 +88,7 @@ it("keeps both drafts while quick model choices persist independently", async ()
   fireEvent.change(screen.getByLabelText("构建需求"), {
     target: { value: "保留构建输入" },
   });
+  fireEvent.click(screen.getByRole("button", { name: "构建助手模型与思考" }));
   fireEvent.change(screen.getByRole("combobox", { name: "构建助手模型" }), {
     target: { value: "second-model" },
   });
@@ -103,6 +104,7 @@ it("keeps both drafts while quick model choices persist independently", async ()
   fireEvent.change(screen.getByLabelText("向 Agent 提问"), {
     target: { value: "保留问题输入" },
   });
+  fireEvent.click(screen.getByRole("button", { name: "Blocky Agent 模型与思考" }));
   fireEvent.change(
     screen.getByRole("combobox", { name: "快捷运行模型 compose-answer" }),
     { target: { value: "first-model" } },

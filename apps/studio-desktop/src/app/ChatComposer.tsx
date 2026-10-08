@@ -11,7 +11,7 @@ import "./ChatLayout.css";
 
 const MIN_TEXTAREA_HEIGHT = 54;
 const HANDLE_HEIGHT = 8;
-const TOOLBAR_HEIGHT = 28;
+const TOOLBAR_HEIGHT = 36;
 
 export function ChatComposer({
   value,
@@ -38,8 +38,6 @@ export function ChatComposer({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const toolbarRef = useRef<HTMLDivElement>(null);
-  const [toolbarHeight, setToolbarHeight] = useState(TOOLBAR_HEIGHT);
   const [panelHeight, setPanelHeight] = useState(0);
   const [manualHeight, setManualHeight] = useState<number | null>(null);
   const [contentHeight, setContentHeight] = useState(MIN_TEXTAREA_HEIGHT);
@@ -55,13 +53,6 @@ export function ChatComposer({
       setPanelHeight((current) =>
         current === nextHeight ? current : nextHeight,
       );
-      const height =
-        toolbarRef.current?.getBoundingClientRect().height ||
-        toolbarRef.current?.clientHeight ||
-        TOOLBAR_HEIGHT;
-      setToolbarHeight((current) =>
-        current === height ? current : Math.max(TOOLBAR_HEIGHT, height),
-      );
     };
 
     measure();
@@ -70,7 +61,6 @@ export function ChatComposer({
         ? null
         : new ResizeObserver(measure);
     observer?.observe(panel);
-    if (toolbarRef.current) observer?.observe(toolbarRef.current);
     window.addEventListener("resize", measure);
     return () => {
       observer?.disconnect();
@@ -78,7 +68,7 @@ export function ChatComposer({
     };
   }, []);
 
-  const formChromeHeight = 2 + 7 + HANDLE_HEIGHT + toolbarHeight;
+  const formChromeHeight = 2 + 7 + HANDLE_HEIGHT + TOOLBAR_HEIGHT;
   const defaultFormHeight = formChromeHeight + MIN_TEXTAREA_HEIGHT;
   const maxHeight =
     panelHeight > 0
@@ -176,7 +166,7 @@ export function ChatComposer({
         placeholder={placeholder}
         style={{ height: `${textareaHeight}px`, resize: "none" }}
       />
-      <div className="chat-composer-toolbar" ref={toolbarRef}>
+      <div className="chat-composer-toolbar">
         {children}
       </div>
     </form>

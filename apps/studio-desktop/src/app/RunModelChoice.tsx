@@ -5,14 +5,18 @@ import { resolveSetting } from "@blocky/settings-core";
 import type { Studio } from "../composition/useStudio";
 import { ModelPicker } from "./ModelPicker";
 import { ReasoningPicker } from "./ReasoningPicker";
+import { ChatModelControl } from "./ChatModelControl";
+import type { ChatMenuControl } from "./ChatControls";
 
 /** A selection updates exactly one explicit block, or a preference for a blank work. */
 export function RunModelChoice({
   studio: s,
   compact = false,
+  menu,
 }: {
   studio: Studio;
   compact?: boolean;
+  menu?: ChatMenuControl;
 }) {
   const [targetKey, setTargetKey] = useState("");
   const project = s.snapshot.project;
@@ -60,7 +64,6 @@ export function RunModelChoice({
     targets.find((target) => target.block.id === s.selected) ??
     targets.find((target) => target.moduleId === s.session?.active) ??
     targets[0];
-  const visibleTargets = compact && activeTarget ? [activeTarget] : targets;
   const changeModel = (id: string, target?: (typeof targets)[number]) => {
     const resource = models.find((model) => model.resourceId === id);
     if (!resource) return;
@@ -82,28 +85,27 @@ export function RunModelChoice({
   const selectedModel = activeTarget
     ? String(activeTarget.block.fields?.[activeTarget.field] ?? "")
     : preferred;
+  if (compact) return <ChatModelControl
+    label="Blocky Agent 模型与思考"
+    modelLabel={`快捷运行模型${activeTarget ? ` ${activeTarget.block.id}` : ""}`}
+    reasoningLabel="Blocky Agent 思考等级"
+    models={models}
+    value={selectedModel}
+    effort={ui?.values.agentReasoningEffort ?? "none"}
+    disabled={disabled || (!activeTarget && !ui)}
+    reasoningDisabled={!ui}
+    changeModel={id => changeModel(id, activeTarget)}
+    changeEffort={value => ui?.change("agentReasoningEffort", value)}
+    context={activeTarget ? `${project.manifest.modules.find(module => module.moduleId === activeTarget.moduleId)?.displayName} · ${activeTarget.block.id}` : "Blocky Agent 模型偏好"}
+    menu={menu}
+    target={targets.length > 1 ? <label className="chat-model-option">模型积木
+      <select className="chat-model-target" aria-label="运行模型目标" value={activeTarget.key} disabled={disabled} onChange={event => setTargetKey(event.target.value)}>
+        {targets.map(target => <option key={target.key} value={target.key}>{project.manifest.modules.find(module => module.moduleId === target.moduleId)?.displayName} · {target.block.id}</option>)}
+      </select>
+    </label> : undefined}
+  />;
   return (
-    <div className={compact ? "chat-run-model-pickers" : "run-model-settings"}>
-      {compact && targets.length > 1 && (
-        <select
-          className="chat-model-target"
-          aria-label="运行模型目标"
-          value={activeTarget.key}
-          disabled={disabled}
-          onChange={(event) => setTargetKey(event.target.value)}
-        >
-          {targets.map((target) => (
-            <option key={target.key} value={target.key}>
-              {
-                project.manifest.modules.find(
-                  (module) => module.moduleId === target.moduleId,
-                )?.displayName
-              }{" "}
-              · {target.block.id}
-            </option>
-          ))}
-        </select>
-      )}
+    <div className="run-model-settings">
       {!targets.length && (
         <ModelPicker
           label={compact ? "快捷运行模型" : "运行模型"}
@@ -114,7 +116,7 @@ export function RunModelChoice({
           change={(id) => changeModel(id)}
         />
       )}
-      {visibleTargets.map((target) => (
+      {targets.map((target) => (
         <label
           className={compact ? "chat-run-model-label" : "prompt-label"}
           key={target.key}

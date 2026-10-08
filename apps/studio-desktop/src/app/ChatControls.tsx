@@ -5,9 +5,10 @@ import {
   useRef,
   useState,
   type ReactNode,
+  type CSSProperties,
 } from "react";
 
-export type ChatMenu = "add" | "settings" | "history" | null;
+export type ChatMenu = "add" | "settings" | "history" | "model" | null;
 export type ChatMenuControl = { value: ChatMenu; set(value: ChatMenu): void };
 
 export function useChatMenu(control?: ChatMenuControl): ChatMenuControl {
@@ -21,11 +22,15 @@ export function ChatPopover({
   kind,
   label,
   children,
+  style,
+  className,
 }: {
   menu: ChatMenuControl;
   kind: Exclude<ChatMenu, null>;
   label: string;
   children: ReactNode;
+  style?: CSSProperties;
+  className?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
@@ -57,7 +62,8 @@ export function ChatPopover({
     <div
       ref={root}
       hidden={!open}
-      className="chat-popover"
+      className={`chat-popover${className ? ` ${className}` : ""}`}
+      style={style}
       data-chat-kind={kind}
       role="dialog"
       aria-labelledby={titleId}
