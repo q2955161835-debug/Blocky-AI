@@ -13,6 +13,7 @@ pub fn validate(doc: &Value) -> Result<(), String> {
     }
     for (key, value) in doc["values"].as_object().ok_or(ERROR)? {
         let valid = match key.as_str() {
+            "permissionMode" => matches!(value.as_str(), Some("full" | "ask")),
             "theme" => matches!(value.as_str(), Some("dark" | "light" | "system")),
             "fontFamily" => matches!(value.as_str(), Some("system" | "yahei" | "simsun")),
             "codeFont" => matches!(value.as_str(), Some("consolas" | "courier" | "system")),

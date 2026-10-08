@@ -32,7 +32,7 @@ it("keeps search text controlled and reports user edits without altering navigat
   view.rerender(<SettingsShell section="appearance" onSection={vi.fn()} query="深色" onQuery={onQuery}><p>外观内容</p></SettingsShell>);
   expect(input.value).toBe("深色");
   expect(document.activeElement).toBe(input);
-  expect(within(screen.getByRole("navigation")).getAllByRole("button")).toHaveLength(7);
+  expect(within(screen.getByRole("navigation")).getAllByRole("button")).toHaveLength(8);
 });
 
 it("lets keyboard users navigate categories and close settings without duplicate close controls", async () => {

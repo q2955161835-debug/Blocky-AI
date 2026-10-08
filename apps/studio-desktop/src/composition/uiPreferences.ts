@@ -1,4 +1,5 @@
 export type UiPreferences = {
+  permissionMode: "full" | "ask";
   theme: "dark" | "light" | "system";
   fontSize: number;
   fontFamily: "system" | "yahei" | "simsun";
@@ -10,6 +11,7 @@ export type UiPreferences = {
 };
 export type UiPreferenceId = keyof UiPreferences;
 export const defaultUiPreferences: UiPreferences = {
+  permissionMode: "full",
   theme: "dark",
   fontSize: 13,
   fontFamily: "yahei",
@@ -38,7 +40,9 @@ export function parseUiPreferences(raw: unknown): UiPreferencesDocument {
   const values: Partial<UiPreferences> = {};
   for (const [id, value] of Object.entries(doc.values)) {
     const valid =
-      id === "fontSize"
+      id === "permissionMode"
+        ? value === "full" || value === "ask"
+        : id === "fontSize"
         ? typeof value === "number" &&
           Number.isInteger(value) &&
           value >= 11 &&

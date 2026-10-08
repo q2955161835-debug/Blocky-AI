@@ -2,6 +2,22 @@ mod placement;
 #[cfg(windows)]
 mod windows;
 
+/// Read the persisted profile preference for every new request so that other
+/// windows and reopened projects use the same mode. Never bypass Host preflight.
+pub async fn runtime_request(
+    window: &tauri::WebviewWindow,
+    title: &str,
+    description: impl Into<String>,
+) -> Result<bool, String> {
+    use tauri::Manager;
+    if window.label() != "main" { return Err("BLK-PERM-001".into()); }
+    let ask = {
+        let store = window.state::<crate::user_store::UserStore>();
+        crate::permission_policy::requires_confirmation(&store)?
+    };
+    if ask { Ok(yes_no(window, title, description).await) } else { Ok(true) }
+}
+
 /// Native Yes/No approval, positioned inside its visible owner on Windows.
 /// Failure to establish the owner or place the prompt is a refusal.
 pub async fn yes_no(

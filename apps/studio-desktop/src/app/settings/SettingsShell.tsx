@@ -13,6 +13,7 @@ export interface SettingsShellProps {
 }
 
 const sectionIcons: Record<SettingsSection, string> = {
+  permissions: "M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6zM8 12l3 3 5-6",
   general: "M4 5h16M4 12h16M4 19h16M8 3v4M16 10v4M10 17v4",
   appearance: "M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   models: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",

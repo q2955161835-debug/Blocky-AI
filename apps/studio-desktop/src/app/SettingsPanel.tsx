@@ -18,6 +18,7 @@ import { ProjectMap } from "./ProjectMap";
 import { EditorTools } from "./EditorTools";
 import { Inspector } from "./Inspector";
 const searchTerms: Record<SettingsSection, string> = {
+  permissions: "权限 完整权限 运行前询问 确认 模型 工具 构建助手 工作目录",
   general: "视图 专业 入门 最小化 托盘 工作台 布局 左侧 右侧 宽度",
   appearance:
     "主题 深色 浅色 跟随系统 界面字号 界面字体 代码字体 微软雅黑 宋体 Consolas Courier 减少动态",
@@ -150,6 +151,20 @@ export function SettingsPanel({
             </>
           )}
           {id === "appearance" && <AppearanceSettings studio={s} />}
+          {id === "permissions" && (
+            <SettingsGroup title="助手权限">
+              <SettingsRow title="权限模式" description="适用于 Blocky Agent 和构建助手。修改自动保存，下次请求生效。">
+                <select aria-label="权限模式" value={s.settings.ui.values.permissionMode}
+                  disabled={!s.settings.ui.ready || !!builder?.busy || s.running}
+                  onChange={(e) => s.settings.ui.change("permissionMode", e.target.value as "full" | "ask")}>
+                  <option value="full">完整权限</option>
+                  <option value="ask">运行前询问</option>
+                </select>
+              </SettingsRow>
+              <p>完整权限自动执行模型与工具请求，可读写已选择的工作目录。运行前询问会在调用前请求确认。</p>
+              {s.settings.ui.error && <p role="alert">{s.settings.ui.error}</p>}
+            </SettingsGroup>
+          )}
           {id === "models" && (
             <>
               <SettingsGroup title="默认模型">
@@ -160,6 +175,9 @@ export function SettingsPanel({
           )}
           {id === "builder" && (
             <>
+              <SettingsGroup title="权限">
+                <SettingsRow title="助手权限"><button onClick={() => select("permissions")}>管理权限</button></SettingsRow>
+              </SettingsGroup>
               <SettingsGroup title="模型">
                 <BuilderModelSettings
                   studio={s}
@@ -201,6 +219,9 @@ export function SettingsPanel({
           )}
           {id === "agent" && (
             <>
+              <SettingsGroup title="权限">
+                <SettingsRow title="助手权限"><button onClick={() => select("permissions")}>管理权限</button></SettingsRow>
+              </SettingsGroup>
               <SettingsGroup title="运行与调试">
                 <RunSettings studio={s} execute={execute} />
               </SettingsGroup>

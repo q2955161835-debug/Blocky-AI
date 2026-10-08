@@ -1,5 +1,6 @@
 export type SettingsSection =
   | "general"
+  | "permissions"
   | "appearance"
   | "models"
   | "builder"
@@ -9,6 +10,7 @@ export type SettingsSection =
 
 export const settingsSections = [
   { id: "general", title: "常规" },
+  { id: "permissions", title: "权限" },
   { id: "appearance", title: "外观" },
   { id: "models", title: "模型与厂商" },
   { id: "builder", title: "构建助手" },

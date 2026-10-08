@@ -16,7 +16,7 @@ pub async fn agent_memory_authorize(
 ) -> Result<Value, String> {
     guard(&window)?;
     blocky_studio::agent_data::validate_context(&project_id, &session_id)?;
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准项目本机能力", format!("本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。工具和在线模型继续独立核验。\n项目：{}\n会话：{}\n授权在运行结束或取消时撤销，最长30分钟。",project_id,session_id)).await {
+    if !blocky_studio::native_confirmation::runtime_request(&window, "批准项目本机能力", format!("本次操作可访问此项目的本机记忆、媒体、评估资产和已安装技能，并调用本地评分模型、管理触发器和监听已绑定工作流的事件。\n项目：{}\n会话：{}",project_id,session_id)).await? {
         return Err("BLK-PERM-001".into());
     }
     guard(&window)?;
@@ -111,7 +111,7 @@ pub async fn agent_tool_call(
     guard(&window)?;
     let preview = request.preflight()?;
     let digest = blocky_studio::agent_data::digest(&request)?;
-    if !blocky_studio::native_confirmation::yes_no(
+    if !blocky_studio::native_confirmation::runtime_request(
         &window,
         "批准文本分析工具",
         format!(
@@ -119,7 +119,7 @@ pub async fn agent_tool_call(
             request.project_id, request.run_id, preview["inputBytes"], digest
         ),
     )
-    .await
+    .await?
     {
         return Err("BLK-PERM-001".into());
     }

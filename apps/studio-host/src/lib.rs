@@ -9,6 +9,7 @@ pub mod log_store;
 pub mod mcp_client;
 pub mod model_registry;
 pub mod native_confirmation;
+pub mod permission_policy;
 mod native_session;
 mod network_policy;
 pub mod patch_guard;

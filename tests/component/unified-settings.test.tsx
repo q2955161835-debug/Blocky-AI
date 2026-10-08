@@ -29,6 +29,24 @@ function Harness({
   studio = useStudio();
   return <SettingsPanel studio={studio} initialSection={initial} />;
 }
+it("defaults to full permission and restores an explicitly saved confirmation mode", async () => {
+  const view = render(<Harness initial="builder" />);
+  await waitFor(() => expect(studio.settings.ui.ready).toBe(true));
+  fireEvent.click(screen.getByRole("button", { name: "管理权限" }));
+  expect((screen.getByRole("combobox", { name: "权限模式" }) as HTMLSelectElement).value).toBe("full");
+  fireEvent.change(screen.getByRole("combobox", { name: "权限模式" }), { target: { value: "ask" } });
+  await act(() => studio.settings.flush());
+  expect(JSON.parse(localStorage.getItem("blocky.ui-preferences.app")!).values.permissionMode).toBe("ask");
+  view.unmount();
+  render(<Harness />);
+  await waitFor(() => expect(studio.settings.ui.ready).toBe(true));
+  fireEvent.change(screen.getByRole("searchbox", { name: "搜索设置" }), { target: { value: "完整权限" } });
+  fireEvent.click(within(screen.getByLabelText("设置搜索结果")).getByRole("button", { name: /权限/ }));
+  expect((screen.getByRole("combobox", { name: "权限模式" }) as HTMLSelectElement).value).toBe("ask");
+  fireEvent.change(screen.getByRole("combobox", { name: "权限模式" }), { target: { value: "full" } });
+  await act(() => studio.settings.flush());
+  expect(studio.settings.ui.values.permissionMode).toBe("full");
+});
 it("searches all categories and persists actual theme and font choices", async () => {
   render(<Harness />);
   await waitFor(() => expect(studio.settings.ui.ready).toBe(true));

@@ -39,7 +39,7 @@ pub async fn provider_model_call(
         request.max_output_tokens.map(|n|format!("{n} tokens")).unwrap_or_else(||"由模型服务决定".into()),
         digest
     );
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准模型请求", description).await
+    if !blocky_studio::native_confirmation::runtime_request(&window, "批准模型请求", description).await?
     {
         return Err("BLK-PERM-001".into());
     }
@@ -94,7 +94,7 @@ pub async fn provider_call(
         roles,
         digest
     );
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准模型请求", description).await
+    if !blocky_studio::native_confirmation::runtime_request(&window, "批准模型请求", description).await?
     {
         return Err("BLK-PERM-001".into());
     }

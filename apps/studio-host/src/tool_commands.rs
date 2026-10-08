@@ -79,7 +79,7 @@ pub async fn tool_call(
     };
     let message=format!("操作：{action}\n资源：{}\n目标：{destination}\n输入：{} bytes\n时限：{} ms\n未核实调用：{}\n请求摘要：{digest}",request.resource_id,preview["inputBytes"],request.timeout_ms,preview["unresolvedCalls"]);
     operation.check_cancel()?;
-    if !blocky_studio::native_confirmation::yes_no(&window, "批准工具请求", message).await {
+    if !blocky_studio::native_confirmation::runtime_request(&window, "批准工具请求", message).await? {
         return Err("BLK-PERM-001".into());
     }
     crate::window_lifecycle::visible(&window)?;

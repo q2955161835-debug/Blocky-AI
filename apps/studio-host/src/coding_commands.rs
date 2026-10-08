@@ -43,6 +43,9 @@ pub async fn coding_run(
         .as_str()
         .ok_or("BLK-CODING-INPUT")?
         .to_owned();
+    if !blocky_studio::native_confirmation::runtime_request(
+        &window, "运行构建助手", "构建助手将调用所选模型、操作当前作品，并可读写已选择的工作目录。",
+    ).await? { return Err("BLK-PERM-001".into()); }
     crate::window_lifecycle::visible(&window)?;
     let host = host.inner().clone();
     tauri::async_runtime::spawn_blocking(move || {

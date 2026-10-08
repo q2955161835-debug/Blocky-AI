@@ -35,8 +35,8 @@ pub async fn builder_run(
             start.request.create_surface,
             digest
         );
-        if !blocky_studio::native_confirmation::yes_no(&window, "批准构建模型请求", description)
-            .await
+        if !blocky_studio::native_confirmation::runtime_request(&window, "批准构建模型请求", description)
+            .await?
         {
             return Err("BLK-PERM-001".into());
         }
