@@ -1,0 +1,285 @@
+{
+  "synthetic": true,
+  "externalApi": false,
+  "started": "2026-10-08T06:39:38.645Z",
+  "requests": [
+    {
+      "url": "/v1/chat/completions",
+      "model": "synthetic-md",
+      "messageCount": 2,
+      "at": "2026-10-08T06:39:42.463Z"
+    },
+    {
+      "url": "/v1/chat/completions",
+      "model": "synthetic-md",
+      "messageCount": 4,
+      "at": "2026-10-08T06:39:42.474Z"
+    },
+    {
+      "url": "/v1/chat/completions",
+      "model": "synthetic-md",
+      "messageCount": 2,
+      "at": "2026-10-08T06:39:51.827Z"
+    }
+  ],
+  "checks": [
+    {
+      "name": "live unfinished visible",
+      "ok": true,
+      "detail": "＋\n⚙\n\nMD-LIVE **用户原文**\n\n流式标题\n\n**正在续写\n\n  const unfinished = 1;\n\n\n查看项目 · 已完成\n\n调用轨迹 · 1 项操作\n＋\nMarkdown 合成模型\n⌄\n■"
+    },
+    {
+      "name": "Blocky 构建助手 markdown 240",
+      "ok": true,
+      "detail": {
+        "width": 198,
+        "overflow": false,
+        "h1": 1,
+        "strong": 1,
+        "li": 4,
+        "quote": 1,
+        "hr": 1,
+        "table": 1,
+        "imgs": 0,
+        "badLinks": 0,
+        "executed": false,
+        "scrolls": [
+          {
+            "client": 197,
+            "scroll": 197,
+            "tab": 0,
+            "text": "  const unfinished = 1;\n"
+          },
+          {
+            "client": 197,
+            "scroll": 1508,
+            "tab": 0,
+            "text": "function demo() {\n  const long = \"LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_L"
+          },
+          {
+            "client": 198,
+            "scroll": 306,
+            "tab": 0,
+            "text": "名称第一宽列第二宽列第三宽列第四宽列测试表格内容表格内容表格内容表格内容"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Blocky 构建助手 keyboard scroll 240",
+      "ok": true,
+      "detail": {
+        "left": 39.365081787109375,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky 构建助手 keyboard scroll 240",
+      "ok": true,
+      "detail": {
+        "left": 39.365081787109375,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky 构建助手 markdown 400",
+      "ok": true,
+      "detail": {
+        "width": 358,
+        "overflow": false,
+        "h1": 1,
+        "strong": 1,
+        "li": 4,
+        "quote": 1,
+        "hr": 1,
+        "table": 1,
+        "imgs": 0,
+        "badLinks": 0,
+        "executed": false,
+        "scrolls": [
+          {
+            "client": 357,
+            "scroll": 357,
+            "tab": 0,
+            "text": "  const unfinished = 1;\n"
+          },
+          {
+            "client": 357,
+            "scroll": 1508,
+            "tab": 0,
+            "text": "function demo() {\n  const long = \"LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_L"
+          },
+          {
+            "client": 358,
+            "scroll": 358,
+            "tab": 0,
+            "text": "名称第一宽列第二宽列第三宽列第四宽列测试表格内容表格内容表格内容表格内容"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Blocky 构建助手 keyboard scroll 400",
+      "ok": true,
+      "detail": {
+        "left": 78.73016357421875,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky 构建助手 keyboard scroll 400",
+      "ok": true,
+      "detail": {
+        "left": 0,
+        "overflow": false,
+        "focused": true
+      }
+    },
+    {
+      "name": "user source unchanged",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "stop returns composer",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "Blocky Agent 聊天 markdown 240",
+      "ok": true,
+      "detail": {
+        "width": 198,
+        "overflow": false,
+        "h1": 1,
+        "strong": 1,
+        "li": 4,
+        "quote": 1,
+        "hr": 1,
+        "table": 1,
+        "imgs": 0,
+        "badLinks": 0,
+        "executed": false,
+        "scrolls": [
+          {
+            "client": 197,
+            "scroll": 1771,
+            "tab": 0,
+            "text": "function demo() {\n  const long = \"LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_L"
+          },
+          {
+            "client": 198,
+            "scroll": 306,
+            "tab": 0,
+            "text": "名称第一宽列第二宽列第三宽列第四宽列测试表格内容表格内容表格内容表格内容"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Blocky Agent 聊天 keyboard scroll 240",
+      "ok": true,
+      "detail": {
+        "left": 39.365081787109375,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky Agent 聊天 keyboard scroll 240",
+      "ok": true,
+      "detail": {
+        "left": 39.365081787109375,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky Agent 聊天 markdown 400",
+      "ok": true,
+      "detail": {
+        "width": 358,
+        "overflow": false,
+        "h1": 1,
+        "strong": 1,
+        "li": 4,
+        "quote": 1,
+        "hr": 1,
+        "table": 1,
+        "imgs": 0,
+        "badLinks": 0,
+        "executed": false,
+        "scrolls": [
+          {
+            "client": 357,
+            "scroll": 1771,
+            "tab": 0,
+            "text": "function demo() {\n  const long = \"LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_LONG_L"
+          },
+          {
+            "client": 358,
+            "scroll": 358,
+            "tab": 0,
+            "text": "名称第一宽列第二宽列第三宽列第四宽列测试表格内容表格内容表格内容表格内容"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Blocky Agent 聊天 keyboard scroll 400",
+      "ok": true,
+      "detail": {
+        "left": 78.73016357421875,
+        "overflow": true,
+        "focused": true
+      }
+    },
+    {
+      "name": "Blocky Agent 聊天 keyboard scroll 400",
+      "ok": true,
+      "detail": {
+        "left": 0,
+        "overflow": false,
+        "focused": true
+      }
+    },
+    {
+      "name": "history persisted reopen",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no remote image request",
+      "ok": true,
+      "detail": [
+        {
+          "url": "/v1/chat/completions",
+          "model": "synthetic-md",
+          "messageCount": 2,
+          "at": "2026-10-08T06:39:42.463Z"
+        },
+        {
+          "url": "/v1/chat/completions",
+          "model": "synthetic-md",
+          "messageCount": 4,
+          "at": "2026-10-08T06:39:42.474Z"
+        },
+        {
+          "url": "/v1/chat/completions",
+          "model": "synthetic-md",
+          "messageCount": 2,
+          "at": "2026-10-08T06:39:51.827Z"
+        }
+      ]
+    },
+    {
+      "name": "no page errors",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "completed": "2026-10-08T06:39:58.255Z"
+}

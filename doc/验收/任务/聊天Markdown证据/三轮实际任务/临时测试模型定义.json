@@ -1,0 +1,21 @@
+{
+  "capabilityRequirements": [],
+  "definition": {
+    "capabilities": [
+      "text",
+      "tools"
+    ],
+    "connectionRef": "provider-xirang-personal",
+    "modelId": "deepseek-v4-pro",
+    "parameters": {
+      "maxOutputTokens": 8192
+    },
+    "timeoutMs": 240000
+  },
+  "displayName": "本次端到端测试模型",
+  "kind": "model",
+  "resourceId": "markdown-e2e-model",
+  "schemaVersion": "blocky.resource/v1alpha1",
+  "scope": "user",
+  "secretBindings": []
+}

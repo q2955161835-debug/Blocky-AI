@@ -1,0 +1,152 @@
+{
+  "sourceCommit": "ac48205102318803ed0c2c056f333fdc5b28385d",
+  "auditedAt": "2026-10-08T07:02:20.874Z",
+  "scenes": {
+    "work": {
+      "variant": "blueprint",
+      "checks": {
+        "builderActuallyModified": true,
+        "builderExternalApi": true,
+        "compiled": true,
+        "agentCompleted": true,
+        "agentExternalApi": true,
+        "builderWithin600": true,
+        "agentWithin600": true,
+        "originalAndCopyUnchanged": true,
+        "exactNumericResults": true,
+        "actualFileMatchesRuntimeWrite": true
+      },
+      "builderSeconds": 28.854,
+      "agentSecondsUpperBound": 54.205,
+      "traceAgentSeconds": 53.355,
+      "changedFields": [
+        {
+          "id": "assistant-root",
+          "type": "core.agent",
+          "fields": {
+            "ROLE": "你是日常数据分析工作助手。使用已启用的工作目录读写工具，读取 rural-cpi.csv，统计数据行数、年份范围、2022年的价格因子与平减系数，并将结果保存为 cpi-summary.md。"
+          }
+        },
+        {
+          "id": "assistant-work-instructions",
+          "type": "core.prompt.context",
+          "fields": {
+            "TEXT": "在用户已选择的工作目录中查找并读取 rural-cpi.csv：总结数据总行数（不含表头）与年份范围（最小到最大年份），找出2022年对应的价格因子与平减系数，将全部结果写成 Markdown 保存为 cpi-summary.md。数字计算用计算工具的结果，不用语言模型心算充当核验；写文件后读回核对内容。最后用中文 Markdown 说明产物的保存位置与关键数字。"
+          }
+        }
+      ],
+      "builderResponses": 4,
+      "agentResponses": 8,
+      "reportedTokens": 36753,
+      "builtFileSha256": "c8b2ad95c4379d8bfcb567f4a7cbe37bd5e2626c966319c2943d530e45e4ba9c",
+      "sourceOriginalPath": "D:/1Folder/数据分析工作区/tasks/20261003-数字普惠金融农村家庭韧性/work/sources/全国农村CPI_2016基期.csv",
+      "originalSha256": "d6d5ea113f6c6ce51a7496a823329a0cb0d602202fd333f4dc26eb3fea7136ec",
+      "calculation": {
+        "rows": 7,
+        "firstYear": 2016,
+        "lastYear": 2022,
+        "priceFactor2022": 1.1292282951540908,
+        "deflator2022": 0.8855605233160964,
+        "product2022": 1,
+        "maxAnnualChange": 3.2,
+        "maxYear": 2019
+      },
+      "outputSha256": "909f7203d38166d57a761cc3af740f7bc5b13977193b2566361eb57eb1f23c8a",
+      "passed": true
+    },
+    "knowledge": {
+      "variant": "blueprint2",
+      "checks": {
+        "builderActuallyModified": true,
+        "builderExternalApi": true,
+        "compiled": true,
+        "agentCompleted": true,
+        "agentExternalApi": true,
+        "builderWithin600": true,
+        "agentWithin600": true,
+        "everyCitedIdExists": true,
+        "citationTextComesFromSource": true,
+        "articleComparisonAndPenalties": true,
+        "fourQualifiedConditions": true,
+        "noRequiredMajorAccident": true
+      },
+      "builderSeconds": 30.374,
+      "agentSecondsUpperBound": 22.24,
+      "traceAgentSeconds": 21.742,
+      "changedFields": [
+        {
+          "id": "assistant-root",
+          "type": "core.agent",
+          "fields": {
+            "ROLE": "你是刑事法条学习问答助手，专门基于 assistant-knowledge 资料（仅覆盖《刑法》第133条与第133条之一）回答法律学习问题。回答必须引用资料原文并准确区分两个罪名：第133条是交通肇事罪，第133条之一是危险驾驶罪。只做条文学习与对比说明，不推断、不评判任何具体案件。"
+          }
+        },
+        {
+          "id": "assistant-evidence-instructions",
+          "type": "core.prompt.context",
+          "fields": {
+            "TEXT": "回答前必须先检索 assistant-knowledge 资料并通过证据护栏，只依据命中的条文原文作答。引用时可核对的原文并明确标注来自第133条还是第133条之一，清楚区分交通肇事罪与危险驾驶罪的构成差异。资料未命中或覆盖范围外时如实说明边界，不编造、不推断具体案件。"
+          }
+        }
+      ],
+      "builderResponses": 4,
+      "agentResponses": 1,
+      "reportedTokens": 14969,
+      "builtFileSha256": "70450c7f64406b9dfe4c55d7d0dd679b74f999ebc81abdc2440e84770a27033b",
+      "sourceUrl": "https://gxt.hunan.gov.cn/gxt/syzt/fzxcxx/fzxcflfg/202601/t20260122_33899278.html",
+      "officialSourceIndependentlyBrowsed": true,
+      "citationCount": 5,
+      "answerSha256": "d0d8bb101bfa5cc7636ae12041acd9d155d2196a7fa7d04f3755d0aa7ab89c49",
+      "passed": true
+    },
+    "coding": {
+      "variant": "agent-retry",
+      "builderSeconds": 38.467,
+      "agentSeconds": 39.225,
+      "traceAgentSeconds": 38.685,
+      "builderResponses": 5,
+      "agentResponses": 2,
+      "reportedTokens": 32420,
+      "builtFileSha256": "f9881518e1b6b7ced0f3c2c1756beb049fe42b96002b60e09605a683d6336d94",
+      "outputSha256": "d4598ff493bec7b51fc62a9c09b16a9559c891a529a05f1c1162e1826a83b816",
+      "screenshotSha256": "145e9cc5fbca6b861be6aebf0c7a8b15d977b296533e29b39a3a917a3aaab234",
+      "earlierAgentTimeoutSeconds": 60.980999999999995,
+      "visualJudgment": "实际浏览器截图显示白色鸟身、长橙喙与黄色喉囊、翅膀和两腿，脚在踏板附近；两轮和红色车架完整可辨，天空与路面清晰。属于简单静态卡通，不外推复杂动画或真实自行车机械结构。",
+      "checks": {
+        "builderActuallyModified": true,
+        "builderExternalApi": true,
+        "compiled": true,
+        "unchangedConstructionReuse": true,
+        "agentCompleted": true,
+        "agentExternalApi": true,
+        "builderWithin600": true,
+        "agentWithin600": true,
+        "actualFileMatchesRuntimeWrite": true,
+        "inlineSvg": true,
+        "visibleRenderedSvg": true,
+        "noBrowserError": true,
+        "noExternalDependency": true,
+        "noForbiddenLabels": true,
+        "visualPelicanBicycle": true
+      },
+      "passed": true,
+      "changedFields": [
+        {
+          "id": "assistant-root",
+          "type": "core.agent",
+          "fields": {
+            "ROLE": "你是 Coding 助手，负责根据用户网页需求实际编写静态 HTML 文件。运行时选择空测试工作目录；收到需求后使用读写工具创建 index.html。只使用已声明的 workspace 工具与模型工具循环，不猜测其他能力。生成包含内联 SVG 的完整网页，最后回复实际产物路径。"
+          }
+        },
+        {
+          "id": "assistant-coding-instructions",
+          "type": "core.prompt.context",
+          "fields": {
+            "TEXT": "用户提出网页需求时，实际在空测试工作目录中写入 index.html。使用已授权的 workspace-write 创建文件，workspace-read 验证内容。网页必须包含内联 SVG 元素（如鹈鹕骑自行车场景），结构完整可直接浏览器打开。只使用真实工具回执确认写入成功，最后回复「产物路径: index.html」。不生成计划或草案，直接动手写文件。"
+          }
+        }
+      ]
+    }
+  },
+  "completedAt": "2026-10-08T07:03:33.161Z"
+}

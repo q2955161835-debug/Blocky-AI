@@ -1,0 +1,19 @@
+{
+  "scene": "knowledge",
+  "sourceCommit": "ac48205",
+  "checks": {
+    "agentCompleted": true,
+    "articles": true,
+    "offences": true,
+    "conditions": true,
+    "penalties": true,
+    "citations": true,
+    "constructionWithinTenMinutes": true,
+    "agentWithinTenMinutes": true
+  },
+  "finishedAt": "2026-10-08T07:00:34.031Z",
+  "elapsedSeconds": 52.938,
+  "builderSeconds": 30.374,
+  "agentSeconds": 22.24,
+  "passed": true
+}

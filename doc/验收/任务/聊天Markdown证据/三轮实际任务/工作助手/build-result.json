@@ -1,0 +1,703 @@
+{
+  "schemaVersion": "blocky.coding-result/v1",
+  "requestId": "round-work-1791442370424",
+  "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+  "baseDigest": "db724ca9a94aec9f2e0d295fe39fff74327e92c7003e50b9a24ea9e271052e6a",
+  "text": "I have the structure. Now I'll configure the ROLE and TEXT fields precisely.\n\n完成。三处改动，编译通过，零诊断。\n\n改造要点：\n\n| 积木 | 字段 | 内容 |\n|---|---|---|\n| `assistant-root` (core.agent) | ROLE | 你是日常数据分析工作助手。使用已启用的工作目录读写工具，读取 rural-cpi.csv，统计数据行数、年份范围、2022 年的价格因子与平减系数，并将结果保存为 cpi-summary.md。 |\n| `assistant-work-instructions` (core.prompt.context) | TEXT | 在用户已选择的工作目录中查找并读取 rural-cpi.csv：总结数据总行数（不含表头）与年份范围（最小到最大年份），找出 2022 年对应的价格因子与平减系数，将全部结果写成 Markdown 保存为 cpi-summary.md。数字计算用计算工具的结果，不用语言模型心算充当核验；写文件后读回核对内容。最后用中文 Markdown 说明产物的保存位置与关键数字。 |\n\n**保持原样：** 模型 `markdown-e2e-model`、工具声明（workspace-list/read/write/undo/work-calculator 六件套）、tool_loop 预算（32 轮/256 调用/30 分钟超时）、会话记忆与输出链路。\n\nAgent 运行时可选择包含 `rural-cpi.csv` 的测试目录，自动完成读取→统计→计算→写入 `cpi-summary.md` 的闭环。",
+  "changes": [],
+  "events": [
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 1,
+      "kind": "tool.started",
+      "tool": "project_context",
+      "callId": "call_c8ad23a4c98a4bcf9246ba4e"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 2,
+      "kind": "tool.completed",
+      "tool": "project_context",
+      "callId": "call_c8ad23a4c98a4bcf9246ba4e"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 3,
+      "kind": "text.delta",
+      "text": "I have the structure. Now I'll configure the ROLE and TEXT fields precisely.\n\n"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 4,
+      "kind": "tool.started",
+      "tool": "blocky_cli",
+      "callId": "call_eitdf6es9vjn8e7oq1rdcclt"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 5,
+      "kind": "tool.completed",
+      "tool": "blocky_cli",
+      "callId": "call_eitdf6es9vjn8e7oq1rdcclt"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 6,
+      "kind": "tool.started",
+      "tool": "blocky_cli",
+      "callId": "call_8a7m62rup0ttszsen2weqmsz"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 7,
+      "kind": "tool.completed",
+      "tool": "blocky_cli",
+      "callId": "call_8a7m62rup0ttszsen2weqmsz"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 8,
+      "kind": "tool.started",
+      "tool": "blocky_cli",
+      "callId": "call_kvvie6py0zh3v4a4ctdeu9xy"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 9,
+      "kind": "tool.completed",
+      "tool": "blocky_cli",
+      "callId": "call_kvvie6py0zh3v4a4ctdeu9xy"
+    },
+    {
+      "schemaVersion": "blocky.coding-event/v1",
+      "requestId": "round-work-1791442370424",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "sequence": 10,
+      "kind": "text.delta",
+      "text": "完成。三处改动，编译通过，零诊断。\n\n改造要点：\n\n| 积木 | 字段 | 内容 |\n|---|---|---|\n| `assistant-root` (core.agent) | ROLE | 你是日常数据分析工作助手。使用已启用的工作目录读写工具，读取 rural-cpi.csv，统计数据行数、年份范围、2022 年的价格因子与平减系数，并将结果保存为 cpi-summary.md。 |\n| `assistant-work-instructions` (core.prompt.context) | TEXT | 在用户已选择的工作目录中查找并读取 rural-cpi.csv：总结数据总行数（不含表头）与年份范围（最小到最大年份），找出 2022 年对应的价格因子与平减系数，将全部结果写成 Markdown 保存为 cpi-summary.md。数字计算用计算工具的结果，不用语言模型心算充当核验；写文件后读回核对内容。最后用中文 Markdown 说明产物的保存位置与关键数字。 |\n\n**保持原样：** 模型 `markdown-e2e-model`、工具声明（workspace-list/read/write/undo/work-calculator 六件套）、tool_loop 预算（32 轮/256 调用/30 分钟超时）、会话记忆与输出链路。\n\nAgent 运行时可选择包含 `rural-cpi.csv` 的测试目录，自动完成读取→统计→计算→写入 `cpi-summary.md` 的闭环。"
+    }
+  ],
+  "generations": [
+    {
+      "schemaVersion": "blocky.model-response/v2",
+      "usageStatus": "reported",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-1d654807-04cf-962a-a08a-67884dbdeb18",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 1800,
+        "outputTokens": 27,
+        "totalTokens": 1827
+      }
+    },
+    {
+      "schemaVersion": "blocky.model-response/v2",
+      "usageStatus": "reported",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217914423801997093713527b8c530401a403eec8fc1525003ee",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 4643,
+        "outputTokens": 330,
+        "totalTokens": 4973
+      }
+    },
+    {
+      "schemaVersion": "blocky.model-response/v2",
+      "usageStatus": "reported",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "0217914423884758df8e1a1401bb5aa62b5b494646ada58b0355b",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 5296,
+        "outputTokens": 56,
+        "totalTokens": 5352
+      }
+    },
+    {
+      "schemaVersion": "blocky.model-response/v2",
+      "usageStatus": "reported",
+      "provider": "xirang",
+      "model": "deepseek-v4-pro",
+      "requestId": "chatcmpl-664e9404-9542-96e5-bcd0-b8ada0e0d8c5",
+      "transport": "remote",
+      "usage": {
+        "inputTokens": 7613,
+        "outputTokens": 318,
+        "totalTokens": 7931
+      }
+    }
+  ],
+  "engine": "pi-agent-core/0.86.0",
+  "modelApiCalled": true,
+  "project": {
+    "manifest": {
+      "schemaVersion": "blocky.project/v1",
+      "projectId": "project-33ce4003-11db-434d-bc94-f649db79f7e5",
+      "displayName": "round-work",
+      "modules": [
+        {
+          "moduleId": "main",
+          "displayName": "主画布",
+          "purpose": "agent",
+          "workspaceRef": "workspaces/main.workspace.json",
+          "exports": []
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "workspace-list",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/workspace-list.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "workspace-search",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/workspace-search.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "workspace-read",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/workspace-read.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "workspace-write",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/workspace-write.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "workspace-undo",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/workspace-undo.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "work-calculator",
+          "kind": "tool",
+          "scope": "project",
+          "definitionRef": "resources/work-calculator.json",
+          "secretRefs": []
+        },
+        {
+          "resourceId": "markdown-e2e-model",
+          "kind": "model",
+          "scope": "user",
+          "definitionRef": "markdown-e2e-model",
+          "secretRefs": []
+        }
+      ],
+      "appSurfaces": [],
+      "format": {
+        "createdWith": "blocky-desktop/0.8.0",
+        "minimumReaderVersion": "0.8.0"
+      }
+    },
+    "workspaces": {
+      "main": {
+        "blocks": {
+          "languageVersion": 0,
+          "blocks": [
+            {
+              "type": "core.agent",
+              "id": "assistant-root",
+              "fields": {
+                "ROLE": "你是日常数据分析工作助手。使用已启用的工作目录读写工具，读取 rural-cpi.csv，统计数据行数、年份范围、2022年的价格因子与平减系数，并将结果保存为 cpi-summary.md。"
+              },
+              "inputs": {
+                "BODY": {
+                  "block": {
+                    "type": "core.interaction.chat",
+                    "id": "assistant-chat-trigger",
+                    "fields": {
+                      "NAME": "工作任务"
+                    },
+                    "next": {
+                      "block": {
+                        "type": "core.prompt.context",
+                        "id": "assistant-work-instructions",
+                        "fields": {
+                          "TEXT": "在用户已选择的工作目录中查找并读取 rural-cpi.csv：总结数据总行数（不含表头）与年份范围（最小到最大年份），找出2022年对应的价格因子与平减系数，将全部结果写成 Markdown 保存为 cpi-summary.md。数字计算用计算工具的结果，不用语言模型心算充当核验；写文件后读回核对内容。最后用中文 Markdown 说明产物的保存位置与关键数字。"
+                        },
+                        "next": {
+                          "block": {
+                            "type": "core.run.budget",
+                            "id": "assistant-run-budget",
+                            "fields": {
+                              "CALLS": "256",
+                              "OUTPUT_TOKENS": "1048576",
+                              "STEPS": "10000",
+                              "TIMEOUT_MS": "1800000"
+                            },
+                            "next": {
+                              "block": {
+                                "type": "core.reason.tool_loop",
+                                "id": "assistant-tool-loop",
+                                "fields": {
+                                  "ENGINE": "pi",
+                                  "MAX_TURNS": "32",
+                                  "OUTPUT_TOKENS": "32768",
+                                  "RESOURCE": "markdown-e2e-model",
+                                  "SESSION": "conversation"
+                                },
+                                "inputs": {
+                                  "TOOLS": {
+                                    "block": {
+                                      "type": "core.tool.expose",
+                                      "id": "assistant-tool-1",
+                                      "fields": {
+                                        "RESOURCE": "workspace-list"
+                                      },
+                                      "next": {
+                                        "block": {
+                                          "type": "core.tool.expose",
+                                          "id": "assistant-tool-2",
+                                          "fields": {
+                                            "RESOURCE": "workspace-search"
+                                          },
+                                          "next": {
+                                            "block": {
+                                              "type": "core.tool.expose",
+                                              "id": "assistant-tool-3",
+                                              "fields": {
+                                                "RESOURCE": "workspace-read"
+                                              },
+                                              "next": {
+                                                "block": {
+                                                  "type": "core.tool.expose",
+                                                  "id": "assistant-tool-4",
+                                                  "fields": {
+                                                    "RESOURCE": "workspace-write"
+                                                  },
+                                                  "next": {
+                                                    "block": {
+                                                      "type": "core.tool.expose",
+                                                      "id": "assistant-tool-5",
+                                                      "fields": {
+                                                        "RESOURCE": "workspace-undo"
+                                                      },
+                                                      "next": {
+                                                        "block": {
+                                                          "type": "core.tool.expose",
+                                                          "id": "assistant-tool-6",
+                                                          "fields": {
+                                                            "RESOURCE": "work-calculator"
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "next": {
+                                  "block": {
+                                    "type": "core.memory.write",
+                                    "id": "assistant-remember-delivery",
+                                    "fields": {
+                                      "KEY": "last-delivery",
+                                      "SCOPE": "session",
+                                      "SOURCE": "result"
+                                    },
+                                    "next": {
+                                      "block": {
+                                        "type": "core.output.answer",
+                                        "id": "assistant-answer",
+                                        "fields": {
+                                          "STYLE": "段落"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "x": 80,
+              "y": 70
+            }
+          ]
+        }
+      }
+    },
+    "resources": {
+      "work-calculator": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "work-calculator",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "计算并核验数字：加减乘除，返回确定性结果",
+        "definition": {
+          "implementationRef": {
+            "id": "arithmetic-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"operation\":{\"type\":\"string\",\"enum\":[\"add\",\"subtract\",\"multiply\",\"divide\"]},\"values\":{\"type\":\"array\",\"items\":{\"type\":\"number\"},\"maxItems\":100,\"description\":\"至少两个有限数值；不足两个由计算服务拒绝\"}},\"required\":[\"operation\",\"values\"],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "work-calculator-input",
+            "kind": "schema"
+          },
+          "outputSchemaJson": "{\"type\":\"object\",\"properties\":{\"operation\":{\"type\":\"string\"},\"result\":{\"type\":\"number\"}},\"required\":[\"operation\",\"result\"],\"additionalProperties\":false}",
+          "outputSchemaRef": {
+            "id": "work-calculator-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "data.calculate"
+          ],
+          "timeoutMs": 1000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "data.calculate"
+        ],
+        "secretBindings": []
+      },
+      "workspace-list": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "workspace-list",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "列出工作目录文件与可撤销变更编号",
+        "definition": {
+          "implementationRef": {
+            "id": "workspace-file-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"maxLength\":500}},\"required\":[],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "workspace-list-input",
+            "kind": "schema"
+          },
+          "operation": "list",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "outputSchemaRef": {
+            "id": "workspace-list-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "workspace.read"
+          ],
+          "timeoutMs": 30000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "workspace.read"
+        ],
+        "secretBindings": []
+      },
+      "workspace-read": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "workspace-read",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "读取文件与版本摘要",
+        "definition": {
+          "implementationRef": {
+            "id": "workspace-file-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"maxLength\":500}},\"required\":[\"path\"],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "workspace-read-input",
+            "kind": "schema"
+          },
+          "operation": "read",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "outputSchemaRef": {
+            "id": "workspace-read-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "workspace.read"
+          ],
+          "timeoutMs": 30000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "workspace.read"
+        ],
+        "secretBindings": []
+      },
+      "workspace-search": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "workspace-search",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "搜索工作目录文本",
+        "definition": {
+          "implementationRef": {
+            "id": "workspace-file-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"maxLength\":200},\"path\":{\"type\":\"string\",\"maxLength\":500}},\"required\":[\"query\"],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "workspace-search-input",
+            "kind": "schema"
+          },
+          "operation": "search",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "outputSchemaRef": {
+            "id": "workspace-search-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "workspace.read"
+          ],
+          "timeoutMs": 30000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "workspace.read"
+        ],
+        "secretBindings": []
+      },
+      "workspace-undo": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "workspace-undo",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "按变更回执撤销文件修改",
+        "definition": {
+          "implementationRef": {
+            "id": "workspace-file-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"changeId\":{\"type\":\"string\",\"maxLength\":200}},\"required\":[\"changeId\"],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "workspace-undo-input",
+            "kind": "schema"
+          },
+          "operation": "undo",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "outputSchemaRef": {
+            "id": "workspace-undo-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "workspace.write"
+          ],
+          "timeoutMs": 30000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "workspace.write"
+        ],
+        "secretBindings": []
+      },
+      "workspace-write": {
+        "schemaVersion": "blocky.resource/v1alpha1",
+        "resourceId": "workspace-write",
+        "kind": "tool",
+        "scope": "project",
+        "displayName": "创建或修改文件并返回差异",
+        "definition": {
+          "implementationRef": {
+            "id": "workspace-file-v1",
+            "kind": "adapter"
+          },
+          "inputSchemaJson": "{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"maxLength\":500},\"text\":{\"type\":\"string\",\"maxLength\":16000},\"expectedDigest\":{\"type\":\"string\",\"maxLength\":64,\"description\":\"新建文件使用空字符串；修改已有文件使用读取工具返回的最新 digest\"}},\"required\":[\"path\",\"text\",\"expectedDigest\"],\"additionalProperties\":false}",
+          "inputSchemaRef": {
+            "id": "workspace-write-input",
+            "kind": "schema"
+          },
+          "operation": "write",
+          "outputSchemaJson": "{\"type\":\"object\"}",
+          "outputSchemaRef": {
+            "id": "workspace-write-output",
+            "kind": "schema"
+          },
+          "permissions": [
+            "workspace.write"
+          ],
+          "timeoutMs": 30000,
+          "version": "1"
+        },
+        "capabilityRequirements": [
+          "workspace.write"
+        ],
+        "secretBindings": []
+      }
+    },
+    "schemas": {
+      "schemas/work-calculator-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "enum": [
+              "add",
+              "subtract",
+              "multiply",
+              "divide"
+            ],
+            "type": "string"
+          },
+          "values": {
+            "description": "至少两个有限数值；不足两个由计算服务拒绝",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 100,
+            "type": "array"
+          }
+        },
+        "required": [
+          "operation",
+          "values"
+        ],
+        "type": "object"
+      },
+      "schemas/work-calculator-output.json": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string"
+          },
+          "result": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "operation",
+          "result"
+        ],
+        "type": "object"
+      },
+      "schemas/workspace-list-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "schemas/workspace-list-output.json": {
+        "type": "object"
+      },
+      "schemas/workspace-read-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "maxLength": 500,
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "schemas/workspace-read-output.json": {
+        "type": "object"
+      },
+      "schemas/workspace-search-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "schemas/workspace-search-output.json": {
+        "type": "object"
+      },
+      "schemas/workspace-undo-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "changeId": {
+            "maxLength": 200,
+            "type": "string"
+          }
+        },
+        "required": [
+          "changeId"
+        ],
+        "type": "object"
+      },
+      "schemas/workspace-undo-output.json": {
+        "type": "object"
+      },
+      "schemas/workspace-write-input.json": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedDigest": {
+            "description": "新建文件使用空字符串；修改已有文件使用读取工具返回的最新 digest",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "path": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 16000,
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "text",
+          "expectedDigest"
+        ],
+        "type": "object"
+      },
+      "schemas/workspace-write-output.json": {
+        "type": "object"
+      }
+    },
+    "surfaces": {}
+  }
+}

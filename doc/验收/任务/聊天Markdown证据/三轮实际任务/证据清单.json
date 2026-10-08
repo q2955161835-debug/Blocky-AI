@@ -1,0 +1,196 @@
+{
+  "sourceCommit": "ac48205102318803ed0c2c056f333fdc5b28385d",
+  "createdAt": "2026-10-08T07:04:05.772Z",
+  "startingPoint": "internal corresponding blueprint modified by real Builder",
+  "constructionDeadlineSeconds": 600,
+  "agentDeadlineSeconds": 600,
+  "realModel": "deepseek-v4-pro",
+  "scenes": [
+    {
+      "scene": "知识问答",
+      "rawSource": "try\\builder-markdown-2026-10-08\\rounds\\knowledge\\blueprint2",
+      "builderSeconds": 30.374,
+      "agentSeconds": 22.24,
+      "reportedGenerations": 5,
+      "reportedTokens": 14969,
+      "earlierAgentAttemptSeconds": null
+    },
+    {
+      "scene": "工作助手",
+      "rawSource": "try\\builder-markdown-2026-10-08\\rounds\\work\\blueprint",
+      "builderSeconds": 28.854,
+      "agentSeconds": 54.205,
+      "reportedGenerations": 12,
+      "reportedTokens": 36753,
+      "earlierAgentAttemptSeconds": null
+    },
+    {
+      "scene": "Coding助手",
+      "rawSource": "try\\builder-markdown-2026-10-08\\rounds\\coding\\agent-retry",
+      "builderSeconds": 38.467,
+      "agentSeconds": 39.225,
+      "reportedGenerations": 7,
+      "reportedTokens": 32420,
+      "earlierAgentAttemptSeconds": 60.980999999999995
+    }
+  ],
+  "files": [
+    {
+      "path": "知识问答/round-receipt.json",
+      "bytes": 11375,
+      "sha256": "91241cebf0e41237d0de5b3c7a79c920b640ff3823b7aa6f02393d3bd0123cb1"
+    },
+    {
+      "path": "知识问答/build-result.json",
+      "bytes": 14995,
+      "sha256": "25256ee766b91eb4f4e42cf3c85bf4b8625bcb048b0ac16364503f5c43fd8067"
+    },
+    {
+      "path": "知识问答/compile.json",
+      "bytes": 4190,
+      "sha256": "7db34d0b3011663729aaf1c10c0f7f409ad34645b6116676b5aa15c6094d1e62"
+    },
+    {
+      "path": "知识问答/agent-final.json",
+      "bytes": 10560,
+      "sha256": "58189a32788934575b9881f158bb016f730c4f31830f5cbc23441c362b44efc2"
+    },
+    {
+      "path": "知识问答/trace.json",
+      "bytes": 12579,
+      "sha256": "54f0dff668b1003b9bf1bd526e1a76aea36487173ee350652d0bf5fb5fb9c6d5"
+    },
+    {
+      "path": "知识问答/answer.md",
+      "bytes": 2512,
+      "sha256": "d0d8bb101bfa5cc7636ae12041acd9d155d2196a7fa7d04f3755d0aa7ab89c49"
+    },
+    {
+      "path": "知识问答/verification.json",
+      "bytes": 435,
+      "sha256": "986348ec903bd586e85aa0eee4c0b0e6411f4fc86611a5cde264f1c0a3cc5c8e"
+    },
+    {
+      "path": "知识问答/built.blocky",
+      "bytes": 2053,
+      "sha256": "70450c7f64406b9dfe4c55d7d0dd679b74f999ebc81abdc2440e84770a27033b"
+    },
+    {
+      "path": "知识问答/citations.json",
+      "bytes": 4279,
+      "sha256": "ab3d7e0b1409d93425d80c55d4d4ced0a94263122de9b98c9aaf179ea8d96cd1"
+    },
+    {
+      "path": "工作助手/round-receipt.json",
+      "bytes": 6467,
+      "sha256": "167378b139bf9d74c67815408a19052f2130b99168d8c60557df3bcb945dd6d8"
+    },
+    {
+      "path": "工作助手/build-result.json",
+      "bytes": 27478,
+      "sha256": "22f6138600b92c1f07fdf49dc9975f3f0d8613b8499623aa6666914c37386e72"
+    },
+    {
+      "path": "工作助手/compile.json",
+      "bytes": 7480,
+      "sha256": "d82d1506e34ffd34b91542b7707dc7750b5f4a6588d58577a041432142bfeb77"
+    },
+    {
+      "path": "工作助手/agent-final.json",
+      "bytes": 5781,
+      "sha256": "4c6a85c6f83eebe0913ffb404c181c6cac4456856a588a1473c2ad99b535b627"
+    },
+    {
+      "path": "工作助手/trace.json",
+      "bytes": 24014,
+      "sha256": "c6038c5a95634bbec346826121c1eaaca526a3a1638087f3d14ec29054d69f79"
+    },
+    {
+      "path": "工作助手/answer.md",
+      "bytes": 603,
+      "sha256": "87cbcde52b5dd30f10f3d3172f029d1e9ca9956f9d3bd1fd56cbbc33fec6d920"
+    },
+    {
+      "path": "工作助手/verification.json",
+      "bytes": 515,
+      "sha256": "09707042a7ec37a76db97629363249615f44863284744a2f0d351436c9e9fe39"
+    },
+    {
+      "path": "工作助手/built.blocky",
+      "bytes": 7940,
+      "sha256": "c8b2ad95c4379d8bfcb567f4a7cbe37bd5e2626c966319c2943d530e45e4ba9c"
+    },
+    {
+      "path": "工作助手/expected.json",
+      "bytes": 324,
+      "sha256": "ef58e801ae32400fb20b6948629009be6cdbdd4b630c0c773ae7912947f11f76"
+    },
+    {
+      "path": "工作助手/workspace/rural-cpi.csv",
+      "bytes": 881,
+      "sha256": "d6d5ea113f6c6ce51a7496a823329a0cb0d602202fd333f4dc26eb3fea7136ec"
+    },
+    {
+      "path": "工作助手/workspace/cpi-summary.md",
+      "bytes": 436,
+      "sha256": "909f7203d38166d57a761cc3af740f7bc5b13977193b2566361eb57eb1f23c8a"
+    },
+    {
+      "path": "Coding助手/round-receipt.json",
+      "bytes": 7383,
+      "sha256": "7e5a19199cc9818155ffcd4762779fc17ff9f5fd0068a9822f45a1fab39f195d"
+    },
+    {
+      "path": "Coding助手/build-result.json",
+      "bytes": 28266,
+      "sha256": "df9e803fb758ee09e4aa8494ec94726e9e2ad43f046edcdf23bf3f7a7345fa2e"
+    },
+    {
+      "path": "Coding助手/compile.json",
+      "bytes": 7273,
+      "sha256": "22cc2d797605cb5c8094418799666e316b735e36f17c9498bb06820a6c4eece1"
+    },
+    {
+      "path": "Coding助手/agent-final.json",
+      "bytes": 6316,
+      "sha256": "36834ae8319cd813fca3ab346adf458009463bde800c010ef4ec6cf2ab45d602"
+    },
+    {
+      "path": "Coding助手/trace.json",
+      "bytes": 10629,
+      "sha256": "4135f56d4735c4e2c90d668080cf73517a2d96c3cf4433d6fe38074d79c75f57"
+    },
+    {
+      "path": "Coding助手/answer.md",
+      "bytes": 263,
+      "sha256": "fe29d9786d3d21562dc6f8bc03caf03aa5487fcc34812326b05e4f80c21abb1e"
+    },
+    {
+      "path": "Coding助手/verification.json",
+      "bytes": 469,
+      "sha256": "0a0caafdcf63fb86632b7ed1fd06da0738b4358c061177f53eee7a9d3c1cf328"
+    },
+    {
+      "path": "Coding助手/built.blocky",
+      "bytes": 7640,
+      "sha256": "f9881518e1b6b7ced0f3c2c1756beb049fe42b96002b60e09605a683d6336d94"
+    },
+    {
+      "path": "Coding助手/workspace/index.html",
+      "bytes": 3691,
+      "sha256": "d4598ff493bec7b51fc62a9c09b16a9559c891a529a05f1c1162e1826a83b816"
+    },
+    {
+      "path": "Coding助手/pelican-bicycle.png",
+      "bytes": 24312,
+      "sha256": "145e9cc5fbca6b861be6aebf0c7a8b15d977b296533e29b39a3a917a3aaab234"
+    },
+    {
+      "path": "Coding助手/browser.json",
+      "bytes": 224,
+      "sha256": "99b6f49eb07958abe48a825926ca313973ac3118b56bafe4a7df88e357aed39d"
+    }
+  ],
+  "reportedSuccessTokens": 84142,
+  "unknownFailedUsageExcluded": true
+}

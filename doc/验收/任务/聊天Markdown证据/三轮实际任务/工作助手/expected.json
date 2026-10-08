@@ -1,0 +1,12 @@
+{
+  "rows": 7,
+  "firstYear": 2016,
+  "lastYear": 2022,
+  "priceFactor2022": 1.1292282951540908,
+  "deflator2022": 0.8855605233160964,
+  "product2022": 1.0,
+  "maxAnnualChange": 3.2,
+  "maxYear": 2019,
+  "sourceSha256": "D6D5EA113F6C6CE51A7496A823329A0CB0D602202FD333F4DC26EB3FEA7136EC",
+  "copyMatches": true
+}

@@ -1,0 +1,87 @@
+[
+  {
+    "collectionId": "assistant-knowledge",
+    "digest": "6f83100b5e6514c9e6323eb4a64897234829f5fc9b364b43c5bb02245437825c",
+    "documentId": "doc-26f8efb8607032c0e9ea1debd4af8e2f406c17dfa257b5e1a627a9d12510bec4",
+    "id": "chunk-3c88445c69beb5b0a6f40fad122e16bc7a990757bec7331f32394c3292989c6d",
+    "locator": {
+      "lineEnd": 1,
+      "lineStart": 1,
+      "path": "legal-source.md"
+    },
+    "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "score": 0.6033177098524041,
+    "sourceId": "src-7805a148-b22c-4bda-bc4b-31cd1e92e3de",
+    "text": "# 交通肇事罪与危险驾驶罪",
+    "title": "legal-source.md (legal-source.md · 行 1–1)",
+    "truncated": false
+  },
+  {
+    "collectionId": "assistant-knowledge",
+    "digest": "88cdeb258e58549dce2d6e2ab53c249c754d28453605563a17648fa83670def7",
+    "documentId": "doc-26f8efb8607032c0e9ea1debd4af8e2f406c17dfa257b5e1a627a9d12510bec4",
+    "id": "chunk-408ad9d071790ad313f6d6e06da610e348b24ccfe3bb001810cc445b12c10101",
+    "locator": {
+      "lineEnd": 11,
+      "lineStart": 11,
+      "path": "legal-source.md"
+    },
+    "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "score": 0.57258233249531,
+    "sourceId": "src-7805a148-b22c-4bda-bc4b-31cd1e92e3de",
+    "text": "## 第一百三十三条之一：危险驾驶罪",
+    "title": "legal-source.md (legal-source.md · 行 11–11)",
+    "truncated": false
+  },
+  {
+    "collectionId": "assistant-knowledge",
+    "digest": "31cb105f3021a51d6e1863b64a54a13757d1d890d84700acf10d73800824327b",
+    "documentId": "doc-26f8efb8607032c0e9ea1debd4af8e2f406c17dfa257b5e1a627a9d12510bec4",
+    "id": "chunk-93b4a0453de05b4645c51564ce6f7453524240868f58977c8cae4ba88a14a211",
+    "locator": {
+      "lineEnd": 9,
+      "lineStart": 9,
+      "path": "legal-source.md"
+    },
+    "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "score": 0.570047519080576,
+    "sourceId": "src-7805a148-b22c-4bda-bc4b-31cd1e92e3de",
+    "text": "违反交通运输管理法规，因而发生重大事故，致人重伤、死亡或者使公私财产遭受重大损失的，处三年以下有期徒刑或者拘役；交通运输肇事后逃逸或者有其他特别恶劣情节的，处三年以上七年以下有期徒刑；因逃逸致人死亡的，处七年以上有期徒刑。",
+    "title": "legal-source.md (legal-source.md · 行 9–9)",
+    "truncated": false
+  },
+  {
+    "collectionId": "assistant-knowledge",
+    "digest": "2b262548588219d6acbdb247e75b86509aa406a2d0c0288e88b57c673fcd3bf8",
+    "documentId": "doc-26f8efb8607032c0e9ea1debd4af8e2f406c17dfa257b5e1a627a9d12510bec4",
+    "id": "chunk-be5bb99aa53b2a2cb0adc63fb24e575b5dd6cc3ee5b9b664922818f101076521",
+    "locator": {
+      "lineEnd": 17,
+      "lineStart": 13,
+      "path": "legal-source.md"
+    },
+    "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "score": 0.5434721446355352,
+    "sourceId": "src-7805a148-b22c-4bda-bc4b-31cd1e92e3de",
+    "text": "在道路上驾驶机动车，有下列情形之一的，处拘役，并处罚金：\n（一）追逐竞驶，情节恶劣的；\n（二）醉酒驾驶机动车的；\n（三）从事校车业务或者旅客运输，严重超过额定乘员载客，或者严重超过规定时速行驶的；\n（四）违反危险化学品安全管理规定运输危险化学品，危及公共安全的。",
+    "title": "legal-source.md (legal-source.md · 行 13–17)",
+    "truncated": false
+  },
+  {
+    "collectionId": "assistant-knowledge",
+    "digest": "583e07003f5eca4d5fa0b05b6910c8445d9954d2375a2cb0e0abd14da959ee33",
+    "documentId": "doc-26f8efb8607032c0e9ea1debd4af8e2f406c17dfa257b5e1a627a9d12510bec4",
+    "id": "chunk-5dda47bcd0c1c4e8b8bc153bad72f10f8c4a806452814066af4705898de46208",
+    "locator": {
+      "lineEnd": 7,
+      "lineStart": 7,
+      "path": "legal-source.md"
+    },
+    "revision": "d9d5369fc83eec16fc34cd7b86347af5f5ed9f3bf5ede94ac19e93cb93edaeb1",
+    "score": 0.5304406531995698,
+    "sourceId": "src-7805a148-b22c-4bda-bc4b-31cd1e92e3de",
+    "text": "## 第一百三十三条：交通肇事罪",
+    "title": "legal-source.md (legal-source.md · 行 7–7)",
+    "truncated": false
+  }
+]

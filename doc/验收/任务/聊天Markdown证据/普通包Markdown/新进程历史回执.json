@@ -1,0 +1,48 @@
+{
+  "synthetic": true,
+  "externalApi": false,
+  "historyDiskSha": "d0064e783960f6f621f89b7159daf611214d274b7d701ea6aaf760b6ee3378ca",
+  "checks": [
+    {
+      "name": "new process disk history visible",
+      "ok": true,
+      "data": null
+    },
+    {
+      "name": "persisted source bytes unchanged",
+      "ok": true,
+      "data": "d0064e783960f6f621f89b7159daf611214d274b7d701ea6aaf760b6ee3378ca"
+    },
+    {
+      "name": "history full source includes fixture",
+      "ok": true,
+      "data": [
+        {
+          "role": "user",
+          "length": 16
+        },
+        {
+          "role": "assistant",
+          "status": "completed",
+          "length": 778
+        },
+        {
+          "role": "user",
+          "length": 7
+        },
+        {
+          "role": "assistant",
+          "status": "cancelled",
+          "length": 25
+        }
+      ]
+    },
+    {
+      "name": "new process real panel renders",
+      "ok": true,
+      "data": null
+    }
+  ],
+  "requests": 1,
+  "completed": "2026-10-08T06:41:11.809Z"
+}

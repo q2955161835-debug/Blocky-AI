@@ -1,0 +1,22 @@
+{
+  "scene": "work",
+  "sourceCommit": "ac48205",
+  "checks": {
+    "agentCompleted": true,
+    "actualFileWritten": true,
+    "rowCount": true,
+    "yearRange": true,
+    "priceFactor": true,
+    "deflator": true,
+    "product": true,
+    "maxChange": true,
+    "originalUnchanged": true,
+    "constructionWithinTenMinutes": true,
+    "agentWithinTenMinutes": true
+  },
+  "finishedAt": "2026-10-08T07:01:55.260Z",
+  "elapsedSeconds": 83.059,
+  "builderSeconds": 28.854,
+  "agentSeconds": 54.205,
+  "passed": true
+}

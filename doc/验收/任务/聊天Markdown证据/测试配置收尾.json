@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-08T15:03:39.4692495+08:00",
+  "temporaryModelRemoved": true,
+  "defaultResourceId": "xirang-personal",
+  "originalResourceId": "xirang-personal",
+  "originalOutputBudget": 1024,
+  "originalTimeoutMs": 60000,
+  "noSecretOperationPerformed": true
+}
