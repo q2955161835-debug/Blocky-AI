@@ -26,6 +26,26 @@ const generation = (
   transport: "local",
   usage: null,
 });
+it("distinguishes JSON literal values, raw comparisons and explicit message replies in its model instructions", async () => {
+  await runCodingAgent(start, {
+    modelId: "fixture",
+    executeTool: async () => { throw Error("This instruction check must not execute tools"); },
+    generate: async ({ messages }) => {
+      const system = messages[0].content!;
+      expect(system).toContain("core.data.set 与 core.data.literal 的 VALUE 是JSON文本");
+      expect(system).toContain("core.logic.condition 的 VALUE 是裸比较文本");
+      expect(system).toContain("SOURCE、OP");
+      expect(system).toContain("optionalFields");
+      expect(system).toContain("requiredInputs");
+      expect(system).toContain("core.message.create 的 CONTENT");
+      expect(system).toContain("core.message.reply 的 MESSAGE");
+      expect(system).toContain("core.output.answer 不读取 core.data.set 的结果");
+      expect(system).toContain("BLK-CODING-CLI-JSON-ROOT");
+      expect(system).toContain("BLK-CODING-CLI-INPUT-GUARD");
+      return generation([{type: "text", text: "参数语义已核对。"}]);
+    },
+  });
+});
 const call = (id: string, name: string, args: unknown = {}) => ({
   type: "toolCall",
   id,

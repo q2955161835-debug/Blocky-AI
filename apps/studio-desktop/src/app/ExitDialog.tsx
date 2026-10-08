@@ -1,15 +1,12 @@
 import { useEffect, useRef } from "react";
 import type { Studio } from "../composition/useStudio";
-import type { StudioLogs } from "../composition/useLogs";
 import type { useLifecycle } from "../composition/useLifecycle";
 export function ExitDialog({
   studio,
   lifecycle,
-  logs,
 }: {
   studio: Studio;
   lifecycle: ReturnType<typeof useLifecycle>;
-  logs: StudioLogs;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -22,7 +19,7 @@ export function ExitDialog({
       aria-label="关闭 Blocky Studio"
       onCancel={(e) => {
         e.preventDefault();
-        if (!studio.exiting) lifecycle.cancel();
+        if (lifecycle.canReturn) lifecycle.cancel();
       }}
     >
       <h2>关闭 Blocky Studio</h2>
@@ -33,14 +30,11 @@ export function ExitDialog({
       </p>
       {lifecycle.error && <p role="alert">{lifecycle.error}</p>}
       <div className="exit-actions">
-        <button
-          disabled={studio.exiting || lifecycle.working}
-          onClick={lifecycle.cancel}
-        >
+        <button disabled={!lifecycle.canReturn} onClick={lifecycle.cancel}>
           返回工作台
         </button>
         <button
-          disabled={studio.exiting || lifecycle.working}
+          disabled={!lifecycle.canReturn}
           onClick={() => void lifecycle.hide()}
         >
           隐藏并继续
@@ -51,14 +45,6 @@ export function ExitDialog({
         >
           {lifecycle.working ? "正在结算…" : "停止并退出"}
         </button>
-        {lifecycle.error && (
-          <button
-            disabled={lifecycle.working}
-            onClick={() => void logs.clearStorage()}
-          >
-            清除诊断存储
-          </button>
-        )}
       </div>
     </dialog>
   );

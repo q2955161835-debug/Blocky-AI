@@ -7,6 +7,7 @@ import { useProjectStartup, type ProjectStarter } from "./useProjectStartup";
 import { useResources } from "./useResources";
 import { useChatHistory } from "./useChatHistory";
 import { useSession } from "./useSession";
+import { exitStage } from "./exitStage";
 import {
   ProjectController,
   restoreSession,
@@ -645,18 +646,24 @@ export function useStudio(initialProject?: Project) {
     answerConfirmation(false);
     abort.current?.abort();
     runtime.resume();
-    if (runtime instanceof DesktopRuntime) await runtime.dispose();
-    await settings.flush();
-    await shortcuts.flush();
-    await recovery.flush();
-    await resources.flush();
-    await sessionStore.flush();
-    await agentChat.flush();
+    if (runtime instanceof DesktopRuntime) await runtime.cancelAndDrain();
     const until = Date.now() + 5000;
     while (runBusy.current || ioBusy.current) {
       if (Date.now() > until) throw Error("BLK-WINDOW-001");
       await new Promise((resolve) => setTimeout(resolve, 20));
     }
+  };
+  const flush = async () => {
+    await exitStage("保存设置", () => settings.flush());
+    await exitStage("保存快捷键", () => shortcuts.flush());
+    await exitStage("保存恢复副本", () => recovery.flush());
+    await exitStage("保存模型配置", () => resources.flush());
+    await exitStage("保存布局", () => sessionStore.flush());
+    await exitStage("保存 Agent 会话", () => agentChat.flush());
+  };
+  const resumeAfterExit = () => {
+    closing.current = false;
+    setExiting(false);
   };
   const togglePause = () => {
     if (!running) return;
@@ -681,6 +688,8 @@ export function useStudio(initialProject?: Project) {
     busy,
     newWindow,
     exiting,
+    flush,
+    resumeAfterExit,
     settle,
     paused,
     togglePause,

@@ -4,6 +4,7 @@ use tauri::{Emitter, Manager};
 pub struct Lifecycle {
     pub closing: AtomicBool,
     pub authorized: AtomicBool,
+    committing: AtomicBool,
     minimize_to_tray: AtomicBool,
 }
 pub fn visible(window: &tauri::WebviewWindow) -> Result<(), String> {
@@ -29,7 +30,9 @@ pub fn notify(app: &tauri::AppHandle, action: &str) {
     }
 }
 pub fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    app.state::<Lifecycle>().minimize_to_tray.store(true, Ordering::SeqCst);
+    app.state::<Lifecycle>()
+        .minimize_to_tray
+        .store(true, Ordering::SeqCst);
     crate::shared_tray::start(app)
 }
 pub(crate) fn build_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
@@ -37,7 +40,9 @@ pub(crate) fn build_tray(app: &tauri::AppHandle) -> Result<(), Box<dyn std::erro
         menu::{Menu, MenuItem},
         tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     };
-    if app.tray_by_id("blocky-tray").is_some() {return Ok(());}
+    if app.tray_by_id("blocky-tray").is_some() {
+        return Ok(());
+    }
     let restore_item = MenuItem::with_id(app, "restore", "打开 Blocky Studio", true, None::<&str>)?;
     let pause = MenuItem::with_id(app, "pause", "暂停 / 继续问答运行", true, None::<&str>)?;
     let logs = MenuItem::with_id(app, "logs", "运行日志", true, None::<&str>)?;
@@ -135,7 +140,12 @@ pub fn hide_window(window: tauri::WebviewWindow) -> Result<(), String> {
 }
 #[tauri::command]
 pub fn begin_exit(window: tauri::WebviewWindow) -> Result<(), String> {
-    if window.label() != "main" {
+    if window.label() != "main"
+        || window
+            .state::<Lifecycle>()
+            .committing
+            .load(Ordering::SeqCst)
+    {
         return Err("BLK-WINDOW-001".into());
     }
     window
@@ -145,40 +155,90 @@ pub fn begin_exit(window: tauri::WebviewWindow) -> Result<(), String> {
     Ok(())
 }
 #[tauri::command]
+pub fn cancel_exit(window: tauri::WebviewWindow) -> Result<(), String> {
+    if window.label() != "main"
+        || window
+            .state::<Lifecycle>()
+            .committing
+            .load(Ordering::SeqCst)
+    {
+        return Err("BLK-WINDOW-001".into());
+    }
+    window
+        .state::<Lifecycle>()
+        .closing
+        .store(false, Ordering::SeqCst);
+    Ok(())
+}
+#[tauri::command(async)]
+pub fn prepare_exit(
+    window: tauri::WebviewWindow,
+    logs: tauri::State<'_, blocky_studio::log_store::LogStore>,
+) -> Result<(), String> {
+    let state = window.state::<Lifecycle>();
+    if window.label() != "main"
+        || !state.closing.load(Ordering::SeqCst)
+        || state.committing.load(Ordering::SeqCst)
+    {
+        return Err("BLK-WINDOW-001".into());
+    }
+    // Persist before closing any host: disk errors must leave the workbench recoverable.
+    logs.flush()
+}
+#[tauri::command(async)]
 pub fn finish_exit(
     window: tauri::WebviewWindow,
     tasks: tauri::State<'_, blocky_studio::task_host::TaskHost>,
-    logs: tauri::State<'_, blocky_studio::log_store::LogStore>,
     terminals: tauri::State<'_, blocky_studio::user_terminal::UserTerminals>,
 ) -> Result<(), String> {
     if window.label() != "main" || !window.state::<Lifecycle>().closing.load(Ordering::SeqCst) {
         return Err("BLK-WINDOW-001".into());
     }
     window
-        .state::<blocky_studio::workflow::desktop::RuntimeHost>()
-        .shutdown()?;
-    window
-        .state::<blocky_studio::coding::CodingHost>()
-        .shutdown()?;
-    tasks.shutdown()?;
-    window
-        .state::<blocky_studio::workflow::host::WorkflowHost>()
-        .shutdown()?;
-    window.state::<blocky_studio::rpa::RpaHost>().shutdown()?;
-    window
-        .state::<blocky_studio::builder::BuilderHost>()
-        .shutdown()?;
-    window
-        .state::<blocky_studio::tool_gateway::ToolHost>()
-        .shutdown()?;
-    window
-        .state::<blocky_studio::agent_data::AgentData>()
-        .shutdown()?;
-    window
-        .state::<blocky_studio::provider::ProviderHost>()
-        .shutdown()?;
-    terminals.settle()?;
-    logs.flush()?;
+        .state::<Lifecycle>()
+        .committing
+        .store(true, Ordering::SeqCst);
+    // Do not short-circuit: every owner must receive cancellation even if an earlier
+    // one has not settled yet. A retry repeats only these idempotent shutdowns.
+    let results = [
+        window
+            .state::<blocky_studio::workflow::desktop::RuntimeHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-RUNTIME"),
+        window
+            .state::<blocky_studio::coding::CodingHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-CODING"),
+        tasks.shutdown().map_err(|_| "BLK-EXIT-TASK"),
+        window
+            .state::<blocky_studio::workflow::host::WorkflowHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-WORKFLOW"),
+        window
+            .state::<blocky_studio::rpa::RpaHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-AUTOMATION"),
+        window
+            .state::<blocky_studio::builder::BuilderHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-BUILDER"),
+        window
+            .state::<blocky_studio::tool_gateway::ToolHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-TOOLS"),
+        window
+            .state::<blocky_studio::agent_data::AgentData>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-DATA"),
+        window
+            .state::<blocky_studio::provider::ProviderHost>()
+            .shutdown()
+            .map_err(|_| "BLK-EXIT-PROVIDER"),
+        terminals.settle().map_err(|_| "BLK-EXIT-TERMINAL"),
+    ];
+    if let Some(error) = results.into_iter().find_map(Result::err) {
+        return Err(error.into());
+    }
     window
         .state::<Lifecycle>()
         .authorized

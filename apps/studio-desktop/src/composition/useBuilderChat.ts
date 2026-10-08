@@ -89,6 +89,7 @@ export function useBuilderChat(
   current.current = projectId;
   const cache = useRef(new Map<string, BuilderChatMessage[]>());
   const touched = useRef(new Set<string>());
+  const dirty = useRef(new Set<string>());
   const queue = useRef(Promise.resolve());
   const alive = useRef(true);
   const [loaded, setLoaded] = useState("");
@@ -133,11 +134,15 @@ export function useBuilderChat(
     const value = { schemaVersion: version, projectId: id, messages };
     builderInputBudget(value);
     touched.current.add(id);
+    dirty.current.add(id);
     cache.current.set(id, messages);
     if (alive.current && current.current === id) refresh((n) => n + 1);
     queue.current = queue.current
       .catch(() => {})
-      .then(() => writeUserState("builder-chat", id, value));
+      .then(async () => {
+        await writeUserState("builder-chat", id, value);
+        if (cache.current.get(id) === messages) dirty.current.delete(id);
+      });
     void queue.current.catch(() => {
       if (alive.current) report("本机对话未能保存，请检查可用空间。");
     });
@@ -146,6 +151,22 @@ export function useBuilderChat(
     messages: cache.current.get(projectId) ?? [],
     ready: loaded === projectId,
     update,
-    flush: () => queue.current,
+    flush: async () => {
+      await queue.current.catch(() => {});
+      while (dirty.current.size) {
+        for (const id of [...dirty.current]) {
+          const messages = cache.current.get(id)!;
+          const value = { schemaVersion: version, projectId: id, messages };
+          builderInputBudget(value);
+          queue.current = queue.current.catch(() => {}).then(async () => {
+            if (dirty.current.has(id) && cache.current.get(id) === messages) {
+              await writeUserState("builder-chat", id, value);
+              if (cache.current.get(id) === messages) dirty.current.delete(id);
+            }
+          });
+          await queue.current;
+        }
+      }
+    },
   };
 }

@@ -64,13 +64,16 @@ impl Cli {
                     if inline.len() > 256 * 1024 {
                         return Err("BLK-CODING-BUDGET".into());
                     }
-                    let value = crate::strict_json::parse(inline.as_bytes()).map_err(|_| ERROR)?;
-                    if (!value.is_object() && !value.is_array())
-                        || crate::builder::contains_credentials(&value)
-                    {
-                        return Err(ERROR.into());
+                    let value = crate::strict_json::parse(inline.as_bytes())
+                        .map_err(|_| "BLK-CODING-CLI-JSON")?;
+                    if !value.is_object() && !value.is_array() {
+                        return Err("BLK-CODING-CLI-JSON-ROOT".into());
                     }
-                    crate::project_store::check_secrets(&value, 0).map_err(|_| ERROR)?;
+                    if crate::builder::contains_credentials(&value) {
+                        return Err("BLK-CODING-CLI-INPUT-GUARD".into());
+                    }
+                    crate::project_store::check_secrets(&value, 0)
+                        .map_err(|_| "BLK-CODING-CLI-INPUT-GUARD")?;
                     value.to_string()
                 } else {
                     let read = scope.ok_or("BLK-CODING-WORKSPACE")?.read(path)?;
@@ -475,6 +478,37 @@ mod tests {
         crate::project_store::create_archive(&staging.path().join("project-0.blocky"),&crate::patch_guard::project_files(&project).unwrap()).unwrap();
         let profile=staging.path().join("profile");
         Cli {staging,project,revision:0,profile,patch:None}
+    }
+    #[test]
+    fn inline_rejections_identify_the_safe_stage_without_writing_or_changing_project() {
+        let mut cli = isolated_cli();
+        let original = cli.project.clone();
+        let archive = std::fs::read(cli.staging.path().join("project-0.blocky")).unwrap();
+        let credential = json!({"value": format!("sk-{}", "a".repeat(32))}).to_string();
+        let mut nested = json!(0);
+        for _ in 0..101 { nested = json!({"nested":nested}); }
+        for (inline, code) in [
+            ("[".to_owned(), "BLK-CODING-CLI-JSON"),
+            (r#"{"x":1,"x":2}"#.to_owned(), "BLK-CODING-CLI-JSON"),
+            (r#"{"a":{"x":1,"x":2}}"#.to_owned(), "BLK-CODING-CLI-JSON"),
+            (r#""[]""#.to_owned(), "BLK-CODING-CLI-JSON-ROOT"),
+            ("42".to_owned(), "BLK-CODING-CLI-JSON-ROOT"),
+            (r#"{"password":"synthetic"}"#.to_owned(), "BLK-CODING-CLI-INPUT-GUARD"),
+            (credential, "BLK-CODING-CLI-INPUT-GUARD"),
+            (nested.to_string(), "BLK-CODING-CLI-INPUT-GUARD"),
+        ] {
+            let args = ["patch", "create", "$project", "--operations"]
+                .map(str::to_owned)
+                .into_iter()
+                .chain([format!("$json:{inline}"), "--output".into(), "$patch".into()])
+                .collect::<Vec<_>>();
+            assert_eq!(cli.run(&args, None, &AtomicBool::new(false)).unwrap_err(), code);
+            assert_eq!(cli.project, original);
+            assert_eq!(cli.revision, 0);
+            assert!(cli.patch.is_none());
+            assert!(!cli.staging.path().join("input-0.json").exists());
+            assert_eq!(std::fs::read(cli.staging.path().join("project-0.blocky")).unwrap(), archive);
+        }
     }
     fn invoke(cli:&mut Cli,args:Vec<String>)->Result<Value,String> {
         let label=args.iter().take(2).cloned().collect::<Vec<_>>().join(" ");

@@ -86,5 +86,6 @@ export function useUiPreferences(report: (text: string) => void) {
       });
     void queue.current.catch(() => {});
   }
-  return { values, ready, error, change, flush: () => queue.current };
+  // A failed change retains the committed values; there is no unsaved candidate.
+  return { values, ready, error, change, flush: () => queue.current.catch(() => {}) };
 }

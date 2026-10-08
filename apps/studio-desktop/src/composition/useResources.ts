@@ -70,7 +70,9 @@ export function useResources(report: (text: string) => void) {
           throw conflict ? Error("BLK-RESOURCE-CONFLICT") : cause;
         }
       });
-    queue.current = operation;
+    // Callers still receive the failure, but the registry remains committed.
+    // Draining cannot replay a rejected mutation (especially a revision conflict).
+    queue.current = operation.catch(() => {});
     // Callers can await/reject the original promise; also avoid unhandled rejection for old fire-and-forget consumers.
     void operation.catch(() => {});
     return operation;

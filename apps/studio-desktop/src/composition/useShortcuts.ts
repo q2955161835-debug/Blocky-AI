@@ -11,6 +11,7 @@ export function useShortcuts(report: (text: string) => void) {
     [ready, setReady] = useState(false),
     [error, setError] = useState("");
   const queue = useRef(Promise.resolve());
+  const dirty = useRef<ReturnType<typeof emptyBindings> | undefined>(undefined);
   useEffect(() => {
     let active = true;
     void readUserState("shortcuts", "app")
@@ -31,9 +32,13 @@ export function useShortcuts(report: (text: string) => void) {
   }, []);
   const persist = (next: ReturnType<typeof emptyBindings>) => {
     setDocument(next);
+    dirty.current = next;
     queue.current = queue.current
       .catch(() => {})
-      .then(() => writeUserState("shortcuts", "app", next));
+      .then(async () => {
+        await writeUserState("shortcuts", "app", next);
+        if (dirty.current === next) dirty.current = undefined;
+      });
     void queue.current.catch(() => report("快捷键配置未能保存。"));
   };
   return {
@@ -69,6 +74,18 @@ export function useShortcuts(report: (text: string) => void) {
       setReady(true);
       setError("");
     },
-    flush: () => queue.current,
+    flush: async () => {
+      await queue.current.catch(() => {});
+      while (dirty.current) {
+        const next = dirty.current;
+        queue.current = queue.current.catch(() => {}).then(async () => {
+          if (dirty.current === next) {
+            await writeUserState("shortcuts", "app", next);
+            if (dirty.current === next) dirty.current = undefined;
+          }
+        });
+        await queue.current;
+      }
+    },
   };
 }

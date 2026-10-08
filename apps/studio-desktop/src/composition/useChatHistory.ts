@@ -31,6 +31,9 @@ export function useChatHistory(
     | undefined
   >(undefined);
   const queue = useRef(Promise.resolve());
+  const unsaved = useRef(new Map<string, {
+    index: ChatIndex; conversation: ChatConversation; compatibility: boolean;
+  }>());
   const reads = useRef(
     new Map<
       string,
@@ -52,7 +55,9 @@ export function useChatHistory(
     if (mounted.current)
       reporter.current("会话未能保存或读取，请检查后重试；原会话仍保留。");
   };
-  const save = async (index: ChatIndex, conversation: ChatConversation) => {
+  const save = async (index: ChatIndex, conversation: ChatConversation, compatibility = false) => {
+    const candidate = { index, conversation, compatibility };
+    unsaved.current.set(conversation.thread.id, candidate);
     await writeUserState(
       "chat-conversation",
       conversation.thread.id,
@@ -63,6 +68,28 @@ export function useChatHistory(
       index.projectId,
       index,
     );
+    if (compatibility && index.assistant === "builder")
+      await writeUserState("coding-chat", index.projectId, {
+        schemaVersion: "blocky.coding-chat/v1",
+        projectId: index.projectId,
+        messages: conversation.messages.map(({ id, role, text, status }) => ({
+          id, role, text, ...(status ? { status } : {}),
+        })),
+      });
+    if (unsaved.current.get(conversation.thread.id) === candidate)
+      unsaved.current.delete(conversation.thread.id);
+  };
+  const drain = async () => {
+    await queue.current.catch(() => {});
+    while (unsaved.current.size) {
+      for (const candidate of [...unsaved.current.values()]) {
+        queue.current = queue.current.catch(() => {}).then(async () => {
+          if (unsaved.current.get(candidate.conversation.thread.id) === candidate)
+            await save(candidate.index, candidate.conversation, candidate.compatibility);
+        });
+        await queue.current;
+      }
+    }
   };
   useEffect(() => {
     mounted.current = true;
@@ -74,7 +101,7 @@ export function useChatHistory(
     let active = true;
     setLoaded("");
     const load = async () => {
-      await queue.current.catch(() => {});
+      await drain();
       const raw = await readUserState(chatIndexKind(assistant), projectId);
       let index: ChatIndex, conversation: ChatConversation;
       if (raw !== null) {
@@ -180,19 +207,8 @@ export function useChatHistory(
     queue.current = queue.current
       .catch(() => {})
       .then(async () => {
-        await save(index, conversation);
-        // Keep the CLI's current v1 text contract. Archives and index are authoritative for the GUI.
-        if (assistant === "builder")
-          await writeUserState("coding-chat", id, {
-            schemaVersion: "blocky.coding-chat/v1",
-            projectId: id,
-            messages: messages.map(({ id, role, text, status }) => ({
-              id,
-              role,
-              text,
-              ...(status ? { status } : {}),
-            })),
-          });
+        // Archive, index, then the CLI's compatible text document are one retry unit.
+        await save(index, conversation, true);
       });
     void queue.current.catch(notify);
   };
@@ -215,6 +231,7 @@ export function useChatHistory(
     loading.current = true;
     setSwitching(true);
     try {
+      await drain();
       const work = queue.current
         .catch(() => {})
         .then(async () => {
@@ -233,8 +250,8 @@ export function useChatHistory(
               ? previous.index.threads
               : [...previous.index.threads, conversation.thread],
           };
-          await save(previous.index, previous.conversation);
-          await save(index, conversation);
+          await save(previous.index, previous.conversation, true);
+          await save(index, conversation, true);
           return { index, conversation };
         });
       queue.current = work.then(() => {});
@@ -245,6 +262,15 @@ export function useChatHistory(
       refresh((n) => n + 1);
       return true;
     } catch {
+      // Failed selection never becomes the active RAM conversation. Any partial
+      // target/index write must be restored to the previously selected candidate.
+      for (const [id, candidate] of unsaved.current)
+        if (candidate.index.projectId === previous.index.projectId &&
+            candidate.index.assistant === previous.index.assistant)
+          unsaved.current.delete(id);
+      unsaved.current.set(previous.conversation.thread.id, {
+        index: previous.index, conversation: previous.conversation, compatibility: true,
+      });
       notify();
       return false;
     } finally {
@@ -264,7 +290,7 @@ export function useChatHistory(
     select: (id: string) => change(id),
     flush: async () => {
       await Promise.allSettled([...reads.current.values()]);
-      await queue.current;
+      await drain();
     },
   };
 }

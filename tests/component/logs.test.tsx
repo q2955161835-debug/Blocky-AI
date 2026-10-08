@@ -48,6 +48,11 @@ it("shows corrupt storage health after policy failure and recovers only on expli
   );
   expect(calls).not.toContain("clear_diagnostics");
   expect(calls).not.toContain("append_diagnostics");
+  const configured = calls.filter((name) => name === "configure_diagnostics").length;
+  await act(async () => {
+    await expect(hook.result.current.flush()).rejects.toThrow("BLK-LOG-004");
+  });
+  expect(calls.filter((name) => name === "configure_diagnostics")).toHaveLength(configured);
   await act(async () => {
     await hook.result.current.clearStorage();
   });
@@ -55,6 +60,40 @@ it("shows corrupt storage health after policy failure and recovers only on expli
   expect(studio.setMessage).toHaveBeenLastCalledWith(
     "已清除本机诊断存储，当前视图保留。",
   );
+});
+it.each([false, true])("explicitly retries transient policy failure while background flushing never retries (persistent=%s)", async (persistent) => {
+  vi.useFakeTimers();
+  let configureCount = 0, receive: (record: any) => void = () => {};
+  const calls: { name: string; args: any }[] = [];
+  const stats = { effectiveMaxBytes: 10485760, storedBytes: 0, records: 0, maxRecords: 100000,
+    health: { corruptStore: false, quarantinePresent: false, quarantinedRecords: 0 } };
+  (window as any).__TAURI_INTERNALS__ = {
+    invoke: async (name: string, args: any) => {
+      calls.push({ name, args });
+      if (name === "configure_diagnostics" && (++configureCount === 1 || persistent))
+        throw Error("BLK-LOG-004");
+      return stats;
+    },
+  };
+  const studio = {
+    session: { outputChannel: "" }, setSession: vi.fn(), settings: { ready: true, layers: {} },
+    bus: { subscribe: (fn: typeof receive) => { receive = fn; return () => {}; } }, setMessage: vi.fn(),
+  } as unknown as Studio;
+  const hook = renderHook(() => useLogs(studio));
+  await act(async () => { await vi.advanceTimersByTimeAsync(2500); });
+  expect(configureCount).toBe(1);
+  act(() => receive({ timestamp: "2026-09-16T00:00:00.000Z", sequence: 1, level: "info", channel: "runtime" }));
+  await act(async () => {
+    if (persistent) await expect(hook.result.current.flush()).rejects.toThrow("BLK-LOG-004");
+    else await hook.result.current.flush();
+  });
+  expect(configureCount).toBe(2);
+  expect(calls.some(({ name }) => name === "clear_diagnostics")).toBe(false);
+  const appended = calls.filter(({ name }) => name === "append_diagnostics");
+  expect(appended).toHaveLength(persistent ? 0 : 1);
+  if (!persistent) expect(appended[0].args.records).toHaveLength(1);
+  await act(async () => { await vi.advanceTimersByTimeAsync(2500); });
+  expect(configureCount).toBe(2);
 });
 it("persists overflow counts after a failed write without exceeding the queue bound", async () => {
   vi.useFakeTimers();

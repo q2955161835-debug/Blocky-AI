@@ -268,6 +268,8 @@ fn main() {
             window_lifecycle::set_window_preferences,
             window_lifecycle::hide_window,
             window_lifecycle::begin_exit,
+            window_lifecycle::cancel_exit,
+            window_lifecycle::prepare_exit,
             window_lifecycle::finish_exit,
             log_commands::append_diagnostics,
             log_commands::configure_diagnostics,

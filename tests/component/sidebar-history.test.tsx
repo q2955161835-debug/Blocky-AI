@@ -36,6 +36,7 @@ function Harness() {
 afterEach(async () => {
   cleanup();
   await studio.settle();
+  await studio.flush();
   await builder.flush();
   localStorage.clear();
 });

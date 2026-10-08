@@ -224,6 +224,10 @@ impl TaskHost {
     }
     pub fn shutdown(&self) -> Result<(), String> {
         self.closing.store(true, Ordering::SeqCst);
+        self.settle()
+    }
+    /// Stop owned jobs without permanently disabling new work after a cancelled exit.
+    pub fn settle(&self) -> Result<(), String> {
         {
             for task in self.tasks.lock().map_err(|_| "BLK-WINDOW-001")?.values() {
                 task.cancel.store(true, Ordering::SeqCst);

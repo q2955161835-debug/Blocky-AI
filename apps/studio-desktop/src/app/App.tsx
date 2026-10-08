@@ -586,7 +586,7 @@ export function App() {
       {s.rpaInput.source && <RpaInputDialog key={`${s.rpaInput.source.moduleId}/${s.rpaInput.source.blockId}`} accept={s.rpaInput.answer} stop={()=>{s.stop();s.rpaInput.answer(null);}} />}
       {popup?.kind === "rpa" && !s.confirmation && <RpaPanel projectId={s.snapshot.project.manifest.projectId} close={() => setPopup(null)} draft={async(plan,url)=>{if(await construction.previewRpa(plan,url))show("patch-review");}} />}
       {lifecycle.requested && (
-        <ExitDialog studio={s} lifecycle={lifecycle} logs={logs} />
+        <ExitDialog studio={s} lifecycle={lifecycle} />
       )}
       {popup &&
         [

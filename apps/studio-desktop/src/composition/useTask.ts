@@ -30,7 +30,13 @@ export function useTask(studio: Studio) {
         const snapshot = await invoke<TaskSnapshot>("task_status", {
           requestId,
         });
-        if (!active || stopping.current) return;
+        if (!active) return;
+        if (stopping.current) {
+          // Exit may still fail later. Keep observing the owned task so returning
+          // to the workbench never strands its gate or loses the final status.
+          timer = setTimeout(poll, 200);
+          return;
+        }
         setState(snapshot);
         if (snapshot.activeProcesses) {
           timer = setTimeout(poll, 200);
@@ -115,25 +121,29 @@ export function useTask(studio: Studio) {
   };
   const settle = async () => {
     stopping.current = true;
-    if (starting.current) await starting.current.catch(() => {});
-    await invoke("settle_tasks");
-    if (lastId.current && reported.current !== lastId.current) {
-      const snapshot = await invoke<TaskSnapshot>("task_status", {
-        requestId: lastId.current,
-      });
-      if (snapshot.activeProcesses) throw Error("BLK-WINDOW-001");
-      setState(snapshot);
-      reported.current = snapshot.requestId;
-      current.current.bus.write(
-        "terminal",
-        snapshot.status === "exited" ? "info" : "warning",
-        "任务已结束",
-        { status: snapshot.status, exitCode: snapshot.exitCode },
-      );
+    try {
+      if (starting.current) await starting.current.catch(() => {});
+      await invoke("settle_tasks");
+      if (lastId.current && reported.current !== lastId.current) {
+        const snapshot = await invoke<TaskSnapshot>("task_status", {
+          requestId: lastId.current,
+        });
+        if (snapshot.activeProcesses) throw Error("BLK-WINDOW-001");
+        setState(snapshot);
+        reported.current = snapshot.requestId;
+        current.current.bus.write(
+          "terminal",
+          snapshot.status === "exited" ? "info" : "warning",
+          "任务已结束",
+          { status: snapshot.status, exitCode: snapshot.exitCode },
+        );
+      }
+      setRequestId(undefined);
+      setPending(false);
+      gate.current = false;
+    } finally {
+      stopping.current = false;
     }
-    setRequestId(undefined);
-    setPending(false);
-    gate.current = false;
   };
   return {
     state,

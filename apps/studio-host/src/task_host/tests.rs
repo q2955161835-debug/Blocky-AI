@@ -63,6 +63,18 @@ fn registry_concurrency_cancel_inventory_and_budget() {
     assert_eq!(host.active(), 0);
 }
 #[test]
+fn settling_before_exit_allows_new_work_but_shutdown_does_not() {
+    let host = TaskHost::default();
+    let long = host.start(check(), files()).unwrap();
+    host.settle().unwrap();
+    assert_eq!(host.active(), 0);
+    assert_eq!(host.snapshot(&long).unwrap().status, "cancelled");
+    let next = host.start(inventory(), files()).unwrap();
+    assert_eq!(await_done(&host, &next).status, "exited");
+    host.shutdown().unwrap();
+    assert!(host.start(inventory(), files()).is_err());
+}
+#[test]
 fn host_tickets_are_scoped_single_use_and_not_caller_claims() {
     let host = TaskHost::default();
     let token = host

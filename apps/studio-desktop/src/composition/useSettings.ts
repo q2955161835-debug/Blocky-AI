@@ -131,6 +131,7 @@ export function useSettings(
       setError("");
       setReady(true);
     },
-    flush: async () => {await queue.current;await ui.flush();},
+    // Failed operations have already been removed and rolled back by persist.
+    flush: async () => {await queue.current.catch(() => {});await ui.flush();},
   };
 }

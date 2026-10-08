@@ -13,12 +13,14 @@ const calls = vi.hoisted(() => ({
     modelApiCalled: false,
   })),
   dispose: vi.fn(async () => {}),
+  cancelAndDrain: vi.fn(async () => {}),
   resume: vi.fn(),
 }));
 vi.mock("../../apps/studio-desktop/src/composition/desktop-runtime", () => ({
   DesktopRuntime: class {
     run = calls.run;
     dispose = calls.dispose;
+    cancelAndDrain = calls.cancelAndDrain;
     resume = calls.resume;
     pause = vi.fn();
     step = vi.fn();
@@ -31,7 +33,7 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllGlobals();
 });
-it("routes the Studio entry through the native facade and disposes it during exit", async () => {
+it("stops before exit without disposing the native facade and can return to run again", async () => {
   const invoke = vi.fn(async (command: string) =>
     command === "read_user_state" ? null : undefined,
   );
@@ -50,7 +52,14 @@ it("routes the Studio entry through the native facade and disposes it during exi
   expect(calls.run, hook.result.current.message).toHaveBeenCalledOnce();
   expect(hook.result.current.result?.answer).toBe("native");
   await act(() => hook.result.current.settle());
-  expect(calls.dispose).toHaveBeenCalledOnce();
+  expect(calls.cancelAndDrain).toHaveBeenCalledOnce();
+  expect(calls.dispose).not.toHaveBeenCalled();
+  expect(hook.result.current.exiting).toBe(true);
+  await act(() => hook.result.current.flush());
+  act(() => hook.result.current.resumeAfterExit());
+  expect(hook.result.current.canRun).toBe(true);
+  await act(() => hook.result.current.run());
+  expect(calls.run).toHaveBeenCalledTimes(2);
 });
 it("waits for Agent history before F5 can start a native run and refuses an unreadable index", async () => {
   let release!: (value:unknown)=>void;

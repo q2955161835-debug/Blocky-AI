@@ -78,8 +78,27 @@ export function useLogs(studio: Studio) {
     clearing = useRef(false);
   const [queueDropped, setQueueDropped] = useState(0),
     [queueDroppedImportant, setQueueDroppedImportant] = useState(0);
-  const flush = async () => {
-    await policy.current;
+  const flush = async (retryPolicy = true) => {
+    const previousPolicy = policy.current;
+    try {
+      await previousPolicy;
+    } catch (cause) {
+      if (!retryPolicy || corruptStore.current || clearing.current) throw cause;
+      // Explicit flush retries a transient configure failure. Background flushing
+      // keeps the rejected policy until a user action or settings change retries it.
+      if (policy.current === previousPolicy) {
+        policyReady.current = false;
+        policy.current = invoke<LogStats>("configure_diagnostics", { days, maxBytes })
+          .then((value) => {
+            updateStats(value);
+            policyReady.current = true;
+          }).catch(async (failure) => {
+            await invoke<LogStats>("diagnostic_stats").then(updateStats).catch(() => {});
+            throw failure;
+          });
+      }
+      await policy.current;
+    }
     if (!policyReady.current) return;
     if (clearing.current) return;
     if (writing.current) await writing.current;
@@ -110,7 +129,7 @@ export function useLogs(studio: Studio) {
       if (writing.current === pending) writing.current = null;
       inflight.current = 0;
     }
-    if (queue.current.length || losses.current.dropped) await flush();
+    if (queue.current.length || losses.current.dropped) await flush(false);
   };
   useEffect(() => {
     const unsubscribe = studio.bus.subscribe((record) => {
@@ -129,7 +148,7 @@ export function useLogs(studio: Studio) {
     });
     const timer = setInterval(
       () =>
-        void flush().catch(() =>
+        void flush(false).catch(() =>
           reportStorageError("诊断摘要尚未保存，请检查本机空间。"),
         ),
       500,

@@ -1,6 +1,6 @@
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
-const ERROR: &str = "BLK-MODEL-RESPONSE";
+const ERROR: &str = "BLK-MODEL-RESPONSE-SSE";
 const LIMIT: usize = 16 * 1024 * 1024;
 #[derive(Default)]
 pub(super) struct Stream {
@@ -64,7 +64,7 @@ impl Stream {
         }
         if let Some(usage) = v.get("usage").filter(|v| !v.is_null()) {
             if self.usage.as_ref().is_some_and(|old| old != usage) {
-                return Err(ERROR.into());
+                return Err(super::protocol::RESPONSE_USAGE.into());
             }
             self.usage = Some(usage.clone());
         }
@@ -164,7 +164,7 @@ impl Stream {
         // A closed HTTP body is not proof of an uninterrupted provider stream.
         if !self.done || self.finish.is_none() || !self.pending.is_empty() || !self.data.is_empty()
         {
-            return Err("BLK-MODEL-TRUNCATED".into());
+            return Err("BLK-MODEL-TRUNCATED-SSE".into());
         }
         let mut message = json!({"role":"assistant","content":self.text});
         if !self.thinking.is_empty() {
@@ -215,6 +215,12 @@ mod tests {
     fn incomplete_stream_is_not_a_generation() {
         let mut s = Stream::default();
         s.feed(b"data: {\"id\":\"r\",\"model\":\"m\",\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}\n\n",&mut |_|Ok(())).unwrap();
-        assert_eq!(s.complete().unwrap_err(), "BLK-MODEL-TRUNCATED");
+        assert_eq!(s.complete().unwrap_err(), "BLK-MODEL-TRUNCATED-SSE");
+    }
+    #[test]
+    fn changing_usage_is_a_fixed_usage_error_not_a_protocol_error() {
+        let mut stream = Stream::default();
+        stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":1}}\n\n", &mut |_| Ok(())).unwrap();
+        assert_eq!(stream.feed(b"data: {\"choices\":[],\"usage\":{\"prompt_tokens\":2}}\n\n", &mut |_| Ok(())).unwrap_err(), "BLK-MODEL-RESPONSE-USAGE");
     }
 }

@@ -11,6 +11,29 @@ const result: RunResult = {
   events: [],
   modelApiCalled: false,
 };
+it("drains a cancelled run and reuses its native session after exit is cancelled", async () => {
+  let finish!: () => void;
+  const port: RuntimePort = {
+    open: vi.fn(async () => "runtime-owned"), close: vi.fn(async () => {}),
+    send: vi.fn(async (_session, _run, message: any) => { if (message.kind === "cancel") finish(); }),
+    run: vi.fn(async (_s, _r, _q, receive) => {
+      receive({ kind: "ready" });
+      return new Promise<RunResult>((resolve) => {
+        finish = () => { receive({ kind: "settle" }); resolve({ ...result, status: "cancelled" }); };
+      });
+    }),
+  };
+  const runtime = new DesktopRuntime(localAdapters, port);
+  const first = runtime.run(createStarter(), "on-question", "first");
+  await vi.waitFor(() => expect(finish).toBeTypeOf("function"));
+  await runtime.cancelAndDrain();
+  expect((await first).status).toBe("cancelled");
+  expect(port.close).not.toHaveBeenCalled();
+  vi.mocked(port.run).mockImplementationOnce(async (_s, _r, _q, receive) => { receive({kind:"ready"}); receive({kind:"settle"}); return result; });
+  expect(await runtime.run(createStarter(), "on-question", "second")).toEqual(result);
+  expect(port.open).toHaveBeenCalledOnce();
+  await runtime.dispose();
+});
 it("keeps a legitimate long task active beyond the former frontend timeout and still settles it", async () => {
   vi.useFakeTimers();
   const port: RuntimePort = {

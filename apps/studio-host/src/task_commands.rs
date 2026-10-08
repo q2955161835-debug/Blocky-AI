@@ -50,7 +50,7 @@ pub fn cancel_task(
 pub fn attach_user_terminal() -> Result<(), String> {
     Err("BLK-TERM-003".into())
 }
-#[tauri::command]
+#[tauri::command(async)]
 pub fn settle_tasks(
     window: tauri::WebviewWindow,
     host: tauri::State<'_, TaskHost>,
@@ -64,5 +64,5 @@ pub fn settle_tasks(
     {
         return Err("BLK-WINDOW-001".into());
     }
-    host.shutdown()
+    host.settle()
 }

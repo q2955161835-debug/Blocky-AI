@@ -273,6 +273,10 @@ export class DesktopRuntime {
       }
     }
   }
+  async cancelAndDrain(): Promise<void> {
+    this.current?.abort.abort();
+    if (this.active) await wait(this.active.catch(() => {}));
+  }
   async dispose(): Promise<void> {
     this.disposed = true;
     this.current?.abort.abort();

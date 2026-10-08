@@ -2,7 +2,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 pub const INVALID: &str = "BLK-MODEL-REQUEST";
-pub const RESPONSE: &str = "BLK-MODEL-RESPONSE";
+// Fixed diagnostics preserve the model error family without returning response data.
+pub const RESPONSE: &str = "BLK-MODEL-RESPONSE-SHAPE";
+pub(super) const RESPONSE_JSON: &str = "BLK-MODEL-RESPONSE-JSON";
+pub(super) const RESPONSE_TOOLS: &str = "BLK-MODEL-RESPONSE-TOOLS";
+pub(super) const RESPONSE_TOOL_JSON: &str = "BLK-MODEL-RESPONSE-TOOL-JSON";
+pub(super) const RESPONSE_USAGE: &str = "BLK-MODEL-RESPONSE-USAGE";
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -311,7 +316,7 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
     if bytes.len() > 16 * 1024 * 1024 {
         return Err(RESPONSE.into());
     }
-    let value = crate::strict_json::parse(bytes).map_err(|_| RESPONSE)?;
+    let value = crate::strict_json::parse(bytes).map_err(|_| RESPONSE_JSON)?;
     let choice = &value["choices"][0];
     if value["choices"].as_array().is_none_or(|a| a.len() != 1)
         || choice["message"]["role"] != "assistant"
@@ -321,7 +326,7 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
     let finish = choice["finish_reason"].as_str().ok_or(RESPONSE)?;
     if !["stop", "tool_calls"].contains(&finish) {
         return Err(if finish == "length" {
-            "BLK-MODEL-TRUNCATED"
+            "BLK-MODEL-TRUNCATED-LENGTH"
         } else {
             RESPONSE
         }
@@ -338,34 +343,34 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
         for call in list
             .as_array()
             .filter(|a| !a.is_empty() && a.len() <= 8)
-            .ok_or(RESPONSE)?
+            .ok_or(RESPONSE_TOOLS)?
         {
             let id = call["id"]
                 .as_str()
                 .filter(|id| token(id, 128))
-                .ok_or(RESPONSE)?;
+                .ok_or(RESPONSE_TOOLS)?;
             let name = call["function"]["name"]
                 .as_str()
                 .filter(|name| request.tools.iter().any(|t| t.name == *name))
-                .ok_or(RESPONSE)?;
+                .ok_or(RESPONSE_TOOLS)?;
             let args = call["function"]["arguments"]
                 .as_str()
                 .filter(|s| s.len() <= 2 * 1024 * 1024)
-                .ok_or(RESPONSE)?;
-            let args = crate::strict_json::parse(args.as_bytes()).map_err(|_| RESPONSE)?;
+                .ok_or(RESPONSE_TOOLS)?;
+            let args = crate::strict_json::parse(args.as_bytes()).map_err(|_| RESPONSE_TOOL_JSON)?;
             if call["type"] != "function" || !ids.insert(id) || !args.is_object() {
-                return Err(RESPONSE.into());
+                return Err(RESPONSE_TOOLS.into());
             }
             calls.push(json!({"id":id,"name":name,"arguments":args}));
         }
     }
     if (finish == "tool_calls") != !calls.is_empty() || (text.is_empty() && calls.is_empty()) {
-        return Err(RESPONSE.into());
+        return Err(RESPONSE_TOOLS.into());
     }
     if (request.tool_choice.as_deref() == Some("none") && !calls.is_empty())
         || (request.tool_choice.as_deref() == Some("required") && calls.is_empty())
     {
-        return Err(RESPONSE.into());
+        return Err(RESPONSE_TOOLS.into());
     }
     if calls.is_empty() {
         if let Some(schema) = &request.output_schema {
@@ -381,16 +386,16 @@ pub fn parse_response(bytes: &[u8], request: &GatewayRequest) -> Result<Value, S
     let usage = match value.get("usage").filter(|v| !v.is_null()) {
         None => Value::Null,
         Some(u) => {
-            let input = u["prompt_tokens"].as_u64().ok_or(RESPONSE)?;
-            let output = u["completion_tokens"].as_u64().ok_or(RESPONSE)?;
-            let total = u["total_tokens"].as_u64().ok_or(RESPONSE)?;
+            let input = u["prompt_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
+            let output = u["completion_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
+            let total = u["total_tokens"].as_u64().ok_or(RESPONSE_USAGE)?;
             if input > 9_007_199_254_740_991
                 || output > 9_007_199_254_740_991
                 || total > 9_007_199_254_740_991
                 || request.max_output_tokens.is_some_and(|max| output > max as u64)
                 || input.checked_add(output) != Some(total)
             {
-                return Err(RESPONSE.into());
+                return Err(RESPONSE_USAGE.into());
             }
             json!({"inputTokens":input,"outputTokens":output,"totalTokens":total})
         }

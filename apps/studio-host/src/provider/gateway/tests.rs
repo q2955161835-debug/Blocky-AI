@@ -59,6 +59,94 @@ fn unknown_usage_is_explicit_and_undeclared_or_malformed_tool_calls_fail() {
     assert!(parse_response(&serde_json::to_vec(&value).unwrap(), &req).is_err());
 }
 #[test]
+fn failed_responses_return_only_fixed_diagnostic_codes() {
+    let req: GatewayRequest = serde_json::from_value(request()).unwrap();
+    assert_eq!(parse_response(b"{synthetic-private-token-and-url", &req).unwrap_err(), "BLK-MODEL-RESPONSE-JSON");
+    let mut cases = Vec::new();
+    let mut value = response();
+    value["choices"][0]["finish_reason"] = json!("length");
+    cases.push((value, "BLK-MODEL-TRUNCATED-LENGTH"));
+    let mut value = response();
+    value["choices"][0]["finish_reason"] = json!("synthetic-private-finish-value");
+    cases.push((value, "BLK-MODEL-RESPONSE-SHAPE"));
+    let mut value = response();
+    value["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"] = json!("{synthetic-private-arguments");
+    cases.push((value, "BLK-MODEL-RESPONSE-TOOL-JSON"));
+    let mut value = response();
+    value["choices"][0]["message"]["tool_calls"][0]["function"]["name"] = json!("synthetic-private-tool");
+    cases.push((value, "BLK-MODEL-RESPONSE-TOOLS"));
+    let mut value = response();
+    value["usage"] = json!({"prompt_tokens":10,"completion_tokens":4,"total_tokens":15});
+    cases.push((value, "BLK-MODEL-RESPONSE-USAGE"));
+    let mut value = response();
+    value["usage"] = json!({"prompt_tokens":10,"completion_tokens":513,"total_tokens":523});
+    cases.push((value, "BLK-MODEL-RESPONSE-USAGE"));
+    for (value, expected) in cases {
+        let error = parse_response(&serde_json::to_vec(&value).unwrap(), &req).unwrap_err();
+        assert_eq!(error, expected);
+        assert!(error.len() < 64 && error.bytes().all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || b == b'-'));
+        assert!(!error.contains("synthetic-private"));
+    }
+    assert!(parse_response(&serde_json::to_vec(&response()).unwrap(), &req).is_ok());
+}
+
+/// Local HTTP only: exercise the same BuilderModel streaming bridge used by Coding.
+fn synthetic_builder_stream(wire: String) -> Result<Value, String> {
+    use std::io::{Read, Write};
+    use crate::provider::builder_model::BuilderModel;
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let root = profile();
+    install_resource(root.path(), &format!("http://{}/v1", listener.local_addr().unwrap()));
+    let worker = std::thread::spawn(move || {
+        let (mut socket, _) = listener.accept().unwrap();
+        socket.set_read_timeout(Some(std::time::Duration::from_secs(5))).unwrap();
+        let mut bytes = Vec::new();
+        let mut buffer = [0u8; 8192];
+        loop {
+            let n = socket.read(&mut buffer).unwrap();
+            assert!(n > 0);
+            bytes.extend_from_slice(&buffer[..n]);
+            if let Some(end) = bytes.windows(4).position(|w| w == b"\r\n\r\n") {
+                let head = String::from_utf8_lossy(&bytes[..end]);
+                let length = head.lines().find_map(|line| line.to_lowercase().strip_prefix("content-length: ").and_then(|s| s.parse::<usize>().ok())).unwrap();
+                if bytes.len() >= end + 4 + length { break; }
+            }
+        }
+        write!(socket, "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}", wire.len(), wire).unwrap();
+    });
+    let model = BuilderModel::coding(root.path(), "diagnostic-fixture", "project1", "model1").unwrap();
+    let result = model.generate_stream(root.path(), json!([{"role":"user","content":"public fixture"}]), 30000,
+        &std::sync::atomic::AtomicBool::new(false), &mut None, &mut || Ok(()), &mut |_| Ok(()));
+    worker.join().unwrap();
+    result
+}
+
+#[test]
+fn builder_stream_bridge_preserves_diagnostic_codes_without_raw_response_leaks() {
+    fn wire(delta: Value, finish: &str, done: bool, usage: Option<Value>) -> String {
+        let frame = json!({"id":"synthetic-private-id","model":"synthetic-private-model","choices":[{"index":0,"delta":delta,"finish_reason":finish}]});
+        let mut wire = format!("data: {frame}\n\n");
+        if let Some(usage) = usage { wire.push_str(&format!("data: {}\n\n", json!({"choices":[],"usage":usage}))); }
+        if done { wire.push_str("data: [DONE]\n\n"); }
+        wire
+    }
+    let text = json!({"content":"synthetic-private-body","reasoning_content":"synthetic-private-thought"});
+    let malformed_tool = json!({"tool_calls":[{"index":0,"id":"call1","type":"function","function":{"name":"workspace_read","arguments":"{synthetic-private-arguments"}}]});
+    for (wire, expected) in [
+        (wire(text.clone(), "length", true, None), "BLK-MODEL-TRUNCATED-LENGTH"),
+        (wire(text.clone(), "stop", false, None), "BLK-MODEL-TRUNCATED-SSE"),
+        (wire(malformed_tool, "tool_calls", true, None), "BLK-MODEL-RESPONSE-TOOL-JSON"),
+        (wire(text.clone(), "stop", true, Some(json!({"prompt_tokens":1,"completion_tokens":2,"total_tokens":99}))), "BLK-MODEL-RESPONSE-USAGE"),
+        (wire(json!({"role":"synthetic-private-role"}), "stop", true, None), "BLK-MODEL-RESPONSE-SSE"),
+        ("data: {synthetic-private-invalid-json\n\n".into(), "BLK-MODEL-RESPONSE-SSE"),
+    ] {
+        let error = synthetic_builder_stream(wire).unwrap_err();
+        assert_eq!(error, expected);
+        assert!(!error.contains("synthetic-private"));
+    }
+    assert!(synthetic_builder_stream(wire(text, "stop", true, None)).is_ok());
+}
+#[test]
 fn endpoint_profiles_do_not_admit_private_remote_or_non_loopback_local_targets() {
     assert!(validate_endpoint("https://api.example.com/v1", false).is_ok());
     assert!(validate_endpoint("http://127.0.0.1:11434", true).is_ok());
