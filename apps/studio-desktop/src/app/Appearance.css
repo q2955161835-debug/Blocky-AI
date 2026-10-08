@@ -1,4 +1,6 @@
 /* Preferences are applied to the document root by the settings owner. */
+.menu-trigger-icon {display:block;flex:0 0 17px;}
+.topbar .menu-anchor>button {display:grid;place-items:center;min-width:28px;height:29px;padding:4px;}
 :root {
   font-family: var(--ui-font, "Microsoft YaHei UI", "Segoe UI", sans-serif);
   font-size: var(--ui-font-size, 13px);

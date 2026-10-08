@@ -13,6 +13,7 @@ import {
 } from "./ChatControls";
 import { ChatHistoryMenu } from "./ChatHistoryMenu";
 import type {SettingsSection} from "./settings/settingsNavigation";
+import {UiIcon} from "./UiIcon";
 
 export function StudioSidebar({
   studio: s,
@@ -65,6 +66,7 @@ export function StudioSidebar({
               id={`sidebar-tab-${id}`}
               role="tab"
               title={label}
+              aria-label={label}
               aria-selected={s.session.rightView === id}
               aria-controls={`sidebar-view-${id}`}
               tabIndex={s.session.rightView === id ? 0 : -1}
@@ -89,7 +91,7 @@ export function StudioSidebar({
                 document.getElementById(`sidebar-tab-${next}`)?.focus();
               }}
             >
-              {label}
+              <UiIcon name={id} className="sidebar-tab-icon"/>
               {id === "builder" && builder.busy && (
                 <span aria-label="正在构建"> ●</span>
               )}
@@ -110,21 +112,21 @@ export function StudioSidebar({
               void (isBuilder ? builder.newChat() : s.changeAgentChat());
             }}
           >
-            ＋
+            <UiIcon name="add"/>
           </button>
           <ChatMenuButton
             menu={menu}
             kind="history"
             label={isBuilder ? "构建助手历史会话" : "Blocky Agent 历史会话"}
           >
-            ⌄
+            <UiIcon name="history"/>
           </ChatMenuButton>
-          {openSettings?<button type="button" className="chat-icon" aria-label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"} title="设置" onClick={()=>{menu.set(null);openSettings(isBuilder?"builder":"agent");}}>⚙</button>:<ChatMenuButton
+          {openSettings?<button type="button" className="chat-icon" aria-label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"} title={isBuilder ? "构建助手设置" : "Blocky Agent 设置"} onClick={()=>{menu.set(null);openSettings(isBuilder?"builder":"agent");}}><UiIcon name="settings"/></button>:<ChatMenuButton
             menu={menu}
             kind="settings"
             label={isBuilder ? "构建助手设置" : "Blocky Agent 设置"}
           >
-            ⚙
+            <UiIcon name="settings"/>
           </ChatMenuButton>}
         </div>
       </div>

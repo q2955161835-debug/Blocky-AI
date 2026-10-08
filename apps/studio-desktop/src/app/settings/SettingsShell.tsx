@@ -1,6 +1,7 @@
 import { useId, useState, type ReactNode } from "react";
 import { settingsSections, type SettingsSection } from "./settingsNavigation";
 import "./SettingsUi.css";
+import {UiIcon} from "../UiIcon";
 
 export interface SettingsShellProps {
   section: SettingsSection;
@@ -30,8 +31,8 @@ export function SettingsShell({ section, onSection, query, onQuery, children, on
       <aside className="settings-sidebar" aria-label="设置导航">
         <div className="settings-sidebar-heading">
           <h2>设置</h2>
-          <button className="settings-navigation-toggle" type="button" aria-expanded={navigationOpen} aria-controls={`${id}-navigation`} onClick={() => setNavigationOpen((open) => !open)}>
-            {navigationOpen ? "收起分类" : "展开分类"}
+          <button className="settings-navigation-toggle" type="button" aria-label={navigationOpen ? "收起分类" : "展开分类"} title={navigationOpen ? "收起分类" : "展开分类"} aria-expanded={navigationOpen} aria-controls={`${id}-navigation`} onClick={() => setNavigationOpen((open) => !open)}>
+            <UiIcon name={navigationOpen?"collapse":"expand"}/>
           </button>
         </div>
         <div className="settings-search">
@@ -40,9 +41,9 @@ export function SettingsShell({ section, onSection, query, onQuery, children, on
         </div>
         <nav className="settings-navigation" id={`${id}-navigation`} aria-label="设置分类">
           {settingsSections.map((item) => (
-            <button key={item.id} type="button" className="settings-navigation-item" aria-current={section === item.id ? "page" : undefined} onClick={() => onSection(item.id)}>
+            <button key={item.id} type="button" className="settings-navigation-item" aria-label={item.title} title={item.title} aria-current={section === item.id ? "page" : undefined} onClick={() => onSection(item.id)}>
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d={sectionIcons[item.id]} /></svg>
-              <span>{item.title}</span>
+              <span className="settings-navigation-label">{item.title}</span>
             </button>
           ))}
         </nav>

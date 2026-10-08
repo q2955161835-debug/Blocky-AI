@@ -1,5 +1,6 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { commands } from "@blocky/command-system";
+import {UiIcon} from "./UiIcon";
 
 const menus = [
   ["file", "文件"],
@@ -73,6 +74,8 @@ export function MenuBar({
             <button
               id={`menu-trigger-${category}`}
               role="menuitem"
+              aria-label={label}
+              title={label}
               aria-haspopup="menu"
               aria-expanded={expanded}
               aria-controls={expanded ? `menu-${category}` : undefined}
@@ -102,7 +105,7 @@ export function MenuBar({
                 }
               }}
             >
-              {label}
+              <UiIcon className="menu-trigger-icon" name={category==="build"?"builder":category}/>
             </button>
             {expanded && (
               <div
