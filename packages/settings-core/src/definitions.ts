@@ -122,8 +122,8 @@ const definitions: SettingDefinition[] = [
   {
     ...base,
     id: "window.minimizeToTray",
-    title: "最小化到通知区域",
-    description: "关闭时最小化到任务栏，不改变运行状态",
+    title: "关闭到系统托盘",
+    description: "关闭窗口时隐藏到系统托盘；最小化保留任务栏图标",
     category: "窗口与后台",
     valueType: "boolean",
     defaultValue: true,

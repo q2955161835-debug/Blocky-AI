@@ -16,8 +16,8 @@ import { CodingTrace } from "./CodingTrace";
 import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { ChatModelControl } from "./ChatModelControl";
-import { ArrowUpIcon, PlusIcon, FolderIcon } from "@heroicons/react/24/outline";
-import { StopIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, FolderIcon } from "@heroicons/react/24/outline";
+import { UiIcon } from "./UiIcon";
 import { useChatFollow } from "./useChatFollow";
 import type { SettingsSection } from "./settings/settingsNavigation";
 
@@ -389,7 +389,7 @@ export function BuilderPanel({
             disabled={builder.stopping}
             onClick={builder.stop}
           >
-            <StopIcon aria-hidden="true" className="chat-action-icon" />
+            <UiIcon name="stop" className="chat-action-icon" />
           </button>
         ) : (
           <button
@@ -399,7 +399,7 @@ export function BuilderPanel({
             title="发送"
             disabled={!canSend}
           >
-            <ArrowUpIcon aria-hidden="true" className="chat-action-icon" />
+            <UiIcon name="send" className="chat-action-icon" />
           </button>
         )}
       </ChatComposer>

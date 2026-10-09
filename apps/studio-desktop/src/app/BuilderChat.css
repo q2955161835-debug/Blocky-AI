@@ -306,6 +306,8 @@
   color: var(--muted);
 }
 .chat-panel .chat-send {
+  display: grid;
+  place-items: center;
   width: 28px;
   height: 28px;
   flex: 0 0 28px;
@@ -315,6 +317,7 @@
   background: #bfd0e4;
   color: #202630;
   font-size: 19px;
+  line-height: 1;
 }
 .chat-panel .chat-send:disabled {
   opacity: 0.35;

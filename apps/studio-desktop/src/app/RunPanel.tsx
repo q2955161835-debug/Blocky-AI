@@ -19,8 +19,8 @@ import { ChatMarkdown } from "./ChatMarkdown";
 import { ChatComposer } from "./ChatComposer";
 import { useChatFollow } from "./useChatFollow";
 import { RunModelChoice } from "./RunModelChoice";
-import { ArrowUpIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { StopIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { UiIcon } from "./UiIcon";
 import { AgentTrace } from "./AgentTrace";
 export function RunPanel({
   studio: s,
@@ -196,7 +196,7 @@ export function RunPanel({
             title="停止"
             onClick={s.stop}
           >
-            <StopIcon aria-hidden="true" className="chat-action-icon" />
+            <UiIcon name="stop" className="chat-action-icon" />
           </button>
         ) : (
           <button
@@ -206,7 +206,7 @@ export function RunPanel({
             title="发送并运行"
             disabled={!s.canRun}
           >
-            <ArrowUpIcon aria-hidden="true" className="chat-action-icon" />
+            <UiIcon name="send" className="chat-action-icon" />
           </button>
         )}
       </ChatComposer>

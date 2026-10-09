@@ -5,7 +5,7 @@ pub struct Lifecycle {
     pub closing: AtomicBool,
     pub authorized: AtomicBool,
     committing: AtomicBool,
-    minimize_to_tray: AtomicBool,
+    close_to_tray: AtomicBool,
 }
 pub fn visible(window: &tauri::WebviewWindow) -> Result<(), String> {
     if window.label() != "main"
@@ -31,7 +31,7 @@ pub fn notify(app: &tauri::AppHandle, action: &str) {
 }
 pub fn setup(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     app.state::<Lifecycle>()
-        .minimize_to_tray
+        .close_to_tray
         .store(true, Ordering::SeqCst);
     crate::shared_tray::start(app)
 }
@@ -104,13 +104,13 @@ pub fn window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
             if !state.authorized.load(Ordering::SeqCst) =>
         {
             api.prevent_close();
+            if state.close_to_tray.load(Ordering::SeqCst)
+                && !state.closing.load(Ordering::SeqCst)
+                && window.hide().is_ok()
+            {
+                return;
+            }
             let _ = window.emit("blocky:window", "close");
-        }
-        tauri::WindowEvent::Resized(_)
-            if state.minimize_to_tray.load(Ordering::SeqCst)
-                && window.is_minimized().unwrap_or(false) =>
-        {
-            let _ = window.hide();
         }
         _ => {}
     }
@@ -129,7 +129,8 @@ pub fn set_window_preferences(
     }
     window
         .state::<Lifecycle>()
-        .minimize_to_tray
+        // Preserve the legacy IPC/config key; this preference now applies to close.
+        .close_to_tray
         .store(minimize_to_tray, Ordering::SeqCst);
     Ok(())
 }
