@@ -1,0 +1,18 @@
+[
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\site-beta-2026-10-09",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\site-beta-2026-10-09",
+    "files": 87,
+    "bytes": 9536369.0,
+    "inventoryMatch": true,
+    "operation": "same-volume reversible move"
+  },
+  {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\beta-release-2026-10-09",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\测试版发布-2026-10-09\\beta-release-2026-10-09",
+    "files": 12,
+    "bytes": 11921.0,
+    "inventoryMatch": true,
+    "operation": "same-volume reversible move"
+  }
+]

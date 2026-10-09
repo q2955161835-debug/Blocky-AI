@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-10-09 13:38:52 +08:00",
+  "integrationCommit": "da01130c669a81d9a8d97a575aca4df0961a5e14",
+  "previousMain": "98b06bd83d97fb0697fb71ff99692a204da1debc",
+  "acceptedTaskSource": "875f8446e28660e137b78244f8bc853716f87852",
+  "currentBranch": "main",
+  "remoteMainDuringCheck": "da01130c669a81d9a8d97a575aca4df0961a5e14",
+  "taskBranch": "codex/fix-builder-markdown",
+  "localTaskBranchAbsent": true,
+  "remoteTaskBranchAbsent": true,
+  "gitWorktreeCount": 1,
+  "unrelatedUnmergedBranches": [
+    "codex/chore-doc-archive-20260930",
+    "codex/docs-xirang-gpt-materials",
+    "codex/docs-xirang-product-screenshots"
+  ],
+  "sourceVisibility": "PRIVATE",
+  "ciRun": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37889358217",
+  "ciObservedStatus": "in_progress",
+  "scope": "本次合并/推送/分支清理读回；不改历史产品验收结论，后续提交仅文档"
+}
