@@ -1,0 +1,17 @@
+{
+  "productCommit": "b2f7549c2bf5393d4c9ece29deae4fe924de582c",
+  "sourceCommit": "53e37a39475bf721ecf078a14015e3bb47d818d5",
+  "verifiedPreviewFiles": 51,
+  "verifiedSitesFiles": 51,
+  "mismatches": [],
+  "version": 20,
+  "status": "succeeded",
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version": 20,
+    "status": "active",
+    "access": "public",
+    "url": "https://blocky.donk55666.chatgpt.site"
+  },
+  "method": "原生回执与精确资产双路径SHA读回；不重新公网导航"
+}

@@ -1,0 +1,21 @@
+{
+  "source": "D:\\1Folder\\Blocky-AI\\try\\online-demo-refresh-2026-10-09",
+  "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网在线演示前端同步-2026-10-09",
+  "files": 1156,
+  "bytes": 81367682.0,
+  "inventoryMatch": true,
+  "operation": "same-volume reversible move",
+  "previewServerPid": 56600,
+  "previewServerStopped": true,
+  "browserProcessesRemaining": 0,
+  "gitSourceRetained": true,
+  "deleted": false,
+  "buildMetadata": {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\官网工作演示\\experience-build.json",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网在线演示前端同步-2026-10-09\\experience-build.json",
+    "bytes": 526096,
+    "sha256": "BDE3F9BA0CB48F53BA35D2D9317383765A44D9F2BCF46BA9232245050FAD17C5",
+    "hashMatch": true
+  },
+  "combinedBytes": 81893778.0
+}

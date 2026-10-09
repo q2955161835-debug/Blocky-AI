@@ -1,0 +1,227 @@
+{
+  "source": "b2f7549c2bf5393d4c9ece29deae4fe924de582c",
+  "browser": "154.0.4258.62",
+  "platform": "x64",
+  "method": "Edge headless real browser; Browser plugin not available",
+  "checks": [
+    {
+      "id": "A07",
+      "detail": "Stopped partial response/calls restored from history; Agent history and drafts isolated",
+      "time": "2026-10-09T06:24:34.816Z"
+    },
+    {
+      "id": "B01",
+      "detail": "English/light switching retains canvas/draft/history; 390px chat readable and no overflow",
+      "time": "2026-10-09T06:24:35.068Z"
+    },
+    {
+      "id": "B02",
+      "detail": "Playback pause holds time and exit restores original workspace/draft",
+      "time": "2026-10-09T06:24:39.286Z"
+    },
+    {
+      "id": "B03",
+      "detail": "Real unaccelerated complete playback 60450ms, report visible",
+      "time": "2026-10-09T06:25:39.778Z"
+    },
+    {
+      "id": "C01",
+      "detail": "No page/console errors; requests only local public assets; no real model/tool requests",
+      "time": "2026-10-09T06:25:39.778Z"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4177/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "http://127.0.0.1:4177/preferences-boot.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/styles.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/scenes.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/navigation.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/preferences.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/appearance.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/art.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/worlds.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/capsule.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/pricing.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/page-navigation.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/main.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/assets/blocky.png",
+      "method": "GET",
+      "type": "image"
+    },
+    {
+      "url": "http://127.0.0.1:4177/content.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/demo.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/preferences.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/world-pages.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/active-navigation.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/content-motion.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/brand-motion.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/pricing.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/page-navigation.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/faq-motion.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/compact-navigation.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/scenes.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/pricing-data.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/translations.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/ui-translations.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/demo-translations.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/art-translations.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/experience-translations.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/art3d.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/studio/index.html",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "http://127.0.0.1:4177/preferences-boot.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/studio/app-LJ3GF5K2.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "http://127.0.0.1:4177/studio/app-SEP4OEUD.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "http://127.0.0.1:4177/assets/blocky.png",
+      "method": "GET",
+      "type": "other"
+    }
+  ],
+  "duration": 60450
+}
