@@ -1,0 +1,546 @@
+{
+  "localTime": "2026-10-09 14:51",
+  "authorization": "用户答复“是”，同意官网更新合并main、推送GitHub并清理本次分支",
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "previousMain": "242462577b68ce020438e2a661aadfc6595140fc",
+  "integrationAnchor": "3d63527f7c82919003a18f7e5b1578c1097d6a4d",
+  "method": "fast-forward",
+  "acceptedProductCommit": "b2f7549c2bf5393d4c9ece29deae4fe924de582c",
+  "sitesSource": "53e37a39475bf721ecf078a14015e3bb47d818d5",
+  "publicVersion": 20,
+  "remoteMainAtIntegrationReadback": "3d63527f7c82919003a18f7e5b1578c1097d6a4d",
+  "taskBranch": "codex/feat-online-demo-refresh",
+  "localTaskBranchRemoved": true,
+  "remoteTaskBranchAbsent": true,
+  "remoteTaskBranchAction": "此前未创建，读回为空，无需删除",
+  "worktreeCount": 1,
+  "worktree": "D:/1Folder/Blocky-AI",
+  "otherTaskBranches": "保留，未扩大清理范围",
+  "sourceDeltaSinceAcceptance": [],
+  "publishedAssetChecks": [
+    {
+      "path": "dist/active-navigation.js",
+      "publishedBytes": 1655,
+      "publishedSha256": "56e8efe0311859909fd992ab0073ab9bfe3c5484f3644499bd4dd9cc07f753f9",
+      "publishedManifestMatch": true,
+      "localBytes": 1655,
+      "localSha256": "56e8efe0311859909fd992ab0073ab9bfe3c5484f3644499bd4dd9cc07f753f9",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/appearance.css",
+      "publishedBytes": 7375,
+      "publishedSha256": "881a83f608f6518d9e5c4d66443b47c1ef65e49c3d2f16f790dab0a8ab5b511b",
+      "publishedManifestMatch": true,
+      "localBytes": 7375,
+      "localSha256": "881a83f608f6518d9e5c4d66443b47c1ef65e49c3d2f16f790dab0a8ab5b511b",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/art/THREE-LICENSE.txt",
+      "publishedBytes": 1102,
+      "publishedSha256": "5d5dad8147523d59bc15cca838ae0bdaae7075230ec49132c551a1d18e7b3412",
+      "publishedManifestMatch": true,
+      "localBytes": 1102,
+      "localSha256": "5d5dad8147523d59bc15cca838ae0bdaae7075230ec49132c551a1d18e7b3412",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/art-translations.js",
+      "publishedBytes": 1282,
+      "publishedSha256": "4a53936189d3bc2991398e6fec612fd7befcb002aed75d9b4f86af383703a60d",
+      "publishedManifestMatch": true,
+      "localBytes": 1282,
+      "localSha256": "4a53936189d3bc2991398e6fec612fd7befcb002aed75d9b4f86af383703a60d",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/art.css",
+      "publishedBytes": 2496,
+      "publishedSha256": "bb3c2b401245a66c44287de7cd75fc64e533229f10245a56223c0a660f613bab",
+      "publishedManifestMatch": true,
+      "localBytes": 2496,
+      "localSha256": "bb3c2b401245a66c44287de7cd75fc64e533229f10245a56223c0a660f613bab",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/art3d.js",
+      "publishedBytes": 781744,
+      "publishedSha256": "7e69e0c6db757b3f0673f984c9a34507d1afcbdc2b83f4ab8f97e4b4305b8873",
+      "publishedManifestMatch": true,
+      "localBytes": 781744,
+      "localSha256": "7e69e0c6db757b3f0673f984c9a34507d1afcbdc2b83f4ab8f97e4b4305b8873",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/1x1.gif",
+      "publishedBytes": 43,
+      "publishedSha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629",
+      "publishedManifestMatch": true,
+      "localBytes": 43,
+      "localSha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/delete-icon.svg",
+      "publishedBytes": 315,
+      "publishedSha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef",
+      "publishedManifestMatch": true,
+      "localBytes": 315,
+      "localSha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/dropdown-arrow.svg",
+      "publishedBytes": 569,
+      "publishedSha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9",
+      "publishedManifestMatch": true,
+      "localBytes": 569,
+      "localSha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/foldout-icon.svg",
+      "publishedBytes": 150,
+      "publishedSha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64",
+      "publishedManifestMatch": true,
+      "localBytes": 150,
+      "localSha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/handclosed.cur",
+      "publishedBytes": 326,
+      "publishedSha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5",
+      "publishedManifestMatch": true,
+      "localBytes": 326,
+      "localSha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/handdelete.cur",
+      "publishedBytes": 766,
+      "publishedSha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040",
+      "publishedManifestMatch": true,
+      "localBytes": 766,
+      "localSha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/handopen.cur",
+      "publishedBytes": 198,
+      "publishedSha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd",
+      "publishedManifestMatch": true,
+      "localBytes": 198,
+      "localSha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/pilcrow.png",
+      "publishedBytes": 1010,
+      "publishedSha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167",
+      "publishedManifestMatch": true,
+      "localBytes": 1010,
+      "localSha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/quote0.png",
+      "publishedBytes": 771,
+      "publishedSha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c",
+      "publishedManifestMatch": true,
+      "localBytes": 771,
+      "localSha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/quote1.png",
+      "publishedBytes": 738,
+      "publishedSha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35",
+      "publishedManifestMatch": true,
+      "localBytes": 738,
+      "localSha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/resize-handle.svg",
+      "publishedBytes": 218,
+      "publishedSha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b",
+      "publishedManifestMatch": true,
+      "localBytes": 218,
+      "localSha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blockly-media/sprites.svg",
+      "publishedBytes": 1775,
+      "publishedSha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f",
+      "publishedManifestMatch": true,
+      "localBytes": 1775,
+      "localSha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/assets/blocky.png",
+      "publishedBytes": 1222308,
+      "publishedSha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "publishedManifestMatch": true,
+      "localBytes": 1222308,
+      "localSha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/brand-motion.js",
+      "publishedBytes": 1793,
+      "publishedSha256": "7c72ed274874a1e9e9d2f02840e382fb1c45c9a5daebb02e9caada5106fda128",
+      "publishedManifestMatch": true,
+      "localBytes": 1793,
+      "localSha256": "7c72ed274874a1e9e9d2f02840e382fb1c45c9a5daebb02e9caada5106fda128",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/capsule.css",
+      "publishedBytes": 6416,
+      "publishedSha256": "68aeacf71fd93b0b9e34348f27750554f06d3875d09e266bd068d057bd88b3c0",
+      "publishedManifestMatch": true,
+      "localBytes": 6416,
+      "localSha256": "68aeacf71fd93b0b9e34348f27750554f06d3875d09e266bd068d057bd88b3c0",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/compact-navigation.js",
+      "publishedBytes": 1800,
+      "publishedSha256": "0931a8c613526d0aa6b1047bfcb3b891534f93700b3b7b0462d9102b1e7f5f67",
+      "publishedManifestMatch": true,
+      "localBytes": 1800,
+      "localSha256": "0931a8c613526d0aa6b1047bfcb3b891534f93700b3b7b0462d9102b1e7f5f67",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/content-motion.js",
+      "publishedBytes": 646,
+      "publishedSha256": "a75b1b3fb29f23f22bc5e7e36f9381c3cb97ffae0b7930940c497692479f7a57",
+      "publishedManifestMatch": true,
+      "localBytes": 646,
+      "localSha256": "a75b1b3fb29f23f22bc5e7e36f9381c3cb97ffae0b7930940c497692479f7a57",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/content.js",
+      "publishedBytes": 12925,
+      "publishedSha256": "fa050f8d44ff6a03af1aa739fb5bdbd4e2421c142883a330b7e2b5ccb7abc5c3",
+      "publishedManifestMatch": true,
+      "localBytes": 12925,
+      "localSha256": "fa050f8d44ff6a03af1aa739fb5bdbd4e2421c142883a330b7e2b5ccb7abc5c3",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/demo-translations.js",
+      "publishedBytes": 5298,
+      "publishedSha256": "9b04461fb804af13c2eb6c949b509780aa2c4137430d5c06f263daf3a021f1d8",
+      "publishedManifestMatch": true,
+      "localBytes": 5298,
+      "localSha256": "9b04461fb804af13c2eb6c949b509780aa2c4137430d5c06f263daf3a021f1d8",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/demo.js",
+      "publishedBytes": 430,
+      "publishedSha256": "fef6f291ed78fb1954ca53d22cbf01ac1bc86d1a9aa6b98e697e2c88fe7d1a98",
+      "publishedManifestMatch": true,
+      "localBytes": 430,
+      "localSha256": "fef6f291ed78fb1954ca53d22cbf01ac1bc86d1a9aa6b98e697e2c88fe7d1a98",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/experience-translations.js",
+      "publishedBytes": 3382,
+      "publishedSha256": "70a9bebc06f579d10c7f3cfb3209832630c8d34709fa2f503ec9fb195592775a",
+      "publishedManifestMatch": true,
+      "localBytes": 3396,
+      "localSha256": "5c62ad90c28842824adda93945804ab757f20c68d5a9522f1cb234eb830549f7",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/faq-motion.js",
+      "publishedBytes": 1418,
+      "publishedSha256": "8ffd112e1897a98e560d870fd23f9e6fc4308ede43717982c7f030c2562bdb76",
+      "publishedManifestMatch": true,
+      "localBytes": 1418,
+      "localSha256": "8ffd112e1897a98e560d870fd23f9e6fc4308ede43717982c7f030c2562bdb76",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/index.html",
+      "publishedBytes": 6775,
+      "publishedSha256": "73b447ffa9df8cae184f24a624d8bf751c7bcf0a5df1ec175a4ccf471a474aa8",
+      "publishedManifestMatch": true,
+      "localBytes": 6775,
+      "localSha256": "73b447ffa9df8cae184f24a624d8bf751c7bcf0a5df1ec175a4ccf471a474aa8",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/main.js",
+      "publishedBytes": 4517,
+      "publishedSha256": "8f3795f70aee218e44821af5ca5eb70836fd82a96a64f17be96e8d9a1026051c",
+      "publishedManifestMatch": true,
+      "localBytes": 4517,
+      "localSha256": "8f3795f70aee218e44821af5ca5eb70836fd82a96a64f17be96e8d9a1026051c",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/navigation.css",
+      "publishedBytes": 768,
+      "publishedSha256": "9f7bf7a93e265ce0b3ba8bc093aa9abcb858bbcbd58ef9930f06d84e3d0fe253",
+      "publishedManifestMatch": true,
+      "localBytes": 768,
+      "localSha256": "9f7bf7a93e265ce0b3ba8bc093aa9abcb858bbcbd58ef9930f06d84e3d0fe253",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/page-navigation.css",
+      "publishedBytes": 2975,
+      "publishedSha256": "517f034106437796894b4ac5bc83e5c17f32ecaee7ee66aa6dd54cd7258cf9b2",
+      "publishedManifestMatch": true,
+      "localBytes": 2975,
+      "localSha256": "517f034106437796894b4ac5bc83e5c17f32ecaee7ee66aa6dd54cd7258cf9b2",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/page-navigation.js",
+      "publishedBytes": 2452,
+      "publishedSha256": "d21c9b902604f2013ae1e8528cbf4b33dafd316101960c0425130d491559ba50",
+      "publishedManifestMatch": true,
+      "localBytes": 2452,
+      "localSha256": "d21c9b902604f2013ae1e8528cbf4b33dafd316101960c0425130d491559ba50",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/preferences-boot.js",
+      "publishedBytes": 613,
+      "publishedSha256": "71f67f092e266842c0ab6519d2f1157fd0e4b3cea6c8a34ac9dfb4a0bf32f7fc",
+      "publishedManifestMatch": true,
+      "localBytes": 613,
+      "localSha256": "71f67f092e266842c0ab6519d2f1157fd0e4b3cea6c8a34ac9dfb4a0bf32f7fc",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/preferences.css",
+      "publishedBytes": 2323,
+      "publishedSha256": "1e45ed5cef2dc870a15f778e99a6d79263f5af51a551cdcfc1231e405b8a5b51",
+      "publishedManifestMatch": true,
+      "localBytes": 2323,
+      "localSha256": "1e45ed5cef2dc870a15f778e99a6d79263f5af51a551cdcfc1231e405b8a5b51",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/preferences.js",
+      "publishedBytes": 8597,
+      "publishedSha256": "65fcfa975960541e59bda3ca4b1b49fe4e3816a2aa2951eba149fad90467124b",
+      "publishedManifestMatch": true,
+      "localBytes": 8600,
+      "localSha256": "3406bff4882d012370d9a5fcb9127c657190805be7392fba0fd8a0df9484f63b",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/pricing-data.js",
+      "publishedBytes": 5790,
+      "publishedSha256": "f1240b16cfed0e39095943cf5dd19b7736105a0668c34828de9a24b852008b29",
+      "publishedManifestMatch": true,
+      "localBytes": 5790,
+      "localSha256": "f1240b16cfed0e39095943cf5dd19b7736105a0668c34828de9a24b852008b29",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/pricing.css",
+      "publishedBytes": 10394,
+      "publishedSha256": "2095c088a6928aa43202cfdffac3d2d3943ada5cc632148424a565c181179a62",
+      "publishedManifestMatch": true,
+      "localBytes": 10394,
+      "localSha256": "2095c088a6928aa43202cfdffac3d2d3943ada5cc632148424a565c181179a62",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/pricing.js",
+      "publishedBytes": 11240,
+      "publishedSha256": "1252d7f85ae959db67ca736047c7f0d48b907f58a8e525cc48b592100622db16",
+      "publishedManifestMatch": true,
+      "localBytes": 11240,
+      "localSha256": "1252d7f85ae959db67ca736047c7f0d48b907f58a8e525cc48b592100622db16",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/scenes.css",
+      "publishedBytes": 8196,
+      "publishedSha256": "c194f8a3f1b54a4430a342e86dd86bd9250b94a5a26fdd4ad35792db4bdb9eb0",
+      "publishedManifestMatch": true,
+      "localBytes": 8196,
+      "localSha256": "c194f8a3f1b54a4430a342e86dd86bd9250b94a5a26fdd4ad35792db4bdb9eb0",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/scenes.js",
+      "publishedBytes": 9301,
+      "publishedSha256": "83bd27104bb91c9586ae52d8530b9616b5219a8c748d66677d24724b2fbdbd56",
+      "publishedManifestMatch": true,
+      "localBytes": 9301,
+      "localSha256": "83bd27104bb91c9586ae52d8530b9616b5219a8c748d66677d24724b2fbdbd56",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/studio/app-LJ3GF5K2.css",
+      "publishedBytes": 70884,
+      "publishedSha256": "3c8dcf401082daf00f64a1a7456cf8dc8d0ef632beaef37559c268ef1633d891",
+      "publishedManifestMatch": true,
+      "localBytes": 70885,
+      "localSha256": "8ac24d822eb091f10fb8c2105ebe29d7e165c021ba8708ff963fceb072099bf9",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/studio/app-SEP4OEUD.js",
+      "publishedBytes": 3273136,
+      "publishedSha256": "32c7aa6ef6e909ccf588a6f53e9e1eb484dd6d0dd0325767e7142cc088fa3598",
+      "publishedManifestMatch": true,
+      "localBytes": 3274318,
+      "localSha256": "699f958740679402e023f7fdea7f19df88a3cae704d2f41b169e305ced49bd58",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/studio/app-SEP4OEUD.js.LEGAL.txt",
+      "publishedBytes": 1528,
+      "publishedSha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3",
+      "publishedManifestMatch": true,
+      "localBytes": 1584,
+      "localSha256": "7c7ab6a419a4d421503e9aaacf521f0dac734e2d319a204f8d1149741ef774a4",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/studio/index.html",
+      "publishedBytes": 655,
+      "publishedSha256": "8944187af24f3573d0a706646a73c969c7b8abd2e5ed84404b4c98413d30dfab",
+      "publishedManifestMatch": true,
+      "localBytes": 655,
+      "localSha256": "8944187af24f3573d0a706646a73c969c7b8abd2e5ed84404b4c98413d30dfab",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/studio/licenses.txt",
+      "publishedBytes": 104355,
+      "publishedSha256": "7144f83e6ec8abe43f55af50bc114399507c88551fa633ae4b79b9e992a740f7",
+      "publishedManifestMatch": true,
+      "localBytes": 106474,
+      "localSha256": "f0a98d35c48ea471e160e47fa6d781dae3c2c5107aed5c06fa7923426497c9a0",
+      "rawMatches": false,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/styles.css",
+      "publishedBytes": 26828,
+      "publishedSha256": "06627ae1c910e78ac9b5044511a0fdf0af92d786e4b2d7f6a954cb7b5ff4f395",
+      "publishedManifestMatch": true,
+      "localBytes": 26828,
+      "localSha256": "06627ae1c910e78ac9b5044511a0fdf0af92d786e4b2d7f6a954cb7b5ff4f395",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/translations.js",
+      "publishedBytes": 23217,
+      "publishedSha256": "269fcb9a397e88e7bdb04b9e86c6f30f130d8943e28e6ac8637effb87775130e",
+      "publishedManifestMatch": true,
+      "localBytes": 23217,
+      "localSha256": "269fcb9a397e88e7bdb04b9e86c6f30f130d8943e28e6ac8637effb87775130e",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/ui-translations.js",
+      "publishedBytes": 17621,
+      "publishedSha256": "dc4b4050bd1a8198c5659c8d28584bcc89033bd16a3e9da3961e028eda832aec",
+      "publishedManifestMatch": true,
+      "localBytes": 17621,
+      "localSha256": "dc4b4050bd1a8198c5659c8d28584bcc89033bd16a3e9da3961e028eda832aec",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/world-pages.js",
+      "publishedBytes": 7943,
+      "publishedSha256": "7ce3d70bf3fef2e3f529dbb1ff2ecdc1d3ab632b1709552bd03810e5721184d3",
+      "publishedManifestMatch": true,
+      "localBytes": 7943,
+      "localSha256": "7ce3d70bf3fef2e3f529dbb1ff2ecdc1d3ab632b1709552bd03810e5721184d3",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    },
+    {
+      "path": "dist/worlds.css",
+      "publishedBytes": 13468,
+      "publishedSha256": "9b306abd9d062df480e9c9d82b1448a54a5389ed5c32099c39982202f952d387",
+      "publishedManifestMatch": true,
+      "localBytes": 13468,
+      "localSha256": "9b306abd9d062df480e9c9d82b1448a54a5389ed5c32099c39982202f952d387",
+      "rawMatches": true,
+      "normalizedContentMatches": true
+    }
+  ],
+  "publishedAssetCheckCount": 51,
+  "localRawAssetMatchCount": 45,
+  "localLineEndingOnlyDifferenceCount": 6,
+  "lineEndingExplanation": "core.autocrlf=true；6份当前Windows检出文本与封存发布源仅CRLF/LF差异。45份原始字节一致，51份规范化内容一致；归档Sites源51份原始字节与已验发布清单一致。未把规范化相同写成原始SHA相同",
+  "previousDesktopCi": {
+    "conclusion": "success",
+    "databaseId": 37889358217,
+    "headSha": "da01130c669a81d9a8d97a575aca4df0961a5e14",
+    "status": "completed",
+    "url": "https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37889358217"
+  },
+  "ciScope": "completed/success仅属于da01130桌面整合提交；本轮官网不另声明新完整产品CI通过。后续收尾仅文档，使用[skip ci]",
+  "publication": "保留独立验收通过的公开版本20；未重新构建或部署",
+  "acceptanceReference": "doc/验收/网站/验收-2026-10-09-官网在线演示前端同步.md"
+}
