@@ -1,0 +1,12 @@
+{
+  "time": "2026-10-10 01:40 Asia/Shanghai",
+  "changed_parts": [
+    "xl/workbook.xml"
+  ],
+  "old_absPath": true,
+  "new_absPath": false,
+  "old_xlsx_sha256": "27f25f906441bcf77bfaa77e2ee2a3d0ad1bc0bec6644f0ef0aeaa6c3fc1920b",
+  "new_xlsx_sha256": "ce5157fc61ef6ee39ede7fa2dc0bca94202d5c2bd58fcaeff20cdc371f18cc83",
+  "all_OOXML_privacy_hits": [],
+  "result": "通过"
+}

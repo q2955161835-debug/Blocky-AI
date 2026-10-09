@@ -1,0 +1,153 @@
+{
+  "outputs": [
+    {
+      "name": "Blocky-Studio-25页答辩-2026-10-10.pptx",
+      "path": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\复赛\\Blocky-Studio-25页答辩-2026-10-10.pptx",
+      "bytes": 3819737,
+      "sha256": "cd26c03055f230edddafeeaca821ab757689a519bdc241d56e0eec04eb4ebeaa"
+    },
+    {
+      "name": "Blocky-Studio-25页答辩-2026-10-10.pdf",
+      "path": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\复赛\\Blocky-Studio-25页答辩-2026-10-10.pdf",
+      "bytes": 830873,
+      "sha256": "1b2a3ca5ce9ccfe04983741173fd889d9d66c703b5d42898e78d119bbc9e0c51"
+    },
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-10.docx",
+      "path": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\复赛\\Blocky-Studio-商业计划书-2026-10-10.docx",
+      "bytes": 76456,
+      "sha256": "11534f9ab55e2fae05a2ee96c3c3c0f6deb34e4a2110caa8e62d56efc7f8f9f2"
+    },
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-10.pdf",
+      "path": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\复赛\\Blocky-Studio-商业计划书-2026-10-10.pdf",
+      "bytes": 461721,
+      "sha256": "236ae0253204cd07a6294acc3a8c17c71c1f8742073da588924bc4898180cd76"
+    },
+    {
+      "name": "Blocky-Studio-财务测算-2026-10-10.xlsx",
+      "path": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\复赛\\Blocky-Studio-财务测算-2026-10-10.xlsx",
+      "bytes": 29920,
+      "sha256": "ce5157fc61ef6ee39ede7fa2dc0bca94202d5c2bd58fcaeff20cdc371f18cc83"
+    }
+  ],
+  "pptPages": 25,
+  "bpPages": 27,
+  "educationPages": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "educationFraction": 0.52,
+  "educationSeconds": 249,
+  "totalSeconds": 480,
+  "originalSourceTopics": 51,
+  "nativeFormulaCount": 576,
+  "formulaErrors": [],
+  "privacy": {
+    "[CD]:[\\\\/]": false,
+    "AGENTS\\.md": false,
+    "SKILL\\.md": false,
+    "(?:独立|最终|本轮|内部)验收": false,
+    "子Agent": false,
+    "AI处理": false,
+    "AI生成": false,
+    "sk-[A-Za-z0-9]{16}": false,
+    "Bearer\\s+[A-Za-z0-9_-]{12}": false,
+    "用户决定": false,
+    "29551": false
+  },
+  "packagePrivacyFindings": [],
+  "baseBudgets": {
+    "6": {
+      "团队工资及附加": 45,
+      "5席Pro订阅": 10.5,
+      "研发API测试": 0.5616,
+      "基础设施": 0.336,
+      "一般运营": 1.8,
+      "专项技术交付": 3,
+      "教学验证材料": 0,
+      "条件试用API": 0,
+      "增量测试设备": 3,
+      "预算现金支出": 64.1976,
+      "支出风险预留": 6.41976,
+      "正常运营现金储备": 29.0988,
+      "最低追加资金": 99.71615999999999,
+      "取整覆盖目标": 100,
+      "取整余量": 0.2838400000000121
+    },
+    "12": {
+      "团队工资及附加": 90,
+      "5席Pro订阅": 21,
+      "研发API测试": 1.1232,
+      "基础设施": 1.02,
+      "一般运营": 3.6,
+      "专项技术交付": 6,
+      "教学验证材料": 2,
+      "条件试用API": 0.48324055679999994,
+      "增量测试设备": 5,
+      "预算现金支出": 130.2264405568,
+      "支出风险预留": 13.022644055679999,
+      "正常运营现金储备": 29.594960371200003,
+      "最低追加资金": 172.84404498367996,
+      "取整覆盖目标": 180,
+      "取整余量": 7.155955016320036
+    },
+    "24": {
+      "团队工资及附加": 180,
+      "5席Pro订阅": 42,
+      "研发API测试": 2.2464,
+      "基础设施": 3.408,
+      "一般运营": 7.2,
+      "专项技术交付": 12,
+      "教学验证材料": 6,
+      "条件试用API": 5.023085011199998,
+      "增量测试设备": 5,
+      "预算现金支出": 262.8774850112001,
+      "支出风险预留": 26.287748501119996,
+      "正常运营现金储备": 31.0410814848,
+      "最低追加资金": 320.2063149971201,
+      "取整覆盖目标": 330,
+      "取整余量": 9.793685002879897
+    }
+  },
+  "nativeInputChanges": {
+    "cases": [
+      {
+        "minimum12": 137.44470649183998,
+        "target24": 260.0,
+        "cash12": 103.02106027839999,
+        "case": 1,
+        "target12": 140.0
+      },
+      {
+        "minimum12": 172.84404498367996,
+        "target24": 330.0,
+        "cash12": 130.2264405568,
+        "case": 2,
+        "target12": 180.0
+      },
+      {
+        "minimum12": 283.20277960384,
+        "target24": 700.0,
+        "cash12": 190.56376111359998,
+        "case": 3,
+        "target12": 290.0
+      }
+    ],
+    "salary1000MonthlyDeltaWan": 7.5,
+    "prepayment10000Cash12Wan": 130.2264405568,
+    "pilotOffApiWan": 0.0
+  },
+  "claimBoundary": "作者技术与排版检查；正式独立验收另行执行。未修改产品或采购服务。"
+}

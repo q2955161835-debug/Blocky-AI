@@ -1,0 +1,92 @@
+{
+  "scope": "Independent copy only; all input changes reverted before read-only exports; original untouched; no live user workbook edited.",
+  "pricePressure": [
+    9.1,
+    -0.9000000000000021,
+    -100.9,
+    5.0
+  ],
+  "application": "Microsoft Excel",
+  "pilotOff": {
+    "cash12": 129.7432,
+    "pilotApi12": 0.0
+  },
+  "sourceModified": false,
+  "cases": [
+    {
+      "case": 1,
+      "target12": 140.0,
+      "minimum12": 137.44470649183998,
+      "cash12": 103.02106027839999,
+      "target24": 260.0
+    },
+    {
+      "case": 2,
+      "target12": 180.0,
+      "minimum12": 172.84404498367996,
+      "cash12": 130.2264405568,
+      "target24": 330.0
+    },
+    {
+      "case": 3,
+      "target12": 290.0,
+      "minimum12": 283.20277960384,
+      "cash12": 190.56376111359998,
+      "target24": 700.0
+    }
+  ],
+  "time": "2026-10-10 01:32",
+  "sourceSha": "5b94134b971281ed36ff18462817576caa2bac8620dce26f3aaf34a149c2b50d",
+  "salary13000": {
+    "cash12": 137.7264405568,
+    "minimum12": 182.96904498367996,
+    "minimumDelta": 10.125
+  },
+  "prepayment10000": {
+    "cash12": 130.2264405568,
+    "minimum12": 172.84404498367996
+  },
+  "version": "16.0",
+  "views": [
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-1.pdf",
+      "sheet": "资金总览",
+      "range": "A1:E34"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-2.pdf",
+      "sheet": "预算输入",
+      "range": "A1:G33"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-3.pdf",
+      "sheet": "预算输入",
+      "range": "A36:F51"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-4.pdf",
+      "sheet": "月度预算",
+      "range": "A7:J31"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-5.pdf",
+      "sheet": "月度预算",
+      "range": "K7:T31"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-6.pdf",
+      "sheet": "用量测算",
+      "range": "A1:D20"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-7.pdf",
+      "sheet": "定价与利润",
+      "range": "A1:H17"
+    },
+    {
+      "pdf": "D:\\29551\\.codex\\worktrees\\ppt-25-slides\\Blocky-AI\\try\\ppt25-materials\\acceptance\\recent-excel\\view-8.pdf",
+      "sheet": "来源与口径",
+      "range": "A1:F14"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "F02",
+    "result": "不通过",
+    "source_sha256": "27f25f906441bcf77bfaa77e2ee2a3d0ad1bc0bec6644f0ef0aeaa6c3fc1920b",
+    "part": "xl/workbook.xml",
+    "element": "x15ac:absPath",
+    "description": "Absolute user/worktree path exposes material production workspace; no credential found.",
+    "observed_time": "2026-10-10 01:36 Asia/Shanghai"
+  }
+]
