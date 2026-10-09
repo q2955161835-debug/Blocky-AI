@@ -1,0 +1,116 @@
+.canvas-shell {
+  position: relative;
+  flex: 1;
+  min-height: 180px;
+  background: #1d2128;
+  overflow: hidden;
+}
+.canvas-overview { position: absolute; top: 12px; right: 18px; width: 192px; max-height: calc(100% - 52px); overflow: auto; background: #171d27ed; border: 1px solid #435169; border-radius: 6px; color: #dbe7f7; font-size: 11px; }
+.canvas-overview summary { cursor: pointer; padding: 7px; }
+.canvas-overview input { width: calc(100% - 12px); margin: 0 6px 6px; box-sizing: border-box; }
+.canvas-overview svg { display: block; width: 100%; height: 105px; cursor: crosshair; }
+.overview-block { fill: #678cbc; stroke: #8cadd8; stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.overview-viewport { fill: #abcfff14; stroke: #e4edf9; stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.canvas-outline { max-height: 210px; overflow: auto; }
+.canvas-outline button { display: block; width: 100%; text-align: left; border: 0; border-radius: 0; background: transparent; color: inherit; padding: 5px 8px; }
+.canvas-outline button:hover, .canvas-outline button:focus-visible { background: #32445b; }
+.canvas-outline span, .canvas-outline small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.canvas-outline small, .canvas-outline p { color: #aebdd0; font-size: 10px; }
+.blockly-host {
+  position: absolute;
+  inset: 0;
+  outline: none;
+}
+.blocklySvg {
+  background: #1d2128 !important;
+}
+.canvas-hint {
+  position: absolute;
+  bottom: 13px;
+  left: 18px;
+  max-width: calc(100% - 110px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  color: #6c7c92;
+  font:
+    10px "Microsoft YaHei UI",
+    sans-serif;
+}
+.runtime-status {
+  position: absolute;
+  right: 18px;
+  bottom: 56px;
+  max-width: calc(100% - 36px);
+  pointer-events: none;
+  color: #a9c9b9;
+  font-size: 11px;
+}
+.blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+  stroke: #48e290 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 4px #2fc46f88);
+  animation: blocky-active-glow 1.2s ease-in-out infinite alternate;
+}
+@keyframes blocky-active-glow {
+  to {
+    filter: drop-shadow(0 0 8px #2fc46fcc);
+  }
+}
+.reduce-motion .blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .blocklyDraggable[data-runtime-state="active"] > .blocklyPath {
+    animation: none;
+  }
+}
+.blocklyDraggable[data-runtime-state="warning"] > .blocklyPath {
+  stroke: #f3b95f !important;
+  stroke-width: 4px !important;
+}
+.blocklyDraggable[data-runtime-state="error"] > .blocklyPath {
+  stroke: #ff817a !important;
+  stroke-width: 4px !important;
+}
+.blocklyText {
+  font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif !important;
+}
+.blocky-code-marker { pointer-events: none; fill: #c9d7e7; }
+[data-code-state="custom-valid"] > .blocky-code-marker { fill: #7fe6aa; }
+[data-code-state="warning"] > .blocky-code-marker { fill: #ffd17d; }
+[data-code-state="invalid"] > .blocky-code-marker { fill: #ff9790; }
+.blocky-code-badge { font-size: 11px; font-weight: 600; }
+.blocklyHtmlInput {
+  color: #1c2430 !important;
+}
+.blocklyWidgetDiv,
+.blocklyDropDownDiv {
+  z-index: 90 !important;
+}
+.selection-marquee {
+  position: absolute;
+  pointer-events: none;
+  background: #67b4ff22;
+  border: 1px solid #67b4ff;
+  z-index: 10;
+}
+[data-blocky-selected] > .blocklyPath {
+  stroke: #c0d8ff;
+  stroke-width: 3px;
+  stroke-dasharray: 5 3;
+}
+.blocklyDraggable[data-runtime-state] > .blocklyPath {
+  stroke-dasharray: none;
+}
+.canvas-load-error {
+  position: absolute;
+  top: 48px;
+  left: 18px;
+  right: 18px;
+  z-index: 5;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}

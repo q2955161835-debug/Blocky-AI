@@ -1,0 +1,407 @@
+[
+  {
+    "type": "core.prompt.context",
+    "label": "补充指令",
+    "category": 2,
+    "color": "#8863b2",
+    "fields": [
+      "TEXT"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.run.budget",
+    "label": "运行预算",
+    "category": 9,
+    "color": "#ba6f4c",
+    "defaultFields": { "STEPS": "10000", "CALLS": "256", "OUTPUT_TOKENS": "1048576", "TIMEOUT_MS": "1800000" },
+    "fields": [
+      "STEPS",
+      "CALLS",
+      "OUTPUT_TOKENS",
+      "TIMEOUT_MS"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.data.set",
+    "label": "设置结果",
+    "category": 10,
+    "color": "#6384b8",
+    "fields": [
+      "VALUE"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.logic.condition",
+    "label": "如果",
+    "category": 10,
+    "color": "#6384b8",
+    "fields": [
+      "SOURCE",
+      "OP",
+      "VALUE"
+    ],
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result",
+        "memory"
+      ],
+      "OP": [
+        "equals",
+        "contains",
+        "truthy"
+      ]
+    },
+    "optionalFields": [
+      "VALUE"
+    ],
+    "inputs": [
+      "THEN",
+      "ELSE"
+    ],
+    "inputChecks": { "THEN": ["step", "command"], "ELSE": ["step", "command"] },
+    "statement": true
+  },
+  {
+    "type": "core.memory.read",
+    "label": "读取记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "KEY"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.write",
+    "label": "保存记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "KEY",
+      "SOURCE"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ],
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.delete",
+    "label": "删除记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "KEY"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.tool.invoke",
+    "label": "调用工具",
+    "category": 6,
+    "color": "#418eac",
+    "fields": [
+      "RESOURCE",
+      "SOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "tool"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.guardrail.evidence",
+    "label": "引用护栏",
+    "category": 9,
+    "color": "#ba6f4c",
+    "fields": [
+      "POLICY"
+    ],
+    "fieldOptions": {
+      "POLICY": [
+        "require",
+        "optional"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.structured",
+    "label": "结构化输出",
+    "category": 11,
+    "color": "#45997e",
+    "fields": [
+      "SCHEMA"
+    ],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.publish",
+    "label": "发布页面数据",
+    "category": 11,
+    "color": "#45997e",
+    "fields": ["SCHEMA"],
+    "jsonFields": ["SCHEMA"],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.output.file",
+    "label": "文件输出",
+    "category": 11,
+    "color": "#45997e",
+    "fields": [
+      "NAME",
+      "FORMAT"
+    ],
+    "fieldOptions": {
+      "FORMAT": [
+        "text",
+        "json"
+      ]
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.search",
+    "label": "搜索记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "RESOURCE",
+      "QUERY",
+      "LIMIT"
+    ],
+    "fieldOptions": {
+      "SCOPE": [
+        "session",
+        "project"
+      ]
+    },
+    "optionalFields": [
+      "RESOURCE"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
+    "defaultFields": {
+      "QUERY": "",
+      "LIMIT": "20"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.memory.update",
+    "label": "保存有来源的记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "RESOURCE",
+      "KEY",
+      "SOURCE",
+      "POLICY",
+      "SOURCE_REF",
+      "TTL_SECONDS"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ],
+      "POLICY": [
+        "reject",
+        "replace",
+        "merge"
+      ],
+      "SCOPE": [
+        "project",
+        "session"
+      ]
+    },
+    "defaultFields": {
+      "KEY": "note",
+      "POLICY": "reject",
+      "SCOPE": "project"
+    },
+    "inputs": [],
+    "statement": true,
+    "optionalFields": [
+      "RESOURCE",
+      "SOURCE_REF",
+      "TTL_SECONDS"
+    ]
+  },
+  {
+    "type": "core.memory.revoke_source",
+    "label": "撤销来源记忆",
+    "category": 5,
+    "color": "#9971b5",
+    "fields": [
+      "SCOPE",
+      "RESOURCE",
+      "SOURCE_REF"
+    ],
+    "resourceFields": {
+      "RESOURCE": "memory"
+    },
+    "inputs": [],
+    "statement": true,
+    "fieldOptions": {
+      "SCOPE": [
+        "project",
+        "session"
+      ]
+    },
+    "defaultFields": {
+      "SCOPE": "project"
+    },
+    "optionalFields": [
+      "RESOURCE"
+    ]
+  },
+  {
+    "type": "core.agent.delegate",
+    "label": "委派 Agent 子任务",
+    "category": 8,
+    "color": "#8863b2",
+    "fields": [
+      "TASKS",
+      "MODE",
+      "FAILURE",
+      "SOURCE"
+    ],
+    "fieldOptions": {
+      "MODE": [
+        "sequential",
+        "parallel"
+      ],
+      "FAILURE": [
+        "stop",
+        "collect"
+      ],
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    },
+    "defaultFields": {
+      "TASKS": "[]",
+      "MODE": "sequential",
+      "FAILURE": "stop"
+    },
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.skill.discover",
+    "label": "发现已安装 Skill",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [],
+    "inputs": [],
+    "statement": true
+  },
+  {
+    "type": "core.skill.use",
+    "label": "加载 Skill 指令",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill"
+    }
+  },
+  {
+    "type": "core.skill.execute",
+    "label": "执行 Skill 声明工具",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE",
+      "TOOL",
+      "SOURCE"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill",
+      "TOOL": "tool"
+    },
+    "fieldOptions": {
+      "SOURCE": [
+        "input",
+        "result"
+      ]
+    }
+  },
+  {
+    "type": "core.skill.read_resource",
+    "label": "读取 Skill 附属资料",
+    "category": 7,
+    "color": "#8863b2",
+    "fields": [
+      "RESOURCE",
+      "PATH"
+    ],
+    "inputs": [],
+    "statement": true,
+    "resourceFields": {
+      "RESOURCE": "skill"
+    }
+  },
+  {"type":"core.model.score","label":"英文候选评分（实验）","category":3,"color":"#8863b2","fields":["RESOURCE","SOURCE","LABELS","RULES","THRESHOLD","FALLBACK"],"inputs":[],"statement":true,"resourceFields":{"RESOURCE":"model"},"jsonFields":["LABELS","RULES"],"fieldOptions":{"SOURCE":["input","result"]},"defaultFields":{"LABELS":"[{\"id\":\"geography\",\"description\":\"Geography and locations\"},{\"id\":\"sports\",\"description\":\"Sports and athletes\"}]","RULES":"[]","THRESHOLD":"0","FALLBACK":"unknown"}},
+  {"type":"core.media.transcribe","label":"转写项目音频","category":6,"color":"#6384b8","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}},
+  {"type":"core.media.image","label":"添加项目图片","category":3,"color":"#8863b2","fields":["MEDIA_ID","SHA256","VERSION"],"inputs":[],"statement":true,"defaultFields":{"VERSION":"1"}}
+]

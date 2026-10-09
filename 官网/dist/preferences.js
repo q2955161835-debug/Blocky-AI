@@ -3,8 +3,9 @@ import { uiEnglish } from './ui-translations.js';
 import { demoEnglish } from './demo-translations.js';
 import { artEnglish } from './art-translations.js';
 import { experienceEnglish } from './experience-translations.js';
+import { quizEnglish } from './quiz-translations.js';
 
-const dictionary = { ...english, ...uiEnglish, ...demoEnglish, ...artEnglish, ...experienceEnglish };
+const dictionary = { ...english, ...uiEnglish, ...demoEnglish, ...artEnglish, ...experienceEnglish, ...quizEnglish };
 const reverse = new Map(Object.entries(dictionary).map(([zh,en]) => [en,zh]));
 const key = 'blocky.site.preferences.v1';
 const media = matchMedia('(prefers-color-scheme: dark)');

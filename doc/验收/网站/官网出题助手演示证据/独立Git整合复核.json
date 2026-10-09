@@ -1,0 +1,545 @@
+{
+  "time": "2026-10-09T20:50:12.339Z",
+  "branch": "codex/integrate-quiz-website",
+  "head": "3856d29dbc794d931a5c52ff6a6c302c71e5f521",
+  "source": "644fd892e341d7973d011be2bfe6ec46d9135402",
+  "files": [
+    {
+      "modulePath": "packages/ui-editor/src/blocks.ts",
+      "snapshot": "blocks.ts.txt",
+      "sha256": "d4319bc71c728c4826a0cb39f846831c857c77eddf7108a41dd917d0da477311",
+      "snapshotBytes": 7061,
+      "snapshotSha256": "d4319bc71c728c4826a0cb39f846831c857c77eddf7108a41dd917d0da477311",
+      "gitBytes": 7061,
+      "gitSha256": "d4319bc71c728c4826a0cb39f846831c857c77eddf7108a41dd917d0da477311",
+      "pass": true
+    },
+    {
+      "modulePath": "packages/ui-editor/src/canvas/Canvas.tsx",
+      "snapshot": "Canvas.tsx.txt",
+      "sha256": "ac2cb52261c875fb8e9fd2f5ba66fc59dd73feb3831dc4f830870bcc45b6081e",
+      "snapshotBytes": 14820,
+      "snapshotSha256": "ac2cb52261c875fb8e9fd2f5ba66fc59dd73feb3831dc4f830870bcc45b6081e",
+      "gitBytes": 14820,
+      "gitSha256": "ac2cb52261c875fb8e9fd2f5ba66fc59dd73feb3831dc4f830870bcc45b6081e",
+      "pass": true
+    },
+    {
+      "modulePath": "packages/ui-editor/src/canvas/canvas.css",
+      "snapshot": "canvas.css.txt",
+      "sha256": "3dc08ead31b6136e562d0a965200dbd638c477d9c5653ea6e9ed13db19e38adc",
+      "snapshotBytes": 3742,
+      "snapshotSha256": "3dc08ead31b6136e562d0a965200dbd638c477d9c5653ea6e9ed13db19e38adc",
+      "gitBytes": 3742,
+      "gitSha256": "3dc08ead31b6136e562d0a965200dbd638c477d9c5653ea6e9ed13db19e38adc",
+      "pass": true
+    },
+    {
+      "modulePath": "packages/block-catalog/src/agent-primitives.json",
+      "snapshot": "agent-primitives.json.txt",
+      "sha256": "0ae3a721d00ec221fce0a1fd9ca12dd2934e6ac79781364170e3786b04cb3389",
+      "snapshotBytes": 8027,
+      "snapshotSha256": "0ae3a721d00ec221fce0a1fd9ca12dd2934e6ac79781364170e3786b04cb3389",
+      "gitBytes": 8027,
+      "gitSha256": "0ae3a721d00ec221fce0a1fd9ca12dd2934e6ac79781364170e3786b04cb3389",
+      "pass": true
+    }
+  ],
+  "assets": [
+    {
+      "path": "active-navigation.js",
+      "expectedBytes": 1655,
+      "actualBytes": 1655,
+      "expectedSha256": "56e8efe0311859909fd992ab0073ab9bfe3c5484f3644499bd4dd9cc07f753f9",
+      "actualSha256": "56e8efe0311859909fd992ab0073ab9bfe3c5484f3644499bd4dd9cc07f753f9",
+      "pass": true
+    },
+    {
+      "path": "appearance.css",
+      "expectedBytes": 7375,
+      "actualBytes": 7375,
+      "expectedSha256": "881a83f608f6518d9e5c4d66443b47c1ef65e49c3d2f16f790dab0a8ab5b511b",
+      "actualSha256": "881a83f608f6518d9e5c4d66443b47c1ef65e49c3d2f16f790dab0a8ab5b511b",
+      "pass": true
+    },
+    {
+      "path": "art/THREE-LICENSE.txt",
+      "expectedBytes": 1102,
+      "actualBytes": 1102,
+      "expectedSha256": "5d5dad8147523d59bc15cca838ae0bdaae7075230ec49132c551a1d18e7b3412",
+      "actualSha256": "5d5dad8147523d59bc15cca838ae0bdaae7075230ec49132c551a1d18e7b3412",
+      "pass": true
+    },
+    {
+      "path": "art-translations.js",
+      "expectedBytes": 1282,
+      "actualBytes": 1282,
+      "expectedSha256": "4a53936189d3bc2991398e6fec612fd7befcb002aed75d9b4f86af383703a60d",
+      "actualSha256": "4a53936189d3bc2991398e6fec612fd7befcb002aed75d9b4f86af383703a60d",
+      "pass": true
+    },
+    {
+      "path": "art.css",
+      "expectedBytes": 2496,
+      "actualBytes": 2496,
+      "expectedSha256": "bb3c2b401245a66c44287de7cd75fc64e533229f10245a56223c0a660f613bab",
+      "actualSha256": "bb3c2b401245a66c44287de7cd75fc64e533229f10245a56223c0a660f613bab",
+      "pass": true
+    },
+    {
+      "path": "art3d.js",
+      "expectedBytes": 781744,
+      "actualBytes": 781744,
+      "expectedSha256": "7e69e0c6db757b3f0673f984c9a34507d1afcbdc2b83f4ab8f97e4b4305b8873",
+      "actualSha256": "7e69e0c6db757b3f0673f984c9a34507d1afcbdc2b83f4ab8f97e4b4305b8873",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/1x1.gif",
+      "expectedBytes": 43,
+      "actualBytes": 43,
+      "expectedSha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629",
+      "actualSha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/delete-icon.svg",
+      "expectedBytes": 315,
+      "actualBytes": 315,
+      "expectedSha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef",
+      "actualSha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/dropdown-arrow.svg",
+      "expectedBytes": 569,
+      "actualBytes": 569,
+      "expectedSha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9",
+      "actualSha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/foldout-icon.svg",
+      "expectedBytes": 150,
+      "actualBytes": 150,
+      "expectedSha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64",
+      "actualSha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/handclosed.cur",
+      "expectedBytes": 326,
+      "actualBytes": 326,
+      "expectedSha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5",
+      "actualSha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/handdelete.cur",
+      "expectedBytes": 766,
+      "actualBytes": 766,
+      "expectedSha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040",
+      "actualSha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/handopen.cur",
+      "expectedBytes": 198,
+      "actualBytes": 198,
+      "expectedSha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd",
+      "actualSha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/pilcrow.png",
+      "expectedBytes": 1010,
+      "actualBytes": 1010,
+      "expectedSha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167",
+      "actualSha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/quote0.png",
+      "expectedBytes": 771,
+      "actualBytes": 771,
+      "expectedSha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c",
+      "actualSha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/quote1.png",
+      "expectedBytes": 738,
+      "actualBytes": 738,
+      "expectedSha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35",
+      "actualSha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/resize-handle.svg",
+      "expectedBytes": 218,
+      "actualBytes": 218,
+      "expectedSha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b",
+      "actualSha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b",
+      "pass": true
+    },
+    {
+      "path": "assets/blockly-media/sprites.svg",
+      "expectedBytes": 1775,
+      "actualBytes": 1775,
+      "expectedSha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f",
+      "actualSha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f",
+      "pass": true
+    },
+    {
+      "path": "assets/blocky.png",
+      "expectedBytes": 1222308,
+      "actualBytes": 1222308,
+      "expectedSha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "actualSha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+      "pass": true
+    },
+    {
+      "path": "brand-motion.js",
+      "expectedBytes": 1793,
+      "actualBytes": 1793,
+      "expectedSha256": "7c72ed274874a1e9e9d2f02840e382fb1c45c9a5daebb02e9caada5106fda128",
+      "actualSha256": "7c72ed274874a1e9e9d2f02840e382fb1c45c9a5daebb02e9caada5106fda128",
+      "pass": true
+    },
+    {
+      "path": "capsule.css",
+      "expectedBytes": 6416,
+      "actualBytes": 6416,
+      "expectedSha256": "68aeacf71fd93b0b9e34348f27750554f06d3875d09e266bd068d057bd88b3c0",
+      "actualSha256": "68aeacf71fd93b0b9e34348f27750554f06d3875d09e266bd068d057bd88b3c0",
+      "pass": true
+    },
+    {
+      "path": "compact-navigation.js",
+      "expectedBytes": 1800,
+      "actualBytes": 1800,
+      "expectedSha256": "0931a8c613526d0aa6b1047bfcb3b891534f93700b3b7b0462d9102b1e7f5f67",
+      "actualSha256": "0931a8c613526d0aa6b1047bfcb3b891534f93700b3b7b0462d9102b1e7f5f67",
+      "pass": true
+    },
+    {
+      "path": "content-motion.js",
+      "expectedBytes": 646,
+      "actualBytes": 646,
+      "expectedSha256": "a75b1b3fb29f23f22bc5e7e36f9381c3cb97ffae0b7930940c497692479f7a57",
+      "actualSha256": "a75b1b3fb29f23f22bc5e7e36f9381c3cb97ffae0b7930940c497692479f7a57",
+      "pass": true
+    },
+    {
+      "path": "content.js",
+      "expectedBytes": 12925,
+      "actualBytes": 12925,
+      "expectedSha256": "fa050f8d44ff6a03af1aa739fb5bdbd4e2421c142883a330b7e2b5ccb7abc5c3",
+      "actualSha256": "fa050f8d44ff6a03af1aa739fb5bdbd4e2421c142883a330b7e2b5ccb7abc5c3",
+      "pass": true
+    },
+    {
+      "path": "demo-translations.js",
+      "expectedBytes": 5298,
+      "actualBytes": 5298,
+      "expectedSha256": "9b04461fb804af13c2eb6c949b509780aa2c4137430d5c06f263daf3a021f1d8",
+      "actualSha256": "9b04461fb804af13c2eb6c949b509780aa2c4137430d5c06f263daf3a021f1d8",
+      "pass": true
+    },
+    {
+      "path": "demo.js",
+      "expectedBytes": 430,
+      "actualBytes": 430,
+      "expectedSha256": "fef6f291ed78fb1954ca53d22cbf01ac1bc86d1a9aa6b98e697e2c88fe7d1a98",
+      "actualSha256": "fef6f291ed78fb1954ca53d22cbf01ac1bc86d1a9aa6b98e697e2c88fe7d1a98",
+      "pass": true
+    },
+    {
+      "path": "experience-translations.js",
+      "expectedBytes": 3396,
+      "actualBytes": 3396,
+      "expectedSha256": "5c62ad90c28842824adda93945804ab757f20c68d5a9522f1cb234eb830549f7",
+      "actualSha256": "5c62ad90c28842824adda93945804ab757f20c68d5a9522f1cb234eb830549f7",
+      "pass": true
+    },
+    {
+      "path": "faq-motion.js",
+      "expectedBytes": 1418,
+      "actualBytes": 1418,
+      "expectedSha256": "8ffd112e1897a98e560d870fd23f9e6fc4308ede43717982c7f030c2562bdb76",
+      "actualSha256": "8ffd112e1897a98e560d870fd23f9e6fc4308ede43717982c7f030c2562bdb76",
+      "pass": true
+    },
+    {
+      "path": "index.html",
+      "expectedBytes": 6775,
+      "actualBytes": 6775,
+      "expectedSha256": "73b447ffa9df8cae184f24a624d8bf751c7bcf0a5df1ec175a4ccf471a474aa8",
+      "actualSha256": "73b447ffa9df8cae184f24a624d8bf751c7bcf0a5df1ec175a4ccf471a474aa8",
+      "pass": true
+    },
+    {
+      "path": "main.js",
+      "expectedBytes": 4517,
+      "actualBytes": 4517,
+      "expectedSha256": "8f3795f70aee218e44821af5ca5eb70836fd82a96a64f17be96e8d9a1026051c",
+      "actualSha256": "8f3795f70aee218e44821af5ca5eb70836fd82a96a64f17be96e8d9a1026051c",
+      "pass": true
+    },
+    {
+      "path": "navigation.css",
+      "expectedBytes": 768,
+      "actualBytes": 768,
+      "expectedSha256": "9f7bf7a93e265ce0b3ba8bc093aa9abcb858bbcbd58ef9930f06d84e3d0fe253",
+      "actualSha256": "9f7bf7a93e265ce0b3ba8bc093aa9abcb858bbcbd58ef9930f06d84e3d0fe253",
+      "pass": true
+    },
+    {
+      "path": "page-navigation.css",
+      "expectedBytes": 2975,
+      "actualBytes": 2975,
+      "expectedSha256": "517f034106437796894b4ac5bc83e5c17f32ecaee7ee66aa6dd54cd7258cf9b2",
+      "actualSha256": "517f034106437796894b4ac5bc83e5c17f32ecaee7ee66aa6dd54cd7258cf9b2",
+      "pass": true
+    },
+    {
+      "path": "page-navigation.js",
+      "expectedBytes": 2452,
+      "actualBytes": 2452,
+      "expectedSha256": "d21c9b902604f2013ae1e8528cbf4b33dafd316101960c0425130d491559ba50",
+      "actualSha256": "d21c9b902604f2013ae1e8528cbf4b33dafd316101960c0425130d491559ba50",
+      "pass": true
+    },
+    {
+      "path": "preferences-boot.js",
+      "expectedBytes": 613,
+      "actualBytes": 613,
+      "expectedSha256": "71f67f092e266842c0ab6519d2f1157fd0e4b3cea6c8a34ac9dfb4a0bf32f7fc",
+      "actualSha256": "71f67f092e266842c0ab6519d2f1157fd0e4b3cea6c8a34ac9dfb4a0bf32f7fc",
+      "pass": true
+    },
+    {
+      "path": "preferences.css",
+      "expectedBytes": 2323,
+      "actualBytes": 2323,
+      "expectedSha256": "1e45ed5cef2dc870a15f778e99a6d79263f5af51a551cdcfc1231e405b8a5b51",
+      "actualSha256": "1e45ed5cef2dc870a15f778e99a6d79263f5af51a551cdcfc1231e405b8a5b51",
+      "pass": true
+    },
+    {
+      "path": "preferences.js",
+      "expectedBytes": 8671,
+      "actualBytes": 8671,
+      "expectedSha256": "f3bf0e8db0c8c2d2d47d16db22278af4d50fc209721e013c2f6ee68ac4fa37f1",
+      "actualSha256": "f3bf0e8db0c8c2d2d47d16db22278af4d50fc209721e013c2f6ee68ac4fa37f1",
+      "pass": true
+    },
+    {
+      "path": "pricing-data.js",
+      "expectedBytes": 5790,
+      "actualBytes": 5790,
+      "expectedSha256": "f1240b16cfed0e39095943cf5dd19b7736105a0668c34828de9a24b852008b29",
+      "actualSha256": "f1240b16cfed0e39095943cf5dd19b7736105a0668c34828de9a24b852008b29",
+      "pass": true
+    },
+    {
+      "path": "pricing.css",
+      "expectedBytes": 10394,
+      "actualBytes": 10394,
+      "expectedSha256": "2095c088a6928aa43202cfdffac3d2d3943ada5cc632148424a565c181179a62",
+      "actualSha256": "2095c088a6928aa43202cfdffac3d2d3943ada5cc632148424a565c181179a62",
+      "pass": true
+    },
+    {
+      "path": "pricing.js",
+      "expectedBytes": 11240,
+      "actualBytes": 11240,
+      "expectedSha256": "1252d7f85ae959db67ca736047c7f0d48b907f58a8e525cc48b592100622db16",
+      "actualSha256": "1252d7f85ae959db67ca736047c7f0d48b907f58a8e525cc48b592100622db16",
+      "pass": true
+    },
+    {
+      "path": "quiz-translations.js",
+      "expectedBytes": 10611,
+      "actualBytes": 10677,
+      "expectedSha256": "fcdda715a8eb81a5e154d1797371d3c1421f5c46def4099a59644dad75c1c3e0",
+      "actualSha256": "cde83ebb2d10ce37cdbdb4e58a05ba716d19ba78f8b7ef10baab3151ca183e81",
+      "pass": false
+    },
+    {
+      "path": "scenes.css",
+      "expectedBytes": 8196,
+      "actualBytes": 8196,
+      "expectedSha256": "c194f8a3f1b54a4430a342e86dd86bd9250b94a5a26fdd4ad35792db4bdb9eb0",
+      "actualSha256": "c194f8a3f1b54a4430a342e86dd86bd9250b94a5a26fdd4ad35792db4bdb9eb0",
+      "pass": true
+    },
+    {
+      "path": "scenes.js",
+      "expectedBytes": 9301,
+      "actualBytes": 9301,
+      "expectedSha256": "83bd27104bb91c9586ae52d8530b9616b5219a8c748d66677d24724b2fbdbd56",
+      "actualSha256": "83bd27104bb91c9586ae52d8530b9616b5219a8c748d66677d24724b2fbdbd56",
+      "pass": true
+    },
+    {
+      "path": "studio/app-DFYDVGIF.js",
+      "expectedBytes": 3315470,
+      "actualBytes": 3315470,
+      "expectedSha256": "f75db12beedc7a11e75897929f4aa404190a754949daaa865c93693428d86bdf",
+      "actualSha256": "f75db12beedc7a11e75897929f4aa404190a754949daaa865c93693428d86bdf",
+      "pass": true
+    },
+    {
+      "path": "studio/app-DFYDVGIF.js.LEGAL.txt",
+      "expectedBytes": 1528,
+      "actualBytes": 1528,
+      "expectedSha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3",
+      "actualSha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3",
+      "pass": true
+    },
+    {
+      "path": "studio/app-UICMB3PD.css",
+      "expectedBytes": 83040,
+      "actualBytes": 83040,
+      "expectedSha256": "8a1cb88b9e4815c7bcc355e296ba7614c98b2387a8398b207c263ea3f258399e",
+      "actualSha256": "8a1cb88b9e4815c7bcc355e296ba7614c98b2387a8398b207c263ea3f258399e",
+      "pass": true
+    },
+    {
+      "path": "studio/index.html",
+      "expectedBytes": 655,
+      "actualBytes": 655,
+      "expectedSha256": "574b1f87e7ab23fb1058636335312a89e74a30bda905a2bc1ce949b5cb0fe09b",
+      "actualSha256": "574b1f87e7ab23fb1058636335312a89e74a30bda905a2bc1ce949b5cb0fe09b",
+      "pass": true
+    },
+    {
+      "path": "studio/licenses.txt",
+      "expectedBytes": 104355,
+      "actualBytes": 104355,
+      "expectedSha256": "7144f83e6ec8abe43f55af50bc114399507c88551fa633ae4b79b9e992a740f7",
+      "actualSha256": "7144f83e6ec8abe43f55af50bc114399507c88551fa633ae4b79b9e992a740f7",
+      "pass": true
+    },
+    {
+      "path": "styles.css",
+      "expectedBytes": 26828,
+      "actualBytes": 26828,
+      "expectedSha256": "06627ae1c910e78ac9b5044511a0fdf0af92d786e4b2d7f6a954cb7b5ff4f395",
+      "actualSha256": "06627ae1c910e78ac9b5044511a0fdf0af92d786e4b2d7f6a954cb7b5ff4f395",
+      "pass": true
+    },
+    {
+      "path": "translations.js",
+      "expectedBytes": 23217,
+      "actualBytes": 23217,
+      "expectedSha256": "269fcb9a397e88e7bdb04b9e86c6f30f130d8943e28e6ac8637effb87775130e",
+      "actualSha256": "269fcb9a397e88e7bdb04b9e86c6f30f130d8943e28e6ac8637effb87775130e",
+      "pass": true
+    },
+    {
+      "path": "ui-translations.js",
+      "expectedBytes": 17621,
+      "actualBytes": 17621,
+      "expectedSha256": "dc4b4050bd1a8198c5659c8d28584bcc89033bd16a3e9da3961e028eda832aec",
+      "actualSha256": "dc4b4050bd1a8198c5659c8d28584bcc89033bd16a3e9da3961e028eda832aec",
+      "pass": true
+    },
+    {
+      "path": "world-pages.js",
+      "expectedBytes": 7943,
+      "actualBytes": 7943,
+      "expectedSha256": "7ce3d70bf3fef2e3f529dbb1ff2ecdc1d3ab632b1709552bd03810e5721184d3",
+      "actualSha256": "7ce3d70bf3fef2e3f529dbb1ff2ecdc1d3ab632b1709552bd03810e5721184d3",
+      "pass": true
+    },
+    {
+      "path": "worlds.css",
+      "expectedBytes": 13468,
+      "actualBytes": 13468,
+      "expectedSha256": "9b306abd9d062df480e9c9d82b1448a54a5389ed5c32099c39982202f952d387",
+      "actualSha256": "9b306abd9d062df480e9c9d82b1448a54a5389ed5c32099c39982202f952d387",
+      "pass": true
+    }
+  ],
+  "checks": {
+    "onLoad": [
+      {
+        "modulePath": "packages/ui-editor/src/blocks.ts",
+        "filterMatch": true,
+        "loader": "ts",
+        "resolveDir": "D:\\1Folder\\Blocky-AI\\packages\\ui-editor\\src",
+        "contentsMatch": true
+      },
+      {
+        "modulePath": "packages/ui-editor/src/canvas/Canvas.tsx",
+        "filterMatch": true,
+        "loader": "tsx",
+        "resolveDir": "D:\\1Folder\\Blocky-AI\\packages\\ui-editor\\src\\canvas",
+        "contentsMatch": true
+      },
+      {
+        "modulePath": "packages/ui-editor/src/canvas/canvas.css",
+        "filterMatch": true,
+        "loader": "css",
+        "resolveDir": "D:\\1Folder\\Blocky-AI\\packages\\ui-editor\\src\\canvas",
+        "contentsMatch": true
+      },
+      {
+        "modulePath": "packages/block-catalog/src/agent-primitives.json",
+        "filterMatch": true,
+        "loader": "json",
+        "resolveDir": "D:\\1Folder\\Blocky-AI\\packages\\block-catalog\\src",
+        "contentsMatch": true
+      }
+    ],
+    "unrelatedModulePassThrough": true,
+    "negative": {
+      "pass": true,
+      "error": "Error: Website build input changed: packages/ui-editor/src/blocks.ts"
+    },
+    "exactPublicAssets": {
+      "pass": true,
+      "expected": 52,
+      "actual": 52,
+      "extra": [],
+      "missing": []
+    },
+    "protectedDiffToMain": "",
+    "protectedDiffPass": true,
+    "changedPaths": [
+      "doc/验收/网站/官网出题助手演示证据/产物整理回执.json",
+      "doc/验收/网站/官网出题助手演示证据/公开资产与封包校验.json",
+      "doc/验收/网站/官网出题助手演示证据/官网发布回执.json",
+      "doc/验收/网站/官网出题助手演示证据/构建元数据整理.json",
+      "doc/验收/网站/验收-2026-10-10-官网出题助手三分钟演示.md",
+      "官网/AGENTS.md",
+      "官网/README.md",
+      "官网/build-experience.mjs",
+      "官网/dist/preferences.js",
+      "官网/dist/quiz-translations.js",
+      "官网/dist/studio/app-DFYDVGIF.js",
+      "官网/dist/studio/app-DFYDVGIF.js.LEGAL.txt",
+      "官网/dist/studio/app-QV7LLCYQ.js",
+      "官网/dist/studio/app-UICMB3PD.css",
+      "官网/dist/studio/app-VFR5MS5L.css",
+      "官网/dist/studio/index.html",
+      "官网/experience/DemoApp.tsx",
+      "官网/experience/DemoChatPanel.tsx",
+      "官网/experience/data.ts",
+      "官网/experience/entry.tsx",
+      "官网/experience/guided-demo/GuidedControls.tsx",
+      "官网/experience/guided-demo/scenario.ts",
+      "官网/experience/guided-demo/useGuidedDemo.ts",
+      "官网/experience/guided-demo/useGuidedViewport.ts",
+      "官网/experience/quiz-demo/QuizPreview.tsx",
+      "官网/experience/quiz-demo/content.ts",
+      "官网/experience/quiz-demo/quiz.css",
+      "官网/experience/quiz-demo/scenario.ts",
+      "官网/experience/quiz-demo/useDemoFollow.ts",
+      "官网/experience/quiz-demo/workspace.json"
+    ]
+  },
+  "pass": false
+}

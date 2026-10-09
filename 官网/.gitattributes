@@ -1,0 +1,2 @@
+# Preserve the accepted multiline translation asset on Windows checkouts.
+dist/quiz-translations.js text eol=lf

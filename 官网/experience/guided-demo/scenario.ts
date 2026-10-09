@@ -12,6 +12,13 @@ export type DemoAction=
   | {kind:'trace';mode:'builder'|'agent';text:string;blockId?:string}
   | {kind:'workspace';stage:1|2|3|4;focus:string}
   | {kind:'mode';mode:'agent'}
+  | {kind:'quiz-workspace';stage:number;focus:string}
+  | {kind:'quiz-view';view:'practice'|'synced'}
+  | {kind:'quiz-generate'}
+  | {kind:'quiz-item';count:number}
+  | {kind:'quiz-select';index:number;answer:number}
+  | {kind:'quiz-chat';role:'user'|'assistant';text:string}
+  | {kind:'quiz-complete'}
   | {kind:'result'};
 export const timeline:{at:number;action:DemoAction}[]=[
   {at:6,action:{kind:'message',mode:'builder',role:'user',text:buildPrompt}},

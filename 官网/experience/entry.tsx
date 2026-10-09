@@ -8,6 +8,7 @@ import '../dist/preferences.css';
 import './appearance.css';
 import './refresh.css';
 import './guided-demo/guided.css';
+import './quiz-demo/quiz.css';
 import { getPreferences, observeTranslations, subscribePreferences } from '../dist/preferences.js';
 import { installCanvasLocalization } from './localization';
 installCanvasLocalization();

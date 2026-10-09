@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "644fd892e341d7973d011be2bfe6ec46d9135402",
+  "files": [
+    {
+      "modulePath": "packages/ui-editor/src/blocks.ts",
+      "snapshot": "blocks.ts.txt",
+      "sha256": "d4319bc71c728c4826a0cb39f846831c857c77eddf7108a41dd917d0da477311"
+    },
+    {
+      "modulePath": "packages/ui-editor/src/canvas/Canvas.tsx",
+      "snapshot": "Canvas.tsx.txt",
+      "sha256": "ac2cb52261c875fb8e9fd2f5ba66fc59dd73feb3831dc4f830870bcc45b6081e"
+    },
+    {
+      "modulePath": "packages/ui-editor/src/canvas/canvas.css",
+      "snapshot": "canvas.css.txt",
+      "sha256": "3dc08ead31b6136e562d0a965200dbd638c477d9c5653ea6e9ed13db19e38adc"
+    },
+    {
+      "modulePath": "packages/block-catalog/src/agent-primitives.json",
+      "snapshot": "agent-primitives.json.txt",
+      "sha256": "0ae3a721d00ec221fce0a1fd9ca12dd2934e6ac79781364170e3786b04cb3389"
+    }
+  ]
+}

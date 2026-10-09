@@ -7,8 +7,9 @@ import { ChatHistoryMenu } from '../../apps/studio-desktop/src/app/ChatHistoryMe
 import { ChatMarkdown } from '../../apps/studio-desktop/src/app/ChatMarkdown';
 import { UiIcon } from '../../apps/studio-desktop/src/app/UiIcon';
 import { useChatFollow } from '../../apps/studio-desktop/src/app/useChatFollow';
+import { useDemoFollow } from './quiz-demo/useDemoFollow';
 import { demoModels, type DemoMode, type DemoModelChoice } from './demoPreferences';
-export type Message = { role: 'user' | 'assistant'; text: string; preset?: boolean };
+export type Message = { role: 'user' | 'assistant'; text: string; preset?: boolean; startedAt?: number };
 type Thread = { id: string; title: string; createdAt: string; updatedAt: string; messages: Message[]; trace: string[] };
 export function DemoChat({ projectKey, mode, setMode, messages, send, running, stop, sample, trace, reset, info, prompt, setPrompt, guided = false, guidedDraft = '', choice, changeChoice, restore, openSettings }: {
   projectKey: string; mode: DemoMode; setMode(mode: DemoMode): void; messages: Message[];
@@ -25,6 +26,7 @@ export function DemoChat({ projectKey, mode, setMode, messages, send, running, s
   const activeId=active[scopeKey]??`${scopeKey}-initial`;
   const stored=saved[scopeKey]??[];
   const follow = useChatFollow(`${mode}:${activeId}`, `${messages.map(message => message.text).join('')}|${trace.join('')}`);
+  useDemoFollow(follow.ref,guided,`${mode}|${messages.map(message=>message.text).join('')}|${trace.join('')}`);
   useEffect(() => { menu.set(null); }, [mode]);
   const disabled = running || guided;
   const current: Thread = {
@@ -47,9 +49,9 @@ export function DemoChat({ projectKey, mode, setMode, messages, send, running, s
     <ChatHistoryMenu menu={menu} threads={threads} activeId={activeId} disabled={disabled} select={async id => { const chosen = threads.find(thread => thread.id === id); if (!chosen || disabled) return; remember(); setActive(old => ({ ...old, [scopeKey]: id })); restore(chosen.messages, chosen.trace); }}/>
     <div id="chat-content" className="sidebar-content" role="tabpanel" aria-labelledby={`sidebar-tab-${mode}`}>
       <section className={`chat-panel ${mode === 'builder' ? 'builder-panel builder-chat-panel' : 'run-panel'}`} aria-label={mode === 'builder' ? 'Blocky 构建助手' : 'Blocky Agent 聊天'}>
-        <div className="builder-chat-thread" ref={follow.ref} onScroll={follow.onScroll} role="log" aria-live="polite"><ol className="builder-chat-messages">{messages.map((message, index) => <li key={index} className={`builder-chat-message builder-chat-message-${message.role}`}>{message.role === 'assistant' ? <ChatMarkdown text={translate(message.text)}/> : <p data-no-translate={message.preset ? undefined : ''}>{message.text}</p>}</li>)}</ol>
+        <div className="builder-chat-thread" ref={follow.ref} onScroll={follow.onScroll} role="log" aria-live="polite">{guided&&trace.length>0&&<div className="demo-guided-activity"><small>{mode==='builder'?'构建进度':'运行进度'}</small>{trace.slice(-3).map((line,index)=><p key={`${trace.length}-${index}`}>✓ {line}</p>)}</div>}<ol className="builder-chat-messages">{messages.map((message, index) => <li key={index} className={`builder-chat-message builder-chat-message-${message.role}`}>{message.role === 'assistant' ? <ChatMarkdown text={translate(message.text)}/> : <p data-no-translate={message.preset ? undefined : ''}>{message.text}</p>}</li>)}</ol>
           {!messages.length && <div className="demo-chat-sample"><button onClick={() => send(translate(sample))} disabled={disabled}>{sample}<span> ↗</span></button><small>预设对话示例</small></div>}
-          {trace.length > 0 && <div className="demo-chat-activity"><details open><summary>{mode === 'builder' ? '调用轨迹 · 预设' : '运行轨迹 · 预设'}</summary>{trace.map((line, index) => <p key={index}>✓ {line}</p>)}</details></div>}
+          {!guided&&trace.length > 0 && <div className="demo-chat-activity"><details open><summary>{mode === 'builder' ? '调用轨迹 · 预设' : '运行轨迹 · 预设'}</summary>{trace.map((line, index) => <p key={index}>✓ {line}</p>)}</details></div>}
         </div>
         <ChatPopover menu={menu} kind="add" label="对话上下文"><button onClick={info}>选择工作文件夹</button><p>当前项目的积木可在此页面编辑。</p></ChatPopover>
         <ChatComposer label={mode === 'builder' ? '构建需求' : '输入问题'} placeholder={mode === 'builder' ? '描述要构建的内容' : '向 Agent 提问'} value={guided ? guidedDraft : prompt} onChange={setPrompt} onSubmit={submit} disabled={guided} maxLength={2000} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); submit(); } }}>

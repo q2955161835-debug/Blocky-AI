@@ -1,6 +1,7 @@
 import { catalog, startingBlueprints } from '../../packages/block-catalog/src/index';
 import type { Workspace, WorkspaceBlock } from '../../packages/language-schema/src/index';
 import { localizeDefault, getPreferences } from '../dist/preferences.js';
+import quizWorkspace from './quiz-demo/workspace.json';
 export { catalog, startingBlueprints };
 export type BlueprintId = (typeof startingBlueprints)[number]['id'];
 export const descriptions = {
@@ -21,6 +22,11 @@ export function createWorkspace(id: BlueprintId | 'blank') {
 }
 const presetFields=new Map<string,Set<string>>();
 for(const blueprint of startingBlueprints)for(const block of flatten(blueprint.create('website-demo').workspaces.main))for(const [field,value] of Object.entries(block.fields??{})) {
+  if(typeof value!=='string'||!['NAME','ROLE','TEXT'].includes(field))continue;
+  const key=block.type+':'+field,values=presetFields.get(key)||new Set<string>();
+  values.add(value);values.add(localizeDefault(value,'en'));presetFields.set(key,values);
+}
+for(const block of flatten(quizWorkspace as Workspace))for(const [field,value] of Object.entries(block.fields??{})) {
   if(typeof value!=='string'||!['NAME','ROLE','TEXT'].includes(field))continue;
   const key=block.type+':'+field,values=presetFields.get(key)||new Set<string>();
   values.add(value);values.add(localizeDefault(value,'en'));presetFields.set(key,values);

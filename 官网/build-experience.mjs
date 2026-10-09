@@ -2,6 +2,7 @@ import { build } from 'esbuild';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { quizBuildInputs } from './build-inputs.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const out=path.join(root,'dist','studio');
 await fs.mkdir(out,{recursive:true});
@@ -10,7 +11,7 @@ const mediaSource=path.resolve(root,'../packages/ui-editor/node_modules/blockly/
 const mediaTarget=path.join(root,'dist/assets/blockly-media');
 await fs.mkdir(mediaTarget,{recursive:true});
 for(const name of await fs.readdir(mediaSource))if(/\.(svg|png|gif|cur)$/.test(name))await fs.copyFile(path.join(mediaSource,name),path.join(mediaTarget,name));
-const result=await build({entryPoints:[path.join(root,'experience','entry.tsx')],bundle:true,platform:'browser',format:'esm',target:'es2022',jsx:'automatic',minify:true,sourcemap:false,legalComments:'linked',outdir:out,entryNames:'app-[hash]',write:false,metafile:true,loader:{'.png':'dataurl'},alias:{blockly:path.resolve(root,'../packages/ui-editor/node_modules/blockly')},define:{'process.env.NODE_ENV':'"production"'}});
+const result=await build({entryPoints:[path.join(root,'experience','entry.tsx')],bundle:true,platform:'browser',format:'esm',target:'es2022',jsx:'automatic',minify:true,sourcemap:false,legalComments:'linked',outdir:out,entryNames:'app-[hash]',write:false,metafile:true,plugins:[await quizBuildInputs()],loader:{'.png':'dataurl'},alias:{blockly:path.resolve(root,'../packages/ui-editor/node_modules/blockly')},define:{'process.env.NODE_ENV':'"production"'}});
 // A dependency boundary: no desktop composition, Host, model, or worker is bundled.
 const forbidden=Object.keys(result.metafile.inputs).filter(p=>/studio-host|studio-desktop\/src\/composition|tauri-apps|runtime-worker|builder\.mjs/.test(p.replaceAll('\\','/')));
 if(forbidden.length)throw Error(`Unexpected desktop dependency: ${forbidden.join(', ')}`);
