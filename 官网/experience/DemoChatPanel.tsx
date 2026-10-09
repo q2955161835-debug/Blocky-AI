@@ -55,7 +55,7 @@ export function DemoChat({ projectKey, mode, setMode, messages, send, running, s
         <ChatComposer label={mode === 'builder' ? '构建需求' : '输入问题'} placeholder={mode === 'builder' ? '描述要构建的内容' : '向 Agent 提问'} value={guided ? guidedDraft : prompt} onChange={setPrompt} onSubmit={submit} disabled={guided} maxLength={2000} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); submit(); } }}>
           <ChatMenuButton menu={menu} kind="add" label="添加上下文"><UiIcon name="add"/></ChatMenuButton>
           <ChatModelControl label={mode === 'builder' ? '构建助手模型与思考' : 'Agent 模型与思考'} modelLabel={mode === 'builder' ? '构建助手模型' : 'Agent 模型'} reasoningLabel={mode === 'builder' ? '构建助手思考等级' : 'Agent 思考等级'} models={demoModels} value={choice.model} effort={choice.effort} changeModel={model => changeChoice({ ...choice, model })} changeEffort={effort => changeChoice({ ...choice, effort })} disabled={disabled} menu={menu}/>
-          <button className="chat-send" type={running ? 'button' : 'submit'} aria-label={running ? '停止演示' : '发送消息'} disabled={!running && (guided || !prompt.trim())} onClick={running ? stop : undefined}>{running ? '■' : '↑'}</button>
+          <button className="chat-send" type={running ? 'button' : 'submit'} aria-label={running ? '停止演示' : '发送消息'} disabled={!running && (guided || !prompt.trim())} onClick={running ? () => stop() : undefined}>{running ? '■' : '↑'}</button>
         </ChatComposer>
       </section>
     </div>
