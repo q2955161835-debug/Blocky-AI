@@ -1,0 +1,105 @@
+{
+  "originalPath": "D:\\29551\\.codex\\worktrees\\gpt-project-files\\Blocky-AI\\try\\gpt-project-sync-20261008",
+  "targetPath": "D:\\1Folder\\Blocky-AI\\try\\待清理\\GPT项目资料同步-2026-10-08",
+  "fileCount": 19,
+  "bytes": 6685402.0,
+  "allShaEqual": true,
+  "oldSourceAbsent": true,
+  "files": [
+    {
+      "relativePath": "cloud-readback.json",
+      "bytes": 1939,
+      "sha256": "2f315f06e35dc3cebc42b44fc29b544a3f5f860105cdb771b819cc03da735978"
+    },
+    {
+      "relativePath": "cloud-ui-result.json",
+      "bytes": 1753,
+      "sha256": "4bc5d566363092fdbd2d7a291922349ea379e4fa5770ab9afbadcb751ac59587"
+    },
+    {
+      "relativePath": "finalize_records.py",
+      "bytes": 8320,
+      "sha256": "739c878f6a0887ea8bc77239c2491cc32b8480de70359f68373c73088d8c9c56"
+    },
+    {
+      "relativePath": "local-refresh-check.json",
+      "bytes": 1916,
+      "sha256": "5d6e22a31fe22c17ddd4082c4f855c26aa5673a30fd20cf1ab8bb7a82858f2c1"
+    },
+    {
+      "relativePath": "new-upload-files.json",
+      "bytes": 3394,
+      "sha256": "90d00220dfeeeeaaff5eb4879224078cf467b4ebab51387f9b3ca6bf1268601b"
+    },
+    {
+      "relativePath": "old-cloud-files.json",
+      "bytes": 3486,
+      "sha256": "9d7eba7bcb0f6e5bd80516a5800919fd91717d1e7836a6d00164d95d675356ad"
+    },
+    {
+      "relativePath": "prepare_upload.py",
+      "bytes": 5696,
+      "sha256": "acd71596f1d76e390bafba754ebf44b02515e9f7e0635c8413d2a9eda17812eb"
+    },
+    {
+      "relativePath": "update_market.py",
+      "bytes": 5754,
+      "sha256": "3d0301b9dc72551d6448358ab68dd63a6a12b48a0e98b16c00a2858226c9e7f1"
+    },
+    {
+      "relativePath": "update_packet.py",
+      "bytes": 16546,
+      "sha256": "33f3b1cd5867f1dba468a8e6eda6deaa7479b6f830a9dd4fa28ef7169c76f335"
+    },
+    {
+      "relativePath": "verify_git_delivery.py",
+      "bytes": 3642,
+      "sha256": "2b4399e623a926c706ada2dd6b8607a16274a90116ae0795dc1711e1b9193f28"
+    },
+    {
+      "relativePath": "cloud-readback\\00-资料导航与使用说明.md",
+      "bytes": 3815,
+      "sha256": "5177bad2d1886cff353370daf05c89ff162d89a9399e65d192ab3cf5b74eba7d"
+    },
+    {
+      "relativePath": "cloud-readback\\01-最新版PPT逐页文字与备注.md",
+      "bytes": 64388,
+      "sha256": "0ff609caba5df38246fa5684b4b791626e506adccaa3fd43f8d6ddf86200ce9d"
+    },
+    {
+      "relativePath": "cloud-readback\\06-Blocky已完成功能与边界.md",
+      "bytes": 9757,
+      "sha256": "9c6727c221e5c332d04f5f65c2a8931f652cae02f9e79f5ba69a24fdabdc56cd"
+    },
+    {
+      "relativePath": "cloud-readback\\07-Blocky产品与架构设计.md",
+      "bytes": 7285,
+      "sha256": "cfd64b7c68571c06aef5348ea173a677df74c001d455d3ed34357f8cc4025c08"
+    },
+    {
+      "relativePath": "cloud-readback\\08-答辩重点与预留问题策略.md",
+      "bytes": 10007,
+      "sha256": "cede385a67a4e167459fa3c040724f5261f44859a79fac120c2538b86125de7d"
+    },
+    {
+      "relativePath": "cloud-readback\\10-Blocky市场与竞品现行口径.md",
+      "bytes": 65225,
+      "sha256": "06aa830ad8739180c25c210962d78c0ae90a23c70b09efe57fed21a5e49b3229"
+    },
+    {
+      "relativePath": "cloud-readback\\Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "bytes": 85536,
+      "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c"
+    },
+    {
+      "relativePath": "cloud-readback\\Blocky-Studio-积木AI创作-2026-10-08.pptx",
+      "bytes": 6312499,
+      "sha256": "4f3daf8e84876303023d4ac5a36b8e79601214592e7ce469f4eb6c70495d4e35"
+    },
+    {
+      "relativePath": "cloud-readback\\Blocky-Studio-商业计划书-2026-10-08.docx",
+      "bytes": 74444,
+      "sha256": "03c8210b4cf19541753d7c969da6c489dff113f511adeda635019c16998c6d0e"
+    }
+  ]
+}

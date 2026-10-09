@@ -1,0 +1,20 @@
+{
+  "scope": "主线整合开发检查，不替代既有独立产品验收",
+  "localPeriod": "2026-10-09 13:32 ~ 2026-10-09 13:35",
+  "typecheck": { "exitCode": 0 },
+  "unit": { "exitCode": 0, "passed": 587, "skipped": 6, "passedFiles": 129, "skippedFiles": 5 },
+  "contracts": { "exitCode": 0, "passed": 32, "passedFiles": 7 },
+  "components": { "exitCode": 0, "passed": 309, "passedFiles": 68, "durationSeconds": 76.28 },
+  "warnings": ["组件测试使用既有jsdom环境，HTMLCanvasElement.getContext未实现警告保留，未新增依赖绕过"],
+  "websiteSyntax": { "content.js": "passed", "translations.js": "passed" },
+  "publishedWebsite": {
+    "version": 19,
+    "filesChecked": 50,
+    "contentDifferencesAfterGitTextNormalization": 0,
+    "rawByteDifferences": ["content.js", "translations.js"],
+    "rawByteDifferenceReason": "仓库core.autocrlf=true；两份文案经Git文本规范化后与已发布来源一致"
+  },
+  "installerSha256": "ed8c805eb36fec6473a02e67bb6453acefdf9516b8dce57fda05dbce58b292e7",
+  "fullGate": "本轮不重复30分钟Full；精确来源与复用范围沿用既有独立验收，不声明新来源Full通过",
+  "ci": "推送前未执行；远端结果另行读回"
+}

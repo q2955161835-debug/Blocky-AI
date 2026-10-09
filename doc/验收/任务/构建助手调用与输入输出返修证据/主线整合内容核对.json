@@ -1,0 +1,19 @@
+{
+  "verifiedAt": "2026-10-09T05:33:39.420Z",
+  "acceptedTaskCommit": "875f8446e28660e137b78244f8bc853716f87852",
+  "previousRemoteMain": "98b06bd83d97fb0697fb71ff99692a204da1debc",
+  "protectedFileCount": 1033,
+  "protectedSourceDifferences": 0,
+  "remoteChangedPaths": 57,
+  "remotePathsPreservedExactly": 53,
+  "manuallyCombined": [
+    "AGENTS.md",
+    "doc/进展记录/2026-10-08.md",
+    "官网/dist/content.js",
+    "官网/dist/translations.js"
+  ],
+  "publishedBetaWebsiteFilesPreservedExactly": 4,
+  "bothProgressRecordsPreserved": true,
+  "projectPacketFilesPreserved": 11,
+  "scope": "Git integration content verification; does not replace independent product acceptance"
+}
