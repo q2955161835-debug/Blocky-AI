@@ -1,0 +1,150 @@
+{
+  "pptPages": 25,
+  "pdfPages": 25,
+  "coveredSourcePages": 51,
+  "speakerReferenceSeconds": 480,
+  "font": "Microsoft YaHei",
+  "slideSizeEmu": [
+    12192000,
+    6858000
+  ],
+  "privacyPatterns": {
+    "[CD]:[\\\\/]": false,
+    "AGENTS\\.md": false,
+    "SKILL\\.md": false,
+    "验收": false,
+    "子Agent": false,
+    "AI处理": false,
+    "AI生成": false,
+    "sk-[A-Za-z0-9]{16}": false,
+    "Bearer\\s+[A-Za-z0-9_-]{12}": false
+  },
+  "nativeTables": [
+    7,
+    19,
+    22,
+    23
+  ],
+  "fundingDisplayedSum": "900.000",
+  "marginArithmetic": [
+    {
+      "price": 99,
+      "quota": 2000,
+      "modelCost": "40.00",
+      "variableFee": "9.90",
+      "contribution": "49.10",
+      "rate": "49.60"
+    },
+    {
+      "price": 199,
+      "quota": 4500,
+      "modelCost": "90.00",
+      "variableFee": "19.90",
+      "contribution": "89.10",
+      "rate": "44.77"
+    },
+    {
+      "price": 999,
+      "quota": 25000,
+      "modelCost": "500.00",
+      "variableFee": "99.90",
+      "contribution": "399.10",
+      "rate": "39.95"
+    },
+    {
+      "price": 50,
+      "quota": 1000,
+      "modelCost": "20.00",
+      "variableFee": "5.00",
+      "contribution": "25.00",
+      "rate": "50.00"
+    }
+  ],
+  "unchangedBaselineFiles": [
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-08.docx",
+      "sha256": "03c8210b4cf19541753d7c969da6c489dff113f511adeda635019c16998c6d0e",
+      "bytes": 74444,
+      "baselineIdentical": true
+    },
+    {
+      "name": "Blocky-Studio-商业计划书-2026-10-08.pdf",
+      "sha256": "542512f7decda03f370c8970397f722b998b2126f3fafee679198c6c84424117",
+      "bytes": 450079,
+      "baselineIdentical": true
+    },
+    {
+      "name": "Blocky-Studio-财务测算-2026-10-03.xlsx",
+      "sha256": "e0178e057a2010ebf568f921c7f3141ed27aec6c3ee56e2de2ba9ca0e561759c",
+      "bytes": 85536,
+      "baselineIdentical": true
+    }
+  ],
+  "metadata": {
+    "docProps/core.xml": [
+      [
+        "creator",
+        "Blocky Studio"
+      ],
+      [
+        "lastModifiedBy",
+        "Blocky Studio"
+      ],
+      [
+        "title",
+        "Blocky Studio 25页答辩"
+      ],
+      [
+        "created",
+        "2026-10-09T16:57:25.2930000Z"
+      ],
+      [
+        "modified",
+        "2026-10-09T16:57:25.2930000Z"
+      ]
+    ],
+    "docProps/app.xml": [
+      [
+        "Application",
+        "Blocky Studio"
+      ],
+      [
+        "PresentationFormat",
+        "16:9"
+      ],
+      [
+        "Slides",
+        "25"
+      ],
+      [
+        "Notes",
+        "25"
+      ],
+      [
+        "HiddenSlides",
+        "0"
+      ],
+      [
+        "SharedDoc",
+        "false"
+      ],
+      [
+        "DocSecurity",
+        "0"
+      ]
+    ]
+  },
+  "outputs": [
+    {
+      "name": "Blocky-Studio-25页答辩-2026-10-10.pptx",
+      "bytes": 5082138,
+      "sha256": "caab36c86d4084b4e4824492ca9288e307660973fd9c0c5c296fd669e2ee2caa"
+    },
+    {
+      "name": "Blocky-Studio-25页答辩-2026-10-10.pdf",
+      "bytes": 1134807,
+      "sha256": "36f48963977365d5d0a0bdbe4c4caffa016831abe962eb1e52750e8b93153c15"
+    }
+  ],
+  "limits": "Author checks only; formal independent review is separate. Historical supplier and competitor snapshots were retained, not refreshed. No product/API or website changes."
+}
