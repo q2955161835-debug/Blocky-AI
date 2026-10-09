@@ -1,0 +1,24 @@
+{
+  "localTime": "2026-10-10 04:23",
+  "authorization": "用户明确要求合并推送本轮材料目录修正",
+  "mainBefore": "acce90e4113d35dfdb18c38f1410053156cecb10",
+  "sourceMaterialCommit": "ccf26e5d5ad7575336f99f38b9ebb08568e57792",
+  "sourceBranchPreserved": "codex/test-quiz-agent-workflow",
+  "sourceBranchHeadAtStart": "644fd892e341d7973d011be2bfe6ec46d9135402",
+  "integrationMethod": "独立临时索引整合本轮范围并快进main，避免整合产品分支其他提交",
+  "productionFilesUnchanged": true,
+  "rootMaterialCount": 5,
+  "oldArchiveFiles": 5,
+  "externalOriginalAbsent": true,
+  "externalFilesIncludedInGit": false,
+  "changedPaths": [
+    "AGENTS.md",
+    "doc/进展记录/2026-10-10.md",
+    "doc/验收/任务/25页答辩与费用证据/主目录同步回执.json",
+    "doc/验收/任务/25页答辩与费用证据/目录修正Git整合回执.json"
+  ],
+  "newProductCIClaimed": false,
+  "newWorktreeCreated": false,
+  "archiveRestoreLimitation": "原生工具返回已归档快照缺失，改用Git中完整材料及提交；不声称原生恢复成功",
+  "postPushReadback": "try/待清理/材料目录合并-2026-10-10/远端最终读回.json"
+}
