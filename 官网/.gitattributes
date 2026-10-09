@@ -1,2 +1,3 @@
-# Preserve the accepted multiline translation asset on Windows checkouts.
-dist/quiz-translations.js text eol=lf
+# Published assets and sealed build inputs are verified byte for byte.
+dist/** -text whitespace=-trailing-space
+build-inputs/quiz-v22/** -text
