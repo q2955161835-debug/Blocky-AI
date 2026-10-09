@@ -1,0 +1,22 @@
+.demo-settings-dialog{padding:0;width:min(1120px,calc(100vw - 32px));height:min(820px,calc(100dvh - 48px));max-width:none;max-height:none;border:1px solid var(--border);border-radius:16px;background:var(--panel);color:var(--text)}
+.demo-settings-dialog::backdrop{background:#0009}
+.demo-settings-dialog>.settings-shell{border:0;border-radius:inherit}
+.demo-settings-note{margin:0 0 24px;line-height:1.7;font-size:.92rem}
+.demo-chat-activity{margin:10px 8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.demo-chat-activity summary{cursor:pointer;color:var(--text)}
+.demo-chat-activity p{padding:4px 0}
+.demo-studio .brand .brand-mark{object-fit:contain;background:transparent}
+.demo-studio .project-title{display:flex;align-items:center;gap:8px;min-width:0}
+.demo-project-picker{width:min(190px,20vw);padding:5px 8px;overflow:hidden;text-overflow:ellipsis;background:transparent;border:0}
+.demo-studio .blueprint-dock-content .module-list{padding:12px 14px}
+.demo-studio .blueprint-dock-content .module-list button{width:100%;text-align:left}
+.demo-studio .chat-sidebar-header .sidebar-tabs{min-width:0}
+.demo-studio .chat-sidebar-header .sidebar-tabs button{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.demo-studio .builder-chat-thread{min-height:0;overscroll-behavior:contain}
+.demo-studio .chat-panel .chat-composer--resizable{margin:12px;max-width:calc(100% - 24px)}
+.demo-studio .chat-composer-toolbar .chat-model-control{min-width:0}
+.demo-studio .chat-model-control-name{max-width:160px}
+.demo-studio .chat-send{font-size:17px}
+.demo-studio .builder-chat-message .chat-markdown{font-size:1rem}
+@media(max-width:900px){.demo-studio .project-title{display:flex}.demo-project-picker{width:140px;max-width:140px}.demo-studio .blueprint-dock-content .module-list{max-height:none}.demo-studio .chat-model-control-name{max-width:none}}
+@media(max-width:600px){.demo-settings-dialog{width:calc(100vw - 16px);height:calc(100dvh - 24px)}.demo-settings-dialog .settings-row-controls .preference-options{right:0}.demo-studio .chat-sidebar-header{min-height:48px}}
