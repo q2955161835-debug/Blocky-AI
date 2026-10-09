@@ -1,0 +1,25 @@
+{
+  "localTime": "2026-10-09 18:40",
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "authorization": "2026-10-09 用户：合并并推送；承接本轮合并/推送/清理任务分支问题",
+  "beforeMain": "6676a8e2296fd6c6b7bb71ec27ce1236db642801",
+  "acceptedProduct": "ef5b3a214097781d1fc2d4dbe2d44f9d5fd50af4",
+  "acceptedDocumentation": "e318f41f13f2124c9992f337f2d5353367ccc655",
+  "integrationAnchor": "84dc4232d25f570638de5e5ef99c6381ea5b863b",
+  "integrationTree": "d9508399f98a15d787d9457208c8c1c2c751b87d",
+  "remoteMainReadback": "84dc4232d25f570638de5e5ef99c6381ea5b863b",
+  "mergeMethod": "fast-forward",
+  "acceptedProductTreeUnchanged": true,
+  "localTaskBranchDeleted": true,
+  "remoteTaskBranchAbsent": true,
+  "onlyWorktree": "D:/1Folder/Blocky-AI",
+  "otherUnmergedBranchesPreserved": [
+    "codex/chore-doc-archive-20260930",
+    "codex/docs-xirang-gpt-materials",
+    "codex/docs-xirang-product-screenshots"
+  ],
+  "packageUnchanged": "dist/Blocky-Studio-0.8.0-send-minimize",
+  "websiteUnchanged": "Sites version21 d4fc1150",
+  "newCIClaim": "none; accepted tests remain bound to ef5b3a2",
+  "followup": "Only status and this receipt are committed after this integration anchor; no product or deployed asset change"
+}
