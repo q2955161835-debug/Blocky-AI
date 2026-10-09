@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "blocky.builder-preset-stop/v1",
+  "startedAt": "2026-10-09T10:17:56.816Z",
+  "previewUrl": "http://127.0.0.1:4177/#/studio",
+  "browser": "Microsoft Edge (isolated profile)",
+  "publicWebsiteVisited": false,
+  "realModelConfiguredOrCalled": false,
+  "stopButtonVisible": true,
+  "returnedBeforeStop": "预设修改示例：已",
+  "stopMetrics": {
+    "ariaLabel": "停止演示",
+    "offsetX": 0,
+    "offsetY": 0,
+    "flexWrap": "nowrap"
+  },
+  "returnedAfterStop": "预设修改示例：已",
+  "returnedTextPreserved": true,
+  "status": "演示已停止",
+  "completed": true,
+  "endedAt": "2026-10-09T10:17:58.209Z"
+}

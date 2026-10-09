@@ -1,0 +1,253 @@
+{
+  "schemaVersion": "blocky.send-minimize.acceptance-ui/v1",
+  "startedAt": "2026-10-09T09:41:33.116Z",
+  "cases": [
+    {
+      "id": "UI01 assistant send SVG centered at default width",
+      "passed": true,
+      "startedAt": "2026-10-09T09:41:33.482Z",
+      "details": {
+        "agent": {
+          "assistant": "agent",
+          "ariaLabel": "运行",
+          "button": {
+            "x": 1320.446533203125,
+            "y": 779.0476684570312,
+            "width": 31.994049072265625,
+            "height": 31.994049072265625
+          },
+          "icon": {
+            "x": 1326.9444580078125,
+            "y": 785.545654296875,
+            "width": 18.998016357421875,
+            "height": 18.998016357421875
+          },
+          "offsetX": -0.000091552734375,
+          "offsetY": -0.000030517578125,
+          "toolbar": {
+            "x": 1051.6865234375,
+            "y": 777.0535888671875,
+            "width": 300.75396728515625,
+            "height": 35.9920654296875,
+            "display": "flex",
+            "flexWrap": "nowrap"
+          },
+          "toolbarChildren": [
+            {
+              "tag": "BUTTON",
+              "label": "Blocky Agent 添加上下文",
+              "x": 1051.6865234375,
+              "y": 779.0476684570312,
+              "width": 27.99603271484375,
+              "height": 31.994049072265625
+            },
+            {
+              "tag": "BUTTON",
+              "label": "Blocky Agent 模型与思考",
+              "x": 1137.9564208984375,
+              "y": 779.0476684570312,
+              "width": 178.4920654296875,
+              "height": 31.994049072265625
+            },
+            {
+              "tag": "BUTTON",
+              "label": "运行",
+              "x": 1320.446533203125,
+              "y": 779.0476684570312,
+              "width": 31.994049072265625,
+              "height": 31.994049072265625
+            }
+          ],
+          "maxChildCenterDeltaY": 0,
+          "horizontalOverflow": false
+        },
+        "builder": {
+          "assistant": "builder",
+          "ariaLabel": "发送",
+          "button": {
+            "x": 1320.446533203125,
+            "y": 779.0476684570312,
+            "width": 31.994049072265625,
+            "height": 31.994049072265625
+          },
+          "icon": {
+            "x": 1326.9444580078125,
+            "y": 785.545654296875,
+            "width": 18.998016357421875,
+            "height": 18.998016357421875
+          },
+          "offsetX": -0.000091552734375,
+          "offsetY": -0.000030517578125,
+          "toolbar": {
+            "x": 1051.6865234375,
+            "y": 777.0535888671875,
+            "width": 300.75396728515625,
+            "height": 35.9920654296875,
+            "display": "flex",
+            "flexWrap": "nowrap"
+          },
+          "toolbarChildren": [
+            {
+              "tag": "BUTTON",
+              "label": "构建助手添加上下文",
+              "x": 1051.6865234375,
+              "y": 779.0476684570312,
+              "width": 27.99603271484375,
+              "height": 31.994049072265625
+            },
+            {
+              "tag": "BUTTON",
+              "label": "构建助手模型与思考",
+              "x": 1137.9564208984375,
+              "y": 779.0476684570312,
+              "width": 178.4920654296875,
+              "height": 31.994049072265625
+            },
+            {
+              "tag": "BUTTON",
+              "label": "发送",
+              "x": 1320.446533203125,
+              "y": 779.0476684570312,
+              "width": 31.994049072265625,
+              "height": 31.994049072265625
+            }
+          ],
+          "maxChildCenterDeltaY": 0,
+          "horizontalOverflow": false
+        }
+      }
+    },
+    {
+      "id": "UI02 assistant send SVG centered and footer single-row at narrow pane",
+      "passed": true,
+      "startedAt": "2026-10-09T09:41:33.689Z",
+      "details": {
+        "rightPaneWidth": "240",
+        "rows": {
+          "agent": {
+            "assistant": "agent",
+            "ariaLabel": "运行",
+            "button": {
+              "x": 1320.446533203125,
+              "y": 779.0476684570312,
+              "width": 31.994049072265625,
+              "height": 31.994049072265625
+            },
+            "icon": {
+              "x": 1326.9444580078125,
+              "y": 785.545654296875,
+              "width": 18.998016357421875,
+              "height": 18.998016357421875
+            },
+            "offsetX": -0.000091552734375,
+            "offsetY": -0.000030517578125,
+            "toolbar": {
+              "x": 1151.6964111328125,
+              "y": 777.0535888671875,
+              "width": 200.74404907226562,
+              "height": 35.9920654296875,
+              "display": "flex",
+              "flexWrap": "nowrap"
+            },
+            "toolbarChildren": [
+              {
+                "tag": "BUTTON",
+                "label": "Blocky Agent 添加上下文",
+                "x": 1151.6964111328125,
+                "y": 779.0476684570312,
+                "width": 27.99603271484375,
+                "height": 31.994049072265625
+              },
+              {
+                "tag": "BUTTON",
+                "label": "Blocky Agent 模型与思考",
+                "x": 1183.6905517578125,
+                "y": 779.0476684570312,
+                "width": 132.7579345703125,
+                "height": 31.994049072265625
+              },
+              {
+                "tag": "BUTTON",
+                "label": "运行",
+                "x": 1320.446533203125,
+                "y": 779.0476684570312,
+                "width": 31.994049072265625,
+                "height": 31.994049072265625
+              }
+            ],
+            "maxChildCenterDeltaY": 0,
+            "horizontalOverflow": false
+          },
+          "builder": {
+            "assistant": "builder",
+            "ariaLabel": "发送",
+            "button": {
+              "x": 1320.446533203125,
+              "y": 779.0476684570312,
+              "width": 31.994049072265625,
+              "height": 31.994049072265625
+            },
+            "icon": {
+              "x": 1326.9444580078125,
+              "y": 785.545654296875,
+              "width": 18.998016357421875,
+              "height": 18.998016357421875
+            },
+            "offsetX": -0.000091552734375,
+            "offsetY": -0.000030517578125,
+            "toolbar": {
+              "x": 1151.6964111328125,
+              "y": 777.0535888671875,
+              "width": 200.74404907226562,
+              "height": 35.9920654296875,
+              "display": "flex",
+              "flexWrap": "nowrap"
+            },
+            "toolbarChildren": [
+              {
+                "tag": "BUTTON",
+                "label": "构建助手添加上下文",
+                "x": 1151.6964111328125,
+                "y": 779.0476684570312,
+                "width": 27.99603271484375,
+                "height": 31.994049072265625
+              },
+              {
+                "tag": "BUTTON",
+                "label": "构建助手模型与思考",
+                "x": 1183.6905517578125,
+                "y": 779.0476684570312,
+                "width": 132.7579345703125,
+                "height": 31.994049072265625
+              },
+              {
+                "tag": "BUTTON",
+                "label": "发送",
+                "x": 1320.446533203125,
+                "y": 779.0476684570312,
+                "width": 31.994049072265625,
+                "height": 31.994049072265625
+              }
+            ],
+            "maxChildCenterDeltaY": 0,
+            "horizontalOverflow": false
+          }
+        }
+      }
+    },
+    {
+      "id": "UI03 model choices and draft text remain editable",
+      "passed": false,
+      "startedAt": "2026-10-09T09:41:33.781Z",
+      "error": "构建助手 synthetic model missing; UI options=[]; native profile={\"schemaVersion\":\"blocky.resource-registry/v2\",\"revision\":2,\"providers\":[{\"providerId\":\"send-minimize-local-provider\",\"adapter\":\"openai-compatible\"}],\"resourceIds\":[\"send-minimize-local-model\"]}"
+    }
+  ],
+  "evidenceBoundary": {
+    "taskbarIconDirectlyObserved": false,
+    "trayIconDirectlyClicked": false,
+    "note": "The owned harness runs on a non-input desktop without Explorer's visible notification area. Native isVisible/isMinimized readback is recorded; no tray click is claimed."
+  },
+  "failure": "构建助手 synthetic model missing; UI options=[]; native profile={\"schemaVersion\":\"blocky.resource-registry/v2\",\"revision\":2,\"providers\":[{\"providerId\":\"send-minimize-local-provider\",\"adapter\":\"openai-compatible\"}],\"resourceIds\":[\"send-minimize-local-model\"]}",
+  "endedAt": "2026-10-09T09:41:49.065Z",
+  "complete": false
+}

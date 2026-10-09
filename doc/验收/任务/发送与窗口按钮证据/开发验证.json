@@ -1,0 +1,23 @@
+{
+  "productCommit": "ef5b3a214097781d1fc2d4dbe2d44f9d5fd50af4",
+  "scope": "Root开发检查，不替代独立验收",
+  "typecheckPassed": true,
+  "componentTests": {
+    "files": 6,
+    "tests": 80,
+    "command": "pnpm exec vitest run tests/component/window-controls.test.tsx tests/component/exit-lifecycle.test.tsx tests/component/chat-model-control.test.tsx tests/component/blueprint-chat-layout.test.tsx tests/component/builder-chat.test.tsx tests/component/settings-panel.test.tsx packages/settings-core/tests/settings.test.ts",
+    "note": "settings-panel.test.tsx不存在，实际6个匹配文件80项全部通过；未将不存在文件计为通过"
+  },
+  "websiteTypecheckPassed": true,
+  "ordinaryBuildExit": 0,
+  "nativeTestBuildExit": 0,
+  "nativeTestBuildPurpose": "仅补发行扫描的真实WDIO阳性对照，不作为普通包或Full通过",
+  "releaseScanPassed": true,
+  "positiveControl": true,
+  "ordinaryPackage": "dist/Blocky-Studio-0.8.0-send-minimize",
+  "ordinaryFiles": 2595,
+  "ordinaryBytes": 772354804,
+  "helperDelta": "三helper仅设置标题/描述变更，正文逐字绑定",
+  "runtimeFull": "未重复，不另声明新Full/Runtime验收通过",
+  "localTime": "2026-10-09 17:46"
+}

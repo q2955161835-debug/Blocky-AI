@@ -1,0 +1,26 @@
+{
+  "scope": "Root development reproduction, existing beta.1 package",
+  "url": "http://tauri.localhost/",
+  "errors": [],
+  "button": {
+    "display": "block",
+    "button": {
+      "x": 1320.446533203125,
+      "y": 779.0476684570312,
+      "width": 31.994049072265625,
+      "height": 31.994049072265625
+    },
+    "icon": {
+      "x": 1320.446533203125,
+      "y": 785.545654296875,
+      "width": 18.998016357421875,
+      "height": 18.998016357421875
+    },
+    "offsetX": -6.498016357421875,
+    "offsetY": -0.000030517578125
+  },
+  "afterMinimize": {
+    "visible": false,
+    "minimized": true
+  }
+}

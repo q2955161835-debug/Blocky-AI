@@ -1,0 +1,275 @@
+{
+  "schemaVersion": "blocky.send-minimize.website-preview/v1",
+  "startedAt": "2026-10-09T09:58:08.951Z",
+  "previewUrl": "http://127.0.0.1:4177/#/studio",
+  "browser": "Microsoft Edge (isolated profile)",
+  "publicWebsiteVisited": false,
+  "fullGuidedDemoRun": false,
+  "checks": [
+    {
+      "id": "WEB01 both assistants send SVG centered at desktop width",
+      "passed": true
+    },
+    {
+      "id": "WEB02 preset Agent Stop SVG is centered and preserves returned text",
+      "passed": true
+    },
+    {
+      "id": "WEB03 light 390px footer remains one line",
+      "passed": true
+    },
+    {
+      "id": "WEB03 dark 390px footer remains one line",
+      "passed": true
+    }
+  ],
+  "frameUrl": "http://127.0.0.1:4177/studio/index.html",
+  "desktop": {
+    "agent": {
+      "ariaLabel": "发送消息",
+      "offsetX": 0,
+      "offsetY": 0,
+      "toolbarWidth": 296,
+      "flexWrap": "nowrap",
+      "maxChildCenterDeltaY": 0,
+      "horizontalOverflow": false,
+      "children": [
+        {
+          "label": "添加上下文",
+          "x": 952,
+          "y": 809,
+          "width": 28,
+          "height": 32
+        },
+        {
+          "label": "Agent 模型与思考",
+          "x": 1070.984375,
+          "y": 809,
+          "width": 141.015625,
+          "height": 32
+        },
+        {
+          "label": "发送消息",
+          "x": 1216,
+          "y": 809,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    "builder": {
+      "ariaLabel": "发送消息",
+      "offsetX": 0,
+      "offsetY": 0,
+      "toolbarWidth": 296,
+      "flexWrap": "nowrap",
+      "maxChildCenterDeltaY": 0,
+      "horizontalOverflow": false,
+      "children": [
+        {
+          "label": "添加上下文",
+          "x": 952,
+          "y": 809,
+          "width": 28,
+          "height": 32
+        },
+        {
+          "label": "构建助手模型与思考",
+          "x": 1070.984375,
+          "y": 809,
+          "width": 141.015625,
+          "height": 32
+        },
+        {
+          "label": "发送消息",
+          "x": 1216,
+          "y": 809,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    }
+  },
+  "streams": {
+    "agent": {
+      "mode": "agent",
+      "returnedText": "预设回答示例：水",
+      "returnedTextRetained": true,
+      "stopMetrics": {
+        "ariaLabel": "停止演示",
+        "offsetX": 0,
+        "offsetY": 0,
+        "toolbarWidth": 296,
+        "flexWrap": "nowrap",
+        "maxChildCenterDeltaY": 0,
+        "horizontalOverflow": false,
+        "children": [
+          {
+            "label": "添加上下文",
+            "x": 952,
+            "y": 809,
+            "width": 28,
+            "height": 32
+          },
+          {
+            "label": "Agent 模型与思考",
+            "x": 1070.984375,
+            "y": 809,
+            "width": 141.015625,
+            "height": 32
+          },
+          {
+            "label": "停止演示",
+            "x": 1216,
+            "y": 809,
+            "width": 32,
+            "height": 32
+          }
+        ]
+      },
+      "status": "演示已停止"
+    }
+  },
+  "light390": {
+    "theme": "light",
+    "width": 390,
+    "metrics": {
+      "agent": {
+        "ariaLabel": "发送消息",
+        "offsetX": 0,
+        "offsetY": 0,
+        "toolbarWidth": 326,
+        "flexWrap": "nowrap",
+        "maxChildCenterDeltaY": 0,
+        "horizontalOverflow": false,
+        "children": [
+          {
+            "label": "添加上下文",
+            "x": 32,
+            "y": 753,
+            "width": 28,
+            "height": 32
+          },
+          {
+            "label": "Agent 模型与思考",
+            "x": 180.984375,
+            "y": 753,
+            "width": 141.015625,
+            "height": 32
+          },
+          {
+            "label": "发送消息",
+            "x": 326,
+            "y": 753,
+            "width": 32,
+            "height": 32
+          }
+        ]
+      },
+      "builder": {
+        "ariaLabel": "发送消息",
+        "offsetX": 0,
+        "offsetY": 0,
+        "toolbarWidth": 326,
+        "flexWrap": "nowrap",
+        "maxChildCenterDeltaY": 0,
+        "horizontalOverflow": false,
+        "children": [
+          {
+            "label": "添加上下文",
+            "x": 32,
+            "y": 753,
+            "width": 28,
+            "height": 32
+          },
+          {
+            "label": "构建助手模型与思考",
+            "x": 180.984375,
+            "y": 753,
+            "width": 141.015625,
+            "height": 32
+          },
+          {
+            "label": "发送消息",
+            "x": 326,
+            "y": 753,
+            "width": 32,
+            "height": 32
+          }
+        ]
+      }
+    }
+  },
+  "dark390": {
+    "theme": "dark",
+    "width": 390,
+    "metrics": {
+      "agent": {
+        "ariaLabel": "发送消息",
+        "offsetX": 0,
+        "offsetY": 0,
+        "toolbarWidth": 326,
+        "flexWrap": "nowrap",
+        "maxChildCenterDeltaY": 0,
+        "horizontalOverflow": false,
+        "children": [
+          {
+            "label": "添加上下文",
+            "x": 32,
+            "y": 753,
+            "width": 28,
+            "height": 32
+          },
+          {
+            "label": "Agent 模型与思考",
+            "x": 180.984375,
+            "y": 753,
+            "width": 141.015625,
+            "height": 32
+          },
+          {
+            "label": "发送消息",
+            "x": 326,
+            "y": 753,
+            "width": 32,
+            "height": 32
+          }
+        ]
+      },
+      "builder": {
+        "ariaLabel": "发送消息",
+        "offsetX": 0,
+        "offsetY": 0,
+        "toolbarWidth": 326,
+        "flexWrap": "nowrap",
+        "maxChildCenterDeltaY": 0,
+        "horizontalOverflow": false,
+        "children": [
+          {
+            "label": "添加上下文",
+            "x": 32,
+            "y": 753,
+            "width": 28,
+            "height": 32
+          },
+          {
+            "label": "构建助手模型与思考",
+            "x": 180.984375,
+            "y": 753,
+            "width": 141.015625,
+            "height": 32
+          },
+          {
+            "label": "发送消息",
+            "x": 326,
+            "y": 753,
+            "width": 32,
+            "height": 32
+          }
+        ]
+      }
+    }
+  },
+  "completed": true,
+  "endedAt": "2026-10-09T09:58:10.849Z"
+}

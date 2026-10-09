@@ -1,0 +1,33 @@
+{
+  "localTime": "2026-10-09 18:25",
+  "method": "Same-volume verified Move-Item, no deletion",
+  "previewProcess42736Stopped": true,
+  "moves": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\native-e2e-target",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\发送与最小化-2026-10-09\\native-e2e-target",
+      "files": 9568,
+      "bytes": 4390350738.0,
+      "countsMatch": true
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\官网工作演示\\experience-build.json",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\发送与最小化-2026-10-09\\experience-build.json",
+      "files": 1,
+      "bytes": 526096,
+      "sha256": "CA0A77E5BF11303B2E241BE00478E2E276289153E1775908DEA1D06293654440"
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\send-minimize-2026-10-09",
+      "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\发送与最小化-2026-10-09\\send-minimize-2026-10-09",
+      "files": 4608,
+      "bytes": 322324897.0,
+      "countsMatch": true
+    }
+  ],
+  "totalBytes": 4713201731,
+  "independentSeparateArchive": "try/待清理/发送最小化验收-2026-10-09",
+  "independentSeparateBytes": 29952090,
+  "releasedDiskSpace": 0,
+  "recovery": "Verify no active owner then move each destination back to exact source; preserve source/report bindings"
+}

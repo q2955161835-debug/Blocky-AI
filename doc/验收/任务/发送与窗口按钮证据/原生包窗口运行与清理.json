@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "blocky.send-minimize.window-run/v1",
+  "application": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize\\Blocky Studio.exe",
+  "profileDirectory": "D:\\1Folder\\Blocky-AI\\try\\send-minimize-2026-10-09\\acceptance\\runs\\package-window-20261009-r6\\profile",
+  "cdpPortClosed": true,
+  "focusViolation": false,
+  "ownedProcessHandlesClosed": true,
+  "controllerExitCode": 0,
+  "evidence": {
+    "schemaVersion": "blocky.send-minimize.window-acceptance/v1",
+    "startedAt": "2026-10-09T10:05:56.748Z",
+    "cases": [
+      {
+        "id": "NATIVE01 creating a second work window keeps both native identities registered",
+        "passed": true,
+        "startedAt": "2026-10-09T10:05:57.093Z",
+        "details": {
+          "beforeCount": 1,
+          "afterCount": 2,
+          "windows": [
+            {
+              "id": "3345214",
+              "title": "Blocky Studio",
+              "current": false
+            },
+            {
+              "id": "1052440",
+              "title": "未命名项目 — Blocky Studio",
+              "current": true
+            }
+          ],
+          "originalIdentityRetained": true,
+          "secondWindowCreatedThroughAppCommand": true
+        }
+      },
+      {
+        "id": "NATIVE02 clicking minimize leaves the actual window visible and minimized",
+        "passed": true,
+        "startedAt": "2026-10-09T10:05:57.324Z",
+        "details": {
+          "before": {
+            "visible": true,
+            "minimized": false
+          },
+          "afterMinimize": {
+            "visible": true,
+            "minimized": true
+          }
+        }
+      },
+      {
+        "id": "NATIVE03 owned system restore returns the minimized window to its workbench",
+        "passed": true,
+        "startedAt": "2026-10-09T10:05:58.509Z",
+        "details": {
+          "restore": {
+            "hwnd": 1052440,
+            "beforeVisible": true,
+            "beforeMinimized": true,
+            "afterVisible": true,
+            "afterMinimized": false,
+            "method": "Win32 SW_RESTORE, no ACL bypass or Tauri mock"
+          },
+          "afterRestore": {
+            "visible": true,
+            "minimized": false
+          },
+          "method": "Win32 SW_RESTORE on exact owned PID/HWND; not a tray click"
+        }
+      },
+      {
+        "id": "NATIVE04 tray preference off preserves cancellable unsaved close prompt",
+        "passed": true,
+        "startedAt": "2026-10-09T10:05:58.510Z",
+        "details": {
+          "canvasTitleBefore": "主画布",
+          "canvasTitleAfterCancel": "send-minimize-unsaved-canvas",
+          "undoAvailableBefore": true,
+          "undoAvailableAfter": true,
+          "closePreference": false,
+          "prompt": "关闭 Blocky Studio\n\n当前项目有未保存的修改。停止并退出将放弃这些修改。\n\n返回工作台\n隐藏并继续\n停止并退出"
+        }
+      },
+      {
+        "id": "NATIVE05 tray preference on hides the work window and owned system restore returns it",
+        "passed": true,
+        "startedAt": "2026-10-09T10:05:58.768Z",
+        "details": {
+          "before": {
+            "visible": true,
+            "minimized": false
+          },
+          "afterClose": {
+            "visible": false,
+            "minimized": false
+          },
+          "afterRestore": {
+            "visible": true,
+            "minimized": false
+          },
+          "restoreHelper": {
+            "hwnd": 1052440,
+            "beforeVisible": false,
+            "beforeMinimized": false,
+            "afterVisible": true,
+            "afterMinimized": false,
+            "method": "Win32 SW_RESTORE, no ACL bypass or Tauri mock"
+          },
+          "canvasTitleRetained": "send-minimize-unsaved-canvas",
+          "composerDraftRetained": "隐藏与恢复后应继续保留的构建草稿",
+          "windowCountBefore": 2,
+          "windowCountAfter": 2,
+          "windowIdentitiesRetained": true,
+          "restoreMechanism": "Win32 SW_RESTORE on exact owned PID/HWND; tray icon click not directly tested"
+        }
+      }
+    ],
+    "evidenceBoundary": {
+      "taskbarIconDirectlyObserved": false,
+      "trayIconDirectlyClicked": false,
+      "note": "The owned harness uses a non-input desktop without Explorer's visible notification area; only native visibility/minimized state and app-owned window registration are claimed."
+    },
+    "pageErrors": [],
+    "completed": true,
+    "endedAt": "2026-10-09T10:05:59.625Z"
+  }
+}

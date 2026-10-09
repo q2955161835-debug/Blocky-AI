@@ -1,0 +1,23 @@
+[
+  {
+    "previous": "builder/builder.mjs",
+    "current": "try/stage5/builder-runtime/builder.mjs",
+    "previousBytes": 682205,
+    "currentBytes": 682229,
+    "onlySettingsCopy": true
+  },
+  {
+    "previous": "cli/main.mjs",
+    "current": "tools/blocky-cli/dist/main.mjs",
+    "previousBytes": 2500240,
+    "currentBytes": 2500264,
+    "onlySettingsCopy": true
+  },
+  {
+    "previous": "cli/runtime-worker.mjs",
+    "current": "tools/blocky-cli/dist/runtime-worker.mjs",
+    "previousBytes": 2503066,
+    "currentBytes": 2503090,
+    "onlySettingsCopy": true
+  }
+]

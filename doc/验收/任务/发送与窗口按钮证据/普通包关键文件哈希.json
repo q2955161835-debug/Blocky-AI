@@ -1,0 +1,27 @@
+{
+  "observedAtUtc": "2026-10-09T10:06:02Z",
+  "files": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\release-native-target\\release\\blocky-studio.exe",
+      "bytes": 52235264,
+      "sha256": "1F6A310992F95F6BF06B9811AC86EB6A947E5408741CD4302D3D7924240A9163"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize\\Blocky Studio.exe",
+      "bytes": 52235264,
+      "sha256": "1F6A310992F95F6BF06B9811AC86EB6A947E5408741CD4302D3D7924240A9163"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\tools\\blocky-cli\\dist\\bin\\blocky-project-io.exe",
+      "bytes": 38566912,
+      "sha256": "7EF7896A926298DE11646B3D90813AFCFB1EF328C7CA24F3A7448BBB6891D4FC"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize\\cli\\bin\\blocky-project-io.exe",
+      "bytes": 38566912,
+      "sha256": "7EF7896A926298DE11646B3D90813AFCFB1EF328C7CA24F3A7448BBB6891D4FC"
+    }
+  ],
+  "productCommit": "ef5b3a214097781d1fc2d4dbe2d44f9d5fd50af4",
+  "schemaVersion": "blocky.send-minimize.package-hashes/v1"
+}

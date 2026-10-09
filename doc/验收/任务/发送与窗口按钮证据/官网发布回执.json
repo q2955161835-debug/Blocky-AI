@@ -1,0 +1,49 @@
+{
+  "productCommit": "ef5b3a214097781d1fc2d4dbe2d44f9d5fd50af4",
+  "savedVersion": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_5db0151af604819190ca89a077d8e225",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "version_number": 21,
+    "source": {
+      "commit_sha": "d4fc1150ad117922fddd1a43c9206d87a32ff8f0"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000002ba481f5bc7a8b9c9e83dac8",
+      "content_hash": "sha256:f976bf187fcef8defcda9803d92a80007634d2eedb352f5d115a52ad0441cdaa",
+      "size_bytes": 5724160,
+      "file_count": 52
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "source": {
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "checkout_path": "D:\\1Folder\\Blocky-AI\\try\\send-minimize-2026-10-09\\site-source",
+    "commit_sha": "d4fc1150ad117922fddd1a43c9206d87a32ff8f0",
+    "archive": "D:\\1Folder\\Blocky-AI\\try\\send-minimize-2026-10-09\\site-update.tar.gz"
+  },
+  "deployment": {
+    "id": "appgdep_6ac8bb2b48f881919b2fe961546cdb0a",
+    "project_id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "title": "Blocky — 让想法，一块块成真",
+    "version_id": "appgprj_6ac2611c78048191af586892e782d68f~appgver_5db0151af604819190ca89a077d8e225",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ac2611c78048191af586892e782d68f",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-09T10:00:23.835621+00:00"
+  },
+  "site": {
+    "id": "appgprj_6ac2611c78048191af586892e782d68f",
+    "status": "active",
+    "access": "public",
+    "version": 21,
+    "url": "https://blocky.donk55666.chatgpt.site"
+  },
+  "scope": "只采用独立本地官网按钮复验及同源51文件SHA绑定；不外推桌面窗口剩余验收，不导航公网浏览器收尾"
+}

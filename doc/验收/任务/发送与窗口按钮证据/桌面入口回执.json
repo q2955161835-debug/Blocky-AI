@@ -1,0 +1,18 @@
+{
+  "localTime": "2026-10-09 18:18",
+  "path": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "purpose": "只更新本地修复预览入口；既有窗口未关闭，安装包下载未更新",
+  "before": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1-final\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-beta.1-final",
+    "description": "Blocky Studio 0.8.0-beta.1 测试版",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-exit-recovery\\Blocky Studio.exe,0"
+  },
+  "after": {
+    "target": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize\\Blocky Studio.exe",
+    "workingDirectory": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize",
+    "description": "Blocky Studio 本地修复预览：发送与窗口按钮",
+    "icon": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-send-minimize\\Blocky Studio.exe,0"
+  },
+  "recovery": "使用before中的目标/工作目录/描述/图标写回同一lnk；旧beta.1普通包保留"
+}
