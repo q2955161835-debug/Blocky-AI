@@ -1,0 +1,83 @@
+{
+  "time": "2026-10-10 04:57",
+  "operation": "同盘可逆移动并逐SHA核对，未删除或释放空间",
+  "source": "D:\\1Folder\\Blocky-AI\\try\\官网出题Git整合-2026-10-10",
+  "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网出题Git整合-2026-10-10",
+  "files": [
+    {
+      "relative": "独立整合复核.json",
+      "bytes": 21020,
+      "sha256": "0c8148a925e56a773f1e76170035eb02f9f70099f3f145e033988930b58fc85c"
+    },
+    {
+      "relative": "公开资产定向复验.json",
+      "bytes": 15382,
+      "sha256": "e2d3d6f3a6a1edf37cbc8107acef92c8426c494b9f107998a4ae3a6e29041685"
+    },
+    {
+      "relative": "freeze-inputs.cjs",
+      "bytes": 965,
+      "sha256": "489b431f79e06c8ac7eb17bc6b4e145f14fcf938c3b693e356761d757c331974"
+    },
+    {
+      "relative": "head-blobs.mjs",
+      "bytes": 2423,
+      "sha256": "ffcec741fafd68d0f72fc0e4b7db3542167e25ea77360f45aaa978a559cf73f2"
+    },
+    {
+      "relative": "independent-review.mjs",
+      "bytes": 4590,
+      "sha256": "9861c46a13c4c09e29f734a53b845d70de83df31f7bc9fe7768be96be7891989"
+    },
+    {
+      "relative": "restore-accepted-bytes.cjs",
+      "bytes": 454,
+      "sha256": "5626babc6718a3c3cda548ae5db3da0fe695fdc2dcb92fa49941bc0cd3fb71cf"
+    },
+    {
+      "relative": "verify-git-bytes.cjs",
+      "bytes": 1034,
+      "sha256": "aee1ab1012136fce4cfe8c336690d5ff211530edb97ed8a362ed24f0c5f3abd4"
+    },
+    {
+      "relative": "negative-copy\\build-inputs.mjs",
+      "bytes": 1434,
+      "sha256": "3cc5d37b20cadf2daaccb5737d836f178c4bd978aed5f1796e5877fc0f0ec400"
+    },
+    {
+      "relative": "negative-copy\\build-inputs\\quiz-v22\\agent-primitives.json.txt",
+      "bytes": 8027,
+      "sha256": "0ae3a721d00ec221fce0a1fd9ca12dd2934e6ac79781364170e3786b04cb3389"
+    },
+    {
+      "relative": "negative-copy\\build-inputs\\quiz-v22\\blocks.ts.txt",
+      "bytes": 7080,
+      "sha256": "0f09ad5f825fec7891765302a29db6545782372525da8b55a5c95d64d70a98d2"
+    },
+    {
+      "relative": "negative-copy\\build-inputs\\quiz-v22\\canvas.css.txt",
+      "bytes": 3742,
+      "sha256": "3dc08ead31b6136e562d0a965200dbd638c477d9c5653ea6e9ed13db19e38adc"
+    },
+    {
+      "relative": "negative-copy\\build-inputs\\quiz-v22\\Canvas.tsx.txt",
+      "bytes": 14820,
+      "sha256": "ac2cb52261c875fb8e9fd2f5ba66fc59dd73feb3831dc4f830870bcc45b6081e"
+    },
+    {
+      "relative": "negative-copy\\build-inputs\\quiz-v22\\manifest.json",
+      "bytes": 876,
+      "sha256": "65aa5d460283b94870e60d204e2300f7509efc178cfd80e08f58ffd2188bd899"
+    }
+  ],
+  "count": 14,
+  "totalBytes": 612502,
+  "metadata": {
+    "source": "D:\\1Folder\\Blocky-AI\\try\\官网工作演示\\experience-build.json",
+    "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网出题Git整合-2026-10-10\\experience-build.json",
+    "bytes": 530655,
+    "sha256": "545bc70e32de9e482859322d12b7f9a3d40c50b15b55017609b791eb43437c1c"
+  },
+  "outsideWorkspaceStorage": "无新增",
+  "verified": true
+}

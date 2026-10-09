@@ -1,0 +1,49 @@
+{
+  "localRange": "2026-10-10 04:47 ~ 2026-10-10 04:57",
+  "authorization": "用户批注：本轮官网代码是否合并main并推送GitHub；是",
+  "repository": "https://github.com/I-dont-know-codex-is-right/Blocky-AI",
+  "visibility": "private",
+  "baseline": "cb613e22a1aad3b242e378d99956d308c445952e",
+  "originalTaskHead": "79c22df",
+  "checkpoint": "3856d29dbc794d931a5c52ff6a6c302c71e5f521",
+  "integratedFeature": "8d808eebe063dbb9f45206c8bb350ef57ef2e68c",
+  "artifactAnchor": "c28660b608774970fd9986ab1cf816b3c3589a4a",
+  "tree": "4f43b39d0a71819ab57ea6b392b5bc2831dff1a9",
+  "remoteMain": "c28660b608774970fd9986ab1cf816b3c3589a4a",
+  "GitHubApiReadback": {
+    "sha": "c28660b608774970fd9986ab1cf816b3c3589a4a",
+    "tree": "4f43b39d0a71819ab57ea6b392b5bc2831dff1a9"
+  },
+  "scope": "官网、封存构建输入与本轮记录；apps/packages及根依赖锁定类型配置零差异",
+  "independentEvidence": "独立Git字节复验.json",
+  "publicAssets": 52,
+  "sealedInputs": 4,
+  "exactBytesVerified": true,
+  "websites": {
+    "version": 22,
+    "source": "9e3781d5d9f4442beef3ce98bed10e6d0090585c",
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "redeployed": false
+  },
+  "branchCleanup": {
+    "integrationBranch": "codex/integrate-quiz-website",
+    "localDeleted": true,
+    "remoteAbsent": true,
+    "originalTask": "codex/test-quiz-agent-workflow",
+    "retainedReason": "桌面出题返修未验收通过；不在此次官网整合授权范围",
+    "newWorktrees": 0
+  },
+  "errors": [
+    "Windows检出换行变化；首修f26ecb1字节未通过，c28660b恢复52公开资源及4输入原始Git字节后独立复验通过，保留历史失败",
+    "一次只读HEAD树参数未加引号，已用带引号引用读回完整树；推送不受影响"
+  ],
+  "ci": "本轮仅官网与记录，使用[skip ci]，不声明新的桌面CI通过",
+  "cleanup": {
+    "path": "D:\\1Folder\\Blocky-AI\\try\\待清理\\官网出题Git整合-2026-10-10",
+    "files": 14,
+    "bytes": 612502,
+    "deleted": false,
+    "receipt": "Git产物整理回执.json"
+  },
+  "closing": "后续只提交记录，并返回原桌面任务分支；本回执绑定已观察的artifactAnchor，避免自引用提交哈希"
+}
