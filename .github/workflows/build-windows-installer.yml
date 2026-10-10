@@ -71,7 +71,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build the ordinary Windows release
-        run: pnpm build:release
+        run: |
+          New-Item -ItemType Directory -Path try -Force | Out-Null
+          pnpm build:release
 
       - name: Verify types and the changed desktop features
         run: |
