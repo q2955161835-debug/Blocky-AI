@@ -14,7 +14,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SOURCE_COMMIT: 3e23c02163279121fccac59012f854eea7d19635
+  SOURCE_COMMIT: f85560c125762249cb1b1ffe2342b1ef91fe9509
+  # The packaging/scan follow-up changes no native compilation inputs.
+  NATIVE_CACHE_SOURCE: 3e23c02163279121fccac59012f854eea7d19635
   RELEASE_VERSION: 0.8.0-beta.2
 
 jobs:
@@ -74,7 +76,7 @@ jobs:
         id: native-cache
         uses: actions/cache/restore@v4
         with:
-          key: windows-installer-native-v1-${{ env.SOURCE_COMMIT }}
+          key: windows-installer-native-v1-${{ env.NATIVE_CACHE_SOURCE }}
           path: |
             try/release-native-target/release/deps
             try/release-native-target/release/build
@@ -103,7 +105,7 @@ jobs:
         if: steps.native-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          key: windows-installer-native-v1-${{ env.SOURCE_COMMIT }}
+          key: windows-installer-native-v1-${{ env.NATIVE_CACHE_SOURCE }}
           path: |
             try/release-native-target/release/deps
             try/release-native-target/release/build
