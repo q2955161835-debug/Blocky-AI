@@ -9,6 +9,7 @@ import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 import { audioLock, audioRuntimeSource, verifyAudioRuntime } from "./prepare-audio-runtime.mjs";
 import { checkSystemRuntime } from "./prepare-native-runtime.mjs";
 import { verifyPiCore } from "./check-pi-core.mjs";
+import { scanLocalBuildPaths } from "./release-path-scan.mjs";
 await verifyPiCore();
 const root = process.cwd();
 const files = [
@@ -128,7 +129,8 @@ for (const path of files) {
   const bytes = await readFile(path),
     text = bytes.toString("utf8");
   const failures = [];
-  if (privatePrefixes.some((p) => includes(bytes, p)))
+  const pathScan = scanLocalBuildPaths(bytes, privatePrefixes, path);
+  if (pathScan.localBuildPath)
     failures.push("local-build-path");
   // Tokenizer vocabulary and the upstream Playwright driver legitimately contain
   // webdriver. Vendor files are pinned above; our worker retains all marker checks.
@@ -150,6 +152,7 @@ for (const path of files) {
     path,
     bytes: bytes.length,
     sha256: createHash("sha256").update(bytes).digest("hex"),
+    ...(pathScan.upstreamBuildPaths.length ? { upstreamBuildPaths: pathScan.upstreamBuildPaths } : {}),
     failures,
   });
 }

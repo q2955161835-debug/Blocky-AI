@@ -31,7 +31,7 @@
     "evaluate:knowledge:capability": "tsx scripts/evaluate-knowledge.ts --capability",
     "build:document": "node scripts/build-document-parser.mjs",
     "prepare:knowledge": "node scripts/prepare-knowledge-model.mjs && node scripts/prepare-extra-knowledge-models.mjs",
-    "test:deployment": "node --test tests/document-parser/*.test.mjs tests/audio/*.test.mjs scripts/knowledge-deployment.test.mjs scripts/knowledge-assets.test.mjs",
+    "test:deployment": "node --test tests/document-parser/*.test.mjs tests/audio/*.test.mjs scripts/knowledge-deployment.test.mjs scripts/knowledge-assets.test.mjs scripts/release-path-scan.test.mjs",
     "prepare:audio": "node scripts/prepare-audio-runtime.mjs"
   },
   "devDependencies": {
