@@ -16,6 +16,13 @@ if (!nativePath) {
 }
 
 const nativeSkip = !nativePath && process.platform !== "win32";
+test("recognizes the same pinned upstream paths in the packaged Canvas layout", { skip: nativeSkip }, async () => {
+  const bytes = await readFile(nativePath);
+  const result = scanLocalBuildPaths(bytes, prefixes, "document-parser/node_modules/@napi-rs/canvas-win32-x64-msvc/skia.win32-x64-msvc.node");
+  assert.equal(result.localBuildPath, false);
+  assert.equal(result.upstreamBuildPaths.length, 1);
+});
+
 test("recognizes upstream runner paths in the exact pinned Windows Canvas binary", { skip: nativeSkip }, async () => {
   const bytes = await readFile(nativePath);
   const result = scanLocalBuildPaths(bytes, prefixes, canvasPath);

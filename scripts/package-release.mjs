@@ -13,6 +13,7 @@ import { extraKnowledgeModels } from "./prepare-extra-knowledge-models.mjs";
 import { loadDocumentLicenses } from "./document-runtime-licenses.mjs";
 import { registry } from "./prepare-knowledge-model.mjs";
 import { audioLock, audioRuntimeSource, verifyAudioRuntime } from "./prepare-audio-runtime.mjs";
+import { scanLocalBuildPaths } from "./release-path-scan.mjs";
 const version = JSON.parse(await readFile("package.json", "utf8")).version;
 const root = process.cwd(),
   base = resolve("dist"),
@@ -110,19 +111,13 @@ async function walk(folder) {
     if (entry.isDirectory()) await walk(path);
     else {
       const bytes = await readFile(path);
-      for (const prefix of [
-        root,
-        root.replaceAll("\\", "/"),
-        process.env.USERPROFILE,
-      ])
-        if (
-          prefix &&
-          (bytes.includes(Buffer.from(prefix)) ||
-            bytes.includes(Buffer.from(prefix, "utf16le")))
-        )
-          throw Error("Local path in release content");
+      const packagePath = relative(out, path).replaceAll("\\", "/");
+      const prefixes = [root, process.env.USERPROFILE].filter(Boolean)
+        .flatMap(prefix => [prefix, prefix.replaceAll("\\", "/")]);
+      if (scanLocalBuildPaths(bytes, prefixes, packagePath).localBuildPath)
+        throw Error(`Local path in release content: ${packagePath}`);
       files.push({
-        path: relative(out, path).replaceAll("\\", "/"),
+        path: packagePath,
         bytes: bytes.length,
         sha256: createHash("sha256").update(bytes).digest("hex"),
       });
