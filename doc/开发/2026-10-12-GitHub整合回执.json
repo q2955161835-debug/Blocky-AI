@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "blocky.github-main-integration/v1",
+  "verifiedAt": "2026-10-11T17:39:51.2406793+00:00",
+  "integrationCommit": "9b9c4d5d45e584f8b548f2b50543c18cdb4cb680",
+  "tree": "90125b55c660f0a100295fbb431ad4d21f2e6998",
+  "remoteMain": "9b9c4d5d45e584f8b548f2b50543c18cdb4cb680",
+  "remoteTree": "90125b55c660f0a100295fbb431ad4d21f2e6998",
+  "exactCommitAndTree": true,
+  "sources": {
+    "cleanup": "6167a6df4039cdd9d98a1bedaba0089e1524115c",
+    "build": "f9501c0c1a9ded6478f565b01afeef77a9fd47ed",
+    "local": "a7c755bbf1a4091f3383ce17e7a7c06082f4e56b"
+  },
+  "authorization": {
+    "recycleBothOldBackups": true,
+    "pushMain": true,
+    "deleteLocalTaskBranch": true,
+    "mergeMain": true
+  },
+  "taskBranch": "codex/edit-demo-video",
+  "taskBranchExists": false,
+  "remoteTaskBranch": [],
+  "unmergedOtherBranches": [
+    "codex/chore-doc-archive-20260930",
+    "codex/docs-xirang-gpt-materials",
+    "codex/docs-xirang-product-screenshots",
+    "codex/test-quiz-agent-workflow"
+  ],
+  "worktrees": [
+    "worktree D:/1Folder/Blocky-AI",
+    "HEAD 9b9c4d5d45e584f8b548f2b50543c18cdb4cb680",
+    "branch refs/heads/main",
+    ""
+  ],
+  "syncEvidence": "doc/开发/2026-10-12-GitHub同步回执.json",
+  "backupEvidence": "doc/开发/2026-10-12-旧备份回收站回执.json",
+  "productBuildExecuted": false,
+  "releasePublished": false,
+  "realModelApiCalled": false
+}
