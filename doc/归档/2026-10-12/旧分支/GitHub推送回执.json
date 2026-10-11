@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "blocky.old-branch-cleanup-push/v1",
+  "verifiedAt": "2026-10-11T18:26:06.395Z",
+  "authorization": {
+    "archiveUniqueBranchHistory": "用户确认保留Git归档与恢复包，删除旧分支",
+    "pushScope": "用户确认推送本轮文档与清理记录"
+  },
+  "remote": "https://github.com/I-dont-know-codex-is-right/Blocky-AI.git",
+  "previousRemoteMain": "0066fb46a94d23c006c712dbdeacfac7e785b5ad",
+  "pushedMain": "c216b0fcc72a91ce9ded27efe157ca1d72500179",
+  "pushedMainTree": "051f7aae0cf1215a27eb60e1bfcb3f89b2ddab9d",
+  "remoteMainReadback": "c216b0fcc72a91ce9ded27efe157ca1d72500179",
+  "remoteMainTreeReadback": "051f7aae0cf1215a27eb60e1bfcb3f89b2ddab9d",
+  "pushedCommits": [
+    "ae6ecfeb2fcf5aa2acd094d7e8930e8b5bd49760",
+    "e3bd6366580d3e0f26efdb96031958d2643b72e7",
+    "c216b0fcc72a91ce9ded27efe157ca1d72500179"
+  ],
+  "pushedPaths": [
+    "AGENTS.md",
+    "doc/产品设计/Blocky-初版产品方案.md",
+    "doc/归档/2026-10-12/旧分支/审计与恢复.md",
+    "doc/归档/2026-10-12/旧分支/归档清单.json",
+    "doc/归档/2026-10-12/旧分支/本地清理回执.json",
+    "doc/技术设计/ADR-005-多模块应用界面与RPA边界.md",
+    "doc/技术设计/ADR-006-底部面板终端与日志系统边界.md",
+    "doc/技术设计/正式契约/11-阶段2语言与桌面地基.md",
+    "doc/技术设计/正式契约/12-阶段3知识与积木化.md",
+    "doc/技术设计/正式契约/15-阶段6-7调试与有人值守自动化.md",
+    "doc/进展记录/2026-10-12.md"
+  ],
+  "pushCommand": "git -c push.followTags=false push origin main",
+  "documentationOnly": true,
+  "productChangesMerged": false,
+  "archiveTagsPushed": false,
+  "archivedUnmergedHistoryPushed": false,
+  "localArchiveTags": [
+    {
+      "tag": "archive/2026-10-12/doc-archive-20260930",
+      "commit": "b7f752f8c13a51898e5164dd8bce5f445ac1c003",
+      "remoteTagPresent": false
+    },
+    {
+      "tag": "archive/2026-10-12/xirang-gpt-materials",
+      "commit": "65c27206b3b8bf65b5de327cbfca14ee08fd50fd",
+      "remoteTagPresent": false
+    },
+    {
+      "tag": "archive/2026-10-12/xirang-product-screenshots",
+      "commit": "3b56e66c54e0fbd8959690fe67695510fd170257",
+      "remoteTagPresent": false
+    },
+    {
+      "tag": "archive/2026-10-12/quiz-agent-workflow",
+      "commit": "bc6bd1a53c4b436dfca74079bce346d23a8ffaaf",
+      "remoteTagPresent": false
+    }
+  ],
+  "localBranches": [
+    "main"
+  ],
+  "cleanWorkspaceAtAnchor": true,
+  "worktreeCount": 1,
+  "remoteOtherBranchesChangedByTask": false,
+  "bundle": {
+    "path": "D:\\0文件夹\\备份\\Blocky-旧分支归档-2026-10-12-0205\\旧分支增量恢复.bundle",
+    "bytes": 67971397,
+    "sha256": "6526eb19ed91f170f8edc33e6b306ca46030e98b350faca7a31a0921f5f919c0",
+    "verifiedUniqueObjects": 860
+  },
+  "knownProductIssue": "BLK-GUARD-001 remains unremediated in archived quiz source",
+  "finalBookkeeping": "后续仅补齐本回执、用户确认与推送状态记录；最终提交SHA与树读回保存在忽略的待清理目录final-readback.json"
+}
