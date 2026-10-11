@@ -1,132 +1,316 @@
-# Blocky
+<div align="center">
+  <img src="logo/logo.png" alt="Blocky Studio 标识" width="112" />
+  <h1>Blocky Studio · 积木式 AI Agent 创作平台</h1>
+  <p><strong>像搭积木一样，读懂、搭建、改造和调试你的 AI 智能体。</strong></p>
+  <p>Scratch 式可视化编程 · 自然语言构建助手 · 本地知识库 RAG · 桌面自动化 · CLI</p>
+  <p>
+    <img src="https://img.shields.io/badge/源码版本-0.8.0-4c83ff" alt="源码版本 0.8.0" />
+    <img src="https://img.shields.io/badge/桌面平台-Windows_x64-0078d4" alt="当前桌面平台 Windows x64" />
+    <img src="https://img.shields.io/badge/技术栈-Tauri_2_%2B_React_19-35b8a6" alt="Tauri 2 与 React 19" />
+    <img src="https://img.shields.io/badge/项目状态-Beta-e2ad38" alt="项目处于 Beta 阶段" />
+  </p>
+  <p>
+    <a href="https://blocky.donk55666.chatgpt.site">官网</a> ·
+    <a href="https://blocky.donk55666.chatgpt.site/#/studio">在线体验</a> ·
+    <a href="https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases">Windows 下载</a> ·
+    <a href="tools/blocky-cli/README.md">CLI 文档</a> ·
+    <a href="https://github.com/I-dont-know-codex-is-right/Blocky-AI/issues">问题反馈</a>
+  </p>
+</div>
 
-Blocky 是一款面向普通人和学校教育的“积木式 AI 创作软件”。用户通过可拼接、可解释的能力积木创建 AI 伙伴，并使用右侧构建助手或运行入口完成创作、对话和调试。
+**Blocky Studio** 是面向普通创作者、AI Agent 开发者和学校教育的桌面软件。它将模型、提示词、知识检索、记忆、工具调用、控制流和权限组合成可以展开、检查与修改的能力积木，让智能体的结构和运行过程都能被看见。
 
-![Blocky 已批准的 Windows Logo（标识）](logo/logo.png)
+创作画布采用 **Scratch 风格的嵌套积木语言**。你可以手动拼搭，也可以用自然语言让构建助手修改项目，再在画布上检查结构、撤销修改、观察运行轨迹。桌面界面与命令行共享项目格式、编译器、运行内核和本机存储，便于人和编程 Agent 协作。
 
-[Blocky 官网](https://blocky.donk55666.chatgpt.site) · [官网源码与预览](官网/README.md)。官网按完整产品方向介绍教育和专业场景，具体开放进度见 FAQ；在线体验为预设 UI 展示。
+*Blocky Studio is a Windows desktop visual AI agent builder with Scratch-style nested blocks, a natural-language coding assistant, local retrieval-augmented generation (RAG), tool calling, and a shared CLI. It is designed for AI literacy education and editable, inspectable agent development.*
 
-2026-10-04预算修正交付：四类蓝图默认每轮32768、累计1048576输出Token，32轮/256次工具/30分钟，可继续编辑提高；构建助手取消软件Token配额，无显式模型输出参数时省略max_tokens，已保存的显式模型参数和旧作品预算保持。长UTF-8聊天、2.7MB历史传递、保存重开续问、自然退出及停止/隐私边界通过独立[TB01–TB05最终验收](doc/验收/任务/验收-2026-10-04-Agent-Token预算修正.md)。当前普通包`dist/Blocky-Studio-0.8.0-budgets/`，2595文件/770452440字节，冻结产品来源`ef4810db182b1f34cbc8a529f6d0c50e34e110ff`，固定桌面入口已更新并独立核对。最终来源原生E2E15/Core3/Full360次五秒循环及30次重载通过；相关门禁的精确来源与复用边界见[开发索引](doc/验收/任务/Agent预算证据/开发验证索引.md)。唯一真实模型调用保留原3521585来源，输出27600/总27750Token，按未变Gateway映射，不计合成HTTP用量；旧蓝图包保留回退。已按2026-10-04本聊天用户授权，连同初赛归档及复赛目录整理快进合并main并推送；任务分支已清理，[Git联合整合回执](doc/验收/任务/Agent预算证据/Git联合整合.json)绑定ac0984d及本次Windows CI。未发布GitHub Release。已完成[计划归档](doc/归档/2026-10-04/2026-10-04-Agent-Token预算修正.md)。
+> 当前源码版本为 **0.8.0**；公开 Windows 安装包为 **0.8.0-beta.1**。后续桌面修复可能已进入源码而尚未更新安装包，请以下载页说明为准。在线体验展示真实积木画布与蓝图，聊天和运行结果使用预设示例，不连接模型或本机文件。
 
-2026-10-04：四类可改造起始蓝图已完成，按知识问答助手、工作助手、Coding 助手、Pi Agent 顺序提供。真实 Pi Agent Core 0.86.0 已接入模型/工具循环；构建助手默认拥有当前项目上下文与 Blocky CLI，发送直接执行，无额外任务批准弹窗，修改可撤销并保留并发冲突。独立[最终验收](doc/验收/任务/验收-2026-10-04-四类起始蓝图与默认构建助手.md) **B01–B08 全部通过**，同源完整 Full 360/30、组件200、Host343+1、CLI150、原生E2E15通过，发行扫描及682项许可证覆盖通过。该轮普通包为 `dist/Blocky-Studio-0.8.0-blueprints/`，2595文件/770510512字节，产品与门禁来源 `10e738b2ec695693627ec02b1a0cec3ba37531ab`；固定桌面入口当时指向该包，当前以本页预算修正交付为准，已独立核对逐文件SHA及普通GUI创建/保存/自然退出。真实API调用为是，使用息壤deepseek-v4-pro；高风险四候选可读75响应/97400Token，普通知识3响应/844Token，GUI及取消中不可读用量不推算。前三失败候选记录保留，旧已验0.8.0-chat留作回退；已按2026-10-04用户授权快进合并main并推送，任务分支已清理（远端原无同名分支）；[本次Windows CI](https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37179523042)在整合提交`72dc1ed9ad2fe523cdb75aee8138ba319afd79cf`成功。最后收尾仅修改文档，不改变产品源码或已验包；未发布GitHub Release。
+## 导航
 
-2026-10-06材料补充：当前[积木AI创作PPT与商业计划书](复赛/)保留10月5日官网同步内容与ImageGen美术，新增WorkBuddy参照、每积分售价、贡献利润及成本上限。PPT为47页，BP为26页6.1版；原45页内容、25张表和财务XLSX字节保持。原专业月模型成本与999元拟价的缺口作为条件分析单列；成本、使用率与费用假设明确，不称已实现净利，新套餐不进入原收入预算。独立投资顾问[本轮验收](doc/验收/任务/验收-2026-10-06-订阅单位经济PPT与商业计划书.md)M01–M05全部通过，历史官网同步验收仅绑定旧版本。未提交赛事；用户随后授权“合并并推送”，已快进合并main并推送私有GitHub，清理本地材料任务分支（远端原无）。五成品远端blob与字节读回一致，整合记录见[Git回执](doc/验收/任务/答辩与商业计划书证据/订阅单位经济/Git整合回执.json)；仅材料变更使用[skip ci]，后续状态收尾不改变五成品。
+[界面预览](#preview) · [主要能力](#features) · [四类蓝图](#blueprints) · [开始使用](#getting-started) · [源码开发](#development) · [CLI](#cli) · [架构](#architecture) · [项目结构](#repository) · [路线图](#roadmap) · [贡献](#contributing) · [常见问题](#faq) · [许可证](#license)
 
-2026-10-04目录整理：初赛旧PPT、素材与POC已移至[初赛归档](doc/归档/2026-10-04/初赛/)，复赛五成品直接存于根目录[复赛](复赛/)。2026-10-03及10月5日四份PPT/BP成品已由上方10月6日材料替代，历史来源与验收保留原日期及哈希。
+<a id="preview"></a>
+## 界面预览
 
-2026-10-03：[小学Agent创作教育PPT与独立商业计划书](复赛/)已更新为45页连续PPT、24页5.0版BP和12表5596公式资金工作簿，独立投资顾问[联合验收通过](doc/验收/任务/验收-2026-10-03-研发主线与真实算力依据.md)。该日材料记录的研发路线为六个上游软件兼容模板；2026-10-04用户已将当前起始蓝图路线更新为知识问答助手、工作助手、Coding 助手、Pi Agent，已实现并通过普通包独立最终验收，见[四类起始蓝图与构建助手权限设计](doc/归档/2026-10-04/2026-10-04-四类起始蓝图与构建助手默认权限.md)。算力预算区分历史短任务Token、官方专业开发者使用参考与自设容量；前18个月研发现金支出196.413万元，完整24个月条件容量的最低追加需求866.443万元、取整覆盖目标900万元，后者不作为当前融资轮报价。机构后台、个人开源与社区、独立算力、多端及Agent App均按建设阶段呈现；本轮材料未发布或提交赛事。
+![Blocky Studio 风格的在线体验：左侧能力积木库、中间嵌套积木画布、右侧构建助手](doc/验收/网站/官网在线演示同步证据/A01-desktop-dark.png)
 
-2026-10-02：右侧聊天简化与发送修复已完成独立最终验收，**6/6通过**。构建助手对话正文与调用轨迹分开，Blocky Agent主区显示积木颜色运行轨迹；扩展配置收进＋和设置。旧默认模型可显式恢复工具调用能力，无需先选目录也能发送；顶部、聊天和调试入口的提交输入保持对应。见[本轮最终验收](doc/验收/任务/验收-2026-10-02-右侧聊天简化与发送修复.md)。
+*上图来自官网在线体验，复用桌面画布和工作助手蓝图；对话为预设展示。左侧选择能力，中间审阅结构，右侧在 Blocky Agent 与构建助手之间切换。*
 
-2026-10-02历史普通包：`dist/Blocky-Studio-0.8.0-chat/`，2,595文件、769,327,639字节，产品及完整门禁来源`ad058182fd379adf83228fbc6323b57a796fcfb0`。该日桌面固定入口曾指向此包，现以2026-10-04交付入口为准。完整Full360次5秒循环/30次原生保存重载、组件189项、Host339+1项、CLI141项、原生E2E15项通过；发行扫描、许可证与隔离检查通过。验收使用[自有后台desktop](doc/开发/后台UI验收.md)，不侵占前台。
+<a id="features"></a>
+## 主要能力
 
-此前`dist/Blocky-Studio-0.8.0-coding/`和`dist/Blocky-Studio-0.8.0/`已验包保留回退；原内置代码Agent范围见[8项验收](doc/验收/任务/验收-2026-10-02-内置代码Agent最终交付.md)，共享厂商/自定义多模型与能力补全见[17项验收](doc/验收/任务/验收-2026-09-30-Agent能力完整补全.md)。
+| 能力 | 可以做什么 |
+| --- | --- |
+| 🧩 可视化 Agent 编程 | 通过嵌套积木表达角色、上下文、模型、工具、逻辑和输出；支持搜索、多选、撤销、蓝图展开与多模块编辑 |
+| ✨ 自然语言构建助手 | 描述目标后，助手结合当前项目和 Blocky CLI 修改积木；提供修改记录、可撤销操作及并发冲突检查 |
+| 📚 本地知识库与 RAG | 导入与解析资料，查看分段，建立索引，执行关键词、向量或混合检索，并追溯回答引用 |
+| 🤖 模型与工具调用 | 管理厂商连接和多个模型配置；支持 DeepSeek、息壤、自定义 OpenAI Chat 兼容服务及 Ollama 接口，具体能力取决于所选服务 |
+| 🧠 记忆与会话 | 组合记忆能力，管理助手历史和会话上下文；不同类型的记忆有各自生命周期 |
+| 🔌 Skills 与 MCP | 通过受控协议准备、加载和执行技能，发现与调用 MCP 工具及资源；执行依赖对应配置和权限 |
+| 🔍 运行轨迹与调试 | 查看积木执行状态、诊断与日志；使用断点、单步、继续和停止定位问题，轨迹回放用于检查已有记录 |
+| 🖥️ 应用界面与自动化 | 按需创建可审阅的页面候选及隔离预览，组合有人值守的浏览器或 Windows UI Automation 流程 |
+| ⌨️ 共享 CLI | 发现命令与 Schema，创建、校验和编译项目，编辑候选、查看差异、恢复检查点并执行受控运行 |
 
-真实大模型API调用：**是**，息壤`deepseek-v4-pro`。本任务43个可读供应商响应、102,576Token；新产品来源11个响应、20,760Token。失败和取消中未读回的用量未知，不算零。已按用户授权快进合并main并推送，任务分支已清理；[本次Windows CI](https://github.com/I-dont-know-codex-is-right/Blocky-AI/actions/runs/37001717250)在整合提交`f51536d`成功。后续仅文档收尾，不改变已验产品来源；未发布GitHub Release。精确证据及清理记录见[进展记录](doc/进展记录/2026-10-02.md)。
+**一个项目可以由多个模块组成。** 除了 Agent，还能表达状态机、规则、事件驱动、行为树、数据处理和混合 AI 流程。跨模块引用使用稳定标识，项目地图用于导航和查看影响范围。
 
-阶段5已通过独立最终验收（16/16），阶段6–7已通过独立最终验收（8/8）。正式普通包位于 `dist/Blocky-Studio-0.7.0/`：143文件、449562994字节，产品来源 `2f583b0`，与通过GUI/CLI验收的候选文件逐项哈希一致，无额外文件。同来源[完整Core/Full 360/30](doc/验收/任务/阶段6-7证据/验收-2026-09-27-最终来源Core与Full复核.md)和成品隔离/安全复核通过。精确范围见[阶段5验收](doc/验收/任务/验收-2026-09-20-Blocky阶段5.md)、[阶段6–7验收](doc/验收/任务/验收-2026-09-25-Blocky阶段6-7.md)与[开发索引](doc/验收/任务/阶段6-7证据/开发验证索引.md)；Git集成及清理限制见[进展记录](doc/进展记录/2026-09-27.md)。使用方式见[CLI说明](tools/blocky-cli/README.md)。
+入门与专业视图使用同一项目语言。入门视图按“开始、角色、会思考、会查找、会记住、会行动、会回答”组织能力；专业视图按以下十二类 Agent 语义检索：
 
-阶段 4 最小完整 Agent 闭环已完成开发与独立最终验收，版本 0.4.0，**16/16 通过**。已实现受控生成模型、预算、工具、记忆、条件、护栏及结构化/文件输出，详见[阶段 4 契约](doc/技术设计/正式契约/13-阶段4Agent语义闭环.md)；完整 Full 360/30、普通包操作和崩溃恢复均通过。当前普通候选为 `dist/Blocky-Studio-0.4.0-candidate3/`，来源 `f24aea0`；测试与产物清单见[开发验证索引](doc/验收/任务/阶段4证据/开发验证索引.md)。
+<details>
+<summary>展开专业积木分类</summary>
 
-阶段 4 真实大模型 API 调用：**是**。限定公开/虚构夹具的 DeepSeek 调用共 3 次，实际返回模型 `deepseek-flash`，总用量 722 Token；其中 2 次任务成功，1 次返回后因伪造引用被护栏拒绝。详见[真实调用证据](doc/验收/任务/阶段4证据/验收-2026-09-19-真实Provider与CLI.md)。默认示例仍使用无网络本地整理器，在线模型须单独配置并逐次批准。
+| 分类 | 分类 |
+| --- | --- |
+| 触发与交互 | 智能体 |
+| 指令与上下文 | 模型 |
+| 知识库 | 记忆 |
+| 工具 | 技能与扩展 |
+| 协作与编排 | 护栏与权限 |
+| 数据与逻辑 | 输出与渠道 |
 
-阶段 3“真实知识、项目积木化与蓝图”已交付 `0.3.0` 开发候选，并于 2026-09-19 完成独立最终验收：**18/18 通过**。三类真实来源、本地 E5、关键词/向量/混合检索、锁定仓库静态转换、四个蓝图及生命周期已实现；三档规模、完整 Full 360/30、出处全文和个人蓝图原生补验、转换动态安全补验均通过。首次体验按用户调整采用 AI 模拟，真实 10–15 岁试用未执行，不外推教育可用性。详见[阶段 3 验收](doc/验收/任务/验收-2026-09-18-Blocky阶段3.md)及[开发验证索引](doc/验收/任务/阶段3证据/开发验证索引.md)。真实外部大模型 API 调用为“否”；发布与远端 CI 未执行。
+</details>
 
-阶段 2“语言与桌面地基”已完成独立最终验收。Windows Core（Windows 核心）技术尖峰曾作为可删除实验完成验证，目录已从当前工作区删除，相关结论只保留在 Git 历史中；它不是正式 Blocky 应用，也不是可分发产品。
+<a id="blueprints"></a>
+## 四类可改造起始蓝图
 
-本机开发工具链提供可复现的[开发环境检查入口](doc/开发/开发环境.md)。阶段 1 正式 monorepo 与共享包已按确认范围建立并完成独立验收；阶段 2 在 `codex/feat-stage2-foundations` 的 `f016afc` 实现检查点完成开发并通过独立最终验收，目标版本为 `0.2.0`。2026-09-18 用户已授权合并与推送；验收交付已合并 main，任务分支已删除。
+蓝图是普通、可编辑的项目底座。创建后可以展开积木、替换模型、调整工具和指令，再保存为自己的作品或个人蓝图。
 
-## 阶段 2 已验收基线（2026-09-17）
+| 蓝图 | CLI 标识 | 适用场景 | 运行前的准备 |
+| --- | --- | --- | --- |
+| 知识问答助手 | `knowledge-assistant` | 根据课程资料、手册或文档回答问题，核查引用 | 配置模型，添加资料并同步知识索引 |
+| 工作助手 | `work-assistant` | 阅读选定目录中的资料，汇总数据、生成文档并读回核对 | 配置模型，按任务选择工作目录 |
+| Coding 助手 | `coding-assistant` | 修改仓库、调用受控开发工具，查看差异和检查结果 | 配置支持工具调用的模型，选择工作目录 |
+| Pi Agent | `pi-agent` | 阅读和改造来自真实 Pi Agent 核心的模型与工具循环 | 配置兼容模型及所需工具资源 |
 
-正式 monorepo 已建立，阶段 1 已按用户确认范围通过 S1-01–S1-12。阶段 2 当前实现检查点为 `f016afc`，已完成 v1 项目/IR、显式迁移、增量编译、六个文本语言原子、统一命令、设置/资源、真实 Windows ConPTY、类型化任务、日志、会话恢复和秘密存储；`pnpm check`、组成门禁、发行构建/检查/打包和独立最终验收均已读回。阶段 2 任务验收已 16/16 通过，Full 360/30 通过，安全补证通过；详见[阶段 2 任务验收](doc/验收/任务/验收-2026-09-17-Blocky阶段2.md)。阶段 1 的 GUI、组件、CLI、Host、发行扫描和包装证据见[阶段 1 正式验收报告](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)及[验收证据清单](doc/验收/任务/阶段1证据/)。
+四类蓝图已有实现与独立验收记录，详见[蓝图设计](doc/产品设计/Blocky-四类起始蓝图.md)及[交付验收](doc/验收/任务/验收-2026-10-04-四类起始蓝图与默认构建助手.md)。蓝图不会附带你的模型凭据、资料索引或工作目录。创建空白作品时，项目只有空白 `main` 模块。
 
-阶段 1 的 `970d815` Core/Full 结果、首次 `undo failed` 残余风险和普通候选证据均为绑定历史提交的记录，不能作为阶段 2 当前结果。阶段 2 当前已读回发行目录 `dist/Blocky-Studio-0.2.0/`（8 个文件，共 19,112,686 字节）、9 个物料的 release 扫描（`positiveControl=true`、`passed=true`）和 315/315 许可证覆盖；独立最终验收已 16/16 通过，Full 360/30 通过，安全补证通过。普通候选的 `sourceCommit` 为 `f016afc19457bf5631ad5a41c3c686478a4dd080`；后续文档提交造成的 HEAD 变化不改写该产物来源。真实大模型 API 调用为“否”，远端 CI 未执行。
+这些底座适合从“读懂一个 Agent”开始，逐步练习修改角色和上下文、替换检索或工具、添加控制流、根据轨迹解释结果。课堂教学与学习效果仍需实际教学验证。
 
-CLI 是 Agent 使用 Blocky 的核心方式，应让已开放的共享能力达到不低于真人界面操作的实际效果。现支持目录、个人蓝图、项目创建/配置/检查/编译/运行、锁定仓库候选、页面补丁、命令与 Schema 查询、积木结构定位、批量候选、项目差异、检查点恢复、注册任务及诊断导出，共用桌面领域和 Rust 存储；用法见 [CLI 说明](tools/blocky-cli/README.md)。本节阶段 2 基线未真实调用外部大模型 API；阶段 4 实际调用事实见页首。
+<a id="getting-started"></a>
+## 开始使用
+
+### 安装 Windows 测试版
+
+1. 打开 [Windows Releases](https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases)，选择 `v0.8.0-beta.1` 的安装程序，阅读版本说明。
+2. 确认系统具备 **Microsoft Edge WebView2 Runtime** 与 **Microsoft Visual C++ x64 运行库 14.44 或更高版本**。安装器会检查依赖并在缺失时给出官方安装入口。
+3. 启动 **Blocky Studio（测试版）**，创建空白作品，或选择一种起始蓝图。
+4. 在模型设置中添加厂商连接和具体模型；按任务准备知识资料或选择工作目录。
+5. 编辑积木，或向构建助手描述目标；检查修改后，通过 Blocky Agent 入口运行并查看轨迹。
+
+安装版使用按用户安装目录，卸载保留作品和用户配置。已安装同名测试版时，先按安装器说明卸载旧版。安装及打包机制见[安装器说明](scripts/installer/README.md)。
+
+### 配置模型与资料
+
+厂商连接管理协议和凭据引用，模型配置管理实际模型 ID、能力、超时及生成参数。同一连接下的多个模型共用连接配置。构建助手需要模型服务支持工具调用。
+
+API Key 等敏感内容通过应用的 Host 安全存储管理；`.blocky` 作品只保存资源引用。导入他人的作品后，应在自己的本机环境重新绑定模型、知识与工具资源。
+
+如果希望先了解界面，可直接打开[在线体验](https://blocky.donk55666.chatgpt.site/#/studio)，尝试编辑积木、切换蓝图及预设演示。实际模型推理、资料处理和本机工具执行在桌面版完成。
+
+在线体验提供一分钟工作助手和三分钟分数出题助手的预设演示，展示从提示词、逐步搭建到查看结果和追问的创作过程。
+
+<a id="development"></a>
+## 从源码开发
+
+完整桌面应用与原生构建目前面向 **Windows x64**。以下命令在仓库根目录的 PowerShell 中执行。
+
+### 环境要求
+
+| 工具 | 要求或用途 |
+| --- | --- |
+| Node.js | `>= 22.19.0`；Windows CI 使用 `22.23.1` |
+| pnpm | `10.23.0`，与根目录 `packageManager` 一致 |
+| Rust / Cargo | 支持 Rust 2024 edition 的稳定版及 `x86_64-pc-windows-msvc` 工具链；既有环境基线为 `1.95.0` |
+| C++ 工具链 | Visual Studio 2022 Build Tools、C++ 桌面开发组件和 Windows SDK |
+| PowerShell | PowerShell 7，用于原生验证与发行脚本 |
+| Windows 运行库 | WebView2 与 Visual C++ x64 运行库 `14.44+` |
+| 网络与存储 | 首次安装和构建需获取锁定依赖、知识模型、OCR/音频及浏览器运行资产，并预留构建缓存空间 |
+
+直接依赖使用固定版本，JavaScript 和 Rust 的完整依赖分别由 [pnpm-lock.yaml](pnpm-lock.yaml) 和 [Cargo.lock](apps/studio-host/Cargo.lock) 锁定。首次原生构建会准备较大的运行资产；这些资源有独立大小、校验和及许可证检查。
+
+### 克隆与启动
 
 ```powershell
+git clone https://github.com/I-dont-know-codex-is-right/Blocky-AI.git
+cd Blocky-AI
+
+# 确保 pnpm 版本与仓库一致
+corepack enable
+corepack prepare pnpm@10.23.0 --activate
 pnpm install --frozen-lockfile
-pnpm check
-pnpm test:component
-pnpm test:host
+
+# 构建共享 CLI 与必要运行资产
 pnpm build:cli
-pnpm test:cli
-.\blocky.cmd --help
-# Windows 桌面开发/普通构建
+
+# 启动 Tauri 桌面开发环境
 pnpm dev
-pnpm build
 ```
 
-原生自动化包：`pnpm test:e2e:build` 后运行 `pnpm test:e2e`。阶段 2 的组成门禁均已通过：`pnpm check`、组件/Host/CLI 测试、原生 E2E 与 Full 命令内的 3 项 Core 场景；根 `pnpm check:core` 别名未重复跑。Full 使用未缩短的 360 个五秒循环及 30 次不同内容的 Rust 保存重开，4/4 通过，退出码 0，`elapsedMs=1,803,382`、`heapDelta=-8,703,892`。发行构建/检查/打包和独立最终验收也已完成。
+代码仓库的可访问性取决于当前仓库权限。项目默认使用无密钥的确定性 Provider 进行开发验证；真实模型调用需另行配置本机资源。
 
-普通开发包从默认 `apps/studio-host/target/release/blocky-studio.exe` 输出；发行隔离构建在 `try/release-native-target/release/`，测试包在 `try/native-e2e-target/release/`。Windows iframe 隔离使用锁定 Wry 修复，来源和维护责任见 [补丁说明](vendor/WRY-PATCH.md)。
+### 构建与检查
 
-可交付候选使用 `pnpm build:release` 统一重映射 Rust 构建路径，输出隔离在 `try/release-native-target/` 及 CLI `dist/`，随后运行 `pnpm check:release`。阶段 2 目标版本为 `0.2.0`，候选目录 `dist/Blocky-Studio-0.2.0/` 已完成独立读回；常规开发构建不能直接代替此候选。阶段 1 的扫描报告和固定证据继续留在阶段 1 验收目录，不能替代阶段 2 证据。
+| 命令 | 用途 |
+| --- | --- |
+| `pnpm check` | TypeScript、包单元测试、契约测试及部署资产测试 |
+| `pnpm test:component` | 桌面与共享组件测试 |
+| `pnpm test:host` | Rust Host 与项目存储测试 |
+| `pnpm build:cli` / `pnpm test:cli` | 构建 CLI 及原生存储程序，运行 CLI 测试 |
+| `pnpm build` | 构建普通桌面程序及运行资产 |
+| `pnpm test:e2e:build` / `pnpm test:e2e` | 构建并运行独立原生自动化测试包 |
+| `pnpm check:core` | 核心组合验证，包含原生场景 |
+| `pnpm check:full` | 完整门禁，含 360 次五秒循环和 30 次保存重载，约 30 分钟以上 |
+| `pnpm build:release` | 使用隔离目录和构建路径重映射生成发行候选 |
+| `pnpm check:release` / `pnpm package:release` | 扫描候选、检查第三方许可证并整理发行目录 |
 
-通过候选扫描后，`pnpm package:release` 生成与版本源码对应的发行目录，包含桌面程序、CLI、使用说明、第三方许可证和 selectors 对应源码；目标已存在时拒绝覆盖。许可证从锁定依赖及 `vendor/licenses/registry.json` 校验收集，缺失即停止构建。此命令不安装、启动或发布应用，也不代表普通窗口验收通过。
+普通构建程序位于 `apps/studio-host/target/release/blocky-studio.exe`；发行构建隔离在 `try/release-native-target/`。发行目录由版本和打包参数确定，已有目标不会被覆盖。普通构建、原生测试包和公开安装包分别有自己的验证与发布流程。
 
-阶段 1 历史普通候选位于 `dist/Blocky-Studio-0.1.0-ui-fix/`，来源为 `1e106a2`，已完成 GUI 与组件局部复验。22 项、共 10,666,833,465 字节的构建缓存按 [storage-moves-final.json](doc/验收/任务/阶段1证据/storage-moves-final.json) 记录整理，9 月 16 日的旧映射仅作阶段 1 历史证据。阶段 2 当前候选为 `dist/Blocky-Studio-0.2.0/`；生成测试包不等于运行界面验收。
+Windows CI 定义见 [check.yml](.github/workflows/check.yml)。历史验收只证明其记录的源码与产物；最近桌面变更可查[构建助手与输入输出验收](doc/验收/任务/验收-2026-10-09-构建助手调用与输入输出返修.md)和[发送与窗口按钮验收](doc/验收/任务/验收-2026-10-09-发送与最小化按钮修复.md)。
 
-本轮 36 项中间产物共 8,351,259,352 字节已可逆整理到 `try/待清理/阶段2-2026-09-17/`，固定结果与恢复映射见[阶段 2 证据清单](doc/验收/任务/阶段2证据/README.md)。重新扫描构建路径前需重新构建或按映射恢复缓存。
+<a id="cli"></a>
+## CLI：让编程 Agent 操作同一份项目
 
-CLI 增补计划见[已归档同步开发补充](doc/归档/2026-09-17/2026-09-16-CLI同步开发补充.md)。阶段 2 实施安排已归档至[阶段 2 实施安排](doc/归档/2026-09-17/2026-09-17-Blocky-阶段2实施安排.md)。当前为团队项目；2026-09-18 已按用户授权将阶段 2 验收交付快进合并至 `main`，并删除 `codex/feat-stage2-foundations`。本轮 Git 收尾与推送记录见[进展记录](doc/进展记录/2026-09-18.md)。
+`blocky` CLI 与桌面共享领域实现和 Rust 项目存储，可用于脚本、自动化检查，以及外部编程 Agent 对作品的结构化操作。
 
-## 已确认方向
+完成 `pnpm build:cli` 后：
 
-- 产品形态：安装式客户端，无 Web 版。
-- 版本：教育版与专业版共用同一项目格式、积木语言和运行内核。
-- 商业方向：个人版完全开源免费，建设作品、蓝图、积木与教学资源社区；机构/K12付费包含组织后台配置及教育支持，AI算力订阅单独核算。当前组织后台、托管计费及开源公开发布仍按[新方向与建设顺序](doc/产品设计/2026-10-03-开源社区与机构收费方向.md)推进，不以个人创作功能限制收费。
-- 平台：Windows 首发完整搭建与运行应用；macOS 后续提供同等桌面能力；Android、HarmonyOS、iOS 将来提供只使用已搭建 Agent 的应用。
-- 产品演进：当前Windows工作台为阶段成果，四类起始蓝图已实现并通过普通包独立最终验收；之后继续推进教育组织、部署和多端。后续结合Agent页面与积木执行，基于Pake或Tauri二次开发一键生成独立Agent App，具体依赖见完整开发计划，尚未在当前普通包实现。
-- 核心差异：不是节点连线式工作流，而是像 Scratch 一样能嵌套、能约束错误、能逐步执行的视觉语言。
-- 桌面布局：左侧积木库，中间是带“画布/浏览器”项目标签的 Scratch 式工作区，右侧分为 Blocky 内置“搭建助手”和由聊天入口积木生成的“运行 Agent”两个标签页。
-- 多模块项目：一个项目可打开多个 Agent、自动化或通用模块画布；跨画布通过稳定、类型化的引用和事件连接，不要求全部 Agent 位于同一画布。
-- 应用界面：默认不创建 Web 前端；只有用户主动要求后，才生成可审查页面差异并在隔离浏览器标签预览，部署、域名、认证和数据库仍是独立任务。
-- 自动化上限：RPA 可独立运行或作为 Agent 工具；状态机、规则、行为树、事件驱动、传统工作流和混合 AI 架构可使用同一模块语言自由组合。
-- Windows 生命周期：点击最小化默认进入通知区域；最小化、关闭、退出和后台运行分别处理，真正退出后不得遗留 Host、预览服务或运行时孤儿进程。
-- 交互入口：没有聊天入口积木时运行标签页禁用；多个入口可切换和重命名，图片、文件、语音、Skills 与插件控件按入口能力积木解锁。
-- 核心形态：工具是独立一等积木；Agent、交互入口、模型、Prompt、记忆、Skill、多 Agent 与护栏等重要语义具有专属外观，但复用统一连接规则。
-- 用户术语：单个能力称为“能力积木”，扩展分发单元称为“积木包”，共享入口称为“积木社区”。
-- 四类起始蓝图：按知识问答助手、工作助手、Coding 助手、Pi Agent 的顺序建设可编辑项目底座；新建空白项目仍只有空白 `main` 模块，没有资源或问句。四类蓝图当前已实现并通过普通包独立最终验收，不表示上游软件兼容已经完成。
-- Agent 接入：提供 `blocky` CLI、官方 Skills 包和 Codex 等客户端的官方插件，使编程 Agent 能创建积木、搭建 Agent、转换 GitHub 项目和逆向现有 Agent，并与图形页进行可审查协作。
-- 项目积木化：`$convert-github-project-to-blocky` 是官方 Skills 库的核心入口，按来源证据提出自定义积木、可展开蓝图或原生保留报告；第三方框架只作为研究来源，不代表可用软件模板或已完成兼容。
-- 首个代码阶段：优先交付可展示 Demo，并让固定知识/GitHub 夹具走正式接口；Demo 不在界面、项目格式、设置或运行事件中增加以后需要删除的专用标记或分支。
-- 品牌素材：`logo/logo.png` 是本次正式批准的 Windows Logo（标识）母图，Windows/Tauri 图标已生成并通过普通窗口检查；各平台上架资源、签名包图标矩阵和商店素材仍属于未来交付。
+```powershell
+# 发现环境、命令、Schema 与能力积木
+.\blocky.cmd doctor --json
+.\blocky.cmd --help
+.\blocky.cmd catalog list --limit 10 --json
+.\blocky.cmd template list --json
 
-## 当前文档
+# 创建与校验空白作品：父目录必须存在，已有文件不覆盖
+New-Item -ItemType Directory -Force .\try | Out-Null
+.\blocky.cmd project create --name "我的第一个 Agent" --output .\try\my-agent.blocky --json
+.\blocky.cmd project validate .\try\my-agent.blocky --json
+.\blocky.cmd project compile .\try\my-agent.blocky --json
 
-- [竞品驱动完整开发计划](doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)
-- [阶段 0 正式契约索引](doc/技术设计/正式契约/README.md)
-- [阶段 2 语言与桌面地基契约](doc/技术设计/正式契约/11-阶段2语言与桌面地基.md)
-- [阶段 2 实施安排（已归档）](doc/归档/2026-09-17/2026-09-17-Blocky-阶段2实施安排.md)
-- [阶段 1 Demo 正式接口交接](doc/技术设计/正式契约/07-阶段1-Demo接口交接.md)
-- [阶段 1 正式 Demo 实施计划（已归档）](doc/归档/2026-09-17/2026-09-16-Blocky-阶段1正式Demo实施计划.md)
-- [阶段 1 任务验收](doc/验收/任务/验收-2026-09-16-Blocky阶段1正式Demo.md)
-- [阶段 0 已完成实施计划](doc/归档/2026-08-23/2026-08-23-Blocky-阶段0契约冻结实施计划.md)
-- [阶段 0 验收记录](doc/验收/归档/2026-08-23/验收-Blocky阶段0契约冻结.md)
-- [状态与阶段替换账本](doc/产品设计/Blocky-状态与阶段替换账本.md)
-- [GitHub 项目积木化与 Agent 组件设计](doc/产品设计/Blocky-GitHub项目积木化与Agent组件设计.md)
-- [多画布、应用界面与 RPA 设计](doc/产品设计/Blocky-多画布应用界面与RPA设计.md)
-- [设置中心设计模板](doc/产品设计/Blocky-设置中心设计模板.md)
-- [产品方案总览](doc/产品设计/Blocky-初版产品方案.md)
-- [完整积木与 Agent 兼容设计](doc/产品设计/Blocky-完整积木与Agent兼容设计.md)
-- [积木完整清单](doc/产品设计/Blocky-积木完整清单.md)
-- [交互入口与工具积木设计](doc/产品设计/Blocky-交互入口与工具积木设计.md)
-- [Blocky 四类起始蓝图](doc/产品设计/Blocky-四类起始蓝图.md)
-- [CLI 与官方 Agent Skill 产品设计](doc/产品设计/CLI与官方Agent-Skill.md)
-- [平台分层与桌面技术选型](doc/技术设计/ADR-001-首版跨端技术选型.md)
-- [Windows Core 技术尖峰报告](doc/技术设计/Windows-Core技术尖峰报告.md)
-- [Windows Core L3 任务验收](doc/验收/归档/2026-08-10/验收-Windows-Core技术尖峰.md)
-- [DeepSeek Flash Agent 补充验证](doc/验收/归档/2026-08-10/验收-DeepSeek-Flash-Agent补充验证.md)
-- [Blocky 编辑器与运行核心模块验收](doc/验收/模块/验收-Blocky编辑器与运行核心.md)
-- [Blocky 核心创作与项目积木化跨模块验收](doc/验收/跨模块/验收-Blocky核心创作与项目积木化流程.md)
-- [项目规则与项目地图](AGENTS.md)
-- [原生 Agent 兼容运行时](doc/技术设计/ADR-002-原生Agent兼容运行时.md)
-- [CLI、官方 Agent Skills 与插件接口](doc/技术设计/ADR-003-CLI与官方Agent-Skill接口.md)
-- [开放扩展与社区安全边界](doc/技术设计/ADR-004-开放扩展与社区安全边界.md)
-- [多模块项目、应用界面与 RPA 边界](doc/技术设计/ADR-005-多模块应用界面与RPA边界.md)
-- [底部面板、终端与日志系统边界](doc/技术设计/ADR-006-底部面板终端与日志系统边界.md)
+# 或者从工作助手蓝图创建独立作品
+.\blocky.cmd project create --template work-assistant --name "我的工作助手" --output .\try\work-assistant.blocky --json
+```
 
-## 当前结论
+以上示例发现目录、创建文件并验证结构，不调用外部大模型。蓝图运行前仍需绑定有效模型和所需资源。
 
-Windows Blockly/本地 WebView（网页视图）技术尖峰已从当前工作区删除，独立验收结果只作为 Git 历史证据保留，不是正式产品入口。阶段 0 契约已通过并归档；阶段 1 正式 monorepo、同步 CLI、桌面候选和配套证据已按用户确认范围通过 S1-01–S1-12。阶段 2 `0.2.0` 已按独立最终验收通过 16/16，Full 360/30 与安全补证均通过；普通候选来源绑定 `sourceCommit=f016afc19457bf5631ad5a41c3c686478a4dd080`，文档收尾提交后的 HEAD 不替代该来源。正式实现范围与 alpha 协议保留见[阶段 2 语言与桌面地基契约](doc/技术设计/正式契约/11-阶段2语言与桌面地基.md)和[状态与阶段替换账本](doc/产品设计/Blocky-状态与阶段替换账本.md)。
+进一步使用项目候选、差异、检查点、知识同步、真实运行、工具审批或诊断导出时，请查阅 [CLI 完整文档](tools/blocky-cli/README.md)，并以当前 `--help` 和 Schema 输出为准。CLI 返回结构化结果及明确退出码，自动化脚本应直接读取原始退出码。
+
+<a id="architecture"></a>
+## 技术架构与项目格式
+
+前端由 **React 19、TypeScript、Blockly 13 和 Vite** 构成，桌面壳与本机能力由 **Tauri 2 / Rust Host** 提供。共享 TypeScript 包负责语言、编译、运行、知识、构建和项目操作。
+
+```mermaid
+flowchart TD
+    UI["桌面画布 / 构建助手 / CLI"] --> Project["Project Manifest + 模块 Workspace JSON"]
+    Project --> Compiler["Compiler：Module IR、源码映射、诊断"]
+    Compiler --> Linker["跨模块链接：Project IR"]
+    Linker --> Runtime["Runtime：入口、模型、工具、控制流"]
+    Runtime --> Host["Rust Host：本机资源、权限、秘密与存储"]
+    Host --> Events["结构化 RuntimeEvent"]
+    Events --> Views["Agent 对话、运行轨迹、日志与画布高亮"]
+    Project --> Surface["可选 AppSurface：页面候选与隔离预览"]
+```
+
+`.blocky` 文件保存版本化项目清单、各模块的 Blockly Workspace、资源引用及可选应用界面来源。编译出的 IR、诊断与运行轨迹是派生结果，可以重新生成和核对；窗口布局与本机会话状态不改变项目语义。
+
+本机文件、模型秘密和进程能力由 Host 按声明权限管理。构建助手工作目录由用户选择，项目修改可撤销；用户终端与 Agent 工具进程分别管理。页面预览通过最小桥接访问声明能力。详细边界见[正式契约索引](doc/技术设计/正式契约/README.md)与[开放扩展设计](doc/技术设计/ADR-004-开放扩展与社区安全边界.md)。
+
+<a id="repository"></a>
+## 项目结构与文档入口
+
+```text
+Blocky-AI/
+├── apps/
+│   ├── studio-desktop/       # React 桌面界面与画布
+│   └── studio-host/          # Tauri / Rust Host、本机能力与项目存储
+├── packages/                # 共享语言、编译、运行、知识及编辑领域
+├── tools/blocky-cli/         # 共享 CLI
+├── scripts/                 # 构建、资产准备、发行检查与安装器
+├── tests/                   # 契约、组件、CLI 与原生端到端测试
+├── vendor/                  # 锁定上游补丁、资产登记与第三方许可证
+├── 官网/                    # 官网与隔离在线体验
+├── 作品/                    # 示例作品及配套来源资料
+├── doc/                     # 产品设计、技术契约、验收与进展记录
+├── logo/                    # 品牌标识
+└── AGENTS.md                # 贡献 Agent 的项目规则与执行地图
+```
+
+| 想了解什么 | 从这里开始 |
+| --- | --- |
+| 产品定位与积木语言 | [产品方案](doc/产品设计/Blocky-初版产品方案.md)、[积木清单](doc/产品设计/Blocky-积木完整清单.md) |
+| 当前实现与规划的区别 | [状态与阶段替换账本](doc/产品设计/Blocky-状态与阶段替换账本.md)、[完整开发计划](doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md) |
+| 项目、运行、Host 与 CLI 接口 | [正式契约](doc/技术设计/正式契约/README.md)、[CLI 文档](tools/blocky-cli/README.md) |
+| GitHub 项目转为能力积木 | [项目积木化设计](doc/产品设计/Blocky-GitHub项目积木化与Agent组件设计.md) |
+| 知识与文档解析 | [阶段 3 契约](doc/技术设计/正式契约/12-阶段3知识与积木化.md)、[解析器说明](packages/document-parser/README.md) |
+| 多模块、页面与 RPA | [设计说明](doc/产品设计/Blocky-多画布应用界面与RPA设计.md)、[阶段 6–7 契约](doc/技术设计/正式契约/15-阶段6-7调试与有人值守自动化.md) |
+| 官网开发与预览 | [官网 README](官网/README.md) |
+| 技术选型与上游维护 | [桌面技术 ADR](doc/技术设计/ADR-001-首版跨端技术选型.md)、[Wry 补丁说明](vendor/WRY-PATCH.md) |
+
+设计文档可能涵盖后续能力，阅读时请结合状态账本和对应验收记录。
+
+<a id="roadmap"></a>
+## 当前阶段与后续方向
+
+当前已有 Windows 创作端、多模块积木语言、四类起始蓝图、本地知识/RAG、模型与工具运行、构建助手、运行调试、有人值守自动化和 CLI 等阶段成果。项目仍处于 Beta，真实模型与第三方服务的表现取决于其能力、配置和任务。
+
+后续工作包括：
+
+- 完善可审阅的 Agent 创作体验、扩展积木与蓝图，以及 Blocks ↔ Text 协作。
+- 推进官方 Agent Skills、客户端插件、作品与积木社区及扩展分发。
+- 建设教师组织、课程、进度和机构配置能力，验证真实教学场景。
+- 研究应用界面部署与一键生成独立 Agent App。
+- 推进 macOS 创作端，以及 Android、HarmonyOS、iOS 的 Agent 使用端。
+
+上述后续方向不构成当前跨平台或发布能力承诺，实施顺序见[完整开发计划](doc/执行计划/2026-08-23-Blocky-竞品驱动完整开发计划.md)。
+
+<a id="contributing"></a>
+## 参与贡献与反馈
+
+欢迎提供可复现的问题报告、文档改进、使用场景与实现建议。提交问题时请包含版本、Windows 环境、复现步骤、预期与实际行为，以及经过脱敏的诊断信息。
+
+代码贡献前请阅读 [AGENTS.md](AGENTS.md) 和相关正式契约，使用锁定依赖，并执行与修改范围对应的检查。涉及共享领域的能力应同步考虑桌面与 CLI；界面交互和原生行为需有对应验证。第三方源码、模型或资产需保留来源与许可证。
+
+- [报告 Bug 或提出建议](https://github.com/I-dont-know-codex-is-right/Blocky-AI/issues)
+- [查看和提交 Pull Request](https://github.com/I-dont-know-codex-is-right/Blocky-AI/pulls)
+- [阅读项目执行规则](AGENTS.md)
+
+代码再分发与衍生使用的授权范围，以正式加入的项目许可证为准。
+
+<a id="faq"></a>
+## 常见问题
+
+**这是 AI 教育工具，还是 Agent 开发工具？**
+
+两者共用同一语言与运行内核。入门视图帮助学习者读懂和改造 Agent，专业视图提供模型、工具、控制流与调试能力。学校场景是产品方向，已上线的组织后台与已验证教学效果需分别看实现和证据。
+
+**网页在线体验可以运行真实模型吗？**
+
+在线体验的对话、轨迹和结果为预设示例。真实模型、资料、本机工具和桌面自动化在 Windows 应用中配置与运行。
+
+**必须使用云端模型吗？**
+
+可配置云端 API、自定义 OpenAI Chat 兼容服务或 Ollama 接口。是否支持具体模型、工具调用和媒体能力取决于服务及资源配置。本地知识检索使用锁定的模型资产；测试中的确定性 Provider 用于验证流程。
+
+**为什么打开作品后还需要配置资源？**
+
+作品保存模型、知识和工具的稳定引用，凭据和本机资源保存在你的资料目录中。迁移或共享作品时，需要重新绑定本机资源。
+
+**如何隔离开发和自己的日常数据？**
+
+可通过 `BLOCKY_PROFILE_DIR`，或桌面的 `--profile-dir <绝对本地目录>` 参数选择独立资料目录。不同资料目录使用不同实例标识；完整规则见 [CLI 独立资料目录说明](tools/blocky-cli/README.md#独立资料目录)。
+
+**已经支持 macOS 或手机了吗？**
+
+完整创作和原生构建当前以 Windows x64 为目标。macOS 创作端和移动 Agent 使用端列在后续路线图中。
+
+<a id="license"></a>
+## 开源与第三方许可证
+
+项目方向是个人版开源免费及社区协作。**当前仓库尚未包含项目级 `LICENSE` 文件，开源许可证与公开发布状态仍待正式确定。** 第三方许可证只覆盖对应依赖，不能替代项目本身的授权。
+
+Blockly、Tauri、React、Pi 相关依赖、Wry 补丁，以及知识、文档、音频和浏览器运行资产，分别保留其上游授权与来源记录。参见 [vendor/licenses](vendor/licenses/README.md)、[模型资产说明](vendor/models/README.md)、[音频资产说明](vendor/audio/README.md)和[官网 Blockly 许可证](官网/experience/LICENSE.blockly.txt)。发行打包会收集并检查第三方许可证。
+
+---
+
+**相关技术与检索词：** 可视化编程、积木编程、AI 智能体、AI 素养教育、低代码 Agent、知识库问答、RAG、工具调用、桌面自动化；Visual Programming, AI Agent Builder, Scratch-style Blocks, Local RAG, MCP, Tauri, Blockly, Rust, TypeScript。

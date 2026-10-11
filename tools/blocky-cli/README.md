@@ -2,7 +2,9 @@
 
 Agent 使用 Blocky 的核心入口，与桌面共享 Project Model、Compiler、Runtime 和 Rust 项目存储。常用任务通过结构化命令完成发现、编辑、审查、运行与恢复，不依赖电脑控制补齐业务能力。本地确定性模式不调用外部大模型；在线模式须使用 Host 预检与批准。
 
-从仓库根构建：`pnpm build:cli`。运行 `./blocky.cmd --help` 查看**实际已实现**的命令。需 Node.js 22.12 或以上；依赖位于项目环境，不全局安装。
+从仓库根构建：`pnpm build:cli`。运行 `./blocky.cmd --help` 查看**实际已实现**的命令。需 Node.js 22.19.0 或以上；依赖位于项目环境，不全局安装。
+
+当前源码为 0.8.0。四类起始蓝图已完成普通包独立验收，调试、持久工作流与有人值守 RPA 的交付边界见[阶段 6–7 验收](../../doc/验收/任务/验收-2026-09-25-Blocky阶段6-7.md)；后续桌面和 CLI 修订以[项目首页](../../README.md)及对应验收记录为准。本页示例不代表本次重新执行过真实模型或原生验收。
 
 ```powershell
 .\blocky.cmd doctor --json
@@ -16,7 +18,7 @@ Agent 使用 Blocky 的核心入口，与桌面共享 Project Model、Compiler�
 $LASTEXITCODE
 ```
 
-不带 `--template` 的新建项目是空白 `main` 模块，没有模型、资料、问句或 Agent 流程。四类蓝图创建的是可改造项目，但并不预置可用模型、知识索引或已选工作目录；运行前需配置对应资源、完成资料同步，并按需绑定工作目录。`--model` 只适用于 `project create --template <id>`；省略时仅蓝图创建会尝试继承本机默认模型，空白项目不会暗中添加模型积木。当前蓝图 CLI 接口已进入开发源码，尚未完成普通构建和验收。
+不带 `--template` 的新建项目是空白 `main` 模块，没有模型、资料、问句或 Agent 流程。四类蓝图创建的是可改造项目，但并不预置可用模型、知识索引或已选工作目录；运行前需配置对应资源、完成资料同步，并按需绑定工作目录。`--model` 只适用于 `project create --template <id>`；省略时仅蓝图创建会尝试继承本机默认模型，空白项目不会暗中添加模型积木。当前蓝图交付见[四类起始蓝图验收](../../doc/验收/任务/验收-2026-10-04-四类起始蓝图与默认构建助手.md)。
 
 创建目标的父目录必须已存在。文件已存在时退出码为 5，不提供强制覆盖开关。缺少存储程序返回 6；参数错误 2；校验失败 3；拒绝 live 运行 4；取消或超时 7；内部错误 10。`--timeout` 单位为毫秒，Agent 运行默认 120000，具名任务默认 30000；Ctrl+C 请求取消。机器脚本应直接调用 `blocky.cmd` 或 `node tools/blocky-cli/dist/main.mjs`，不要以 pnpm 包装进程的退出码代替 CLI 原始退出码。
 
@@ -47,15 +49,15 @@ $LASTEXITCODE
 
 选定目录直接保存本资料集的设置、资源、秘密、日志、知识、转换缓存、记忆、恢复记录与自动化回执；桌面 WebView2 数据也进入其 `webview2/`。不同目录使用不同桌面实例标识，同目录保持单实例。项目文件与模型/驱动只读安装资产不迁移；新资料集不会自动复制原密钥或未保存作品。不设置时保留原默认行为。不要用覆盖 `LOCALAPPDATA` 代替桌面此入口：Windows Known Folder 不跟随该子进程变量。
 
-开发中的 `template list/show/status` 面向四类新起始蓝图：`knowledge-assistant`、`work-assistant`、`coding-assistant`、`pi-agent`。`template status` 读取目标项目的模型、知识来源/索引及可选工作目录状态；它报告配置就绪度，不代替真实运行验收。旧软件项目起点 ID 不再作为别名。状态机、行为树、规则、混合路由和事件收件箱仍是通用积木/工作流能力，不是固定软件项目起点。状态机记忆和事件队列只保留在当前会话；退出程序或另开 CLI 运行不会保留。事件收件箱用普通输入入队，输入 next 按顺序取出消息。取出后业务失败不自动重投；持久工作流仍在开发。
+`template list/show/status` 面向四类新起始蓝图：`knowledge-assistant`、`work-assistant`、`coding-assistant`、`pi-agent`。`template status` 读取目标项目的模型、知识来源/索引及可选工作目录状态；它报告配置就绪度，不代替真实运行验收。旧软件项目起点 ID 不再作为别名。状态机、行为树、规则、混合路由和事件收件箱仍是通用积木/工作流能力，不是固定软件项目起点。状态机记忆和事件队列只保留在当前会话；退出程序或另开 CLI 运行不会保留。事件收件箱用普通输入入队，输入 next 按顺序取出消息。取出后业务失败不自动重投；持久工作流的实现与验证范围见阶段 6–7 契约及验收。
 
 `run start --inputs-file <inputs.json>` 可替代 `--input`，在同一会话按顺序执行 1–32 个字符串；每项最多 16000 UTF-8 字节，文件最多 128 KiB。用 `schema show blocky.run-inputs/v1 --json` 获取输入结构。失败、拒绝授权或取消后不继续剩余输入，整批共享命令超时；每次模型/工具请求仍遵守原有批准要求。JSONL 输出所有运行事件，最终 `runs` 分别返回结果和运行 ID，`completedInputs/requestedInputs` 表示进度。`--trace-output` 只导出最后一次尝试的运行，响应注明 `traceScope:last-run`；多次输入不能使用单个 `--output` 文件路径。
 
-本节命令位于开发分支，尚未完成阶段交付。`run start` 可使用 `--breakpoint <module:block>`、`--debug-actions <actions.json>`（`step`、`continue`、`stop` 数组）、`--from-block <id>` 和 `--trace-output <trace.json>`；轨迹文件只保存受限元数据，`trace inspect/replay` 只读，不重发模型或工具调用。从所选积木运行若会跳过前置步骤，返回 `BLK-RUN-010`。
+`run start` 可使用 `--breakpoint <module:block>`、`--debug-actions <actions.json>`（`step`、`continue`、`stop` 数组）、`--from-block <id>` 和 `--trace-output <trace.json>`；轨迹文件只保存受限元数据，`trace inspect/replay` 只读，不重发模型或工具调用。从所选积木运行若会跳过前置步骤，返回 `BLK-RUN-010`。交付证据见阶段 6–7 验收。
 
-`project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。Windows UIA 与隔离浏览器 Host 已有开发实现；普通包操作、录制和完整阶段门禁仍未完成。
+`project map <file.blocky> --json` 返回模块引用和影响范围；`project edit` 按 `blocky.editor-operation/v1` 批量编辑并保存新项目，要求当前项目摘要，源文件不覆盖。`rpa validate <plan.json>` 校验有人值守计划，`rpa recording-import` 产生 `requiresReview:true` 的待审阅草案并丢弃录入文本；草案不是可执行计划。Windows UIA 与隔离浏览器 Host 的普通包操作、录制和门禁范围见阶段 6–7 验收。
 
-阶段 4 已提供受控 `run start --live`；四类新起始蓝图在开发源码中有 CLI 入口，但普通构建与验收尚未完成。当前创建接口接受四个新 ID，旧软件项目起点 ID 应明确拒绝。`run start --workspace-dir <directory>` 为本次 CLI 运行绑定所选文件范围；对外只显示工作区名和相对文件名，绝对路径不写入项目。第三方 Agent/框架只作为研究与来源分析对象，不因此提供原生适配或兼容声明。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
+阶段 4 已提供受控 `run start --live`；四类起始蓝图提供共享 CLI 入口，已完成普通包独立验收。当前创建接口接受四个新 ID，旧软件项目起点 ID 应明确拒绝。`run start --workspace-dir <directory>` 为本次 CLI 运行绑定所选文件范围；对外只显示工作区名和相对文件名，绝对路径不写入项目。第三方 Agent/框架只作为研究与来源分析对象，不因此提供原生适配或兼容声明。阶段 3 已提供本地 Git 锁定提交扫描、静态证据与受限数值转换；不会执行上游代码。不能证明的函数/算法保留原生。`--fixture` 仅为旧夹具回归入口。`surface create`/`surface list` 提供候选页面清单路径，CLI 不打开浏览器或发布站点。
 
 ## 阶段 4 Agent 运行
 
@@ -98,7 +100,7 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 ## 阶段 3 蓝图与真实来源
 
-空白创建只生成空白 `main` 模块。当前开发源码提供四类蓝图的列出、查看与状态查询，创建时需通过 `project create --template` 选取；这些新入口尚未完成 CLI 普通构建或验收。
+空白创建只生成空白 `main` 模块。当前源码提供四类蓝图的列出、查看与状态查询，创建时需通过 `project create --template` 选取；交付证据见四类起始蓝图验收。
 
 ```powershell
 .\blocky.cmd project create --name "空白项目" --output .\try\empty.blocky --json
@@ -115,7 +117,7 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 更新有冲突时返回 `ready:false` 且不写补丁；明确 `--resolution keep-user` 或 `upstream` 后才生成候选。`blueprint restore` 生成还原补丁；`patch apply` 输出新项目，不覆盖原件。版本、绑定和默认副本随项目保存，蓝图本身不包含知识正文或模型密钥。
 
-`model-example` 是占位资源 ID，运行示例前请将其替换为你已配置的模型资源；也可省略 `--model`，但只有蓝图创建会尝试继承本机默认模型。模型积木存在不代表资源已连通或外部模型已调用。知识问答的资料来源需另行通过 `knowledge add` 添加，再运行 `knowledge sync` 建立索引；普通空白/蓝图结构未同步前不应宣称资料问答已就绪。`template status` 的配置结果及上述 CLI 命令目前没有普通构建读回或验收结论。
+`model-example` 是占位资源 ID，运行示例前请将其替换为你已配置的模型资源；也可省略 `--model`，但只有蓝图创建会尝试继承本机默认模型。模型积木存在不代表资源已连通或外部模型已调用。知识问答的资料来源需另行通过 `knowledge add` 添加，再运行 `knowledge sync` 建立索引；普通空白/蓝图结构未同步前不应宣称资料问答已就绪。`template status` 只报告配置状态，不能替代当前作品的真实运行结果；对应交付证据见四类起始蓝图验收。
 
 ## 阶段 2 项目、模块、设置与资源
 
@@ -249,7 +251,7 @@ JSONL 包含有序运行事件、稳定错误码、`modelApiCalled` 和实际模
 
 Windows 目标 identity 必须来自当前 `rpa targets`；原生对话框要求核对计划与窗口。Windows UIA 与隔离浏览器均支持查找、读取、点击、填写与等待。截图已接入同一计划和权限，Windows 真实绘制及普通包仍待验。
 
-浏览器高风险坐标回退仅允许 click：`locator:{"kind":"coordinate","x":50,"y":60,"riskAccepted":true}`。坐标从隔离浏览器可见页面左上角开始，使用 CSS 像素，当前视口 1100×760；不是桌面屏幕坐标。`rpa validate` 返回 `coordinateSpace` 和 `BLK-RPA-COORDINATE-RISK` 警告。运行时完整计划及每步均需原生确认；超界或视口变化拒绝，布局变化仍可能误点，应优先语义定位。转为普通积木时单独审阅 `rpa.coordinate` 权限。Windows 坐标为屏幕物理像素，允许负方向显示器；`rpa targets` 返回 `coordinateFrame`（窗口/客户区/虚拟屏幕与 DPI）或 `coordinateError`。批准后聚焦目标并移动系统鼠标；几何、前台、遮挡或按键状态变化会拒绝，未知回执不得重放。以上新增路径尚无普通包验收证明。
+浏览器高风险坐标回退仅允许 click：`locator:{"kind":"coordinate","x":50,"y":60,"riskAccepted":true}`。坐标从隔离浏览器可见页面左上角开始，使用 CSS 像素，当前视口 1100×760；不是桌面屏幕坐标。`rpa validate` 返回 `coordinateSpace` 和 `BLK-RPA-COORDINATE-RISK` 警告。运行时完整计划及每步均需原生确认；超界或视口变化拒绝，布局变化仍可能误点，应优先语义定位。转为普通积木时单独审阅 `rpa.coordinate` 权限。Windows 坐标为屏幕物理像素，允许负方向显示器；`rpa targets` 返回 `coordinateFrame`（窗口/客户区/虚拟屏幕与 DPI）或 `coordinateError`。批准后聚焦目标并移动系统鼠标；几何、前台、遮挡或按键状态变化会拒绝，未知回执不得重放。以上路径的普通包验证范围见阶段 6–7 验收及其中的坐标确认补证。
 
 浏览器计划使用 `target.kind="browser"`，`target.identity` 为起始网址的来源（协议、域名及非默认端口，不含路径）。步骤定位器使用 `{kind:"browser",role:"button",name:"保存"}` 等可访问性角色及精确名称。运行方式：
 

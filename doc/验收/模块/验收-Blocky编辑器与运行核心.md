@@ -14,7 +14,7 @@
 | 最近结论 | 阶段 1 S1-01–S1-12 通过；首次 Full 第 113 轮 `undo failed` 原因未证实，作为非阻塞残余风险保留 |
 | 当前详细证据 | [阶段 1 任务验收](../任务/验收-2026-09-16-Blocky阶段1正式Demo.md) |
 | 历史 POC 基线 | 2026-08-26 结论为“通过”；Critical（严重）0 / Important（重要）0 / Minor（次要）2（多入口双入口用例待补、普通 Web 构建约 1.08 MB 包体积警告） |
-| 历史详细证据 | [秋叶课堂 POC Agent](../归档/2026-08-26/验收-Blocky秋叶课堂POC-Agent.md)；[专业生产力工作台](../归档/2026-08-12/验收-Blocky专业生产力工作台.md)；[现代桌面工作区](../归档/2026-08-11/验收-Blocky现代桌面工作区.md)；[任务验收：Windows Core 技术尖峰](../归档/2026-08-10/验收-Windows-Core技术尖峰.md)；[DeepSeek Flash Agent 补充验证](../归档/2026-08-10/验收-DeepSeek-Flash-Agent补充验证.md) |
+| 历史详细证据 | 秋叶课堂 POC Agent（历史比赛材料，已清理）；[专业生产力工作台](../归档/2026-08-12/验收-Blocky专业生产力工作台.md)；[现代桌面工作区](../归档/2026-08-11/验收-Blocky现代桌面工作区.md)；[任务验收：Windows Core 技术尖峰](../归档/2026-08-10/验收-Windows-Core技术尖峰.md)；[DeepSeek Flash Agent 补充验证](../归档/2026-08-10/验收-DeepSeek-Flash-Agent补充验证.md) |
 
 本文件长期维护功能与场景基线，不复制一次性原始日志。新增、修改或删除相关功能时，更新对应场景，并以新的任务验收记录绑定当次命令、指标和人工证据。
 
@@ -150,7 +150,7 @@
 
 预期结果：运行不再绕过积木链直接回显输入；`run.started` 和唯一终态之间，每个实际求值或执行的积木均产生来源映射正确的 `block.started`/`block.completed`，回复文本只由该处理链生成；取消时结束尚未释放的可视化节拍且不产生 `run.completed`；未声明入口、缺失处理链、未知处理块或缺失来源映射均以稳定安全码失败关闭。
 
-基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core` 与原生 POC 人工运行；当前任务证据见 [秋叶课堂 POC Agent](../归档/2026-08-26/验收-Blocky秋叶课堂POC-Agent.md)。
+基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core` 与原生 POC 人工运行；当前任务证据见 秋叶课堂 POC Agent（历史比赛材料，已清理）。
 
 ### 6.5 领域级证据 Agent 与无依据护栏
 
@@ -158,7 +158,7 @@
 
 预期结果：不同主题不需要修改 Agent 配置或积木；检索只返回当前问题相关证据，重排节点按相关性排序并去重，复合问题可命中多份课程资料；无来源模型草稿被护栏改写为“待核实”，不能进入带引用结论；结构化输出渲染为真实标题、段落、列表和加粗字段，不显示原始 Markdown 标记；项目中不存在 `core.data.literal` 固定回答或单题判断分支。普通 release 的模型调用必须经过 Rust Host，成功后产生 `model.completed` 安全事件并显示 Provider、实际模型、请求 ID 与 Token 用量；自动化测试使用确定性适配器且必须明确不产生外部消费。两者都不被描述为生产级外部知识库或完整 RAG。
 
-基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core`、`.blocky` ZIP 静态审计与 Windows 普通 release 人工运行；当前结果：通过。当前任务证据见 [自然科学课程助教 Agent](../任务/验收-Blocky自然科学课程助教Agent.md)。
+基线命令：`pnpm test:unit`、`pnpm test:component`、`pnpm check:core`、`.blocky` ZIP 静态审计与 Windows 普通 release 人工运行；当前结果：通过。当前任务证据见 自然科学课程助教 Agent（历史比赛材料，已清理）。
 
 ## 7. Tauri Host 本地存储
 
