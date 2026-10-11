@@ -47,7 +47,7 @@
   "archiveTagsPushed": false,
   "productChangesPushed": false,
   "historicalRefsRewritten": false,
-  "currentTaskDocumentCommitsPushed": false,
+  "currentTaskDocumentCommitsPushed": true,
   "publicPreflight": {
     "historyReport": "try/待清理/仓库转移-2026-10-12/公开审计/",
     "recentCiRunsChecked": [
@@ -94,5 +94,30 @@
     "filesAtMove": 42,
     "bytesAtMove": 34621357,
     "disposition": "公开前扫描工具、脱敏证据与近期CI日志保留待清理；本次未永久删除或宣称空间释放"
+  },
+  "documentPush": {
+    "authorization": "用户确认推送两库本轮文档与记录",
+    "verifiedAt": "2026-10-11T18:51:16.539Z",
+    "anchors": [
+      {
+        "workspace": "D:/1Folder/Blocky-AI",
+        "commit": "9b655320b2968d4c1c41acfb69caa58428ca50ca",
+        "tree": "991f0721ec9872379f6991948b6dbca548db594f",
+        "remoteCommit": "9b655320b2968d4c1c41acfb69caa58428ca50ca",
+        "remoteTree": "991f0721ec9872379f6991948b6dbca548db594f",
+        "verified": true
+      },
+      {
+        "workspace": "D:/2Folder/NexQ",
+        "commit": "29690d4894cc4d3358c6b8ddffb541e95253fdda",
+        "tree": "0491f360b9eba5a02e4ecc6892787df17e822966",
+        "remoteCommit": "29690d4894cc4d3358c6b8ddffb541e95253fdda",
+        "remoteTree": "0491f360b9eba5a02e4ecc6892787df17e822966",
+        "verified": true
+      }
+    ],
+    "archiveTagsPushed": false,
+    "productChangesPushed": false,
+    "followingBookkeeping": "后续只记录授权及读回结果，随本次文档范围推送；最终SHA以忽略目录final-readback.json为准"
   }
 }
