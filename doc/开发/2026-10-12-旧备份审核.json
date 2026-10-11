@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "blocky.backup-readonly-audit/v1",
+  "verifiedAt": "2026-10-11T17:34:16.858Z",
+  "deletionExecuted": false,
+  "scope": [
+    "D:/0文件夹/备份/Blocky-出题构建崩溃保全-2026-10-10-0117",
+    "D:/0文件夹/备份/Blocky-GPT项目替换-20261008-2239"
+  ],
+  "backups": [
+    {
+      "path": "D:\\0文件夹\\备份\\Blocky-出题构建崩溃保全-2026-10-10-0117",
+      "fileCount": 2,
+      "bytes": 16847,
+      "exactGitRecoveryFiles": 0,
+      "withoutVerifiedGitRecovery": [
+        "recovered-built-receipt.json",
+        "recovered-built.blocky"
+      ],
+      "files": [
+        {
+          "name": "recovered-built-receipt.json",
+          "bytes": 507,
+          "sha256": "7a770bd45d37db68814aed5f4d1a5c07c58e7b98a65377cb1dabe8ac63574860",
+          "gitBlob": "159b6fe2f364580cb897c6963d7acb3b2dce3427",
+          "gitRecovery": null
+        },
+        {
+          "name": "recovered-built.blocky",
+          "bytes": 16340,
+          "sha256": "a0059f528bf1a79e6e57e2deb4612208677dc6ce8c3e36938b58d7419da0c2ae",
+          "gitBlob": "98c4e305e92c96329d8f98b348b32fb9f7789b19",
+          "gitRecovery": null
+        }
+      ]
+    },
+    {
+      "path": "D:\\0文件夹\\备份\\Blocky-GPT项目替换-20261008-2239",
+      "fileCount": 10,
+      "bytes": 25159819,
+      "exactGitRecoveryFiles": 4,
+      "withoutVerifiedGitRecovery": [
+        "00-资料导航与使用说明.md",
+        "01-旧版PPT逐页文字与备注.md",
+        "06-Blocky已完成功能与边界.md",
+        "07-Blocky产品与架构设计.md",
+        "08-答辩重点与预留问题策略.md",
+        "project-before.png"
+      ],
+      "files": [
+        {
+          "name": "00-资料导航与使用说明.md",
+          "bytes": 4759,
+          "sha256": "805cd5394e7613cdd045440b662b525fce96d1a25047544e8bc5224ef77b8ce6",
+          "gitBlob": "ddae27efdd326a4916b20af0a71ea2c2ec6184d2",
+          "gitRecovery": null
+        },
+        {
+          "name": "01-旧版PPT逐页文字与备注.md",
+          "bytes": 40108,
+          "sha256": "25352c7e23b7bfcde064c842de327531342ad6910dc509cfba2a6aebbc543dec",
+          "gitBlob": "cfa6698d8cfc39fbb13e9d7586a54b31127818f1",
+          "gitRecovery": null
+        },
+        {
+          "name": "06-Blocky已完成功能与边界.md",
+          "bytes": 8339,
+          "sha256": "d57d92b0eebf6edc34e1438b0d8e6465d5a36be49ab09c8c1d0daad7ffbc1a19",
+          "gitBlob": "1792714ed66e74b7abd3b2b7f01382ab0040b88c",
+          "gitRecovery": null
+        },
+        {
+          "name": "07-Blocky产品与架构设计.md",
+          "bytes": 5620,
+          "sha256": "dacd3fdd2d4b94035b41790c7de122538eee960dddce9a375f83ba77c3b74183",
+          "gitBlob": "5d50309a5acd1ea0a627eb4a302e1d43dd8eb40d",
+          "gitRecovery": null
+        },
+        {
+          "name": "08-答辩重点与预留问题策略.md",
+          "bytes": 8303,
+          "sha256": "269d52bbf80aec35ff084ce48e1e412cf18987f8dd30460dad7312edfc0aeec2",
+          "gitBlob": "ad3def3740ffbf1d38dbe4e225fd7c01d623bb90",
+          "gitRecovery": null
+        },
+        {
+          "name": "2026-10-02-Blocky市场与竞品深度调研.md",
+          "bytes": 60629,
+          "sha256": "1b5468b8638261f65156e98a9f38f7d694235488b453643604a0aa31b87d93b7",
+          "gitBlob": "b22bef1e70e2df2b15156fd2dc63c774eb8ee861",
+          "gitRecovery": {
+            "path": "doc/产品设计/2026-10-02-Blocky市场与竞品深度调研.md",
+            "exactBytesVerified": true
+          }
+        },
+        {
+          "name": "Blocky-Studio-商业计划书-2026-10-06.docx",
+          "bytes": 72012,
+          "sha256": "edd3dbe56582f135fdb46b585e3e2993d6ab26104a914c45f3a906fc42cb41b8",
+          "gitBlob": "ba1cf8ad72eca83eb9acf74ae103d8060637783d",
+          "gitRecovery": {
+            "path": "复赛/Blocky-Studio-商业计划书-2026-10-06.docx",
+            "exactBytesVerified": true
+          }
+        },
+        {
+          "name": "Blocky-Studio-积木AI创作-2026-10-06.pptx",
+          "bytes": 6294855,
+          "sha256": "7b1cb73f27a3f5de091036bc0f5b7508f1a40c8ff94c67f3c15628aec7febafa",
+          "gitBlob": "25b12d1629461ca56a6afc5f2ef4e6c8eb64795d",
+          "gitRecovery": {
+            "path": "复赛/Blocky-Studio-积木AI创作-2026-10-06.pptx",
+            "exactBytesVerified": true
+          }
+        },
+        {
+          "name": "project-before.png",
+          "bytes": 76371,
+          "sha256": "9dccedacd4cbd1a49be85fc847e9156aa23ef0befbed67e4c6222e8501d04ca1",
+          "gitBlob": "79d57ab577e11919e5fc04768912961fc4754b1b",
+          "gitRecovery": null
+        },
+        {
+          "name": "旧版PPT-历史方案-备注清理版.pptx",
+          "bytes": 18588823,
+          "sha256": "06f248fabaa8d49b40a88f7d780046e4fcce8baf46c8421950ee696b4a484d72",
+          "gitBlob": "88db1a4a776457dba4ddb41f0a2a159b392c8508",
+          "gitRecovery": {
+            "path": "项目组件/旧版PPT-历史方案-备注清理版.pptx",
+            "exactBytesVerified": true
+          }
+        }
+      ]
+    }
+  ],
+  "crashReceiptShaVerified": true,
+  "limits": [
+    "Only raw-byte matches in reachable local Git objects prove Git restoration.",
+    "Missing ignored historical process evidence does not prove backup duplicates."
+  ],
+  "externalReads": [
+    "D:/0文件夹/备份/Blocky-出题构建崩溃保全-2026-10-10-0117",
+    "D:/0文件夹/备份/Blocky-GPT项目替换-20261008-2239",
+    "C:/Users/29551/AppData/Local/ai.blocky.studio/user/recovery/latest.json (path metadata only; file not read)"
+  ]
+}
