@@ -44,8 +44,8 @@ export const english = {
   '在哪里获取桌面版和源码？':'Where can I download the app and source code?','获取 Windows x64 安装包：':'Get the Windows x64 installer:','。此版本为测试版，仅供体验与反馈，不代表正式稳定版。源码仓库已公开：':' This is a beta for evaluation and feedback, not a stable release. The source repository is now public:',
   '下一个想法，':'Your next idea','从你开始。':'starts with you.','找到你的创作起点':'Find your starting point','让每一个好奇的想法，都有开始的方式。':'Give every curious idea a place to begin.','常见问题':'FAQ',
   '语言':'Language','主题':'Appearance','跟随系统':'Use system setting','深色':'Dark','浅色':'Light','切换语言':'Change language','切换主题':'Change appearance','联系':'Contact','机构咨询':'Institutional inquiries',
-  '下载测试版 · 0.8.0-beta.1':'Download beta · 0.8.0-beta.1',
+  '下载测试版 · 0.8.0-beta.2':'Download beta · 0.8.0-beta.2',
   'Windows x64 安装包':'Windows x64 installer',
-  '0.8.0-beta.1 测试版':'Beta 0.8.0-beta.1',
+  '0.8.0-beta.2 测试版':'Beta 0.8.0-beta.2',
   '仅供体验与反馈，不代表正式稳定版。':'For evaluation and feedback only; this is not a stable release.',
 };

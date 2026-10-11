@@ -25,7 +25,7 @@
 
 *Blocky Studio is a Windows desktop visual AI agent builder with Scratch-style nested blocks, a natural-language coding assistant, local retrieval-augmented generation (RAG), tool calling, and a shared CLI. It is designed for AI literacy education and editable, inspectable agent development.*
 
-> 当前源码版本为 **0.8.0**；公开 Windows 安装包为 **0.8.0-beta.1**。后续桌面修复可能已进入源码而尚未更新安装包，请以下载页说明为准。在线体验展示真实积木画布与蓝图，聊天和运行结果使用预设示例，不连接模型或本机文件。
+> 当前源码版本为 **0.8.0**；公开 Windows 安装包为 **0.8.0-beta.2**。后续桌面修复可能已进入源码而尚未更新安装包，请以下载页说明为准。在线体验展示真实积木画布与蓝图，聊天和运行结果使用预设示例，不连接模型或本机文件。
 
 ## 导航
 
@@ -92,7 +92,7 @@
 
 ### 安装 Windows 测试版
 
-1. 打开 [Windows Releases](https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases)，选择 `v0.8.0-beta.1` 的安装程序，阅读版本说明。
+1. 打开 [Windows Releases](https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases)，选择 `v0.8.0-beta.2` 的安装程序，阅读版本说明。
 2. 确认系统具备 **Microsoft Edge WebView2 Runtime** 与 **Microsoft Visual C++ x64 运行库 14.44 或更高版本**。安装器会检查依赖并在缺失时给出官方安装入口。
 3. 启动 **Blocky Studio（测试版）**，创建空白作品，或选择一种起始蓝图。
 4. 在模型设置中添加厂商连接和具体模型；按任务准备知识资料或选择工作目录。
