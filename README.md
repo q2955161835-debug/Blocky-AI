@@ -14,7 +14,7 @@
     <a href="https://blocky.donk55666.chatgpt.site/#/studio">在线体验</a> ·
     <a href="https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases">Windows 下载</a> ·
     <a href="tools/blocky-cli/README.md">CLI 文档</a> ·
-    <a href="https://github.com/I-dont-know-codex-is-right/Blocky-AI/issues">问题反馈</a>
+    <a href="https://github.com/q2955161835-debug/Blocky-AI/issues">问题反馈</a>
   </p>
 </div>
 
@@ -131,7 +131,7 @@ API Key 等敏感内容通过应用的 Host 安全存储管理；`.blocky` 作�
 ### 克隆与启动
 
 ```powershell
-git clone https://github.com/I-dont-know-codex-is-right/Blocky-AI.git
+git clone https://github.com/q2955161835-debug/Blocky-AI.git
 cd Blocky-AI
 
 # 确保 pnpm 版本与仓库一致
@@ -271,8 +271,8 @@ Blocky-AI/
 
 代码贡献前请阅读 [AGENTS.md](AGENTS.md) 和相关正式契约，使用锁定依赖，并执行与修改范围对应的检查。涉及共享领域的能力应同步考虑桌面与 CLI；界面交互和原生行为需有对应验证。第三方源码、模型或资产需保留来源与许可证。
 
-- [报告 Bug 或提出建议](https://github.com/I-dont-know-codex-is-right/Blocky-AI/issues)
-- [查看和提交 Pull Request](https://github.com/I-dont-know-codex-is-right/Blocky-AI/pulls)
+- [报告 Bug 或提出建议](https://github.com/q2955161835-debug/Blocky-AI/issues)
+- [查看和提交 Pull Request](https://github.com/q2955161835-debug/Blocky-AI/pulls)
 - [阅读项目执行规则](AGENTS.md)
 
 代码再分发与衍生使用的授权范围，以正式加入的项目许可证为准。

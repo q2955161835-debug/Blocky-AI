@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "blocky.repository-transfer/v1",
+  "verifiedAt": "2026-10-11T18:39:57.751Z",
+  "authorization": "用户要求将Blocky和NexQ中文仓库转到个人，仅Blocky公开",
+  "targetOwner": "q2955161835-debug",
+  "previousOwner": "I-dont-know-codex-is-right",
+  "repositoryNameDecision": "用户明确确认转移现有Nexq-cn并保留名称",
+  "repositories": [
+    {
+      "clone_url": "https://github.com/q2955161835-debug/Blocky-AI.git",
+      "default_branch": "main",
+      "full_name": "q2955161835-debug/Blocky-AI",
+      "html_url": "https://github.com/q2955161835-debug/Blocky-AI",
+      "id": 1328047278,
+      "owner": "q2955161835-debug",
+      "private": false,
+      "visibility": "public",
+      "remoteRefsPreserved": true,
+      "remoteRefs": [
+        "4a29c4f82d58c544eea26cd9277058d5d9c65915\tHEAD",
+        "f9501c0c1a9ded6478f565b01afeef77a9fd47ed\trefs/heads/codex/build-windows-installer-2026-10-10",
+        "6167a6df4039cdd9d98a1bedaba0089e1524115c\trefs/heads/codex/cleanup-competition-readme",
+        "9666a10dd155c7aa6dd34fcab19746f85c40344f\trefs/heads/codex/docs-ppt-speech",
+        "97a6ceac65025119bce9fdc407bb6b835159a7d0\trefs/heads/codex/fix-studio-fullscreen",
+        "4a29c4f82d58c544eea26cd9277058d5d9c65915\trefs/heads/main",
+        "36843e31749a01b5632636ba34b02b6032da7b42\trefs/pull/1/head"
+      ]
+    },
+    {
+      "clone_url": "https://github.com/q2955161835-debug/Nexq-cn.git",
+      "default_branch": "main",
+      "full_name": "q2955161835-debug/Nexq-cn",
+      "html_url": "https://github.com/q2955161835-debug/Nexq-cn",
+      "id": 1387785154,
+      "owner": "q2955161835-debug",
+      "private": true,
+      "visibility": "private",
+      "remoteRefsPreserved": true,
+      "remoteRefs": [
+        "e645614ca76472fe5e33e0039ae723efb2ef6cb2\tHEAD",
+        "e645614ca76472fe5e33e0039ae723efb2ef6cb2\trefs/heads/main"
+      ]
+    }
+  ],
+  "localOriginsUpdated": true,
+  "nexqUpstreamPushDisabled": true,
+  "archiveTagsPushed": false,
+  "productChangesPushed": false,
+  "historicalRefsRewritten": false,
+  "currentTaskDocumentCommitsPushed": false,
+  "publicPreflight": {
+    "historyReport": "try/待清理/仓库转移-2026-10-12/公开审计/",
+    "recentCiRunsChecked": [
+      38031578321,
+      38027872566,
+      38024261051,
+      38024048070,
+      37889358217
+    ],
+    "recentCiCredentialPatternHits": 0,
+    "historyAndLogScanDoesNotGuaranteeAbsenceOfAllSensitiveContent": true,
+    "remoteReachableCommits": 769,
+    "uniqueBlobs": 8396,
+    "confirmedPublicationBlockers": 0,
+    "scopeLimitations": [
+      "This is a bounded publication privacy and credential review, not an application vulnerability audit or a zero-risk guarantee.",
+      "All image-containing blobs are included in the object inventory, but individual product screenshots were not exhaustively OCRed or visually reviewed.",
+      "The intentional bad.pdf fixture at c6b8146807685e37671a6d9d710716c1eea2c06c starts with synthetic data and is not a valid PDF.",
+      "Actions logs and GitHub metadata outside the listed refs are handled separately by the main agent."
+    ],
+    "toolTemporaryPath": {
+      "path": "C:/Users/29551/AppData/Local/Temp/git-blob-a16744/business-plan-template.docx",
+      "existsAtCloseout": false,
+      "reason": "Initial invalidated Git textconv attempt; final complete scan uses --no-textconv"
+    }
+  },
+  "independentVerification": "doc/验收/任务/验收-2026-10-12-仓库转移与Blocky公开.md",
+  "noProjectLicenseSelected": true,
+  "noProductBuildOrRelease": true,
+  "externalWorkspaceChanges": [
+    "D:\\2Folder\\NexQ\\.git\\config",
+    "D:\\2Folder\\NexQ\\AGENTS.md",
+    "D:\\2Folder\\NexQ\\doc\\进展记录\\2026-10-12.md"
+  ],
+  "rollback": {
+    "transfer": "具备权限时原生转回原组织，并恢复各自旧origin",
+    "visibility": "可将Blocky改回私有，但已访问或复制的公开内容不能收回"
+  },
+  "independentConclusion": "通过",
+  "processArchive": {
+    "previousPath": "D:/1Folder/Blocky-AI/try/仓库转移-2026-10-12",
+    "currentPath": "D:/1Folder/Blocky-AI/try/待清理/仓库转移-2026-10-12",
+    "movedOnSameVolume": true,
+    "filesAtMove": 42,
+    "bytesAtMove": 34621357,
+    "disposition": "公开前扫描工具、脱敏证据与近期CI日志保留待清理；本次未永久删除或宣称空间释放"
+  }
+}
