@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "blocky.backup-recycle/v1",
+  "startedAt": "2026-10-11T17:37:16.7946336+00:00",
+  "finishedAt": "2026-10-11T17:37:17.2392186+00:00",
+  "entries": [
+    {
+      "originalPath": "D:\\0文件夹\\备份\\Blocky-出题构建崩溃保全-2026-10-10-0117",
+      "recycleMetadata": "D:\\$RECYCLE.BIN\\S-1-5-21-209688474-3446081356-2440070058-1001\\$IUYQZG9",
+      "recycleData": "D:\\$Recycle.Bin\\S-1-5-21-209688474-3446081356-2440070058-1001\\$RUYQZG9",
+      "files": 2,
+      "bytes": 16847,
+      "sha256Verified": true,
+      "deletedAtUtc": "2026-10-11T17:37:16.9350000Z"
+    },
+    {
+      "originalPath": "D:\\0文件夹\\备份\\Blocky-GPT项目替换-20261008-2239",
+      "recycleMetadata": "D:\\$RECYCLE.BIN\\S-1-5-21-209688474-3446081356-2440070058-1001\\$IXG0E41",
+      "recycleData": "D:\\$Recycle.Bin\\S-1-5-21-209688474-3446081356-2440070058-1001\\$RXG0E41",
+      "files": 10,
+      "bytes": 25159819,
+      "sha256Verified": true,
+      "deletedAtUtc": "2026-10-11T17:37:17.0950000Z"
+    }
+  ],
+  "files": 12,
+  "bytes": 25176666,
+  "permanentDeletion": false,
+  "diskSpaceFreedClaimed": false,
+  "newBackupPreserved": "D:\\0文件夹\\备份\\Blocky-GitHub同步前成品-2026-10-12-0109"
+}
