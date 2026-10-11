@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "blocky.old-branch-cleanup/v1",
+  "verifiedAt": "2026-10-11T18:19:05.5508962+00:00",
+  "localMain": "e3bd6366580d3e0f26efdb96031958d2643b72e7",
+  "localBranches": [
+    "main"
+  ],
+  "cleanWorkspace": true,
+  "worktreeCount": 1,
+  "oldBranchesDeleted": 7,
+  "archiveTagsVerified": 4,
+  "productChangesMerged": false,
+  "docStatusFixes": 6,
+  "bundle": {
+    "uniqueObjects": 860,
+    "sha256": "6526eb19ed91f170f8edc33e6b306ca46030e98b350faca7a31a0921f5f919c0",
+    "path": "D:\\0文件夹\\备份\\Blocky-旧分支归档-2026-10-12-0205\\旧分支增量恢复.bundle",
+    "bytes": 67971397
+  },
+  "checks": {
+    "verifiedAt": "2026-10-11T18:19:05.264Z",
+    "baseline": "0066fb46a94d23c006c712dbdeacfac7e785b5ad",
+    "deletedLocalOldBranches": 7,
+    "archiveTagsVerified": 4,
+    "bundleBytes": 67971397,
+    "uniqueObjectsVerified": 860,
+    "adoptedDocs": 6,
+    "adoptedChangesOneLineEach": true,
+    "protectedGitTreesUnchanged": true,
+    "preservedLocalFilesSha256": 8,
+    "markdownUtf8AndSecretCategoryChecks": "passed",
+    "gitDiffCheck": "passed",
+    "realModelApiCalled": false,
+    "newProductTestsExecuted": false
+  },
+  "pushExecuted": false,
+  "remoteOtherBranchesChanged": false,
+  "productKnownIssue": "BLK-GUARD-001 remains unremediated in archived quiz source",
+  "processArchive": "D:\\1Folder\\Blocky-AI\\try\\待清理\\旧分支清理-2026-10-12"
+}
