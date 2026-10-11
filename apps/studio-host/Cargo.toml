@@ -2,6 +2,7 @@
 name = "blocky-studio"
 version = "0.8.0"
 edition = "2024"
+license = "PolyForm-Noncommercial-1.0.0"
 default-run = "blocky-studio"
 
 [features]

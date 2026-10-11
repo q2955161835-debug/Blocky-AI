@@ -1,1 +1,2 @@
-{"name":"blocky-site-art","private":true,"type":"module","dependencies":{"three":"0.186.1"}}
+{"name":"blocky-site-art",
+  "license": "PolyForm-Noncommercial-1.0.0","private":true,"type":"module","dependencies":{"three":"0.186.1"}}

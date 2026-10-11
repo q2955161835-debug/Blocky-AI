@@ -38,6 +38,8 @@ await mkdir(out); // Existing releases are never overwritten.
 await mkdir(join(out, "cli/bin"), { recursive: true });
 await mkdir(join(out, "licenses/sources"), { recursive: true });
 const copies = [
+  ["LICENSE", "licenses/LICENSE.Blocky.txt"],
+  ["NOTICE", "licenses/NOTICE.Blocky.txt"],
   ["try/release-native-target/release/blocky-studio.exe", "Blocky Studio.exe"],
   ["try/release-native-target/release/DirectML.dll", "DirectML.dll"],
   ["tools/blocky-cli/dist/main.mjs", "cli/main.mjs"],

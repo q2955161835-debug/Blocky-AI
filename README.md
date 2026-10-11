@@ -306,9 +306,11 @@ Blocky-AI/
 完整创作和原生构建当前以 Windows x64 为目标。macOS 创作端和移动 Agent 使用端列在后续路线图中。
 
 <a id="license"></a>
-## 开源与第三方许可证
+## 使用许可与第三方许可证
 
-项目方向是个人版开源免费及社区协作。**当前仓库尚未包含项目级 `LICENSE` 文件，开源许可证与公开发布状态仍待正式确定。** 第三方许可证只覆盖对应依赖，不能替代项目本身的授权。
+Blocky 原创软件采用 [PolyForm Noncommercial 1.0.0](LICENSE)，源码公开，可按协议允许的非商用目的使用、修改和分发。商业用途若不属于协议明确允许的用途，需要另行取得授权；[联系项目维护者](mailto:q2955161835@gmail.com)。个人用途和协议列出的慈善、教育、公共研究等组织用途以正式条款为准，不能将“非商用”简化为禁止所有机构使用。
+
+这是带非商用限制的源码公开许可，不属于 OSI 定义的开源许可证。再分发须随附许可条款或其网址及 [NOTICE](NOTICE) 中的 Required Notice。第三方材料继续遵循各自许可证，不由本项目许可重新授权。
 
 Blockly、Tauri、React、Pi 相关依赖、Wry 补丁，以及知识、文档、音频和浏览器运行资产，分别保留其上游授权与来源记录。参见 [vendor/licenses](vendor/licenses/README.md)、[模型资产说明](vendor/models/README.md)、[音频资产说明](vendor/audio/README.md)和[官网 Blockly 许可证](官网/experience/LICENSE.blockly.txt)。发行打包会收集并检查第三方许可证。
 

@@ -1,0 +1,11 @@
+Required Notice: Copyright (c) 2026 Blocky contributors
+
+Blocky original software is licensed under the PolyForm Noncommercial License
+1.0.0 in LICENSE. Commercial use outside its permitted purposes requires a
+separate license from the relevant rights holders.
+
+Third-party software, models, and assets retain their separately stated
+licenses and notices. This notice does not relicense those materials.
+
+Source repository: https://github.com/q2955161835-debug/Blocky-AI
+Commercial licensing inquiries: q2955161835@gmail.com
