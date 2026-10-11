@@ -11,6 +11,7 @@
   </p>
   <p>
     <a href="https://blocky.donk55666.chatgpt.site">官网</a> ·
+    <a href="https://q2955161835-debug.github.io/Blocky-AI/">GitHub 官网副本</a> ·
     <a href="https://blocky.donk55666.chatgpt.site/#/studio">在线体验</a> ·
     <a href="https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases">Windows 下载</a> ·
     <a href="tools/blocky-cli/README.md">CLI 文档</a> ·

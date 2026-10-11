@@ -18,7 +18,7 @@
 
 发布只包括 `dist/` 的公开网页资源与第三方许可证。禁止发布源码路径、工程文档、验收、私有历史、真实密钥或模型配置。演示只在内存编辑合成项目，不调用模型、不读写本机文件、不持久化聊天。CSP 与构建依赖边界必须保持。
 
-在根目录通过 `node 官网/preview.mjs` 预览，Sites 配置在 `.openai/hosting.json`；复用既有站点和原生发布流程。验收由根目录 `doc/验收/网站/` 管理，真实桌面能力不在官网验收范围。
+在根目录通过 `node 官网/preview.mjs` 预览，Sites 配置在 `.openai/hosting.json`；复用既有站点和原生发布流程。GitHub Pages副本为 `https://q2955161835-debug.github.io/Blocky-AI/`，来源是远端长期托管分支 `gh-pages` 根目录的公开 `dist/` 内容及空 `.nojekyll`；发布分支需保留，不合并为产品源码或当作临时任务分支清理。两种托管分别核对发布来源，原生资源相对路径与Studio CSP保持。验收由根目录 `doc/验收/网站/` 管理，真实桌面能力不在官网验收范围。
 
 中英文与深浅主题默认跟随系统，顶部紧凑控件允许手动选择并恢复系统模式。`dist/preferences-boot.js` 在样式前确定首次外观，`preferences.js` 共享偏好、翻译及切换控件；`translations.js`/`ui-translations.js` 维护官网和演示文案，`appearance.css` 分别适配三种场景。演示的 `localization.ts` 只适配真实 Blockly 的标签、预设字段和内置菜单，不修改产品源码或积木语言。仅 `blocky.site.preferences.v1` 保存语言/主题选项，不保存项目、输入或聊天；切换不重新挂载工作台。
 

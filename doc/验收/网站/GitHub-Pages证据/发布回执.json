@@ -1,0 +1,389 @@
+{
+  "schemaVersion": "blocky.github-pages/v1",
+  "verifiedAt": "2026-10-11T19:07:35.926Z",
+  "authorization": "用户要求Blocky官网用GitHub子域名再部署一份",
+  "url": "https://q2955161835-debug.github.io/Blocky-AI/",
+  "repository": "q2955161835-debug/Blocky-AI",
+  "sourceCommit": "d5a60b8faaf8b024144cc3e6ff0663088cfd12ec",
+  "sourcePath": "官网/dist",
+  "sourceTree": "c93fe079b889c5feb94cdb9bae0faa25b4cae622",
+  "hostingBranch": "gh-pages",
+  "publicationCommit": "23b9e3ba5ef01b3e93559f776c032ba399b5eb92",
+  "publicationTree": "8666ee21245f6ee94b18f1ac6c0b7dcdad60498b",
+  "originalPublicAssets": 52,
+  "publicationFiles": 53,
+  "addedOnly": ".nojekyll",
+  "originalAssetBytes": 5737992,
+  "onlineAll52AssetsExactBytes": true,
+  "pages": {
+    "status": "built",
+    "buildType": "legacy",
+    "source": {
+      "branch": "gh-pages",
+      "path": "/"
+    },
+    "httpsEnforced": true,
+    "cname": null
+  },
+  "deployment": {
+    "runId": 38166518776,
+    "url": "https://github.com/q2955161835-debug/Blocky-AI/actions/runs/38166518776",
+    "status": "completed",
+    "conclusion": "success",
+    "headCommit": "23b9e3ba5ef01b3e93559f776c032ba399b5eb92"
+  },
+  "assets": [
+    {
+      "path": "active-navigation.js",
+      "blob": "4253b2b4cb9569fb3dae8c8c00e1ea8aff86becb",
+      "bytes": 1655,
+      "sha256": "56e8efe0311859909fd992ab0073ab9bfe3c5484f3644499bd4dd9cc07f753f9"
+    },
+    {
+      "path": "appearance.css",
+      "blob": "be1bdb85eea65410dd4582e9d9ae1691fef175b4",
+      "bytes": 7375,
+      "sha256": "881a83f608f6518d9e5c4d66443b47c1ef65e49c3d2f16f790dab0a8ab5b511b"
+    },
+    {
+      "path": "art-translations.js",
+      "blob": "35cb468acfd80f720f0db5dc9c8d70ac95eb0e7b",
+      "bytes": 1282,
+      "sha256": "4a53936189d3bc2991398e6fec612fd7befcb002aed75d9b4f86af383703a60d"
+    },
+    {
+      "path": "art.css",
+      "blob": "c91218900ba4c6efb6a8dd72137d7ea304fc1216",
+      "bytes": 2496,
+      "sha256": "bb3c2b401245a66c44287de7cd75fc64e533229f10245a56223c0a660f613bab"
+    },
+    {
+      "path": "art/THREE-LICENSE.txt",
+      "blob": "1ca9aed778c17c740f1c8133e50414d26fdc58b2",
+      "bytes": 1102,
+      "sha256": "5d5dad8147523d59bc15cca838ae0bdaae7075230ec49132c551a1d18e7b3412"
+    },
+    {
+      "path": "art3d.js",
+      "blob": "a7a5711ed992e6888b794280850fe52bd56bde5f",
+      "bytes": 781744,
+      "sha256": "7e69e0c6db757b3f0673f984c9a34507d1afcbdc2b83f4ab8f97e4b4305b8873"
+    },
+    {
+      "path": "assets/blockly-media/1x1.gif",
+      "blob": "3085511236caea65b69ad30a68979c9b95f4a425",
+      "bytes": 43,
+      "sha256": "a1d88b2c952b790f5f23473c63ef99473327d02e11ebe174799ad912db08f629"
+    },
+    {
+      "path": "assets/blockly-media/delete-icon.svg",
+      "blob": "1bd27ee735a559d125413f502928b7078e9abcf6",
+      "bytes": 315,
+      "sha256": "3eee02b06f476ce746566808178543389e53cd4e9d7fd32b69e329eff4fc71ef"
+    },
+    {
+      "path": "assets/blockly-media/dropdown-arrow.svg",
+      "blob": "4e6ce19ec0fca4e66e07dcc753184ebd8a9704c3",
+      "bytes": 569,
+      "sha256": "bc3873b086b25a01c417cb3b5fe61fd7eef360b8f7c85c2c7f7b802a2626faf9"
+    },
+    {
+      "path": "assets/blockly-media/foldout-icon.svg",
+      "blob": "7aeb5b17427cf9c0991fba84f5277e0b4fb98ab4",
+      "bytes": 150,
+      "sha256": "0ac7478b56f5e5cc583c26710cb7ee5edcedb563cde65cd2385f4dd3e9e08c64"
+    },
+    {
+      "path": "assets/blockly-media/handclosed.cur",
+      "blob": "4851755a1690d6631be7c32dcc7e001e6372aafb",
+      "bytes": 326,
+      "sha256": "4a1637e16f33e1b02f96f699ada695edededfd089530372126d375ad9ed2f0a5"
+    },
+    {
+      "path": "assets/blockly-media/handdelete.cur",
+      "blob": "170320fc281ab02ded109f0310aa180b77e465f0",
+      "bytes": 766,
+      "sha256": "e53ef200d76fef617bd2e307a100d778834ad49784f80c1abc6da547e50b8040"
+    },
+    {
+      "path": "assets/blockly-media/handopen.cur",
+      "blob": "da44588b2fa68ee115deb843e1ce6802e58b3e30",
+      "bytes": 198,
+      "sha256": "d2ec9a81d9a76b0f64b7168e5f05ee660ffb6ba7e35695caaf9851e6b01a04fd"
+    },
+    {
+      "path": "assets/blockly-media/pilcrow.png",
+      "blob": "f224c35868a35f31f5f836943ac03ef951bbfa2d",
+      "bytes": 1010,
+      "sha256": "4e4aa37ce0c162b0239203e538a7ae8eee706554514ff611cfb3a94baaa66167"
+    },
+    {
+      "path": "assets/blockly-media/quote0.png",
+      "blob": "c7820d6077e6d346b9015c22996745fbc4586fd4",
+      "bytes": 771,
+      "sha256": "a06f7a05d9c86851266e55357090d3af37ff24e116258c94d52c4f436c614c7c"
+    },
+    {
+      "path": "assets/blockly-media/quote1.png",
+      "blob": "826583e0ad72dd1424a2ffe9e21a8b653b596058",
+      "bytes": 738,
+      "sha256": "56c52fc75cf7d2926d7502aaa7e95efb46c229aa266306d932795325722aba35"
+    },
+    {
+      "path": "assets/blockly-media/resize-handle.svg",
+      "blob": "b46f177abb369b7ed31f3e1aa637f3657c55feff",
+      "bytes": 218,
+      "sha256": "c95d07b3fb3aaa088e6665061b01952e7ea9dda462b7032a85e095bf8a12855b"
+    },
+    {
+      "path": "assets/blockly-media/sprites.svg",
+      "blob": "3f09ef3a4d6313f8f75070f2b1b2e75ef6abb57b",
+      "bytes": 1775,
+      "sha256": "862de0ee081fa9baf504e673736d7446439c15246452258cab964a82566ef40f"
+    },
+    {
+      "path": "assets/blocky.png",
+      "blob": "10b4f0ae39fab54ff42d91973da77ebd1621088e",
+      "bytes": 1222308,
+      "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d"
+    },
+    {
+      "path": "brand-motion.js",
+      "blob": "740d18af6fe6cf516923d88a6c12d823829d8ae4",
+      "bytes": 1793,
+      "sha256": "7c72ed274874a1e9e9d2f02840e382fb1c45c9a5daebb02e9caada5106fda128"
+    },
+    {
+      "path": "capsule.css",
+      "blob": "f794d6b46b18586808eb292b337425101100e652",
+      "bytes": 6416,
+      "sha256": "68aeacf71fd93b0b9e34348f27750554f06d3875d09e266bd068d057bd88b3c0"
+    },
+    {
+      "path": "compact-navigation.js",
+      "blob": "9266124de0e81ebd0af64b4105f97ddf58464b3d",
+      "bytes": 1800,
+      "sha256": "0931a8c613526d0aa6b1047bfcb3b891534f93700b3b7b0462d9102b1e7f5f67"
+    },
+    {
+      "path": "content-motion.js",
+      "blob": "4a4f082a3b20a5c2e6d8a2168c079bd5d566d9fd",
+      "bytes": 646,
+      "sha256": "a75b1b3fb29f23f22bc5e7e36f9381c3cb97ffae0b7930940c497692479f7a57"
+    },
+    {
+      "path": "content.js",
+      "blob": "ecba8e12e5e99bb5253ccebc7972b8d8b465842d",
+      "bytes": 13046,
+      "sha256": "e5a8a07e4b7874e16d09b5509ce3962059fe9d0a5e50b1c87982915e090a77b4"
+    },
+    {
+      "path": "demo-translations.js",
+      "blob": "d2b951e08ae898839548c59c4b566936ecdee1ee",
+      "bytes": 5298,
+      "sha256": "9b04461fb804af13c2eb6c949b509780aa2c4137430d5c06f263daf3a021f1d8"
+    },
+    {
+      "path": "demo.js",
+      "blob": "719ee6da66e6d851f994c9f2f4a661d88a6b9375",
+      "bytes": 430,
+      "sha256": "fef6f291ed78fb1954ca53d22cbf01ac1bc86d1a9aa6b98e697e2c88fe7d1a98"
+    },
+    {
+      "path": "experience-translations.js",
+      "blob": "415c21fbff97ac82448c2fabd7c420aa136c8b54",
+      "bytes": 3396,
+      "sha256": "5c62ad90c28842824adda93945804ab757f20c68d5a9522f1cb234eb830549f7"
+    },
+    {
+      "path": "faq-motion.js",
+      "blob": "63b4226cf98405489e72dfa664f8fd99a0d63661",
+      "bytes": 1418,
+      "sha256": "8ffd112e1897a98e560d870fd23f9e6fc4308ede43717982c7f030c2562bdb76"
+    },
+    {
+      "path": "index.html",
+      "blob": "57d7ec0e38eb47a7b625f8db2a76f3efa968df91",
+      "bytes": 6775,
+      "sha256": "73b447ffa9df8cae184f24a624d8bf751c7bcf0a5df1ec175a4ccf471a474aa8"
+    },
+    {
+      "path": "main.js",
+      "blob": "7430cbae5c1c8f409e7c9293428294a7b41e1dce",
+      "bytes": 4517,
+      "sha256": "8f3795f70aee218e44821af5ca5eb70836fd82a96a64f17be96e8d9a1026051c"
+    },
+    {
+      "path": "navigation.css",
+      "blob": "6db5a83e170afa1fa438ae9a153a5fcca15baa3d",
+      "bytes": 768,
+      "sha256": "9f7bf7a93e265ce0b3ba8bc093aa9abcb858bbcbd58ef9930f06d84e3d0fe253"
+    },
+    {
+      "path": "page-navigation.css",
+      "blob": "037fea2e9e92e76360857df974072292a789dfa2",
+      "bytes": 2975,
+      "sha256": "517f034106437796894b4ac5bc83e5c17f32ecaee7ee66aa6dd54cd7258cf9b2"
+    },
+    {
+      "path": "page-navigation.js",
+      "blob": "ab068e0b8bdd3e159a6e2f302e1860f7a3aff444",
+      "bytes": 2452,
+      "sha256": "d21c9b902604f2013ae1e8528cbf4b33dafd316101960c0425130d491559ba50"
+    },
+    {
+      "path": "preferences-boot.js",
+      "blob": "5f937ca409024514c7a40d0629ed7accddc66065",
+      "bytes": 613,
+      "sha256": "71f67f092e266842c0ab6519d2f1157fd0e4b3cea6c8a34ac9dfb4a0bf32f7fc"
+    },
+    {
+      "path": "preferences.css",
+      "blob": "286f61c21cf4a91a5cc6c2c0f2c45d6f3b68abce",
+      "bytes": 2323,
+      "sha256": "1e45ed5cef2dc870a15f778e99a6d79263f5af51a551cdcfc1231e405b8a5b51"
+    },
+    {
+      "path": "preferences.js",
+      "blob": "ef8400cb319fd55a150a4d3fb76e79f16641eea3",
+      "bytes": 8671,
+      "sha256": "f3bf0e8db0c8c2d2d47d16db22278af4d50fc209721e013c2f6ee68ac4fa37f1"
+    },
+    {
+      "path": "pricing-data.js",
+      "blob": "812b2e2d7f8f93d94ca50a440f2fd224e22a26a9",
+      "bytes": 5790,
+      "sha256": "f1240b16cfed0e39095943cf5dd19b7736105a0668c34828de9a24b852008b29"
+    },
+    {
+      "path": "pricing.css",
+      "blob": "7e0d64e93f8ff15a3218eb6782632fedc094952c",
+      "bytes": 10394,
+      "sha256": "2095c088a6928aa43202cfdffac3d2d3943ada5cc632148424a565c181179a62"
+    },
+    {
+      "path": "pricing.js",
+      "blob": "19d6228c3998832ece14b70b7c58a3779749da95",
+      "bytes": 11240,
+      "sha256": "1252d7f85ae959db67ca736047c7f0d48b907f58a8e525cc48b592100622db16"
+    },
+    {
+      "path": "quiz-translations.js",
+      "blob": "d46d04071cdee4acd02c29df64817fd392faca0b",
+      "bytes": 10611,
+      "sha256": "fcdda715a8eb81a5e154d1797371d3c1421f5c46def4099a59644dad75c1c3e0"
+    },
+    {
+      "path": "scenes.css",
+      "blob": "c081bf627f60d2babd10a4f9a6823a25ae8aefc1",
+      "bytes": 8196,
+      "sha256": "c194f8a3f1b54a4430a342e86dd86bd9250b94a5a26fdd4ad35792db4bdb9eb0"
+    },
+    {
+      "path": "scenes.js",
+      "blob": "3a08c18904945ee9835f071c5a9fb08ba04db43f",
+      "bytes": 9301,
+      "sha256": "83bd27104bb91c9586ae52d8530b9616b5219a8c748d66677d24724b2fbdbd56"
+    },
+    {
+      "path": "studio/app-DFYDVGIF.js",
+      "blob": "82e85ea10f0ef91d96b69471b368d249d20bc1df",
+      "bytes": 3315470,
+      "sha256": "f75db12beedc7a11e75897929f4aa404190a754949daaa865c93693428d86bdf"
+    },
+    {
+      "path": "studio/app-DFYDVGIF.js.LEGAL.txt",
+      "blob": "475313d041ae4ddcbe3ebb9ab7b0680cb8983d8f",
+      "bytes": 1528,
+      "sha256": "cd7dec749043f2074e9799163f9c46a6ba714fd4889f07150cc1165c816ea1d3"
+    },
+    {
+      "path": "studio/app-UICMB3PD.css",
+      "blob": "7fa4606f5481232b74b76f0bea58c4c97bb7d881",
+      "bytes": 83040,
+      "sha256": "8a1cb88b9e4815c7bcc355e296ba7614c98b2387a8398b207c263ea3f258399e"
+    },
+    {
+      "path": "studio/index.html",
+      "blob": "3d7522c685cddf0350b341a63d0a9f077c12ef3b",
+      "bytes": 655,
+      "sha256": "574b1f87e7ab23fb1058636335312a89e74a30bda905a2bc1ce949b5cb0fe09b"
+    },
+    {
+      "path": "studio/licenses.txt",
+      "blob": "732bab1368fc74730b9cbaee9db36ca92e467ed9",
+      "bytes": 104355,
+      "sha256": "7144f83e6ec8abe43f55af50bc114399507c88551fa633ae4b79b9e992a740f7"
+    },
+    {
+      "path": "styles.css",
+      "blob": "762d16f3d13f9c43da57da099df89429ce960d17",
+      "bytes": 26828,
+      "sha256": "06627ae1c910e78ac9b5044511a0fdf0af92d786e4b2d7f6a954cb7b5ff4f395"
+    },
+    {
+      "path": "translations.js",
+      "blob": "8e9f851fa240d76fde79d73ac08737119d1cb6a7",
+      "bytes": 23374,
+      "sha256": "30cead01a9930705fa764931d9c51089a60365a4301ddd08e9b26eb236d8997e"
+    },
+    {
+      "path": "ui-translations.js",
+      "blob": "42be85e622def45a35da73483ccb46a0001fcb64",
+      "bytes": 17621,
+      "sha256": "dc4b4050bd1a8198c5659c8d28584bcc89033bd16a3e9da3961e028eda832aec"
+    },
+    {
+      "path": "world-pages.js",
+      "blob": "23f7d63be84ed918871a35fc4e8bbada1502570c",
+      "bytes": 7943,
+      "sha256": "7ce3d70bf3fef2e3f529dbb1ff2ecdc1d3ab632b1709552bd03810e5721184d3"
+    },
+    {
+      "path": "worlds.css",
+      "blob": "e9f27d03724443833c9f745052013c7cdb3ad972",
+      "bytes": 13468,
+      "sha256": "9b306abd9d062df480e9c9d82b1448a54a5389ed5c32099c39982202f952d387"
+    }
+  ],
+  "sites": {
+    "url": "https://blocky.donk55666.chatgpt.site",
+    "redeployedByThisTask": false,
+    "resourceChangesByThisTask": false
+  },
+  "productOrSourceDocumentsIncludedInHostingBranch": false,
+  "localArchiveTagsPushed": false,
+  "mainOrPrivateHistoryIncludedInHostingCommit": false,
+  "independentBrowserAcceptance": "doc/验收/网站/验收-2026-10-12-GitHub-Pages官网副本.md",
+  "processArchive": {
+    "previousPath": "D:/1Folder/Blocky-AI/try/GitHub-Pages-2026-10-12",
+    "currentPath": "D:/1Folder/Blocky-AI/try/待清理/GitHub-Pages-2026-10-12",
+    "files": 29,
+    "bytes": 1128520,
+    "sha256Preserved": true,
+    "deleted": false
+  },
+  "configurationNote": "推送gh-pages后GitHub自动启用Pages；显式POST返回409 already enabled，GET已确认正确来源及HTTPS，无须重复创建",
+  "mainDocumentationPushed": false,
+  "noDesktopBuildOrRealModelCall": true,
+  "initialCopy": {
+    "sourceCommit": "220d022d44f2d05b89f51bd0a0e65242639178fd",
+    "sourceTree": "32b9ce0d4978f331b8de3e1f7266c6a8a3c171ba",
+    "publicationCommit": "c88696b5207097c639e095d1fc875a3cc6be750a",
+    "publicationTree": "f5bf35902932bec181212fcd79c250b06ace4700",
+    "originalAssets": 52,
+    "bytes": 5737714,
+    "runId": 38165794906,
+    "conclusion": "success",
+    "all52MatchOriginalWebsiteGitBlobs": true
+  },
+  "all52MatchFinalSourceGitBlobs": true,
+  "changedAssetsFromInitialCopy": [
+    "content.js",
+    "translations.js"
+  ],
+  "unchangedAssetsFromInitialCopy": 50,
+  "textCorrection": "Chinese and English repository visibility statements now reflect public source and pending license; source link points to the personal repository",
+  "independentConclusion": "通过",
+  "independentFinalScope": "G01-G03 first-copy browser observations reused for 50 unchanged assets; T01 independently reviewed root-collected Chinese/English final text and source-link DOM/screenshots"
+}
