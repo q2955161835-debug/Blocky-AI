@@ -1,0 +1,31 @@
+export function fullSceneSections() {
+  return `
+<section class="scenes-intro section-shell"><div class="section-kicker">04 / 两种场景，同一种创造力</div><h2>从课堂里的好奇心，<br>到专业创作的可能。</h2><p>同一套积木语言，同一种项目格式。<br>从第一份作品出发，一直走向自己的应用。</p></section>
+<section class="scene-section section-shell" id="education" aria-labelledby="education-title">
+  <div class="scene-frame education-scene">
+    <div class="scene-topline"><span>FOR EDUCATION</span><span>教育场景</span></div>
+    <div class="scene-hero"><div><h2 id="education-title">让 AI 教育，<br>有一件自己的作品。</h2><p>学生亲手搭建，教师看见过程。<br>把一次课堂探索，变成可理解、可分享、<br>可以继续生长的创作。</p></div><div class="learning-ladder" aria-label="学习路径"><div><b>01</b><span>读懂一个智能体<small>看见角色、知识与行动</small></span></div><div><b>02</b><span>改变它的做法<small>试着修改，再观察结果</small></span></div><div><b>03</b><span>创造自己的作品<small>独立搭建，讲清设计</small></span></div></div></div>
+    <div class="scene-features"><article><span>给学生</span><h3>从“会用”到“会创造”</h3><p>从蓝图与互动任务开始，逐步展开原子积木。用运行轨迹讲清每一步，留下自己的思考与作品。</p></article><article><span>给教师</span><h3>把课堂组织起来</h3><p>分发课程和任务，锁定蓝图与资源版本。查看提交、作品过程与常见问题，让反馈落在具体的创作上。</p></article><article><span>给学校</span><h3>让探索有序发生</h3><p>统一配置班级、模型与权限，结合离线资源、设备情况和教学进度，为不同课堂准备合适的创作环境。</p></article></div>
+    <div class="scene-example education-example"><div class="example-caption"><span class="example-label">一节课，可以这样展开</span><h3>做一位校园植物小向导</h3><p>从身边的问题出发，学习如何给智能体设定角色、连接资料，并判断它的回答。</p><div class="example-tags"><span>科学探索</span><span>资料问答</span><span>表达与分享</span></div></div><div class="classroom-preview" aria-label="课堂流程示意"><div class="classroom-title">植物小向导 · 创作任务<span>场景示意</span></div><div><b>准备</b><span>教师分发蓝图与植物资料</span></div><div><b>创作</b><span>学生调整角色、知识与回答方式</span></div><div><b>探索</b><span>提出问题，对照资料检查回答</span></div><div><b>讲述</b><span>提交作品，解释设计与改进</span></div></div></div>
+    <div class="scene-bottom"><span>课程与蓝图</span><span>班级与作业</span><span>过程与反馈</span><span>教学资源社区</span></div>
+  </div>
+</section>
+<section class="scene-section section-shell" id="professional" aria-labelledby="professional-title">
+  <div class="scene-frame professional-scene">
+    <div class="scene-topline"><span>FOR PROFESSIONALS</span><span>专业场景</span></div>
+    <div class="scene-hero"><div><h2 id="professional-title">把一个好想法，<br>做成能工作的系统。</h2><p>从个人创作者到专业团队，<br>把智能体、知识、工具与业务流程组合起来，<br>让每一步都可以审阅、调试和持续改进。</p></div><div class="professional-flow" aria-label="专业创作生命周期"><div><span>BUILD</span><b>搭建与扩展</b><small>积木 / 文本 / 构建助手</small></div><div><span>OBSERVE</span><b>运行与评测</b><small>轨迹 / 日志 / 成本</small></div><div><span>DELIVER</span><b>部署与交付</b><small>应用 / API / 自动化</small></div></div></div>
+    <div class="scene-features"><article><span>自由组合</span><h3>不止一种 Agent 架构</h3><p>多画布组织智能体与传统工作流，结合状态机、规则和事件。用可视化或代码自定义积木，封装算法、工具与业务能力；连接知识库与 MCP，让作品的上限由你的想法决定。</p></article><article><span>深入掌控</span><h3>从积木审阅到专业开发</h3><p>Blocky CLI 是开放创作入口。任何能执行 CLI 命令的开发 Agent，都可查询、修改、校验和运行积木作品，不必使用内置构建助手。保留你熟悉的 Agent 与工作方式，直接接入 Blocky。</p></article><article><span>持续交付</span><h3>从作品走向可用应用</h3><p>为 Agent 配上交互界面，面向 API、定时任务和渠道部署。结合环境隔离、版本、团队权限与回滚，管理完整生命周期。</p></article></div>
+    <div class="scene-example professional-example"><div class="example-caption"><span class="example-label">一个团队，可以这样协作</span><h3><span>搭建你的研究与报告</span><wbr><span>工作台</span></h3><p>让资料收集、知识检索、内容整理与审阅各司其职。把成熟流程变成可复用能力，再交给更多人使用。</p><div class="example-tags"><span>知识工作</span><span>流程自动化</span><span>团队协作</span></div></div><div class="project-preview" aria-label="专业项目结构示意"><div class="project-preview-title">研究工作台<span>结构示意</span></div><div class="project-preview-tabs"><span>主流程</span><span>知识检索</span><span>应用界面</span></div><div class="project-layer"><span style="--layer:#bb9ddd">角色与目标</span><p>研究、整理、审阅</p></div><div class="project-layer"><span style="--layer:#8cc9af">资料与工具</span><p>知识库、MCP、自动化</p></div><div class="project-layer"><span style="--layer:#8cb7e8">权限与交付</span><p>审查、版本、应用发布</p></div></div></div>
+    <div class="professional-extensions"><article><span>01</span><div><h3>把重复操作交给自动化</h3><p>连接浏览器与桌面任务，从有人值守流程走向队列、计划任务与企业 Worker；保留审计与失败转人工的路径。</p></div></article><article><span>02</span><div><h3>把 Agent 带到更多设备</h3><p>后续可将交互页面与积木执行一键导出为 Windows、macOS 和手机应用。独立界面、工具与执行逻辑，让作品成为可用的 Agent App，并沿用 Blocky Token 套餐。</p></div></article></div>
+    <div class="scene-bottom"><span>专业编辑</span><span>CLI 与扩展</span><span>团队与部署</span><span>Agent App</span></div>
+  </div>
+</section>
+<section class="shared-foundation section-shell"><span class="section-kicker">ONE PLATFORM. ROOM TO GROW.</span><h3>从入门到专业，<span>作品始终是你的。</span></h3><p>教育与专业共享项目格式、积木语言和运行内核。<br>切换视图，展开蓝图，继续生长；不必换一种语言重新开始。</p></section>`;
+}
+
+export function sceneSections() {
+  return `<section class="scenes-intro section-shell"><div class="section-kicker">04 / 两种场景，同一种创造力</div><h2>从课堂里的好奇心，<br>到专业创作的可能。</h2><p>同一套积木语言，同一种项目格式。<br>从第一份作品出发，一直走向自己的应用。</p></section>
+  <section class="world-entry education-scene section-shell" id="education" aria-labelledby="education-title"><div class="world-entry-copy"><span class="section-kicker">FOR EDUCATION</span><h2 id="education-title">让 AI 教育，<br>有一件自己的作品。</h2><p>学生亲手搭建，教师看见过程。<br>把一次课堂探索，变成可理解、可分享、<br>可以继续生长的创作。</p><a class="world-enter" href="#/education">进入积木校园 <span aria-hidden="true">＋</span></a><div class="world-entry-meta"><span>学习</span><span>课堂</span><span>作品</span></div></div><a class="world-art art-stage" data-art="education" href="#/education" aria-label="进入积木校园"><span class="world-map-label">BLOCKY / CAMPUS</span></a></section>
+  <section class="world-entry professional-scene section-shell" id="professional" aria-labelledby="professional-title"><a class="world-art art-stage" data-art="professional" href="#/professional" aria-label="进入创作园区"><span class="world-map-label">BLOCKY / DISTRICT</span></a><div class="world-entry-copy"><span class="section-kicker">FOR PROFESSIONALS</span><h2 id="professional-title">把一个好想法，<br>做成能工作的系统。</h2><p>从个人创作者到专业团队，<br>把智能体、知识、工具与业务流程组合起来，<br>让每一步都可以审阅、调试和持续改进。</p><a class="world-enter" href="#/professional">进入创作园区 <span aria-hidden="true">＋</span></a><div class="world-entry-meta"><span>搭建与扩展</span><span>运行与评测</span><span>部署与交付</span></div></div></section>
+  <section class="shared-foundation section-shell"><span class="section-kicker">ONE PLATFORM. ROOM TO GROW.</span><h3>从入门到专业，<span>作品始终是你的。</span></h3><p>教育与专业共享项目格式、积木语言和运行内核。<br>切换视图，展开蓝图，继续生长；不必换一种语言重新开始。</p></section>`;
+}

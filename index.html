@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="Blocky，面向每一个创作者的积木式 AI 创作软件。从理解 AI，到亲手搭建自己的智能体。探索四类起始蓝图，在线体验积木画布与构建助手。">
+  <title>Blocky — 让想法，一块块成真</title>
+  <script src="./preferences-boot.js"></script>
+  <link rel="icon" href="./assets/blocky.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./scenes.css">
+  <link rel="stylesheet" href="./navigation.css">
+  <link rel="stylesheet" href="./preferences.css">
+  <link rel="stylesheet" href="./appearance.css">
+  <link rel="stylesheet" href="./art.css">
+  <link rel="stylesheet" href="./worlds.css">
+  <link rel="stylesheet" href="./capsule.css">
+  <link rel="stylesheet" href="./pricing.css">
+  <link rel="stylesheet" href="./page-navigation.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">跳至主要内容</a>
+<div id="website">
+  <header class="site-header">
+    <nav aria-label="主导航"><a href="#possibilities">产品能力</a><a href="#blueprints">起始蓝图</a><a href="#education">教育场景</a><a href="#professional">专业场景</a><a href="#access">定价咨询</a></nav>
+    <div class="header-actions"><a class="pricing-mobile-entry" href="#access">定价咨询</a><a class="experience-entry" href="#/studio">在线体验</a><div id="site-preferences"></div></div>
+  </header>
+  <main id="main">
+    <section class="hero section-shell">
+      <div class="hero-art art-stage" data-art="hero" aria-hidden="true"></div>
+      <div class="hero-copy">
+      <div class="eyebrow"><span class="small-block" aria-hidden="true"></span>给好奇心，一套创作工具</div>
+      <h1>让想法，<br><span>一块块成真。</span></h1>
+      <p class="hero-description">把 AI 的能力，变成你手里的积木。<br>看懂它、改造它，搭建属于自己的智能体。</p>
+      <div class="hero-actions"><a class="button button-accent" href="#possibilities">探索 Blocky</a><a class="text-link" href="#how-it-works">了解创作方式</a><a class="button button-accent beta-download-link" href="https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases/download/v0.8.0-beta.1/Blocky-Studio-0.8.0-beta.1-setup.exe"><span>下载测试版 · 0.8.0-beta.1</span><small>Windows x64 安装包</small></a></div>
+      <p class="microcopy">积木式 AI 创作 · 为好奇心而生</p>
+      </div>
+      <div class="product-preview" aria-label="Blocky 工作台界面示意">
+        <div class="preview-titlebar"><div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span>我的第一个 AI 伙伴.blocky</span><span class="preview-label">界面示意</span></div>
+        <div class="preview-toolbar"><span class="mini-brand">B<span>.</span></span><span>文件</span><span>编辑</span><span>视图</span><div class="toolbar-spacer"></div><span class="pill">入门视图</span><span class="preview-run">▷ 运行</span></div>
+        <div class="preview-body">
+          <aside class="preview-library"><div class="panel-heading">积木库 <span>＋</span></div><span class="library-item active" style="--category:#f3c661">开始</span><span class="library-item" style="--category:#bb94f0">角色</span><span class="library-item" style="--category:#83b9f5">会思考</span><span class="library-item" style="--category:#71c9ae">会查找</span><span class="library-item" style="--category:#ec9bbb">会记住</span><span class="library-item" style="--category:#f5a76e">会行动</span><span class="library-item" style="--category:#87c6d9">会回答</span><div class="library-note">你的创意<br>从这里开始。</div></aside>
+          <div class="preview-canvas dotted"><div class="canvas-tab">◇ main <span>画布</span></div><div class="preview-stack"><div class="block block-yellow cap">当收到 <b>用户消息</b></div><div class="block block-purple">扮演 <b>耐心的科学老师</b></div><div class="block block-blue bracket">让智能体思考<div class="block block-green">查找 <b>我的科学知识库</b></div><div class="block block-cyan">回答 <b>用一个生活中的例子</b></div></div></div><span class="canvas-caption">每一块，都有你能理解的意义。</span><div class="canvas-zoom">− <span>100%</span> ＋</div></div>
+          <aside class="preview-chat"><div class="panel-heading">✦ 构建助手 <span>⋯</span></div><div class="chat-user">帮我搭建一个会讲科学故事的 AI。</div><div class="chat-avatar">B.</div><p>一起从这几个积木开始。</p><p class="muted">设定角色、连接知识，再让它用自己的方式回答。</p><div class="chat-file">◇ 科学故事伙伴 <span>5 个积木</span></div><div class="chat-prompt">接下来，你想改变什么？<span>＋</span></div></aside>
+        </div>
+        <div class="preview-footer"><span>main · 5 个积木</span><span>每个想法，都值得被搭出来</span></div>
+      </div>
+      <div class="product-caption"><span>BLOCKY STUDIO</span><span>创作、理解与调试，在同一张画布。</span><span>DESIGNED FOR CURIOSITY</span></div>
+    </section>
+    <section class="manifesto section-shell" id="possibilities"><div class="assembly-art art-stage" data-art="assembly" aria-hidden="true"></div><div class="manifesto-copy"><div class="section-kicker">01 / 从使用 AI，到创造 AI</div><h2>你不必从代码开始。<br>但可以一直走得更远。</h2><div class="manifesto-bottom"><p>把角色、知识、工具和记忆拼在一起。<br>复杂的智能体，变成看得见、讲得清、<br>可以亲手改变的创作过程。</p><span class="manifesto-note">MAKE IT YOURS.<br>从理解开始，以创造继续。</span></div></div></section>
+    <div id="more-content"></div>
+  </main>
+  <div id="pricing-page" hidden></div>
+  <footer class="site-footer section-shell"><a class="brand" href="#"><img src="./assets/blocky.png" width="32" height="32" alt=""><span>Blocky.</span></a><span>让每一个好奇的想法，都有开始的方式。</span><a href="#faq">常见问题</a><a href="#access">定价咨询</a><a class="contact-email" href="mailto:q2955161835@gmail.com"><span>联系</span><span data-no-translate>q2955161835@gmail.com</span></a><small>© 2026 Blocky</small></footer>
+</div>
+<div id="studio" hidden></div>
+<div id="world-page" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

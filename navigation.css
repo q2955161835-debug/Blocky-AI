@@ -1,0 +1,22 @@
+/* Fixed navigation remains available across every marketing section. */
+#website { padding-top: 94px; }
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  width: 100%;
+  max-width: none;
+  padding-inline: max(48px, calc((100vw - 1264px) / 2));
+  background: rgba(16, 18, 17, .93);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #ffffff0c;
+}
+html { scroll-padding-top: 118px; }
+.skip-link { z-index: 110; }
+body.experiencing { overflow: hidden; }
+.experience-frame { position: fixed; inset: 0; width: 100%; height: 100dvh; border: 0; display: block; background: #20242c; }
+@media (max-width: 760px) {
+  #website { padding-top: 78px; }
+  .site-header { padding-inline: 22px; }
+  html { scroll-padding-top: 98px; }
+}

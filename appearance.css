@@ -1,0 +1,60 @@
+/* The three scenes keep separate hues in both appearances. */
+:root[data-theme=light]{--bg:#f7f8f2;--panel:#fffefa;--line:#d8dece;--text:#20291e;--muted:#626e5c;--accent:#526b26;background:var(--bg);color:var(--text)}
+[data-theme=light] .site-header{background:#f7f8f2ed;border-color:#d8dece}
+[data-theme=light] .site-header nav{color:#5e6a56}[data-theme=light] .site-header nav a:hover{color:#20291e}
+[data-theme=light] .experience-entry{color:#536947;border-color:#a6b797}
+[data-theme=light] .button-accent{background:#dbeaa0;color:#28351a}[data-theme=light] .button-light{background:#28351f;color:#f6faef}
+[data-theme=light] .eyebrow,[data-theme=light] .hero-description,[data-theme=light] .section-kicker{color:#5f7052}
+[data-theme=light] .microcopy,[data-theme=light] .product-caption,[data-theme=light] .manifesto-note{color:#758167}
+[data-theme=light] .product-preview{background:#fffefa;border-color:#c4cdb7;box-shadow:0 24px 70px #3d502015}
+[data-theme=light] .preview-titlebar{background:#e9eddc;color:#647454}[data-theme=light] .window-dots i{background:#a5b090}
+[data-theme=light] .preview-label,[data-theme=light] .pill,[data-theme=light] .chat-file,[data-theme=light] .chat-prompt{border-color:#ced8c0}
+[data-theme=light] .library-item,[data-theme=light] .canvas-tab,[data-theme=light] .chat-file{color:#536649}
+[data-theme=light] .library-item.active{background:#ebf0dc;color:#354825}
+[data-theme=light] .library-note,[data-theme=light] .canvas-caption,[data-theme=light] .canvas-tab span,[data-theme=light] .preview-footer,[data-theme=light] .chat-prompt{color:#738362}
+[data-theme=light] .dotted{background-color:#f0f3e7;background-image:radial-gradient(#a5b49070 .8px,transparent .8px)}
+[data-theme=light] .canvas-zoom{background:#fffefa;border-color:#cdd6be;color:#5c704d}
+[data-theme=light] .chat-user{background:#edf1e2}[data-theme=light] .chat-file span{color:#738562}
+[data-theme=light] .feature-visual{background:#edf2e2;border-color:#ced9be}
+[data-theme=light] .visual-conversation{background:linear-gradient(135deg,#edf2e2,#f4f7ec)}[data-theme=light] .conversation-question{background:#dce7ca}
+[data-theme=light] .inline-tags{color:#627852}[data-theme=light] .inline-tags span{border-color:#bdcca8}[data-theme=light] .visual-footnote,[data-theme=light] .feature-number{color:#738665}
+[data-theme=light] .visual-blocks .visual-label,[data-theme=light] .visual-title,[data-theme=light] .assistant-label,[data-theme=light] .visual-conversation>p,[data-theme=light] .change-line,[data-theme=light] .trace-title{color:#536946}
+[data-theme=light] .visual-blocks .visual-subtitle,[data-theme=light] .visual-conversation>small,[data-theme=light] .conversation-status,[data-theme=light] .trace-line small,[data-theme=light] .trace-line>span,[data-theme=light] .trace-title>span{color:#748566}
+[data-theme=light] .change-line,[data-theme=light] .trace-title,[data-theme=light] .tag-outline{border-color:#bdcca9}
+[data-theme=light] .tag-outline{color:#526843}[data-theme=light] .trace-line:after{background:#b6c5a1}
+[data-theme=light] .blueprints-section{background:#ecf1e2;border-color:#d1dac3}
+[data-theme=light] .blueprint-grid,[data-theme=light] .blueprint-grid article{border-color:#ccd6bc}
+[data-theme=light] .blueprint-grid article:hover{background:#e3ebd4}
+[data-theme=light] .blueprint-index,[data-theme=light] .blueprint-use{color:#728560}
+[data-theme=light] .blueprint-grid p,[data-theme=light] .blueprint-bottom{color:#5d7250}
+[data-theme=light] .blueprint-glyph{color:#526b38}
+[data-theme=light] .how-section h2>span,[data-theme=light] .steps article>span,[data-theme=light] .access-label,[data-theme=light] .closing .section-kicker,[data-theme=light] .faq-list summary span{color:#687f51}
+[data-theme=light] .steps>article,[data-theme=light] .access-details article,[data-theme=light] .faq-section,[data-theme=light] .faq-list details{border-color:#ced8c0}
+[data-theme=light] .faq-list p{color:#627754}[data-theme=light] .shared-foundation h3>span{color:#58743f}
+[data-theme=light] .education-scene{--scene-accent:#996022;--scene-muted:#82705b;--scene-line:#dfcdb6;background:radial-gradient(ellipse at 93% 0,#edc89440,transparent 65%),#fbf4e9;color:#382d21}
+[data-theme=light] .learning-ladder b{color:#ad8051}
+[data-theme=light] .classroom-preview{background:#fffaf2;border-color:#d9c5a7}
+[data-theme=light] .classroom-title{color:#7b552c;border-color:#e2d2bc}
+[data-theme=light] .classroom-title>span{color:#987345}
+[data-theme=light] .classroom-preview b{color:#926433}[data-theme=light] .classroom-preview>div>span{color:#85705a}
+[data-theme=light] .professional-scene{--scene-accent:#356d94;--scene-muted:#657e91;--scene-line:#c4d5e0;background:radial-gradient(ellipse at 95% 0,#aecddd40,transparent 65%),#edf5fa;color:#213846}
+[data-theme=light] .professional-flow span,[data-theme=light] .professional-extensions>article>span{color:#658ba5}
+[data-theme=light] .professional-flow b{color:#2e5871}
+[data-theme=light] .project-preview{background:#f9fcff;border-color:#bbd0df}
+[data-theme=light] .project-preview-title,[data-theme=light] .project-preview-tabs{border-color:#d2dfe8;color:#416b88}
+[data-theme=light] .project-preview-title>span,[data-theme=light] .project-preview-tabs{color:#6c8ca4}
+[data-theme=light] .project-preview-tabs>span:first-child{color:#376480;border-color:#5486a6}
+[data-theme=light] .project-layer{border-color:#d8e4ec}[data-theme=light] .project-layer>span{color:#3b7196;border-color:#6f9bb8}[data-theme=light] .project-layer>p{color:#55768d}
+html[lang=en] h1{font-size:clamp(48px,6.2vw,82px);line-height:1.16;letter-spacing:-3px}
+html[lang=en] h2,html[lang=en] .scene-hero h2{letter-spacing:-1.3px;line-height:1.2}
+html[lang=en] .eyebrow,html[lang=en] .section-kicker{letter-spacing:1px}
+html[lang=en] .site-header nav{gap:25px;font-size:13px}
+html[lang=en] .professional-example .example-caption h3 span{white-space:normal}
+html[lang=en] .feature-copy h3{line-height:1.22;letter-spacing:-1px}
+html[lang=en] .preview-body{grid-template-columns:175px minmax(0,1fr) 255px}
+html[lang=en] .preview-library{padding-inline:12px}html[lang=en] .preview-stack{margin-left:0;margin-right:0}
+html[lang=en] .preview-chat .panel-heading,html[lang=en] .preview-footer,html[lang=en] .chat-file{font-size:11px}
+html[lang=en] .blueprint-grid h3{line-height:1.4;min-height:50px}
+@media(max-width:760px){html[lang=en] h1{font-size:clamp(39px,9vw,58px);letter-spacing:-1.6px}html[lang=en] h2{font-size:32px}html[lang=en] .scene-hero h2{font-size:29px}html[lang=en] .closing h2{font-size:38px}html[lang=en] .preview-body{grid-template-columns:105px minmax(0,1fr)}html[lang=en] .preview-stack .block{font-size:10px}html[lang=en] .product-caption{font-size:10px}html[lang=en] .scene-topline{letter-spacing:.5px}html[lang=en] .scene-topline>span:first-child{letter-spacing:1px}.scene-topline{gap:18px}.project-preview-tabs{flex-wrap:wrap;column-gap:16px;row-gap:0}html[lang=en] .scene-bottom{grid-template-columns:1fr;gap:8px}}
+@media(max-width:360px){html[lang=en] .scene-hero h2{font-size:25px}html[lang=en] .hero-actions{gap:18px}html[lang=en] .button{padding-inline:18px;font-size:13px}html[lang=en] .text-link{font-size:13px}html[lang=en] .preview-body{grid-template-columns:85px minmax(0,1fr)}}
+@media(max-width:360px){html[lang=en] .scene-hero p br{display:initial}}
