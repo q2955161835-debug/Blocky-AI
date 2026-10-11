@@ -1,0 +1,205 @@
+name: Build Windows beta installer
+
+# The build branch carries this workflow; the product checkout is pinned below.
+# This produces private Actions artifacts and does not publish a GitHub Release.
+on:
+  push:
+    branches: [codex/build-windows-installer-2026-10-10]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-beta-installer-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SOURCE_COMMIT: f85560c125762249cb1b1ffe2342b1ef91fe9509
+  # The packaging/scan follow-up changes no native compilation inputs.
+  NATIVE_CACHE_SOURCE: 3e23c02163279121fccac59012f854eea7d19635
+  RELEASE_VERSION: 0.8.0-beta.2
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out the exact product source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_COMMIT }}
+          persist-credentials: false
+
+      - name: Verify product source and release version
+        run: |
+          $source = (git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($source -cne $env:SOURCE_COMMIT) { throw 'Product source changed' }
+          $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
+          if ($env:RELEASE_VERSION -notmatch '^\d+\.\d+\.\d+-beta\.\d+$' -or
+              $env:RELEASE_VERSION.Split('-')[0] -cne $version) {
+            throw 'Beta installer version must match the product version'
+          }
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.1'
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install the NSIS compiler
+        run: |
+          choco install nsis --version=3.11 --yes --no-progress --limit-output
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $compiler = Join-Path ${env:ProgramFiles(x86)} 'NSIS\makensis.exe'
+          if (!(Test-Path -LiteralPath $compiler -PathType Leaf)) {
+            throw 'NSIS compiler was not installed'
+          }
+          "MAKENSIS=$compiler" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Restore native compiler outputs for this source
+        id: native-cache
+        uses: actions/cache/restore@v4
+        with:
+          key: windows-installer-native-v1-${{ env.NATIVE_CACHE_SOURCE }}
+          path: |
+            try/release-native-target/release/deps
+            try/release-native-target/release/build
+            try/release-native-target/release/.fingerprint
+            try/native-e2e-target/release/deps
+            try/native-e2e-target/release/build
+            try/native-e2e-target/release/.fingerprint
+
+      - name: Build the ordinary Windows release
+        run: |
+          New-Item -ItemType Directory -Path try -Force | Out-Null
+          pnpm build:release
+
+      - name: Verify the workspace and the changed desktop features
+        run: |
+          pnpm check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pnpm exec vitest run tests/component/window-controls.test.tsx tests/component/exit-lifecycle.test.tsx tests/component/chat-model-control.test.tsx tests/component/blueprint-chat-layout.test.tsx tests/component/builder-chat.test.tsx packages/settings-core/tests/settings.test.ts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build the release scan's native positive control
+        # The WDIO binary is only a scan control; it never enters the installer.
+        run: pnpm test:e2e:build
+
+      - name: Save native compiler outputs for retries
+        if: steps.native-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          key: windows-installer-native-v1-${{ env.NATIVE_CACHE_SOURCE }}
+          path: |
+            try/release-native-target/release/deps
+            try/release-native-target/release/build
+            try/release-native-target/release/.fingerprint
+            try/native-e2e-target/release/deps
+            try/native-e2e-target/release/build
+            try/native-e2e-target/release/.fingerprint
+
+      - name: Reject changed source or regenerated locks
+        run: |
+          git diff --exit-code HEAD -- .
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Scan the ordinary release
+        run: pnpm check:release
+
+      - name: Check installer contracts and Windows IO boundaries
+        run: node --test scripts/installer/build-installer.test.mjs scripts/installer/installer-io.test.mjs
+
+      - name: Package the verified payload and compile the beta installer
+        run: |
+          $package = "dist/Blocky-Studio-$env:RELEASE_VERSION"
+          $output = "dist/Blocky-Studio-$env:RELEASE_VERSION-setup.exe"
+          node scripts/package-release.mjs $package
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node scripts/build-installer.mjs --package $package --manifest try/stage3-release/package.json --output $output --display-name "Blocky Studio（测试版）$env:RELEASE_VERSION" --release-version $env:RELEASE_VERSION --makensis $env:MAKENSIS
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify the installer receipt and write checksums
+        run: |
+          $installer = "dist/Blocky-Studio-$env:RELEASE_VERSION-setup.exe"
+          $receipt = Get-Content -Raw "$installer.build.json" | ConvertFrom-Json
+          $manifest = Get-Content -Raw try/stage3-release/package.json | ConvertFrom-Json
+          $scan = Get-Content -Raw try/stage3-release/artifacts.json | ConvertFrom-Json
+          $coverage = Get-Content -Raw try/stage3-release/license-coverage.json | ConvertFrom-Json
+          $hash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          if (!$scan.passed -or !$scan.positiveControl -or @($coverage.missing).Count -ne 0 -or
+              $scan.commit -cne $env:SOURCE_COMMIT -or
+              $manifest.sourceCommit -cne $env:SOURCE_COMMIT -or
+              $receipt.sourceCommit -cne $env:SOURCE_COMMIT -or
+              $receipt.releaseVersion -cne $env:RELEASE_VERSION -or
+              $receipt.sha256 -cne $hash -or
+              $receipt.bytes -ne (Get-Item -LiteralPath $installer).Length -or
+              !$receipt.checks.fileHashesBeforeAndAfter -or
+              !$receipt.checks.exactManifestCoverage -or
+              !$receipt.checks.noLinksOrPathEscape -or
+              !$receipt.checks.noRawLocalPathsInInstaller) {
+            throw 'Installer, payload, scan or provenance verification failed'
+          }
+          "$hash  $(Split-Path -Leaf $installer)" |
+            Out-File -FilePath dist/SHA256SUMS.txt -Encoding utf8NoBOM
+          @{
+            schemaVersion = 'blocky.windows-ci-build/v1'
+            sourceCommit = $env:SOURCE_COMMIT
+            workflowCommit = $env:GITHUB_SHA
+            releaseVersion = $env:RELEASE_VERSION
+            runUrl = "https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID"
+            installerSha256 = $hash
+            installerBytes = $receipt.bytes
+            compiledOnly = $true
+            installationExecuted = $false
+            uninstallationExecuted = $false
+            realModelApiCalled = $false
+          } | ConvertTo-Json | Out-File -FilePath dist/build-provenance.json -Encoding utf8NoBOM
+          "Built Windows x64 $env:RELEASE_VERSION from $env:SOURCE_COMMIT." |
+            Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          'Compilation, release scans and miniature installer IO checks passed. Full product installation, startup and uninstall acceptance have not been executed.' |
+            Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - name: Upload the installer and verified build evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-${{ env.RELEASE_VERSION }}-${{ env.SOURCE_COMMIT }}
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+          path: |
+            dist/Blocky-Studio-${{ env.RELEASE_VERSION }}-setup.exe
+            dist/Blocky-Studio-${{ env.RELEASE_VERSION }}-setup.exe.build.json
+            dist/SHA256SUMS.txt
+            dist/build-provenance.json
+            try/stage3-release/package.json
+            try/stage3-release/artifacts.json
+            try/stage3-release/license-coverage.json
+
+      - name: Preserve diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            try/installer-2026-10-09/**/compile.log
+            try/installer-2026-10-09/**/results.json
+            try/stage3-release/artifacts.json
+            try/stage3-release/license-coverage.json
