@@ -9,4 +9,4 @@
 | threejs-geometry | 场景几何与程序化建模 | [SKILL.md](threejs-geometry/SKILL.md) |
 | threejs-lighting | 场景灯光与材质表现 | [SKILL.md](threejs-lighting/SKILL.md) |
 
-官网开发入口见[官网 README](../../官网/README.md)，具体执行约束见[官网规则](../../官网/AGENTS.md)。商业计划书、路演和答辩专用技能、Office 模板与来源登记已随赛事材料清理；历史版本可从 Git 恢复。
+官网开发入口见[官网 README](../../官网/README.md)，具体执行约束见[官网规则](../../官网/AGENTS.md)。

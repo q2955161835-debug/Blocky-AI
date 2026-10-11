@@ -12,14 +12,7 @@
   "deletedFiles": 403,
   "deletedWorkingBytes": 106256360,
   "preservedLocalFiles": [
-    "doc/开发/2026-10-10-商业计划书邮件发送回执.json",
-    "doc/演讲稿/Blocky-Studio-25页PPT与商业计划书-答辩问答-2026-10-11.md",
-    "doc/演讲稿/Blocky-Studio-息壤杯8分钟演讲稿-第7页视频衔接版-2026-10-10.md",
-    "doc/验收/任务/演示视频证据/产物整理回执.json",
-    "doc/验收/任务/演示视频证据/剪辑与导出回执.json",
-    "doc/验收/任务/验收-2026-10-10-Blocky演示视频剪辑.md",
-    "作品/故事搭档-规则对照/故事搭档-规则对照.blocky",
-    "复赛/Blocky-出题助手演示.mp4"
+    "作品/故事搭档-规则对照/故事搭档-规则对照.blocky"
   ],
   "protectedFileCount": 1220,
   "cloudBuildFilesExact": 6,
@@ -54,5 +47,11 @@
     "utf8": "passed",
     "conflictMarkers": "none"
   },
-  "processArchive": "D:\\1Folder\\Blocky-AI\\try\\待清理\\GitHub同步-2026-10-12"
+  "processArchive": "D:\\1Folder\\Blocky-AI\\try\\待清理\\GitHub同步-2026-10-12",
+  "historicalLocalDeliverables": {
+    "count": 7,
+    "subsequentlyRemovedFromCurrentTree": true,
+    "recoveryCommit": "22689c1970df6cb4b58694a350d831b071f843dc",
+    "note": "2026-10-12 user requested current-tree cleanup; original filenames and exact bytes remain recoverable from Git history"
+  }
 }
