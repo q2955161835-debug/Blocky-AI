@@ -1,0 +1,49 @@
+{
+  "startedLocal": "2026-10-12 15:35:40",
+  "finishedLocal": "2026-10-12 15:35:49",
+  "timezone": "Asia/Shanghai",
+  "type": "portable program removal; registered installer absent",
+  "authorization": "User explicitly requested uninstall of local Blocky",
+  "sourcePackage": "D:\\1Folder\\Blocky-AI\\dist\\Blocky-Studio-0.8.0-quiz-astra-r3",
+  "sourceShortcut": "C:\\Users\\29551\\Desktop\\Blocky Studio.lnk",
+  "recycledPackage": "D:\\$RECYCLE.BIN\\S-1-5-21-209688474-3446081356-2440070058-1001\\$R7E6EHC.0-quiz-astra-r3",
+  "recycledShortcut": "C:\\$Recycle.Bin\\S-1-5-21-209688474-3446081356-2440070058-1001\\$RQHYQYK.lnk",
+  "packageFileCount": 2595,
+  "packageBytes": 772744556,
+  "allRecycledFilesSha256Match": true,
+  "recycledShortcutSha256Matches": true,
+  "preservedProfiles": [
+    {
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio",
+      "fileCount": 815,
+      "bytes": 63823745,
+      "metadataSha256": "f071f537fd3303758647626cbdbf7278eabd8d03a1f1c8d196e378d71cf47edc"
+    },
+    {
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.studio.test",
+      "fileCount": 431,
+      "bytes": 42758273,
+      "metadataSha256": "ef7294df339d32f6b45a8f23ddf9876e1c08228c1d7dcc6a12ed64818d7a8e0e"
+    },
+    {
+      "path": "C:\\Users\\29551\\AppData\\Local\\ai.blocky.windowscorespike",
+      "fileCount": 593,
+      "bytes": 91575165,
+      "metadataSha256": "cdb876adc325325a7b45a936d2350fd54889977a8b1aca85d9abff5f3d0f2bbc"
+    },
+    {
+      "path": "C:\\Users\\29551\\AppData\\Roaming\\ai.blocky.windowscorespike",
+      "fileCount": 2,
+      "bytes": 37072,
+      "metadataSha256": "976a25b502e0ecd261a1afa26b320f1fc8f07f6ca3d09a9e543eb572a523b473"
+    }
+  ],
+  "profilesMetadataUnchanged": true,
+  "remainingInstalledEntries": [],
+  "remainingSystemShortcuts": [],
+  "remainingBlockyProcesses": [],
+  "sourceAndOtherBuildsPreserved": true,
+  "permanentDeletion": false,
+  "measuredSpaceFreed": 0,
+  "restoration": "Restore the two named objects from Windows Recycle Bin to their original paths"
+}
