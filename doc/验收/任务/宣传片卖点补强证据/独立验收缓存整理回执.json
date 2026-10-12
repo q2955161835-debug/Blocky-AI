@@ -1,0 +1,124 @@
+{
+  "at": "2026-10-13T02:52:08.7711512+08:00",
+  "operation": "same-volume Move-Item; no deletion",
+  "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13",
+  "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13",
+  "files": 14,
+  "bytes": 600500.0,
+  "allVerified": true,
+  "sourceAbsent": true,
+  "mapping": [
+    {
+      "relative": "compare.py",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\compare.py",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\compare.py",
+      "bytes": 1567,
+      "sha256": "383268263AE499BF2F70E089128EDFB4EB1991A48608C36DA4275928E7B6920F",
+      "verified": true
+    },
+    {
+      "relative": "decode-exit.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\decode-exit.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\decode-exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354",
+      "verified": true
+    },
+    {
+      "relative": "decode.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\decode.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\decode.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "verified": true
+    },
+    {
+      "relative": "ffprobe.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\ffprobe.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\ffprobe.json",
+      "bytes": 4914,
+      "sha256": "BB9785516CAA30D3DE1EEA2ECC36E79C795ED74DA98162DCE591D0F7F180C897",
+      "verified": true
+    },
+    {
+      "relative": "hash.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\hash.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\hash.json",
+      "bytes": 221,
+      "sha256": "C941D71F5CDA0F1EE73414F472FD61FB0D639CC3A396B29778CEAAD02358FC21",
+      "verified": true
+    },
+    {
+      "relative": "live-timeline.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\live-timeline.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\live-timeline.json",
+      "bytes": 34450,
+      "sha256": "1B4CFFCEC3AE6D11F1C2146485506E4DA93D5FABF62AE85D39CDDEFF302665A9",
+      "verified": true
+    },
+    {
+      "relative": "parameter-comparison.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\parameter-comparison.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\parameter-comparison.json",
+      "bytes": 1065,
+      "sha256": "ACDA26BDC5DEEB37C8434CECF30310AA4059C9E74C27A6148ECCE6FEBCAF1AE0",
+      "verified": true
+    },
+    {
+      "relative": "shared-assets-live.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\shared-assets-live.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\shared-assets-live.json",
+      "bytes": 15413,
+      "sha256": "986BF905A52D1B8DC3B42A7541AB4A435DF04F418902A65214EBD0084B1C57D9",
+      "verified": true
+    },
+    {
+      "relative": "shared-code-comparison.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\shared-code-comparison.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\shared-code-comparison.json",
+      "bytes": 511,
+      "sha256": "59C737E95E9D6329A14BDAC056DB67D8143A668545760BA0C00521FB5C34FDF6",
+      "verified": true
+    },
+    {
+      "relative": "text-check-seconds.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\text-check-seconds.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\text-check-seconds.json",
+      "bytes": 171,
+      "sha256": "6D6A1A498E7F149344ABCAB6F454FF73C52B365DCBEDAACCE1C6D9901B65CA9D",
+      "verified": true
+    },
+    {
+      "relative": "text-check.jpg",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\text-check.jpg",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\text-check.jpg",
+      "bytes": 471912,
+      "sha256": "48D0A402ACFCAF1CFD18B46D00408323EC0383D5CB2B9015523DEDCEB30F72BF",
+      "verified": true
+    },
+    {
+      "relative": "v5-parameters.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\v5-parameters.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\v5-parameters.txt",
+      "bytes": 35122,
+      "sha256": "C3C32290D3855CA65F904BDC59A71B6530F949E7050CD5B69184D6B2AC649166",
+      "verified": true
+    },
+    {
+      "relative": "v6-parameters.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\v6-parameters.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\v6-parameters.txt",
+      "bytes": 34044,
+      "sha256": "22BDDBF9D4A648971C9C033307F66F6D4D2229B21A377EFFAA413AB0A3DA6C3C",
+      "verified": true
+    },
+    {
+      "relative": "zoom-comparison.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片卖点补强独立验收-2026-10-13\\zoom-comparison.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片卖点补强独立验收-2026-10-13\\zoom-comparison.json",
+      "bytes": 1107,
+      "sha256": "B91CD5FFE144D70FD61C2A3943339D19D52C32ADC0137F8752DD19C9AF91FE2F",
+      "verified": true
+    }
+  ]
+}

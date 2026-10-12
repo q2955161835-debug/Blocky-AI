@@ -1,0 +1,25 @@
+
+{
+  "entries": [
+    {
+      "codec": "h264",
+      "completedAt": "2026-10-12T18:47:59.218Z",
+      "error": null,
+      "id": "6bc452f0-8d5c-41e0-9e1b-73ad4ad59643",
+      "name": "Blocky-审查搭子-卖点补强-v6.mp4",
+      "ok": true,
+      "outputSizeBytes": 66624061,
+      "progress": 1,
+      "renderId": "6bc452f0-8d5c-41e0-9e1b-73ad4ad59643",
+      "resolution": null,
+      "source": "browser",
+      "startedAt": "2026-10-12T18:47:42.835Z",
+      "status": "complete",
+      "statusMessage": "Finished. The browser tab that rendered it started the file download on the user's device.",
+      "terminal": true,
+      "timelineId": "17d06b26-5474-41bb-8561-a3afa07e7316"
+    }
+  ],
+  "success": true,
+  "terminal": true
+}

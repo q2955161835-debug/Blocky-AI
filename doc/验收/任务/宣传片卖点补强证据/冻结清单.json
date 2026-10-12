@@ -1,0 +1,29 @@
+{
+  "film": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-卖点补强-v6.mp4",
+  "sha256": "c7665e11bf834b946deb811c513e39878e41b74923a2f5059a854a495942dac0",
+  "bytes": 66624061,
+  "durationSeconds": 67.008,
+  "width": 1920,
+  "height": 1080,
+  "fps": "30/1",
+  "videoFrames": "2010",
+  "videoCodec": "h264",
+  "audioCodec": "aac",
+  "audioSampleRate": "48000",
+  "audioChannels": 2,
+  "decodeExitCode": 0,
+  "decodeLogBytes": 0,
+  "timelineId": "17d06b26-5474-41bb-8561-a3afa07e7316",
+  "renderId": "6bc452f0-8d5c-41e0-9e1b-73ad4ad59643",
+  "baselineSHA256": "4bac6fff490f2fc8f09eecfcf3b644b64393ae375dc86ec251c74776675c2743",
+  "baselineUserAccepted": true,
+  "changes": "Four MG instance property patches and one additional 3-second note instance; no shared MG code, source video, transitions, zoom or sound edits",
+  "sourceReceipt": "doc/验收/任务/宣传片节奏片尾证据/冻结清单.json",
+  "storage": {
+    "originalAbsent": true,
+    "defaultDownload": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-卖点补强-v6.mp4",
+    "operation": "Move-Item",
+    "movedSHA256": "c7665e11bf834b946deb811c513e39878e41b74923a2f5059a854a495942dac0"
+  },
+  "claims": "Preset runtime remains labelled 界面演示, actual CLI create plus fictional collaboration retains CLI协作情景示意. No new real-model or brand-tool execution."
+}
