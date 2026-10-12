@@ -1,0 +1,15 @@
+{
+  "codex": {
+    "source": "User provided original blue Codex companion screenshot",
+    "inputPath": "C:\\Users\\29551\\AppData\\Local\\Temp\\codex-clipboard-d92c242c-0f63-4791-b598-f9b2cda8a9b3.png",
+    "localReference": "codex-user-reference.png"
+  },
+  "claude": {
+    "source": "Clawd by Claude Code artwork listing; visual reference only, no endorsement or integration claim",
+    "page": "https://www.stickermule.com/claudecode/item/19156131",
+    "image": "https://storage.googleapis.com/sm-artworks/5719926a-04ae-4afb-9925-f1f4521d38ce/proof_retina_3x.png?cacheFor=ae97e86eaf931cb075104b625e1708fe",
+    "localReference": "clawd-reference.png",
+    "adaptation": "Terra-cotta extruded pixel silhouette, two square eyes and four short legs"
+  },
+  "sceneBoundary": "User authorized fictional collaborative animation for Codex/Claude Code/Blocky; not actual brand execution, official integration, or automatically converting arbitrary source code"
+}

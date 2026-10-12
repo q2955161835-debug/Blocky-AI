@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] The absurdly long code accordion is established exactly as in the first frame. The same three solid 3D characters, same workshop light/materials and tabletop are preserved: Codex is the blue round scalloped-hood robot with dark >_ screen, never flesh eyes; Clawd is terracotta wide block body with two black square eyes and four feet, never a mouth; Blocky is cyan cube with exactly two studs and bean eyes. No duplicate cast, new anatomy, new text, or scene cut. Keep all three visible, keep the C-shaped nested program intact and never replace it with nodes and wires. For 0-3 seconds Clawd very carefully scans just two adjacent code panels with its tiny magnifier, side-stepping on its four feet while Codex proudly extends its arms a little to hold the other end. It is comically too much document for a quick review. At 3-4 seconds Clawd stops and looks from the endless accordion to Blocky's tidy nested program. During 4-6 seconds Blocky gives a gentle beckoning gesture toward the program, while Codex tilts its large hood as if realizing the point. Static camera for a clear visual joke, no spawning more cards or disappearing props.
+
+overall_soundscape: Two soft card hinge clicks, tiny four-foot clay steps, a short descending comedic pluck when Clawd pauses, clean room tone. No speech.
+
+non_diegetic_music: N/A
