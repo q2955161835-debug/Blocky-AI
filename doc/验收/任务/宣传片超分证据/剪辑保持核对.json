@@ -1,0 +1,1929 @@
+{
+  "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+  "itemCount": 39,
+  "itemsEqualAfterAssetMapping": true,
+  "transitionsAndEffectsEqual": true,
+  "baseline": [
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0.05,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -5,
+        "durationInFrames": 360,
+        "from": 0,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "5b54aa4c07",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 0,
+        "height": 110,
+        "left": 350,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 30,
+        "width": 1230
+      }
+    },
+    {
+      "type": "video",
+      "asset": "39bf1db0c5",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 0,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -9,
+        "durationInFrames": 4,
+        "from": 59,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 60,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "写好了！",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 120,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "简单审一眼。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "669c0d45ac",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 180,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.15,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 210,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "就，亿点点。",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 300,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "来，把逻辑摆出来。"
+        },
+        "rotation": 0,
+        "top": 45,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 12,
+        "decibelAdjustment": -17,
+        "durationInFrames": 150,
+        "from": 360,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 360,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "让我审一下。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "00cc9941d4",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 360,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.15,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "364c5fd20f",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -8,
+        "durationInFrames": 19,
+        "from": 391,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -9,
+        "durationInFrames": 4,
+        "from": 434,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 435,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "tail": "right"
+        },
+        "rotation": 0,
+        "top": 45,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 17,
+        "decibelAdjustment": -6,
+        "durationInFrames": 1050,
+        "from": 510,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "video",
+      "asset": "24cb8a3ca5",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 540,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "video",
+      "asset": "bbffbcdeca",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 630,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.96,
+        "rotation": 0,
+        "top": 0,
+        "sourceStartFromInSeconds": 2.5,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "6f4889b802",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 645,
+        "height": 190,
+        "left": 70,
+        "opacity": 1,
+        "propertyOverrides": {
+          "body": "拖积木 · 改指令",
+          "label": "零基础起步",
+          "title": "不会代码，也能搭"
+        },
+        "rotation": 0,
+        "top": 800,
+        "width": 460
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "6f4889b802",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 750,
+        "height": 190,
+        "left": 70,
+        "opacity": 1,
+        "propertyOverrides": {
+          "body": "结构、指令，直接审",
+          "title": "不用啃代码"
+        },
+        "rotation": 0,
+        "top": 800,
+        "width": 460
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 870,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "dc8942b32d",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 870,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.3,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 960,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "盯得很紧.jpg",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 845,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "06af9651a1",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1050,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.96,
+        "rotation": 0,
+        "top": 0,
+        "sourceStartFromInSeconds": 6.5,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "f10e519f82",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1065,
+        "height": 250,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "tag": "无代码基础 · 界面演示",
+          "title": "结果能审阅",
+          "detail": "看步骤 · 查调用 · 核对输出"
+        },
+        "rotation": 0,
+        "top": 495,
+        "width": 370
+      }
+    },
+    {
+      "type": "video",
+      "asset": "f5c046cfe0",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1290,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1305,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "积木快递，签收一下。",
+          "tail": "right",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 65,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "f42485a4a3",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1380,
+        "height": 195,
+        "left": 80,
+        "opacity": 1,
+        "propertyOverrides": {
+          "result": "CLI 开发 → 积木审阅；入门与专业共用。"
+        },
+        "rotation": 0,
+        "top": 865,
+        "width": 1760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "6b03a6c640",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1380,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 46,
+        "decibelAdjustment": -13,
+        "durationInFrames": 150,
+        "from": 1560,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1560,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "专业场景，必须大场面？",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "bcfcda8f3a",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1560,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.92,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.3,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1650,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "倒也不必。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 880,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 51,
+        "decibelAdjustment": -5,
+        "durationInFrames": 90,
+        "from": 1710,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1710,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "从入门学习，到专业开发。"
+        },
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0.2,
+        "audioFadeOut": 0.9,
+        "sourceStartFromInSeconds": 53,
+        "decibelAdjustment": -7,
+        "durationInFrames": 210,
+        "from": 1800,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "9a0e5c6b9f",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1800,
+        "height": 250,
+        "left": 930,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 420,
+        "width": 900
+      }
+    },
+    {
+      "type": "video",
+      "asset": "96cad1345d",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1800,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.94,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.35,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -14,
+        "durationInFrames": 4,
+        "from": 1885,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    }
+  ],
+  "result": [
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0.05,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -5,
+        "durationInFrames": 360,
+        "from": 0,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "5b54aa4c07",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 0,
+        "height": 110,
+        "left": 350,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 30,
+        "width": 1230
+      }
+    },
+    {
+      "type": "video",
+      "asset": "39bf1db0c5",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 0,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -9,
+        "durationInFrames": 4,
+        "from": 59,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 60,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "写好了！",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 120,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "简单审一眼。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "669c0d45ac",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 180,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.15,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 210,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "就，亿点点。",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 300,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "来，把逻辑摆出来。"
+        },
+        "rotation": 0,
+        "top": 45,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 12,
+        "decibelAdjustment": -17,
+        "durationInFrames": 150,
+        "from": 360,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 360,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "让我审一下。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 70,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "00cc9941d4",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 360,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.15,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "364c5fd20f",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -8,
+        "durationInFrames": 19,
+        "from": 391,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -9,
+        "durationInFrames": 4,
+        "from": 434,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 435,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "tail": "right"
+        },
+        "rotation": 0,
+        "top": 45,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 17,
+        "decibelAdjustment": -6,
+        "durationInFrames": 1050,
+        "from": 510,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "video",
+      "asset": "24cb8a3ca5",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 540,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "video",
+      "asset": "bbffbcdeca",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 630,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.96,
+        "rotation": 0,
+        "top": 0,
+        "sourceStartFromInSeconds": 2.5,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "6f4889b802",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 645,
+        "height": 190,
+        "left": 70,
+        "opacity": 1,
+        "propertyOverrides": {
+          "body": "拖积木 · 改指令",
+          "label": "零基础起步",
+          "title": "不会代码，也能搭"
+        },
+        "rotation": 0,
+        "top": 800,
+        "width": 460
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "6f4889b802",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 750,
+        "height": 190,
+        "left": 70,
+        "opacity": 1,
+        "propertyOverrides": {
+          "body": "结构、指令，直接审",
+          "title": "不用啃代码"
+        },
+        "rotation": 0,
+        "top": 800,
+        "width": 460
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 870,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "dc8942b32d",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 870,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.3,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 960,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "盯得很紧.jpg",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 845,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "06af9651a1",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1050,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.96,
+        "rotation": 0,
+        "top": 0,
+        "sourceStartFromInSeconds": 6.5,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "f10e519f82",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1065,
+        "height": 250,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "tag": "无代码基础 · 界面演示",
+          "title": "结果能审阅",
+          "detail": "看步骤 · 查调用 · 核对输出"
+        },
+        "rotation": 0,
+        "top": 495,
+        "width": 370
+      }
+    },
+    {
+      "type": "video",
+      "asset": "f5c046cfe0",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 90,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1290,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "58cd33acb0",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1305,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "积木快递，签收一下。",
+          "tail": "right",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 65,
+        "width": 760
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "f42485a4a3",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1380,
+        "height": 195,
+        "left": 80,
+        "opacity": 1,
+        "propertyOverrides": {
+          "result": "CLI 开发 → 积木审阅；入门与专业共用。"
+        },
+        "rotation": 0,
+        "top": 865,
+        "width": 1760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "6b03a6c640",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 180,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1380,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.25,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 46,
+        "decibelAdjustment": -13,
+        "durationInFrames": 150,
+        "from": 1560,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1560,
+        "height": 155,
+        "left": 55,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "专业场景，必须大场面？",
+          "actor": "Codex",
+          "accent": "#B6CBFF"
+        },
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "video",
+      "asset": "bcfcda8f3a",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 240,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1560,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.92,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.3,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1650,
+        "height": 155,
+        "left": 1100,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "倒也不必。",
+          "tail": "right",
+          "actor": "Claude",
+          "accent": "#F5BC92"
+        },
+        "rotation": 0,
+        "top": 880,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 51,
+        "decibelAdjustment": -5,
+        "durationInFrames": 90,
+        "from": 1710,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "fb89cb0ca2",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 60,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1710,
+        "height": 155,
+        "left": 580,
+        "opacity": 1,
+        "propertyOverrides": {
+          "line": "从入门学习，到专业开发。"
+        },
+        "rotation": 0,
+        "top": 850,
+        "width": 760
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "6c9622d70d",
+      "track": "A1",
+      "props": {
+        "audioFadeIn": 0.2,
+        "audioFadeOut": 0.9,
+        "sourceStartFromInSeconds": 53,
+        "decibelAdjustment": -7,
+        "durationInFrames": 210,
+        "from": 1800,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    },
+    {
+      "type": "motion-graphic",
+      "asset": "9a0e5c6b9f",
+      "track": "V2",
+      "props": {
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1800,
+        "height": 250,
+        "left": 930,
+        "opacity": 1,
+        "rotation": 0,
+        "top": 420,
+        "width": 900
+      }
+    },
+    {
+      "type": "video",
+      "asset": "96cad1345d",
+      "track": "V1",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "borderRadius": 0,
+        "cropBottom": 0.007293,
+        "cropLeft": 0,
+        "cropRight": 0,
+        "cropTop": 0.008204,
+        "decibelAdjustment": -60,
+        "durationInFrames": 210,
+        "fadeIn": 0,
+        "fadeOut": 0,
+        "from": 1800,
+        "height": 1097,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 0.94,
+        "rotation": 0,
+        "top": -9,
+        "sourceStartFromInSeconds": 0.35,
+        "width": 1920
+      }
+    },
+    {
+      "type": "audio",
+      "asset": "dca309b9d5",
+      "track": "A2",
+      "props": {
+        "audioFadeIn": 0,
+        "audioFadeOut": 0,
+        "sourceStartFromInSeconds": 0,
+        "decibelAdjustment": -14,
+        "durationInFrames": 4,
+        "from": 1885,
+        "height": 1080,
+        "left": 0,
+        "opacity": 1,
+        "playbackRate": 1,
+        "top": 0,
+        "width": 1920
+      }
+    }
+  ],
+  "normalizedTransitionsAndEffects": {
+    "effects": [
+      {
+        "assetId": "builtin:zoom",
+        "duration": 240,
+        "enabled": true,
+        "from": 630,
+        "props": {
+          "easeInDurationInSeconds": 1.4,
+          "easeOutDurationInSeconds": 1.4,
+          "focalMode": "manual",
+          "focalPointX": 0.45,
+          "magnification": 3,
+          "shape": "spring-focused"
+        },
+        "target": 630
+      },
+      {
+        "assetId": "builtin:zoom",
+        "duration": 240,
+        "enabled": true,
+        "from": 1050,
+        "props": {
+          "direction": "in",
+          "easeIn": 0.12,
+          "easeOut": 0,
+          "focalMode": "manual",
+          "focalPointX": 0.99,
+          "focalPointY": 0.18,
+          "magnification": 1.35
+        },
+        "target": 1050
+      }
+    ],
+    "transitions": [
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 6,
+        "enabled": true,
+        "in": 180,
+        "out": 0,
+        "range": {
+          "fromFrame": 177,
+          "toFrame": 183
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 6,
+        "enabled": true,
+        "in": 360,
+        "out": 180,
+        "range": {
+          "fromFrame": 357,
+          "toFrame": 363
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 8,
+        "enabled": true,
+        "in": 540,
+        "out": 360,
+        "range": {
+          "fromFrame": 536,
+          "toFrame": 544
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 630,
+        "out": 540,
+        "range": {
+          "fromFrame": 623,
+          "toFrame": 637
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 870,
+        "out": 630,
+        "range": {
+          "fromFrame": 863,
+          "toFrame": 877
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 12,
+        "enabled": true,
+        "in": 1050,
+        "out": 870,
+        "range": {
+          "fromFrame": 1044,
+          "toFrame": 1056
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 1290,
+        "out": 1050,
+        "range": {
+          "fromFrame": 1283,
+          "toFrame": 1297
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 10,
+        "enabled": true,
+        "in": 1380,
+        "out": 1290,
+        "range": {
+          "fromFrame": 1375,
+          "toFrame": 1385
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 14,
+        "enabled": true,
+        "in": 1560,
+        "out": 510,
+        "range": {
+          "fromFrame": 1553,
+          "toFrame": 1567
+        },
+        "track": "A1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 10,
+        "enabled": true,
+        "in": 1560,
+        "out": 1380,
+        "range": {
+          "fromFrame": 1555,
+          "toFrame": 1565
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 10,
+        "enabled": true,
+        "in": 1710,
+        "out": 1560,
+        "range": {
+          "fromFrame": 1705,
+          "toFrame": 1715
+        },
+        "track": "A1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 18,
+        "enabled": true,
+        "in": 1800,
+        "out": 1560,
+        "range": {
+          "fromFrame": 1791,
+          "toFrame": 1809
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 10,
+        "enabled": true,
+        "in": 1800,
+        "out": 1710,
+        "range": {
+          "fromFrame": 1795,
+          "toFrame": 1805
+        },
+        "track": "A1"
+      }
+    ]
+  }
+}

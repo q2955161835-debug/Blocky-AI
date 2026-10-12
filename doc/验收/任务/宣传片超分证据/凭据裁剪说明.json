@@ -1,0 +1,7 @@
+{
+  "files": [
+    "live-v7-structure.json",
+    "live-v7-tail.json"
+  ],
+  "removed": "Ephemeral browserHandoff and editor-boot-token query; timeline state, entries and effects preserved"
+}

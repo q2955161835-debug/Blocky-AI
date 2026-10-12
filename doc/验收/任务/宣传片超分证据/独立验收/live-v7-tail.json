@@ -1,0 +1,415 @@
+{
+  "state": {
+    "canvas": {
+      "height": 1080,
+      "width": 1920
+    },
+    "durationFrames": 2010,
+    "fps": 30,
+    "id": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+    "name": "审查搭子 · Real-ESRGAN画质优化 v7",
+    "range": {
+      "fromFrame": 0,
+      "toFrame": 2010
+    }
+  },
+  "views": [
+    "timeline"
+  ],
+  "timeline": {
+    "entries": [
+      {
+        "asset": {
+          "id": "f42485a4-a30f-4532-8ad4-c839a5ef451a",
+          "name": "搭子协作 · CLI薄层",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1380,
+        "id": "d1ac3fd8-93e0-4e00-b3c2-389e4e5fe7c6",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1380,
+          "toFrame": 1560
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 14,
+        "enabled": true,
+        "id": "0876c40f-ee9e-43f3-b65c-0b95fe857426",
+        "incomingItemId": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "kind": "transition",
+        "outgoingItemId": "fbeb0e12-87e4-418b-89be-0545c354c273",
+        "timelineRange": {
+          "fromFrame": 1553,
+          "toFrame": 1567
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "9d6edfc2-a66d-49ac-9a0d-d42378dd79a5",
+        "incomingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "kind": "transition",
+        "outgoingItemId": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+        "timelineRange": {
+          "fromFrame": 1555,
+          "toFrame": 1565
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "3cbdd510-61a4-4556-9a67-148dee33d2c0",
+          "name": "2a1a6f7f_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1560,
+        "id": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 7660000,
+          "start": 300000
+        },
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1800
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1560,
+        "id": "0599b028-52a0-44a2-b70c-c17ef06b398e",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1620
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1560,
+        "id": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 51000000,
+          "start": 46000000
+        },
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1710
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "fromFrame": 1620,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1620,
+          "toFrame": 1650
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1650,
+        "id": "f8690d5f-fcae-4795-89a9-b70b268127db",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1650,
+          "toFrame": 1710
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "84babad7-3d31-45e5-8239-0abc068a2b97",
+        "incomingItemId": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "kind": "transition",
+        "outgoingItemId": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "timelineRange": {
+          "fromFrame": 1705,
+          "toFrame": 1715
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1710,
+        "id": "2563830d-7a27-4c02-b787-b0524006cb1e",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1710,
+          "toFrame": 1770
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1710,
+        "id": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 54000000,
+          "start": 51000000
+        },
+        "timelineRange": {
+          "fromFrame": 1710,
+          "toFrame": 1800
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "fromFrame": 1770,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1770,
+          "toFrame": 1800
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 18,
+        "enabled": true,
+        "id": "5ad63f11-9ef2-4aff-9af5-01ea042ca13f",
+        "incomingItemId": "f14495f6-76df-470f-b3ba-20cdc6f3637a",
+        "kind": "transition",
+        "outgoingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "timelineRange": {
+          "fromFrame": 1791,
+          "toFrame": 1809
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "3a079582-b093-4987-ac3f-b1a1f0218637",
+        "incomingItemId": "c3522e80-19c4-4b6a-a21a-208b587158bd",
+        "kind": "transition",
+        "outgoingItemId": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "timelineRange": {
+          "fromFrame": 1795,
+          "toFrame": 1805
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "cdc6cc7d-8422-49a2-b8f0-91d1984fe52f",
+          "name": "5f26c679_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1800,
+        "id": "f14495f6-76df-470f-b3ba-20cdc6f3637a",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6930000,
+          "start": 350000
+        },
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "9a0e5c6b-9f08-4d2b-bba0-0a6eafe22615",
+          "name": "片尾 · Blocky. 逐字落稳",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1800,
+        "id": "165f7836-99d0-40e8-94db-142cd1a31805",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1800,
+        "id": "c3522e80-19c4-4b6a-a21a-208b587158bd",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 60000000,
+          "start": 53000000
+        },
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "dca309b9-d5ac-4199-a26d-cab9d44dfcef",
+          "name": "tiny-bubble-pop-r1.mp3",
+          "type": "audio"
+        },
+        "startFrame": 1885,
+        "id": "989289e1-6f9a-4752-949f-4cd13b047513",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 133333,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 1885,
+          "toFrame": 1889
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "fromFrame": 1889,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1889,
+          "toFrame": 2010
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      }
+    ],
+    "totalEntries": 69,
+    "tracks": [
+      {
+        "alias": "V1",
+        "effects": [
+          {
+            "assetId": "builtin:zoom",
+            "durationFrames": 240,
+            "enabled": true,
+            "startFrame": 630,
+            "id": "7b6b0bc6-9016-47be-8ce1-379ca1a9b581",
+            "propertyOverrides": {
+              "shape": "spring-focused",
+              "focalMode": "manual",
+              "focalPointX": 0.45,
+              "magnification": 3,
+              "easeInDurationInSeconds": 1.4,
+              "easeOutDurationInSeconds": 1.4
+            },
+            "targetItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c"
+          },
+          {
+            "assetId": "builtin:zoom",
+            "durationFrames": 240,
+            "enabled": true,
+            "startFrame": 1050,
+            "id": "fbbdfd32-b856-4ac4-a9a3-70b0dbfc7d42",
+            "propertyOverrides": {
+              "easeIn": 0.12,
+              "easeOut": 0,
+              "direction": "in",
+              "focalMode": "manual",
+              "focalPointX": 0.99,
+              "focalPointY": 0.18,
+              "magnification": 1.35
+            },
+            "targetItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53"
+          }
+        ],
+        "hidden": false,
+        "id": "f5402f29-70df-457a-a952-0945051e5992",
+        "muted": false,
+        "name": null,
+        "order": 0,
+        "trackType": "video"
+      },
+      {
+        "alias": "V2",
+        "hidden": false,
+        "id": "8f0e8597-f713-45a2-ade4-f7359e5f8533",
+        "muted": false,
+        "name": null,
+        "order": 1,
+        "trackType": "video"
+      },
+      {
+        "alias": "A1",
+        "hidden": false,
+        "id": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb",
+        "muted": false,
+        "name": "原创节拍",
+        "order": 3,
+        "trackType": "audio"
+      },
+      {
+        "alias": "A2",
+        "hidden": false,
+        "id": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7",
+        "muted": false,
+        "name": "喜剧音效",
+        "order": 4,
+        "trackType": "audio"
+      }
+    ]
+  },
+  "editorUrl": "https://app.chatcut.io/editor/d0cba719-b937-45cd-b22e-829476adff1d?chatcutLaunchClient=codex_app&chatcutLaunchSurface=ext_browser&chatcutLaunchRuntimeSource=codex_app__hosted_mcp",
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d"
+}

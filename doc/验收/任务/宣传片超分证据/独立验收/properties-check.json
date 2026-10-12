@@ -1,0 +1,202 @@
+{
+  "oldProperties": 39,
+  "newProperties": 39,
+  "propertyTextEqual": true,
+  "normalizedItemCount": 39,
+  "normalizedItemsEqual": true,
+  "transitionsAndEffects": {
+    "effects": [
+      {
+        "assetId": "builtin:zoom",
+        "duration": 240,
+        "enabled": true,
+        "from": 630,
+        "props": {
+          "easeInDurationInSeconds": 1.4,
+          "easeOutDurationInSeconds": 1.4,
+          "focalMode": "manual",
+          "focalPointX": 0.45,
+          "magnification": 3,
+          "shape": "spring-focused"
+        },
+        "target": 630
+      },
+      {
+        "assetId": "builtin:zoom",
+        "duration": 240,
+        "enabled": true,
+        "from": 1050,
+        "props": {
+          "direction": "in",
+          "easeIn": 0.12,
+          "easeOut": 0,
+          "focalMode": "manual",
+          "focalPointX": 0.99,
+          "focalPointY": 0.18,
+          "magnification": 1.35
+        },
+        "target": 1050
+      }
+    ],
+    "transitions": [
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 6,
+        "enabled": true,
+        "in": 180,
+        "out": 0,
+        "range": {
+          "fromFrame": 177,
+          "toFrame": 183
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 6,
+        "enabled": true,
+        "in": 360,
+        "out": 180,
+        "range": {
+          "fromFrame": 357,
+          "toFrame": 363
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 8,
+        "enabled": true,
+        "in": 540,
+        "out": 360,
+        "range": {
+          "fromFrame": 536,
+          "toFrame": 544
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 630,
+        "out": 540,
+        "range": {
+          "fromFrame": 623,
+          "toFrame": 637
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 870,
+        "out": 630,
+        "range": {
+          "fromFrame": 863,
+          "toFrame": 877
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 12,
+        "enabled": true,
+        "in": 1050,
+        "out": 870,
+        "range": {
+          "fromFrame": 1044,
+          "toFrame": 1056
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 14,
+        "enabled": true,
+        "in": 1290,
+        "out": 1050,
+        "range": {
+          "fromFrame": 1283,
+          "toFrame": 1297
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 10,
+        "enabled": true,
+        "in": 1380,
+        "out": 1290,
+        "range": {
+          "fromFrame": 1375,
+          "toFrame": 1385
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 14,
+        "enabled": true,
+        "in": 1560,
+        "out": 510,
+        "range": {
+          "fromFrame": 1553,
+          "toFrame": 1567
+        },
+        "track": "A1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 10,
+        "enabled": true,
+        "in": 1560,
+        "out": 1380,
+        "range": {
+          "fromFrame": 1555,
+          "toFrame": 1565
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 10,
+        "enabled": true,
+        "in": 1710,
+        "out": 1560,
+        "range": {
+          "fromFrame": 1705,
+          "toFrame": 1715
+        },
+        "track": "A1"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "duration": 18,
+        "enabled": true,
+        "in": 1800,
+        "out": 1560,
+        "range": {
+          "fromFrame": 1791,
+          "toFrame": 1809
+        },
+        "track": "V1"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "duration": 10,
+        "enabled": true,
+        "in": 1800,
+        "out": 1710,
+        "range": {
+          "fromFrame": 1795,
+          "toFrame": 1805
+        },
+        "track": "A1"
+      }
+    ]
+  },
+  "independentTransitionsEqual": true,
+  "independentEffectsEqual": true
+}

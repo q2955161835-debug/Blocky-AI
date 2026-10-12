@@ -1,0 +1,615 @@
+{
+  "started": "2026-10-13T03:27:41.4788719+08:00",
+  "finished": "2026-10-13T03:40:11.5864777+08:00",
+  "toolRoot": "D:\\2Folder\\Real-ESRGAN",
+  "toolGitTracked": false,
+  "model": "RealESRGAN_x4plus",
+  "fp16": true,
+  "tile": 0,
+  "numProcessPerGpu": 1,
+  "outputSources": [
+    {
+      "sourceAssetId": "39bf1db0-c59a-4686-813f-ff85075f6a8a",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-01-start\\fd25f5bd_000.mp4",
+      "inputSha256": "db53c9642698cd8a30c0dd2b48e0430cc277d3484a0a2567dc2aa0b324ca0c80",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\fd25f5bd_000_out.mp4",
+      "outputSha256": "0643d1db89d1106d1128127dcf88bd7272ea0f737364259dd6fad71804e2cf92",
+      "bytes": 4607939,
+      "elapsedSeconds": 85.7983886,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "526449"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "4607939"
+        }
+      },
+      "audioPacketHash": "b1c537fc32d7e49ef86fe4f8b4a9a5bba9ca51f05adf2741d5ae843e67c128a1",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "669c0d45-ac73-4c65-a88a-27994aed8be5",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-02-long-review\\335d9510_000.mp4",
+      "inputSha256": "b5d61dc47eb2f27d802aaec8ccea1f327f19289964e072ca6a5443e57eaded9c",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\335d9510_000_out.mp4",
+      "outputSha256": "6d783eb6bd5fd7b9b0b48918ef0cce0ad5113f862b9e8f140f35e44da92ecfdf",
+      "bytes": 4301511,
+      "elapsedSeconds": 88.1146295,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "479881"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "4301511"
+        }
+      },
+      "audioPacketHash": "b8862c41bac88556bd82e4179dc4d5b6c804ef0ce98826dcbecef35ba2ca740d",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "00cc9941-d463-47da-ab40-2514092f8c7d",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-03-wrong-target\\9f2f3362_000.mp4",
+      "inputSha256": "f6bd03981c90fb12103a793216fc392907bb7df2a6fe5b8554fbb73e51e8851b",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\9f2f3362_000_out.mp4",
+      "outputSha256": "02bf7a8f72e0620499b36ffa0dcfcf9888c63870c3c259d3e39aaeff1dd15421",
+      "bytes": 3259127,
+      "elapsedSeconds": 88.0576532,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "414449"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "3259127"
+        }
+      },
+      "audioPacketHash": "7443d992810455cf1f18c6a795dbd20a457a175aa1d46f5bebcc1a9e8243a346",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "dc8942b3-2dce-4e2a-9e1a-cbb3224badde",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-04-visible-run\\c3a17c46_000.mp4",
+      "inputSha256": "201a493fba0d6638167c3483fa70f6b90544b59a4686ea99c8a947de92f68569",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\c3a17c46_000_out.mp4",
+      "outputSha256": "b9a51bc0e42872600a0b346b71954a3d23258c189e4386c826daf3ab27cc2c45",
+      "bytes": 3879293,
+      "elapsedSeconds": 83.2344632,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "465640"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "3879293"
+        }
+      },
+      "audioPacketHash": "4cf4d5769d53d447c1cbb659cbfb2e9193e23e03faba04ff9dbd80c19f894906",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "6b03a6c6-40bb-43bc-b89a-8d1988e9f3fc",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-05-cli-handoff\\3f6434c6_000.mp4",
+      "inputSha256": "d1a1fc74b27e1222056d397f88773652f8c8832f198753323986540530148e73",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\3f6434c6_000_out.mp4",
+      "outputSha256": "6d73f350a895a3c5f5d4398e87e7840e21628888776a848dd3e784f5377d83a9",
+      "bytes": 4544278,
+      "elapsedSeconds": 83.255267,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "534778"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333",
+            "nb_read_frames": "158"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000",
+            "nb_read_frames": "206"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "4544278"
+        }
+      },
+      "audioPacketHash": "a3d83419344ac3f50487f50bffdfcf5595d40c4233611c6e5f54d170c2c3737d",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "bcfcda8f-3a19-4852-ae12-5324421c385f",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-06-growing-together\\2a1a6f7f_000.mp4",
+      "inputSha256": "07daed8cee0841484b4a114dfaa7d16beea4ced8e0d474b35d4b256dc5dea1fe",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\2a1a6f7f_000_out.mp4",
+      "outputSha256": "8c1d2d2cd2e392da0423a797326f824378e6b8e5d4ad4b16431cb9e1ad8f353d",
+      "bytes": 5734796,
+      "elapsedSeconds": 99.5887187,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "8.000000",
+            "nb_read_frames": "192"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "8.000000",
+            "nb_read_frames": "250"
+          }
+        ],
+        "format": {
+          "duration": "8.000000",
+          "size": "613805"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "8.000000",
+            "nb_read_frames": "192"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "8.000000",
+            "nb_read_frames": "250"
+          }
+        ],
+        "format": {
+          "duration": "8.000000",
+          "size": "5734796"
+        }
+      },
+      "audioPacketHash": "267018eb83e4adc3027bf2164e2cf4c14b2e8c43213d385dfbcf9c4a3938e50b",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "24cb8a3c-a54f-4604-92c2-d9424ead0545",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-lens-in\\3e860d9b_000.mp4",
+      "inputSha256": "0cb19d0120e42aeb8e2640349857db3aba4e8718bc3c59aa0d4e54f0ec5c6487",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\3e860d9b_000_out.mp4",
+      "outputSha256": "8e2aec358eedd77f9ad8cf2f572d7d17cc7fc4610a47b13abde8950526b35c0b",
+      "bytes": 3871294,
+      "elapsedSeconds": 57.8768162,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "4.458333",
+            "nb_read_frames": "107"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "4.450000",
+            "nb_read_frames": "140"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "457771"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "4.458333",
+            "nb_read_frames": "107"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "4.450000",
+            "nb_read_frames": "140"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "3871294"
+        }
+      },
+      "audioPacketHash": "ad97f58277a4b87306f2df81e82bb86dd98455406da7e8e8b676d999346c5260",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "f5c046cf-e084-4adb-9489-079823713245",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-cli-close\\fb70b1a2_000.mp4",
+      "inputSha256": "2e29f05ed2466111ea0cc3f7e42362ce8ffcdb28b841064563b198978ce96d49",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\fb70b1a2_000_out.mp4",
+      "outputSha256": "bf5e07d274b38bc7dfff0b92602afd662487a283131e3dee177dd98a249b00f6",
+      "bytes": 3671801,
+      "elapsedSeconds": 60.6096707,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "4.458333",
+            "nb_read_frames": "107"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "4.450000",
+            "nb_read_frames": "140"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "428222"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "4.458333",
+            "nb_read_frames": "107"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "4.450000",
+            "nb_read_frames": "140"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "3671801"
+        }
+      },
+      "audioPacketHash": "5b198dc1628bc7465128e40506faa56496833f73ae34cc644cc5d21ea30983aa",
+      "fullDecodeExit": 0
+    },
+    {
+      "sourceAssetId": "96cad134-5d36-4042-b3a5-58810956647a",
+      "input": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-logo-outro\\5f26c679_000.mp4",
+      "inputSha256": "337c7b879eba2b7db1b57c27b621998ef06765a4ae398be7abdb99540d30ea54",
+      "output": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v7-esrgan4x\\5f26c679_000_out.mp4",
+      "outputSha256": "c479bde044a0e00c516edb696ded7aa1c3d9865f594c736f0bb4f7f1a04cbd2a",
+      "bytes": 1537667,
+      "elapsedSeconds": 89.8037991,
+      "inputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1",
+            "duration": "7.291667",
+            "nb_read_frames": "175"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "7.292000",
+            "nb_read_frames": "228"
+          }
+        ],
+        "format": {
+          "duration": "7.292000",
+          "size": "274202"
+        }
+      },
+      "outputProbe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 2688,
+            "height": 1536,
+            "r_frame_rate": "24/1",
+            "duration": "7.291667",
+            "nb_read_frames": "175"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "7.292000",
+            "nb_read_frames": "228"
+          }
+        ],
+        "format": {
+          "duration": "7.292000",
+          "size": "1537667"
+        }
+      },
+      "audioPacketHash": "3487264b8759a0785d98bb37bc4a4ce5f074e5ae40cb2f7e92b11458e231bdb6",
+      "fullDecodeExit": 0
+    }
+  ]
+}

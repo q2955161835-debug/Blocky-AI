@@ -1,0 +1,599 @@
+{
+  "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+  "swap": {
+    "adds": [
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 180,
+        "from": 0,
+        "id": "4fa42d7960",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 180,
+        "sourceStartFromInSeconds": 0.15,
+        "from": 180,
+        "id": "1ce763e2a2",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 180,
+        "sourceStartFromInSeconds": 0.15,
+        "from": 360,
+        "id": "037c5dc724",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 90,
+        "sourceStartFromInSeconds": 0.25,
+        "from": 540,
+        "id": "8a485a9369",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 180,
+        "sourceStartFromInSeconds": 0.3,
+        "from": 870,
+        "id": "4be43c3760",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 90,
+        "sourceStartFromInSeconds": 0.25,
+        "from": 1290,
+        "id": "946763eaa1",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 180,
+        "sourceStartFromInSeconds": 0.25,
+        "from": 1380,
+        "id": "cb85d04f41",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 240,
+        "sourceStartFromInSeconds": 0.3,
+        "from": 1560,
+        "id": "7bef4f3380",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      },
+      {
+        "createdNewTrack": false,
+        "durationInFrames": 210,
+        "sourceStartFromInSeconds": 0.35,
+        "from": 1800,
+        "id": "f14495f676",
+        "timelineId": "25c6aff19c",
+        "trackId": "f5402f2970",
+        "type": "video",
+        "visualReviewRequired": {
+          "canvas": {
+            "height": 1080,
+            "width": 1920
+          },
+          "crop": {
+            "bottom": 0.00729,
+            "left": 0,
+            "right": 0,
+            "top": 0.0082,
+            "totalHorizontal": 0,
+            "totalVertical": 0.01549
+          },
+          "itemFrame": {
+            "height": 1097,
+            "left": 0,
+            "top": -9,
+            "width": 1920
+          },
+          "reasons": [
+            "source-crop",
+            "canvas-clip"
+          ],
+          "requiredAction": "Before the final response: 1) use inspect_asset to inspect this item's source frame(s); 2) use preview_timeline with views:[\"viewer\"] to inspect the matching composed timeline frame(s); 3) compare source vs timeline; 4) confirm protected subject/text/logo/UI/product edges remain visible. If protected information is cut off, reframe, use contain with a deliberate background, choose another source, or state the trade-off."
+        }
+      }
+    ],
+    "deletes": [
+      {
+        "id": "43a0550630",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "2e9a84c849",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "8be1ca078f",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "d079adddc9",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "5ac21f52d3",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "cfbc300332",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "f7f3c95bd6",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "addc355622",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "c45b4fe73e",
+        "timelineId": "25c6aff19c",
+        "type": "video"
+      },
+      {
+        "id": "111dbc94c6",
+        "type": "transition"
+      },
+      {
+        "id": "1992e18c35",
+        "type": "transition"
+      },
+      {
+        "id": "2010c63fa7",
+        "type": "transition"
+      },
+      {
+        "id": "2afaf40890",
+        "type": "transition"
+      },
+      {
+        "id": "58dc94cc94",
+        "type": "transition"
+      },
+      {
+        "id": "72f57ae3e2",
+        "type": "transition"
+      },
+      {
+        "id": "77b5face6f",
+        "type": "transition"
+      },
+      {
+        "id": "a7c9ef4783",
+        "type": "transition"
+      },
+      {
+        "id": "be7087e689",
+        "type": "transition"
+      },
+      {
+        "id": "c09c1e84f1",
+        "type": "transition"
+      }
+    ],
+    "updates": [],
+    "warnings": [
+      "deletes[3] also deleted transition 111dbc94c6, because it was attached to deleted item d079adddc9.",
+      "deletes[4] also deleted transition 1992e18c35, because it was attached to deleted item 5ac21f52d3.",
+      "deletes[0] also deleted transition 2010c63fa7, because it was attached to deleted item 43a0550630.",
+      "deletes[7] also deleted transition 2afaf40890, because it was attached to deleted item addc355622.",
+      "deletes[1] also deleted transition 58dc94cc94, because it was attached to deleted item 2e9a84c849.",
+      "deletes[4] also deleted transition 72f57ae3e2, because it was attached to deleted item 5ac21f52d3.",
+      "deletes[6] also deleted transition 77b5face6f, because it was attached to deleted item f7f3c95bd6.",
+      "deletes[5] also deleted transition a7c9ef4783, because it was attached to deleted item cfbc300332.",
+      "deletes[5] also deleted transition be7087e689, because it was attached to deleted item cfbc300332.",
+      "deletes[2] also deleted transition c09c1e84f1, because it was attached to deleted item 8be1ca078f."
+    ]
+  },
+  "transitionAdds": [
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "4fa42d79-60c5-49bd-91be-c33c0aec97d8",
+      "incomingItemId": "1ce763e2-a20c-4f42-ac61-8eae4ae5d10f",
+      "durationInFrames": 6,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "1ce763e2-a20c-4f42-ac61-8eae4ae5d10f",
+      "incomingItemId": "037c5dc7-24a1-4802-978f-7c5ea2bf660d",
+      "durationInFrames": 6,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "037c5dc7-24a1-4802-978f-7c5ea2bf660d",
+      "incomingItemId": "8a485a93-6943-46ce-8365-fffbc4ddab22",
+      "durationInFrames": 8,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "8a485a93-6943-46ce-8365-fffbc4ddab22",
+      "incomingItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c",
+      "durationInFrames": 14,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c",
+      "incomingItemId": "4be43c37-6070-40ab-8178-ffda30e3e457",
+      "durationInFrames": 14,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "4be43c37-6070-40ab-8178-ffda30e3e457",
+      "incomingItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53",
+      "durationInFrames": 12,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53",
+      "incomingItemId": "946763ea-a10e-4e5c-96c3-8b74b7178065",
+      "durationInFrames": 14,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "946763ea-a10e-4e5c-96c3-8b74b7178065",
+      "incomingItemId": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+      "durationInFrames": 10,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+      "incomingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+      "durationInFrames": 10,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "type": "transition",
+      "assetId": "builtin:tr-cross-dissolve",
+      "outgoingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+      "incomingItemId": "f14495f6-76df-470f-b3ba-20cdc6f3637a",
+      "durationInFrames": 18,
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    }
+  ],
+  "transitionResult": {
+    "adds": [
+      {
+        "createdNewTrack": false,
+        "id": "df158b8378",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "4fa42d7960",
+        "incomingItemId": "1ce763e2a2",
+        "durationInFrames": 6
+      },
+      {
+        "createdNewTrack": false,
+        "id": "e74b1f2854",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "1ce763e2a2",
+        "incomingItemId": "037c5dc724",
+        "durationInFrames": 6
+      },
+      {
+        "createdNewTrack": false,
+        "id": "9fdbafcacf",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "037c5dc724",
+        "incomingItemId": "8a485a9369",
+        "durationInFrames": 8
+      },
+      {
+        "createdNewTrack": false,
+        "id": "7e44f5b46f",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "8a485a9369",
+        "incomingItemId": "6489bbf6dc",
+        "durationInFrames": 14
+      },
+      {
+        "createdNewTrack": false,
+        "id": "a4d0b1bd9b",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "6489bbf6dc",
+        "incomingItemId": "4be43c3760",
+        "durationInFrames": 14
+      },
+      {
+        "createdNewTrack": false,
+        "id": "7bcc8dca3d",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "4be43c3760",
+        "incomingItemId": "6a3e8dca04",
+        "durationInFrames": 12
+      },
+      {
+        "createdNewTrack": false,
+        "id": "a09a2eac82",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "6a3e8dca04",
+        "incomingItemId": "946763eaa1",
+        "durationInFrames": 14
+      },
+      {
+        "createdNewTrack": false,
+        "id": "27f7c50655",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "946763eaa1",
+        "incomingItemId": "cb85d04f41",
+        "durationInFrames": 10
+      },
+      {
+        "createdNewTrack": false,
+        "id": "9d6edfc2a6",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "cb85d04f41",
+        "incomingItemId": "7bef4f3380",
+        "durationInFrames": 10
+      },
+      {
+        "createdNewTrack": false,
+        "id": "5ad63f119e",
+        "trackId": "f5402f2970",
+        "type": "transition",
+        "outgoingItemId": "7bef4f3380",
+        "incomingItemId": "f14495f676",
+        "durationInFrames": 18
+      }
+    ],
+    "deletes": [],
+    "updates": []
+  }
+}

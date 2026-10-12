@@ -1,0 +1,180 @@
+{
+  "source": "D:\\1Folder\\Blocky-AI\\try\\promo-esrgan-v7",
+  "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片超分制作-2026-10-13",
+  "fileCount": 34,
+  "bytes": 5206092.0,
+  "method": "Same-volume Move-Item; each SHA verified",
+  "releasedBytes": 0,
+  "files": [
+    {
+      "relative": "composed-23.png",
+      "bytes": 204607,
+      "sha256": "533565b1382b3088e6845efe5d7300d73cab278150a153d20d3290b49a77e271"
+    },
+    {
+      "relative": "composed-3.png",
+      "bytes": 572294,
+      "sha256": "e9442e30439fe89dbb283b7560a5f5e55bc9b38054b58caf1262f6d4e3d15ea0"
+    },
+    {
+      "relative": "composed-39.png",
+      "bytes": 194948,
+      "sha256": "a7656ec3ed6bca3c8233eac171613329a5b414cb4492d4effbeac12efa112be1"
+    },
+    {
+      "relative": "composed-64.png",
+      "bytes": 214536,
+      "sha256": "b45c6e6567423043b20cb63d595a1acde008157b10f91072a0c66ed1ab98e6e9"
+    },
+    {
+      "relative": "composed-contact.png",
+      "bytes": 1209913,
+      "sha256": "0aba93d5bcdc83525b51ae552e69243a2ef77bba9b9d96c18049014c5dd81c39"
+    },
+    {
+      "relative": "decode-01.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-02.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-03.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-04.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-05.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-06.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-07.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-08.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "decode-09.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "final-decode.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "first-enhanced.png",
+      "bytes": 676748,
+      "sha256": "11aae05aa8519e7b054484a3b3380bf2c0947629fcab87a7a7e37adb77b6b3f4"
+    },
+    {
+      "relative": "first-original.png",
+      "bytes": 660078,
+      "sha256": "2478662087d8654fce712086a93ae888b2ebcc8e4a5b235858a639a6ebe8bcbe"
+    },
+    {
+      "relative": "first-pair.png",
+      "bytes": 1333905,
+      "sha256": "c5e626cddba891897fb0e4fac10a107c2233c57d73bca540b914f4b9ebe2513c"
+    },
+    {
+      "relative": "Freeze-Result.py",
+      "bytes": 2513,
+      "sha256": "c3e3072967c638f356628de21f292a149ae7b4dbc1db20db4cf240ae903cb711"
+    },
+    {
+      "relative": "helper-stop.json",
+      "bytes": 216,
+      "sha256": "186cf249450a04922af5a1094f6f01ddd704c1c51a29b5c6662a62b99db3325b"
+    },
+    {
+      "relative": "inference-01.log",
+      "bytes": 12099,
+      "sha256": "0a88f8bdc59af8e87621578dda231390087899f64fd623e05519977709f639dd"
+    },
+    {
+      "relative": "inference-02.log",
+      "bytes": 12099,
+      "sha256": "3df29383de620dd074cbb5bf6ad0c85bd08cfbedeec811e13a009d8e43685b35"
+    },
+    {
+      "relative": "inference-03.log",
+      "bytes": 12099,
+      "sha256": "7cc8d236b6ba58beff385eb1a409decc15c954e67211b1b9ddb2c145532d9446"
+    },
+    {
+      "relative": "inference-04.log",
+      "bytes": 12099,
+      "sha256": "e8ca519937b2d9018ffbdd2acb193d659b981a29a7f3a9120acc199aeea871f1"
+    },
+    {
+      "relative": "inference-05.log",
+      "bytes": 12099,
+      "sha256": "5f650fcb8cf12d2556628786eb72fdc62c07d1e44554bd2c0edf4735ba23df6a"
+    },
+    {
+      "relative": "inference-06.log",
+      "bytes": 14675,
+      "sha256": "05fddcf209dfcd2d774c782071ebfd38dbbd30f964c27d4ed1b7e937c5768de4"
+    },
+    {
+      "relative": "inference-07.log",
+      "bytes": 8234,
+      "sha256": "1aa5cf98df632beca6122d99285f133b3fae494135f8364638fa7949576916e2"
+    },
+    {
+      "relative": "inference-08.log",
+      "bytes": 8234,
+      "sha256": "9bcf46ad7ee177e0dc4374f5c70b80d28cfa7951601fcddf6b8e4f59bdc9a66a"
+    },
+    {
+      "relative": "inference-09.log",
+      "bytes": 13384,
+      "sha256": "020277d091309723b79f75d511ce91a7c88e6a2002b983970eb22abbb609a4c6"
+    },
+    {
+      "relative": "progress.json",
+      "bytes": 19705,
+      "sha256": "d329a7924ff04069d5deabd65443528cffde0f21d8fd5e5e2c5594e1af2b1180"
+    },
+    {
+      "relative": "Recycle-OldFilms.ps1",
+      "bytes": 4297,
+      "sha256": "dfa93bd1f986fe36d56843bf1882e090eeb46749a6a59d0fb893b2c0f4030e72"
+    },
+    {
+      "relative": "recycle-private.json",
+      "bytes": 1988,
+      "sha256": "3fd10f2ac8cae2687427e6311bbe3ac6dd6ec3dae36f2ae81a2f0430f57c7754"
+    },
+    {
+      "relative": "Run-Upscale.ps1",
+      "bytes": 4299,
+      "sha256": "16e7e782f81fa37b0d6d701bb0ac2923a7a0002d8c4a26550227208891371e4b"
+    },
+    {
+      "relative": "Sanitize-Receipts.py",
+      "bytes": 1023,
+      "sha256": "2e11e9a3c4bfc33b7bc728e8975d27ea8af30a90ccce185973043f20cec83ac0"
+    }
+  ]
+}

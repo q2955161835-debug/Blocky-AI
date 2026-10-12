@@ -1,0 +1,317 @@
+{
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+  "imports": [
+    {
+      "assetId": "fa4da209-4917-491d-b731-48763994ae53",
+      "filename": "fd25f5bd_000_out.mp4",
+      "sizeBytes": 4607939
+    },
+    {
+      "assetId": "9cce9304-b317-4893-b392-9628752c00f1",
+      "filename": "335d9510_000_out.mp4",
+      "sizeBytes": 4301511
+    },
+    {
+      "assetId": "b01d92bb-34ad-47ae-8389-4ac90018c018",
+      "filename": "9f2f3362_000_out.mp4",
+      "sizeBytes": 3259127
+    },
+    {
+      "assetId": "00cc0cea-8d74-42d3-92c4-1e4d7564ca71",
+      "filename": "c3a17c46_000_out.mp4",
+      "sizeBytes": 3879293
+    },
+    {
+      "assetId": "e7e78dc3-257c-4ffb-a141-3411cbb0a5c4",
+      "filename": "3f6434c6_000_out.mp4",
+      "sizeBytes": 4544278
+    },
+    {
+      "assetId": "3cbdd510-61a4-4556-9a67-148dee33d2c0",
+      "filename": "2a1a6f7f_000_out.mp4",
+      "sizeBytes": 5734796
+    },
+    {
+      "assetId": "5b7474db-2280-4c56-b4e9-3416e61086c0",
+      "filename": "3e860d9b_000_out.mp4",
+      "sizeBytes": 3871294
+    },
+    {
+      "assetId": "d70ecebc-f70a-4637-9fa9-4fa6e39abb2a",
+      "filename": "fb70b1a2_000_out.mp4",
+      "sizeBytes": 3671801
+    },
+    {
+      "assetId": "cdc6cc7d-8422-49a2-b8f0-91d1984fe52f",
+      "filename": "5f26c679_000_out.mp4",
+      "sizeBytes": 1537667
+    }
+  ],
+  "swapAdds": [
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 180,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0,
+      "width": 1920,
+      "type": "video",
+      "assetId": "fa4da209-4917-491d-b731-48763994ae53",
+      "fromFrame": 0,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 180,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.15,
+      "width": 1920,
+      "type": "video",
+      "assetId": "9cce9304-b317-4893-b392-9628752c00f1",
+      "fromFrame": 180,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 180,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.15,
+      "width": 1920,
+      "type": "video",
+      "assetId": "b01d92bb-34ad-47ae-8389-4ac90018c018",
+      "fromFrame": 360,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 90,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.25,
+      "width": 1920,
+      "type": "video",
+      "assetId": "5b7474db-2280-4c56-b4e9-3416e61086c0",
+      "fromFrame": 540,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 180,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.3,
+      "width": 1920,
+      "type": "video",
+      "assetId": "00cc0cea-8d74-42d3-92c4-1e4d7564ca71",
+      "fromFrame": 870,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 90,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.25,
+      "width": 1920,
+      "type": "video",
+      "assetId": "d70ecebc-f70a-4637-9fa9-4fa6e39abb2a",
+      "fromFrame": 1290,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 180,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 1,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.25,
+      "width": 1920,
+      "type": "video",
+      "assetId": "e7e78dc3-257c-4ffb-a141-3411cbb0a5c4",
+      "fromFrame": 1380,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 240,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 0.92,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.3,
+      "width": 1920,
+      "type": "video",
+      "assetId": "3cbdd510-61a4-4556-9a67-148dee33d2c0",
+      "fromFrame": 1560,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "audioFadeIn": 0,
+      "audioFadeOut": 0,
+      "borderRadius": 0,
+      "cropBottom": 0.007293,
+      "cropLeft": 0,
+      "cropRight": 0,
+      "cropTop": 0.008204,
+      "decibelAdjustment": -60,
+      "durationInFrames": 210,
+      "fadeIn": 0,
+      "fadeOut": 0,
+      "left": 0,
+      "opacity": 1,
+      "playbackRate": 0.94,
+      "rotation": 0,
+      "top": -9,
+      "sourceStartFromInSeconds": 0.35,
+      "width": 1920,
+      "type": "video",
+      "assetId": "cdc6cc7d-8422-49a2-b8f0-91d1984fe52f",
+      "fromFrame": 1800,
+      "trackId": "f5402f29-70df-457a-a952-0945051e5992",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    }
+  ],
+  "swapDeletes": [
+    {
+      "id": "43a05506-30ed-40cc-87cd-6c43d3dae5e2",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "2e9a84c8-4961-4993-8a29-be47d279354b",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "8be1ca07-8f64-4a8b-8f81-e25285180238",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "d079addd-c901-44ec-8893-dffac6a1cc64",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "5ac21f52-d302-4c46-804b-8f094836e190",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "cfbc3003-32b1-4249-862b-3fee73a038b5",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "f7f3c95b-d667-439c-92e6-e9706c549031",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "addc3556-22f6-4551-af7b-82c013cb83f5",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    },
+    {
+      "id": "c45b4fe7-3e6f-4cd1-bc94-6a1731c30818",
+      "timelineId": "25c6aff1-9c84-4a5e-b09b-e999485db655"
+    }
+  ],
+  "method": "Editor loopback import; locally_imported for all nine originals"
+}
