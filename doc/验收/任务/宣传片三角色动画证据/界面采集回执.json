@@ -1,0 +1,399 @@
+{
+  "resolution": "1920x1080",
+  "source": "Unmodified 官网/dist/studio current compiled frontend; genuine product Canvas and existing guided demo",
+  "boundary": "Review is actual UI edit. Runtime clip is existing website preset simulation, not model or desktop Runtime; no task execution claim.",
+  "simulate": {
+    "status": "failed",
+    "code": "BLK-PROVIDER-DISABLED",
+    "modelApiCalled": false,
+    "eventCount": 14,
+    "jsonl": "simulate.jsonl"
+  },
+  "before": [
+    {
+      "id": "assistant-tool-6_field_blockly-11",
+      "value": "work-calculator",
+      "label": "Edit text: work-calculator"
+    },
+    {
+      "id": "assistant-tool-5_field_blockly-14",
+      "value": "workspace-undo",
+      "label": "Edit text: workspace-undo"
+    },
+    {
+      "id": "assistant-tool-4_field_blockly-17",
+      "value": "workspace-write",
+      "label": "Edit text: workspace-write"
+    },
+    {
+      "id": "assistant-tool-3_field_blockly-1a",
+      "value": "workspace-read",
+      "label": "Edit text: workspace-read"
+    },
+    {
+      "id": "assistant-tool-2_field_blockly-1d",
+      "value": "workspace-search",
+      "label": "Edit text: workspace-search"
+    },
+    {
+      "id": "assistant-tool-1_field_blockly-1g",
+      "value": "workspace-list",
+      "label": "Edit text: workspace-list"
+    },
+    {
+      "id": "assistant-answer_field_blockly-1p",
+      "value": "段落",
+      "label": "dropdown: 段落"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1s",
+      "value": "session",
+      "label": "dropdown: session"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1u",
+      "value": "last-delivery",
+      "label": "Edit text: last-delivery"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1w",
+      "value": "result",
+      "label": "dropdown: result"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-1z",
+      "value": "assistant-model",
+      "label": "Edit text: assistant-model"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-21",
+      "value": "32",
+      "label": "Edit text: 32"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-23",
+      "value": "32768",
+      "label": "Edit text: 32768"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-25",
+      "value": "pi",
+      "label": "dropdown: pi"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-27",
+      "value": "conversation",
+      "label": "dropdown: conversation"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2a",
+      "value": "10000",
+      "label": "Edit text: 10000"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2c",
+      "value": "256",
+      "label": "Edit text: 256"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2e",
+      "value": "1048576",
+      "label": "Edit text: 1048576"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2g",
+      "value": "1800000",
+      "label": "Edit text: 1800000"
+    },
+    {
+      "id": "assistant-work-instructions_field_blockly-2j",
+      "value": "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的…",
+      "label": "Edit text: 先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的结果，不用语言模型心算充当核验；生成后读回文件核对内容。只报告已完成的操作；没有可用目录或工具时准确说明缺少哪项配置。"
+    },
+    {
+      "id": "assistant-chat-trigger_field_blockly-2m",
+      "value": "工作任务",
+      "label": "Edit text: 工作任务"
+    },
+    {
+      "id": "assistant-root_field_blockly-2p",
+      "value": "帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。",
+      "label": "Edit text: 帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。"
+    }
+  ],
+  "review": {
+    "endMs": 10527.541000000001,
+    "action": {
+      "zoomMs": 2710.0907,
+      "typeMs": 2800.3776000000003,
+      "submitMs": 4452.9989000000005,
+      "original": "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的结果，不用语言模型心算充当核验；生成后读回文件核对内容。只报告已完成的操作；没有可用目录或工具时准确说明缺少哪项配置。",
+      "newValue": "先核对资料，再汇总工时；交付前读回检查。"
+    },
+    "changes": []
+  },
+  "after": [
+    {
+      "id": "assistant-root_field_blockly-2p",
+      "value": "帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。",
+      "label": "Edit text: 帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。"
+    },
+    {
+      "id": "assistant-chat-trigger_field_blockly-2m",
+      "value": "工作任务",
+      "label": "Edit text: 工作任务"
+    },
+    {
+      "id": "assistant-tool-6_field_blockly-11",
+      "value": "work-calculator",
+      "label": "Edit text: work-calculator"
+    },
+    {
+      "id": "assistant-tool-5_field_blockly-14",
+      "value": "workspace-undo",
+      "label": "Edit text: workspace-undo"
+    },
+    {
+      "id": "assistant-tool-4_field_blockly-17",
+      "value": "workspace-write",
+      "label": "Edit text: workspace-write"
+    },
+    {
+      "id": "assistant-tool-3_field_blockly-1a",
+      "value": "workspace-read",
+      "label": "Edit text: workspace-read"
+    },
+    {
+      "id": "assistant-tool-2_field_blockly-1d",
+      "value": "workspace-search",
+      "label": "Edit text: workspace-search"
+    },
+    {
+      "id": "assistant-tool-1_field_blockly-1g",
+      "value": "workspace-list",
+      "label": "Edit text: workspace-list"
+    },
+    {
+      "id": "assistant-answer_field_blockly-1p",
+      "value": "段落",
+      "label": "dropdown: 段落"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1s",
+      "value": "session",
+      "label": "dropdown: session"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1u",
+      "value": "last-delivery",
+      "label": "Edit text: last-delivery"
+    },
+    {
+      "id": "assistant-remember-delivery_field_blockly-1w",
+      "value": "result",
+      "label": "dropdown: result"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-1z",
+      "value": "assistant-model",
+      "label": "Edit text: assistant-model"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-21",
+      "value": "32",
+      "label": "Edit text: 32"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-23",
+      "value": "32768",
+      "label": "Edit text: 32768"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-25",
+      "value": "pi",
+      "label": "dropdown: pi"
+    },
+    {
+      "id": "assistant-tool-loop_field_blockly-27",
+      "value": "conversation",
+      "label": "dropdown: conversation"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2a",
+      "value": "10000",
+      "label": "Edit text: 10000"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2c",
+      "value": "256",
+      "label": "Edit text: 256"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2e",
+      "value": "1048576",
+      "label": "Edit text: 1048576"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-2g",
+      "value": "1800000",
+      "label": "Edit text: 1800000"
+    },
+    {
+      "id": "assistant-work-instructions_field_blockly-2j",
+      "value": "先核对资料，再汇总工时；交付前读回检查。",
+      "label": "Edit text: 先核对资料，再汇总工时；交付前读回检查。"
+    }
+  ],
+  "reviewAssertions": {
+    "editorClosed": true,
+    "valueVisible": true
+  },
+  "runtime": {
+    "endMs": 14579.6688,
+    "changes": [
+      {
+        "ms": 0.00420000000303844,
+        "state": [],
+        "trace": "运行进度\n\n✓ workspace_list · 找到本周任务.csv"
+      },
+      {
+        "ms": 975.2249000000011,
+        "state": [
+          {
+            "id": "assistant-tool-1",
+            "state": "active",
+            "sequence": "44111",
+            "text": "提供给模型的工具资源work-calculator提供给模型的工具资源workspace-undo提供给模型的工具资源workspace-write提供给模型的工具资源workspace-read提供给模型的工具资源workspace-search提供给模型的工具资源workspace-list"
+          }
+        ],
+        "trace": "运行进度\n\n✓ workspace_list · 找到本周任务.csv"
+      },
+      {
+        "ms": 2672.7188000000024,
+        "state": [
+          {
+            "id": "assistant-tool-3",
+            "state": "active",
+            "sequence": "46107",
+            "text": "提供给模型的工具资源work-calculator提供给模型的工具资源workspace-undo提供给模型的工具资源workspace-write提供给模型的工具资源workspace-read"
+          }
+        ],
+        "trace": "运行进度\n\n✓ workspace_list · 找到本周任务.csv\n\n✓ workspace_read · 读取 3 项任务与工时"
+      },
+      {
+        "ms": 5641.607400000001,
+        "state": [
+          {
+            "id": "assistant-tool-6",
+            "state": "active",
+            "sequence": "49107",
+            "text": "提供给模型的工具资源work-calculator"
+          }
+        ],
+        "trace": "运行进度\n\n✓ workspace_list · 找到本周任务.csv\n\n✓ workspace_read · 读取 3 项任务与工时\n\n✓ calculate · 4 + 3 + 2 = 9 小时"
+      },
+      {
+        "ms": 8702.570100000004,
+        "state": [
+          {
+            "id": "assistant-tool-4",
+            "state": "active",
+            "sequence": "52108",
+            "text": "提供给模型的工具资源work-calculator提供给模型的工具资源workspace-undo提供给模型的工具资源workspace-write"
+          }
+        ],
+        "trace": "运行进度\n\n✓ workspace_read · 读取 3 项任务与工时\n\n✓ calculate · 4 + 3 + 2 = 9 小时\n\n✓ workspace_write · 生成周报.md"
+      },
+      {
+        "ms": 11574.732799999998,
+        "state": [
+          {
+            "id": "assistant-tool-3",
+            "state": "active",
+            "sequence": "55107",
+            "text": "提供给模型的工具资源work-calculator提供给模型的工具资源workspace-undo提供给模型的工具资源workspace-write提供给模型的工具资源workspace-read"
+          }
+        ],
+        "trace": "运行进度\n\n✓ calculate · 4 + 3 + 2 = 9 小时\n\n✓ workspace_write · 生成周报.md\n\n✓ workspace_read · 读回周报，核对分类与工时"
+      }
+    ]
+  },
+  "runtimeAssertions": [
+    {
+      "id": "assistant-tool-1",
+      "trace": "workspace_list",
+      "matched": true
+    },
+    {
+      "id": "assistant-tool-3",
+      "trace": "workspace_read",
+      "matched": true
+    },
+    {
+      "id": "assistant-tool-6",
+      "trace": "calculate",
+      "matched": true
+    },
+    {
+      "id": "assistant-tool-4",
+      "trace": "workspace_write",
+      "matched": true
+    }
+  ],
+  "runtimeAssertionsPassed": true,
+  "videos": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-nested-review-edit.mp4",
+      "sha256": "b69ee6e4cb0cd3e4541386b2d6a315891d42550fac77ad21a1fdbd7817c104d7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "10.500000",
+          "size": "479759"
+        }
+      }
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-preset-runtime-highlights.mp4",
+      "sha256": "fc628b458527089c333fd7796d96af722603dfc32087168fc1a2988817cfea34",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "14.500000",
+          "size": "813431"
+        }
+      }
+    }
+  ],
+  "runtimeScenarioWindowSeconds": [
+    43.3,
+    57.8
+  ],
+  "servicesClosed": true,
+  "compiledSources": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\官网\\dist\\studio\\app-DFYDVGIF.js",
+      "sha256": "f75db12beedc7a11e75897929f4aa404190a754949daaa865c93693428d86bdf"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\官网\\dist\\studio\\app-UICMB3PD.css",
+      "sha256": "8a1cb88b9e4815c7bcc355e296ba7614c98b2387a8398b207c263ea3f258399e"
+    }
+  ]
+}

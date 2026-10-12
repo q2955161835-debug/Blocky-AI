@@ -1,0 +1,81 @@
+{
+  "files": 12,
+  "bytes": 14796279.0,
+  "moves": [
+    {
+      "from": "D:\\ComfyUI\\input\\team-01-start.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-01-start.png",
+      "bytes": 1980516,
+      "sha256": "c805b3789e4daff2c9e7604c8520c455eb9eaacf30825df1f63358c11737814a"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-01-start_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-01-start_00001_.mp4",
+      "bytes": 526449,
+      "sha256": "db53c9642698cd8a30c0dd2b48e0430cc277d3484a0a2567dc2aa0b324ca0c80"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\team-02-long-review.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-02-long-review.png",
+      "bytes": 2025389,
+      "sha256": "4c8cd36c8fa231aecf9b55572c84df3b97af92f661729abb7f284b28dee7d5b0"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-02-long-review_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-02-long-review_00001_.mp4",
+      "bytes": 479881,
+      "sha256": "b5d61dc47eb2f27d802aaec8ccea1f327f19289964e072ca6a5443e57eaded9c"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\team-03-wrong-target.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-03-wrong-target.png",
+      "bytes": 1994454,
+      "sha256": "784e91795aa3a9fc2c19e952955684a0858184dbaafa14a13c07a454fbde99ed"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-03-wrong-target_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-03-wrong-target_00001_.mp4",
+      "bytes": 414449,
+      "sha256": "f6bd03981c90fb12103a793216fc392907bb7df2a6fe5b8554fbb73e51e8851b"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\team-04-visible-run.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-04-visible-run.png",
+      "bytes": 1970643,
+      "sha256": "397a066e67b2f0ef9408fee96294ddf883587f47dbb4d15da6a08f7931a1cf54"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-04-visible-run_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-04-visible-run_00001_.mp4",
+      "bytes": 465640,
+      "sha256": "201a493fba0d6638167c3483fa70f6b90544b59a4686ea99c8a947de92f68569"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\team-05-cli-handoff.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-05-cli-handoff.png",
+      "bytes": 1867373,
+      "sha256": "a43fc9366563e5cb536579f45862e1f003869fbb1c859aa2ba0377d50cb2b37e"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-05-cli-handoff_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-05-cli-handoff_00001_.mp4",
+      "bytes": 534778,
+      "sha256": "d1a1fc74b27e1222056d397f88773652f8c8832f198753323986540530148e73"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\team-06-growing-together.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\team-06-growing-together.png",
+      "bytes": 1922902,
+      "sha256": "1199876e8ae5194c24457dd158f5aeea84d5549ac5836bd98c38fd9efa9a53e0"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_team_team-06-growing-together_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax三角色原生副本-2026-10-13\\Blocky_team_team-06-growing-together_00001_.mp4",
+      "bytes": 613805,
+      "sha256": "07daed8cee0841484b4a114dfaa7d16beea4ced8e0d474b35d4b256dc5dea1fe"
+    }
+  ],
+  "sha256Verified": true,
+  "deleted": false,
+  "releasedBytes": 0
+}

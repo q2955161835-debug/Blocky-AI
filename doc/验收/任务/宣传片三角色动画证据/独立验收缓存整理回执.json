@@ -1,0 +1,181 @@
+{
+  "at": "2026-10-13T01:34:15.3141620+08:00",
+  "operation": "same-volume Move-Item; no deletion",
+  "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13",
+  "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13",
+  "files": 21,
+  "bytes": 1661831.0,
+  "allVerified": true,
+  "sourceAbsent": true,
+  "ownPreviewServerStopped": true,
+  "mapping": [
+    {
+      "relative": "audio.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\audio.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\audio.log",
+      "bytes": 7139,
+      "sha256": "E6E96BF23EBF4428B8C8EE541A5057860327B4ABEBA31634C1DC1DCA57D12722",
+      "verified": true
+    },
+    {
+      "relative": "blackdetect.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\blackdetect.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\blackdetect.log",
+      "bytes": 1987,
+      "sha256": "B81E2E584B40F6CA36205B7EEA5EE5DD4BA362723E4F5D6F08162514DC5A8EB2",
+      "verified": true
+    },
+    {
+      "relative": "decode-exit.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\decode-exit.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\decode-exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354",
+      "verified": true
+    },
+    {
+      "relative": "decode.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\decode.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\decode.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "verified": true
+    },
+    {
+      "relative": "ffprobe.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\ffprobe.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\ffprobe.json",
+      "bytes": 4932,
+      "sha256": "30F9151EC73C3CC42EC5355D0A981676CA7EA7E85B8504477BC5DDF88E63AA5A",
+      "verified": true
+    },
+    {
+      "relative": "hash.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\hash.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\hash.json",
+      "bytes": 215,
+      "sha256": "7ECDE86AA440F280255089DA694FC1F591D7882457A613E0CC221592622731CD",
+      "verified": true
+    },
+    {
+      "relative": "live-timeline-readback.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\live-timeline-readback.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\live-timeline-readback.json",
+      "bytes": 23410,
+      "sha256": "DA1F42AEB91C0CA84A9F9AAD37F4E1D6B46371E39D1C290FAF4565A060CCF940",
+      "verified": true
+    },
+    {
+      "relative": "overview.jpg",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\overview.jpg",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\overview.jpg",
+      "bytes": 335688,
+      "sha256": "F2FF9C854959C692CD0F7585387FA5DAA91842B3C71F8FA4BFF7B2E71637AB8A",
+      "verified": true
+    },
+    {
+      "relative": "player-eye-followup.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\player-eye-followup.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\player-eye-followup.png",
+      "bytes": 164348,
+      "sha256": "D8414762C8C646EF2F6AB20F45B283484EBFFCAC5A8A9CC01186C80405B36094",
+      "verified": true
+    },
+    {
+      "relative": "player-eye-start.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\player-eye-start.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\player-eye-start.png",
+      "bytes": 164707,
+      "sha256": "F69C8ED2529FAFF9EC93DEE2D56CEB96DB3922D28DF1FF0CD5C24B2D577563FB",
+      "verified": true
+    },
+    {
+      "relative": "player-giant-followup.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\player-giant-followup.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\player-giant-followup.png",
+      "bytes": 175182,
+      "sha256": "A53D82C17D5868E61CF8BD23F667BB8267A15E896BED03C6CDA63B8081C66048",
+      "verified": true
+    },
+    {
+      "relative": "player-giant-start.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\player-giant-start.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\player-giant-start.png",
+      "bytes": 168980,
+      "sha256": "7E1DA114CCD43C2994FC8A1BD5DA0167DA4DCACF54C98DF114A70BCA12878C16",
+      "verified": true
+    },
+    {
+      "relative": "player-states.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\player-states.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\player-states.json",
+      "bytes": 6522,
+      "sha256": "041F0E4FBCC026F335DD5F9AA58095D745F6D43FE785FF6DB5153D0C3E824BA6",
+      "verified": true
+    },
+    {
+      "relative": "playing-code-roll.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\playing-code-roll.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\playing-code-roll.png",
+      "bytes": 157878,
+      "sha256": "C0663680C56AAD716A64B35AFDAD937F4A5899D83AF7A02E7C58781FDB0BC89E",
+      "verified": true
+    },
+    {
+      "relative": "playing-start.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\playing-start.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\playing-start.png",
+      "bytes": 164354,
+      "sha256": "E01E16A0A17D2A2487E77DFD35EF1FF62A916A6E9177F0C7B644F86B0A470F41",
+      "verified": true
+    },
+    {
+      "relative": "playing-visible-run.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\playing-visible-run.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\playing-visible-run.png",
+      "bytes": 162752,
+      "sha256": "A3BEDE4319D199AB618F5CAD52EBDC93CDD242A2300D9466EC03636A6E9FC3C9",
+      "verified": true
+    },
+    {
+      "relative": "playing-wrong-target.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\playing-wrong-target.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\playing-wrong-target.png",
+      "bytes": 119319,
+      "sha256": "63BEDAE30E4C442817A7E62E641374A9C5A05C878A9745AFF9035B9B3F57D1F6",
+      "verified": true
+    },
+    {
+      "relative": "preview.html",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\preview.html",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\preview.html",
+      "bytes": 882,
+      "sha256": "1E2DAA5AA4DDF6BCA4925DD3D6AA224162335E64C0149513DD11276298ED6ECE",
+      "verified": true
+    },
+    {
+      "relative": "reused-source-readback.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\reused-source-readback.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\reused-source-readback.json",
+      "bytes": 728,
+      "sha256": "80D67A6A76269F4A12825FE81A32459D33CF537B6E75CD8F42DCE78FC267D09F",
+      "verified": true
+    },
+    {
+      "relative": "serve.py",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\serve.py",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\serve.py",
+      "bytes": 1150,
+      "sha256": "827EEE4A7485F1FFC0AD8E03B8C8D7F6403B93ABF5C56E1C35A7DB8D0B09E68B",
+      "verified": true
+    },
+    {
+      "relative": "source-readback.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片三角色独立验收-2026-10-13\\source-readback.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片三角色独立验收-2026-10-13\\source-readback.json",
+      "bytes": 1655,
+      "sha256": "8DE1C9843420856C8E244432CC7CDC60EA27EAFC8C404597F52F62C835DD7DF3",
+      "verified": true
+    }
+  ]
+}

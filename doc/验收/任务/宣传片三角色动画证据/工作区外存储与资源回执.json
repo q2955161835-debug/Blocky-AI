@@ -1,0 +1,94 @@
+{
+  "defaultStorageMoves": [
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-0ee3fc0c-04a2-49d4-89bf-79c18ebed0e8.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-01-start.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-0f91cb25-b4f4-4f05-9dcb-b52bf88ad132.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-02-long-review.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-568c2f74-1526-4088-81d5-f4560f83069d.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-03-wrong-target.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-0c57736a-ba49-4d3b-99e3-3a79bbcfa294.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-04-visible-run.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-2e776783-5912-4ffe-8609-1ef7d0c13bbe.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-05-cli-handoff.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-4d326709-70a7-48fe-8665-b1d51bfec00f.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-06-growing-together.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-81233689-44c0-40c3-977d-e6f32ba933e8.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片审美优化-2026-10-13\\未采用单角色首帧\\v4-ivory-code.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-5b3ad7d2-748b-4d82-a48b-70211c7caa0e.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片审美优化-2026-10-13\\未采用单角色首帧\\v4-ivory-inspect.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-ce8e6a12-565b-4970-b8fe-e0c68d3590ea.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片审美优化-2026-10-13\\未采用单角色首帧\\v4-ivory-running.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-4be0f5ec-5b9e-4d50-95a1-b5fe8586b0cd.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片审美优化-2026-10-13\\未采用单角色首帧\\v4-ivory-scale.png",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-试片-v4.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-试片-v4.mp4",
+      "operation": "moved",
+      "originalDefaultPathExistsAfterMove": false
+    }
+  ],
+  "codexReference": {
+    "from": "C:\\Users\\29551\\AppData\\Local\\Temp\\codex-clipboard-d92c242c-0f63-4791-b598-f9b2cda8a9b3.png",
+    "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\references\\codex-user-reference.png",
+    "operation": "copied, user original left intact"
+  },
+  "comfyCliState": "Six exact C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\<taskId>.json paths retained as tool task indexes; exact IDs/paths in MiniMax采用回执.json",
+  "nativeCopiesReceipt": "原生副本整理回执.json",
+  "ownedService": {
+    "pid": 79332,
+    "executable": "D:\\Miniconda\\envs\\comfyui\\python.exe",
+    "script": "D:\\ComfyUI\\main.py",
+    "port": 8188,
+    "stoppedAt": "2026-10-13 01:27",
+    "identityVerified": true
+  },
+  "helpers": {
+    "nodePath": "C:\\Users\\29551\\.codex\\plugins\\cache\\chatcut-inc\\chatcut\\1.10.15\\skills\\asset-import\\scripts\\serve-local-media.mjs",
+    "allOwnedSessionsStopped": [
+      20716,
+      22390,
+      88096
+    ],
+    "note": "Bundled installed tool path, read/executed; no package edits or new global dependencies"
+  }
+}

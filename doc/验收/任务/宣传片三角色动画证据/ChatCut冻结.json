@@ -1,0 +1,229 @@
+{
+  "timeline": "Timeline: 审查搭子 · 三角色动画 v4 [17be1d36-58f7-4ab2-803e-1d035bd1cc2c]\nState: 1920x1080 @ 30fps | durationFrames=1800 (1m) | range=[0, 1800)\nViews: timeline\nTimeline structure: tracks=4 | entriesThisPage=45 | totalEntries=45\n- V1 [770e2ed9-5eaf-4d14-9a93-99dd42b5e2a4] | video\n  effect [014c5929-4cd5-4076-b2fb-858ea5d0a641] asset=builtin:zoom range=[960, 1200) on=[8384e38d-d4fc-4b46-9ffe-e21fafa51080] enabled=true overrides={\"easeIn\":0.12,\"easeOut\":0,\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.99,\"focalPointY\":0.18,\"magnification\":1.35}\n  effect [7b5ab0a4-b7de-429f-878b-5309f90ec9ae] asset=builtin:zoom range=[549, 759) on=[75b80a46-a111-47c0-9958-a192eaecba53] enabled=true overrides={\"easeIn\":0,\"easeOut\":0,\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.45,\"magnification\":3}\n- V2 [8969e850-b384-472f-b049-43dc161852aa] | video\n- A1 \"原创节拍\" [0dd4983c-a123-4b2d-bda5-e5f2f6b3867a] | audio\n- A2 \"喜剧音效\" [15c53601-d35f-4da7-8cb9-30379dc683f2] | audio\n- item V1 [1cceed89-aa41-4374-a0a8-87b77de8b79d] type=video startFrame=0 range=[0, 180) asset=\"fd25f5bd_000.mp4\" [39bf1db0-c59a-4686-813f-ff85075f6a8a] source=[0, 6000000)us\n- item V2 [d2d6449d-1948-43e8-bfec-25335a51f781] type=motion-graphic startFrame=0 range=[0, 60) asset=\"搭子开场 · 核心小标题\" [5b54aa4c-0723-4931-96fc-f33a13122cd9]\n- item A1 [5e20d173-493c-4491-9594-083f8d717489] type=audio startFrame=0 range=[0, 360) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[0, 12000000)us\n- gap A2 [0, 59)\n- item A2 [2d806979-0b42-40a6-95f5-1c80246dee4c] type=audio startFrame=59 range=[59, 63) asset=\"tiny-bubble-pop-r1.mp3\" [dca309b9-d5ac-4199-a26d-cab9d44dfcef] source=[0, 133333)us\n- item V2 [c36aaf29-2f8a-4720-b471-f6d8de0d89a1] type=motion-graphic startFrame=60 range=[60, 120) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- gap A2 [63, 391)\n- item V2 [34959e30-31f1-4aa7-bf3c-c7fb3ac9ade7] type=motion-graphic startFrame=120 range=[120, 180) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item V1 [bb547107-0912-4300-8c99-2b891a6fe44e] type=video startFrame=180 range=[180, 360) asset=\"335d9510_000.mp4\" [669c0d45-ac73-4c65-a88a-27994aed8be5] source=[0, 6000000)us\n- gap V2 [180, 210)\n- item V2 [06160b1b-28e4-45bd-b14c-78b5b123bde5] type=motion-graphic startFrame=210 range=[210, 270) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- gap V2 [270, 300)\n- item V2 [7e87cc63-b753-4194-bb2f-4555bb30a909] type=motion-graphic startFrame=300 range=[300, 360) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item V1 [73f87c81-228d-4692-871d-617b4a3e367d] type=video startFrame=360 range=[360, 540) asset=\"9f2f3362_000.mp4\" [00cc9941-d463-47da-ab40-2514092f8c7d] source=[0, 6000000)us\n- item V2 [f05f0f81-0009-4fb7-b2cb-ddd5e22fa5fa] type=motion-graphic startFrame=360 range=[360, 420) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item A1 [45536c13-afbe-47a0-b51a-5575459efd63] type=audio startFrame=360 range=[360, 510) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[12000000, 17000000)us\n- item A2 [5add0348-0c53-42e9-9828-98cb07cbb9c2] type=audio startFrame=391 range=[391, 410) asset=\"record-scratch-stop-r1.mp3\" [364c5fd2-0fc0-43e8-8c93-737fef3e26cd] source=[0, 633333)us\n- gap A2 [410, 434)\n- gap V2 [420, 435)\n- item A2 [2d83111d-9e3a-4879-ad31-e430b5d61cb5] type=audio startFrame=434 range=[434, 438) asset=\"tiny-bubble-pop-r1.mp3\" [dca309b9-d5ac-4199-a26d-cab9d44dfcef] source=[0, 133333)us\n- item V2 [aaac9208-3235-4b3d-bced-84f27487c1da] type=motion-graphic startFrame=435 range=[435, 495) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- gap A2 [438, 1800)\n- gap V2 [495, 540)\n- item A1 [6aa0cba5-74a0-4068-b4ad-04022db88181] type=audio startFrame=510 range=[510, 1380) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[17000000, 46000000)us\n- item V1 [75b80a46-a111-47c0-9958-a192eaecba53] type=video startFrame=540 range=[540, 780) asset=\"blocky-nested-review-edit.mp4\" [bbffbcde-ca1b-4df4-b191-cf2fed30a464] source=[2500000, 10500000)us\n- item V2 [bccec155-0716-4b69-823f-201058987600] type=motion-graphic startFrame=540 range=[540, 780) asset=\"搭子实操 · 界面小标题\" [37c71b43-4ffc-4b48-9605-8f9b0e244d2a]\n- item V1 [ab9d81f2-61e7-4bc3-b8ef-8017507b7606] type=video startFrame=780 range=[780, 960) asset=\"c3a17c46_000.mp4\" [dc8942b3-2dce-4e2a-9e1a-cbb3224badde] source=[0, 6000000)us\n- item V2 [10696b37-0364-4e5f-8eec-0c12801e9b43] type=motion-graphic startFrame=780 range=[780, 840) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- gap V2 [840, 870)\n- item V2 [3208c121-8bfa-4bb7-93d9-7417848dd0fc] type=motion-graphic startFrame=870 range=[870, 930) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- gap V2 [930, 960)\n- item V1 [8384e38d-d4fc-4b46-9ffe-e21fafa51080] type=video startFrame=960 range=[960, 1200) asset=\"blocky-preset-runtime-highlights.mp4\" [06af9651-a140-41fd-87c5-56aed2cd26b7] source=[6500000, 14500000)us\n- item V2 [3a1ed3db-a025-4e00-9f01-a70e97a9bff1] type=motion-graphic startFrame=960 range=[960, 1200) asset=\"搭子实操 · 界面小标题\" [37c71b43-4ffc-4b48-9605-8f9b0e244d2a]\n- item V1 [8429f4d7-a23c-441d-bc71-9c7654c1a5f1] type=video startFrame=1200 range=[1200, 1380) asset=\"3f6434c6_000.mp4\" [6b03a6c6-40bb-43bc-b89a-8d1988e9f3fc] source=[0, 6000000)us\n- item V2 [99d98246-b42c-4711-8da2-3cc05fa47e6a] type=motion-graphic startFrame=1200 range=[1200, 1380) asset=\"搭子协作 · CLI薄层\" [f42485a4-a30f-4532-8ad4-c839a5ef451a]\n- item V1 [4f317eab-7d7f-430b-895d-85791849542f] type=video startFrame=1380 range=[1380, 1620) asset=\"2a1a6f7f_000.mp4\" [bcfcda8f-3a19-4852-ae12-5324421c385f] source=[0, 8000000)us\n- item V2 [fe713f39-4697-424a-8685-7ffac684870b] type=motion-graphic startFrame=1380 range=[1380, 1440) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item A1 [249bb49d-7048-4098-b486-fc28b28f38b4] type=audio startFrame=1380 range=[1380, 1530) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[46000000, 51000000)us\n- gap V2 [1440, 1470)\n- item V2 [8b06788e-7e79-483e-b41b-8b20081a412a] type=motion-graphic startFrame=1470 range=[1470, 1530) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item V2 [cda19dfc-be44-478b-b285-00e6653b9d8c] type=motion-graphic startFrame=1530 range=[1530, 1590) asset=\"搭子对白 · 两秒气泡\" [58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3]\n- item A1 [6ca77613-953d-4fab-ab1d-7206dad8a095] type=audio startFrame=1530 range=[1530, 1800) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[51000000, 60000000)us\n- gap V2 [1590, 1620)\n- item V1 [2f40a0da-b850-4d0c-837e-228e27b35d44] type=video startFrame=1620 range=[1620, 1800) asset=\"2a1a6f7f_000.mp4\" [bcfcda8f-3a19-4852-ae12-5324421c385f] source=[3800000, 8000000)us\n- item V2 [7fb5321a-25a7-4105-8186-52c4cb6671c4] type=motion-graphic startFrame=1620 range=[1620, 1800) asset=\"搭子收尾 · 动画上的品牌\" [fea3d61d-9a50-48e8-ae39-f74c0f8f156b]",
+  "itemBatches": [
+    "Timeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 1cceed89aa\nType: video | Track: V1 [770e2ed95e] | from=0 durationInFrames=180 endExclusive=180 visibleFrames=0..179 # start=0.0s endExclusive=6.0s duration=6.0s\nAsset: [39bf1db0c5] fd25f5bd_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 0\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: bb54710709\nType: video | Track: V1 [770e2ed95e] | from=180 durationInFrames=180 endExclusive=360 visibleFrames=180..359 # start=6.0s endExclusive=12.0s duration=6.0s\nAsset: [669c0d45ac] 335d9510_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 180\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 73f87c8122\nType: video | Track: V1 [770e2ed95e] | from=360 durationInFrames=180 endExclusive=540 visibleFrames=360..539 # start=12.0s endExclusive=18.0s duration=6.0s\nAsset: [00cc9941d4] 9f2f3362_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 360\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 75b80a46a1\nType: video | Track: V1 [770e2ed95e] | from=540 durationInFrames=240 endExclusive=780 visibleFrames=540..779 # start=18.0s endExclusive=26.0s duration=8.0s\nAsset: [bbffbcdeca] blocky-nested-review-edit.mp4\nAudio: no embedded audio track\nSize: current 1920x1080 | original asset 1920x1080 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0\n  decibelAdjustment: -60\n  durationInFrames: 240\n  fadeIn: 0\n  fadeOut: 0\n  from: 540\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: 0\n  sourceStartFromInSeconds: 2.5\n  width: 1920\n\nAttached (edit via separate edit_item entries with type:\"effect\"/\"transition\"; not item fields):\n  effect [7b5ab0a4b7] asset=builtin:zoom\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: ab9d81f261\nType: video | Track: V1 [770e2ed95e] | from=780 durationInFrames=180 endExclusive=960 visibleFrames=780..959 # start=26.0s endExclusive=32.0s duration=6.0s\nAsset: [dc8942b32d] c3a17c46_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 780\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 8384e38dd4\nType: video | Track: V1 [770e2ed95e] | from=960 durationInFrames=240 endExclusive=1200 visibleFrames=960..1199 # start=32.0s endExclusive=40.0s duration=8.0s\nAsset: [06af9651a1] blocky-preset-runtime-highlights.mp4\nAudio: no embedded audio track\nSize: current 1920x1080 | original asset 1920x1080 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0\n  decibelAdjustment: -60\n  durationInFrames: 240\n  fadeIn: 0\n  fadeOut: 0\n  from: 960\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: 0\n  sourceStartFromInSeconds: 6.5\n  width: 1920\n\nAttached (edit via separate edit_item entries with type:\"effect\"/\"transition\"; not item fields):\n  effect [014c59294c] asset=builtin:zoom\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 8429f4d7a2\nType: video | Track: V1 [770e2ed95e] | from=1200 durationInFrames=180 endExclusive=1380 visibleFrames=1200..1379 # start=40.0s endExclusive=46.0s duration=6.0s\nAsset: [6b03a6c640] 3f6434c6_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 1200\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 4f317eab7d\nType: video | Track: V1 [770e2ed95e] | from=1380 durationInFrames=240 endExclusive=1620 visibleFrames=1380..1619 # start=46.0s endExclusive=54.0s duration=8.0s\nAsset: [bcfcda8f3a] 2a1a6f7f_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 240\n  fadeIn: 0\n  fadeOut: 0\n  from: 1380\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 2f40a0dab8\nType: video | Track: V1 [770e2ed95e] | from=1620 durationInFrames=180 endExclusive=1800 visibleFrames=1620..1799 # start=54.0s endExclusive=60.0s duration=6.0s\nAsset: [bcfcda8f3a] 2a1a6f7f_000.mp4\nAudio: embedded audio track\nSize: current 1920x1097 | original asset 672x384 | aspect ratio locked (read-only)\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  borderRadius: 0\n  cropBottom: 0.007293\n  cropLeft: 0\n  cropRight: 0\n  cropTop: 0.008204\n  decibelAdjustment: -60\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 1620\n  height: 1097\n  left: 0\n  opacity: 1\n  playbackRate: 0.7\n  rotation: 0\n  top: -9\n  sourceStartFromInSeconds: 3.8\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: d2d6449d19\nType: motion-graphic | Track: V2 [8969e850b3] | from=0 durationInFrames=60 endExclusive=60 visibleFrames=0..59 # start=0.0s endExclusive=2.0s duration=2.0s\nAsset: [5b54aa4c07] 搭子开场 · 核心小标题\nSize: current 1230x110 | original asset 1230x110 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  font=\"Noto Sans SC\" (default)\n  ink=\"#132A32\" (default)\n  paper=\"#FFF6E7\" (default)\n  accent=\"#0876A4\" (default)\n  text=\"代码审查  →  积木审查\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 0\n  height: 110\n  left: 350\n  opacity: 1\n  rotation: 0\n  top: 30\n  width: 1230",
+    "Timeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: c36aaf292f\nType: motion-graphic | Track: V2 [8969e850b3] | from=60 durationInFrames=60 endExclusive=120 visibleFrames=60..119 # start=2.0s endExclusive=4.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Codex\" (override)\n  line=\"写好了！\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#B6CBFF\" (override)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 60\n  height: 155\n  left: 55\n  opacity: 1\n  propertyOverrides: {\"line\":\"写好了！\",\"actor\":\"Codex\",\"accent\":\"#B6CBFF\"}\n  rotation: 0\n  top: 70\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 34959e3031\nType: motion-graphic | Track: V2 [8969e850b3] | from=120 durationInFrames=60 endExclusive=180 visibleFrames=120..179 # start=4.0s endExclusive=6.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Claude\" (override)\n  line=\"简单审一眼。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#F5BC92\" (override)\n  size=42 (default)\n  tail=\"right\" (override)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 120\n  height: 155\n  left: 1100\n  opacity: 1\n  propertyOverrides: {\"line\":\"简单审一眼。\",\"tail\":\"right\",\"actor\":\"Claude\",\"accent\":\"#F5BC92\"}\n  rotation: 0\n  top: 70\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 06160b1b28\nType: motion-graphic | Track: V2 [8969e850b3] | from=210 durationInFrames=60 endExclusive=270 visibleFrames=210..269 # start=7.0s endExclusive=9.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Codex\" (override)\n  line=\"就，亿点点。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#B6CBFF\" (override)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 210\n  height: 155\n  left: 55\n  opacity: 1\n  propertyOverrides: {\"line\":\"就，亿点点。\",\"actor\":\"Codex\",\"accent\":\"#B6CBFF\"}\n  rotation: 0\n  top: 70\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 7e87cc63b7\nType: motion-graphic | Track: V2 [8969e850b3] | from=300 durationInFrames=60 endExclusive=360 visibleFrames=300..359 # start=10.0s endExclusive=12.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Blocky\" (default)\n  line=\"来，把逻辑摆出来。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#E5FA78\" (default)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 300\n  height: 155\n  left: 580\n  opacity: 1\n  propertyOverrides: {\"line\":\"来，把逻辑摆出来。\"}\n  rotation: 0\n  top: 45\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: f05f0f8100\nType: motion-graphic | Track: V2 [8969e850b3] | from=360 durationInFrames=60 endExclusive=420 visibleFrames=360..419 # start=12.0s endExclusive=14.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Claude\" (override)\n  line=\"让我审一下。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#F5BC92\" (override)\n  size=42 (default)\n  tail=\"right\" (override)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 360\n  height: 155\n  left: 1100\n  opacity: 1\n  propertyOverrides: {\"line\":\"让我审一下。\",\"tail\":\"right\",\"actor\":\"Claude\",\"accent\":\"#F5BC92\"}\n  rotation: 0\n  top: 70\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: aaac920832\nType: motion-graphic | Track: V2 [8969e850b3] | from=435 durationInFrames=60 endExclusive=495 visibleFrames=435..494 # start=14.5s endExclusive=16.5s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Blocky\" (default)\n  line=\"审的是 Agent，不是我！\" (default)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#E5FA78\" (default)\n  size=42 (default)\n  tail=\"right\" (override)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 435\n  height: 155\n  left: 580\n  opacity: 1\n  propertyOverrides: {\"tail\":\"right\"}\n  rotation: 0\n  top: 45\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 10696b3703\nType: motion-graphic | Track: V2 [8969e850b3] | from=780 durationInFrames=60 endExclusive=840 visibleFrames=780..839 # start=26.0s endExclusive=28.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Blocky\" (default)\n  line=\"别猜，直接看它跑。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#E5FA78\" (default)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 780\n  height: 155\n  left: 580\n  opacity: 1\n  propertyOverrides: {\"line\":\"别猜，直接看它跑。\"}\n  rotation: 0\n  top: 45\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 3208c1218b\nType: motion-graphic | Track: V2 [8969e850b3] | from=870 durationInFrames=60 endExclusive=930 visibleFrames=870..929 # start=29.0s endExclusive=31.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Codex\" (override)\n  line=\"盯得很紧.jpg\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#B6CBFF\" (override)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 870\n  height: 155\n  left: 55\n  opacity: 1\n  propertyOverrides: {\"line\":\"盯得很紧.jpg\",\"actor\":\"Codex\",\"accent\":\"#B6CBFF\"}\n  rotation: 0\n  top: 70\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: fe713f3946\nType: motion-graphic | Track: V2 [8969e850b3] | from=1380 durationInFrames=60 endExclusive=1440 visibleFrames=1380..1439 # start=46.0s endExclusive=48.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Codex\" (override)\n  line=\"专业场景，必须大场面？\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#B6CBFF\" (override)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 1380\n  height: 155\n  left: 55\n  opacity: 1\n  propertyOverrides: {\"line\":\"专业场景，必须大场面？\",\"actor\":\"Codex\",\"accent\":\"#B6CBFF\"}\n  rotation: 0\n  top: 65\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 8b06788e7e\nType: motion-graphic | Track: V2 [8969e850b3] | from=1470 durationInFrames=60 endExclusive=1530 visibleFrames=1470..1529 # start=49.0s endExclusive=51.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Claude\" (override)\n  line=\"倒也不必。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#F5BC92\" (override)\n  size=42 (default)\n  tail=\"right\" (override)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 1470\n  height: 155\n  left: 1100\n  opacity: 1\n  propertyOverrides: {\"line\":\"倒也不必。\",\"tail\":\"right\",\"actor\":\"Claude\",\"accent\":\"#F5BC92\"}\n  rotation: 0\n  top: 65\n  width: 760",
+    "Timeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: cda19dfcbe\nType: motion-graphic | Track: V2 [8969e850b3] | from=1530 durationInFrames=60 endExclusive=1590 visibleFrames=1530..1589 # start=51.0s endExclusive=53.0s duration=2.0s\nAsset: [58cd33acb0] 搭子对白 · 两秒气泡\nSize: current 760x155 | original asset 760x155 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  actor=\"Blocky\" (default)\n  line=\"入门到专业，都能搭。\" (override)\n  font=\"Noto Sans SC\" (default)\n  paper=\"#FFF6E7\" (default)\n  ink=\"#132A32\" (default)\n  accent=\"#E5FA78\" (default)\n  size=42 (default)\n  tail=\"left\" (default)\n\nProperties:\n  durationInFrames: 60\n  fadeIn: 0\n  fadeOut: 0\n  from: 1530\n  height: 155\n  left: 580\n  opacity: 1\n  propertyOverrides: {\"line\":\"入门到专业，都能搭。\"}\n  rotation: 0\n  top: 45\n  width: 760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: bccec15507\nType: motion-graphic | Track: V2 [8969e850b3] | from=540 durationInFrames=240 endExclusive=780 visibleFrames=540..779 # start=18.0s endExclusive=26.0s duration=8.0s\nAsset: [37c71b434f] 搭子实操 · 界面小标题\nSize: current 1600x145 | original asset 1600x145 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  font=\"Noto Sans SC\" (default)\n  ink=\"#132A32\" (default)\n  paper=\"#FFF6E7\" (default)\n  accent=\"#E5FA78\" (default)\n  title=\"逻辑、顺序、指令，直接看积木。\" (default)\n  sub=\"检查嵌套关系，修改补充指令。\" (default)\n\nProperties:\n  durationInFrames: 240\n  fadeIn: 0\n  fadeOut: 0\n  from: 540\n  height: 145\n  left: 250\n  opacity: 1\n  rotation: 0\n  top: 35\n  width: 1600\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 3a1ed3dba0\nType: motion-graphic | Track: V2 [8969e850b3] | from=960 durationInFrames=240 endExclusive=1200 visibleFrames=960..1199 # start=32.0s endExclusive=40.0s duration=8.0s\nAsset: [37c71b434f] 搭子实操 · 界面小标题\nSize: current 1600x145 | original asset 1600x145 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  font=\"Noto Sans SC\" (default)\n  ink=\"#132A32\" (default)\n  paper=\"#FFF6E7\" (default)\n  accent=\"#E5FA78\" (default)\n  title=\"跑到哪，看哪块。\" (override)\n  sub=\"积木高亮与调用轨迹，同步观察。 · 界面演示\" (override)\n\nProperties:\n  durationInFrames: 240\n  fadeIn: 0\n  fadeOut: 0\n  from: 960\n  height: 145\n  left: 250\n  opacity: 1\n  propertyOverrides: {\"sub\":\"积木高亮与调用轨迹，同步观察。 · 界面演示\",\"title\":\"跑到哪，看哪块。\"}\n  rotation: 0\n  top: 35\n  width: 1600\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 99d98246b4\nType: motion-graphic | Track: V2 [8969e850b3] | from=1200 durationInFrames=180 endExclusive=1380 visibleFrames=1200..1379 # start=40.0s endExclusive=46.0s duration=6.0s\nAsset: [f42485a4a3] 搭子协作 · CLI薄层\nSize: current 1760x195 | original asset 1760x195 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  font=\"Noto Sans SC\" (default)\n  ink=\"#F8FAFC\" (default)\n  paper=\"#102630EE\" (default)\n  accent=\"#E5FA78\" (default)\n  title=\"Codex / Claude Code  →  Blocky CLI\" (default)\n  line1=\"$ blocky project create --template work-assistant\" (default)\n  line2=\"  --name \\\"周报助手\\\" --output agent.blocky --json\" (default)\n  result=\"项目已创建 → 回到积木里审查。\" (default)\n  foot=\"CLI 协作情景示意\" (default)\n\nProperties:\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 1200\n  height: 195\n  left: 80\n  opacity: 1\n  rotation: 0\n  top: 865\n  width: 1760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 7fb5321a25\nType: motion-graphic | Track: V2 [8969e850b3] | from=1620 durationInFrames=180 endExclusive=1800 visibleFrames=1620..1799 # start=54.0s endExclusive=60.0s duration=6.0s\nAsset: [fea3d61d9a] 搭子收尾 · 动画上的品牌\nSize: current 1760x160 | original asset 1760x160 | aspect ratio locked (read-only)\n\nMotion Graphic Effective Props:\n  font=\"Noto Sans SC\" (default)\n  ink=\"#132A32\" (default)\n  paper=\"#FFF6E7\" (default)\n  accent=\"#E5FA78\" (default)\n  title=\"Blocky.  把代码审查，变成积木审查。\" (default)\n  sub=\"看懂逻辑 · 直观观察运行 · 从入门到专业\" (default)\n\nProperties:\n  durationInFrames: 180\n  fadeIn: 0\n  fadeOut: 0\n  from: 1620\n  height: 160\n  left: 80\n  opacity: 1\n  rotation: 0\n  top: 35\n  width: 1760\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 5e20d17349\nType: audio | Track: A1 [0dd4983ca1] | from=0 durationInFrames=360 endExclusive=360 visibleFrames=0..359 # start=0.0s endExclusive=12.0s duration=12.0s\nAsset: [6c9622d70d] 看懂Agent-原创节拍.wav\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0.05\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 0\n  decibelAdjustment: -5\n  durationInFrames: 360\n  from: 0\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 45536c13af\nType: audio | Track: A1 [0dd4983ca1] | from=360 durationInFrames=150 endExclusive=510 visibleFrames=360..509 # start=12.0s endExclusive=17.0s duration=5.0s\nAsset: [6c9622d70d] 看懂Agent-原创节拍.wav\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 12\n  decibelAdjustment: -17\n  durationInFrames: 150\n  from: 360\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 6aa0cba574\nType: audio | Track: A1 [0dd4983ca1] | from=510 durationInFrames=870 endExclusive=1380 visibleFrames=510..1379 # start=17.0s endExclusive=46.0s duration=29.0s\nAsset: [6c9622d70d] 看懂Agent-原创节拍.wav\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 17\n  decibelAdjustment: -6\n  durationInFrames: 870\n  from: 510\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 249bb49d70\nType: audio | Track: A1 [0dd4983ca1] | from=1380 durationInFrames=150 endExclusive=1530 visibleFrames=1380..1529 # start=46.0s endExclusive=51.0s duration=5.0s\nAsset: [6c9622d70d] 看懂Agent-原创节拍.wav\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 46\n  decibelAdjustment: -13\n  durationInFrames: 150\n  from: 1380\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 6ca7761395\nType: audio | Track: A1 [0dd4983ca1] | from=1530 durationInFrames=270 endExclusive=1800 visibleFrames=1530..1799 # start=51.0s endExclusive=60.0s duration=9.0s\nAsset: [6c9622d70d] 看懂Agent-原创节拍.wav\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0.6\n  sourceStartFromInSeconds: 51\n  decibelAdjustment: -5\n  durationInFrames: 270\n  from: 1530\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920",
+    "Timeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 2d8069790b\nType: audio | Track: A2 [15c53601d3] | from=59 durationInFrames=4 endExclusive=63 visibleFrames=59..62 # start=2.0s endExclusive=2.1s duration=0.1s\nAsset: [dca309b9d5] tiny-bubble-pop-r1.mp3\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 0\n  decibelAdjustment: -9\n  durationInFrames: 4\n  from: 59\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 5add03480c\nType: audio | Track: A2 [15c53601d3] | from=391 durationInFrames=19 endExclusive=410 visibleFrames=391..409 # start=13.0s endExclusive=13.7s duration=0.6s\nAsset: [364c5fd20f] record-scratch-stop-r1.mp3\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 0\n  decibelAdjustment: -8\n  durationInFrames: 19\n  from: 391\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 2d83111d9e\nType: audio | Track: A2 [15c53601d3] | from=434 durationInFrames=4 endExclusive=438 visibleFrames=434..437 # start=14.5s endExclusive=14.6s duration=0.1s\nAsset: [dca309b9d5] tiny-bubble-pop-r1.mp3\nSize: current 1920x1080\n\nProperties:\n  audioFadeIn: 0\n  audioFadeOut: 0\n  sourceStartFromInSeconds: 0\n  decibelAdjustment: -9\n  durationInFrames: 4\n  from: 434\n  height: 1080\n  left: 0\n  opacity: 1\n  playbackRate: 1\n  top: 0\n  width: 1920\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 7b5ab0a4b7\nType: effect | Track: V1 [770e2ed95e] | from=549 durationInFrames=210 endExclusive=759 visibleFrames=549..758 # start=18.3s endExclusive=25.3s duration=7.0s\nApplies to: video item 75b80a46a1 (from=540 durationInFrames=240); the effect moves with this clip\nAsset: [builtin:zoom] Zoom\nEnabled: true\n\nProperties:\n  magnification=3 (override; number, UI slider 1..4)\n  focalPointX=0.45 (override; number, UI slider 0..1)\n  focalPointY=0.5 (default; number, UI slider 0..1)\n  shape=\"hold\" (default; \"spring-focused\"|\"punch\"|\"hold\"|\"slow-push\"|\"slow-pull\"|\"instant\")\n  direction=\"in\" (override; \"in\"|\"out\"|\"in-out\")\n  focalMode=\"manual\" (override; \"auto\"|\"manual\")\n  easeInDurationInSeconds=0.26666666666666666 (default; number, UI slider 0..2)\n  easeOutDurationInSeconds=0.26666666666666666 (default; number, UI slider 0..2)\n  easeIn=0 (override, no schema)\n  easeOut=0 (override, no schema)\n\nEdit via edit_item: updates:[{id:\"7b5ab0a4b7\", type:\"effect\", enabled:false}]. Also updatable: propertyOverrides (replaces all stored overrides, so resend every key to keep), trackBoundFrom (timeline frame) and trackBoundDurationInFrames to move or resize. Remove: deletes:[{id:\"7b5ab0a4b7\", type:\"effect\"}].\n\n---\n\nTimeline: 审查搭子 · 三角色动画 v4 [17be1d3658]\nItem: 014c59294c\nType: effect | Track: V1 [770e2ed95e] | from=960 durationInFrames=240 endExclusive=1200 visibleFrames=960..1199 # start=32.0s endExclusive=40.0s duration=8.0s\nApplies to: video item 8384e38dd4 (from=960 durationInFrames=240); the effect moves with this clip\nAsset: [builtin:zoom] Zoom\nEnabled: true\n\nProperties:\n  magnification=1.35 (override; number, UI slider 1..4)\n  focalPointX=0.99 (override; number, UI slider 0..1)\n  focalPointY=0.18 (override; number, UI slider 0..1)\n  shape=\"hold\" (default; \"spring-focused\"|\"punch\"|\"hold\"|\"slow-push\"|\"slow-pull\"|\"instant\")\n  direction=\"in\" (override; \"in\"|\"out\"|\"in-out\")\n  focalMode=\"manual\" (override; \"auto\"|\"manual\")\n  easeInDurationInSeconds=0.26666666666666666 (default; number, UI slider 0..2)\n  easeOutDurationInSeconds=0.26666666666666666 (default; number, UI slider 0..2)\n  easeIn=0.12 (override, no schema)\n  easeOut=0 (override, no schema)\n\nEdit via edit_item: updates:[{id:\"014c59294c\", type:\"effect\", enabled:false}]. Also updatable: propertyOverrides (replaces all stored overrides, so resend every key to keep), trackBoundFrom (timeline frame) and trackBoundDurationInFrames to move or resize. Remove: deletes:[{id:\"014c59294c\", type:\"effect\"}]."
+  ],
+  "motionGraphics": [
+    {
+      "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+      "code": "const Component=({item})=>{const f=useCurrentFrame();const p=item.props||{};const a=Math.min(1,f/5)*Math.min(1,(60-f)/5);const dy=Math.max(0,10-f*2);const face={position:\"relative\",width:\"100%\",height:\"100%\",padding:\"12px 12px 26px\",boxSizing:\"border-box\",fontFamily:p.font,opacity:a,transform:\"translateY(\"+dy+\"px)\"};const body={height:112,background:p.paper,border:\"3px solid \"+p.ink,borderRadius:28,boxShadow:\"0 7px 0 #10273344\",position:\"relative\",boxSizing:\"border-box\",padding:\"38px 24px 8px\",display:\"flex\",alignItems:\"center\",justifyContent:\"center\"};const name={position:\"absolute\",left:23,top:10,fontSize:20,fontWeight:800,color:p.ink,background:p.accent,padding:\"1px 13px\",borderRadius:12};const tail={position:\"absolute\",left:p.tail===\"right\"?\"78%\":\"18%\",top:121,width:0,height:0,borderLeft:\"18px solid transparent\",borderRight:\"18px solid transparent\",borderTop:\"22px solid \"+p.ink};const tip={position:\"absolute\",left:p.tail===\"right\"?\"78%\":\"18%\",top:118,width:0,height:0,borderLeft:\"18px solid transparent\",borderRight:\"18px solid transparent\",borderTop:\"20px solid \"+p.paper};return <div style={face}><div style={body}><div style={name}>{p.actor}</div><div style={{fontSize:p.size,fontWeight:800,color:p.ink,lineHeight:1.15,whiteSpace:\"nowrap\",letterSpacing:-.6}}>{p.line}</div></div><div style={tail}/><div style={tip}/></div>;};"
+    },
+    {
+      "key": "core",
+      "name": "搭子开场 · 核心小标题",
+      "width": 1230,
+      "height": 110,
+      "durationInFrames": 60,
+      "properties": [
+        {
+          "key": "font",
+          "label": "字体",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "ink",
+          "label": "文字",
+          "type": "color",
+          "defaultValue": "#132A32"
+        },
+        {
+          "key": "paper",
+          "label": "底色",
+          "type": "color",
+          "defaultValue": "#FFF6E7"
+        },
+        {
+          "key": "accent",
+          "label": "强调",
+          "type": "color",
+          "defaultValue": "#0876A4"
+        },
+        {
+          "key": "text",
+          "label": "核心",
+          "type": "text",
+          "defaultValue": "代码审查  →  积木审查"
+        }
+      ],
+      "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};const a=Math.min(1,f/5)*Math.min(1,(60-f)/5);return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"16px 25px\",fontFamily:p.font,opacity:a}}><div style={{background:p.paper,border:\"3px solid \"+p.ink,borderRadius:25,padding:\"10px 26px\",fontSize:51,fontWeight:800,color:p.ink,textAlign:\"center\",boxShadow:\"0 6px 0 #132A3233\"}}><span style={{color:p.accent}}>Blocky.</span>　{p.text}</div></div>;};"
+    },
+    {
+      "key": "ui",
+      "name": "搭子实操 · 界面小标题",
+      "width": 1600,
+      "height": 145,
+      "durationInFrames": 240,
+      "properties": [
+        {
+          "key": "font",
+          "label": "字体",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "ink",
+          "label": "文字",
+          "type": "color",
+          "defaultValue": "#132A32"
+        },
+        {
+          "key": "paper",
+          "label": "底色",
+          "type": "color",
+          "defaultValue": "#FFF6E7"
+        },
+        {
+          "key": "accent",
+          "label": "强调",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "title",
+          "label": "主句",
+          "type": "text",
+          "defaultValue": "逻辑、顺序、指令，直接看积木。"
+        },
+        {
+          "key": "sub",
+          "label": "补充",
+          "type": "text",
+          "defaultValue": "检查嵌套关系，修改补充指令。"
+        }
+      ],
+      "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"12px 26px\",background:p.paper,border:\"3px solid \"+p.ink,borderLeft:\"9px solid \"+p.accent,borderRadius:20,fontFamily:p.font,color:p.ink,opacity:Math.min(1,f/6),boxShadow:\"0 6px 0 #132A3244\"}}><div style={{fontSize:51,fontWeight:800,lineHeight:1.2}}>{p.title}</div><div style={{fontSize:26,fontWeight:600,lineHeight:1.4,color:\"#52666E\",marginTop:6}}>{p.sub}</div></div>;};"
+    },
+    {
+      "key": "cli",
+      "name": "搭子协作 · CLI薄层",
+      "width": 1760,
+      "height": 195,
+      "durationInFrames": 180,
+      "properties": [
+        {
+          "key": "font",
+          "label": "字体",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "ink",
+          "label": "文字",
+          "type": "color",
+          "defaultValue": "#F8FAFC"
+        },
+        {
+          "key": "paper",
+          "label": "底色",
+          "type": "color",
+          "defaultValue": "#102630EE"
+        },
+        {
+          "key": "accent",
+          "label": "强调",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "title",
+          "label": "开发入口",
+          "type": "text",
+          "defaultValue": "Codex / Claude Code  →  Blocky CLI"
+        },
+        {
+          "key": "line1",
+          "label": "命令一",
+          "type": "text",
+          "defaultValue": "$ blocky project create --template work-assistant"
+        },
+        {
+          "key": "line2",
+          "label": "命令二",
+          "type": "text",
+          "defaultValue": "  --name \"周报助手\" --output agent.blocky --json"
+        },
+        {
+          "key": "result",
+          "label": "结果",
+          "type": "text",
+          "defaultValue": "项目已创建 → 回到积木里审查。"
+        },
+        {
+          "key": "foot",
+          "label": "来源提示",
+          "type": "text",
+          "defaultValue": "CLI 协作情景示意"
+        }
+      ],
+      "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};const a=Math.min(1,Math.max(0,(f-9)/6));return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"15px 28px\",background:p.paper,border:\"2px solid #E5FA7866\",borderRadius:18,fontFamily:p.font,opacity:a}}><div style={{fontSize:28,fontWeight:800,color:p.accent,marginBottom:7}}>{p.title}</div><div style={{fontSize:26,fontWeight:600,color:p.ink,lineHeight:1.25}}>{p.line1}<br/>{p.line2}</div><div style={{display:\"flex\",justifyContent:\"space-between\",fontSize:22,marginTop:8,color:\"#C6D3D6\"}}><span style={{opacity:Math.min(1,Math.max(0,(f-95)/7))}}>{p.result}</span><span>{p.foot}</span></div></div>;};"
+    },
+    {
+      "key": "end",
+      "name": "搭子收尾 · 动画上的品牌",
+      "width": 1760,
+      "height": 160,
+      "durationInFrames": 180,
+      "properties": [
+        {
+          "key": "font",
+          "label": "字体",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "ink",
+          "label": "文字",
+          "type": "color",
+          "defaultValue": "#132A32"
+        },
+        {
+          "key": "paper",
+          "label": "底色",
+          "type": "color",
+          "defaultValue": "#FFF6E7"
+        },
+        {
+          "key": "accent",
+          "label": "强调",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "title",
+          "label": "品牌句",
+          "type": "text",
+          "defaultValue": "Blocky.  把代码审查，变成积木审查。"
+        },
+        {
+          "key": "sub",
+          "label": "价值",
+          "type": "text",
+          "defaultValue": "看懂逻辑 · 直观观察运行 · 从入门到专业"
+        }
+      ],
+      "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"18px 32px\",background:p.paper,border:\"3px solid \"+p.ink,borderBottom:\"7px solid \"+p.accent,borderRadius:24,fontFamily:p.font,color:p.ink,opacity:Math.min(1,f/8),boxShadow:\"0 7px 0 #132A3244\"}}><div style={{fontSize:54,fontWeight:800,lineHeight:1.2}}>{p.title}</div><div style={{fontSize:27,fontWeight:600,marginTop:9,color:\"#52666E\"}}>{p.sub}</div></div>;};"
+    }
+  ],
+  "export": {
+    "renderId": "68d90c64-d38a-44f0-aefc-acce657f2c1b",
+    "state": "complete",
+    "source": "browser",
+    "startedAt": "2026-10-12T17:27:43.900Z",
+    "completedAt": "2026-10-12T17:27:51.904Z",
+    "bytes": 62180687
+  },
+  "cropReview": {
+    "removedVerticalFraction": 0.01549,
+    "sourceAndComposedFramesInspected": true,
+    "protectedCastNestedFrameAndCLIVisible": true
+  },
+  "audio": {
+    "allVideoEmbeddedGainDb": -60,
+    "reason": "Unrequested voice text detected by source transcription in shot6; all clips use the original score plus deliberate comedy SFX",
+    "humanListening": "not established"
+  }
+}

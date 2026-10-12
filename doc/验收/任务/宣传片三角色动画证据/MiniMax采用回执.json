@@ -1,0 +1,271 @@
+{
+  "mode": "Local I2VA standard workflow, sequential six jobs",
+  "originalWorkflow": "D:\\ComfyUI\\user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+  "tasks": [
+    {
+      "taskId": "fd25f5bd-a29f-4c18-8ca3-cb66d56bbfd0",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-01-start\\fd25f5bd_000.mp4",
+      "bytes": 526449,
+      "sha256": "db53c9642698cd8a30c0dd2b48e0430cc277d3484a0a2567dc2aa0b324ca0c80",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "526449"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-01-start",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-01-start.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-01-start.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 6,
+        "seed": 661026
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-01-start_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\fd25f5bd-a29f-4c18-8ca3-cb66d56bbfd0.json",
+      "firstFrameSha256": "c805b3789e4daff2c9e7604c8520c455eb9eaacf30825df1f63358c11737814a"
+    },
+    {
+      "taskId": "335d9510-8384-443d-ba1f-74c9094fd53d",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-02-long-review\\335d9510_000.mp4",
+      "bytes": 479881,
+      "sha256": "b5d61dc47eb2f27d802aaec8ccea1f327f19289964e072ca6a5443e57eaded9c",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "479881"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-02-long-review",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-02-long-review.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-02-long-review.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 6,
+        "seed": 661032
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-02-long-review_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\335d9510-8384-443d-ba1f-74c9094fd53d.json",
+      "firstFrameSha256": "4c8cd36c8fa231aecf9b55572c84df3b97af92f661729abb7f284b28dee7d5b0"
+    },
+    {
+      "taskId": "9f2f3362-bfa5-4d79-9af2-108c3451e555",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-03-wrong-target\\9f2f3362_000.mp4",
+      "bytes": 414449,
+      "sha256": "f6bd03981c90fb12103a793216fc392907bb7df2a6fe5b8554fbb73e51e8851b",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "414449"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-03-wrong-target",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-03-wrong-target.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-03-wrong-target.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 6,
+        "seed": 661033
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-03-wrong-target_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\9f2f3362-bfa5-4d79-9af2-108c3451e555.json",
+      "firstFrameSha256": "784e91795aa3a9fc2c19e952955684a0858184dbaafa14a13c07a454fbde99ed"
+    },
+    {
+      "taskId": "c3a17c46-64ba-4d33-b198-198370a03cbf",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-04-visible-run\\c3a17c46_000.mp4",
+      "bytes": 465640,
+      "sha256": "201a493fba0d6638167c3483fa70f6b90544b59a4686ea99c8a947de92f68569",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "465640"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-04-visible-run",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-04-visible-run.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-04-visible-run.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 6,
+        "seed": 661032
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-04-visible-run_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\c3a17c46-64ba-4d33-b198-198370a03cbf.json",
+      "firstFrameSha256": "397a066e67b2f0ef9408fee96294ddf883587f47dbb4d15da6a08f7931a1cf54"
+    },
+    {
+      "taskId": "3f6434c6-05c8-4a0b-a938-a92486638144",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-05-cli-handoff\\3f6434c6_000.mp4",
+      "bytes": 534778,
+      "sha256": "d1a1fc74b27e1222056d397f88773652f8c8832f198753323986540530148e73",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "534778"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-05-cli-handoff",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-05-cli-handoff.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-05-cli-handoff.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 6,
+        "seed": 661032
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-05-cli-handoff_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\3f6434c6-05c8-4a0b-a938-a92486638144.json",
+      "firstFrameSha256": "a43fc9366563e5cb536579f45862e1f003869fbb1c859aa2ba0377d50cb2b37e"
+    },
+    {
+      "taskId": "2a1a6f7f-0ba3-4b88-afe5-1c325dbd4374",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-06-growing-together\\2a1a6f7f_000.mp4",
+      "bytes": 613805,
+      "sha256": "07daed8cee0841484b4a114dfaa7d16beea4ced8e0d474b35d4b256dc5dea1fe",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "8.000000",
+          "size": "613805"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "team-06-growing-together",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v4\\team-06-growing-together.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v4\\team-06-growing-together.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seconds": 8,
+        "seed": 661037
+      },
+      "nativeOutputFilenames": [
+        "Blocky_team_team-06-growing-together_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\2a1a6f7f-0ba3-4b88-afe5-1c325dbd4374.json",
+      "firstFrameSha256": "1199876e8ae5194c24457dd158f5aeea84d5549ac5836bd98c38fd9efa9a53e0"
+    }
+  ],
+  "originalWorkflowChanged": false
+}

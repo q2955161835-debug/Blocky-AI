@@ -1,0 +1,410 @@
+{
+  "receipt": {
+    "createExit": 0,
+    "validateExit": 3,
+    "compileExit": 3,
+    "mode": "offline isolated profile; no model execution",
+    "project": "agent.blocky"
+  },
+  "create": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": true,
+    "command": "project.create",
+    "data": {
+      "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+      "digest": "8e8037efb71acf8ab9a09b30b9c65c695c50b8bcede3cedbc6d7eec4396ce462",
+      "modelApiCalled": false
+    },
+    "warnings": [],
+    "artifacts": [
+      {
+        "path": "agent.blocky",
+        "bytes": 7821,
+        "sha256": "f151b3acd9c37b39711ebe45eb865132955be27c31a943a43c375897b9ac4acd"
+      }
+    ],
+    "nextCursor": null
+  },
+  "map": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": true,
+    "command": "project.map",
+    "data": {
+      "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+      "modules": [
+        {
+          "moduleId": "main",
+          "displayName": "主画布",
+          "purpose": "agent",
+          "outgoing": [],
+          "incoming": [],
+          "affected": []
+        }
+      ],
+      "modelApiCalled": false
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  },
+  "validate": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": false,
+    "command": "project.validate",
+    "data": {
+      "valid": false,
+      "diagnostics": [
+        {
+          "schemaVersion": "blocky.diagnostic/v1alpha1",
+          "diagnosticId": "blk-resource-001.main.assistant-tool-loop",
+          "code": "BLK-RESOURCE-001",
+          "severity": "error",
+          "message": "资源不存在或类型不匹配",
+          "source": {
+            "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+            "moduleId": "main",
+            "blockId": "assistant-tool-loop"
+          },
+          "related": []
+        }
+      ],
+      "projectDigest": "8e8037efb71acf8ab9a09b30b9c65c695c50b8bcede3cedbc6d7eec4396ce462"
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  },
+  "compile": {
+    "schemaVersion": "blocky.cli/v1",
+    "ok": false,
+    "command": "project.compile",
+    "data": {
+      "modules": [
+        {
+          "schemaVersion": "blocky.module-ir/v1",
+          "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+          "moduleId": "main",
+          "roots": [
+            {
+              "nodeId": "assistant-root",
+              "blockType": "core.agent",
+              "fields": {
+                "ROLE": "帮助用户完成实际工作任务。使用已声明的工作目录工具，按需检索、读取和保存文件，并准确说明交付结果。"
+              },
+              "inputs": {
+                "BODY": {
+                  "nodeId": "assistant-chat-trigger",
+                  "blockType": "core.interaction.chat",
+                  "fields": {
+                    "NAME": "工作任务"
+                  },
+                  "inputs": {},
+                  "next": {
+                    "nodeId": "assistant-work-instructions",
+                    "blockType": "core.prompt.context",
+                    "fields": {
+                      "TEXT": "先检查用户已选择的工作目录，再按任务读取资料、执行必要修改并核对真实回执。数字计算使用计算工具的结果，不用语言模型心算充当核验；生成后读回文件核对内容。只报告已完成的操作；没有可用目录或工具时准确说明缺少哪项配置。"
+                    },
+                    "inputs": {},
+                    "next": {
+                      "nodeId": "assistant-run-budget",
+                      "blockType": "core.run.budget",
+                      "fields": {
+                        "CALLS": "256",
+                        "OUTPUT_TOKENS": "1048576",
+                        "STEPS": "10000",
+                        "TIMEOUT_MS": "1800000"
+                      },
+                      "inputs": {},
+                      "next": {
+                        "nodeId": "assistant-tool-loop",
+                        "blockType": "core.reason.tool_loop",
+                        "fields": {
+                          "ENGINE": "pi",
+                          "MAX_TURNS": "32",
+                          "OUTPUT_TOKENS": "32768",
+                          "RESOURCE": "assistant-model",
+                          "SESSION": "conversation"
+                        },
+                        "inputs": {
+                          "TOOLS": {
+                            "nodeId": "assistant-tool-1",
+                            "blockType": "core.tool.expose",
+                            "fields": {
+                              "RESOURCE": "workspace-list"
+                            },
+                            "inputs": {},
+                            "next": {
+                              "nodeId": "assistant-tool-2",
+                              "blockType": "core.tool.expose",
+                              "fields": {
+                                "RESOURCE": "workspace-search"
+                              },
+                              "inputs": {},
+                              "next": {
+                                "nodeId": "assistant-tool-3",
+                                "blockType": "core.tool.expose",
+                                "fields": {
+                                  "RESOURCE": "workspace-read"
+                                },
+                                "inputs": {},
+                                "next": {
+                                  "nodeId": "assistant-tool-4",
+                                  "blockType": "core.tool.expose",
+                                  "fields": {
+                                    "RESOURCE": "workspace-write"
+                                  },
+                                  "inputs": {},
+                                  "next": {
+                                    "nodeId": "assistant-tool-5",
+                                    "blockType": "core.tool.expose",
+                                    "fields": {
+                                      "RESOURCE": "workspace-undo"
+                                    },
+                                    "inputs": {},
+                                    "next": {
+                                      "nodeId": "assistant-tool-6",
+                                      "blockType": "core.tool.expose",
+                                      "fields": {
+                                        "RESOURCE": "work-calculator"
+                                      },
+                                      "inputs": {}
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "nodeId": "assistant-remember-delivery",
+                          "blockType": "core.memory.write",
+                          "fields": {
+                            "KEY": "last-delivery",
+                            "SCOPE": "session",
+                            "SOURCE": "result"
+                          },
+                          "inputs": {},
+                          "next": {
+                            "nodeId": "assistant-answer",
+                            "blockType": "core.output.answer",
+                            "fields": {
+                              "STYLE": "段落"
+                            },
+                            "inputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "exports": [],
+          "sourceMap": {
+            "assistant-root": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-root"
+            },
+            "assistant-chat-trigger": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-chat-trigger"
+            },
+            "assistant-work-instructions": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-work-instructions"
+            },
+            "assistant-run-budget": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-run-budget"
+            },
+            "assistant-tool-loop": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-loop"
+            },
+            "assistant-tool-1": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-1"
+            },
+            "assistant-tool-2": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-2"
+            },
+            "assistant-tool-3": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-3"
+            },
+            "assistant-tool-4": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-4"
+            },
+            "assistant-tool-5": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-5"
+            },
+            "assistant-tool-6": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-tool-6"
+            },
+            "assistant-remember-delivery": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-remember-delivery"
+            },
+            "assistant-answer": {
+              "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+              "moduleId": "main",
+              "blockId": "assistant-answer"
+            }
+          }
+        }
+      ],
+      "project": {
+        "schemaVersion": "blocky.project-ir/v1",
+        "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+        "modules": [
+          {
+            "moduleId": "main",
+            "digest": "7b198ffa372d46cc4b81470095f686b702ee3191c031c51f72f754a69a0b0968"
+          }
+        ],
+        "links": []
+      },
+      "interaction": {
+        "schemaVersion": "blocky.interaction/v1alpha1",
+        "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+        "entries": [
+          {
+            "interactionId": "assistant-chat-trigger",
+            "moduleId": "main",
+            "ownerAgentId": "assistant-root",
+            "displayName": "工作任务",
+            "acceptedParts": [
+              "text"
+            ],
+            "exposedSkills": [],
+            "exposedActions": [],
+            "executionRequirements": []
+          }
+        ]
+      },
+      "tools": [
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-1",
+          "moduleId": "main",
+          "displayName": "列出工作目录文件与可撤销变更编号",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/workspace-list-input.json",
+          "outputSchemaRef": "schemas/workspace-list-output.json",
+          "permissions": [
+            "workspace.read"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://workspace-file-v1"
+        },
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-2",
+          "moduleId": "main",
+          "displayName": "搜索工作目录文本",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/workspace-search-input.json",
+          "outputSchemaRef": "schemas/workspace-search-output.json",
+          "permissions": [
+            "workspace.read"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://workspace-file-v1"
+        },
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-3",
+          "moduleId": "main",
+          "displayName": "读取文件与版本摘要",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/workspace-read-input.json",
+          "outputSchemaRef": "schemas/workspace-read-output.json",
+          "permissions": [
+            "workspace.read"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://workspace-file-v1"
+        },
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-4",
+          "moduleId": "main",
+          "displayName": "创建或修改文件并返回差异",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/workspace-write-input.json",
+          "outputSchemaRef": "schemas/workspace-write-output.json",
+          "permissions": [
+            "workspace.write"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://workspace-file-v1"
+        },
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-5",
+          "moduleId": "main",
+          "displayName": "按变更回执撤销文件修改",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/workspace-undo-input.json",
+          "outputSchemaRef": "schemas/workspace-undo-output.json",
+          "permissions": [
+            "workspace.write"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://workspace-file-v1"
+        },
+        {
+          "schemaVersion": "blocky.tool/v1alpha1",
+          "toolId": "tool-main-assistant-tool-6",
+          "moduleId": "main",
+          "displayName": "计算并核验数字：加减乘除，返回确定性结果",
+          "description": "登记的类型化工具",
+          "inputSchemaRef": "schemas/work-calculator-input.json",
+          "outputSchemaRef": "schemas/work-calculator-output.json",
+          "permissions": [
+            "data.calculate"
+          ],
+          "approval": "always",
+          "implementationRef": "adapter://arithmetic-v1"
+        }
+      ],
+      "diagnostics": [
+        {
+          "schemaVersion": "blocky.diagnostic/v1alpha1",
+          "diagnosticId": "blk-resource-001.main.assistant-tool-loop",
+          "code": "BLK-RESOURCE-001",
+          "severity": "error",
+          "message": "资源不存在或类型不匹配",
+          "source": {
+            "projectId": "project-c2ab7dba-fb17-4108-a1a5-4d081abeb9a0",
+            "moduleId": "main",
+            "blockId": "assistant-tool-loop"
+          },
+          "related": []
+        }
+      ],
+      "digest": "9862883a5ddcf6b37e90b904026198e4c0062e142558d2af946350c8b8b893ad"
+    },
+    "warnings": [],
+    "artifacts": [],
+    "nextCursor": null
+  }
+}

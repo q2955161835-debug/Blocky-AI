@@ -1,0 +1,218 @@
+{
+  "frozenAt": "2026-10-13T01:28:46.059377+08:00",
+  "title": "审查搭子",
+  "core": "代码审查变积木审查；Agent入门学习到专业开发，直观观察运行，CLI协作开发",
+  "film": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-试片-v4.mp4",
+    "bytes": 62180687,
+    "sha256": "1726ce112fb8536f3c52cc3bfb1f6554fced2b68d8c53d4cb17987c37cc92333",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "59.966667"
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "duration": "60.010667"
+        }
+      ],
+      "format": {
+        "duration": "60.010667",
+        "size": "62180687"
+      }
+    },
+    "videoFrames": "1800",
+    "fullDecodeExit": 0
+  },
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "projectUrl": "https://app.chatcut.io/zh/editor/d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "17be1d36-58f7-4ab2-803e-1d035bd1cc2c",
+  "timelineName": "审查搭子 · 三角色动画 v4",
+  "exportId": "68d90c64-d38a-44f0-aefc-acce657f2c1b",
+  "renderMode": "local browser",
+  "segments": [
+    {
+      "frames": [
+        0,
+        180
+      ],
+      "source": "team-01-start",
+      "sourceSeconds": [
+        0,
+        6
+      ],
+      "content": "Three friends collaborate; core appears immediately"
+    },
+    {
+      "frames": [
+        180,
+        360
+      ],
+      "source": "team-02-long-review",
+      "sourceSeconds": [
+        0,
+        6
+      ],
+      "content": "Just a quick review of comically long code"
+    },
+    {
+      "frames": [
+        360,
+        540
+      ],
+      "source": "team-03-wrong-target",
+      "sourceSeconds": [
+        0,
+        6
+      ],
+      "content": "Magnifier checks Blocky eye instead of Agent, dialogue redirects review target"
+    },
+    {
+      "frames": [
+        540,
+        780
+      ],
+      "source": "blocky-nested-review-edit.mp4",
+      "sourceSeconds": [
+        2.5,
+        10.5
+      ],
+      "content": "Actual current frontend field edit; no model execution claim"
+    },
+    {
+      "frames": [
+        780,
+        960
+      ],
+      "source": "team-04-visible-run",
+      "sourceSeconds": [
+        0,
+        6
+      ],
+      "content": "Fictional physical observation of nested program; not actual Runtime"
+    },
+    {
+      "frames": [
+        960,
+        1200
+      ],
+      "source": "blocky-preset-runtime-highlights.mp4",
+      "sourceSeconds": [
+        6.5,
+        14.5
+      ],
+      "content": "Existing website preset simulation, on-film 界面演示"
+    },
+    {
+      "frames": [
+        1200,
+        1380
+      ],
+      "source": "team-05-cli-handoff",
+      "sourceSeconds": [
+        0,
+        6
+      ],
+      "content": "Fictional collaboration plus actually verified Blocky project-create command, on-film CLI协作情景示意"
+    },
+    {
+      "frames": [
+        1380,
+        1620
+      ],
+      "source": "team-06-growing-together",
+      "sourceSeconds": [
+        0,
+        8
+      ],
+      "content": "Same language beginner/professional and oversize-magnifier callback"
+    },
+    {
+      "frames": [
+        1620,
+        1800
+      ],
+      "source": "team-06-growing-together",
+      "sourceSeconds": [
+        3.8,
+        8.0
+      ],
+      "playbackRate": 0.7,
+      "embeddedAudioGainDb": -60,
+      "content": "Animated closing with brand overlay"
+    }
+  ],
+  "mascotReferences": {
+    "codex": {
+      "source": "User provided original blue Codex companion screenshot",
+      "inputPath": "C:\\Users\\29551\\AppData\\Local\\Temp\\codex-clipboard-d92c242c-0f63-4791-b598-f9b2cda8a9b3.png",
+      "localReference": "codex-user-reference.png"
+    },
+    "claude": {
+      "source": "Clawd by Claude Code artwork listing; visual reference only, no endorsement or integration claim",
+      "page": "https://www.stickermule.com/claudecode/item/19156131",
+      "image": "https://storage.googleapis.com/sm-artworks/5719926a-04ae-4afb-9925-f1f4521d38ce/proof_retina_3x.png?cacheFor=ae97e86eaf931cb075104b625e1708fe",
+      "localReference": "clawd-reference.png",
+      "adaptation": "Terra-cotta extruded pixel silhouette, two square eyes and four short legs"
+    },
+    "sceneBoundary": "User authorized fictional collaborative animation for Codex/Claude Code/Blocky; not actual brand execution, official integration, or automatically converting arbitrary source code"
+  },
+  "boundaries": [
+    "Fictional three-mascot collaboration, no official integration or executed brand tool claim",
+    "Actual UI edit is verified; preset runtime is not this turn live model/desktop Runtime",
+    "CLI create/map succeeded; validate/compile and disabled-model simulate failures retained in original evidence, not shown as success"
+  ],
+  "audio": {
+    "scoreAsset": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+    "originalScoreSha256": "96ff4a2443184e76d5a7b233b74493069f5632c838386ff2fa4f37ce274ae3af",
+    "voiceover": false,
+    "musicGainRangesDb": [
+      [
+        0,
+        12,
+        -5
+      ],
+      [
+        12,
+        17,
+        -17
+      ],
+      [
+        17,
+        46,
+        -6
+      ],
+      [
+        46,
+        51,
+        -13
+      ],
+      [
+        51,
+        60,
+        -5
+      ]
+    ],
+    "effects": [
+      "library:sound:tiny-bubble-pop",
+      "library:sound:record-scratch-stop"
+    ],
+    "humanListening": "Not established by production tools"
+  },
+  "sourceUIHashes": {
+    "review": "b69ee6e4cb0cd3e4541386b2d6a315891d42550fac77ad21a1fdbd7817c104d7",
+    "preset": "fc628b458527089c333fd7796d96af722603dfc32087168fc1a2988817cfea34"
+  },
+  "scope": "Film only; no product/website/installer/user profile changes"
+}
