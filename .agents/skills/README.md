@@ -15,4 +15,4 @@
 | scenario-storyboards | 分镜覆盖、角色固定、反应镜头及镜头衔接 | [SKILL.md](scenario-storyboards/SKILL.md) |
 
 官网开发入口见[官网 README](../../官网/README.md)，具体执行约束见[官网规则](../../官网/AGENTS.md)。
-宣传片当前制作入口见[重制工程](../../宣传片/字面理解/README.md)。本机技能从 `D:\2Folder\skills` 定向复制；Scenario 三项只用于创意与分镜指导，实际生成使用本机 MiniMax，剪辑使用现有 ChatCut 插件。未安装新节点、模型或依赖。旧版“改一块”由用户否定并已撤下。
+宣传片当前制作入口见[看懂Agent工程](../../宣传片/看懂Agent/README.md)。本机技能从 `D:\2Folder\skills` 定向复制；Scenario 三项只用于创意与分镜指导，实际生成使用本机 MiniMax，剪辑使用现有 ChatCut 插件。未安装新节点、模型或依赖。旧版“改一块”已撤下，“字面理解”已否定，均不作为当前交付。

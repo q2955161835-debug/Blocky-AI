@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "\n{\n  \"entries\": [\n    {\n      \"codec\": \"h264\",\n      \"completedAt\": \"2026-10-12T16:35:35.407Z\",\n      \"error\": null,\n      \"id\": \"c4451fa3-0eec-46c8-a004-7025cbf1ca6f\",\n      \"name\": \"Blocky-看懂Agent-试片-v3.mp4\",\n      \"ok\": true,\n      \"outputSizeBytes\": 32078423,\n      \"progress\": 1,\n      \"renderId\": \"c4451fa3-0eec-46c8-a004-7025cbf1ca6f\",\n      \"resolution\": null,\n      \"source\": \"browser\",\n      \"startedAt\": \"2026-10-12T16:35:24.008Z\",\n      \"status\": \"complete\",\n      \"statusMessage\": \"Finished. The browser tab that rendered it started the file download on the user's device.\",\n      \"terminal\": true,\n      \"timelineId\": \"a38b2cd3-8baa-41e2-a608-62eb3ec0ec35\"\n    }\n  ],\n  \"success\": true,\n  \"terminal\": true\n}"
+    }
+  ]
+}

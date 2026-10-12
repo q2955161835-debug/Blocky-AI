@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"ok\":true,\"results\":[{\"assetId\":\"1854f3ca-3b92-406d-9ea5-ab1279148b1b\",\"ok\":true,\"status\":\"locally_imported\",\"filename\":\"8634fe1b_000.mp4\"},{\"assetId\":\"5e8aad6a-9027-40e8-80fb-4786e0dc701a\",\"ok\":true,\"status\":\"locally_imported\",\"filename\":\"9c7c835f_000.mp4\"},{\"assetId\":\"bbffbcde-ca1b-4df4-b191-cf2fed30a464\",\"ok\":true,\"status\":\"locally_imported\",\"filename\":\"blocky-nested-review-edit.mp4\"},{\"assetId\":\"06af9651-a140-41fd-87c5-56aed2cd26b7\",\"ok\":true,\"status\":\"locally_imported\",\"filename\":\"blocky-preset-runtime-highlights.mp4\"},{\"assetId\":\"6c9622d7-0dbb-4927-942b-810d1423b9b9\",\"ok\":true,\"status\":\"locally_imported\",\"filename\":\"看懂Agent-原创节拍.wav\"}],\"succeeded\":5,\"failed\":0}"
+    }
+  ],
+  "structuredContent": {
+    "ok": true,
+    "results": [
+      {
+        "assetId": "1854f3ca-3b92-406d-9ea5-ab1279148b1b",
+        "ok": true,
+        "status": "locally_imported",
+        "filename": "8634fe1b_000.mp4"
+      },
+      {
+        "assetId": "5e8aad6a-9027-40e8-80fb-4786e0dc701a",
+        "ok": true,
+        "status": "locally_imported",
+        "filename": "9c7c835f_000.mp4"
+      },
+      {
+        "assetId": "bbffbcde-ca1b-4df4-b191-cf2fed30a464",
+        "ok": true,
+        "status": "locally_imported",
+        "filename": "blocky-nested-review-edit.mp4"
+      },
+      {
+        "assetId": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+        "ok": true,
+        "status": "locally_imported",
+        "filename": "blocky-preset-runtime-highlights.mp4"
+      },
+      {
+        "assetId": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+        "ok": true,
+        "status": "locally_imported",
+        "filename": "看懂Agent-原创节拍.wav"
+      }
+    ],
+    "succeeded": 5,
+    "failed": 0,
+    "projectId": "d0cba719-b937-45cd-b22e-829476adff1d"
+  },
+  "isError": false
+}

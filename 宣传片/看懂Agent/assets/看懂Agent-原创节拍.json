@@ -1,0 +1,9 @@
+{
+  "seconds": 60,
+  "sampleRate": 48000,
+  "channels": 2,
+  "tempoBpm": 120,
+  "seed": 551013,
+  "source": "Original deterministic synthesis; no borrowed recordings",
+  "peakDbFS": -8.000000000000002
+}

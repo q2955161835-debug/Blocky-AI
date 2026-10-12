@@ -1,0 +1,492 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Timeline: 代码审查变积木审查 · 当前重制 [a38b2cd3-8baa-41e2-a608-62eb3ec0ec35]\nState: 1920x1080 @ 30fps | durationFrames=1800 (1m) | range=[0, 1800)\nViews: timeline\nTimeline structure: tracks=5 | entriesThisPage=20 | totalEntries=20\n- V1 [6574e47c-8c81-49bd-b9b4-daa24ec35902] | video\n- V2 [9a2a4188-5b9e-4afd-a048-43dcf09a7f85] | video\n  effect [278af7a0-c428-470c-9d5b-657fd28eae02] asset=builtin:zoom range=[258, 480) on=[2b122839-5cfb-4172-a672-db2219f3532d] enabled=true overrides={\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.45,\"magnification\":3,\"easeInDuration\":0,\"easeOutDuration\":0}\n  effect [81720618-bb61-44ef-97b0-f95ae197876a] asset=builtin:zoom range=[195, 258) on=[2b122839-5cfb-4172-a672-db2219f3532d] enabled=true overrides={\"easeIn\":0.2,\"easeOut\":0,\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.72,\"focalPointY\":0.8,\"magnification\":1.35}\n  effect [d520da39-bdbb-4d56-ad33-0b0025032c2d] asset=builtin:zoom range=[510, 945) on=[e4edf305-bad4-4561-ba90-fab913cf45c7] enabled=true overrides={\"easeIn\":0.2,\"easeOut\":0,\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.99,\"focalPointY\":0.18,\"magnification\":1.35}\n  effect [f8ab1705-2783-4a47-bdc8-474e2c01e217] asset=builtin:zoom range=[1425, 1620) on=[63185765-5a60-466e-8be9-fcdbad547e18] enabled=true overrides={\"easeIn\":0,\"easeOut\":0,\"direction\":\"in\",\"focalMode\":\"manual\",\"focalPointX\":0.99,\"focalPointY\":0.18,\"magnification\":1.35}\n- V3 [a10d27fa-1190-46ec-9d98-a54adb25cdcc] | video\n- A1 \"原创节拍\" [ca857528-c1f7-49e1-b908-fd57eb8ac465] | audio\n- V4 \"品牌标志\" [52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e] | video\n- item V1 [f024d1fc-3417-440d-a2b3-13044c67cd6c] type=motion-graphic startFrame=0 range=[0, 1800) asset=\"品牌舞台 · 暗色底\" [0d6963ee-52c5-413b-88ef-2572db5e135c]\n- item V2 [e6ef052a-aab9-45a3-9c57-13665d5ee23f] type=video startFrame=0 range=[0, 195) asset=\"8634fe1b_000.mp4\" [1854f3ca-3b92-406d-9ea5-ab1279148b1b] source=[0, 6500000)us\n- item V3 [5b22ccdb-51eb-48c2-91b0-618b14ecf136] type=motion-graphic startFrame=0 range=[0, 195) asset=\"核心开场 · 代码审查变积木审查\" [ab632f99-42ac-4771-aa35-d6f76f1b3fad]\n- item A1 [d190ead2-23b7-4ac3-976b-9e04883d6fa8] type=audio startFrame=0 range=[0, 1800) asset=\"看懂Agent-原创节拍.wav\" [6c9622d7-0dbb-4927-942b-810d1423b9b9] source=[0, 60000000)us\n- item V4 [6f8226a7-0577-4621-af05-573052f442b2] type=image startFrame=0 range=[0, 945) asset=\"Blocky原标志.png\" [4f29a861-6982-47f9-b153-dc7822dbd99a]\n- item V2 [2b122839-5cfb-4172-a672-db2219f3532d] type=video startFrame=195 range=[195, 510) asset=\"blocky-nested-review-edit.mp4\" [bbffbcde-ca1b-4df4-b191-cf2fed30a464] source=[0, 10500000)us\n- item V3 [69f6af60-0aef-4e93-a2ad-5f70c8475326] type=motion-graphic startFrame=195 range=[195, 510) asset=\"审查与运行 · 段落提示\" [40a88670-abe9-4ba4-bd0f-e8d2782c7abe]\n- item V2 [e4edf305-bad4-4561-ba90-fab913cf45c7] type=video startFrame=510 range=[510, 945) asset=\"blocky-preset-runtime-highlights.mp4\" [06af9651-a140-41fd-87c5-56aed2cd26b7] source=[0, 14500000)us\n- item V3 [dbe00aab-b9e5-44df-b512-04cd09cfd798] type=motion-graphic startFrame=510 range=[510, 945) asset=\"审查与运行 · 段落提示\" [40a88670-abe9-4ba4-bd0f-e8d2782c7abe]\n- item V2 [cce6ae7c-3090-4844-b835-94fd14b52ea4] type=motion-graphic startFrame=945 range=[945, 1230) asset=\"开发入口 · Codex Claude Code 与 Blocky CLI\" [4ebcac5d-9c09-4631-b54d-1bae5f7b0349]\n- gap V3 [945, 1230)\n- gap V4 [945, 1230)\n- item V2 [6a8296fc-e318-472d-9510-192b222577cf] type=video startFrame=1230 range=[1230, 1425) asset=\"9c7c835f_000.mp4\" [5e8aad6a-9027-40e8-80fb-4786e0dc701a] source=[0, 6500000)us\n- item V3 [0da03c19-afd8-4db3-a23f-afe9bf78adff] type=motion-graphic startFrame=1230 range=[1230, 1425) asset=\"核心开场 · 代码审查变积木审查\" [ab632f99-42ac-4771-aa35-d6f76f1b3fad]\n- item V4 [ec8c16d0-3fed-4fda-b1bc-71a3ebe00898] type=image startFrame=1230 range=[1230, 1620) asset=\"Blocky原标志.png\" [4f29a861-6982-47f9-b153-dc7822dbd99a]\n- item V2 [63185765-5a60-466e-8be9-fcdbad547e18] type=video startFrame=1425 range=[1425, 1620) asset=\"blocky-preset-runtime-highlights.mp4\" [06af9651-a140-41fd-87c5-56aed2cd26b7] source=[7700000, 14200000)us\n- item V3 [272b8367-66b1-47a3-8445-019f7682b76c] type=motion-graphic startFrame=1425 range=[1425, 1620) asset=\"审查与运行 · 段落提示\" [40a88670-abe9-4ba4-bd0f-e8d2782c7abe]\n- item V2 [44d9d59d-04db-4f63-80b0-7811a9774837] type=motion-graphic startFrame=1620 range=[1620, 1800) asset=\"看懂 Agent · 品牌落版\" [e38a6305-1348-4e68-b8bb-e39c93238c44]\n- gap V3 [1620, 1800)\n- item V4 [3dec705f-bbac-43b5-889c-d2037883fa54] type=image startFrame=1620 range=[1620, 1800) asset=\"Blocky原标志.png\" [4f29a861-6982-47f9-b153-dc7822dbd99a]"
+    }
+  ],
+  "structuredContent": {
+    "state": {
+      "canvas": {
+        "height": 1080,
+        "width": 1920
+      },
+      "durationFrames": 1800,
+      "fps": 30,
+      "id": "a38b2cd3-8baa-41e2-a608-62eb3ec0ec35",
+      "name": "代码审查变积木审查 · 当前重制",
+      "range": {
+        "fromFrame": 0,
+        "toFrame": 1800
+      }
+    },
+    "views": [
+      "timeline"
+    ],
+    "timeline": {
+      "entries": [
+        {
+          "asset": {
+            "id": "0d6963ee-52c5-413b-88ef-2572db5e135c",
+            "name": "品牌舞台 · 暗色底",
+            "type": "motion-graphic"
+          },
+          "startFrame": 0,
+          "id": "f024d1fc-3417-440d-a2b3-13044c67cd6c",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 0,
+            "toFrame": 1800
+          },
+          "trackAlias": "V1",
+          "trackId": "6574e47c-8c81-49bd-b9b4-daa24ec35902"
+        },
+        {
+          "asset": {
+            "id": "1854f3ca-3b92-406d-9ea5-ab1279148b1b",
+            "name": "8634fe1b_000.mp4",
+            "type": "video"
+          },
+          "startFrame": 0,
+          "id": "e6ef052a-aab9-45a3-9c57-13665d5ee23f",
+          "itemType": "video",
+          "kind": "item",
+          "sourceRange": {
+            "end": 6500000,
+            "start": 0
+          },
+          "timelineRange": {
+            "fromFrame": 0,
+            "toFrame": 195
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "asset": {
+            "id": "ab632f99-42ac-4771-aa35-d6f76f1b3fad",
+            "name": "核心开场 · 代码审查变积木审查",
+            "type": "motion-graphic"
+          },
+          "startFrame": 0,
+          "id": "5b22ccdb-51eb-48c2-91b0-618b14ecf136",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 0,
+            "toFrame": 195
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+            "name": "看懂Agent-原创节拍.wav",
+            "type": "audio"
+          },
+          "startFrame": 0,
+          "id": "d190ead2-23b7-4ac3-976b-9e04883d6fa8",
+          "itemType": "audio",
+          "kind": "item",
+          "sourceRange": {
+            "end": 60000000,
+            "start": 0
+          },
+          "timelineRange": {
+            "fromFrame": 0,
+            "toFrame": 1800
+          },
+          "trackAlias": "A1",
+          "trackId": "ca857528-c1f7-49e1-b908-fd57eb8ac465"
+        },
+        {
+          "asset": {
+            "id": "4f29a861-6982-47f9-b153-dc7822dbd99a",
+            "name": "Blocky原标志.png",
+            "type": "image"
+          },
+          "startFrame": 0,
+          "id": "6f8226a7-0577-4621-af05-573052f442b2",
+          "itemType": "image",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 0,
+            "toFrame": 945
+          },
+          "trackAlias": "V4",
+          "trackId": "52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e"
+        },
+        {
+          "asset": {
+            "id": "bbffbcde-ca1b-4df4-b191-cf2fed30a464",
+            "name": "blocky-nested-review-edit.mp4",
+            "type": "video"
+          },
+          "startFrame": 195,
+          "id": "2b122839-5cfb-4172-a672-db2219f3532d",
+          "itemType": "video",
+          "kind": "item",
+          "sourceRange": {
+            "end": 10500000,
+            "start": 0
+          },
+          "timelineRange": {
+            "fromFrame": 195,
+            "toFrame": 510
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "asset": {
+            "id": "40a88670-abe9-4ba4-bd0f-e8d2782c7abe",
+            "name": "审查与运行 · 段落提示",
+            "type": "motion-graphic"
+          },
+          "startFrame": 195,
+          "id": "69f6af60-0aef-4e93-a2ad-5f70c8475326",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 195,
+            "toFrame": 510
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+            "name": "blocky-preset-runtime-highlights.mp4",
+            "type": "video"
+          },
+          "startFrame": 510,
+          "id": "e4edf305-bad4-4561-ba90-fab913cf45c7",
+          "itemType": "video",
+          "kind": "item",
+          "sourceRange": {
+            "end": 14500000,
+            "start": 0
+          },
+          "timelineRange": {
+            "fromFrame": 510,
+            "toFrame": 945
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "asset": {
+            "id": "40a88670-abe9-4ba4-bd0f-e8d2782c7abe",
+            "name": "审查与运行 · 段落提示",
+            "type": "motion-graphic"
+          },
+          "startFrame": 510,
+          "id": "dbe00aab-b9e5-44df-b512-04cd09cfd798",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 510,
+            "toFrame": 945
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "4ebcac5d-9c09-4631-b54d-1bae5f7b0349",
+            "name": "开发入口 · Codex Claude Code 与 Blocky CLI",
+            "type": "motion-graphic"
+          },
+          "startFrame": 945,
+          "id": "cce6ae7c-3090-4844-b835-94fd14b52ea4",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 945,
+            "toFrame": 1230
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "fromFrame": 945,
+          "kind": "gap",
+          "timelineRange": {
+            "fromFrame": 945,
+            "toFrame": 1230
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "fromFrame": 945,
+          "kind": "gap",
+          "timelineRange": {
+            "fromFrame": 945,
+            "toFrame": 1230
+          },
+          "trackAlias": "V4",
+          "trackId": "52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e"
+        },
+        {
+          "asset": {
+            "id": "5e8aad6a-9027-40e8-80fb-4786e0dc701a",
+            "name": "9c7c835f_000.mp4",
+            "type": "video"
+          },
+          "startFrame": 1230,
+          "id": "6a8296fc-e318-472d-9510-192b222577cf",
+          "itemType": "video",
+          "kind": "item",
+          "sourceRange": {
+            "end": 6500000,
+            "start": 0
+          },
+          "timelineRange": {
+            "fromFrame": 1230,
+            "toFrame": 1425
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "asset": {
+            "id": "ab632f99-42ac-4771-aa35-d6f76f1b3fad",
+            "name": "核心开场 · 代码审查变积木审查",
+            "type": "motion-graphic"
+          },
+          "startFrame": 1230,
+          "id": "0da03c19-afd8-4db3-a23f-afe9bf78adff",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 1230,
+            "toFrame": 1425
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "4f29a861-6982-47f9-b153-dc7822dbd99a",
+            "name": "Blocky原标志.png",
+            "type": "image"
+          },
+          "startFrame": 1230,
+          "id": "ec8c16d0-3fed-4fda-b1bc-71a3ebe00898",
+          "itemType": "image",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 1230,
+            "toFrame": 1620
+          },
+          "trackAlias": "V4",
+          "trackId": "52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e"
+        },
+        {
+          "asset": {
+            "id": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+            "name": "blocky-preset-runtime-highlights.mp4",
+            "type": "video"
+          },
+          "startFrame": 1425,
+          "id": "63185765-5a60-466e-8be9-fcdbad547e18",
+          "itemType": "video",
+          "kind": "item",
+          "sourceRange": {
+            "end": 14200000,
+            "start": 7700000
+          },
+          "timelineRange": {
+            "fromFrame": 1425,
+            "toFrame": 1620
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "asset": {
+            "id": "40a88670-abe9-4ba4-bd0f-e8d2782c7abe",
+            "name": "审查与运行 · 段落提示",
+            "type": "motion-graphic"
+          },
+          "startFrame": 1425,
+          "id": "272b8367-66b1-47a3-8445-019f7682b76c",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 1425,
+            "toFrame": 1620
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "e38a6305-1348-4e68-b8bb-e39c93238c44",
+            "name": "看懂 Agent · 品牌落版",
+            "type": "motion-graphic"
+          },
+          "startFrame": 1620,
+          "id": "44d9d59d-04db-4f63-80b0-7811a9774837",
+          "itemType": "motion-graphic",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 1620,
+            "toFrame": 1800
+          },
+          "trackAlias": "V2",
+          "trackId": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85"
+        },
+        {
+          "fromFrame": 1620,
+          "kind": "gap",
+          "timelineRange": {
+            "fromFrame": 1620,
+            "toFrame": 1800
+          },
+          "trackAlias": "V3",
+          "trackId": "a10d27fa-1190-46ec-9d98-a54adb25cdcc"
+        },
+        {
+          "asset": {
+            "id": "4f29a861-6982-47f9-b153-dc7822dbd99a",
+            "name": "Blocky原标志.png",
+            "type": "image"
+          },
+          "startFrame": 1620,
+          "id": "3dec705f-bbac-43b5-889c-d2037883fa54",
+          "itemType": "image",
+          "kind": "item",
+          "timelineRange": {
+            "fromFrame": 1620,
+            "toFrame": 1800
+          },
+          "trackAlias": "V4",
+          "trackId": "52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e"
+        }
+      ],
+      "totalEntries": 20,
+      "tracks": [
+        {
+          "alias": "V1",
+          "hidden": false,
+          "id": "6574e47c-8c81-49bd-b9b4-daa24ec35902",
+          "muted": false,
+          "name": null,
+          "order": 0,
+          "trackType": "video"
+        },
+        {
+          "alias": "V2",
+          "effects": [
+            {
+              "assetId": "builtin:zoom",
+              "durationFrames": 222,
+              "enabled": true,
+              "startFrame": 258,
+              "id": "278af7a0-c428-470c-9d5b-657fd28eae02",
+              "propertyOverrides": {
+                "direction": "in",
+                "focalMode": "manual",
+                "focalPointX": 0.45,
+                "magnification": 3,
+                "easeInDuration": 0,
+                "easeOutDuration": 0
+              },
+              "targetItemId": "2b122839-5cfb-4172-a672-db2219f3532d"
+            },
+            {
+              "assetId": "builtin:zoom",
+              "durationFrames": 63,
+              "enabled": true,
+              "startFrame": 195,
+              "id": "81720618-bb61-44ef-97b0-f95ae197876a",
+              "propertyOverrides": {
+                "easeIn": 0.2,
+                "easeOut": 0,
+                "direction": "in",
+                "focalMode": "manual",
+                "focalPointX": 0.72,
+                "focalPointY": 0.8,
+                "magnification": 1.35
+              },
+              "targetItemId": "2b122839-5cfb-4172-a672-db2219f3532d"
+            },
+            {
+              "assetId": "builtin:zoom",
+              "durationFrames": 435,
+              "enabled": true,
+              "startFrame": 510,
+              "id": "d520da39-bdbb-4d56-ad33-0b0025032c2d",
+              "propertyOverrides": {
+                "easeIn": 0.2,
+                "easeOut": 0,
+                "direction": "in",
+                "focalMode": "manual",
+                "focalPointX": 0.99,
+                "focalPointY": 0.18,
+                "magnification": 1.35
+              },
+              "targetItemId": "e4edf305-bad4-4561-ba90-fab913cf45c7"
+            },
+            {
+              "assetId": "builtin:zoom",
+              "durationFrames": 195,
+              "enabled": true,
+              "startFrame": 1425,
+              "id": "f8ab1705-2783-4a47-bdc8-474e2c01e217",
+              "propertyOverrides": {
+                "easeIn": 0,
+                "easeOut": 0,
+                "direction": "in",
+                "focalMode": "manual",
+                "focalPointX": 0.99,
+                "focalPointY": 0.18,
+                "magnification": 1.35
+              },
+              "targetItemId": "63185765-5a60-466e-8be9-fcdbad547e18"
+            }
+          ],
+          "hidden": false,
+          "id": "9a2a4188-5b9e-4afd-a048-43dcf09a7f85",
+          "muted": false,
+          "name": null,
+          "order": 1,
+          "trackType": "video"
+        },
+        {
+          "alias": "V3",
+          "hidden": false,
+          "id": "a10d27fa-1190-46ec-9d98-a54adb25cdcc",
+          "muted": false,
+          "name": null,
+          "order": 2,
+          "trackType": "video"
+        },
+        {
+          "alias": "A1",
+          "hidden": false,
+          "id": "ca857528-c1f7-49e1-b908-fd57eb8ac465",
+          "muted": false,
+          "name": "原创节拍",
+          "order": 3,
+          "trackType": "audio"
+        },
+        {
+          "alias": "V4",
+          "hidden": false,
+          "id": "52b7f11b-a4f3-4d75-9c5d-fc6f348bc45e",
+          "muted": false,
+          "name": "品牌标志",
+          "order": 4,
+          "trackType": "video"
+        }
+      ]
+    },
+    "projectId": "d0cba719-b937-45cd-b22e-829476adff1d"
+  }
+}

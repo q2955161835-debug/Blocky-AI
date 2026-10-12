@@ -1,0 +1,113 @@
+{
+  "workflow": "D:\\ComfyUI\\user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+  "originalWorkflowChanged": false,
+  "tasks": [
+    {
+      "taskId": "8634fe1b-ef75-4b3f-bb4b-83bd119e4548",
+      "status": "completed",
+      "statusOk": true,
+      "fetchOk": true,
+      "files": [
+        {
+          "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\01-review-reveal\\8634fe1b_000.mp4",
+          "bytes": 543711
+        }
+      ],
+      "requested": {
+        "seconds": 6,
+        "mp": 0.2,
+        "steps": 8,
+        "mode": "I2VA"
+      },
+      "actual": {
+        "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\01-review-reveal\\8634fe1b_000.mp4",
+        "bytes": 543711,
+        "sha256": "9bae84138adad9de6e46f203dc54b3db3897470929c5e1812ebbe7c960a618ec",
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "index": 0,
+              "codec_name": "h264",
+              "width": 608,
+              "height": 352,
+              "r_frame_rate": "24/1",
+              "duration": "6.583333"
+            },
+            {
+              "index": 1,
+              "codec_name": "aac",
+              "sample_rate": "32000",
+              "channels": 2,
+              "r_frame_rate": "0/0",
+              "duration": "6.575000"
+            }
+          ],
+          "format": {
+            "duration": "6.583333",
+            "size": "543711"
+          }
+        }
+      },
+      "adoptedSourceRangeSeconds": [
+        0,
+        6.5
+      ]
+    },
+    {
+      "taskId": "9c7c835f-2c62-4626-bdd6-fd8fd5c3e999",
+      "status": "completed",
+      "statusOk": true,
+      "fetchOk": true,
+      "files": [
+        {
+          "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\02-beginner-professional\\9c7c835f_000.mp4",
+          "bytes": 390761
+        }
+      ],
+      "requested": {
+        "seconds": 6,
+        "mp": 0.2,
+        "steps": 8,
+        "mode": "I2VA"
+      },
+      "actual": {
+        "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\02-beginner-professional\\9c7c835f_000.mp4",
+        "bytes": 390761,
+        "sha256": "4c1960fe27cb96af23828b28d22eef85b17affb92f76cc2bcdacc1c3f4c99b85",
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "index": 0,
+              "codec_name": "h264",
+              "width": 608,
+              "height": 352,
+              "r_frame_rate": "24/1",
+              "duration": "6.583333"
+            },
+            {
+              "index": 1,
+              "codec_name": "aac",
+              "sample_rate": "32000",
+              "channels": 2,
+              "r_frame_rate": "0/0",
+              "duration": "6.575000"
+            }
+          ],
+          "format": {
+            "duration": "6.583333",
+            "size": "390761"
+          }
+        }
+      },
+      "adoptedSourceRangeSeconds": [
+        0,
+        6.5
+      ]
+    }
+  ],
+  "ownedServiceStoppedAfterFetch": true
+}

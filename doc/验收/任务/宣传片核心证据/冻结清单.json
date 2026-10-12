@@ -1,0 +1,295 @@
+{
+  "frozenAt": "2026-10-13T00:38:13.188323+08:00",
+  "core": "Agent开发：代码审查变成积木审查，入门学习到专业开发，更直观观察运行",
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "projectUrl": "https://app.chatcut.io/zh/editor/d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "a38b2cd3-8baa-41e2-a608-62eb3ec0ec35",
+  "timelineName": "代码审查变积木审查 · 当前重制",
+  "exportId": "c4451fa3-0eec-46c8-a004-7025cbf1ca6f",
+  "renderMode": "local browser",
+  "requestedExport": {
+    "codec": "h264",
+    "fps": 30,
+    "resolution": "1080p",
+    "frames": [
+      0,
+      1800
+    ]
+  },
+  "files": {
+    "intro": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\01-review-reveal\\8634fe1b_000.mp4",
+      "bytes": 543711,
+      "sha256": "9bae84138adad9de6e46f203dc54b3db3897470929c5e1812ebbe7c960a618ec",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "width": 608,
+            "height": 352,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333"
+          },
+          {
+            "index": 1,
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "543711"
+        }
+      }
+    },
+    "growth": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\02-beginner-professional\\9c7c835f_000.mp4",
+      "bytes": 390761,
+      "sha256": "4c1960fe27cb96af23828b28d22eef85b17affb92f76cc2bcdacc1c3f4c99b85",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "width": 608,
+            "height": 352,
+            "r_frame_rate": "24/1",
+            "duration": "6.583333"
+          },
+          {
+            "index": 1,
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "6.575000"
+          }
+        ],
+        "format": {
+          "duration": "6.583333",
+          "size": "390761"
+        }
+      }
+    },
+    "review": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-nested-review-edit.mp4",
+      "bytes": 479759,
+      "sha256": "b69ee6e4cb0cd3e4541386b2d6a315891d42550fac77ad21a1fdbd7817c104d7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1",
+            "duration": "10.500000"
+          }
+        ],
+        "format": {
+          "duration": "10.500000",
+          "size": "479759"
+        }
+      }
+    },
+    "runtime": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-preset-runtime-highlights.mp4",
+      "bytes": 813431,
+      "sha256": "fc628b458527089c333fd7796d96af722603dfc32087168fc1a2988817cfea34",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1",
+            "duration": "14.500000"
+          }
+        ],
+        "format": {
+          "duration": "14.500000",
+          "size": "813431"
+        }
+      }
+    },
+    "score": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\看懂Agent-原创节拍.wav",
+      "bytes": 11520044,
+      "sha256": "96ff4a2443184e76d5a7b233b74493069f5632c838386ff2fa4f37ce274ae3af",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "pcm_s16le",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "60.000000"
+          }
+        ],
+        "format": {
+          "duration": "60.000000",
+          "size": "11520044"
+        }
+      }
+    },
+    "film": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-看懂Agent-试片-v3.mp4",
+      "bytes": 32078423,
+      "sha256": "ef2ca1f48968fa364f434289cb1173a2431bf667c9e6330fc3911b9ba58c3993",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1",
+            "duration": "59.966667"
+          },
+          {
+            "index": 1,
+            "codec_name": "aac",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "duration": "60.010667"
+          }
+        ],
+        "format": {
+          "duration": "60.010667",
+          "size": "32078423"
+        }
+      },
+      "frameCount": "1800"
+    }
+  },
+  "segments": [
+    {
+      "timelineFrames": [
+        0,
+        195
+      ],
+      "kind": "MiniMax concept plus core typography",
+      "assetId": "1854f3ca-3b92-406d-9ea5-ab1279148b1b",
+      "sourceSeconds": [
+        0,
+        6.5
+      ],
+      "boundary": "Concept comparison; no automatic code conversion claim"
+    },
+    {
+      "timelineFrames": [
+        195,
+        510
+      ],
+      "kind": "Actual current frontend nested structure and field edit",
+      "assetId": "bbffbcde-ca1b-4df4-b191-cf2fed30a464",
+      "sourceSeconds": [
+        0,
+        10.5
+      ],
+      "boundary": "Actual UI change; not a live model run"
+    },
+    {
+      "timelineFrames": [
+        510,
+        945
+      ],
+      "kind": "Existing website preset simulation with original highlights and traces",
+      "assetId": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+      "sourceSeconds": [
+        0,
+        14.5
+      ],
+      "boundary": "Not this turn desktop Runtime or model execution; on-film 界面演示"
+    },
+    {
+      "timelineFrames": [
+        945,
+        1230
+      ],
+      "kind": "Virtual Codex/Claude Code terminal and verified Blocky project-create command",
+      "assetId": "4ebcac5d-9c09-4631-b54d-1bae5f7b0349",
+      "boundary": "User allowed virtual context; no official integration or executed brand tool claim; on-film CLI开发情景示意"
+    },
+    {
+      "timelineFrames": [
+        1230,
+        1425
+      ],
+      "kind": "MiniMax concept of same language from simple to complex",
+      "assetId": "5e8aad6a-9027-40e8-80fb-4786e0dc701a",
+      "sourceSeconds": [
+        0,
+        6.5
+      ]
+    },
+    {
+      "timelineFrames": [
+        1425,
+        1620
+      ],
+      "kind": "Return to same website preset simulation",
+      "assetId": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+      "sourceSeconds": [
+        7.7,
+        14.2
+      ],
+      "boundary": "On-film 界面演示"
+    },
+    {
+      "timelineFrames": [
+        1620,
+        1800
+      ],
+      "kind": "Brand end card",
+      "assetId": "e38a6305-1348-4e68-b8bb-e39c93238c44"
+    }
+  ],
+  "score": {
+    "original": true,
+    "voiceover": false,
+    "humanListening": "not performed by production tools"
+  },
+  "sourceFailures": {
+    "cliValidateExit": 3,
+    "cliCompileExit": 3,
+    "formalSimulate": "BLK-PROVIDER-DISABLED; not shown as success"
+  },
+  "scope": "Only film; product/website/installer unchanged; desktop not reinstalled or launched",
+  "outsideStorage": {
+    "browserDefaultDownload": "C:\\Users\\29551\\Downloads\\Blocky-看懂Agent-试片-v3.mp4",
+    "downloadMovedTo": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-看懂Agent-试片-v3.mp4",
+    "imagegenDefaultFilesMovedToMediaAssets": true,
+    "comfyInput": [
+      "D:\\ComfyUI\\input\\代码与积木审查.png",
+      "D:\\ComfyUI\\input\\从入门到专业.png"
+    ],
+    "comfyOutput": [
+      "D:\\ComfyUI\\output\\video\\Blocky_review_01-review-reveal_00001_.mp4",
+      "D:\\ComfyUI\\output\\video\\Blocky_review_02-beginner-professional_00001_.mp4"
+    ],
+    "officialJobReceipts": [
+      "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\8634fe1b-ef75-4b3f-bb4b-83bd119e4548.json",
+      "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\9c7c835f-2c62-4626-bdd6-fd8fd5c3e999.json"
+    ]
+  }
+}

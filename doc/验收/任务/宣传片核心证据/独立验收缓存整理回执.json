@@ -1,0 +1,154 @@
+{
+  "finishedAt": "2026-10-13T00:46:02.5312889+08:00",
+  "operation": "Same-volume Move-Item; no deletion",
+  "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13",
+  "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13",
+  "sourceGone": true,
+  "files": 20,
+  "bytes": 1072900.0,
+  "afterFiles": 20,
+  "allShaAndByteMatches": true,
+  "previewService": "Only self-owned port8877 server stopped before movement",
+  "mapping": [
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\audio.log",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\audio.log",
+      "bytes": 6943,
+      "sha256": "D4DEDB3A763D1C4B0A4F2C4483342B39113B9D553DA014E54FF03852A93F1071",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\blackdetect.log",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\blackdetect.log",
+      "bytes": 1986,
+      "sha256": "44D772B657C2FE6B88E20377F3B0FC775E521ED59CAEDF775224BEB774B31772",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\decode-exit.txt",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\decode-exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\decode.log",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\decode.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\ffprobe.json",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\ffprobe.json",
+      "bytes": 4931,
+      "sha256": "606E45FCD4043A0A25A9E4EF25137DE7B12AD58DCC63086E52F9ABCB14838A61",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\freeze-readback.json",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\freeze-readback.json",
+      "bytes": 1606,
+      "sha256": "95B6C018C48A34347B3B581BD90EC550366597F6F861B836693CFAE2910F44B3",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\hash.json",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\hash.json",
+      "bytes": 214,
+      "sha256": "C7745A27AA43727B0E7AA6F9A9B8631BA996AD120C68167DE475632BC9EA452B",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\live-timeline-readback.json",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\live-timeline-readback.json",
+      "bytes": 13497,
+      "sha256": "39E892C76A65B3FD280CF28874C48AD0B617C7F87F8D3F91D66DAB462B7BCF04",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\normal-playback-states.json",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\normal-playback-states.json",
+      "bytes": 4118,
+      "sha256": "8170CFC4DB18384FCCBBC0CDC2B34274A01773AEB8C08B0B3406B925663E14E5",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\overview.jpg",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\overview.jpg",
+      "bytes": 272989,
+      "sha256": "7ED4C601003D1B4C6AA9D34263619D750BBCD1EC0734D2820D6DAB86EE1F9CFC",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-cli.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-cli.png",
+      "bytes": 100785,
+      "sha256": "BEA606A23FC776C2D394C613B8C374665836A12A18750CC66B78BA1E6AEA19E3",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-ended.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-ended.png",
+      "bytes": 78717,
+      "sha256": "E49A341DC72C71D8701032C1CA754FE495B49A622F2533B5A40A0F30ADB40366",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-learning.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-learning.png",
+      "bytes": 70130,
+      "sha256": "2F7B5F940C355F28BE5247A955C9F45BCE94EB31A63F03F0D0E0E879DA1D95C3",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-review.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-review.png",
+      "bytes": 124723,
+      "sha256": "A08FB48611CF1D1760FBB9AC9CCC608A67753781474E48ADA6CA1D78DB2D795E",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-start.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-start.png",
+      "bytes": 137279,
+      "sha256": "800E677CF774D45046CF46ACCA684FE8D16E42C4746A1548EE1EEBFCED6CA669",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\playing-trace.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\playing-trace.png",
+      "bytes": 129875,
+      "sha256": "69A5662F730BEF5E4FE456A67111DAA058C75E2ADD0DB7946FEACDD08492106D",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\preview.html",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\preview.html",
+      "bytes": 883,
+      "sha256": "B09B053BF1EB2844F8C6D38B00AA960C0C19564AB7B0D0B53814BC9E044A0CC7",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\review-play-state1.txt",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\review-play-state1.txt",
+      "bytes": 577,
+      "sha256": "4DE9612E3988AF900E0E05EE210AA4A3667343FE9A40AB9584BE23B8A118F310",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\review-play1.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\review-play1.png",
+      "bytes": 122500,
+      "sha256": "D186CA4C904B804E8D5F38059D740BAA2F76A7E0D79ECE0CA75EE223787220E8",
+      "verified": true
+    },
+    {
+      "from": "D:\\1Folder\\Blocky-AI\\try\\宣传片核心独立验收-2026-10-13\\serve.py",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片核心独立验收-2026-10-13\\serve.py",
+      "bytes": 1144,
+      "sha256": "5AB16EE189BDF25A4C32E6C698D5165648B59194D39B9851E681164F19E5B23B",
+      "verified": true
+    }
+  ]
+}
