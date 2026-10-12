@@ -1,0 +1,20 @@
+{
+  "duration": 60,
+  "sample_rate": 48000,
+  "channels": 2,
+  "source": "Original procedural composition and toy effects, no external recording",
+  "peak_before_normalization": 0.5916101932525635,
+  "events": {
+    "impacts": [
+      2.58,
+      7.08
+    ],
+    "swap": 33.5,
+    "unfold": 35.1,
+    "logo": [
+      55.7,
+      56,
+      56.3
+    ]
+  }
+}

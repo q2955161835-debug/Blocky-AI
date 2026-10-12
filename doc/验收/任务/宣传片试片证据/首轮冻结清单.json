@@ -1,0 +1,48 @@
+{
+  "scope": "User-approved three-item creative pilot",
+  "frozenAt": "2026-10-12T22:31:05+08:00",
+  "productBase": "40e05e1",
+  "checkpoint": "bda1f4d",
+  "promptId": "4e5c6796-aa03-4bab-ae03-638db690a9d1",
+  "minimaxInterval": [
+    9,
+    14
+  ],
+  "files": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\改一块\\outputs\\Blocky-改一块-试片-v1.mp4",
+      "bytes": 15298772,
+      "sha256": "F7A6269D97AA16F46E31FF1EDD2DA8F11467ECFB8D26261E7BBA33F4AB835E41"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\minimax\\4e5c6796_000.mp4",
+      "bytes": 213068,
+      "sha256": "C9C1080414CC26687FBBE2746837A678C1765D6EEF56DBA2B29B9D90B8989E57"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\reaction-first.png",
+      "bytes": 429369,
+      "sha256": "527217B0BDFC6A0F48AAAD4305F9C8B28A51FE02750E78BC5FB92C894397A0DE"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\ui-before.png",
+      "bytes": 124945,
+      "sha256": "6D82AD41A93BE6C052026AD3CD5464892FD7B818BCD5064659C638962EC81539"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\ui-edit.png",
+      "bytes": 139445,
+      "sha256": "605B2FDE9083D347CFED7AF15F6737532710FC669298DF094DEE463C336D4746"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\ui-after.png",
+      "bytes": 135810,
+      "sha256": "2C912C6880E9BBF54D15635890451D648842FB38BE5B45D499646A50E86ACF0A"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12\\score.wav",
+      "bytes": 11520044,
+      "sha256": "C8326566DA7A2468C5DB0761102CB92EF2C0098C6F4ED90F6BB4AB36CD57906D"
+    }
+  ]
+}

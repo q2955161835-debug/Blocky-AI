@@ -1,0 +1,23 @@
+{
+  "movedAt": "2026-10-12T22:43:21+08:00",
+  "items": [
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片试制-2026-10-12",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片试制-2026-10-12",
+      "files": 1100,
+      "bytes": 173577325.0,
+      "sha256Differences": 0,
+      "operation": "Move-Item, same-volume recoverable relocation"
+    },
+    {
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片试片独立验收-2026-10-12",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片试片独立验收-2026-10-12",
+      "files": 47,
+      "bytes": 6647563.0,
+      "sha256Differences": 0,
+      "operation": "Move-Item, same-volume recoverable relocation"
+    }
+  ],
+  "deletedBytes": 0,
+  "mp4Hash": "110F6CBA75C91A3FE132267698F6A45AB3EF3CA7E1B4A75E67F0C5E30BB8D524"
+}

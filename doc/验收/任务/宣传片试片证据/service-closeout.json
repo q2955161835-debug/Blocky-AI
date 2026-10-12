@@ -1,0 +1,7 @@
+{
+  "owner": "promo-pilot",
+  "pid": 55712,
+  "completedPrompt": "4e5c6796-aa03-4bab-ae03-638db690a9d1",
+  "stoppedAt": "2026-10-12T22:35:01+08:00",
+  "reason": "Owned job completed, fetched and queue had only one completed job"
+}
