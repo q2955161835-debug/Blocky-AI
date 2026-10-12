@@ -1,0 +1,610 @@
+[
+  {
+    "name": "01-space",
+    "submission": {
+      "started": 1791817722.6493776,
+      "config": {
+        "name": "01-space",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\太空工位.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\01-太空工位.txt",
+        "seconds": 4,
+        "megapixels": 0.2,
+        "steps": 12,
+        "seed": 41001
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\01-space\\workflow.json",
+          "status": "queued",
+          "prompt_id": "85bff319-ea7b-4cce-b499-0f2a081bb02e",
+          "client_id": "f648e356-082d-46ea-ae5f-1add11c54870",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\85bff319-ea7b-4cce-b499-0f2a081bb02e.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "85bff319-ea7b-4cce-b499-0f2a081bb02e",
+        "status": "error",
+        "workflow_size": null,
+        "outputs": [],
+        "outputs_by_node": {},
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": {
+          "prompt_id": "85bff319-ea7b-4cce-b499-0f2a081bb02e",
+          "node_id": "105:14",
+          "node_type": "SamplerCustomAdvanced",
+          "executed": [
+            "105:9",
+            "105:121",
+            "114",
+            "105:111",
+            "105:15",
+            "105:17",
+            "105:6",
+            "115",
+            "105:11",
+            "105:24",
+            "105:16",
+            "105:104",
+            "105:107",
+            "105:13"
+          ],
+          "exception_message": "FinalLayer.forward() missing 3 required positional arguments: 'sigma', 'sample_sigmas', and 'shifts'\n",
+          "exception_type": "TypeError",
+          "traceback": [
+            "  File \"D:\\ComfyUI\\execution.py\", line 547, in execute\n    output_data, output_ui, has_subgraph, has_pending_tasks = await get_output_data(prompt_id, unique_id, obj, input_data_all, execution_block_cb=execution_block_cb, pre_execute_cb=pre_execute_cb, v3_data=v3_data)\n                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\execution.py\", line 352, in get_output_data\n    return_values = await _async_map_node_over_list(prompt_id, unique_id, obj, input_data_all, obj.FUNCTION, allow_interrupt=True, execution_block_cb=execution_block_cb, pre_execute_cb=pre_execute_cb, v3_data=v3_data)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\execution.py\", line 326, in _async_map_node_over_list\n    await process_inputs(input_dict, i)\n",
+            "  File \"D:\\ComfyUI\\execution.py\", line 314, in process_inputs\n    result = f(**inputs)\n             ^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy_api\\internal\\__init__.py\", line 149, in wrapped_func\n    return method(locked_class, **inputs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy_api\\latest\\_io.py\", line 2053, in EXECUTE_NORMALIZED\n    to_return = cls.execute(*args, **kwargs)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy_extras\\nodes_custom_sampler.py\", line 1055, in execute\n    samples = guider.sample(noise.generate_noise(latent), latent_image, sampler, sigmas, denoise_mask=noise_mask, callback=callback, disable_pbar=disable_pbar, seed=noise.seed)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1335, in sample\n    output = executor.execute(noise, latent_image, sampler, sigmas, denoise_mask, callback, disable_pbar, seed, latent_shapes=latent_shapes)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 114, in execute\n    return self.wrappers[self.idx](self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3\\comfyui_spectrum_h3\\sampling.py\", line 148, in outer_sample_wrapper\n    return executor(\n           ^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 106, in __call__\n    return new_executor.execute(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 113, in execute\n    return self.original(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1262, in outer_sample\n    output = self.inner_sample(noise, latent_image, device, sampler, sigmas, denoise_mask, callback, disable_pbar, seed, latent_shapes=latent_shapes)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1237, in inner_sample\n    samples = executor.execute(self, sigmas, extra_args, callback, noise, latent_image, denoise_mask, disable_pbar)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 113, in execute\n    return self.original(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1005, in sample\n    samples = self.sampler_function(model_k, noise, sigmas, extra_args=extra_args, callback=k_callback, disable=disable_pbar, **self.extra_options)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\utils\\_contextlib.py\", line 122, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\k_diffusion\\sampling.py\", line 1528, in sample_res_multistep\n    return res_multistep(model, x, sigmas, extra_args=extra_args, callback=callback, disable=disable, s_noise=s_noise, noise_sampler=noise_sampler, eta=0., cfg_pp=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\utils\\_contextlib.py\", line 122, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\k_diffusion\\sampling.py\", line 1486, in res_multistep\n    denoised = model(x, sigmas[i] * s_in, **extra_args)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 640, in __call__\n    out = self.inner_model(x, sigma, model_options=model_options, seed=seed)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1208, in __call__\n    return self.outer_predict_noise(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1215, in outer_predict_noise\n    ).execute(x, timestep, model_options, seed)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 114, in execute\n    return self.wrappers[self.idx](self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3\\comfyui_spectrum_h3\\sampling.py\", line 198, in predict_noise_wrapper\n    result = execute_attempt(decision)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3\\comfyui_spectrum_h3\\sampling.py\", line 194, in execute_attempt\n    return executor(x, timestep, patched, seed)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 106, in __call__\n    return new_executor.execute(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 113, in execute\n    return self.original(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 1218, in predict_noise\n    return sampling_function(self.inner_model, x, timestep, self.conds.get(\"negative\", None), self.conds.get(\"positive\", None), self.cfg, model_options=model_options, seed=seed)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 620, in sampling_function\n    out = calc_cond_batch(model, conds, x, timestep, model_options)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 211, in calc_cond_batch\n    return _calc_cond_batch_outer(model, conds, x_in, timestep, model_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 219, in _calc_cond_batch_outer\n    return executor.execute(model, conds, x_in, timestep, model_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 113, in execute\n    return self.original(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\samplers.py\", line 335, in _calc_cond_batch\n    output = model.apply_model(input_x, timestep_, **c).chunk(batch_chunks)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\model_base.py\", line 209, in apply_model\n    return comfy.patcher_extension.WrapperExecutor.new_class_executor(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 113, in execute\n    return self.original(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\model_base.py\", line 253, in _apply_model\n    model_output = self.diffusion_model(xc, t, context=context, control=control, transformer_options=transformer_options, **extra_conds)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 1782, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 1793, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\ldm\\minimax\\model.py\", line 577, in forward\n    graph_out = comfy.patcher_extension.WrapperExecutor.new_class_executor(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\comfy\\patcher_extension.py\", line 114, in execute\n    return self.wrappers[self.idx](self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3\\comfyui_spectrum_h3\\minimax_h3.py\", line 496, in diffusion_model_wrapper\n    output = _execute_forecast(inner, sanitized, state, video_x, audio_x)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3\\comfyui_spectrum_h3\\minimax_h3.py\", line 337, in _execute_forecast\n    video_projected, audio_projected = inner.final_layer(\n                                       ^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 1782, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"D:\\Miniconda\\envs\\comfyui\\Lib\\site-packages\\torch\\nn\\modules\\module.py\", line 1793, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+          ],
+          "current_inputs": {
+            "noise": [
+              "<D:\\ComfyUI\\comfy_extras\\nodes_custom_sampler.Noise_RandomNoise object at 0x000001F402EA5150>"
+            ],
+            "guider": [
+              "<D:\\ComfyUI\\comfy_extras\\nodes_custom_sampler.Guider_Basic object at 0x000001FBCBC98590>"
+            ],
+            "sampler": [
+              "<comfy.samplers.KSAMPLER object at 0x000001F400F74450>"
+            ],
+            "sigmas": [
+              "tensor([1.0000, 0.9925, 0.9837, 0.9730, 0.9601, 0.9440, 0.9231, 0.8957, 0.8575,\n        0.8000, 0.7064, 0.5239, 0.0000])"
+            ],
+            "latent_image": [
+              "{'samples': NestedTensor([tensor([[[[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]],\n\n\n         [[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]],\n\n\n         [[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]],\n\n\n         ...,\n\n\n         [[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]],\n\n\n         [[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]],\n\n\n         [[[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          ...,\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]],\n\n          [[0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           ...,\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.],\n           [0., 0., 0.,  ..., 0., 0., 0.]]]]]), tensor([[[[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]],\n\n         [[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]],\n\n         [[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]],\n\n         ...,\n\n         [[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]],\n\n         [[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]],\n\n         [[0., 0., 0.,  ..., 0., 0., 0.],\n          [0., 0., 0.,  ..., 0., 0., 0.]]]])])}"
+            ]
+          },
+          "current_outputs": [
+            "105:111",
+            "105:17",
+            "115",
+            "105:11",
+            "105:104",
+            "105:16",
+            "105:24",
+            "105:91",
+            "105:10",
+            "105:9",
+            "105:121",
+            "105:23",
+            "120",
+            "105:15",
+            "105:107",
+            "119",
+            "105:14",
+            "114",
+            "92",
+            "105:6",
+            "105:13"
+          ],
+          "timestamp": 1791817753684
+        },
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "01-space-fast",
+    "submission": {
+      "started": 1791817848.601673,
+      "config": {
+        "name": "01-space-fast",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\太空工位.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\01-太空工位.txt",
+        "seconds": 4,
+        "megapixels": 0.15,
+        "steps": 8,
+        "seed": 41001
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\01-space-fast\\workflow.json",
+          "status": "queued",
+          "prompt_id": "1a3244bb-3f22-43d0-9df4-32682298532b",
+          "client_id": "c9b62198-bd10-4dea-bee4-ce67f276023e",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\1a3244bb-3f22-43d0-9df4-32682298532b.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "1a3244bb-3f22-43d0-9df4-32682298532b",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_01-space-fast_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_01-space-fast_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "02-office",
+    "submission": {
+      "started": 1791818011.7072513,
+      "config": {
+        "name": "02-office",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\地面工位.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\02-帮我卷一下.txt",
+        "seconds": 6,
+        "megapixels": 0.15,
+        "steps": 8,
+        "seed": 41002
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\02-office\\workflow.json",
+          "status": "queued",
+          "prompt_id": "97859bb1-1a25-458d-905f-1beced90d149",
+          "client_id": "cbc912b9-b141-4dae-8fc4-e3754f429908",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\97859bb1-1a25-458d-905f-1beced90d149.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "97859bb1-1a25-458d-905f-1beced90d149",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_02-office_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_02-office_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "03-roll",
+    "submission": {
+      "started": 1791818185.027553,
+      "config": {
+        "name": "03-roll",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\真卷起来了.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\03-真的卷了.txt",
+        "seconds": 6,
+        "megapixels": 0.2,
+        "steps": 8,
+        "seed": 41003
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\03-roll\\workflow.json",
+          "status": "queued",
+          "prompt_id": "4ff983f4-26b3-4262-a35c-afd6297fd7df",
+          "client_id": "6adc6491-6e52-4c0d-9a55-61aa700ba0a7",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\4ff983f4-26b3-4262-a35c-afd6297fd7df.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "4ff983f4-26b3-4262-a35c-afd6297fd7df",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_03-roll_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_03-roll_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "04-bed",
+    "submission": {
+      "started": 1791818375.3563297,
+      "config": {
+        "name": "04-bed",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\真躺平了.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\04-真的躺平.txt",
+        "seconds": 6,
+        "megapixels": 0.2,
+        "steps": 8,
+        "seed": 41004
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\04-bed\\workflow.json",
+          "status": "queued",
+          "prompt_id": "28254f9e-de7e-4590-924f-045259761ae3",
+          "client_id": "6ab720e0-6592-42e9-b958-82a39773993f",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\28254f9e-de7e-4590-924f-045259761ae3.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "28254f9e-de7e-4590-924f-045259761ae3",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_04-bed_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_04-bed_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "05-rocket",
+    "submission": {
+      "started": 1791818597.661773,
+      "config": {
+        "name": "05-rocket",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\真起飞了.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\05-真的起飞.txt",
+        "seconds": 6,
+        "megapixels": 0.2,
+        "steps": 8,
+        "seed": 41005
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\05-rocket\\workflow.json",
+          "status": "queued",
+          "prompt_id": "98529f9c-1332-402e-8848-d16819faff1d",
+          "client_id": "c833ba72-525f-476c-9786-5189d5f61511",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\98529f9c-1332-402e-8848-d16819faff1d.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "98529f9c-1332-402e-8848-d16819faff1d",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_05-rocket_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_05-rocket_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "06-space-reaction",
+    "submission": {
+      "started": 1791818810.680525,
+      "config": {
+        "name": "06-space-reaction",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\太空工位.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\06-效率起飞.txt",
+        "seconds": 6,
+        "megapixels": 0.2,
+        "steps": 8,
+        "seed": 41006
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\06-space-reaction\\workflow.json",
+          "status": "queued",
+          "prompt_id": "ad46998d-b030-4aa7-8a02-f687a90b46c1",
+          "client_id": "030462a5-e9b1-4ae0-b8e1-b1013ac493fd",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\ad46998d-b030-4aa7-8a02-f687a90b46c1.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "ad46998d-b030-4aa7-8a02-f687a90b46c1",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_06-space-reaction_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_06-space-reaction_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  },
+  {
+    "name": "07-resolution",
+    "submission": {
+      "started": 1791818981.6029596,
+      "config": {
+        "name": "07-resolution",
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\assets\\这次听我的.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\workflows\\07-按我的来.txt",
+        "seconds": 6,
+        "megapixels": 0.2,
+        "steps": 8,
+        "seed": 41007
+      },
+      "result": {
+        "schema": "envelope/1",
+        "type": "envelope",
+        "ok": true,
+        "command": "run",
+        "version": "1.20.0",
+        "where": "local",
+        "data": {
+          "workflow": "D:\\1Folder\\Blocky-AI\\try\\宣传片重制-2026-10-12\\07-resolution\\workflow.json",
+          "status": "queued",
+          "prompt_id": "ea1daa82-b772-4a7c-986c-0cd06f069840",
+          "client_id": "1bab8eb9-1a3e-4d12-8bb7-93397c3a9c71",
+          "outputs": [],
+          "elapsed_seconds": null,
+          "host": "127.0.0.1",
+          "port": 8188,
+          "state_file": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\ea1daa82-b772-4a7c-986c-0cd06f069840.json",
+          "watcher_spawned": false
+        },
+        "error": null
+      }
+    },
+    "status": {
+      "schema": "envelope/1",
+      "type": "envelope",
+      "ok": true,
+      "command": "jobs status",
+      "version": "1.20.0",
+      "where": "local",
+      "data": {
+        "prompt_id": "ea1daa82-b772-4a7c-986c-0cd06f069840",
+        "status": "completed",
+        "workflow_size": null,
+        "outputs": [
+          "http://127.0.0.1:8188/view?filename=Blocky_literal_07-resolution_00001_.mp4&subfolder=video&type=output"
+        ],
+        "outputs_by_node": {
+          "92": [
+            "http://127.0.0.1:8188/view?filename=Blocky_literal_07-resolution_00001_.mp4&subfolder=video&type=output"
+          ]
+        },
+        "outputs_by_item": {},
+        "text_outputs": {},
+        "error": null,
+        "host": "127.0.0.1",
+        "port": 8188
+      },
+      "error": null
+    }
+  }
+]

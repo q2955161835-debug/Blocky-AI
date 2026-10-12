@@ -1,0 +1,390 @@
+{
+  "resolution": "1920x1080",
+  "captureMethod": "Sequential real page screenshots with wall-clock timestamps",
+  "durationMs": 6910.815800000011,
+  "action": {
+    "openMs": 1003.0581999999995,
+    "typeStartMs": 1058.2428000000073,
+    "typeEndMs": 2342.027700000006,
+    "submitMs": 2733.4098999999987
+  },
+  "before": [
+    {
+      "id": "assistant-root_field_blockly-1i",
+      "value": "根据已同步资料回答问题，引用可核对的原文；资料不足时说明边界。",
+      "ariaLabel": "Edit text: 根据已同步资料回答问题，引用可核对的原文；资料不足时说明边界。"
+    },
+    {
+      "id": "assistant-chat-trigger_field_blockly-1f",
+      "value": "资料问答",
+      "ariaLabel": "Edit text: 资料问答"
+    },
+    {
+      "id": "assistant-answer_field_blockly-r",
+      "value": "段落",
+      "ariaLabel": "dropdown: 段落"
+    },
+    {
+      "id": "assistant-compose-answer_field_blockly-u",
+      "value": "assistant-model",
+      "ariaLabel": "Edit text: assistant-model"
+    },
+    {
+      "id": "assistant-evidence-guardrail_field_blockly-x",
+      "value": "require",
+      "ariaLabel": "dropdown: require"
+    },
+    {
+      "id": "assistant-knowledge-retrieve_field_blockly-10",
+      "value": "assistant-knowledge",
+      "ariaLabel": "Edit text: assistant-knowledge"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-13",
+      "value": "10000",
+      "ariaLabel": "Edit text: 10000"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-15",
+      "value": "256",
+      "ariaLabel": "Edit text: 256"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-17",
+      "value": "1048576",
+      "ariaLabel": "Edit text: 1048576"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-19",
+      "value": "1800000",
+      "ariaLabel": "Edit text: 1800000"
+    },
+    {
+      "id": "assistant-evidence-instructions_field_blockly-1c",
+      "value": "只根据已同步资料中的证据回答。未同步、无命中或无权访问时清楚说明，不编造答案或引用。",
+      "ariaLabel": "Edit text: 只根据已同步资料中的证据回答。未同步、无命中或无权访问时清楚说明，不编造答案或引用。"
+    }
+  ],
+  "after": [
+    {
+      "id": "assistant-root_field_blockly-1i",
+      "value": "根据已同步资料回答问题，引用可核对的原文；资料不足时说明边界。",
+      "ariaLabel": "Edit text: 根据已同步资料回答问题，引用可核对的原文；资料不足时说明边界。"
+    },
+    {
+      "id": "assistant-chat-trigger_field_blockly-1f",
+      "value": "资料问答",
+      "ariaLabel": "Edit text: 资料问答"
+    },
+    {
+      "id": "assistant-answer_field_blockly-r",
+      "value": "段落",
+      "ariaLabel": "dropdown: 段落"
+    },
+    {
+      "id": "assistant-compose-answer_field_blockly-u",
+      "value": "assistant-model",
+      "ariaLabel": "Edit text: assistant-model"
+    },
+    {
+      "id": "assistant-evidence-guardrail_field_blockly-x",
+      "value": "require",
+      "ariaLabel": "dropdown: require"
+    },
+    {
+      "id": "assistant-knowledge-retrieve_field_blockly-10",
+      "value": "assistant-knowledge",
+      "ariaLabel": "Edit text: assistant-knowledge"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-13",
+      "value": "10000",
+      "ariaLabel": "Edit text: 10000"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-15",
+      "value": "256",
+      "ariaLabel": "Edit text: 256"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-17",
+      "value": "1048576",
+      "ariaLabel": "Edit text: 1048576"
+    },
+    {
+      "id": "assistant-run-budget_field_blockly-19",
+      "value": "1800000",
+      "ariaLabel": "Edit text: 1800000"
+    },
+    {
+      "id": "assistant-evidence-instructions_field_blockly-1c",
+      "value": "先确认我的意图，再执行任务。",
+      "ariaLabel": "Edit text: 先确认我的意图，再执行任务。"
+    }
+  ],
+  "assertions": {
+    "editorClosed": true,
+    "targetVisible": true,
+    "rawFieldListMatches": true,
+    "reopenedEditorValue": "先确认我的意图，再执行任务。",
+    "onlyTargetFieldChanged": true
+  },
+  "frames": [
+    {
+      "file": "frame-0000.png",
+      "ms": 0.004200000024866313
+    },
+    {
+      "file": "frame-0001.png",
+      "ms": 115.37140000000363
+    },
+    {
+      "file": "frame-0002.png",
+      "ms": 221.74190000002272
+    },
+    {
+      "file": "frame-0003.png",
+      "ms": 328.7021999999997
+    },
+    {
+      "file": "frame-0004.png",
+      "ms": 437.49890000000596
+    },
+    {
+      "file": "frame-0005.png",
+      "ms": 560.0101000000141
+    },
+    {
+      "file": "frame-0006.png",
+      "ms": 667.497400000022
+    },
+    {
+      "file": "frame-0007.png",
+      "ms": 774.006400000013
+    },
+    {
+      "file": "frame-0008.png",
+      "ms": 880.721600000019
+    },
+    {
+      "file": "frame-0009.png",
+      "ms": 987.8418000000238
+    },
+    {
+      "file": "frame-0010.png",
+      "ms": 1111.1304000000237
+    },
+    {
+      "file": "frame-0011.png",
+      "ms": 1216.5332000000053
+    },
+    {
+      "file": "frame-0012.png",
+      "ms": 1339.3818000000028
+    },
+    {
+      "file": "frame-0013.png",
+      "ms": 1461.8686000000162
+    },
+    {
+      "file": "frame-0014.png",
+      "ms": 1569.2387000000163
+    },
+    {
+      "file": "frame-0015.png",
+      "ms": 1676.0706000000064
+    },
+    {
+      "file": "frame-0016.png",
+      "ms": 1785.215600000025
+    },
+    {
+      "file": "frame-0017.png",
+      "ms": 1892.1940000000177
+    },
+    {
+      "file": "frame-0018.png",
+      "ms": 2015.5844999999972
+    },
+    {
+      "file": "frame-0019.png",
+      "ms": 2123.614900000015
+    },
+    {
+      "file": "frame-0020.png",
+      "ms": 2231.916100000002
+    },
+    {
+      "file": "frame-0021.png",
+      "ms": 2341.8871999999974
+    },
+    {
+      "file": "frame-0022.png",
+      "ms": 2449.733600000007
+    },
+    {
+      "file": "frame-0023.png",
+      "ms": 2574.3240000000224
+    },
+    {
+      "file": "frame-0024.png",
+      "ms": 2681.841800000024
+    },
+    {
+      "file": "frame-0025.png",
+      "ms": 2787.85520000002
+    },
+    {
+      "file": "frame-0026.png",
+      "ms": 2911.0624000000244
+    },
+    {
+      "file": "frame-0027.png",
+      "ms": 3019.713300000003
+    },
+    {
+      "file": "frame-0028.png",
+      "ms": 3127.1387000000104
+    },
+    {
+      "file": "frame-0029.png",
+      "ms": 3233.9343000000226
+    },
+    {
+      "file": "frame-0030.png",
+      "ms": 3357.5264000000025
+    },
+    {
+      "file": "frame-0031.png",
+      "ms": 3464.089000000007
+    },
+    {
+      "file": "frame-0032.png",
+      "ms": 3572.012700000021
+    },
+    {
+      "file": "frame-0033.png",
+      "ms": 3694.8385000000126
+    },
+    {
+      "file": "frame-0034.png",
+      "ms": 3803.2494000000006
+    },
+    {
+      "file": "frame-0035.png",
+      "ms": 3912.5250000000233
+    },
+    {
+      "file": "frame-0036.png",
+      "ms": 4021.616800000018
+    },
+    {
+      "file": "frame-0037.png",
+      "ms": 4144.566900000005
+    },
+    {
+      "file": "frame-0038.png",
+      "ms": 4251.779300000024
+    },
+    {
+      "file": "frame-0039.png",
+      "ms": 4359.70140000002
+    },
+    {
+      "file": "frame-0040.png",
+      "ms": 4466.0949000000255
+    },
+    {
+      "file": "frame-0041.png",
+      "ms": 4575.811300000001
+    },
+    {
+      "file": "frame-0042.png",
+      "ms": 4698.822700000019
+    },
+    {
+      "file": "frame-0043.png",
+      "ms": 4806.121600000013
+    },
+    {
+      "file": "frame-0044.png",
+      "ms": 4913.937900000019
+    },
+    {
+      "file": "frame-0045.png",
+      "ms": 5036.678100000019
+    },
+    {
+      "file": "frame-0046.png",
+      "ms": 5144.667300000001
+    },
+    {
+      "file": "frame-0047.png",
+      "ms": 5251.9463000000105
+    },
+    {
+      "file": "frame-0048.png",
+      "ms": 5359.44650000002
+    },
+    {
+      "file": "frame-0049.png",
+      "ms": 5482.473400000017
+    },
+    {
+      "file": "frame-0050.png",
+      "ms": 5588.354600000021
+    },
+    {
+      "file": "frame-0051.png",
+      "ms": 5711.411700000026
+    },
+    {
+      "file": "frame-0052.png",
+      "ms": 5818.4841000000015
+    },
+    {
+      "file": "frame-0053.png",
+      "ms": 5927.1686000000045
+    },
+    {
+      "file": "frame-0054.png",
+      "ms": 6034.006000000023
+    },
+    {
+      "file": "frame-0055.png",
+      "ms": 6141.77370000002
+    },
+    {
+      "file": "frame-0056.png",
+      "ms": 6249.231300000014
+    },
+    {
+      "file": "frame-0057.png",
+      "ms": 6356.684399999998
+    },
+    {
+      "file": "frame-0058.png",
+      "ms": 6465.040500000003
+    },
+    {
+      "file": "frame-0059.png",
+      "ms": 6574.0163000000175
+    },
+    {
+      "file": "frame-0060.png",
+      "ms": 6680.662000000011
+    },
+    {
+      "file": "frame-0061.png",
+      "ms": 6803.85520000002
+    }
+  ],
+  "video": {
+    "path": "D:/1Folder/Blocky-AI/宣传片/字面理解/sources/ui/blocky-real-instruction-edit.mp4",
+    "durationSeconds": 6.866667,
+    "fps": 30,
+    "framesDuplicatedFor30fps": true,
+    "sha256": "19ce12433a0b66c36a84a495f7aed40ec1ddf6cc376fb609d267027f0953f308"
+  },
+  "contentBoundary": "Actual Blockly field edit only; no model call or Runtime execution"
+}

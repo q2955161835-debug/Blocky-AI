@@ -1,0 +1,623 @@
+{
+  "state": {
+    "canvas": {
+      "height": 1080,
+      "width": 1920
+    },
+    "durationFrames": 1800,
+    "fps": 30,
+    "id": "67a3804c-6934-4880-a6d8-354c6d53df52",
+    "name": "Timeline",
+    "range": {
+      "fromFrame": 0,
+      "toFrame": 1800
+    }
+  },
+  "timeline": {
+    "entries": [
+      {
+        "asset": {
+          "id": "23ff4014-e361-4728-a5b3-b75f5197ff95",
+          "name": "1a3244bb_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 0,
+        "id": "9c3e1185-45c1-4564-91c4-70f803eb6d25",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 4200000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 126
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "fromFrame": 0,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 28
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "bf84d87d-c452-44b9-b31b-a8bfbcdab4cd",
+          "name": "办公室荒诞喜剧-原创配乐.wav",
+          "type": "audio"
+        },
+        "startFrame": 0,
+        "id": "297d7d62-d8d1-443b-9e6a-5a6b529f6ecc",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 60000000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 1800
+        },
+        "trackAlias": "A1",
+        "trackId": "da8536ce-9c41-4073-bad9-7b64fabf2811"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 28,
+        "id": "6c0981fc-5a1b-42c0-88a6-91f957545b63",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 28,
+          "toFrame": 126
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "cde47e26-7f68-42c6-946c-eead7408d4ec",
+          "name": "倒带 · 事情开始前",
+          "type": "motion-graphic"
+        },
+        "startFrame": 126,
+        "id": "f5cfaf9e-ed1f-48f3-8b53-07b029cadbdc",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 126,
+          "toFrame": 168
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "fromFrame": 126,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 126,
+          "toFrame": 190
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "3741b335-a6c2-41a2-bf93-6b380b1bf709",
+          "name": "97859bb1_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 168,
+        "id": "d0f8c4bd-5117-4fcc-815b-ff3a530d5ad9",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 168,
+          "toFrame": 363
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 190,
+        "id": "8bbcfb8f-79bb-40e3-b2b0-59def0ef0b97",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 190,
+          "toFrame": 258
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 258,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 258,
+          "toFrame": 372
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "ca729634-dbd1-4b52-a6df-f1738f204ab2",
+          "name": "4ff983f4_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 363,
+        "id": "ebf023ea-7c53-4b84-bc6c-245be586750b",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 363,
+          "toFrame": 558
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 372,
+        "id": "b2ea4265-b28e-4349-9310-a4027e219ade",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 372,
+          "toFrame": 492
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 492,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 492,
+          "toFrame": 508
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 508,
+        "id": "af5b2e0b-711e-4e9d-9ca5-714c2de70db8",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 508,
+          "toFrame": 558
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "a2b0a11a-ad5c-4c02-9a41-f8fdd3cc23c8",
+          "name": "28254f9e_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 558,
+        "id": "a2c90e5d-049f-45e2-b180-4ec9a0f80c8f",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 558,
+          "toFrame": 753
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "fromFrame": 558,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 558,
+          "toFrame": 610
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 610,
+        "id": "80fdaaff-8821-41ad-8c30-a890200d5fb2",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 610,
+          "toFrame": 654
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 654,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 654,
+          "toFrame": 655
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 655,
+        "id": "0c050014-e09f-41d3-9fcf-b2e0de6ab93c",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 655,
+          "toFrame": 722
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 722,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 722,
+          "toFrame": 877
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "09ca46e3-d1f1-40f3-9c54-372b956f3f5c",
+          "name": "倒数 · 工位起飞",
+          "type": "motion-graphic"
+        },
+        "startFrame": 753,
+        "id": "2b282450-e8c0-4b3b-a57e-677459926a33",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 753,
+          "toFrame": 798
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "77d02cb7-ab5d-431d-a5f1-eff16e492805",
+          "name": "98529f9c_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 798,
+        "id": "bf4c6f60-9e43-4f88-9e43-cd2df7dd9bc5",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 798,
+          "toFrame": 993
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 877,
+        "id": "6a006264-52aa-447d-b09e-5858739120f1",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 877,
+          "toFrame": 977
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 977,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 977,
+          "toFrame": 1009
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "3d6da3bc-9e2a-4df0-ba1b-fbcf3ff3530b",
+          "name": "ad46998d_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 993,
+        "id": "7156ecef-b5df-42fa-8fac-f65ca3a04236",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 993,
+          "toFrame": 1188
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1009,
+        "id": "b6b9dae1-9e7c-4f97-8f48-928aebd14363",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1009,
+          "toFrame": 1123
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 1123,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1123,
+          "toFrame": 1272
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "8c05461b-e7e9-4118-b10e-9e9191c20f51",
+          "name": "转折 · 脑回路自己改",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1188,
+        "id": "ac15906a-6f3c-4824-afc8-9104f3eab8da",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1188,
+          "toFrame": 1272
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "81d7cf57-5d05-47f6-a997-a14ad69ff9b8",
+          "name": "blocky-real-instruction-edit.mp4",
+          "type": "video"
+        },
+        "startFrame": 1272,
+        "id": "72c1a793-8cfb-4d72-b29c-83945d746025",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6860000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 1272,
+          "toFrame": 1482
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1272,
+        "id": "35c50b59-dd70-4c3a-b6b7-db79075752c3",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1272,
+          "toFrame": 1472
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 1472,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1472,
+          "toFrame": 1497
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "286a3ba9-df1b-4c4b-a674-c20f5105ad64",
+          "name": "ea1daa82_000.mp4",
+          "type": "video"
+        },
+        "startFrame": 1482,
+        "id": "d79ca742-8c31-41c6-8b46-8e5fdc01da75",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6500000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 1482,
+          "toFrame": 1677
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "ec5fe1c5-2d65-45a2-94a9-a97c7a3dc35a",
+          "name": "口令与吐槽 · 黄绿重点字幕",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1497,
+        "id": "99107401-1313-4721-973e-7c5f8c8dbc3d",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1497,
+          "toFrame": 1587
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "fromFrame": 1587,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1587,
+          "toFrame": 1677
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      },
+      {
+        "asset": {
+          "id": "b42792af-a9ba-4c3b-a197-d42982b48605",
+          "name": "Blocky · 自己的 AI 自己改",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1677,
+        "id": "4f2f26c0-6fb9-4f04-b64a-97bd12c22b06",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1677,
+          "toFrame": 1800
+        },
+        "trackAlias": "V1",
+        "trackId": "11df7b5e-db3d-499b-95ef-c891acacd382"
+      },
+      {
+        "asset": {
+          "id": "4f29a861-6982-47f9-b153-dc7822dbd99a",
+          "name": "Blocky原标志.png",
+          "type": "image"
+        },
+        "startFrame": 1677,
+        "id": "efe122c5-dd36-46ef-9b17-bae7568dbb6d",
+        "itemType": "image",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1677,
+          "toFrame": 1800
+        },
+        "trackAlias": "V2",
+        "trackId": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f"
+      }
+    ],
+    "totalEntries": 35,
+    "tracks": [
+      {
+        "alias": "V1",
+        "effects": [
+          {
+            "assetId": "builtin:zoom",
+            "durationFrames": 210,
+            "enabled": true,
+            "startFrame": 1272,
+            "id": "56a3ea6f-c714-4b2e-a71b-48f03b80d176",
+            "propertyOverrides": {
+              "direction": "in",
+              "focalMode": "manual",
+              "focalPointX": 0.25,
+              "focalPointY": 0.49,
+              "magnification": 3.8,
+              "easeInDurationInSeconds": 0.4,
+              "easeOutDurationInSeconds": 0
+            },
+            "targetItemId": "72c1a793-8cfb-4d72-b29c-83945d746025"
+          }
+        ],
+        "hidden": false,
+        "id": "11df7b5e-db3d-499b-95ef-c891acacd382",
+        "muted": false,
+        "name": null,
+        "order": 0,
+        "trackType": "video"
+      },
+      {
+        "alias": "V2",
+        "hidden": false,
+        "id": "eebcaf83-3a7b-4da4-825b-fb05a6ca846f",
+        "muted": false,
+        "name": null,
+        "order": 1,
+        "trackType": "video"
+      },
+      {
+        "alias": "A1",
+        "hidden": false,
+        "id": "da8536ce-9c41-4073-bad9-7b64fabf2811",
+        "muted": false,
+        "name": null,
+        "order": 2,
+        "trackType": "audio"
+      }
+    ]
+  }
+}

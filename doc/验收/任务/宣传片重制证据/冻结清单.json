@@ -1,0 +1,198 @@
+{
+  "title": "我的 AI 理解得太字面了",
+  "file": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\outputs\\Blocky-字面理解-试片-v2.mp4",
+  "sha256": "181d5c93a10b41ac9cfefa356a22b08d40726b94db8d982941f54f55c0dceee2",
+  "bytes": 34955438,
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "67a3804c-6934-4880-a6d8-354c6d53df52",
+  "exportId": "339c5c26-7209-473e-bfba-97aeb82816eb",
+  "metadata": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "mime_codec_string": "avc1.640029",
+        "width": 1280,
+        "height": 720,
+        "coded_width": 1280,
+        "coded_height": 720,
+        "has_b_frames": 0,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "16:9",
+        "pix_fmt": "yuv420p",
+        "level": 41,
+        "color_range": "tv",
+        "color_space": "bt709",
+        "color_transfer": "iec61966-2-1",
+        "color_primaries": "bt709",
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "30/1",
+        "avg_frame_rate": "54000/1799",
+        "time_base": "1/57600",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 3454080,
+        "duration": "59.966667",
+        "bit_rate": "4486536",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "1800",
+        "extradata_size": 42,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "creation_time": "2026-10-12T15:40:43.000000Z",
+          "language": "und",
+          "handler_name": "MediabunnyVideoHandler",
+          "encoder": "Mediabunny"
+        }
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_long_name": "AAC (Advanced Audio Coding)",
+        "profile": "LC",
+        "codec_type": "audio",
+        "codec_tag_string": "mp4a",
+        "codec_tag": "0x6134706d",
+        "mime_codec_string": "mp4a.40.2",
+        "sample_fmt": "fltp",
+        "sample_rate": "48000",
+        "channels": 2,
+        "channel_layout": "stereo",
+        "bits_per_sample": 0,
+        "initial_padding": 0,
+        "id": "0x2",
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0",
+        "time_base": "1/48000",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 2880512,
+        "duration": "60.010667",
+        "bit_rate": "128000",
+        "nb_frames": "2813",
+        "extradata_size": 2,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "creation_time": "2026-10-12T15:40:43.000000Z",
+          "language": "und",
+          "handler_name": "MediabunnySoundHandler"
+        }
+      }
+    ],
+    "format": {
+      "filename": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\outputs\\Blocky-字面理解-试片-v2.mp4",
+      "nb_streams": 2,
+      "nb_programs": 0,
+      "nb_stream_groups": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "60.010667",
+      "size": "34955438",
+      "bit_rate": "4659896",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomavc1mp41",
+        "creation_time": "2026-10-12T15:40:43.000000Z",
+        "comment": "Made with Remotion 4.0.522"
+      }
+    }
+  },
+  "core": "自己的 AI，自己改",
+  "scope": "creative workprint; seven local MiniMax sources plus actual isolated web Blockly edit; no real model or runtime claim from editor footage",
+  "timelineEvidence": "D:\\1Folder\\Blocky-AI\\doc\\验收\\任务\\宣传片重制证据\\ChatCut时间线.json",
+  "assetsEvidence": "D:\\1Folder\\Blocky-AI\\doc\\验收\\任务\\宣传片重制证据\\ChatCut素材库.json",
+  "nativeSources": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\01-space-fast\\1a3244bb_000.mp4",
+      "bytes": 370517,
+      "sha256": "8d858ee74d8b84a6080500cc837eb8b95325d75e616ed6eb4881b7a0120eff50"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\02-office\\97859bb1_000.mp4",
+      "bytes": 598321,
+      "sha256": "d64615a3ab3d86a68519fa1d716983226c40606f3b9f96ba9afe938796fafa0c"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\03-roll\\4ff983f4_000.mp4",
+      "bytes": 486159,
+      "sha256": "1595682e5ed6730e037e938d123722e1c931d30f137fb95a7f29994deb33828d"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\04-bed\\28254f9e_000.mp4",
+      "bytes": 617956,
+      "sha256": "4c7bb721b592dc9b18caca132d24660281d88ac7bb6dfdc9fb63e7c0c0de82f3"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\05-rocket\\98529f9c_000.mp4",
+      "bytes": 1105493,
+      "sha256": "90ba9841bff0cbdffe43fe266aab97cbc70d6e38d25d6a41b4adc3a30b98da3d"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\06-space-reaction\\ad46998d_000.mp4",
+      "bytes": 582923,
+      "sha256": "014d899c390cbdff8de98d5f826061c9410df329a4d3d926bc5d0dc313d7e7ef"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\07-resolution\\ea1daa82_000.mp4",
+      "bytes": 626266,
+      "sha256": "d277a6436268699741baab5548acba6bb40914c2af08755ff5b8ee708927663e"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\sources\\ui\\blocky-real-instruction-edit.mp4",
+      "bytes": 158754,
+      "sha256": "19ce12433a0b66c36a84a495f7aed40ec1ddf6cc376fb609d267027f0953f308"
+    }
+  ]
+}

@@ -1,0 +1,462 @@
+{
+  "assets": [
+    {
+      "id": "23ff4014e3",
+      "name": "1a3244bb_000.mp4",
+      "type": "video",
+      "durationMs": 4459,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 288,
+        "width": 544
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-12.2 LUFS"
+      },
+      "transcript": {
+        "preview": "都 上 天 了 [0.32 seconds silent] 还 开 会？",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "a2b0a11aad",
+      "name": "28254f9e_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 352,
+        "width": 608
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-26.0 LUFS"
+      },
+      "transcript": {
+        "preview": "啊， [0.88 seconds silent] 这 回 还 挺 舒 服。 别 躺 了， 给 我 起 飞！",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "ca729634db",
+      "name": "4ff983f4_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 352,
+        "width": 608
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-10.7 LUFS"
+      },
+      "transcript": {
+        "preview": "不 是， 哥 们， 你 真 卷 啊！ [0.75 seconds silent] 算 了， 躺 平 吧。",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "3741b335a6",
+      "name": "97859bb1_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 288,
+        "width": 544
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-33.4 LUFS"
+      },
+      "transcript": {
+        "preview": "帮 我 卷 一 下。",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "77d02cb7ab",
+      "name": "98529f9c_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 352,
+        "width": 608
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-18.9 LUFS"
+      },
+      "transcript": {
+        "preview": "不 是， 哥 们， 真 飞 呀！",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "3d6da3bc9e",
+      "name": "ad46998d_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 352,
+        "width": 608
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-15.6 LUFS"
+      },
+      "transcript": {
+        "preview": "我 要 的 是 效 率 起 飞！",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "b42792afa9",
+      "name": "Blocky · 自己的 AI 自己改",
+      "type": "motion-graphic",
+      "durationMs": 4100,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1080,
+        "width": 1920
+      },
+      "editableProperties": [
+        {
+          "key": "brand",
+          "type": "text",
+          "defaultValue": "Blocky."
+        },
+        {
+          "key": "tagline",
+          "type": "text",
+          "defaultValue": "自己的 AI，自己改。"
+        },
+        {
+          "key": "foot",
+          "type": "text",
+          "defaultValue": "让想法，一块块成真。"
+        },
+        {
+          "key": "font",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "bg",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "ink",
+          "type": "color",
+          "defaultValue": "#101714"
+        },
+        {
+          "key": "transparentBackground",
+          "type": "boolean",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "id": "81d7cf575d",
+      "name": "blocky-real-instruction-edit.mp4",
+      "type": "video",
+      "durationMs": 6867,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1080,
+        "width": 1920
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": false
+      },
+      "transcript": {
+        "readyForEditing": false,
+        "state": "idle"
+      }
+    },
+    {
+      "id": "4f29a86169",
+      "name": "Blocky原标志.png",
+      "type": "image",
+      "durationMs": null,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1254,
+        "width": 1254
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      }
+    },
+    {
+      "id": "286a3ba9df",
+      "name": "ea1daa82_000.mp4",
+      "type": "video",
+      "durationMs": 6584,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 352,
+        "width": 608
+      },
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "embeddedTrack": true,
+        "loudness": "-15.0 LUFS"
+      },
+      "transcript": {
+        "preview": "这 次 按 我 的 来。",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "cde47e267f",
+      "name": "倒带 · 事情开始前",
+      "type": "motion-graphic",
+      "durationMs": 1400,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1080,
+        "width": 1920
+      },
+      "editableProperties": [
+        {
+          "key": "label",
+          "type": "text",
+          "defaultValue": "事情还得从一句话说起"
+        },
+        {
+          "key": "time",
+          "type": "text",
+          "defaultValue": "六分钟前"
+        },
+        {
+          "key": "font",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "bg",
+          "type": "color",
+          "defaultValue": "#DFF574"
+        },
+        {
+          "key": "ink",
+          "type": "color",
+          "defaultValue": "#111815"
+        },
+        {
+          "key": "transparentBackground",
+          "type": "boolean",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "id": "09ca46e3d1",
+      "name": "倒数 · 工位起飞",
+      "type": "motion-graphic",
+      "durationMs": 1500,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1080,
+        "width": 1920
+      },
+      "editableProperties": [
+        {
+          "key": "word",
+          "type": "text",
+          "defaultValue": "起飞？！"
+        },
+        {
+          "key": "font",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "bg",
+          "type": "color",
+          "defaultValue": "#101714"
+        },
+        {
+          "key": "accent",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "transparentBackground",
+          "type": "boolean",
+          "defaultValue": false
+        }
+      ]
+    },
+    {
+      "id": "bf84d87dc4",
+      "name": "办公室荒诞喜剧-原创配乐.wav",
+      "type": "audio",
+      "durationMs": 60000,
+      "folder": "Master",
+      "status": "ready",
+      "sourceAccess": {
+        "cloud": "not-available",
+        "originalUpload": "deferred"
+      },
+      "audio": {
+        "loudness": "-34.2 LUFS"
+      },
+      "transcript": {
+        "preview": "あなたはなんでしょう?",
+        "readyForEditing": true,
+        "segmentCount": 1,
+        "state": "complete"
+      }
+    },
+    {
+      "id": "ec5fe1c52d",
+      "name": "口令与吐槽 · 黄绿重点字幕",
+      "type": "motion-graphic",
+      "durationMs": 6667,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 150,
+        "width": 1500
+      },
+      "editableProperties": [
+        {
+          "key": "text",
+          "type": "text",
+          "defaultValue": "都上天了，还开会？"
+        },
+        {
+          "key": "font",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "accent",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "ink",
+          "type": "color",
+          "defaultValue": "#FFFFFF"
+        },
+        {
+          "key": "size",
+          "type": "number",
+          "defaultValue": 68
+        }
+      ]
+    },
+    {
+      "id": "8c05461be7",
+      "name": "转折 · 脑回路自己改",
+      "type": "motion-graphic",
+      "durationMs": 2800,
+      "folder": "Master",
+      "status": "ready",
+      "dimensions": {
+        "height": 1080,
+        "width": 1920
+      },
+      "editableProperties": [
+        {
+          "key": "text",
+          "type": "text",
+          "defaultValue": "脑回路，自己改。"
+        },
+        {
+          "key": "small",
+          "type": "text",
+          "defaultValue": "自己的 AI，不用碰运气。"
+        },
+        {
+          "key": "font",
+          "type": "font",
+          "defaultValue": "Noto Sans SC"
+        },
+        {
+          "key": "bg",
+          "type": "color",
+          "defaultValue": "#E5FA78"
+        },
+        {
+          "key": "ink",
+          "type": "color",
+          "defaultValue": "#0E1612"
+        },
+        {
+          "key": "transparentBackground",
+          "type": "boolean",
+          "defaultValue": false
+        }
+      ]
+    }
+  ],
+  "total": 15
+}

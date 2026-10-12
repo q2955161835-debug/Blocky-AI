@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] One 6-second medium-wide stop-motion-style toy comedy shot, matching the tiny retro office in Picture 1. The tired glossy cyan-blue square brick worker with exactly two cylindrical studs, two dark bean eyes, tiny black necktie, short blue arms and feet sits behind the walnut desk. The eager lime-green two-stud assistant stands on the desk at screen right. At 0.5 seconds the blue worker raises its little left hand toward the green assistant and says in a dry young male Mandarin voice (S1): <d>[Chinese] 帮我卷一下。</d> At 2.0 seconds the green assistant nods with absurd enthusiasm and slaps the button on the giant printer behind it, saying in a chipper slightly higher Mandarin voice (S2): <d>[Chinese] 收到！</d> At 3.0 seconds the giant white paper roll starts rotating ever faster, rapidly feeding a blank paper ribbon onto the desk. The blue worker's eyebrows lift in growing worry. At 4.5 seconds papers flutter off the table toward camera and the blue worker recoils slightly. A gentle controlled camera push-in. Clear setup for physical comedy, tactile plastic and warm brass lighting, no visible lettering, labels or subtitles.
+
+overall_soundscape: Quiet nighttime office hum and clock tick; clear short Mandarin speech; a crisp button click at 2.0 seconds followed by an accelerating printer motor and rapid flapping paper. A short concerned breath from the blue worker at the end.
+
+non_diegetic_music: N/A

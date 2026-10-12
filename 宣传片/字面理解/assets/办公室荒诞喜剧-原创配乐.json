@@ -1,0 +1,13 @@
+{
+  "seconds": 60,
+  "sampleRate": 48000,
+  "channels": 2,
+  "source": "Original procedural spy-jazz composition and original synthesized transition cues",
+  "seed": 41012,
+  "silence": [
+    33.1,
+    39.6
+  ],
+  "peakDbFS": -15.691093539244033,
+  "rmsDbFS": -38.04853421167919
+}

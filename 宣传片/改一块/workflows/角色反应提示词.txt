@@ -1,7 +1,0 @@
-For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
-
-integrated_multimodal_description: [Shot 1] A polished 3D animated medium close-up, exactly matching the supplied picture. A small glossy cyan-blue rounded toy brick character has exactly two circular studs on top, two black bean-shaped inset eyes with tiny highlights, subtle black eyebrows, a simple curved closed smile, and two tiny blue feet. It stands beside a dark grey stacked wall in a dim miniature room. Keep the character's cubic proportions, face, cyan color, two studs, wall, camera angle and lighting consistent. The camera holds a static shot. For the first second the character pauses after a failed attempt to walk forward. From one to three seconds it slowly tilts its head and glances from the wall to the viewer, its eyebrows gently lifting in curiosity. From three to five seconds it lifts its gaze toward something above the frame, makes a small hopeful lean, and settles back to its original position. A single restrained blink. No arms, no extra limbs, no additional characters, no visible text, no scene cuts, no transformation. Its mouth remains closed.
-
-overall_soundscape: A quiet enclosed room, a tiny plastic foot tap, a soft creak as the toy shifts its weight. No speech.
-
-non_diegetic_music: N/A
