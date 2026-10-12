@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "blocky.public-repo-closeout/v1",
+  "createdAt": "2026-10-11T20:00:24.965Z",
+  "license": {
+    "name": "PolyForm Noncommercial 1.0.0",
+    "spdx": "PolyForm-Noncommercial-1.0.0",
+    "officialUrl": "https://polyformproject.org/licenses/noncommercial/1.0.0.txt",
+    "bytes": 4563,
+    "sha256": "ffcca38841adb694b6f380647e15f17c446a4d1656fed51a1e2041d064c94cc8",
+    "projectMetadata": 26,
+    "thirdPartyCoverage": {
+      "packages": 778,
+      "included": 778,
+      "missing": []
+    }
+  },
+  "cleanup": {
+    "sourceCommit": "22689c1970df6cb4b58694a350d831b071f843dc",
+    "cleanupCommit": "9cfe94b8258894c295387438d89c586b9d837dce",
+    "deletedTrackedFiles": 17,
+    "checkoutBytes": 42162664,
+    "protectedProductDifferences": 0,
+    "newBrokenMarkdownLinks": 0,
+    "historyRewritten": false,
+    "recovery": "Git objects at sourceCommit; final video/manuscripts also match existing high-value backup",
+    "existingBackup": "D:/0文件夹/备份/Blocky-GitHub同步前成品-2026-10-12-0109"
+  },
+  "websites": {
+    "commonSourceCommit": "8b0b8e8b6e74d01e72a3d999e3f3327104bcb2e1",
+    "assetsPerHost": 54,
+    "unchangedAgainstFirstPages": 49,
+    "pages": {
+      "url": "https://q2955161835-debug.github.io/Blocky-AI/",
+      "commit": "2422515d7f704b83c7065a79896de87c7d5434a5",
+      "tree": "e95fddbd656e89fa8c413829f346b113437de0db",
+      "hostingFiles": 55,
+      "branch": "gh-pages",
+      "nativeStatus": "built",
+      "action": {
+        "id": 38169931055,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "rawShaMatches": 54
+    },
+    "sites": {
+      "url": "https://blocky.donk55666.chatgpt.site",
+      "version": 23,
+      "sourceCommit": "55d9605a95b3f4638b8dfc50f59379284d588792",
+      "savedVersionId": "appgprj_6ac2611c78048191af586892e782d68f~appgver_2794741f12c48191b378342ac9def717",
+      "deploymentId": "appgdep_6acbe94f56148191a5d4e6e572b213e8",
+      "status": "succeeded",
+      "rawShaMatches": 52,
+      "normalizedHtmlMatches": 2,
+      "normalization": "Exactly observed Cloudflare JSD script template; original page bytes restored; no source/CSP changes",
+      "hostingFiles": 55
+    },
+    "browser": {
+      "collector": "root",
+      "independentReviewer": "accept_github_pages_copy",
+      "scenarios": [
+        "Both hosts Chinese and English source/license/download links",
+        "Actual390px viewport on owned hidden tabs; document scroll375px",
+        "Existing user Pages tab desktop843px preserved"
+      ],
+      "unchangedStudioEvidence": "Exact unchanged Studio assets; earlier accepted browser scope reused, no new long demo or model run"
+    }
+  },
+  "installer": {
+    "releaseVersion": "0.8.0-beta.2",
+    "productVersion": "0.8.0",
+    "sourceCommit": "9cfe94b8258894c295387438d89c586b9d837dce",
+    "inputFiles": 1059,
+    "inputByteChanges": [],
+    "packageFiles": 2597,
+    "packageBytes": 772359892,
+    "manifestSha256": "2cabcae563bad0f31fb9eb14ec305be36da883dc0264d3446b897eb7092362cf",
+    "path": "D:/1Folder/Blocky-AI/dist/installers/Blocky-Studio-0.8.0-beta.2-setup.exe",
+    "releaseUrl": "https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases/tag/v0.8.0-beta.2",
+    "prerelease": true,
+    "anonymousReadback": {
+      "time": "2026-10-11T19:54:15.439Z",
+      "url": "https://github.com/I-dont-know-codex-is-right/Blocky-Studio-Releases/releases/download/v0.8.0-beta.2/Blocky-Studio-0.8.0-beta.2-setup.exe",
+      "status": 200,
+      "bytes": 258432299,
+      "sha256": "2314379856d461914ed2d85311ef58964018307a83378d76eec9cbbc9fb74f15",
+      "anonymous": true,
+      "downloadMode": "Streamed and hashed; no duplicate installer saved",
+      "checksumsStatus": 200,
+      "checksums": "2314379856d461914ed2d85311ef58964018307a83378d76eec9cbbc9fb74f15  Blocky-Studio-0.8.0-beta.2-setup.exe\n"
+    },
+    "localAcceptance": "Independent actual install, 2597-file SHA match, native window/start/reopen, repeated-install refusal and uninstall preserving own data; no native visual/click claim",
+    "runtimeFullRerun": false,
+    "realModelApiCalled": false,
+    "dailyShortcutChanged": false
+  },
+  "acceptance": {
+    "report": "doc/验收/任务/验收-2026-10-12-公开仓库许可双站与最新版安装包.md",
+    "conclusion": "通过",
+    "role": "Software release acceptance reviewer",
+    "scope": [
+      "C01",
+      "C02",
+      "C03",
+      "C04"
+    ]
+  },
+  "git": {
+    "branch": "codex/chore-public-repo-closeout",
+    "mainMerge": "Awaiting task-specific team approval under AGENTS section14",
+    "mainPush": "Awaiting task-specific authorization",
+    "archiveTagsPushed": false
+  },
+  "processStorage": {
+    "base": "D:\\1Folder\\Blocky-AI\\try\\待清理\\公开仓库许可双站与新版安装包-2026-10-12",
+    "nativeBuildArchive": "D:/1Folder/Blocky-AI/try/待清理/公开仓库安装构建-2026-10-12",
+    "nativeBuildBytes": 7696552622,
+    "releasedDiskBytes": 0,
+    "defaultExternalTemp": "C:/Users/29551/AppData/Local/Temp",
+    "processArchive": {
+      "originalFiles": 416,
+      "originalBytes": 52934680,
+      "shaMatches": 416,
+      "currentFiles": 420,
+      "currentBytes": 53025166,
+      "originalSourceAbsent": true
+    }
+  },
+  "bookkeepingResumedAt": "2026-10-12T07:18:49.534Z"
+}

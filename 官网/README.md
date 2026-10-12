@@ -2,7 +2,7 @@
 
 公开地址：[blocky.donk55666.chatgpt.site](https://blocky.donk55666.chatgpt.site)
 
-GitHub Pages 副本：[q2955161835-debug.github.io/Blocky-AI/](https://q2955161835-debug.github.io/Blocky-AI/)。2026-10-12首轮直接复用版本22的52份公开资源，仅增加空 `.nojekyll`；随后定向修正中英文“仓库尚未公开”的陈旧说明，增加个人源码链接并保留许可证待确定的事实。最新52份资源与本轮Git来源逐字节一致，其余50份与原副本保持。Pages从远端长期发布分支 `gh-pages` 根目录托管，最新发布提交 `23b9e3ba5ef01b3e93559f776c032ba399b5eb92`；该分支只存网页和第三方许可证，不作为开发分支合并main或删除。入口、hash路由、Studio iframe及本地媒体均保留相对路径，支持 `/Blocky-AI/` 子路径。发布与独立浏览器结果见根目录 `doc/验收/网站/GitHub-Pages证据/发布回执.json` 和 `doc/验收/网站/验收-2026-10-12-GitHub-Pages官网副本.md`。
+GitHub Pages 副本：[q2955161835-debug.github.io/Blocky-AI/](https://q2955161835-debug.github.io/Blocky-AI/)。2026-10-12当前两站共用54份公开资源，已添加首页/页脚个人GitHub仓库与中英非商用许可入口、LICENSE/NOTICE和0.8.0-beta.2下载。Pages发布提交`2422515d7f704b83c7065a79896de87c7d5434a5`，55托管文件含空.nojekyll，54资源线上raw SHA一致；Sites版本23/source`55d9605a95b3f4638b8dfc50f59379284d588792`已原生succeeded/public，52raw一致、两HTML精确剥除Cloudflare注入后SHA一致。首轮副本来源保留在GitHub-Pages证据/；当前验收与发行回执位于根目录`doc/验收/任务/验收-2026-10-12-公开仓库许可双站与最新版安装包.md`及`doc/开发/2026-10-12-公开仓库与双站发行回执.json`。gh-pages长期托管，不合并为产品源码或删除；相对路径继续支持/Blocky-AI/。
 
 当前公开版本22新增“出题助手 · 3分钟演示”，位于原一分钟演示下方：空白画布→24积木→今日练习页面→五题逐题出现→点选解析→页面和Studio双端追问。约180秒，章节说明概述构建思路；白绿题卡、分数图示、逐字聊天和窄屏上下布局由独立 `experience/quiz-demo/` 管理。两处聊天在演示期间保持底部跟随，完成后可自由试用；暂停/重播/退出恢复、中英/深浅及320/390窄屏均经独立检查。最终产品`644fd89`、Sites来源`9e3781d5d9f4442beef3ce98bed10e6d0090585c`，52公开资产/53封包文件，原生succeeded/public同URL。详见根目录`doc/验收/网站/验收-2026-10-10-官网出题助手三分钟演示.md`及`官网出题助手演示证据/`。这是成功流程的合成预设改编，不连接真实模型或文件，不代表桌面模型稳定性问题已修复。下文版本21为保留的历史来源。
 
@@ -55,7 +55,7 @@ GitHub Pages 副本：[q2955161835-debug.github.io/Blocky-AI/](https://q29551618
 
 ## 界面依据与演示边界
 
-当前已发布 `Blocky-Studio-0.8.0-beta.1-final` 及对应桌面源码是界面基准。对应桌面源码的 `app/App.tsx`、`Library.tsx`、`StudioSidebar.tsx`、`BuilderPanel.tsx` 提供壳布局依据，实际画布与积木定义直接导入复用。灰蓝配色、单行图标栏、七/十二分类、嵌套积木、可调宽度三栏、默认收起底栏、右侧聊天均按此基准。
+官网封存 `Blocky-Studio-0.8.0-beta.1-final` 对应前端作为界面基准；桌面最新版测试安装器为0.8.0-beta.2，下载见根README。对应桌面源码的 `app/App.tsx`、`Library.tsx`、`StudioSidebar.tsx`、`BuilderPanel.tsx` 提供壳布局依据，实际画布与积木定义直接导入复用。灰蓝配色、单行图标栏、七/十二分类、嵌套积木、可调宽度三栏、默认收起底栏、右侧聊天均按此基准。
 
 网站额外提供一条体验说明/返回官网栏；窄屏以积木库、画布、对话切换访问同一工作区。对话、轨迹和运行结果为预设；文件、模型和部署入口仅说明桌面版能力，不操作本机文件。输入只存在当前 iframe 内存，离开后销毁。CSP 禁止 connect-src、media、表单提交，不加载运行内核或真实模型配置。
 
