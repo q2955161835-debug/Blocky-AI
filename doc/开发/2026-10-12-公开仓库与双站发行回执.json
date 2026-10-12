@@ -23,7 +23,8 @@
     "newBrokenMarkdownLinks": 0,
     "historyRewritten": false,
     "recovery": "Git objects at sourceCommit; final video/manuscripts also match existing high-value backup",
-    "existingBackup": "D:/0文件夹/备份/Blocky-GitHub同步前成品-2026-10-12-0109"
+    "existingBackup": "D:/0文件夹/备份/Blocky-GitHub同步前成品-2026-10-12-0109",
+    "remoteCurrentMainEffective": true
   },
   "websites": {
     "commonSourceCommit": "8b0b8e8b6e74d01e72a3d999e3f3327104bcb2e1",
@@ -106,10 +107,29 @@
     ]
   },
   "git": {
-    "branch": "codex/chore-public-repo-closeout",
-    "mainMerge": "Awaiting task-specific team approval under AGENTS section14",
-    "mainPush": "Awaiting task-specific authorization",
-    "archiveTagsPushed": false
+    "branch": "main",
+    "integrationCommit": "3dd6f74ea838e329dd397acc6c349981a46e0a7b",
+    "integrationTree": "6515aef9e7d2c4bf432c3e38925ee7b94d92e541",
+    "mainMerge": "Completed, authorized fast-forward",
+    "taskBranchDeleted": true,
+    "mainPush": "Completed, explicit user authorization; only main, followTags=false",
+    "archiveTagsPushed": false,
+    "ghPagesPreserved": "2422515d7f704b83c7065a79896de87c7d5434a5",
+    "independentReadback": {
+      "collector": "accept_github_pages_copy independent GitHub API readback",
+      "checkedAt": "2026-10-12T15:23:47.3437959+08:00",
+      "commit": "3dd6f74ea838e329dd397acc6c349981a46e0a7b",
+      "tree": "6515aef9e7d2c4bf432c3e38925ee7b94d92e541",
+      "treeEntries": 3625,
+      "truncated": false,
+      "deletedAbsent": 17,
+      "sameBlobCopies": 0,
+      "sameNameArchiveCopies": 0,
+      "licenseObjectMatches": 29,
+      "webObjectMatches": 54,
+      "remoteArchiveTags": 0
+    },
+    "closure": "Subsequent bookkeeping only; product, license and website inputs remain bound to integrationCommit"
   },
   "processStorage": {
     "base": "D:\\1Folder\\Blocky-AI\\try\\待清理\\公开仓库许可双站与新版安装包-2026-10-12",
@@ -121,8 +141,8 @@
       "originalFiles": 416,
       "originalBytes": 52934680,
       "shaMatches": 416,
-      "currentFiles": 420,
-      "currentBytes": 53025166,
+      "currentFiles": 422,
+      "currentBytes": 53051338,
       "originalSourceAbsent": true
     }
   },
