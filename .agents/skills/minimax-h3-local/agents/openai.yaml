@@ -1,0 +1,14 @@
+interface:
+  display_name: "MiniMax H3 Local Video"
+  short_description: "Route and run local MiniMax H3 audiovisual workflows"
+  default_prompt: "Use $minimax-h3-local to turn my text or keyframes into a local H3 video."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "comfy-local"
+      description: "Official local Comfy MCP used to execute saved H3 workflows"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true

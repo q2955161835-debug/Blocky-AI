@@ -1,0 +1,14 @@
+interface:
+  display_name: "Local ComfyUI"
+  short_description: "Operate this machine's ComfyUI through the official local MCP"
+  default_prompt: "Use $comfyui-local to run a saved workflow on my local ComfyUI and return its outputs."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "comfy-local"
+      description: "Official Comfy-Org/comfy-mcp stdio server for the local ComfyUI"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,10 @@
+{
+  "project_root": "D:\\ComfyUI",
+  "python": "D:\\Miniconda\\envs\\comfyui\\python.exe",
+  "comfy_bin": "D:\\Miniconda\\envs\\comfyui\\Scripts\\comfy.exe",
+  "mcp_bin": "D:\\Miniconda\\envs\\comfyui\\Scripts\\comfy-mcp.exe",
+  "local_url": "http://127.0.0.1:8188",
+  "output_dir": "D:\\ComfyUI\\output",
+  "mcp_server_name": "comfy-local",
+  "telemetry": false
+}

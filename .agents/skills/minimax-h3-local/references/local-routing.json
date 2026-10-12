@@ -1,0 +1,50 @@
+{
+  "project_root": "D:\\ComfyUI",
+  "workflows": {
+    "t2va": {
+      "standard": "user\\default\\workflows\\翻译版MiniMax H3 文生视频.json",
+      "spectrum": "user\\default\\workflows\\翻译版MiniMax H3 文生视频-Spectrum加速版.json",
+      "required_inputs": [],
+      "prompt_required": true,
+      "prompt_guide": "base"
+    },
+    "i2va": {
+      "standard": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+      "spectrum": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧-Spectrum加速版.json",
+      "required_inputs": ["first_frame"],
+      "prompt_required": true,
+      "prompt_guide": "base"
+    },
+    "l2va": {
+      "standard": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+      "spectrum": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧-Spectrum加速版.json",
+      "required_inputs": ["last_frame"],
+      "prompt_required": true,
+      "prompt_guide": "base"
+    },
+    "fl2va": {
+      "standard": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+      "spectrum": "user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧-Spectrum加速版.json",
+      "required_inputs": ["first_frame", "last_frame"],
+      "prompt_required": true,
+      "prompt_guide": "base"
+    },
+    "ref2va_character_replacement": {
+      "standard": "user\\default\\workflows\\MiniMax H3 Plan v2 - Character Replacement.json",
+      "required_inputs": ["reference_assets"],
+      "prompt_required": true,
+      "prompt_guide": "reference"
+    }
+  },
+  "models": {
+    "base": "models\\diffusion_models\\minimax_h3_fl2va_int8_convrot.safetensors",
+    "reference": "models\\diffusion_models\\minimax_h3_ref2va_int8_convrot.safetensors",
+    "text_base": "models\\text_encoders\\qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+    "text_reference": "models\\text_encoders\\qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+    "video_vae": "models\\vae\\minimax_h3_video_vae_fp16.safetensors",
+    "audio_vae": "models\\vae\\minimax_h3_audio_vae_fp32.safetensors"
+  },
+  "limitations": {
+    "ref2va_general": "not_configured"
+  }
+}

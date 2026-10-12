@@ -1,0 +1,14 @@
+{
+  "local_adaptation": true,
+  "official_prompt_source": {
+    "repository": "https://github.com/MiniMax-AI/MiniMax-H3",
+    "path": "skills/h3-prompt-writing",
+    "revision": "d21241f0a4b3acbb34c97dae47fa417b7065e438",
+    "repository_license_note": "The GitHub repository does not include a license file for the prompt skill; the README links a separate MiniMax H3 model license on Hugging Face. Review terms before redistribution."
+  },
+  "vendored_sha256": {
+    "official-h3-prompt-writing.md": "95d74fee00e78641fb9e774ab17488516ceece441231519287f0d3128eaa8c54",
+    "base-en.txt": "088fb632fa3cbb18c9821024fb689e6f0f356f824c8f2e6b8e43a33239b137c7",
+    "ref-en.txt": "b621067b41988c4d92be715b7a98ba48338f4076ab6041d95fcf463ea7c8ccdd"
+  }
+}

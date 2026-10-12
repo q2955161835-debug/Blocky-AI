@@ -1,0 +1,21 @@
+{
+  "local_adaptation": true,
+  "official_sources": [
+    {
+      "name": "Comfy MCP",
+      "repository": "https://github.com/Comfy-Org/comfy-mcp",
+      "revision": "e5f768d31de21ea32829381cebdda5336492a8ac",
+      "runtime_version": "0.10.0",
+      "license": "AGPL-3.0-or-later OR LicenseRef-Comfy-Commercial"
+    },
+    {
+      "name": "Comfy CLI and official comfy agent skill",
+      "repository": "https://github.com/Comfy-Org/comfy-cli",
+      "path": "comfy_cli/skills/comfy",
+      "revision": "b08adc50cca24f2d29d2115e80719cb8299e6ddf",
+      "runtime_version": "1.20.0",
+      "license": "GPL-3.0-only",
+      "vendored_reference_sha256": "b4c66d08aec92a56d274333d9d5c7b6720a0f1d6a983c3d53182ffdd59d41e4b"
+    }
+  ]
+}
