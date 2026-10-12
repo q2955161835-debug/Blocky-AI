@@ -1,0 +1,18 @@
+{
+  "codec": "h264",
+  "completedAt": "2026-10-12T18:10:42.130Z",
+  "error": null,
+  "id": "a2758346-91b7-4913-8e30-38e597d47641",
+  "name": "Blocky-审查搭子-节奏片尾-v5.mp4",
+  "ok": true,
+  "outputSizeBytes": 66629785,
+  "progress": 1,
+  "renderId": "a2758346-91b7-4913-8e30-38e597d47641",
+  "resolution": null,
+  "source": "browser",
+  "startedAt": "2026-10-12T18:10:25.256Z",
+  "status": "complete",
+  "statusMessage": "Finished. The browser tab that rendered it started the file download on the user's device.",
+  "terminal": true,
+  "timelineId": "693460be-fa31-44e8-8ef5-ae1746f2c20b"
+}

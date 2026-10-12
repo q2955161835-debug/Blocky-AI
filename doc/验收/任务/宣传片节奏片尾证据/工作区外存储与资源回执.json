@@ -1,0 +1,46 @@
+{
+  "defaultMoves": [
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-6959f02a-c445-4204-bf34-94d1a5b22f0a.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\cli-closeup.png",
+      "operation": "moved",
+      "originalPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-8b97040c-5680-4091-87a0-f03483176fc0.png",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\logo-stage.png",
+      "operation": "moved",
+      "originalPathExistsAfterMove": false
+    },
+    {
+      "from": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-节奏片尾-v5.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-节奏片尾-v5.mp4",
+      "operation": "moved",
+      "originalPathExistsAfterMove": false
+    }
+  ],
+  "nativeCopiesReceipt": "原生副本整理回执.json",
+  "comfyCliStateIndexes": [
+    "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\3e860d9b-a4c2-426b-b36a-34c7ec133c31.json",
+    "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\fb70b1a2-9ff9-4a2c-afe3-eb3dad87eab1.json",
+    "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\5f26c679-82cf-4848-946b-da156d289c0f.json"
+  ],
+  "ownedService": {
+    "pid": 88116,
+    "executable": "D:\\Miniconda\\envs\\comfyui\\python.exe",
+    "script": "D:\\ComfyUI\\main.py",
+    "stoppedAt": "2026-10-13 02:04",
+    "identityVerified": true
+  },
+  "officialImportHelper": {
+    "path": "C:\\Users\\29551\\.codex\\plugins\\cache\\chatcut-inc\\chatcut\\1.10.15\\skills\\asset-import\\scripts\\serve-local-media.mjs",
+    "session": 45731,
+    "stoppedAfterThreeLocallyImported": true
+  },
+  "sourceFrame": {
+    "from": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-03-wrong-target\\9f2f3362_000.mp4",
+    "sourceSeconds": 5.7,
+    "to": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\lens-bridge-start.png",
+    "operation": "Extracted exact source frame for matching new insert"
+  }
+}

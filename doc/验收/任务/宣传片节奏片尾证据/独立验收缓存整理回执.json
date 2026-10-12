@@ -1,0 +1,221 @@
+{
+  "at": "2026-10-13T02:17:44.6684246+08:00",
+  "operation": "same-volume Move-Item; no deletion",
+  "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13",
+  "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13",
+  "files": 26,
+  "bytes": 1436185.0,
+  "allVerified": true,
+  "sourceAbsent": true,
+  "ownServerStopped": true,
+  "mapping": [
+    {
+      "relative": "audio.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\audio.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\audio.log",
+      "bytes": 9412,
+      "sha256": "A92D25CDB59E77C5B4F38B749490E4C15ABFBCC8FEB4CC48C0457CC818AE4A9F",
+      "verified": true
+    },
+    {
+      "relative": "boundaries.jpg",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\boundaries.jpg",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\boundaries.jpg",
+      "bytes": 428307,
+      "sha256": "81AE5E84F48DC4486F5F256323C8F07D122A37D46ED1B4E39E9B7110A8AC7C6F",
+      "verified": true
+    },
+    {
+      "relative": "boundary-frame-indices.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\boundary-frame-indices.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\boundary-frame-indices.json",
+      "bytes": 260,
+      "sha256": "24CD10D56CB960EB8E07C1822F3A9ABCC1C0B17F0CB857B9FE0F957E7E0A92E3",
+      "verified": true
+    },
+    {
+      "relative": "decode-exit.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\decode-exit.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\decode-exit.txt",
+      "bytes": 3,
+      "sha256": "13BF7B3039C63BF5A50491FA3CFD8EB4E699D1BA1436315AEF9CBE5711530354",
+      "verified": true
+    },
+    {
+      "relative": "decode.log",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\decode.log",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\decode.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "verified": true
+    },
+    {
+      "relative": "ffprobe.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\ffprobe.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\ffprobe.json",
+      "bytes": 4914,
+      "sha256": "0321F2D6A62646338AA2C18EAE0757713C988E2B463CE0C22FD11DA5351B8FFD",
+      "verified": true
+    },
+    {
+      "relative": "front-bubbles-comparison.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\front-bubbles-comparison.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\front-bubbles-comparison.json",
+      "bytes": 57,
+      "sha256": "216EC5D98FD3627DA1D47B065925C3CD7613AA82D0B2849469EDEE0475F11F97",
+      "verified": true
+    },
+    {
+      "relative": "hash.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\hash.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\hash.json",
+      "bytes": 221,
+      "sha256": "6859CF754A24E2977E9E33F71451DCA9F392A12950C9BF618C85666AAC78B591",
+      "verified": true
+    },
+    {
+      "relative": "live-timeline.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\live-timeline.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\live-timeline.json",
+      "bytes": 33751,
+      "sha256": "56A260C5A608BB4EE682B96D136C467490611FEF5F0242230FC1EBE4EE939AC8",
+      "verified": true
+    },
+    {
+      "relative": "motion-graphics.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\motion-graphics.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\motion-graphics.json",
+      "bytes": 10678,
+      "sha256": "8B9BF82C6ACDF987129C3A4F630274AA55B985A186D2F6C19136684E44A7C0E6",
+      "verified": true
+    },
+    {
+      "relative": "new-source-probes.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\new-source-probes.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\new-source-probes.json",
+      "bytes": 763,
+      "sha256": "D36D13DFD58E3A02B2EF13CFDF0C2088BD88D5F85C5034A2F58D68CC72A3F7CC",
+      "verified": true
+    },
+    {
+      "relative": "overview.jpg",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\overview.jpg",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\overview.jpg",
+      "bytes": 240070,
+      "sha256": "34C75542CAB0E680A6E4088C24F755682CA2E6383B201F4C1290D59CDDC211FD",
+      "verified": true
+    },
+    {
+      "relative": "parameters.txt",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\parameters.txt",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\parameters.txt",
+      "bytes": 35113,
+      "sha256": "13A4231131A2D190729EE1FE52DB7670468FF58304433D1B842746AFE9162BF0",
+      "verified": true
+    },
+    {
+      "relative": "player-bridge-followup.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-bridge-followup.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-bridge-followup.png",
+      "bytes": 88167,
+      "sha256": "187685D88ABEB8DE39199662372F669237E0036C1A117A074A182A1ED8F8A321",
+      "verified": true
+    },
+    {
+      "relative": "player-bridge-start.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-bridge-start.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-bridge-start.png",
+      "bytes": 118812,
+      "sha256": "40A697E61403350D9717D85EE9230F9633800CE9E6E74C2751CAFADF2775572A",
+      "verified": true
+    },
+    {
+      "relative": "player-late-progress.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-late-progress.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-late-progress.png",
+      "bytes": 74110,
+      "sha256": "40D706C87E6F28C033DF0D5D56A06B7243FF5D58A410D21FCBF9E055095937B4",
+      "verified": true
+    },
+    {
+      "relative": "player-outro-final.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-outro-final.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-outro-final.png",
+      "bytes": 74118,
+      "sha256": "F2886F2C70DB0D92CB41855FEBE91CF2E20AB1F126A01366640BEC6ECC23AD72",
+      "verified": true
+    },
+    {
+      "relative": "player-outro-start.png",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-outro-start.png",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-outro-start.png",
+      "bytes": 80107,
+      "sha256": "2FFD3260B3432B762AE34561DA64898BDCBA59E6D8B585D92DB6045DFA1B97B2",
+      "verified": true
+    },
+    {
+      "relative": "player-states.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\player-states.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\player-states.json",
+      "bytes": 3824,
+      "sha256": "1CF79A119D654BB4BD0A58D576CE2961E7F7097C9D28FF6A9DF54B5E7164EFDF",
+      "verified": true
+    },
+    {
+      "relative": "preview.html",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\preview.html",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\preview.html",
+      "bytes": 885,
+      "sha256": "30F8646D3C1EC4472B2A00CA80FD884420CA8509DDB4E532381C79F16674FA4A",
+      "verified": true
+    },
+    {
+      "relative": "reused-receipts.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\reused-receipts.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\reused-receipts.json",
+      "bytes": 136,
+      "sha256": "8D7C8A83CD183A2CBDDC5CB34E0BFA33C53000E3AB8750B3907C74B6429D4FB1",
+      "verified": true
+    },
+    {
+      "relative": "serve.py",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\serve.py",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\serve.py",
+      "bytes": 1161,
+      "sha256": "2B261C3928342E3B8DC869A9CDFBF6720D5BD302CFA621C28567769E6A75D40F",
+      "verified": true
+    },
+    {
+      "relative": "source-hashes.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\source-hashes.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\source-hashes.json",
+      "bytes": 2702,
+      "sha256": "EF6F881082751216693FC2B3C3679580F7AEB5214F204AFE2AED909BE33EB2C3",
+      "verified": true
+    },
+    {
+      "relative": "subtitle-outro-seconds.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\subtitle-outro-seconds.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\subtitle-outro-seconds.json",
+      "bytes": 81,
+      "sha256": "7CE24AB694E8F0E943808F14EF6178DE0A51229D576EADE1564A94DFABFE0A13",
+      "verified": true
+    },
+    {
+      "relative": "subtitle-outro.jpg",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\subtitle-outro.jpg",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\subtitle-outro.jpg",
+      "bytes": 228478,
+      "sha256": "FD09D97941382636F3A1599323994A47655594BCA0C58B5D2B0BA5C394DDC7B3",
+      "verified": true
+    },
+    {
+      "relative": "video-structure-count.json",
+      "source": "D:\\1Folder\\Blocky-AI\\try\\宣传片节奏片尾独立验收-2026-10-13\\video-structure-count.json",
+      "target": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片节奏片尾独立验收-2026-10-13\\video-structure-count.json",
+      "bytes": 55,
+      "sha256": "B38B47477F2E5E2041928C18BDE437F0176BD038232DE42FE1D83724B9B5DA1F",
+      "verified": true
+    }
+  ]
+}

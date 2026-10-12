@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] A polished physical 3D brand closing shot starts exactly from the supplied frame. One friendly blue Blocky logo cube with exactly two round studs, shiny black bean eyes, arched eyebrows and a happy small mouth rests at the left of the composition, in front of one rounded yellow badge tile on a clean warm ivory stage. No limbs and no additional characters. Keep the right half as clean negative space for a wordmark added in editing. During 0-1.4 seconds the complete rigid cube makes one tiny playful hop, tilts about ten degrees and lands on the same stage with one small soft squash settling into its original solid proportions. During 1.4-3 seconds the single yellow tile behind it rotates gently to face the camera and aligns as a rounded square badge. During 3-4.5 seconds the cube gives one natural eye blink and a tiny amused eyebrow lift, then smiles. During 4.5-7 seconds camera holds and the completed logo settles with almost imperceptible breathing-scale motion. Keep the face and exact two studs recognizable, grounded contact shadow, glossy blue resin and soft warm reflections. No letters, no captions, no text, no particles, no new shapes, no extra studs. Right-side empty space and lighting remain constant.
+
+overall_soundscape: Quiet clean room tone and gentle toy handling clicks only. No speech, no singing, no vocalization.
+
+non_diegetic_music: N/A

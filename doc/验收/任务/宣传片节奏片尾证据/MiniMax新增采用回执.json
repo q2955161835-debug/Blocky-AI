@@ -1,0 +1,138 @@
+{
+  "tasks": [
+    {
+      "taskId": "3e860d9b-a4c2-426b-b36a-34c7ec133c31",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-lens-in\\3e860d9b_000.mp4",
+      "bytes": 457771,
+      "sha256": "0cb19d0120e42aeb8e2640349857db3aba4e8718bc3c59aa0d4e54f0ec5c6487",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "457771"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "v5-lens-in",
+        "seconds": 4,
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\lens-bridge-start.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v5\\v5-lens-in.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seed": 771301
+      },
+      "firstFrameSha256": "ad6825bb5a856e39c75b9c29611591abd62a95475a4d8f963512f99ca6211c0b",
+      "nativeOutputFilenames": [
+        "Blocky_rhythm_v5-lens-in_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\3e860d9b-a4c2-426b-b36a-34c7ec133c31.json"
+    },
+    {
+      "taskId": "fb70b1a2-9ff9-4a2c-afe3-eb3dad87eab1",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-cli-close\\fb70b1a2_000.mp4",
+      "bytes": 428222,
+      "sha256": "2e29f05ed2466111ea0cc3f7e42362ce8ffcdb28b841064563b198978ce96d49",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "4.458333",
+          "size": "428222"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "v5-cli-close",
+        "seconds": 4,
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\cli-closeup.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v5\\v5-cli-close.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seed": 771307
+      },
+      "firstFrameSha256": "76125a5e3310634bfa7d6bb27fb020dbfa1ae0a41a2688fbb5ba93fe4f6eaf8d",
+      "nativeOutputFilenames": [
+        "Blocky_rhythm_v5-cli-close_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\fb70b1a2-9ff9-4a2c-afe3-eb3dad87eab1.json"
+    },
+    {
+      "taskId": "5f26c679-82cf-4848-946b-da156d289c0f",
+      "state": "completed",
+      "file": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-logo-outro\\5f26c679_000.mp4",
+      "bytes": 274202,
+      "sha256": "337c7b879eba2b7db1b57c27b621998ef06765a4ae398be7abdb99540d30ea54",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 672,
+            "height": 384,
+            "r_frame_rate": "24/1"
+          },
+          {
+            "codec_name": "aac",
+            "sample_rate": "32000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "7.292000",
+          "size": "274202"
+        }
+      },
+      "decodeExit": 0,
+      "requested": {
+        "name": "v5-logo-outro",
+        "seconds": 7,
+        "image": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v5\\logo-stage.png",
+        "prompt": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\workflows\\v5\\v5-logo-outro.txt",
+        "megapixels": 0.25,
+        "steps": 8,
+        "seed": 771313
+      },
+      "firstFrameSha256": "70cc620ec88bd413a80b4211580954e84c92c4936936699f7555516efb325f21",
+      "nativeOutputFilenames": [
+        "Blocky_rhythm_v5-logo-outro_00001_.mp4"
+      ],
+      "taskReceiptDefaultPath": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\5f26c679-82cf-4848-946b-da156d289c0f.json"
+    }
+  ],
+  "originalWorkflowChanged": false,
+  "mode": "standard local I2VA, sequential 4/4/7 seconds, 0.25MP/8 steps"
+}

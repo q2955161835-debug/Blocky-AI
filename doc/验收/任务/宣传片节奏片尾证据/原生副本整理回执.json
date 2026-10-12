@@ -1,0 +1,45 @@
+{
+  "files": 6,
+  "bytes": 4975491.0,
+  "moves": [
+    {
+      "from": "D:\\ComfyUI\\input\\lens-bridge-start.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\lens-bridge-start.png",
+      "bytes": 312662,
+      "sha256": "ad6825bb5a856e39c75b9c29611591abd62a95475a4d8f963512f99ca6211c0b"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_rhythm_v5-lens-in_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\Blocky_rhythm_v5-lens-in_00001_.mp4",
+      "bytes": 457771,
+      "sha256": "0cb19d0120e42aeb8e2640349857db3aba4e8718bc3c59aa0d4e54f0ec5c6487"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\cli-closeup.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\cli-closeup.png",
+      "bytes": 1995933,
+      "sha256": "76125a5e3310634bfa7d6bb27fb020dbfa1ae0a41a2688fbb5ba93fe4f6eaf8d"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_rhythm_v5-cli-close_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\Blocky_rhythm_v5-cli-close_00001_.mp4",
+      "bytes": 428222,
+      "sha256": "2e29f05ed2466111ea0cc3f7e42362ce8ffcdb28b841064563b198978ce96d49"
+    },
+    {
+      "from": "D:\\ComfyUI\\input\\logo-stage.png",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\logo-stage.png",
+      "bytes": 1506701,
+      "sha256": "70cc620ec88bd413a80b4211580954e84c92c4936936699f7555516efb325f21"
+    },
+    {
+      "from": "D:\\ComfyUI\\output\\video\\Blocky_rhythm_v5-logo-outro_00001_.mp4",
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\MiniMax节奏片尾原生副本-2026-10-13\\Blocky_rhythm_v5-logo-outro_00001_.mp4",
+      "bytes": 274202,
+      "sha256": "337c7b879eba2b7db1b57c27b621998ef06765a4ae398be7abdb99540d30ea54"
+    }
+  ],
+  "sha256Verified": true,
+  "deleted": false,
+  "releasedBytes": 0
+}

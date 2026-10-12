@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] Start from the close angle of Codex and the one cyan programming piece in the miniature workshop. Preserve the same blue scalloped robot and dark luminous greater-than/underscore face, cyan two-stud Blocky and terracotta square-eyed Clawd, rigid toy materials, warm window light. During 0-1 seconds Codex tilts its dark face toward the single cyan piece with a proud little nod. During 1-3 seconds the camera slowly trucks right about 12 percent around the same piece, revealing Blocky reaching one existing hand to receive it and Clawd watching with the same tiny lens. The actual transfer does not happen yet: keep the one piece held clearly between the existing hands. During 3-4 seconds all settle in a ready-to-pass pose. This is a short close insert that establishes intention before the following wider handoff shot. No duplicate cyan pieces, no extra fingers or limbs, no text, no holographic UI, no unrelated action.
+
+overall_soundscape: Quiet clean room tone and gentle toy handling clicks only. No speech, no singing, no vocalization.
+
+non_diegetic_music: N/A

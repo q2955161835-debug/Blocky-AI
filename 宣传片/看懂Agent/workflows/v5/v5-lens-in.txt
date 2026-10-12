@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] The first frame is the exact end of the friendly three-character magnifier correction in the same warm miniature workshop. The cyan two-stud Blocky holds a rigid purple C-shaped nested program, the orange square-eyed Clawd holds one small magnifier, the blue scalloped robot Codex watches. During 0-0.7 seconds Clawd adjusts the same lens closer to the purple program. During 0.7-3.1 seconds the camera continuously pushes in along the lens sight-line with medium amplitude, passing the silver lens rim in the near foreground and arriving at a clear close view of the yellow and cyan pieces inside the purple container. During 3.1-4 seconds the camera settles on the colorful nested structure, with the purple rim anchoring the upper left of the close view. A deliberate insert shot leads to actual program editing in the next shot. Keep toy parts rigid, preserve the exact same three identities and two studs, no face morph, no new lens, no new program pieces. No generated text or screen interface.
+
+overall_soundscape: Quiet clean room tone and gentle toy handling clicks only. No speech, no singing, no vocalization.
+
+non_diegetic_music: N/A

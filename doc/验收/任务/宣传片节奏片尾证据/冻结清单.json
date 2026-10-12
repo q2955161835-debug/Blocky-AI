@@ -1,0 +1,365 @@
+{
+  "frozenAt": "2026-10-13T02:13:14.178101+08:00",
+  "title": "审查搭子 · 节奏与片尾 v5",
+  "film": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-节奏片尾-v5.mp4",
+    "bytes": 66629785,
+    "sha256": "4bac6fff490f2fc8f09eecfcf3b644b64393ae375dc86ec251c74776675c2743",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "duration": "66.966667"
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "duration": "67.008000"
+        }
+      ],
+      "format": {
+        "duration": "67.008000",
+        "size": "66629785"
+      }
+    },
+    "videoFrames": 2010,
+    "fullDecodeExit": 0
+  },
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "projectUrl": "https://app.chatcut.io/zh/editor/d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "693460be-fa31-44e8-8ef5-ae1746f2c20b",
+  "exportId": "a2758346-91b7-4913-8e30-38e597d47641",
+  "renderMode": "local browser",
+  "segments": [
+    {
+      "asset": {
+        "id": "39bf1db0-c59a-4686-813f-ff85075f6a8a",
+        "name": "fd25f5bd_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 0,
+      "id": "4b47e97a-fd81-42cd-8acd-5f150fe2929c",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6000000,
+        "start": 0
+      },
+      "timelineRange": {
+        "fromFrame": 0,
+        "toFrame": 180
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "669c0d45-ac73-4c65-a88a-27994aed8be5",
+        "name": "335d9510_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 180,
+      "id": "10f94ac7-db88-4743-9841-5086ae30b856",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6150000,
+        "start": 150000
+      },
+      "timelineRange": {
+        "fromFrame": 180,
+        "toFrame": 360
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "00cc9941-d463-47da-ab40-2514092f8c7d",
+        "name": "9f2f3362_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 360,
+      "id": "826e8e7f-fb04-4ebc-9a3a-ab098fccc42b",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6150000,
+        "start": 150000
+      },
+      "timelineRange": {
+        "fromFrame": 360,
+        "toFrame": 540
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "24cb8a3c-a54f-4604-92c2-d9424ead0545",
+        "name": "3e860d9b_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 540,
+      "id": "7af75b78-915b-4c12-a073-249b0430a2fe",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 3250000,
+        "start": 250000
+      },
+      "timelineRange": {
+        "fromFrame": 540,
+        "toFrame": 630
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "bbffbcde-ca1b-4df4-b191-cf2fed30a464",
+        "name": "blocky-nested-review-edit.mp4",
+        "type": "video"
+      },
+      "startFrame": 630,
+      "id": "0b15fdd9-dc62-4bf3-b450-26854fb1e79c",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 10180000,
+        "start": 2500000
+      },
+      "timelineRange": {
+        "fromFrame": 630,
+        "toFrame": 870
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "dc8942b3-2dce-4e2a-9e1a-cbb3224badde",
+        "name": "c3a17c46_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 870,
+      "id": "8d293651-b1e2-4b0b-a8c2-8672a0a755b7",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6300000,
+        "start": 300000
+      },
+      "timelineRange": {
+        "fromFrame": 870,
+        "toFrame": 1050
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+        "name": "blocky-preset-runtime-highlights.mp4",
+        "type": "video"
+      },
+      "startFrame": 1050,
+      "id": "32d7fe23-f5d9-4ebf-aab0-540c4100506d",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 14180000,
+        "start": 6500000
+      },
+      "timelineRange": {
+        "fromFrame": 1050,
+        "toFrame": 1290
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "f5c046cf-e084-4adb-9489-079823713245",
+        "name": "fb70b1a2_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 1290,
+      "id": "1293bf0e-e321-4b21-af65-613ca6b66365",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 3250000,
+        "start": 250000
+      },
+      "timelineRange": {
+        "fromFrame": 1290,
+        "toFrame": 1380
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "6b03a6c6-40bb-43bc-b89a-8d1988e9f3fc",
+        "name": "3f6434c6_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 1380,
+      "id": "9a2d68e0-a06f-49aa-8c6e-be8ae808abc5",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6250000,
+        "start": 250000
+      },
+      "timelineRange": {
+        "fromFrame": 1380,
+        "toFrame": 1560
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "bcfcda8f-3a19-4852-ae12-5324421c385f",
+        "name": "2a1a6f7f_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 1560,
+      "id": "541a40b6-be7b-418d-8e67-759aae9393c4",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 7660000,
+        "start": 300000
+      },
+      "timelineRange": {
+        "fromFrame": 1560,
+        "toFrame": 1800
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    },
+    {
+      "asset": {
+        "id": "96cad134-5d36-4042-b3a5-58810956647a",
+        "name": "5f26c679_000.mp4",
+        "type": "video"
+      },
+      "startFrame": 1800,
+      "id": "8ac93ae4-200d-4628-84e4-58ce7f63cdcc",
+      "itemType": "video",
+      "kind": "item",
+      "sourceRange": {
+        "end": 6930000,
+        "start": 350000
+      },
+      "timelineRange": {
+        "fromFrame": 1800,
+        "toFrame": 2010
+      },
+      "trackAlias": "V1",
+      "trackId": "2919107b-0dbf-4a81-97f4-9a1a23be375f"
+    }
+  ],
+  "sources": {
+    "39bf1db0-c59a-4686-813f-ff85075f6a8a": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-01-start\\fd25f5bd_000.mp4",
+      "sha256": "db53c9642698cd8a30c0dd2b48e0430cc277d3484a0a2567dc2aa0b324ca0c80",
+      "bytes": 526449
+    },
+    "669c0d45-ac73-4c65-a88a-27994aed8be5": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-02-long-review\\335d9510_000.mp4",
+      "sha256": "b5d61dc47eb2f27d802aaec8ccea1f327f19289964e072ca6a5443e57eaded9c",
+      "bytes": 479881
+    },
+    "00cc9941-d463-47da-ab40-2514092f8c7d": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-03-wrong-target\\9f2f3362_000.mp4",
+      "sha256": "f6bd03981c90fb12103a793216fc392907bb7df2a6fe5b8554fbb73e51e8851b",
+      "bytes": 414449
+    },
+    "dc8942b3-2dce-4e2a-9e1a-cbb3224badde": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-04-visible-run\\c3a17c46_000.mp4",
+      "sha256": "201a493fba0d6638167c3483fa70f6b90544b59a4686ea99c8a947de92f68569",
+      "bytes": 465640
+    },
+    "6b03a6c6-40bb-43bc-b89a-8d1988e9f3fc": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-05-cli-handoff\\3f6434c6_000.mp4",
+      "sha256": "d1a1fc74b27e1222056d397f88773652f8c8832f198753323986540530148e73",
+      "bytes": 534778
+    },
+    "bcfcda8f-3a19-4852-ae12-5324421c385f": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v4\\team-06-growing-together\\2a1a6f7f_000.mp4",
+      "sha256": "07daed8cee0841484b4a114dfaa7d16beea4ced8e0d474b35d4b256dc5dea1fe",
+      "bytes": 613805
+    },
+    "24cb8a3c-a54f-4604-92c2-d9424ead0545": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-lens-in\\3e860d9b_000.mp4",
+      "sha256": "0cb19d0120e42aeb8e2640349857db3aba4e8718bc3c59aa0d4e54f0ec5c6487",
+      "bytes": 457771
+    },
+    "f5c046cf-e084-4adb-9489-079823713245": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-cli-close\\fb70b1a2_000.mp4",
+      "sha256": "2e29f05ed2466111ea0cc3f7e42362ce8ffcdb28b841064563b198978ce96d49",
+      "bytes": 428222
+    },
+    "96cad134-5d36-4042-b3a5-58810956647a": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v5\\v5-logo-outro\\5f26c679_000.mp4",
+      "sha256": "337c7b879eba2b7db1b57c27b621998ef06765a4ae398be7abdb99540d30ea54",
+      "bytes": 274202
+    },
+    "bbffbcde-ca1b-4df4-b191-cf2fed30a464": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-nested-review-edit.mp4",
+      "sha256": "b69ee6e4cb0cd3e4541386b2d6a315891d42550fac77ad21a1fdbd7817c104d7",
+      "bytes": 479759
+    },
+    "06af9651-a140-41fd-87c5-56aed2cd26b7": {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\ui\\blocky-preset-runtime-highlights.mp4",
+      "sha256": "fc628b458527089c333fd7796d96af722603dfc32087168fc1a2988817cfea34",
+      "bytes": 813431
+    }
+  },
+  "removedDuplicateOutro": {
+    "oldTimeline": "17be1d36-58f7-4ab2-803e-1d035bd1cc2c",
+    "oldFrames": [
+      1620,
+      1800
+    ],
+    "oldSourceSeconds": [
+      3.8,
+      8.0
+    ],
+    "oldPlaybackRate": 0.7,
+    "currentVideoAssetsEachUsedOnce": true
+  },
+  "userBaseline": "User explicitly praised v4 overall effect, requested removal of repeated clip, gentler connections, diverse later subtitle placements and new animated logo closing; not a final v5 viewing confirmation",
+  "logoReference": {
+    "path": "D:\\1Folder\\Blocky-AI\\logo\\logo.png",
+    "sha256": "12d3f351006663fd07efd11480101f3c06a43f91633f2e8a914888ca63cf0d9d",
+    "wordmark": "Blocky.",
+    "animatedLogo": "New MiniMax generated animated logo from this visual reference; native editable exact text overlaid"
+  },
+  "boundaries": [
+    "Actual current frontend field edit, existing website preset runtime labelled 界面演示",
+    "Virtual Codex/Claude Code collaboration and verified create command labelled CLI协作情景示意",
+    "No new desktop/model/brand tool execution or official integration claim"
+  ],
+  "audio": {
+    "originalScoreSha256": "96ff4a2443184e76d5a7b233b74493069f5632c838386ff2fa4f37ce274ae3af",
+    "sourceEmbeddedGainDb": -60,
+    "digitalZeroNotClaimed": true,
+    "voiceover": false,
+    "humanListening": "Not established by production tools"
+  },
+  "scope": "Film only; no product, website, installation or profile changes"
+}
