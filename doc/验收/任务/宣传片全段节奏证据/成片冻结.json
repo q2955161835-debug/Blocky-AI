@@ -1,0 +1,45 @@
+{
+  "time": "2026-10-13 15:04",
+  "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-全段紧凑-v10.mp4",
+  "bytes": 57053653,
+  "sha256": "2b319758a72e503abf8c9fc9d52e4a3e39fd81cb991ce7a39a84aff1a558375d",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "nb_frames": "1710",
+        "nb_read_frames": "1710"
+      },
+      {
+        "codec_name": "aac",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "nb_frames": "2672",
+        "nb_read_frames": "2672"
+      }
+    ],
+    "format": {
+      "duration": "57.002667",
+      "size": "57053653"
+    }
+  },
+  "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+  "renderId": "8625d88d-aea2-405a-9d25-804e62d240c7",
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineFrames": 1710,
+  "storage": {
+    "downloadMovedFrom": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-全段紧凑-v10.mp4",
+    "originalDownloadAbsent": true
+  },
+  "baseline": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-前段提速-v9.mp4",
+    "sha256": "8c51d6863b8417b392091e831e18955724e6fa6788c4d446ba77f82b315e0b79"
+  },
+  "mergePushAuthorized": false
+}

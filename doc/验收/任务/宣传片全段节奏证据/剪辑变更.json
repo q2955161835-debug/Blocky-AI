@@ -1,0 +1,373 @@
+{
+  "checkpoint": "1129e4d",
+  "baseline": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+  "timeline": "0259edab-0856-477f-a88e-cc43528f9e64",
+  "payload": {
+    "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+    "updates": [
+      {
+        "id": "2ad75c05-ef16-4473-b172-910b1f7fe3fd",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "c2fcd074-3764-4ad8-912b-90d296606a62",
+        "fromFrame": 398,
+        "durationInFrames": 937,
+        "sourceStartFromInSeconds": 13.266666666666667,
+        "playbackRate": 1
+      },
+      {
+        "id": "7d2ba6c0-aad8-4ad3-9bb3-7b6289d687cd",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 720,
+        "durationInFrames": 150,
+        "playbackRate": 1.2
+      },
+      {
+        "id": "08a07d67-1d59-433c-ad22-dd8b37861c9d",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 720,
+        "durationInFrames": 60
+      },
+      {
+        "id": "0d0a430c-96f7-42af-bbd5-dec9f3960131",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 795,
+        "durationInFrames": 60
+      },
+      {
+        "id": "ce3e22ce-31dd-4f58-9dac-410576f9a9a5",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 870,
+        "durationInFrames": 240
+      },
+      {
+        "id": "d153801b-5b7c-4da4-8356-be2e018c2684",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 885,
+        "durationInFrames": 210
+      },
+      {
+        "id": "fe4b13d4-1e0d-42c6-b5ce-4bb39bb7b0f3",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 1110,
+        "durationInFrames": 75,
+        "playbackRate": 1.2
+      },
+      {
+        "id": "2960986f-e149-428c-bfd1-db4e92471c07",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1118,
+        "durationInFrames": 60
+      },
+      {
+        "id": "e4b6308c-374a-4fe3-9336-7e468db29eb6",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 1185,
+        "durationInFrames": 150,
+        "playbackRate": 1.2
+      },
+      {
+        "id": "7c3918b7-8a1a-4fe9-afe4-c2976e7c8eeb",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 1335,
+        "durationInFrames": 195,
+        "playbackRate": 1.1323076923076925
+      },
+      {
+        "id": "087ccae5-ac79-4376-b7cc-1cef62d64dfa",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1335,
+        "durationInFrames": 60
+      },
+      {
+        "id": "c69a89a8-9ec7-4903-b110-4613dcd9e719",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "c2fcd074-3764-4ad8-912b-90d296606a62",
+        "fromFrame": 1335,
+        "durationInFrames": 120,
+        "sourceStartFromInSeconds": 44.5,
+        "playbackRate": 1
+      },
+      {
+        "id": "874ec182-41c4-4abe-824c-8f4d11484dbc",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1403,
+        "durationInFrames": 60
+      },
+      {
+        "id": "a1bf8f9f-ebe4-4713-a02e-a80f5af6ba09",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1470,
+        "durationInFrames": 60
+      },
+      {
+        "id": "cfa9086d-a3bb-4d8d-8ff8-f13f695e790f",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "c2fcd074-3764-4ad8-912b-90d296606a62",
+        "fromFrame": 1455,
+        "durationInFrames": 75,
+        "sourceStartFromInSeconds": 48.5,
+        "playbackRate": 1
+      },
+      {
+        "id": "7d8648d9-1c9c-41d6-a8eb-aa0ccb7d8396",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "0e8f974c-18ba-4229-ba21-0ae00511ad61",
+        "fromFrame": 1530,
+        "durationInFrames": 180,
+        "playbackRate": 1.0966666666666665
+      },
+      {
+        "id": "59ac95b7-0c3a-49ff-95a1-8f5b8b69cdb8",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "c2fcd074-3764-4ad8-912b-90d296606a62",
+        "fromFrame": 1530,
+        "durationInFrames": 180,
+        "sourceStartFromInSeconds": 51,
+        "playbackRate": 1
+      },
+      {
+        "id": "d2c3af2a-347e-4847-b7e4-6a598ebb4142",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "trackId": "b7a0940c-05cb-4d15-a0e4-04f5bf2d4473",
+        "fromFrame": 1603,
+        "durationInFrames": 4
+      },
+      {
+        "id": "9f3a3161-6b6a-42e7-8be9-64fef00a854e",
+        "type": "transition",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "durationInFrames": 12
+      }
+    ],
+    "deletes": [
+      {
+        "id": "c6d64e0d-00ee-41b5-89b8-de80ccf5b85d",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64"
+      },
+      {
+        "id": "bb89bd14-4b2b-4f0d-8a25-94bf975dcc7a",
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64"
+      }
+    ],
+    "adds": [
+      {
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "type": "motion-graphic",
+        "assetId": "1e199023-a9e5-4914-bd74-45038b9bcabf",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1185,
+        "durationInFrames": 150,
+        "left": 80,
+        "top": 865,
+        "width": 1760,
+        "height": 195,
+        "propertyOverrides": {
+          "result": "CLI 开发 → 积木审阅；入门与专业共用。"
+        }
+      },
+      {
+        "timelineId": "0259edab-0856-477f-a88e-cc43528f9e64",
+        "type": "motion-graphic",
+        "assetId": "90dcc083-5205-4adf-b186-1c9f94ca2e1d",
+        "trackId": "ee5fc536-f870-4a32-b5db-f7fad95d6a68",
+        "fromFrame": 1530,
+        "durationInFrames": 180,
+        "left": 930,
+        "top": 420,
+        "width": 900,
+        "height": 250
+      }
+    ]
+  },
+  "rows": [
+    {
+      "track": "A1",
+      "asset": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+      "oldFrom": 398,
+      "newFrom": 398,
+      "oldFrames": 1012,
+      "newFrames": 937,
+      "playbackRate": 1,
+      "sourceOffset": 13.266666666666667
+    },
+    {
+      "track": "V1",
+      "asset": "00cc0cea-8d74-42d3-92c4-1e4d7564ca71",
+      "oldFrom": 720,
+      "newFrom": 720,
+      "oldFrames": 180,
+      "newFrames": 150,
+      "playbackRate": 1.2
+    },
+    {
+      "track": "V2",
+      "asset": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+      "oldFrom": 720,
+      "newFrom": 720,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "V2",
+      "asset": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+      "oldFrom": 810,
+      "newFrom": 795,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "V1",
+      "asset": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+      "oldFrom": 900,
+      "newFrom": 870,
+      "oldFrames": 240,
+      "newFrames": 240
+    },
+    {
+      "track": "V2",
+      "asset": "f10e519f-82d1-4544-8d81-2f386d7a3cc9",
+      "oldFrom": 915,
+      "newFrom": 885,
+      "oldFrames": 210,
+      "newFrames": 210
+    },
+    {
+      "track": "V1",
+      "asset": "d70ecebc-f70a-4637-9fa9-4fa6e39abb2a",
+      "oldFrom": 1140,
+      "newFrom": 1110,
+      "oldFrames": 90,
+      "newFrames": 75,
+      "playbackRate": 1.2
+    },
+    {
+      "track": "V2",
+      "asset": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+      "oldFrom": 1155,
+      "newFrom": 1118,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "V1",
+      "asset": "e7e78dc3-257c-4ffb-a141-3411cbb0a5c4",
+      "oldFrom": 1230,
+      "newFrom": 1185,
+      "oldFrames": 180,
+      "newFrames": 150,
+      "playbackRate": 1.2
+    },
+    {
+      "track": "V1",
+      "asset": "3cbdd510-61a4-4556-9a67-148dee33d2c0",
+      "oldFrom": 1410,
+      "newFrom": 1335,
+      "oldFrames": 240,
+      "newFrames": 195,
+      "playbackRate": 1.1323076923076925
+    },
+    {
+      "track": "V2",
+      "asset": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+      "oldFrom": 1410,
+      "newFrom": 1335,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "A1",
+      "asset": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+      "oldFrom": 1410,
+      "newFrom": 1335,
+      "oldFrames": 150,
+      "newFrames": 120,
+      "playbackRate": 1,
+      "sourceOffset": 44.5
+    },
+    {
+      "track": "V2",
+      "asset": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+      "oldFrom": 1500,
+      "newFrom": 1403,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "V2",
+      "asset": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+      "oldFrom": 1560,
+      "newFrom": 1470,
+      "oldFrames": 60,
+      "newFrames": 60
+    },
+    {
+      "track": "A1",
+      "asset": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+      "oldFrom": 1560,
+      "newFrom": 1455,
+      "oldFrames": 90,
+      "newFrames": 75,
+      "playbackRate": 1,
+      "sourceOffset": 48.5
+    },
+    {
+      "track": "V1",
+      "asset": "cdc6cc7d-8422-49a2-b8f0-91d1984fe52f",
+      "oldFrom": 1650,
+      "newFrom": 1530,
+      "oldFrames": 210,
+      "newFrames": 180,
+      "playbackRate": 1.0966666666666665
+    },
+    {
+      "track": "A1",
+      "asset": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+      "oldFrom": 1650,
+      "newFrom": 1530,
+      "oldFrames": 210,
+      "newFrames": 180,
+      "playbackRate": 1,
+      "sourceOffset": 51
+    },
+    {
+      "track": "A2",
+      "asset": "dca309b9-d5ac-4199-a26d-cab9d44dfcef",
+      "oldFrom": 1735,
+      "newFrom": 1603,
+      "oldFrames": 4,
+      "newFrames": 4
+    }
+  ],
+  "mg": {
+    "cli": {
+      "assetId": "1e199023-a9e5-4914-bd74-45038b9bcabf",
+      "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};const a=Math.min(1,Math.max(0,(f-9)/6));return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"15px 28px\",background:p.paper,border:\"2px solid #E5FA7866\",borderRadius:18,fontFamily:p.font,opacity:a}}><div style={{fontSize:28,fontWeight:800,color:p.accent,marginBottom:7}}>{p.title}</div><div style={{fontSize:26,fontWeight:600,color:p.ink,lineHeight:1.25}}>{p.line1}<br/>{p.line2}</div><div style={{display:\"flex\",justifyContent:\"space-between\",fontSize:22,marginTop:8,color:\"#C6D3D6\"}}><span style={{opacity:Math.min(1,Math.max(0,(f-65)/7))}}>{p.result}</span><span>{p.foot}</span></div></div>;};",
+      "frames": 150
+    },
+    "logo": {
+      "assetId": "90dcc083-5205-4adf-b186-1c9f94ca2e1d",
+      "code": "const Component = ({ item }) => {\n  const frame = useCurrentFrame();\n  const p = item.props;\n  const rootStyle = {position:'absolute',inset:0,backgroundColor:'transparent',display:'flex',alignItems:'center',padding:12};\n  const fontSize = Math.min(164,1120/Math.max(7,p.text.length));\n  const rowStyle = {display:'flex',alignItems:'baseline',color:p.ink,fontFamily:p.font,fontSize:fontSize,fontWeight:900,lineHeight:1.15,letterSpacing:-4,whiteSpace:'nowrap'};\n  const chars = p.text.split('');\n  const letters = chars.map((char,index)=>{\n    const start = 38 + index*4;\n    const alpha = interpolate(frame,[start,start+8],[0,1],{extrapolateLeft:'clamp',extrapolateRight:'clamp'});\n    const lift = interpolate(frame,[start,start+5,start+10],[20,-4,0],{extrapolateLeft:'clamp',extrapolateRight:'clamp'});\n    const style = {display:'inline-block',opacity:alpha,transform:'translateY('+lift+'px)'};\n    return <span key={index} style={style}>{char}</span>;\n  });\n  return <div style={rootStyle}><div style={rowStyle}>{letters}</div></div>;\n};",
+      "frames": 180
+    }
+  },
+  "notes": [
+    "12句聊天对白各60帧，内容/布局/字体保持。",
+    "两个UI各240帧，原可见源区间/缩放保持。",
+    "所有改变视频可见源区间保持；Codex入口视觉转场14→12帧，满足新1.2倍速的源入点余量。",
+    "BGM1倍速连续0–57秒，不再回用原音源区间；15转场保留计数。",
+    "CLI结果65帧开始显露/72帧稳定，Logo约70帧完整落稳；共享MG源码不变。",
+    "不新镜头生成，不改v9；用户暂不合并或推送。"
+  ]
+}
