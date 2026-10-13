@@ -1,0 +1,317 @@
+{
+  "checkpoint": "615a9d7",
+  "baseline": "57286d7c-77f1-4755-92fe-0ff67ff861ab",
+  "timeline": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+  "payload": {
+    "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+    "updates": [
+      {
+        "id": "f2d801bf-35ef-4b23-9b9b-a5d90f53dbdf",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 0,
+        "durationInFrames": 150,
+        "playbackRate": 1.2
+      },
+      {
+        "id": "6df34091-7cb0-46c4-8c57-8a4a69160d4a",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 0,
+        "durationInFrames": 285,
+        "sourceStartFromInSeconds": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "b246f6f8-a2a3-44b5-8c2f-de34b04bc48a",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "9dbe8b03-e871-46bb-8099-92e1bc51aa2b",
+        "fromFrame": 29,
+        "durationInFrames": 4
+      },
+      {
+        "id": "70fbc95e-f4f6-44de-97be-169ee94a2922",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 30,
+        "durationInFrames": 60
+      },
+      {
+        "id": "d3c9730d-90aa-479a-b069-91905f145113",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 90,
+        "durationInFrames": 60
+      },
+      {
+        "id": "e7fda40c-cf54-423f-aaf8-bd3e7fa4b909",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 150,
+        "durationInFrames": 135,
+        "playbackRate": 1.3333333333333333
+      },
+      {
+        "id": "2428b9fb-3392-4f3b-92c9-88022cd96237",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 158,
+        "durationInFrames": 60
+      },
+      {
+        "id": "5965fd39-8d91-4f96-9f60-c66fd3486ee7",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 225,
+        "durationInFrames": 60
+      },
+      {
+        "id": "f1c53211-f964-4c8a-a432-4a1e4658b504",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 285,
+        "durationInFrames": 135,
+        "playbackRate": 1.3333333333333333
+      },
+      {
+        "id": "72e656d3-ed67-4b74-90f0-bb0b5d0467b8",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 285,
+        "durationInFrames": 60
+      },
+      {
+        "id": "5278d2b0-7e09-4a40-85f6-8c5f1be5ccdd",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 285,
+        "durationInFrames": 113,
+        "sourceStartFromInSeconds": 9.5,
+        "playbackRate": 1
+      },
+      {
+        "id": "a60496f6-efbb-40a2-82b3-0689bb353e44",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "9dbe8b03-e871-46bb-8099-92e1bc51aa2b",
+        "fromFrame": 308,
+        "durationInFrames": 19
+      },
+      {
+        "id": "0edc6f7d-333e-476c-9ff6-6ae2f1074465",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "9dbe8b03-e871-46bb-8099-92e1bc51aa2b",
+        "fromFrame": 352,
+        "durationInFrames": 4
+      },
+      {
+        "id": "a9a289c9-2c8c-47e5-9042-37c0264d5c42",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 353,
+        "durationInFrames": 60
+      },
+      {
+        "id": "de6a910b-c8ff-4007-a718-dd3c30a4bfcb",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 398,
+        "durationInFrames": 1012,
+        "sourceStartFromInSeconds": 13.266666666666667,
+        "playbackRate": 1
+      },
+      {
+        "id": "a1b25a6b-db9a-4373-9691-95f19552d316",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 420,
+        "durationInFrames": 60,
+        "playbackRate": 1.5
+      },
+      {
+        "id": "760ab120-a6c3-43b3-9455-dfd37f1e96f5",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 480,
+        "durationInFrames": 240
+      },
+      {
+        "id": "140fc24c-cd67-4c1e-b58a-3e0499ac9d7e",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 495,
+        "durationInFrames": 90
+      },
+      {
+        "id": "2ef56239-a5f3-41b0-ba88-2e22f5005136",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 600,
+        "durationInFrames": 90
+      },
+      {
+        "id": "ea5d20ff-02e5-48f4-a55f-86ce49ad4de3",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 720,
+        "durationInFrames": 180
+      },
+      {
+        "id": "191522a4-d36d-480b-be2c-a0bd01790555",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 720,
+        "durationInFrames": 60
+      },
+      {
+        "id": "39fcc19d-4b6b-4716-88dc-cd8da1cb12bd",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 810,
+        "durationInFrames": 60
+      },
+      {
+        "id": "aa4432c4-45da-42f4-84bb-35173826bade",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 900,
+        "durationInFrames": 240
+      },
+      {
+        "id": "50855941-ab01-41de-8ed2-6443b34fcf1b",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 915,
+        "durationInFrames": 210
+      },
+      {
+        "id": "322d65c2-2496-4c08-ae10-c68da7fef7d1",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 1140,
+        "durationInFrames": 90
+      },
+      {
+        "id": "99c5fba9-cef1-4e08-8d00-7005646aff57",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1155,
+        "durationInFrames": 60
+      },
+      {
+        "id": "1911c564-0566-4c38-8b30-6047beeb3dc4",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 1230,
+        "durationInFrames": 180
+      },
+      {
+        "id": "376b8d3f-5fd0-4f23-9ca0-08c7613bd00c",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1230,
+        "durationInFrames": 180
+      },
+      {
+        "id": "9d8bbe98-e19e-4ce6-b4f3-03c45f3c1dda",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 1410,
+        "durationInFrames": 240
+      },
+      {
+        "id": "d8870b57-cbe6-4ee7-ba7a-168cc6f10f87",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1410,
+        "durationInFrames": 60
+      },
+      {
+        "id": "bb14213e-90f0-4a7e-bd43-fbf3580c8ba2",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 1410,
+        "durationInFrames": 150
+      },
+      {
+        "id": "1d622c7b-2963-4d60-9c6e-b440b1c062e7",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1500,
+        "durationInFrames": 60
+      },
+      {
+        "id": "b8e3dd30-0a8b-405b-b6f3-cd62006c399b",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1560,
+        "durationInFrames": 60
+      },
+      {
+        "id": "1c547e10-fd6f-4899-9f12-c7c71688e4b1",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 1560,
+        "durationInFrames": 90
+      },
+      {
+        "id": "643aa3c7-077c-4473-9a45-d067746b4170",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "5da558a9-cba3-4785-affa-501b8b07c80c",
+        "fromFrame": 1650,
+        "durationInFrames": 210
+      },
+      {
+        "id": "ba8b6a33-ac2b-4211-832a-43c4291259fc",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 1650,
+        "durationInFrames": 210
+      },
+      {
+        "id": "f3346fd5-5a4d-4ef4-843c-5b81b1b14feb",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "ebebc49b-6b78-41f7-9b98-5e760a0d9672",
+        "fromFrame": 1650,
+        "durationInFrames": 210
+      },
+      {
+        "id": "e1c33bbc-e07b-4a67-a9ea-bbb8377dfafa",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "trackId": "9dbe8b03-e871-46bb-8099-92e1bc51aa2b",
+        "fromFrame": 1735,
+        "durationInFrames": 4
+      }
+    ],
+    "deletes": [
+      {
+        "id": "d62be95f-3d74-465e-8196-711b37d84546",
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7"
+      }
+    ],
+    "adds": [
+      {
+        "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+        "type": "motion-graphic",
+        "assetId": "01b3c89a-230c-4985-80c3-b0319551346a",
+        "trackId": "b789f05d-c132-48cb-8fad-27580a86df81",
+        "fromFrame": 0,
+        "durationInFrames": 30,
+        "left": 350,
+        "top": 30,
+        "width": 1230,
+        "height": 110
+      }
+    ]
+  },
+  "title": {
+    "assetId": "01b3c89a-230c-4985-80c3-b0319551346a",
+    "code": "const Component=({item})=>{const f=useCurrentFrame(),p=item.props||{};const a=Math.min(1,f/5)*Math.min(1,(30-f)/5);return <div style={{height:\"100%\",width:\"100%\",boxSizing:\"border-box\",padding:\"16px 25px\",fontFamily:p.font,opacity:a}}><div style={{background:p.paper,border:\"3px solid \"+p.ink,borderRadius:25,padding:\"10px 26px\",fontSize:51,fontWeight:800,color:p.ink,textAlign:\"center\",boxShadow:\"0 6px 0 #132A3233\"}}><span style={{color:p.accent}}>Blocky.</span>　{p.text}</div></div>;};",
+    "durationInFrames": 30
+  },
+  "notes": [
+    "六句对白各60帧，不加快文字内动画。",
+    "前四镜头可见源区间保持，后段整体前移150帧。",
+    "BGM保持1倍速，前三段源连续；后段原循环及淡化保持。",
+    "不新镜头生成，不更改共享MG资产，不改变v8。"
+  ]
+}

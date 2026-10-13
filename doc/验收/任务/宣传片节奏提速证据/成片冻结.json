@@ -1,0 +1,45 @@
+{
+  "time": "2026-10-13 14:28",
+  "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-前段提速-v9.mp4",
+  "bytes": 61336863,
+  "sha256": "8c51d6863b8417b392091e831e18955724e6fa6788c4d446ba77f82b315e0b79",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "nb_frames": "1860",
+        "nb_read_frames": "1860"
+      },
+      {
+        "codec_name": "aac",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "nb_frames": "2907",
+        "nb_read_frames": "2907"
+      }
+    ],
+    "format": {
+      "duration": "62.016000",
+      "size": "61336863"
+    }
+  },
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "50c13cf2-8900-489b-97ba-cbf3457394b7",
+  "renderId": "a16047e9-d856-4ef0-8ef2-b0fff7ad29b6",
+  "timelineFrames": 1860,
+  "storage": {
+    "downloadMovedFrom": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-前段提速-v9.mp4",
+    "originalDownloadAbsent": true
+  },
+  "baseline": {
+    "sha256": "11e7979c2d8afe698f477405267509ac6e165a79ec5477fd35e0343972ded7d8",
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-角色细节修复-v8.mp4"
+  },
+  "mergePushAuthorized": false
+}
