@@ -1,0 +1,29 @@
+{
+  "time": "2026-10-13 15:37",
+  "authorization": "用户：只保留最终成品视频，然后合并并推送；沿用仅清理本地旧成片范围。",
+  "kept": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-全段紧凑-v10.mp4",
+    "sha256": "2b319758a72e503abf8c9fc9d52e4a3e39fd81cb991ce7a39a84aff1a558375d",
+    "bytes": 57053653
+  },
+  "method": "Windows回收站；不永久删除或清空；原始镜头、封面和ChatCut工程保持。",
+  "files": [
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-RealESRGAN优化-v7.mp4",
+      "bytes": 66474459,
+      "sha256": "d109bc66248fbc9e2d387675f19a2e234dfb7d0b28731cc7ad619393f4af23cc"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-角色细节修复-v8.mp4",
+      "bytes": 66549239,
+      "sha256": "11e7979c2d8afe698f477405267509ac6e165a79ec5477fd35e0343972ded7d8"
+    },
+    {
+      "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-前段提速-v9.mp4",
+      "bytes": 61336863,
+      "sha256": "8c51d6863b8417b392091e831e18955724e6fa6788c4d446ba77f82b315e0b79"
+    }
+  ],
+  "totalBytes": 194360561.0,
+  "recovery": "从Windows回收站按原文件名还原；本清单用于尺寸/SHA核对，不另复制同批旧片。"
+}
