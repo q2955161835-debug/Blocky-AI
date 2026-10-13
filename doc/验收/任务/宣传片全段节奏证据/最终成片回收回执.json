@@ -1,0 +1,44 @@
+{
+  "time": "2026-10-13 15:36",
+  "method": "Windows回收站",
+  "recycleStorage": "D:\\$Recycle.Bin",
+  "accountSpecificPathOmitted": true,
+  "files": [
+    {
+      "originalPath": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-RealESRGAN优化-v7.mp4",
+      "bytes": 66474459,
+      "sha256": "d109bc66248fbc9e2d387675f19a2e234dfb7d0b28731cc7ad619393f4af23cc",
+      "originalAbsent": true,
+      "recycleMetadataName": "$IMU04QE.mp4",
+      "recycleDataName": "$RMU04QE.mp4",
+      "dataVerified": true
+    },
+    {
+      "originalPath": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-角色细节修复-v8.mp4",
+      "bytes": 66549239,
+      "sha256": "11e7979c2d8afe698f477405267509ac6e165a79ec5477fd35e0343972ded7d8",
+      "originalAbsent": true,
+      "recycleMetadataName": "$I33KYJ9.mp4",
+      "recycleDataName": "$R33KYJ9.mp4",
+      "dataVerified": true
+    },
+    {
+      "originalPath": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-前段提速-v9.mp4",
+      "bytes": 61336863,
+      "sha256": "8c51d6863b8417b392091e831e18955724e6fa6788c4d446ba77f82b315e0b79",
+      "originalAbsent": true,
+      "recycleMetadataName": "$I93VQZF.mp4",
+      "recycleDataName": "$R93VQZF.mp4",
+      "dataVerified": true
+    }
+  ],
+  "totalBytes": 194360561.0,
+  "finalFilmUnchanged": true,
+  "remainingMp4": [
+    "Blocky-审查搭子-全段紧凑-v10.mp4"
+  ],
+  "originalSourcesPreserved": true,
+  "chatcutHistoryPreserved": true,
+  "diskSpaceReleasedClaimed": false,
+  "recovery": "从Windows回收站按原文件名还原；SHA及字节见本回执。"
+}
