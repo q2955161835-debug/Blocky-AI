@@ -1,0 +1,37 @@
+{
+  "time": "2026-10-13 15:44",
+  "authorization": "用户：只保留最终成品视频，然后合并并推送",
+  "repository": "https://github.com/q2955161835-debug/Blocky-AI",
+  "targetBranch": "main",
+  "method": "fast-forward",
+  "integratedAnchor": "61f276956a57bb429475ef64209f2d02ac9ae8a2",
+  "localAnchorTree": "06dd96c834ae4df468e6f64fa759e8fe9f856925",
+  "remoteReadback": {
+    "method": "GitHub API main ref and git commit tree",
+    "sha": "61f276956a57bb429475ef64209f2d02ac9ae8a2",
+    "tree": "06dd96c834ae4df468e6f64fa759e8fe9f856925",
+    "matches": true
+  },
+  "mergedTaskBranch": "codex/feat-blocky-promo-pilot",
+  "localTaskBranchRemoved": true,
+  "remoteTaskBranchExisted": false,
+  "uniqueWorktree": true,
+  "videos": {
+    "retained": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-全段紧凑-v10.mp4",
+    "sha256": "2b319758a72e503abf8c9fc9d52e4a3e39fd81cb991ce7a39a84aff1a558375d",
+    "outputsMp4Count": 1,
+    "recycledCount": 4,
+    "recycledBytes": 229315999,
+    "receipts": [
+      "最终成片回收回执.json",
+      "早期试片回收回执.json"
+    ],
+    "allOriginalSourcesPreserved": true,
+    "chatcutHistoryPreserved": true
+  },
+  "mediaUploadedToGit": false,
+  "publicationOrReleaseCreated": false,
+  "realEsrgan": "D:\\2Folder\\Real-ESRGAN独立且无Git跟踪，本轮未修改",
+  "verificationScope": "当前最终影片SHA保持、4旧成片逐SHA回收、唯一输出视频、主线内容与GitHub API提交及完整树一致；原T01–T03验收复用。",
+  "documentationCloseout": "本回执及补充清理记录作为整合锚点后继本地提交同轮推送；不改变已验影片或产品。"
+}
