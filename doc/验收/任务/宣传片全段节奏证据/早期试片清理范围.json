@@ -1,0 +1,12 @@
+{
+  "time": "2026-10-13 15:41",
+  "authorization": "用户：只保留最终成品视频，然后合并并推送",
+  "file": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\字面理解\\outputs\\Blocky-字面理解-试片-v2.mp4",
+    "bytes": 34955438,
+    "sha256": "181d5c93a10b41ac9cfefa356a22b08d40726b94db8d982941f54f55c0dceee2"
+  },
+  "method": "Windows回收站；不永久删除或清空",
+  "scope": "宣传片目录补扫找到的早期废弃v2成片；不处理原始镜头或其他项目",
+  "recovery": "在Windows回收站按原文件名还原并核对SHA/字节。"
+}
