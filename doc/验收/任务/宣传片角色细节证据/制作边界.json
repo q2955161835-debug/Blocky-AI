@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-13",
+  "baselineCommit": "72cb0cbdf9a5fd6dd667782025e205ba14bb6e92",
+  "checkpoint": "12bf944",
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "baselineTimeline": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+  "candidateTimeline": "57286d7c-77f1-4755-92fe-0ff67ff861ab",
+  "scope": "6-12秒长折页镜头：背景摆件双眼、Claude后腿",
+  "reference": "宣传片/看懂Agent/assets/v4/team-02-long-review.png",
+  "repairedKeyframe": "宣传片/看懂Agent/assets/v8/team-02-detail-fixed.png",
+  "imageDefaultOutputMovedFrom": "C:\\Users\\29551\\.codex\\generated_images\\01a1305e-1f25-7be3-abf4-bcff8a03b791\\exec-b03e8100-07cb-4d3e-aa33-c392e9cd2ede.png",
+  "prompt": "宣传片/看懂Agent/workflows/v8/team-02-detail-fixed.txt",
+  "workflow": "D:\\ComfyUI\\user\\default\\workflows\\翻译版MiniMax H3 图生视频与首尾帧.json",
+  "settings": {"megapixels": 0.5, "steps": 8, "seconds": 6, "seed": 661028, "concurrentGpuJobs": 1},
+  "promptId": "fff18b30-8a38-453d-8109-83e1d348e073",
+  "jobIndex": "C:\\Users\\29551\\AppData\\Local\\comfy-cli\\jobs\\fff18b30-8a38-453d-8109-83e1d348e073.json",
+  "localOnly": true,
+  "confirmSpend": false,
+  "mergePushAuthorized": false,
+  "notes": ["原用户工作流未覆盖。通过当前官方slot发现参数。", "官方MCP的slot读取对当前工作流返回no JSON；同官方CLI直接读取返回可解析完整JSON，使用该结果；set_workflow_slot、validate_workflow、run_workflow通过官方MCP成功。", "背景和腿部原源已有瑕疵，本轮修复，不将原超分验收冒充形象无瑕疵。"]
+}

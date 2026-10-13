@@ -1,0 +1,1210 @@
+{
+  "state": {
+    "canvas": {
+      "height": 1080,
+      "width": 1920
+    },
+    "durationFrames": 2010,
+    "fps": 30,
+    "id": "25c6aff1-9c84-4a5e-b09b-e999485db655",
+    "name": "审查搭子 · Real-ESRGAN画质优化 v7",
+    "range": {
+      "fromFrame": 0,
+      "toFrame": 2010
+    }
+  },
+  "views": [
+    "timeline"
+  ],
+  "timeline": {
+    "entries": [
+      {
+        "asset": {
+          "id": "fa4da209-4917-491d-b731-48763994ae53",
+          "name": "fd25f5bd_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 0,
+        "id": "4fa42d79-60c5-49bd-91be-c33c0aec97d8",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6000000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 180
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "5b54aa4c-0723-4931-96fc-f33a13122cd9",
+          "name": "搭子开场 · 核心小标题",
+          "type": "motion-graphic"
+        },
+        "startFrame": 0,
+        "id": "1aead9a8-9bea-417a-85aa-4d6fbdb1f5d2",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 60
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 0,
+        "id": "11df1e75-fb98-42c2-aa8d-dca955a177b5",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 12000000,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 360
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "fromFrame": 0,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 0,
+          "toFrame": 59
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "asset": {
+          "id": "dca309b9-d5ac-4199-a26d-cab9d44dfcef",
+          "name": "tiny-bubble-pop-r1.mp3",
+          "type": "audio"
+        },
+        "startFrame": 59,
+        "id": "05d03620-1276-4df6-ab59-300138f53565",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 133333,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 59,
+          "toFrame": 63
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 60,
+        "id": "56cf497f-7217-41e4-b5b3-66d743a81769",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 60,
+          "toFrame": 120
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 63,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 63,
+          "toFrame": 391
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 120,
+        "id": "5a45552b-6a64-4d8d-80ee-27eff30a0b56",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 120,
+          "toFrame": 180
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 6,
+        "enabled": true,
+        "id": "df158b83-7834-4f4e-b936-dce5d68d3fe5",
+        "incomingItemId": "1ce763e2-a20c-4f42-ac61-8eae4ae5d10f",
+        "kind": "transition",
+        "outgoingItemId": "4fa42d79-60c5-49bd-91be-c33c0aec97d8",
+        "timelineRange": {
+          "fromFrame": 177,
+          "toFrame": 183
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "9cce9304-b317-4893-b392-9628752c00f1",
+          "name": "335d9510_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 180,
+        "id": "1ce763e2-a20c-4f42-ac61-8eae4ae5d10f",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6150000,
+          "start": 150000
+        },
+        "timelineRange": {
+          "fromFrame": 180,
+          "toFrame": 360
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "fromFrame": 180,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 180,
+          "toFrame": 210
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 210,
+        "id": "491303b7-2e10-4a69-b2ab-49b466db40a5",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 210,
+          "toFrame": 270
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 270,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 270,
+          "toFrame": 300
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 300,
+        "id": "6101afc8-093c-4225-8c10-bf4c88295ef6",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 300,
+          "toFrame": 360
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 6,
+        "enabled": true,
+        "id": "e74b1f28-5428-4e2c-9128-a6b05e0aedc1",
+        "incomingItemId": "037c5dc7-24a1-4802-978f-7c5ea2bf660d",
+        "kind": "transition",
+        "outgoingItemId": "1ce763e2-a20c-4f42-ac61-8eae4ae5d10f",
+        "timelineRange": {
+          "fromFrame": 357,
+          "toFrame": 363
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "b01d92bb-34ad-47ae-8389-4ac90018c018",
+          "name": "9f2f3362_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 360,
+        "id": "037c5dc7-24a1-4802-978f-7c5ea2bf660d",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6150000,
+          "start": 150000
+        },
+        "timelineRange": {
+          "fromFrame": 360,
+          "toFrame": 540
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 360,
+        "id": "178a27e9-60b3-48b8-a278-8fb8f2276d63",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 360,
+          "toFrame": 420
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 360,
+        "id": "2d8f932d-a2f7-4985-853c-f4d6aee7f700",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 17000000,
+          "start": 12000000
+        },
+        "timelineRange": {
+          "fromFrame": 360,
+          "toFrame": 510
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "364c5fd2-0fc0-43e8-8c93-737fef3e26cd",
+          "name": "record-scratch-stop-r1.mp3",
+          "type": "audio"
+        },
+        "startFrame": 391,
+        "id": "6af579f7-ec6e-48da-a4ae-71d8da37561e",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 633333,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 391,
+          "toFrame": 410
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "fromFrame": 410,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 410,
+          "toFrame": 434
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "fromFrame": 420,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 420,
+          "toFrame": 435
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "dca309b9-d5ac-4199-a26d-cab9d44dfcef",
+          "name": "tiny-bubble-pop-r1.mp3",
+          "type": "audio"
+        },
+        "startFrame": 434,
+        "id": "2afe1177-224e-4c8b-9d99-f4a5933053c8",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 133333,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 434,
+          "toFrame": 438
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 435,
+        "id": "109512ad-abb1-4f99-a182-2e74111a3019",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 435,
+          "toFrame": 495
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 438,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 438,
+          "toFrame": 1885
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "fromFrame": 495,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 495,
+          "toFrame": 645
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 510,
+        "id": "fbeb0e12-87e4-418b-89be-0545c354c273",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 52000000,
+          "start": 17000000
+        },
+        "timelineRange": {
+          "fromFrame": 510,
+          "toFrame": 1560
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 8,
+        "enabled": true,
+        "id": "9fdbafca-cffa-4bb8-b17d-8bede1c8cb86",
+        "incomingItemId": "8a485a93-6943-46ce-8365-fffbc4ddab22",
+        "kind": "transition",
+        "outgoingItemId": "037c5dc7-24a1-4802-978f-7c5ea2bf660d",
+        "timelineRange": {
+          "fromFrame": 536,
+          "toFrame": 544
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "5b7474db-2280-4c56-b4e9-3416e61086c0",
+          "name": "3e860d9b_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 540,
+        "id": "8a485a93-6943-46ce-8365-fffbc4ddab22",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 3250000,
+          "start": 250000
+        },
+        "timelineRange": {
+          "fromFrame": 540,
+          "toFrame": 630
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 14,
+        "enabled": true,
+        "id": "7e44f5b4-6f73-44ec-9338-2b12c6524349",
+        "incomingItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c",
+        "kind": "transition",
+        "outgoingItemId": "8a485a93-6943-46ce-8365-fffbc4ddab22",
+        "timelineRange": {
+          "fromFrame": 623,
+          "toFrame": 637
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "bbffbcde-ca1b-4df4-b191-cf2fed30a464",
+          "name": "blocky-nested-review-edit.mp4",
+          "type": "video"
+        },
+        "startFrame": 630,
+        "id": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 10180000,
+          "start": 2500000
+        },
+        "timelineRange": {
+          "fromFrame": 630,
+          "toFrame": 870
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "6f4889b8-02ec-4682-9890-f431a2c9e018",
+          "name": "积木审查 · 左下便签",
+          "type": "motion-graphic"
+        },
+        "startFrame": 645,
+        "id": "42467471-54f5-4d1c-8457-007e7d508d17",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 645,
+          "toFrame": 735
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 735,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 735,
+          "toFrame": 750
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6f4889b8-02ec-4682-9890-f431a2c9e018",
+          "name": "积木审查 · 左下便签",
+          "type": "motion-graphic"
+        },
+        "startFrame": 750,
+        "id": "ec6acff3-646c-460b-bbe6-f4f8520fe658",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 750,
+          "toFrame": 840
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 840,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 840,
+          "toFrame": 870
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 14,
+        "enabled": true,
+        "id": "a4d0b1bd-9b1c-421f-a26c-a39f2f0571e9",
+        "incomingItemId": "4be43c37-6070-40ab-8178-ffda30e3e457",
+        "kind": "transition",
+        "outgoingItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c",
+        "timelineRange": {
+          "fromFrame": 863,
+          "toFrame": 877
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "00cc0cea-8d74-42d3-92c4-1e4d7564ca71",
+          "name": "c3a17c46_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 870,
+        "id": "4be43c37-6070-40ab-8178-ffda30e3e457",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6300000,
+          "start": 300000
+        },
+        "timelineRange": {
+          "fromFrame": 870,
+          "toFrame": 1050
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 870,
+        "id": "feb72125-8a67-4985-822a-354f3eafa5ec",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 870,
+          "toFrame": 930
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 930,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 930,
+          "toFrame": 960
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 960,
+        "id": "547a4d7f-dd14-46a9-ba0b-6261ef700e7c",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 960,
+          "toFrame": 1020
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 1020,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1020,
+          "toFrame": 1065
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 12,
+        "enabled": true,
+        "id": "7bcc8dca-3de2-41d5-b57e-6fe230898e09",
+        "incomingItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53",
+        "kind": "transition",
+        "outgoingItemId": "4be43c37-6070-40ab-8178-ffda30e3e457",
+        "timelineRange": {
+          "fromFrame": 1044,
+          "toFrame": 1056
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "06af9651-a140-41fd-87c5-56aed2cd26b7",
+          "name": "blocky-preset-runtime-highlights.mp4",
+          "type": "video"
+        },
+        "startFrame": 1050,
+        "id": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 14180000,
+          "start": 6500000
+        },
+        "timelineRange": {
+          "fromFrame": 1050,
+          "toFrame": 1290
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "f10e519f-82d1-4544-8d81-2f386d7a3cc9",
+          "name": "运行观察 · 侧边短句",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1065,
+        "id": "d5077c00-7c47-44b4-a557-1886657b4225",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1065,
+          "toFrame": 1275
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 1275,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1275,
+          "toFrame": 1305
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 14,
+        "enabled": true,
+        "id": "a09a2eac-82f9-4ca1-b28f-a3f70db7572f",
+        "incomingItemId": "946763ea-a10e-4e5c-96c3-8b74b7178065",
+        "kind": "transition",
+        "outgoingItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53",
+        "timelineRange": {
+          "fromFrame": 1283,
+          "toFrame": 1297
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "d70ecebc-f70a-4637-9fa9-4fa6e39abb2a",
+          "name": "fb70b1a2_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1290,
+        "id": "946763ea-a10e-4e5c-96c3-8b74b7178065",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 3250000,
+          "start": 250000
+        },
+        "timelineRange": {
+          "fromFrame": 1290,
+          "toFrame": 1380
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "58cd33ac-b0cb-4b31-ad0b-1a82b4aa59c3",
+          "name": "搭子对白 · 两秒气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1305,
+        "id": "6a8d2a24-45c0-4da9-8b48-18d9a7060ebc",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1305,
+          "toFrame": 1365
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "fromFrame": 1365,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1365,
+          "toFrame": 1380
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "27f7c506-55a0-4cba-94d0-1f943eea2237",
+        "incomingItemId": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+        "kind": "transition",
+        "outgoingItemId": "946763ea-a10e-4e5c-96c3-8b74b7178065",
+        "timelineRange": {
+          "fromFrame": 1375,
+          "toFrame": 1385
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "e7e78dc3-257c-4ffb-a141-3411cbb0a5c4",
+          "name": "3f6434c6_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1380,
+        "id": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6250000,
+          "start": 250000
+        },
+        "timelineRange": {
+          "fromFrame": 1380,
+          "toFrame": 1560
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "f42485a4-a30f-4532-8ad4-c839a5ef451a",
+          "name": "搭子协作 · CLI薄层",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1380,
+        "id": "d1ac3fd8-93e0-4e00-b3c2-389e4e5fe7c6",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1380,
+          "toFrame": 1560
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 14,
+        "enabled": true,
+        "id": "0876c40f-ee9e-43f3-b65c-0b95fe857426",
+        "incomingItemId": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "kind": "transition",
+        "outgoingItemId": "fbeb0e12-87e4-418b-89be-0545c354c273",
+        "timelineRange": {
+          "fromFrame": 1553,
+          "toFrame": 1567
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "9d6edfc2-a66d-49ac-9a0d-d42378dd79a5",
+        "incomingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "kind": "transition",
+        "outgoingItemId": "cb85d04f-415f-4a49-9ff0-eeca85415aac",
+        "timelineRange": {
+          "fromFrame": 1555,
+          "toFrame": 1565
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "3cbdd510-61a4-4556-9a67-148dee33d2c0",
+          "name": "2a1a6f7f_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1560,
+        "id": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 7660000,
+          "start": 300000
+        },
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1800
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1560,
+        "id": "0599b028-52a0-44a2-b70c-c17ef06b398e",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1620
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1560,
+        "id": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 51000000,
+          "start": 46000000
+        },
+        "timelineRange": {
+          "fromFrame": 1560,
+          "toFrame": 1710
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "fromFrame": 1620,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1620,
+          "toFrame": 1650
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1650,
+        "id": "f8690d5f-fcae-4795-89a9-b70b268127db",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1650,
+          "toFrame": 1710
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "84babad7-3d31-45e5-8239-0abc068a2b97",
+        "incomingItemId": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "kind": "transition",
+        "outgoingItemId": "d8563780-4b99-4982-bb1f-e2cf167e7ab7",
+        "timelineRange": {
+          "fromFrame": 1705,
+          "toFrame": 1715
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "fb89cb0c-a299-4b88-bf8e-63af8be38328",
+          "name": "搭子对白 · 向上气泡",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1710,
+        "id": "2563830d-7a27-4c02-b787-b0524006cb1e",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1710,
+          "toFrame": 1770
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1710,
+        "id": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 54000000,
+          "start": 51000000
+        },
+        "timelineRange": {
+          "fromFrame": 1710,
+          "toFrame": 1800
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "fromFrame": 1770,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1770,
+          "toFrame": 1800
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "assetId": "builtin:tr-cross-dissolve",
+        "durationFrames": 18,
+        "enabled": true,
+        "id": "5ad63f11-9ef2-4aff-9af5-01ea042ca13f",
+        "incomingItemId": "f14495f6-76df-470f-b3ba-20cdc6f3637a",
+        "kind": "transition",
+        "outgoingItemId": "7bef4f33-80c9-4db8-b30f-f28e816d5924",
+        "timelineRange": {
+          "fromFrame": 1791,
+          "toFrame": 1809
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "assetId": "builtin:tr-audio-cross-fade",
+        "durationFrames": 10,
+        "enabled": true,
+        "id": "3a079582-b093-4987-ac3f-b1a1f0218637",
+        "incomingItemId": "c3522e80-19c4-4b6a-a21a-208b587158bd",
+        "kind": "transition",
+        "outgoingItemId": "26fc1a19-678e-4ecf-8bd4-39e7f720f1c4",
+        "timelineRange": {
+          "fromFrame": 1795,
+          "toFrame": 1805
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "cdc6cc7d-8422-49a2-b8f0-91d1984fe52f",
+          "name": "5f26c679_000_out.mp4",
+          "type": "video"
+        },
+        "startFrame": 1800,
+        "id": "f14495f6-76df-470f-b3ba-20cdc6f3637a",
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6930000,
+          "start": 350000
+        },
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "V1",
+        "trackId": "f5402f29-70df-457a-a952-0945051e5992"
+      },
+      {
+        "asset": {
+          "id": "9a0e5c6b-9f08-4d2b-bba0-0a6eafe22615",
+          "name": "片尾 · Blocky. 逐字落稳",
+          "type": "motion-graphic"
+        },
+        "startFrame": 1800,
+        "id": "165f7836-99d0-40e8-94db-142cd1a31805",
+        "itemType": "motion-graphic",
+        "kind": "item",
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "V2",
+        "trackId": "8f0e8597-f713-45a2-ade4-f7359e5f8533"
+      },
+      {
+        "asset": {
+          "id": "6c9622d7-0dbb-4927-942b-810d1423b9b9",
+          "name": "看懂Agent-原创节拍.wav",
+          "type": "audio"
+        },
+        "startFrame": 1800,
+        "id": "c3522e80-19c4-4b6a-a21a-208b587158bd",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 60000000,
+          "start": 53000000
+        },
+        "timelineRange": {
+          "fromFrame": 1800,
+          "toFrame": 2010
+        },
+        "trackAlias": "A1",
+        "trackId": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb"
+      },
+      {
+        "asset": {
+          "id": "dca309b9-d5ac-4199-a26d-cab9d44dfcef",
+          "name": "tiny-bubble-pop-r1.mp3",
+          "type": "audio"
+        },
+        "startFrame": 1885,
+        "id": "989289e1-6f9a-4752-949f-4cd13b047513",
+        "itemType": "audio",
+        "kind": "item",
+        "sourceRange": {
+          "end": 133333,
+          "start": 0
+        },
+        "timelineRange": {
+          "fromFrame": 1885,
+          "toFrame": 1889
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      },
+      {
+        "fromFrame": 1889,
+        "kind": "gap",
+        "timelineRange": {
+          "fromFrame": 1889,
+          "toFrame": 2010
+        },
+        "trackAlias": "A2",
+        "trackId": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7"
+      }
+    ],
+    "totalEntries": 69,
+    "tracks": [
+      {
+        "alias": "V1",
+        "effects": [
+          {
+            "assetId": "builtin:zoom",
+            "durationFrames": 240,
+            "enabled": true,
+            "startFrame": 630,
+            "id": "7b6b0bc6-9016-47be-8ce1-379ca1a9b581",
+            "propertyOverrides": {
+              "shape": "spring-focused",
+              "focalMode": "manual",
+              "focalPointX": 0.45,
+              "magnification": 3,
+              "easeInDurationInSeconds": 1.4,
+              "easeOutDurationInSeconds": 1.4
+            },
+            "targetItemId": "6489bbf6-dc1a-4f8a-9c77-1c15000f816c"
+          },
+          {
+            "assetId": "builtin:zoom",
+            "durationFrames": 240,
+            "enabled": true,
+            "startFrame": 1050,
+            "id": "fbbdfd32-b856-4ac4-a9a3-70b0dbfc7d42",
+            "propertyOverrides": {
+              "easeIn": 0.12,
+              "easeOut": 0,
+              "direction": "in",
+              "focalMode": "manual",
+              "focalPointX": 0.99,
+              "focalPointY": 0.18,
+              "magnification": 1.35
+            },
+            "targetItemId": "6a3e8dca-0438-4ac6-93b3-06e86f43ec53"
+          }
+        ],
+        "hidden": false,
+        "id": "f5402f29-70df-457a-a952-0945051e5992",
+        "muted": false,
+        "name": null,
+        "order": 0,
+        "trackType": "video"
+      },
+      {
+        "alias": "V2",
+        "hidden": false,
+        "id": "8f0e8597-f713-45a2-ade4-f7359e5f8533",
+        "muted": false,
+        "name": null,
+        "order": 1,
+        "trackType": "video"
+      },
+      {
+        "alias": "A1",
+        "hidden": false,
+        "id": "2cf6b1ed-d891-41db-b23c-93ec75b0b4cb",
+        "muted": false,
+        "name": "原创节拍",
+        "order": 3,
+        "trackType": "audio"
+      },
+      {
+        "alias": "A2",
+        "hidden": false,
+        "id": "72e600b7-728f-4a3b-8efe-dc10c21fb2e7",
+        "muted": false,
+        "name": "喜剧音效",
+        "order": 4,
+        "trackType": "audio"
+      }
+    ]
+  },
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d"
+}

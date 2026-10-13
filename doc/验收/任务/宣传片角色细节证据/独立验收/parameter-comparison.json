@@ -1,0 +1,73 @@
+{
+  "itemReadCounts": [
+    39,
+    39
+  ],
+  "propertyDifferences": [
+    {
+      "index": 6,
+      "from": 180,
+      "changes": {
+        "asset": [
+          "9cce9304b3",
+          "e350e725a6"
+        ],
+        "height": [
+          1097,
+          1088
+        ],
+        "cropTop": [
+          0.008204,
+          0.003676
+        ],
+        "cropBottom": [
+          0.007293,
+          0.003676
+        ],
+        "top": [
+          -9,
+          -4
+        ]
+      }
+    }
+  ],
+  "structureCounts": [
+    69,
+    69
+  ],
+  "structureDifferences": [
+    {
+      "index": 9,
+      "before": {
+        "startFrame": 180,
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6150000,
+          "start": 150000
+        },
+        "timelineRange": {
+          "fromFrame": 180,
+          "toFrame": 360
+        },
+        "trackAlias": "V1",
+        "assetId": "9cce9304-b317-4893-b392-9628752c00f1"
+      },
+      "after": {
+        "startFrame": 180,
+        "itemType": "video",
+        "kind": "item",
+        "sourceRange": {
+          "end": 6150000,
+          "start": 150000
+        },
+        "timelineRange": {
+          "fromFrame": 180,
+          "toFrame": 360
+        },
+        "trackAlias": "V1",
+        "assetId": "e350e725-a682-4172-a033-dd795871af2b"
+      }
+    }
+  ]
+}

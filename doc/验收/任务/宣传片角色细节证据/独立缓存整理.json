@@ -1,0 +1,55 @@
+{
+  "time": "2026-10-13 10:40",
+  "source": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8-acceptance",
+  "destination": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节独立验收-2026-10-13",
+  "files": 9,
+  "bytes": 20390584.0,
+  "operation": "Move-Item; per-file bytes and SHA256 verified; no deletion or disk-space release",
+  "entries": [
+    {
+      "relative": "adjacent-motion.png",
+      "bytes": 1698589,
+      "sha256": "7d7b40b33f3ac0411275fc3afb09c5deb5ed90e52edabf4dad986fe57892ed5c"
+    },
+    {
+      "relative": "baseline.png",
+      "bytes": 1779754,
+      "sha256": "70cc4e71b2e7641d199bcf28fdc4b9f4176d5d2d218bca1b5bcd206c7e8f624a"
+    },
+    {
+      "relative": "compare.py",
+      "bytes": 2824,
+      "sha256": "3996f878b12d3e7f56edfa3cce6515ae3ec4f2fda973ead3be82bd729a4e637e"
+    },
+    {
+      "relative": "eyes-grid.png",
+      "bytes": 1432428,
+      "sha256": "b8e2ed0e37f67bab20e17ff9b009a88ee68bd5115ecaceb0c09e2fcfa0f81c47"
+    },
+    {
+      "relative": "final-grid.png",
+      "bytes": 4035015,
+      "sha256": "d4ddb9a5840b46aab63f4faef037ee7799bc54152589961833e2b54038a35d92"
+    },
+    {
+      "relative": "legs-grid.png",
+      "bytes": 3373507,
+      "sha256": "ebb27e2d482ffb990c589b0dca4cfd9dc6b11282a10caab36709e339c7220db8"
+    },
+    {
+      "relative": "seam-in.png",
+      "bytes": 2112263,
+      "sha256": "89ea188930659b9bb63a8b37845afecc15222c67d786ffdedbd851ae68d9ac74"
+    },
+    {
+      "relative": "seam-out.png",
+      "bytes": 1938520,
+      "sha256": "9c26f45feeb4f846a9bb5b47707189f34fb28863dde88240e77a131f98fb95f8"
+    },
+    {
+      "relative": "source-grid.png",
+      "bytes": 4017684,
+      "sha256": "0bf8e0a95ce9820c316c0e87a74ae568ebdd07bfef55d474568b2a8b6278e081"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "11E7979C2D8AFE698F477405267509AC6E165A79EC5477FD35E0343972DED7D8",
+    "Path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-角色细节修复-v8.mp4"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "951EBCC6C620AB102B8636C70626B8E9C4C9D014B80CB9A475FEF6F4D084FC4B",
+    "Path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v8\\esrgan2x\\fff18b30_000_out.mp4"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "D109BC66248FBC9E2D387675F19A2E234DFB7D0B28731CC7AD619393F4AF23CC",
+    "Path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-RealESRGAN优化-v7.mp4"
+  }
+]

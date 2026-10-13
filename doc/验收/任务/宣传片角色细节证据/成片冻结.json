@@ -1,0 +1,117 @@
+{
+  "projectId": "d0cba719-b937-45cd-b22e-829476adff1d",
+  "timelineId": "57286d7c-77f1-4755-92fe-0ff67ff861ab",
+  "exportId": "6c4c0e29-546d-43e0-93e6-062c62808d6c",
+  "promptId": "fff18b30-8a38-453d-8109-83e1d348e073",
+  "source": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v8\\fff18b30_000.mp4",
+    "bytes": 668198,
+    "sha256": "e436d7abbc0936790949feff2b62ae5e225b206f56053a6f962d3610151275e5",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 960,
+          "height": 544,
+          "r_frame_rate": "24/1",
+          "nb_frames": "158"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "32000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_frames": "207"
+        }
+      ],
+      "format": {
+        "duration": "6.583333",
+        "size": "668198"
+      }
+    }
+  },
+  "enhanced": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\sources\\v8\\esrgan2x\\fff18b30_000_out.mp4",
+    "bytes": 1600671,
+    "sha256": "951ebcc6c620ab102b8636c70626b8e9c4c9d014b80cb9a475fef6f4d084fc4b",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1088,
+          "r_frame_rate": "24/1",
+          "nb_frames": "158"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "32000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_frames": "207"
+        }
+      ],
+      "format": {
+        "duration": "6.583333",
+        "size": "1600671"
+      }
+    }
+  },
+  "film": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-角色细节修复-v8.mp4",
+    "bytes": 66549239,
+    "sha256": "11e7979c2d8afe698f477405267509ac6e165a79ec5477fd35e0343972ded7d8",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_frames": "2010"
+        },
+        {
+          "codec_name": "aac",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0",
+          "nb_frames": "3141"
+        }
+      ],
+      "format": {
+        "duration": "67.008000",
+        "size": "66549239"
+      }
+    }
+  },
+  "keyframe": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\assets\\v8\\team-02-detail-fixed.png",
+    "sha256": "c05670a56fab4d2462b4585e2e35d2797b0641eb99344ef11ddf5d04a1e7dbd3"
+  },
+  "adoption": {
+    "sourceAssetId": "e350e725-a682-4172-a033-dd795871af2b",
+    "startFrame": 180,
+    "durationFrames": 180,
+    "offsetSeconds": 0.15,
+    "rate": 1,
+    "fit": "cover",
+    "decibelAdjustment": -60
+  },
+  "keptBaseline": {
+    "path": "D:\\1Folder\\Blocky-AI\\宣传片\\看懂Agent\\outputs\\Blocky-审查搭子-RealESRGAN优化-v7.mp4",
+    "sha256": "d109bc66248fbc9e2d387675f19a2e234dfb7d0b28731cc7ad619393f4af23cc"
+  },
+  "storage": {
+    "downloadMovedFrom": "C:\\Users\\29551\\Downloads\\Blocky-审查搭子-角色细节修复-v8.mp4",
+    "originalDownloadAbsent": true
+  },
+  "audio": "音乐/SFX保持。新镜头嵌入声以原-60dB增益采用，未承诺与v7全片PCM一致。",
+  "tool": "D:\\2Folder\\Real-ESRGAN / RealESRGAN_x2plus / FP16 / tile0 / single GPU process",
+  "generationSeconds": 376.1
+}

@@ -1,0 +1,242 @@
+{
+  "bytes": 13473937.0,
+  "operation": "recoverable move",
+  "files": [
+    {
+      "bytes": 558609,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\2a1a6f7f_000_out.mp4.png",
+      "sha256": "4e95636bcf95339942a2dbdb8e19a301ec561d22b7d240f9dc05086efc1f9a7b",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\2a1a6f7f_000_out.mp4.png"
+    },
+    {
+      "bytes": 549058,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\3f6434c6_000_out.mp4.png",
+      "sha256": "f063ceae876cc3b2b56b86f0199a4e1b8fbf23d11b06e81991e58f7aeff3e859",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\3f6434c6_000_out.mp4.png"
+    },
+    {
+      "bytes": 551589,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\9f2f3362_000_out.mp4.png",
+      "sha256": "09968f3d0ec7c942a67aada9d6c681abc0925da0839d83952b921d3390e2337b",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\9f2f3362_000_out.mp4.png"
+    },
+    {
+      "bytes": 556316,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\c3a17c46_000_out.mp4.png",
+      "sha256": "5077e0103d67e4a587a5c3b87422c6a7dd470656bbf16413b078d857d0cd13ef",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\c3a17c46_000_out.mp4.png"
+    },
+    {
+      "bytes": 13242,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\comfy.stderr.log",
+      "sha256": "7aa6d60459215f04b21d9857d29ae6e732b631f8435d655e193f135adc6437d8",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\comfy.stderr.log"
+    },
+    {
+      "bytes": 3518,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\comfy.stdout.log",
+      "sha256": "8f407006ac7b01addd8203b3cf0fd872b1a07c930f10c66b99d7dcda5702467d",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\comfy.stdout.log"
+    },
+    {
+      "bytes": 554600,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\fd25f5bd_000_out.mp4.png",
+      "sha256": "a0823c4474c79fe4a900fe9a810a144fb80ecaf7a312bd7a862a2570b11c1a51",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\fd25f5bd_000_out.mp4.png"
+    },
+    {
+      "bytes": 672,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\fetch_outputs.json",
+      "sha256": "7a99074125adf9e62970af51cdaaaf357b6ed7fe627baff622e02406cac1aaa9",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\fetch_outputs.json"
+    },
+    {
+      "bytes": 142,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\fetch-arg.json",
+      "sha256": "7e7d1298c54f6607af0567b89123e1be9a8db3bc08b93c286705e006f046a163",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\fetch-arg.json"
+    },
+    {
+      "bytes": 2255,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\freeze.py",
+      "sha256": "f3f28fdd3bfddc8732eb8655e178252c7c0858f7f9115e32f229206eaa853223",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\freeze.py"
+    },
+    {
+      "bytes": 72,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\job-arg.json",
+      "sha256": "1572c658c10d68f6934d46e4a5ca9978d508dab92aa6fde02dee2a8f97144f5a",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\job-arg.json"
+    },
+    {
+      "bytes": 752,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\job.json",
+      "sha256": "71c046bd8e416faca814fe9a45f0029c47e1d4dc07c2b25a9099aca9973735cc",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\job.json"
+    },
+    {
+      "bytes": 268,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\list_workflow_slots.json",
+      "sha256": "401b26946a86f57ace73fa3ca16256a3c56c489089af604cc92bad089eb57af3",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\list_workflow_slots.json"
+    },
+    {
+      "bytes": 78988,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\list.json",
+      "sha256": "90c5f51d65a2ec4c151d0b042ba44fbe1f0b0bcb8318e6252194a79bdaf9eed8",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\list.json"
+    },
+    {
+      "bytes": 1898,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\mcp_call.py",
+      "sha256": "b9339181e0609332065cbff8868ae0fb2aab6e7f229db6b814b3720c77193caa",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\mcp_call.py"
+    },
+    {
+      "bytes": 0,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\mcp-error.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\mcp-error.log"
+    },
+    {
+      "bytes": 4349881,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\new-contact.png",
+      "sha256": "48d492da5212aef3edfd21f4d2c382ccbc853626c590d80030c944670130f3f0",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\new-contact.png"
+    },
+    {
+      "bytes": 4183,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\notes-cli.json",
+      "sha256": "298d245201497bc6f0d6ed61bbc8ab18cf65ddc4f58b93131412db05da4e4303",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\notes-cli.json"
+    },
+    {
+      "bytes": 2125078,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\old-clip2-contact.png",
+      "sha256": "6c99bc2902ff0c1dfb6eb52d0973705af0954297b81b066ab38ab7c6360b11b7",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\old-clip2-contact.png"
+    },
+    {
+      "bytes": 2310284,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\old-clip2-start.png",
+      "sha256": "ad2b7448470954a4c7d540bf520ebd12ea0f12d65027500effa9954ffc3595a7",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\old-clip2-start.png"
+    },
+    {
+      "bytes": 7,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\owned-comfy.pid",
+      "sha256": "9476b8062b03384ecc9282063e25400ce963298e230d3013a6c37a3a0e98e668",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\owned-comfy.pid"
+    },
+    {
+      "bytes": 0,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\preflight.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\preflight.stdout.log"
+    },
+    {
+      "bytes": 1684488,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\repaired-1s.png",
+      "sha256": "2e7c13ae7e13b73dd9aa2cebf254f6f2e5a3e241b924ff50c77cc9deaf2b3e62",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\repaired-1s.png"
+    },
+    {
+      "bytes": 1850,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\server_info.json",
+      "sha256": "3d45cd1c5e7cdbe29eb99d2661c879dc95b603af41f26b9b846764a167700ac7",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\server_info.json"
+    },
+    {
+      "bytes": 53594,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\set_workflow_slot.json",
+      "sha256": "ec8be4a4f6fa637a583fcec365e753924e8aeaf92c29f122e40acfb27ad09276",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\set_workflow_slot.json"
+    },
+    {
+      "bytes": 12602,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\slots-cli.json",
+      "sha256": "3f28d5064dd95128d80c3a040b675ebc138fa7223b981c918e52600b145697c1",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\slots-cli.json"
+    },
+    {
+      "bytes": 15514,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\slots.stderr.log",
+      "sha256": "c9a88fca5c171d809c94db7aa3d212f522892bd4d6d720e025d5c408ad6c816d",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\slots.stderr.log"
+    },
+    {
+      "bytes": 207,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\slots.stdout.log",
+      "sha256": "d1e10915cb8c2e870171a3a5529b31c5ad0f188bf5c650c789e49a5ee6c2c8c1",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\slots.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\source-decode.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\source-decode.log"
+    },
+    {
+      "bytes": 1334,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\stats-cli.json",
+      "sha256": "21a2ac802c316c48bc6588b4644c26d60110846f7822b553d117ccae808b94e2",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\stats-cli.json"
+    },
+    {
+      "bytes": 730,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\submission.json",
+      "sha256": "54fa39d40d0d2300d0299af22568031c2e4ab3313584e48763d15a619579123f",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\submission.json"
+    },
+    {
+      "bytes": 3018,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\submit_repair.py",
+      "sha256": "0f5bce326dee81a4b47137249b179b5e63b0389583b207e80a1934836220b9b9",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\submit_repair.py"
+    },
+    {
+      "bytes": 0,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\submit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\submit.stderr.log"
+    },
+    {
+      "bytes": 505,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\upload_file.json",
+      "sha256": "2b07fdd213cacdd767f5c0543597aba8e503b7e0334c9ea660be1c8740dc0ba2",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\upload_file.json"
+    },
+    {
+      "bytes": 12014,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\upscale.stderr.log",
+      "sha256": "0363bba50d4f3c8900ff180154d1a9510db006128ebdc62e1173e696473ceb53",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\upscale.stderr.log"
+    },
+    {
+      "bytes": 85,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\upscale.stdout.log",
+      "sha256": "0412c15275ef993731919c0a0e84668f77ddd61383be2790f8f04c2cf105fa0d",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\upscale.stdout.log"
+    },
+    {
+      "bytes": 1514,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\validate_workflow.json",
+      "sha256": "608150b14e2f5115dafbe6018e82994e058079b7406674f76988bfc8b3f6a99e",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\validate_workflow.json"
+    },
+    {
+      "bytes": 105,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\workflow-arg.json",
+      "sha256": "d58f8643df6bce317a9a74af8d0937ea6f319df46d731a3d0e8e28fbd5e2bd64",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\workflow-arg.json"
+    },
+    {
+      "bytes": 24965,
+      "to": "D:\\1Folder\\Blocky-AI\\try\\待清理\\宣传片角色细节制作-2026-10-13\\workflow.json",
+      "sha256": "1578a1226eb57d9564bda47e9535940db6d2faf10b1babfba81861dd79d7aeac",
+      "from": "D:\\1Folder\\Blocky-AI\\try\\promo-detail-v8\\workflow.json"
+    }
+  ],
+  "diskReleasedBytes": 0,
+  "count": 39
+}
